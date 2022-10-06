@@ -1,6 +1,6 @@
 export default function PreviewWarning({ rounded } = {}) {
   return (
-    <div className={`relative bg-indigo-600 ${rounded ? 'rounded-md' : ''}`}>
+    <div className={`relative bg-blue-600 ${rounded ? 'rounded-md' : ''}`}>
       <div className="mx-auto max-w-7xl py-3 px-3 sm:px-6 lg:px-8">
         <div className="pr-16 sm:px-16 sm:text-center">
           <p className="font-medium text-white">

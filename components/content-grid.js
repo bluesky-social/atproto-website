@@ -23,11 +23,11 @@ export default function ContentGrid({ pages }) {
             pageIdx === brCruve
               ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none'
               : '',
-            'relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500'
+            'relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-500'
           )}
         >
           <div>
-            <span className="bg-indigo-50 text-indigo-700 rounded-lg inline-flex p-3 ring-4 ring-white">
+            <span className="bg-blue-50 text-blue-700 rounded-lg inline-flex p-3 ring-4 ring-white">
               <DocumentTextIcon className="h-6 w-6" aria-hidden="true" />
             </span>
           </div>
