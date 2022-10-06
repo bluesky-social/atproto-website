@@ -13,5 +13,5 @@ items:
     href: /specs/atp-repo
   - name: ATP XRPC Methods
     href: /specs/atp-methods
-  - name: at:// Uri Scheme
+  - name: at:// URI Scheme
     href: /specs/at-uri-scheme

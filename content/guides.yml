@@ -1,0 +1,7 @@
+items:
+  - name: Overview
+    href: /guides
+  - name: DID Resolution
+    href: /guides/did-resolution
+  - name: Name Resolution
+    href: /guides/name-resolution

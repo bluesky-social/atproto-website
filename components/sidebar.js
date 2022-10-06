@@ -4,7 +4,7 @@ function classNames(...classes) {
 
 export default function Sidebar({ navigation }) {
   return (
-    <div className="hidden md:block overflow-y-auto bg-gray-100 pb-4 w-64 h-screen">
+    <div className="hidden lg:block overflow-y-auto bg-gray-100 pb-4 w-[208px] rounded-lg">
       <div className="mt-5 flex flex-grow flex-col">
         <nav className="flex-1 space-y-1 px-2" aria-label="Sidebar">
           {navigation.map((item) => (

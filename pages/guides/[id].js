@@ -8,12 +8,12 @@ import { getNavigation, getFile } from '../../lib/content'
 // import styles from '../../styles/Markdown.module.css'
 
 export async function getStaticPaths() {
-  const navigation = await getNavigation('specs', '/specs')
+  const navigation = await getNavigation('guides', '/guides')
   return {
     paths: navigation
       .map((item) => {
         return {
-          params: { id: item.href.slice('/specs/'.length) },
+          params: { id: item.href.slice('/guides/'.length) },
         }
       })
       .filter((item) => item.params.id.length > 0),
@@ -22,14 +22,17 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  const navigation = await getNavigation('specs', `/specs/${context.params.id}`)
-  const file = await getFile('specs', context.params.id)
+  const navigation = await getNavigation(
+    'guides',
+    `/guides/${context.params.id}`
+  )
+  const file = await getFile('guides', context.params.id)
   return { props: { navigation, file } }
 }
 
-export default function Spec({ navigation, file }) {
+export default function Guide({ navigation, file }) {
   const pages = [
-    { name: 'Specs', href: '/specs', current: false },
+    { name: 'Guides', href: '/guides', current: false },
     { name: file.title, href: file.path, current: true },
   ]
   return (

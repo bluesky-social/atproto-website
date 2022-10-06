@@ -1,3 +1,8 @@
+---
+title: Name Resolution
+summary: How to resolve usernames in the at:// protocol.
+---
+
 # Name Resolution
 
 "User" names in ADX are mapped to domain names. A name resolves to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
