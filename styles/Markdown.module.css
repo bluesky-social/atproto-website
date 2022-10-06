@@ -1,0 +1,83 @@
+.markdown {
+  line-height: 1.4;
+  word-break: break-word;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  ul,
+  ol {
+    margin-bottom: 1rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 2rem;
+    font-weight: 500;
+  }
+
+  ul {
+    padding-left: 60px;
+    line-height: 1.5;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  table thead tr {
+    background-color: #5cabff;
+    color: #ffffff;
+    text-align: left;
+  }
+
+  table th,
+  table td {
+    padding: 12px 15px;
+    word-wrap: break-word;
+  }
+
+  table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  table tbody tr:last-of-type {
+    border-bottom: 2px solid #5cabff;
+  }
+
+  img {
+    display: block;
+    margin: 2.5rem auto;
+    max-width: 100%;
+  }
+
+  figcaption {
+    text-align: center;
+    margin-top: -2rem;
+    margin-bottom: 2rem;
+    color: #666;
+    font-size: small;
+  }
+
+  hr {
+    margin: 2.5rem 0;
+    border: 0;
+    border-top: 1px solid #bbb;
+  }
+}
