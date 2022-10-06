@@ -1,6 +1,10 @@
 items:
-  - name: Overview
-    href: /guides
+  - name: Protocol Overview
+    href: /guides/overview
+  - name: Identity
+    href: /guides/identity
+  - name: Data Repositories
+    href: /guides/data-repos
   - name: DID Resolution
     href: /guides/did-resolution
   - name: Name Resolution

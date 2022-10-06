@@ -9,7 +9,7 @@ export default function Hero() {
       >
         <div className="relative mx-auto h-full max-w-7xl">
           <svg
-            className="absolute right-full translate-y-1/4 translate-x-1/4 transform lg:translate-x-1/2"
+            className="absolute right-full translate-x-1/4 transform lg:translate-x-1/2"
             width={404}
             height={784}
             fill="none"

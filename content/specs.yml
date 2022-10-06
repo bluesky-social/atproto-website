@@ -1,6 +1,4 @@
 items:
-  - name: Overview
-    href: /specs
   - name: NSID
     href: /specs/nsid
   - name: Lexicon
@@ -8,7 +6,7 @@ items:
   - name: XRPC
     href: /specs/xrpc
   - name: DID:Placeholder
-    href: /specs/did-pch
+    href: /specs/did-plc
   - name: ATP Repositories
     href: /specs/atp-repo
   - name: ATP XRPC Methods
