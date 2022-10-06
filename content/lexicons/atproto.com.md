@@ -1,9 +1,9 @@
 ---
-title: ATP XRPC Methods
-summary: Documentation of the wire-protocol methods used in ATP.
+title: atproto.com
+summary: Schemas used in ATP.
 ---
 
-# ADX XRPC Methods
+# ATProto.com Lexicon
 
 ## `todo.adx.resolveName`
 

@@ -91,7 +91,7 @@ The base layer of ATP (Personal Data Repositories and Federated Networking) crea
 
 Separating speech and reach gives indexing services more freedom to moderate. Moderation by an indexing service doesn't remove a user's identity or destroy their social graph – it only affects the services' own indexes. Users choose their indexers, and so can choose a different service or to supplement with additional services if they're unhappy with the policies of any particular service.
 
-It's important to recognize that hosting providers will be obligated to remove illegal content according to their local laws. To help providers fulfill this obligation, services can publish labels which providers act upon at their discretion. For more information, see the "Moderation" section.
+It's important to recognize that hosting providers will be obligated to remove illegal content according to their local laws. To help providers fulfill this obligation, services can publish labels which providers act upon at their discretion.
 
 ## Next steps
 

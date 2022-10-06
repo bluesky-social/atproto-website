@@ -9,7 +9,5 @@ items:
     href: /specs/did-plc
   - name: ATP Repositories
     href: /specs/atp-repo
-  - name: ATP XRPC Methods
-    href: /specs/atp-methods
   - name: at:// URI Scheme
     href: /specs/at-uri-scheme

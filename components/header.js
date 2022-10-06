@@ -4,6 +4,7 @@ import { Popover, Transition } from '@headlessui/react'
 import {
   AcademicCapIcon,
   Bars3Icon,
+  BookOpenIcon,
   CommandLineIcon,
   DocumentTextIcon,
   XMarkIcon,
@@ -27,6 +28,11 @@ const SiteSections = [
     name: 'Specifications',
     href: '/specs',
     icon: DocumentTextIcon,
+  },
+  {
+    name: 'Lexicons',
+    href: '/lexicons',
+    icon: BookOpenIcon,
   },
 ]
 
