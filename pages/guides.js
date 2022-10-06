@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Header from '../components/header'
 import Footer from '../components/footer'
-import PreviewWarning from '../components/preview-warning'
 import Sidebar from '../components/sidebar'
 import Breadcrumbs from '../components/breadcrumbs'
 import ContentGrid from '../components/content-grid'
@@ -19,13 +18,27 @@ export default function Guides({ navigation }) {
       <Head>
         <title>Guides | at:// protocol</title>
         <meta name="description" content="" />
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <Header />
-      <div className="max-w-4xl mx-auto my-4 px-4 lg:px-0">
-        <PreviewWarning rounded />
-      </div>
-      <div className="flex max-w-4xl mx-auto">
+      <div className="flex max-w-4xl mx-auto pt-4">
         <Sidebar navigation={navigation} />
         <div className="flex-1 px-4 pt-4">
           <div className="pb-5">
