@@ -3,12 +3,12 @@ title: at:// URI Scheme
 summary: A URI scheme for addressing ATP repository data.
 ---
 
-# ADX URI Scheme
+# ATP URI Scheme
 
-The `adx` URL scheme is used to address records in the ADX network.
+The `at` URL scheme is used to address records in the ATP network.
 
 ```
-adx-url   = "adx://" authority path [ "?" query ] [ "#" fragment ]
+atp-url   = "at://" authority path [ "#" fragment ]
 authority = reg-name / did
 path      = [ "/" coll-nsid [ "/" record-id ] ]
 coll-nsid = nsid
@@ -23,40 +23,38 @@ record-id = 1*pchar
 
 `pchar` is defined in [https://www.rfc-editor.org/rfc/rfc3986#section-3.3](https://www.rfc-editor.org/rfc/rfc3986#section-3.3).
 
-`query` is defined in [https://www.rfc-editor.org/rfc/rfc3986#section-3.4](https://www.rfc-editor.org/rfc/rfc3986#section-3.4).
-
 `fragment` is defined in [https://www.rfc-editor.org/rfc/rfc3986#section-3.5](https://www.rfc-editor.org/rfc/rfc3986#section-3.5). 
 
-The fragment segment only has meaning if the URL references a record. Its value maps to a subrecord with the matching `"id"` value.
+The fragment segment only has meaning if the URL references a record. Its value maps according to "Field pathing" below.
 
-Some example `adx` URLs:
+Some example `at` URLs:
 
 <table>
   <tr>
     <td>Repository</td>
-    <td><code>adx://bob.com</code></td>
+    <td><code>at://bob.com</code></td>
   </tr>
   <tr>
     <td>Repository</td>
-    <td><code>adx://did:web:bob.com</code></td>
+    <td><code>at://did:plc:bv6ggog3tya2z3vxsub7hnal</code></td>
   </tr>
   <tr>
     <td>Collection</td>
-    <td><code>adx://bob.com/io.example.song</code></td>
+    <td><code>at://bob.com/io.example.song</code></td>
   </tr>
   <tr>
     <td>Record</td>
-    <td><code>adx://bob.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
+    <td><code>at://bob.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
   </tr>
   <tr>
     <td>Record Field</td>
-    <td><code>adx://bob.com/io.example.song/3yI5-c1z-cc2p-1a#/title</code></td>
+    <td><code>at://bob.com/io.example.song/3yI5-c1z-cc2p-1a#/title</code></td>
   </tr>
 </table>
 
 ### Field pathing
 
-All fields in ADX records are addressed using [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901) in the fragment section of the URL.
+All fields in ATP records are addressed using [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901) in the fragment section of the URL.
 
 ```javascript
 const obj = {

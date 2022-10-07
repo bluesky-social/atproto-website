@@ -11,7 +11,7 @@ export default function PreviewWarning({ rounded } = {}) {
               The <code>at://</code> protocol is still in active development.
             </span>
             <span className="block sm:ml-2 sm:inline-block">
-              <a href="#TODO" className="font-bold text-white underline">
+              <a href="/roadmap" className="font-bold text-white underline">
                 Learn more
                 <span aria-hidden="true"> &rarr;</span>
               </a>

@@ -1,13 +1,13 @@
 items:
-  - name: NSID
-    href: /specs/nsid
-  - name: Lexicon
-    href: /specs/lexicon
-  - name: XRPC
-    href: /specs/xrpc
-  - name: DID:Placeholder
-    href: /specs/did-plc
   - name: ATP Repositories
     href: /specs/atp-repo
   - name: at:// URI Scheme
     href: /specs/at-uri-scheme
+  - name: Lexicon
+    href: /specs/lexicon
+  - name: XRPC
+    href: /specs/xrpc
+  - name: NSID
+    href: /specs/nsid
+  - name: DID:Placeholder
+    href: /specs/did-plc

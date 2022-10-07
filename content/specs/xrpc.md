@@ -7,8 +7,7 @@ summary: Cross-system remote procedure calls.
 
 XRPC is a general purpose server-to-server messaging protocol. It was created for the ADX protocol but is a generic communications layer which can be applied to multiple use-cases (and which does not include any ADX-specific semantics). The [repository data layer](./repo.md) and social applications operate as layers atop XRPC.
 
-```
-┌─────────────────────┐
+<pre style="line-height: 1.2;"><code>┌─────────────────────┐
 │ Social Applications │  Application semantics
 └─┰──────────┰────────┘
   ┃          ┃
@@ -19,7 +18,7 @@ XRPC is a general purpose server-to-server messaging protocol. It was created fo
 ┌─▽──────────▽────────┐
 │        XRPC         │  Wire protocol
 └─────────────────────┘
-```
+</code></pre>
 
 Features:
 
@@ -38,8 +37,7 @@ Features:
 
 XRPC supports client-to-server and server-to-server messaging over HTTP/S. Each user has a "Personal Data Server (PDS)" which acts as their agent in the network, meaning most (if not all) of their communication is routed through their PDS.
 
-```
-┌────────┐            ┌────────┐
+<pre style="line-height: 1.2;"><code>┌────────┐            ┌────────┐
 │ Server │ ◀──XRPC──▶ │ Server │
 └────────┘            └────────┘
     ▲
@@ -50,7 +48,7 @@ XRPC supports client-to-server and server-to-server messaging over HTTP/S. Each 
 ┌────────┐
 │ Client │
 └────────┘
-```
+</code></pre>
 
 ### Methods
 
