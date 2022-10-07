@@ -89,7 +89,7 @@ At present, none of the DID methods meet our standards fully. Many existing DID 
 
 ## Name Resolution
 
-"User" names in ATP are mapped to domain names. A name resolves to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
+Usernames in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
 Name resolution uses the [`todo.adx.resolveName`](/lexicons/atproto.com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
 

@@ -80,6 +80,83 @@ The data layout establishes the units of network-transmissable data. It includes
 |**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](../nsid.md). Collections only contain records of the type identified by their NSID.|
 |**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a [TID](#timestamp-ids-tid).|
 
+Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/) to be specific) which is referenced by a [CID](https://github.com/multiformats/cid) hash.
+
+<table>
+  <tr>
+   <td><strong>Signed Root ("commit")</strong>
+   </td>
+   <td>The Signed Root, or “commit”, is the topmost node in a repo. It contains:
+<ul>
+
+<li><strong>root</strong> The CID of the Root node.
+
+<li><strong>sig</strong> A signature.
+</li>
+</ul>
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Root</strong>
+   </td>
+   <td>The Root node contains:
+<ul>
+
+<li><strong>did</strong> The DID of this repository.
+
+<li><strong>prev</strong> The CID(s) of the previous commit node(s) in this repository’s history.
+
+<li><strong>new_cids</strong> An array of CIDs which were introduced in the write which produced this root.
+
+<li><strong>relationships</strong> The CID of the “Relationships” Standard Collection, a HAMT which encodes the user’s social graph.
+
+<li><strong>namespaces</strong> A map of Namespace nodes where the key is the Namespace’s string ID and the value is its CID.
+
+<li><strong>auth_token</strong> The jwt-encoded UCAN that gives authority to make the write which produced this root.
+</li>
+</ul>
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Namespace</strong>
+   </td>
+   <td>A Namespace represents a set of schemas which maps to the Collections within it. A Namespace node contains a set of Collections where the key is the Collection’s string ID and the value is its CID.
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Collection</strong>
+   </td>
+   <td>A Collection is a key/value collection which maps a schema-specific key such as a TID or DID to a Record — specifically, to the Record’s CID. The data structures used by Collections are listed below in Collection Data Structures.
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Record</strong>
+   </td>
+   <td>A Record is simply an object. The schema of each Record is determined by the Namespace & Collection it is within.
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Standard Collection</strong>
+   </td>
+   <td>Standard Collections are Collections which exist outside of a Namespace, meaning their schema is encoded into the protocol rather than by applications.
+<p>
+Currently the following Standard Collections are being used:
+<ul>
+
+<li><strong>Relationships</strong>. A list of followed users. 
+<ul>
+ 
+<li><strong>did</strong> The DID of the user.
+ 
+<li><strong>username</strong> The username of the user.
+</li> 
+</ul>
+</li> 
+</ul>
+   </td>
+  </tr>
+</table>
+
 ## Identifiers
 
 The following identifiers are used in repositories:
