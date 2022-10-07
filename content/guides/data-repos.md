@@ -5,6 +5,8 @@ summary: A guide to the at:// protocol repo structure.
 
 # Data Repositories
 
+TODO
+
 A “Personal Data Repository” is a collection of data published by a single user. Repositories are self-authenticating data structures, meaning each update is signed by an authenticated key, includes a proof of that authority, and can have its authenticity verified by anyone through a deterministic algorithm. The content of a repository is laid out in a [Merkle DAG](https://docs.ipfs.io/concepts/merkle-dag/) which reduces the state to a single root hash. This graph of hashes helps quickly compare two repository states which enables more efficient replication protocols.
 
 ## Identifier Types

@@ -1,7 +1,7 @@
 items:
-  - name: ATP Repositories
-    href: /specs/atp-repo
-  - name: at:// URI Scheme
+  - name: Authenticated Transfer Protocol
+    href: /specs/atp
+  - name: URI Scheme
     href: /specs/at-uri-scheme
   - name: Lexicon
     href: /specs/lexicon

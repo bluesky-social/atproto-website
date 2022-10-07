@@ -7,30 +7,40 @@ import HomeLinks from '../components/home-links'
 const core = [
   {
     name: 'Federation',
+    label: 'stable',
     done: true,
+    href: '/guides/overview',
   },
   {
     name: 'Public publishing',
+    label: 'stable',
     done: true,
+    href: '/guides/overview',
   },
   {
     name: 'Account portability',
+    label: 'stable',
     done: true,
+    href: '/guides/overview',
   },
 ]
 
 const software = [
   {
-    name: 'Mobile client (alpha)',
+    name: 'Mobile client',
+    label: 'alpha',
     done: true,
+    href: '/get-started',
   },
   {
     name: 'Desktop client',
     done: false,
   },
   {
-    name: 'Personal data server (alpha)',
+    name: 'Personal data server',
+    label: 'alpha',
     done: true,
+    href: '/get-started',
   },
   {
     name: 'Indexing server',

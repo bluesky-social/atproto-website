@@ -13,12 +13,8 @@ function classNames(...classes) {
 }
 
 export default function ContentGrid({ pages }) {
-  const isOdd = pages.length % 2 === 1
-  if (isOdd) {
-    pages = pages.concat([{ empty: true, href: '#empty' }])
-  }
   return (
-    <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 border border-gray-200 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
+    <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 border border-gray-200">
       {pages.map((page, pageIdx) => (
         <div
           key={page.href}
@@ -26,8 +22,6 @@ export default function ContentGrid({ pages }) {
             pageIdx === 0
               ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none'
               : '',
-            pageIdx === 1 ? 'sm:rounded-tr-lg' : '',
-            pageIdx === pages.length - 2 ? 'sm:rounded-bl-lg' : '',
             pageIdx === pages.length - 1
               ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none'
               : '',
@@ -35,9 +29,9 @@ export default function ContentGrid({ pages }) {
           )}
         >
           {!page.empty && (
-            <>
+            <div class="flex">
               <div>
-                <span className="bg-blue-50 text-blue-700 rounded-lg inline-flex p-3 ring-4 ring-white">
+                <span className="bg-blue-500 text-white rounded-lg inline-flex p-3 ring-4 ring-white">
                   {page.href.startsWith('/spec') && (
                     <DocumentTextIcon className="h-6 w-6" aria-hidden="true" />
                   )}
@@ -49,8 +43,8 @@ export default function ContentGrid({ pages }) {
                   )}
                 </span>
               </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-medium">
+              <div className="ml-4">
+                <h3 className="text-xl font-semibold leading-6">
                   <Link href={page.href}>
                     <a href={page.href} className="focus:outline-none">
                       {/* Extend touch target to entire panel */}
@@ -59,9 +53,9 @@ export default function ContentGrid({ pages }) {
                     </a>
                   </Link>
                 </h3>
-                <p className="mt-2 text-sm text-gray-500">{page.description}</p>
+                <p className="text-md text-gray-500">{page.description}</p>
               </div>
-            </>
+            </div>
           )}
         </div>
       ))}

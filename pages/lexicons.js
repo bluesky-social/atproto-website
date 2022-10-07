@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Header from '../components/header'
 import Footer from '../components/footer'
-import Sidebar from '../components/sidebar'
 import Breadcrumbs from '../components/breadcrumbs'
 import ContentGrid from '../components/content-grid'
 import { getNavigationWithDesc } from '../lib/content'
@@ -38,12 +37,12 @@ export default function Lexicons({ navigation }) {
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <Header />
-      <div className="flex max-w-4xl mx-auto pt-4">
-        <Sidebar navigation={navigation} />
-        <div className="flex-1 px-4 pt-4">
-          <div className="pb-5">
-            <Breadcrumbs pages={pages} />
-          </div>
+      <div className="max-w-4xl mx-auto px-4 pt-4">
+        <Breadcrumbs pages={pages} />
+      </div>
+      <div className="flex max-w-4xl mx-auto">
+        <div className="flex-1 px-4">
+          <h1 className="text-center text-4xl font-bold pb-6">Lexicons</h1>
           <ContentGrid
             pages={navigation.filter((page) => page.href !== '/lexicons')}
           />

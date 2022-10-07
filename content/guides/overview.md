@@ -9,7 +9,7 @@ ATP is a protocol for large-scale distributed social applications. Its goals are
 
 Five primary specs comprise the v1 of the `at://` protocol. These specs are:
 
-- [ATP Data Repositories](./specs/atp-repo)
+- [Authenticated Transfer Protocol](/specs/atp)
 - [Cross-system RPC (XRPC)](/specs/xrpc)
 - [Lexicon Schemas](/specs/lexicon)
 - [NameSpaced IDs (NSIDs)](/specs/nsid)
@@ -37,11 +37,11 @@ These specs can be organize into three layers of dependency:
 ─────────────────────────────────────────────────────
 </code></pre>
 
-[XRPC](/specs/xrpc) is the "bottom-most" layer, acting as an HTTP-based wire protocol for ATP and its applications. Two identifier formats, [NSID](/specs/nsid) and [did:plc](/specs/did-plc), were also required to reference semantic information and repositories respectively. [Lexicon](/specs/lexicon) provides a schemas and semantics system for XRPC methods and data types. [ATP](/specs/atp-repo) is then implemented on top of XRPC, Lexicon, and the other specifications listed.
+[XRPC](/specs/xrpc) is the "bottom-most" layer, acting as an HTTP-based wire protocol for ATP and its applications. Two identifier formats, [NSID](/specs/nsid) and [did:plc](/specs/did-plc), were also required to reference semantic information and repositories respectively. [Lexicon](/specs/lexicon) provides a schemas and semantics system for XRPC methods and data types. [ATP](/specs/atp) is then implemented on top of XRPC, Lexicon, and the other specifications listed.
 
 ## Understanding the protocol
 
-ATP's primary purpose is to exchange [signed data repositories](/specs/atp-repo). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, and so on. They are signed and addressed by [DIDs](/specs/did-plc), making it possible to authenticate the data at rest (e.g. when sharing posts by other users) and enabling user accounts to migrate to new hosting providers without losing their data or social graph.
+ATP's primary purpose is to exchange [signed data repositories](/guides/data-repos). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, and so on. They are signed and addressed by [DIDs](/specs/did-plc), making it possible to authenticate the data at rest (e.g. when sharing posts by other users) and enabling user accounts to migrate to new hosting providers without losing their data or social graph.
 
 ATP uses a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc). A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to introduce new featuresets, including the [ATP Lexicon](/lexicons/atproto.com) for syncing user repositories.
 
@@ -92,12 +92,3 @@ The base layer of ATP (Personal Data Repositories and Federated Networking) crea
 Separating speech and reach gives indexing services more freedom to moderate. Moderation by an indexing service doesn't remove a user's identity or destroy their social graph – it only affects the services' own indexes. Users choose their indexers, and so can choose a different service or to supplement with additional services if they're unhappy with the policies of any particular service.
 
 It's important to recognize that hosting providers will be obligated to remove illegal content according to their local laws. To help providers fulfill this obligation, services can publish labels which providers act upon at their discretion.
-
-## Next steps
-
-From here, we recommend you read:
-
-- [The Identity Guide](/guides/identity)
-- [The Data Repositories Guide](/guides/data-repos)
-
-Or view the [specs](/specs) or [lexicons](/lexicons) sections for more detailed information.

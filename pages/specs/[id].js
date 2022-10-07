@@ -56,12 +56,12 @@ export default function Spec({ navigation, file }) {
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <Header />
-      <div className="flex max-w-4xl mx-auto pt-4">
+      <div className="max-w-4xl mx-auto px-4 py-4">
+        <Breadcrumbs pages={pages} />
+      </div>
+      <div className="flex max-w-4xl mx-auto">
         <Sidebar navigation={navigation} />
-        <div className="flex-1 px-4 pt-4">
-          <div className="pb-4">
-            <Breadcrumbs pages={pages} />
-          </div>
+        <div className="flex-1 px-4">
           <div
             className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
             dangerouslySetInnerHTML={{ __html: file.bodyHTML }}

@@ -5,57 +5,70 @@ summary: How the at:// protocol handles user identity.
 
 # Identity
 
-The identity system has a number of requirements:
+The `at://` identity system has a number of requirements:
 
-* **ID Provision.** Users should be able to create global IDs which are stable across services. These IDs should rarely change to ensure that links to their content are stable.
+* **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should rarely change to ensure that links to their content are stable.
 * **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data and provide end-to-end privacy. The identity system must publish their public keys with strong security.
+* **Key rotation.** Users must be able to rotate their key material without disrupting their identity.
 * **Service discovery.** To interact with users, applications must be able to discover the services in use by a given user.
 * **Usability.** Users should have human-readable and memorable names.
-* **Portability.** Identities should be portable across services. Changing a provider should not cause a user to lose their identity, social graph, or content
+* **Portability.** Identities should be portable across services. Changing a provider should not cause a user to lose their identity, social graph, or content.
 
 Adopting this system should give applications the tools for end-to-end encryption, signed user data, service sign in, and general interoperation.
 
 ## Identifiers
 
-We use two interrelated forms of identifiers: the _username_ and the _DID_. Usernames are email-like IDs which are resolved using [Webfinger](https://webfinger.net/) while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
+We use two interrelated forms of identifiers: the _username_ and the _DID_. Usernames are DNS names while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
 
-![Username & DID diagram](/img/overview/username-did-diagram.png)
+The following are all valid user identifers:
 
-The email-style username is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve usernames to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.
+```
+@alice.com
+at://alice.com
+at://did:plc:bv6ggog3tya2z3vxsub7hnal
+```
+
+The relationship between them can be visualized as:
+
+<pre style="line-height: 1.2;"><code> ┌─────────────┐                     ┌───────────────┐ 
+ │ DNS name    ├────resolves to────→ │ DID           │
+ │ (alice.com) │                     │ (did:plc:...) │
+ └─────────────┘                     └──────┬────────┘
+        ↑                                   │
+        │                               resolves to
+        │                                   │
+        │                                   ↓
+        │                            ┌───────────────┐ 
+        └───────────references───────┤ DID Document  │
+                                     │ {"id":"..."}  │
+                                     └───────────────┘
+</code></pre>
+
+The DNS username is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve usernames to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.
 
 <table>
   <tr>
    <td><strong>Usernames</strong>
    </td>
-   <td>Usernames are email-style (user@domain). They are resolved to DIDs using the <a href="https://webfinger.net/">Webfinger</a> protocol and must be confirmed by a matching entry in the DID document.
-<p>
-By using Webfinger, the allocation and management of usernames are delegated to DNS (for the part after the @) and the admins of the Webfinger HTTP endpoints (for the part before the @).
+   <td>Usernames are DNS names. They are resolved using the <a href="/lexicons/atproto.com">resolveName()</a> XRPC method and should be confirmed by a matching entry in the DID document.
    </td>
   </tr>
   <tr>
    <td><strong>DIDs</strong>
    </td>
-   <td>DIDs are an emerging<a href="https://www.w3.org/TR/did-core/"> W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users.
-<p>
-The DID syntax supports a variety of “DID methods” that define how the DID is published and modified. This document proposes creating a new method which is operated by a consortium of providers.
+   <td>DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users.
    </td>
   </tr>
   <tr>
    <td><strong>DID Documents</strong>
    </td>
-   <td>DID Documents are standardized objects which are hosted by DID registries. They include the following information:
-<ul>
-
-<li>The username associated with the DID
-
-<li>User public-key material
-
-<li>Pointers to the user’s services
-
-<p>
-DID Documents provide all the information necessary for a client to begin interacting with a given user and their content.
-</li>
-</ul>
+   <td>
+    DID Documents are standardized objects which are hosted by DID registries. They include the following information:
+    <ul>
+      <li>The username associated with the DID.</li>
+      <li>The signing key.</li>
+      <li>The URL of the user’s PDS.</li>
+    </ul>
    </td>
   </tr>
 </table>
@@ -72,46 +85,106 @@ The [DID standard](https://www.w3.org/TR/did-core/) supports custom "methods" of
 - **Key rotation**. Users must be able to rotate keypairs without losing their identity.
 - **Decentralized governance**. The network should not be governed by a single stakeholder; it must be an open network or a consortium of providers.
 
-Many existing DID networks are permissionless blockchains which achieve the above goals but with relatively poor latency ([ION](https://identity.foundation/ion/) takes roughly 20 minutes for commitment finality). Other methods such as "did:web" may be ideal for self-hosting users but lack an online API and so must be iterated upon to meet our requirements.
+At present, none of the DID methods meet our standards fully. Many existing DID networks are permissionless blockchains which achieve the above goals but with relatively poor latency ([ION](https://identity.foundation/ion/) takes roughly 20 minutes for commitment finality). **Therefore we have chosen to support [did-web](https://w3c-ccg.github.io/did-method-web/) and a temporary method we've created called [did-placeholder](/specs/did-plc).** We expect this situation to evolve as new solutions emerge.
 
-While we believe supporting the existing methods which meet these criteria is a good idea, we also believe a better approach can be provided by building a new DID Consortium registry.
+## Name Resolution
 
-## The DID Consortium
+"User" names in ATP are mapped to domain names. A name resolves to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-The (currently-unnamed) DID Consortium will securely host user IDs. It will be operated by multiple different organizations who share ownership of the service.
+Name resolution uses the [`todo.adx.resolveName`](/lexicons/atproto.com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
 
-![Consortium diagram](/img/overview/consortium-diagram.png)
+Here is the algorithm in pseudo-typescript:
 
-The design of the consortium software is still under development, but the current thinking follows the above diagram. Consortium members will operate nodes which coordinate under a control plane run by the consortium governance. They will coordinate reads and writes to a secure append-only log which can be monitored externally, through a technique similar to [Certificate Transparency](https://certificate.transparency.dev/).
+```typescript
+async function resolveName(name: string) {
+  const origin = `https://${name}`
+  const res = await xrpc(origin, 'todo.adx.resolveName', {name})
+  assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
+  return res.did
+}
+```
 
-Clients (users) will submit reads and writes to members of the consortium. External auditors will be able to follow the log to watch for unexpected identity changes and ensure the consortium is operating as intended.
+### Example: Hosting service
 
-## Consortium ID format and data model
+Consider a scenario where a hosting service is using PLC and is providing the username for the user as a subdomain:
 
-DID Documents published to the Consortium will be identified by a hash of the initial document (known as the "genesis" document). This genesis doc includes the public key for a primary keypair which signs the genesis doc and any subsequent updates. Updates can change the primary public key, in which case subsequent updates to the document should be signed by the new keypair. A recovery keypair may also be included in the document with superseding capacity to sign updates.
+- The username: `alice.pds.com`
+- The DID: `did:plc:12345`
+- The hosting service: `https://pds.com`
 
-To correctly host a DID Document and its changes, the consortium must maintain the history of the document – or at minimum the history of its key rotations – and act as a trusted witness to the history. If it fails to do so, a compromised keypair could be used to rewrite the history and claim control of an account, even after rotation. The purpose of the append-only transparency log is to ensure that the consortium is maintaining this property.
+At first, all we know is `alice.pds.com`, so we call `todo.adx.resolveName()` on `alice.pds.com`. This tells us the DID.
 
-## Root private key management
+```typescript
+await xrpc.service('https://alice.pds.com').todo.adx.resolveName() // => {did: 'did:plc:12345'}
+```
 
-Many of our systems depend on cryptographic keypairs which are managed by end-users. We believe users should be given the options to use both custodial and non-custodial solutions. Key management is (at this stage) difficult for average consumers and so a custodial solution should be made available, but for professionals and security-conscious users a non-custodial option should also be supported.
+Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
 
-The key manager has the following responsibilities:
+```typescript
+await didPlc.resolve('did:pcl:12345') /* => {
+  id: 'did:pcl:12345',
+  alsoKnownAs: `https://alice.pds.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://pds.com', ...}]
+}*/
+```
 
-- Store root private keys
-- Publish updates to the users' DID Documents
-- Create delegated keypairs through [UCAN](https://ucan.xyz/) issuance (see "Data Repositories" for more info)
-- Handle recovery flows in the event of key loss
+We can now communicate with `https://pds.com` to access Alice's data.
 
-The key manager software integrates into the application stack in a similar fashion to SSO services. When applications want to "log in" (gain authorization) the key manager is opened with a chance for the user to choose the identity and accept or deny the grant. When core account management is needed (e.g. to change a service provider) the key manager will provide interfaces to update this config.
+### Example: Hosting service w/separate domain name
 
-The key management software is seldom used, though it plays a critical role. The key manager provides an interface to authenticate/deauthenticate a new device and manage core configuration details about a user’s account.
+Suppose we have the same scenario as before, except the user has supplied their own domain name:
 
-## Notes on design decisions
+- The username: `alice.com` (this differs from before)
+- The DID: `did:plc:12345`
+- The hosting service: `https://pds.com`
 
-Designing the identity system is a balancing act between requirements and resulting complexity. It can be useful to track how decisions affect the design, to better justify the proposal and to get entry-points to future discussion.
+We call `todo.adx.resolveName()` on `alice.com` to get the DID.
 
-- **Key rotation**. Supporting key rotation for users is a valuable feature but it means that public keys cannot act as a user identifier. Instead, a content-hash of the DID document is used, and pubkeys are embedded in the document. Key changes are maintained as a history to the document. While all such updates are signed by the users' keypairs (main or recovery), a compromised keypair could be used to modify the history of key rotations. Therefore the registry must provide a trusted history for each DID document.
-- **Stable DIDs**. Maintaining a stable DID keeps the network healthy (fewer broken links) and reduces the potential that users lose their social graph or content. It does, however, require a more sophisticated DID Method which must provide that stability. Hypothetically, if we were to loosen this requirement, eg to enable a provider domain name to be part of the DID, it would reduce the amount of coordination needed within the registry.
-- **Online API**. DID Documents include the users' pubkeys and service endpoints. Ideally the software should be able to update the documents in convenient flows, but this requires an API for the client software to publish updates. If we can find reasonable flows for manual updates then DID methods without an online API such as did:web would also be usable.
-- **Transparency log**. The use of an append-only transparency log in the consortium mandates that the history of all mutations must be stored, creating an unbounded growth of state.
+```typescript
+await xrpc.service('https://alice.com').todo.adx.resolveName() // => {did: 'did:plc:12345'}
+```
+
+Then we resolve the DID as before:
+
+```typescript
+await didPlc.resolve('did:pcl:12345') /* => {
+  id: 'did:pcl:12345',
+  alsoKnownAs: `https://alice.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://pds.com', ...}]
+}*/
+```
+
+We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `todo.adx.resolveName()` call. The actual userdata lives on `pds.com`.
+
+### Example: Self-hosted
+
+Let's consider a self-hosting scenario. If using did:plc, it would look something like:
+
+- The username: `alice.com`
+- The DID: `did:plc:12345`
+- The hosting service: `https://alice.com`
+
+However, **if the self-hoster is confident they will retain ownership of the domain name**, they can use did:web instead of did:plc:
+
+- The username: `alice.com`
+- The DID: `did:web:alice.com`
+- The hosting service: `https://alice.com`
+
+We call `todo.adx.resolveName()` on `alice.com` to get the DID.
+
+```typescript
+await xrpc.service('https://alice.com').todo.adx.resolveName() // => {did: 'did:web:alice.com'}
+```
+
+We then resolve using did:web:
+
+```typescript
+await didWeb.resolve('did:web:alice.com') /* => {
+  id: 'did:web:alice.com',
+  alsoKnownAs: `https://alice.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://alice.com', ...}]
+}*/
+```

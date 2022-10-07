@@ -5,7 +5,7 @@ items:
     href: /guides/identity
   - name: Data Repositories
     href: /guides/data-repos
-  - name: DID Resolution
-    href: /guides/did-resolution
-  - name: Name Resolution
-    href: /guides/name-resolution
+  - name: Intro to Lexicon
+    href: /guides/lexicon
+  - name: How Federation Works
+    href: /guides/federation
