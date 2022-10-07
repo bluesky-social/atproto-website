@@ -1,11 +1,8 @@
 import Link from 'next/link'
 import {
   AcademicCapIcon,
-  Bars3Icon,
   BookOpenIcon,
-  CommandLineIcon,
   DocumentTextIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 function classNames(...classes) {
