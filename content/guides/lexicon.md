@@ -10,46 +10,150 @@ tldr:
 
 # Intro to Lexicon
 
-TODO
+Lexicon is a schema system used to define RPC methods and record types. Every Lexicon schema is written in JSON and uses [JSON-Schema](https://json-schema.org/) to define constraints.
 
-Schemas define the possible values of a record. Every record has a "type" which maps to a schema. Schemas are also used to distinguish collections of records, and are used to drive permissioning.
+The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS format. Here are some example methods:
 
-### Schema distribution
+```typescript
+com.atproto.repoGetRecord()
+com.atproto.syncGetRepo()
+app.bsky.getPostThread()
+app.bsky.getNotifications()
+```
 
-Schemas are designed to be machine-readable and network-accessible. While it is not currently _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
+And here are some example record types:
 
-To fetch a schema, a request must be sent to the xrpc [`getSchema`](../xrpc.md#getschema) method. This request is sent to the authority of the NSID.
+```typescript
+app.bsky.post
+app.bsky.profile
+app.bsky.like
+app.bsky.follow
+```
 
-### Schema structure
+## Why is Lexicon needed?
 
-Record schemas are encoded in JSON using [Lexicon Schema Documents](../lexicon.md).
+Interoperability. An open network like ATP needs a way to agree on behaviors and semantics. Lexicon solves this while making it relatively simple for developers to introduce new schemas.
 
-### Reserved field names
+Lexicon is not RDF. While RDF is effective at describing data, it is not ideal for enforcing schemas. Lexicon is easier to use because it doesn't need the generality that RDF provides. In fact, Lexicon's schemas enable code-generation with types and validation, which makes life much easier!
 
-There are a set of fields which are reserved in ADX and shouldn't be used by schemas.
+## Schema format
 
-|Field|Usage|
+Schemas are JSON objects which follow this interface:
+
+```typescript
+interface LexiconDoc {
+  lexicon: 1
+  id: string // an NSID
+  type: 'query' | 'procedure' | 'record'
+  revision?: number
+  description?: string
+
+  // if type == record
+  record?: JSONSchema
+
+  // if type == query or procedure
+  parameters?: Record<string, XrpcParameter>
+  input?: XrpcBody
+  output?: XrpcBody
+  errors?: XrpcError[]
+}
+```
+
+Notice the structure differs depending on the `type`. The meanings of the type are:
+
+|Type|Meaning|
 |-|-|
-|`$type`|Declares the type of a record.|
-|`$ext`|Contains extensions to a record's base schema.|
-|`$required`|Used by extensions to flag whether their support is required.|
-|`$fallback`|Used by extensions to give a description of the missing data.|
+|`query`|An XRPC "read" method (aka GET).|
+|`procedure`|An XRPC "modify" method (aka POST).|
+|`record`|An ATP repository record type.|
 
-Generally it's wise to avoid `$` prefixes in your fieldnames.
+## RPC methods
 
-### Schema validation
+@ Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. A call to:
 
-Constraints are structural: they apply constraints to fields under object path (eg `#/text`) to establish permissable values for that field. The constraints they can apply are value-type and valid values of the type (eg numbers within a range, strings of a certain format or pattern, etc). These constraints are described using [JSON Schema](https://json-schema.org/draft/2020-12/json-schema-core.html).
+```typescript
+app.bsky.getPostThread()
+```
 
-Unconstrained fields are ignored during validation, but should be avoided in case future versions of the schema apply constraints.
+is actually just an HTTP request:
 
-### Schema versioning
+```text
+GET /xrpc/app.bsky.getPostThread
+```
 
-Once a field constraint is published, it can never change. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, schemas may only add optional constraints, and only to previously unconstrained fields.
+The schemas establish valid query parameters, request bodies, and response bodies.
 
-A "revision" field is used to indicate this change, but it has no enforced meaning. It simply is used to help developers track revisions. If a schema must change a previously-published constraint, it should be published as a new schema under a new NSID.
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "type": "query",
+  "parameters": {
+    "user": {"type": "string", "required": true}
+  },
+  "output": {
+    "encoding": "application/json",
+    "schema": {
+      "type": "object",
+      "required": ["did", "name"],
+      "properties": {
+        "did": {"type": "string"},
+        "name": {"type": "string"},
+        "displayName": {"type": "string", "maxLength": 64},
+        "description": {"type": "string", "maxLength": 256}
+      }
+    }
+  }
+}
+```
 
-### Schema extension
+With code-generation, these schemas become very easy to use:
+
+```typescript
+await client.com.example.getProfile({user: 'bob.com'})
+// => {name: 'bob.com', did: 'did:plc:1234', displayName: '...', ...}
+```
+
+## Record types
+
+Schemas define the possible values of a record. Every record has a "type" which maps to a schema and also establishes the URL of a record.
+
+For instance, this "follow" record:
+
+```json
+{
+  "$type": "com.example.follow",
+  "subject": "at://did:plc:12345",
+  "createdAt": "2022-10-09T17:51:55.043Z"
+}
+```
+
+...would have a URL like:
+
+```text
+at://bob.com/com.example.follow/1234
+```
+
+...and a schema like:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "type": "record",
+  "description": "A social follow",
+  "record": {
+    "type": "object",
+    "required": ["subject", "createdAt"],
+    "properties": {
+      "subject": { "type": "string" },
+      "createdAt": {"type": "string", "format": "date-time"}
+    }
+  }
+}
+```
+
+## Extensibility
 
 Records may introduce additional schemas using the `#/$ext` field. This is a standard field which encodes a map of schema NSIDs to "extension objects."
 
@@ -72,3 +176,15 @@ Here is an example of a record with an optional extension:
   }
 }
 ```
+
+## Versioning
+
+Once a schema is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, schemas may only add optional constraint to previously unconstrained fields.
+
+If a schema must change a previously-published constraint, it should be published as a new schema under a new NSID.
+
+## Schema distribution
+
+Schemas are designed to be machine-readable and network-accessible. While it is not currently _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
+
+To fetch a schema, a request is sent via the xrpc [`getSchema`](../xrpc.md#getschema) method. This request is sent to the authority of the NSID.
