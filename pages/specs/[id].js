@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Meta from '../../components/meta'
 import Header from '../../components/header'
 import Footer from '../../components/footer'
 import Sidebar from '../../components/sidebar'
@@ -34,28 +34,7 @@ export default function Spec({ navigation, file }) {
   ]
   return (
     <div>
-      <Head>
-        <title>{file.title + ' | at:// protocol'}</title>
-        <meta name="description" content="" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/site.webmanifest" />
-      </Head>
+      <Meta title={file.title} description={file.summary} />
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs pages={pages} />

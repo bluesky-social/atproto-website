@@ -1,5 +1,5 @@
 items:
-  - name: Authenticated Transfer Protocol
+  - name: ATP
     href: /specs/atp
   - name: URI Scheme
     href: /specs/at-uri-scheme

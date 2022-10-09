@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Meta from '../components/meta'
 import Header from '../components/header'
 import Footer from '../components/footer'
 import RoadmapGrid from '../components/roadmap-grid'
@@ -89,28 +89,7 @@ const curationModeration = [
 export default function RoadmapPage() {
   return (
     <div>
-      <Head>
-        <title>Development Roadmap | at:// protocol</title>
-        <meta name="description" content="" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/site.webmanifest" />
-      </Head>
+      <Meta title="Development Roadmap" />
       <Header />
       <div className="max-w-4xl mx-auto px-5 my-8">
         <h3 className="text-center text-3xl mb-8 font-bold">
