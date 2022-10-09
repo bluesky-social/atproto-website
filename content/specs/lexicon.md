@@ -5,7 +5,7 @@ summary: A schemas format and distribution network.
 
 # Lexicon
 
-Lexicon is a schemas document format used to define [XRPC](./xrpc.md) methods and [ATP Repository](./adx/repo.md) record types. Every Lexicon schema is written in JSON and follows the interface specified below. The schemas are identified using [NSIDs](./nsid.md) which are then used to identify the methods or record types they describe.
+Lexicon is a schemas document format used to define [XRPC](./xrpc) methods and repository record types. Every Lexicon schema is written in JSON and follows the interface specified below. The schemas are identified using [NSIDs](./nsid) which are then used to identify the methods or record types they describe.
 
 ## Interface
 

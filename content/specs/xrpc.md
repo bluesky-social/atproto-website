@@ -5,7 +5,7 @@ summary: Cross-system remote procedure calls.
 
 # XRPC
 
-XRPC is a general purpose server-to-server messaging protocol. It was created for the ADX protocol but is a generic communications layer which can be applied to multiple use-cases (and which does not include any ADX-specific semantics). The [repository data layer](./repo.md) and social applications operate as layers atop XRPC.
+XRPC is a general purpose server-to-server messaging protocol. It was created for the ADX protocol but is a generic communications layer which can be applied to multiple use-cases (and which does not include any ADX-specific semantics). The [repository data layer](./atp) and social applications operate as layers atop XRPC.
 
 <pre style="line-height: 1.2;"><code>┌─────────────────────┐
 │ Social Applications │  Application semantics
@@ -64,19 +64,19 @@ Calls to a method must specify the ID, Parameters, Input, and certain HTTP Heade
 
 #### Method IDs
 
-Methods are identified using [NSIDs](./nsid.md), a form of [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
+Methods are identified using [NSIDs](./nsid), a form of [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
 
 Some example method IDs:
 
-```
-com.example.status
-io.social.getFeed
-net.users.bob.ping
+```typescript
+com.example.status()
+io.social.getFeed()
+net.users.bob.ping()
 ```
 
 #### Method schemas
 
-Method schemas are encoded in JSON using [Lexicon Schema Documents](./lexicon.md).
+Method schemas are encoded in JSON using [Lexicon Schema Documents](./lexicon).
 
 #### Schema distribution
 
@@ -212,4 +212,4 @@ interface XrpcErrorDescription {
 }
 ```
 
-The `error` field of the response body should map to an error name defined in the method's [Lexicon schema](./lexicon.md). This enables more specific error-handling by client software. This is especially advised on 400, 500, and 502 responses where further information will be useful.
+The `error` field of the response body should map to an error name defined in the method's [Lexicon schema](./lexicon). This enables more specific error-handling by client software. This is especially advised on 400, 500, and 502 responses where further information will be useful.

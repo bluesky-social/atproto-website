@@ -11,7 +11,7 @@ NSIDs use [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_d
 
 Some example NSIDs:
 
-```
+```text
 com.example.status
 io.social.getFeed
 net.users.bob.ping
@@ -36,7 +36,7 @@ The `nsid-ns` (a "namespace") can be used in certain situations to designate all
 
 Every NSID asserts a single authority which is identified as the segments prior to the final segment which are then reversed.
 
-```
+```text
 com.example.thing
 ^^^^^^^^^^^--------> example.com
 ```
@@ -45,7 +45,13 @@ The authority controls the namespace of all names within it, however there is no
 
 ## Parsing
 
-NSIDs are comprised of an "authority" and a "name".
+NSIDs are comprised of an "authority" and a "name". Some example resolutions of NSIDs to authorities and names:
+
+|NSID|Authority|Name|
+|-|-|-|
+|`com.example.status`|`example.com`|`status`|
+|`io.social.getFeed`|`social.io`|`getFeed`|
+|`net.users.bob.ping`|`bob.users.net`|`ping`|
 
 The domain can be extracted through the following algorithm:
 
@@ -62,14 +68,6 @@ function getNSIDAuthority (nsid) {
 }
 ```
 
-Some example resolutions of NSIDs to authorities:
-
-```
-com.example.status -> example.com
-io.social.getFeed  -> social.io
-net.users.bob.ping -> bob.user.net
-```
-
 The name can be extracted through the following algorithm:
 
 ```js
@@ -79,12 +77,4 @@ function getNSIDName (nsid) {
   // return the last segment
   return parts.pop()
 }
-```
-
-Some example resolutions of NSIDs to names:
-
-```
-com.example.status -> status
-io.social.getFeed  -> getFeed
-net.users.bob.ping -> ping
 ```

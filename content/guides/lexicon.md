@@ -187,4 +187,4 @@ If a schema must change a previously-published constraint, it should be publishe
 
 Schemas are designed to be machine-readable and network-accessible. While it is not currently _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
 
-To fetch a schema, a request is sent via the xrpc [`getSchema`](../xrpc.md#getschema) method. This request is sent to the authority of the NSID.
+To fetch a schema, a request is sent via the xrpc [`getSchema`](/specs/xrpc#getschema) method. This request is sent to the authority of the NSID.

@@ -19,7 +19,7 @@ record-id = 1*pchar
 
 `reg-name` is defined in [https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2](https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2).
 
-`nsid` is defined in [NameSpaced IDs (NSID)](../nsid.md).
+`nsid` is defined in [NameSpaced IDs (NSID)](./nsid).
 
 `pchar` is defined in [https://www.rfc-editor.org/rfc/rfc3986#section-3.3](https://www.rfc-editor.org/rfc/rfc3986#section-3.3).
 

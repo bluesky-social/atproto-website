@@ -14,7 +14,7 @@ ATP is a protocol for large-scale distributed social applications.  Its primary 
 
 ATP syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc).
 
-## Internet of schematic data
+## Interoperation layer
 
 A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/atproto.com) for syncing user repositories and the [Bsky Lexicon](/lexicons/bsky.app) to provide basic social behaviors.
 

@@ -77,7 +77,7 @@ The data layout establishes the units of network-transmissable data. It includes
 |Grouping|Description|
 |-|-|
 |**Repository**|Repositories are the dataset of a single "user" in the ADX network. Every user has a single repository which is identified by a [DID](https://w3c.github.io/did-core/).|
-|**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](../nsid.md). Collections only contain records of the type identified by their NSID.|
+|**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](./nsid). Collections only contain records of the type identified by their NSID.|
 |**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a [TID](#timestamp-ids-tid).|
 
 Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/) to be specific) which is referenced by a [CID](https://github.com/multiformats/cid) hash.
@@ -166,11 +166,11 @@ The following identifiers are used in repositories:
 |Username|A domain name which weakly identify repositories.|
 |DID|A unique global identifier which strongly identify repositories.|
 |TID|A timestamp-based ID which identifies records.|
-|Schema ID|An [NSID](../nsid.md) which identifies record types.|
+|Schema ID|An [NSID](./nsid) which identifies record types.|
 
 ### Usernames
 
-Usernames are domain names which "weakly" identify repositories. They are a convenience which should be used in UIs but rarely used within records to reference data. See [Name Resolution](./name-resolution.md) for more information.
+Usernames are domain names which "weakly" identify repositories. They are a convenience which should be used in UIs but rarely used within records to reference data. See [Name Resolution](/guides/identity) for more information.
 
 The reason that usernames are considered "weak" references is that they may change at any time. Therefore the repo DID is preferred to provide a stable identifier.
 
@@ -181,9 +181,9 @@ DIDs are unique global identifiers which "strongly" identify repositories. They 
 ADX supports two DID methods:
 
 - [Web (`did:web`)](https://w3c-ccg.github.io/did-method-web/). Should be used only when the user is "self-hosting" and therefore directly controls the domain name & server. May also be used during testing.
-- [Placeholder (`did:plc`)](../did-plc.md). A method developed in conjunction with ADX to provide global secure IDs which are host-independent.
+- [Placeholder (`did:plc`)](/specs/did-plc). A method developed in conjunction with ADX to provide global secure IDs which are host-independent.
 
-DIDs resolve to "DID Documents" which provide the address of the repo's host and the public key used to sign the repo's updates. See [DID Resolution](./did-resolution.md) for more information.
+DIDs resolve to "DID Documents" which provide the address of the repo's host and the public key used to sign the repo's updates.
 
 ## Timestamp IDs (TID)
 
@@ -191,7 +191,7 @@ TODO
 
 ### Schema IDs
 
-Schemas are identified using [NSIDs](../nsid.md), a form of [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). In the repository, the Schema NSID has many usages:
+Schemas are identified using [NSIDs](./nsid), a form of [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). In the repository, the Schema NSID has many usages:
 
 - In the `$type` field of records to identify its schema.
 - To identify collections of records of a given `$type`.
@@ -199,7 +199,7 @@ Schemas are identified using [NSIDs](../nsid.md), a form of [Reverse Domain-Name
 
 Some example schema IDs:
 
-```
+```typescript
 com.example.profile
 io.social.post
 net.users.bob.comment
