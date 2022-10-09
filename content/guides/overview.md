@@ -8,9 +8,9 @@ tldr:
   - Scale is achieved through crawling indexers, similar to Web search engines
 ---
 
-# Authenticated Transport Protocol (ATP) Overview
+# Protocol Overview
 
-ATP is a protocol for large-scale distributed social applications.  Its primary function is to exchange [signed data repositories](/guides/data-repos). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, etc.
+The **Authenticated Transfer Protocol**, aka **ATP**, aka **@ Protocol**, is a protocol for large-scale distributed social applications.  Its primary function is to exchange [signed data repositories](/guides/data-repos). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, etc.
 
 ATP syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc).
 
