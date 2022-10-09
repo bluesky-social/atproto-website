@@ -1,6 +1,10 @@
 ---
 title: Identity
 summary: How the at:// protocol handles user identity.
+tldr:
+  - Every user has a domain name like @alice.com
+  - Every user also has a persistent "DID" which enables migration between hosts
+  - The DID maps to users' keys and host addresses
 ---
 
 # Identity

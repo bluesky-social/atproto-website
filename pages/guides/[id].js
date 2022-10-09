@@ -5,6 +5,7 @@ import Sidebar from '../../components/sidebar'
 import Breadcrumbs from '../../components/breadcrumbs'
 import Alert from '../../components/alert'
 import CTA from '../../components/cta'
+import TLDR from '../../components/tldr'
 import { getNavigation, getFile } from '../../lib/content'
 
 export async function getStaticPaths() {
@@ -66,6 +67,7 @@ export default function Guide({ navigation, file }) {
       <div className="flex max-w-4xl mx-auto">
         <Sidebar navigation={navigation} />
         <div className="flex-1 px-4 pb-16">
+          {file.tldr ? <TLDR items={file.tldr} /> : ''}
           <div
             className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
             dangerouslySetInnerHTML={{ __html: file.bodyHTML }}

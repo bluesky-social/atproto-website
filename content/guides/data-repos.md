@@ -1,6 +1,10 @@
 ---
 title: Personal Data Repositories
 summary: A guide to the at:// protocol repo structure.
+tldr:
+  - A "Data Repository” is a collection of signed data
+  - They're like Git repos but for database records
+  - Users put their public activity in these repos
 ---
 
 # Data Repositories

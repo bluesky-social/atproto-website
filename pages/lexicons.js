@@ -37,12 +37,11 @@ export default function Lexicons({ navigation }) {
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <Header />
-      <div className="max-w-4xl mx-auto px-4 pt-4">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">
         <div className="flex-1 px-4">
-          <h1 className="text-center text-4xl font-bold pb-6">Lexicons</h1>
           <ContentGrid
             pages={navigation.filter((page) => page.href !== '/lexicons')}
           />

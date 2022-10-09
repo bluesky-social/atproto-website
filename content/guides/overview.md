@@ -1,41 +1,16 @@
 ---
 title: Protocol Overview
-summary: An introduction to the at:// protocol.
+summary: An introduction to the @ Protocol.
+tldr:
+  - ATP is a federated network
+  - Signed data repositories enable account-migration between providers
+  - A global schema system called Lexicon creates interoperability
+  - Scale is achieved through crawling indexers, similar to Web search engines
 ---
 
 # Authenticated Transport Protocol (ATP) Overview
 
-ATP is a protocol for large-scale distributed social applications. Five primary specs comprise the v1 of the `at://` protocol. These specs are:
-
-- [Authenticated Transfer Protocol](/specs/atp)
-- [Cross-system RPC (XRPC)](/specs/xrpc)
-- [Lexicon Schemas](/specs/lexicon)
-- [NameSpaced IDs (NSIDs)](/specs/nsid)
-- [DID:Placeholder (did:plc)](/specs/did-plc)
-
-These specs can be organize into three layers of dependency:
-
-<pre style="line-height: 1.2;"><code>─────────────────────────────────────────────────────
-┌───────────────┐
-│  Social apps  │
-└─┰──────────┰──┘
-──╂──────────╂───────────────────────────────────────
-  ┃          ▽
-  ┃       ┌─────┐
-  ┃       │ ATP │  Identity, Block & record storage
-  ┃       └──┰──┘
-──╂──────────╂───────────────────────────────────────
-  ▽          ▽
- ┌────────────┐ 
- │    XRPC    │    Wire protocol
- └────────────┘
- ┌───────┐ ┌─────────┐ ┌─────────┐
- │ NSIDs │ │ Lexicon │ │ did:plc │  Supporting specs
- └───────┘ └─────────┘ └─────────┘
-─────────────────────────────────────────────────────
-</code></pre>
-
-ATP's primary purpose is to exchange [signed data repositories](/guides/data-repos). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, etc. They are signed and addressed by [DIDs](/guides/identity), making it possible to verify the source of the data when shared by other users, and enabling user accounts to migrate to new hosting providers without losing their data or social graph.
+ATP is a protocol for large-scale distributed social applications.  Its primary function is to exchange [signed data repositories](/guides/data-repos). These repositories are collections of user records which include posts, comments, likes, follows, media blobs, etc.
 
 ATP syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc).
 
@@ -68,7 +43,7 @@ at://alice.com/app.bsky.post/1      - a post by alice.com
 at://bob.com/app.bsky.profile/self  - the profile of bob.com
 ```
 
-Lexicons make it possible to interoperate across services with high confidence of correctness. While the Web exchanges documents, the `at://` protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives `at://` clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
+Lexicons make it possible to interoperate across services with high confidence of correctness. While the Web exchanges documents, the @ Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
 ## Achieving scale
 
@@ -128,3 +103,37 @@ The base layer of ATP (Personal Data Repositories and Federated Networking) crea
 Separating speech and reach gives indexing services more freedom to curate and moderate. Curation by an indexing service doesn't remove a user's identity or destroy their social graph – it only affects the services' own indexes. Users choose their indexers, and so can choose a different service or to supplement with additional services if they're unhappy with the policies of any particular service.
 
 It's important to recognize that hosting providers will be obligated to remove illegal content according to their local laws. To help providers fulfill this obligation, services can publish labels which providers act upon at their discretion.
+
+## Specifications
+
+Five primary specs comprise the v1 of the @-protocol. These specs are:
+
+- [Authenticated Transfer Protocol](/specs/atp)
+- [Cross-system RPC (XRPC)](/specs/xrpc)
+- [Lexicon Schemas](/specs/lexicon)
+- [NameSpaced IDs (NSIDs)](/specs/nsid)
+- [DID:Placeholder (did:plc)](/specs/did-plc)
+
+These specs can be organize into three layers of dependency:
+
+<pre style="line-height: 1.2;"><code>─────────────────────────────────────────────────────
+┌───────────────┐
+│  Social apps  │
+└─┰──────────┰──┘
+──╂──────────╂───────────────────────────────────────
+  ┃          ▽
+  ┃       ┌─────┐
+  ┃       │ ATP │  Identity, Block & record storage
+  ┃       └──┰──┘
+──╂──────────╂───────────────────────────────────────
+  ▽          ▽
+ ┌────────────┐ 
+ │    XRPC    │    Wire protocol
+ └────────────┘
+ ┌───────┐ ┌─────────┐ ┌─────────┐
+ │ NSIDs │ │ Lexicon │ │ did:plc │  Supporting specs
+ └───────┘ └─────────┘ └─────────┘
+─────────────────────────────────────────────────────
+</code></pre>
+
+From here you can continue reading the [high level guides](/guides), read the [individual specs](/specs), or read the [lexicon schemas](/lexicons).

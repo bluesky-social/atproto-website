@@ -1,6 +1,11 @@
 ---
 title: Intro to Lexicon
 summary: Applying Lexicon schemas in ATP method calls and data records.
+tldr:
+ - Lexicon is a global schema system
+ - It uses reverse-DNS names like "com.example.ping()"
+ - The definitions are mainly JSON-Schema documents
+ - It's currently used for RPC methods and repo records
 ---
 
 # Intro to Lexicon
