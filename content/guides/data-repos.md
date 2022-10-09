@@ -36,11 +36,10 @@ Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/doc
 
 This layout is reflected in the URLs:
 
-```
-Root       | at://alice.com
+<pre><code>Root       | at://alice.com
 Collection | at://alice.com/app.bsky.post
 Record     | at://alice.com/app.bsky.post/1234
-```
+</code></pre>
 
 A “commit” to a data repository is simply a keypair signature over a Root node’s CID. Each mutation to the repository produces a new Root node, and every Root node includes the CID of the previous Commit. This produces a linked list which represents the history of changes in a Repository.
 

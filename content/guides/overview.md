@@ -20,7 +20,7 @@ A global schemas network called [Lexicon](/specs/lexicon) is used to unify the n
 
 Lexicons unify method-names and record types under a global namespace called [NSIDs](/specs/nsid) which use a reverse-DNS notation. Here are some example methods:
 
-```
+```typescript
 com.atproto.repoGetRecord()
 com.atproto.syncGetRepo()
 app.bsky.getPostThread()
@@ -29,7 +29,7 @@ app.bsky.getNotifications()
 
 And here are some example record types:
 
-```
+```typescript
 app.bsky.post
 app.bsky.profile
 app.bsky.like
@@ -38,10 +38,9 @@ app.bsky.follow
 
 These names resolve to [Lexicon Documents](/specs/lexicon) which strictly define the permitted schemas of the records and method inputs/outputs. They are also used to construct semantic URLs, as in these examples:
 
-```
-at://alice.com/app.bsky.post/1      - a post by alice.com
+<pre><code>at://alice.com/app.bsky.post/1      - a post by alice.com
 at://bob.com/app.bsky.profile/self  - the profile of bob.com
-```
+</code></pre>
 
 Lexicons make it possible to interoperate across services with high confidence of correctness. While the Web exchanges documents, the @ Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 

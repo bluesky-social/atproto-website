@@ -26,11 +26,10 @@ We use two interrelated forms of identifiers: the _username_ and the _DID_. User
 
 The following are all valid user identifers:
 
-```
-@alice.com
+<pre><code>@alice.com
 at://alice.com
 at://did:plc:bv6ggog3tya2z3vxsub7hnal
-```
+</code></pre>
 
 The relationship between them can be visualized as:
 
