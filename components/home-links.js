@@ -35,7 +35,7 @@ export default function HomeLinks() {
         <div key={feature.name} className="pt-6">
           <div className="flow-root rounded-lg bg-gray-50 px-6 pb-8">
             <Link href={feature.href}>
-              <a className="block -mt-6" href={feature.href}>
+              <a className="block -mt-6">
                 <span>
                   <span className="inline-flex items-center justify-center rounded-md bg-blue-500 p-3 shadow-lg">
                     <feature.icon

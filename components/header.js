@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Popover, Transition } from '@headlessui/react'
 import {
   AcademicCapIcon,
@@ -60,9 +61,15 @@ export default function Header() {
       <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-6 md:justify-start md:space-x-10">
         <div className="flex justify-start lg:w-0 lg:flex-1">
           <Link href="/">
-            <a href="/">
+            <a>
               <span className="sr-only">ATP</span>
-              <img className="h-8 w-auto sm:h-10" src="/logo.png" alt="" />
+              <Image
+                className="h-8 w-auto sm:h-10"
+                src="/logo.png"
+                alt=""
+                width="40"
+                height="40"
+              />
             </a>
           </Link>
         </div>
@@ -76,7 +83,6 @@ export default function Header() {
           {SiteSections.map((item) => (
             <Link key={item.href} href={item.href}>
               <a
-                href={item.href}
                 title={item.name}
                 className="text-base font-medium text-gray-500 hover:text-gray-900"
               >
@@ -88,7 +94,7 @@ export default function Header() {
         <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
           {ExternalLinks.map((item) => (
             <Link key={item.href} href={item.href}>
-              <a href={item.href} title={item.name} className="ml-6">
+              <a title={item.name} className="ml-6">
                 <item.icon className="h-6 w-6" />
               </a>
             </Link>
@@ -113,7 +119,13 @@ export default function Header() {
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <img className="h-8 w-auto" src="/logo.png" alt="ATP" />
+                  <Image
+                    className="h-8 w-auto"
+                    src="/logo.png"
+                    alt="ATP"
+                    width="32"
+                    height="32"
+                  />
                 </div>
                 <div className="-mr-2">
                   <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
@@ -126,10 +138,7 @@ export default function Header() {
                 <nav className="grid gap-y-8">
                   {SiteSections.map((item) => (
                     <Link key={item.name} href={item.href}>
-                      <a
-                        href={item.href}
-                        className="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50"
-                      >
+                      <a className="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50">
                         <item.icon
                           className="h-6 w-6 flex-shrink-0 text-blue-600"
                           aria-hidden="true"
@@ -147,20 +156,13 @@ export default function Header() {
               <div className="flex items-center">
                 {ExternalLinks.map((item) => (
                   <Link key={item.href} href={item.href}>
-                    <a
-                      href={item.href}
-                      title={item.name}
-                      className="mr-6 block"
-                    >
+                    <a title={item.name} className="mr-6 block">
                       <item.icon className="h-8 w-8" />
                     </a>
                   </Link>
                 ))}
                 <Link href="/waitlist">
-                  <a
-                    href="/waitlist"
-                    className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8"
-                  >
+                  <a className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8">
                     Join the waitlist
                   </a>
                 </Link>

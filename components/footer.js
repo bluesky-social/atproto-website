@@ -49,10 +49,7 @@ export default function Footer() {
           {navigation.main.map((item) => (
             <div key={item.name} className="px-5 py-2">
               <Link href={item.href}>
-                <a
-                  href={item.href}
-                  className="text-base text-gray-500 hover:text-gray-900"
-                >
+                <a className="text-base text-gray-500 hover:text-gray-900">
                   {item.name}
                 </a>
               </Link>
@@ -62,7 +59,7 @@ export default function Footer() {
         <div className="mt-8 flex justify-center space-x-6">
           {navigation.social.map((item) => (
             <Link key={item.name} href={item.href}>
-              <a href={item.href} className="text-gray-400 hover:text-gray-500">
+              <a className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>

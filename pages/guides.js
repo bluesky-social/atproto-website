@@ -33,7 +33,7 @@ export default function Guides({ navigation }) {
             <div className="ml-4 pt-1.5">
               <h3 className="text-2xl font-bold leading-6 mb-1">
                 <Link href={firstPage.href}>
-                  <a href={firstPage.href} className="focus:outline-none">
+                  <a className="focus:outline-none">
                     {/* Extend touch target to entire panel */}
                     <span className="absolute inset-0" aria-hidden="true" />
                     {firstPage.name}{' '}

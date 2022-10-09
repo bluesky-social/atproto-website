@@ -43,7 +43,7 @@ export default function ContentGrid({ pages }) {
               <div className="ml-4">
                 <h3 className="text-xl font-semibold leading-6">
                   <Link href={page.href}>
-                    <a href={page.href} className="focus:outline-none">
+                    <a className="focus:outline-none">
                       {/* Extend touch target to entire panel */}
                       <span className="absolute inset-0" aria-hidden="true" />
                       {page.name}
