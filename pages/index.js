@@ -68,11 +68,3 @@ export default function Home() {
     </div>
   )
 }
-
-/*<div className="relative after:content-[''] after:absolute after:block after:left-0 after:top-0 after:h-full after:w-full after:bg-blue-800 after:mix-blend-multiply after:bg-opacity-0">
-<img
-  className="w-full lg:h-[300px] sm:h-[200px] h-[120px]  object-cover"
-  src="https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-/>
-</div>*/
-/*https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80*/
