@@ -1,18 +1,11 @@
 import Link from 'next/link'
 import {
   AcademicCapIcon,
-  CommandLineIcon,
+  BookOpenIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline'
 
 const features = [
-  {
-    name: 'Get Started',
-    href: '/get-started',
-    description:
-      'Explore the beta software and learn how to host your own server.',
-    icon: CommandLineIcon,
-  },
   {
     name: 'Guides',
     href: '/guides',
@@ -25,6 +18,13 @@ const features = [
     href: '/specs',
     description: 'Read the protocol documentation for detailed explanations.',
     icon: DocumentTextIcon,
+  },
+  {
+    name: 'Lexicons',
+    href: '/lexicons',
+    description:
+      'Explore the schemas which drive the protocol and social applications.',
+    icon: BookOpenIcon,
   },
 ]
 

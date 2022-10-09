@@ -2,15 +2,9 @@ import Head from 'next/head'
 import Header from '../components/header'
 import Footer from '../components/footer'
 import RoadmapGrid from '../components/roadmap-grid'
-import HomeLinks from '../components/home-links'
+import CTA from '../components/cta'
 
 const core = [
-  {
-    name: 'Federation',
-    label: 'stable',
-    done: true,
-    href: '/guides/overview',
-  },
   {
     name: 'Public publishing',
     label: 'stable',
@@ -23,6 +17,11 @@ const core = [
     done: true,
     href: '/guides/overview',
   },
+  {
+    name: 'Federation',
+    done: false,
+    href: '/guides/overview',
+  },
 ]
 
 const software = [
@@ -30,7 +29,6 @@ const software = [
     name: 'Mobile client',
     label: 'alpha',
     done: true,
-    href: '/get-started',
   },
   {
     name: 'Desktop client',
@@ -40,7 +38,6 @@ const software = [
     name: 'Personal data server',
     label: 'alpha',
     done: true,
-    href: '/get-started',
   },
   {
     name: 'Indexing server',
@@ -93,7 +90,7 @@ export default function RoadmapPage() {
   return (
     <div>
       <Head>
-        <title>at:// protocol</title>
+        <title>Development Roadmap | at:// protocol</title>
         <meta name="description" content="" />
         <link
           rel="apple-touch-icon"
@@ -146,12 +143,8 @@ export default function RoadmapPage() {
             <RoadmapGrid items={curationModeration} />
           </div>
         </div>
-        <p className="mx-auto mb-14 text-xl">
-          We invite you to get involved in the protocol's development! Learn
-          more:
-        </p>
-        <HomeLinks />
       </div>
+      <CTA />
       <Footer />
     </div>
   )

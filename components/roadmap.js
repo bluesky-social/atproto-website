@@ -2,19 +2,19 @@ import { CheckIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 
 const timeline = [
   {
-    content: 'Publish developer preview',
+    content: 'Publish protocol documentation',
     date: 'Oct 6',
     icon: CheckIcon,
-    iconBackground: 'bg-green-500',
+    iconBackground: 'bg-blue-500',
   },
   {
-    content: 'Finish the v1 protocol spec',
+    content: 'Begin the private beta',
     date: 'In Progress',
     icon: EllipsisHorizontalIcon,
     iconBackground: 'bg-gray-400',
   },
   {
-    content: 'Release the v1 beta software',
+    content: 'Launch the public network',
     icon: EllipsisHorizontalIcon,
     iconBackground: 'bg-gray-400',
   },

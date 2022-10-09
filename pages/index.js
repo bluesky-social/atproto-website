@@ -6,6 +6,7 @@ import PreviewWarning from '../components/preview-warning'
 import Hero from '../components/hero'
 import HomeLinks from '../components/home-links'
 import Roadmap from '../components/roadmap'
+import CTA from '../components/cta'
 
 export default function Home() {
   return (
@@ -34,8 +35,6 @@ export default function Home() {
       </Head>
       <Header />
       <Hero />
-      <PreviewWarning />
-
       <div className="relative bg-white py-16 sm:py-24 lg:py-32">
         <div className="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
           <h2 className="text-lg font-semibold text-blue-600">Introducing</h2>
@@ -52,7 +51,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="max-w-lg mx-auto px-5 mb-16">
+      <div className="max-w-lg mx-auto px-5 mb-24">
         <h3 className="text-center text-3xl mb-8 font-bold">Roadmap</h3>
         <Roadmap />
         <div className="text-center mt-8">
@@ -64,7 +63,16 @@ export default function Home() {
           </Link>
         </div>
       </div>
+      <CTA />
       <Footer />
     </div>
   )
 }
+
+/*<div className="relative after:content-[''] after:absolute after:block after:left-0 after:top-0 after:h-full after:w-full after:bg-blue-800 after:mix-blend-multiply after:bg-opacity-0">
+<img
+  className="w-full lg:h-[300px] sm:h-[200px] h-[120px]  object-cover"
+  src="https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+/>
+</div>*/
+/*https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80*/

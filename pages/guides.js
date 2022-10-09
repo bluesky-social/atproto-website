@@ -47,7 +47,7 @@ export default function Guides({ navigation }) {
         <div className="flex-1 px-4">
           <h1 className="text-center text-4xl font-bold pb-6">Guides</h1>
 
-          <div class="flex px-6 py-6 border border-gray-300 rounded-lg mb-6">
+          <div class="flex px-6 py-6 border border-gray-200 rounded-lg mb-6">
             <div>
               <span className="bg-blue-500 text-white rounded-lg inline-flex p-3 ring-4 ring-white">
                 <AcademicCapIcon className="h-10 w-10" aria-hidden="true" />

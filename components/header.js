@@ -5,7 +5,6 @@ import {
   AcademicCapIcon,
   Bars3Icon,
   BookOpenIcon,
-  CommandLineIcon,
   DocumentTextIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
@@ -14,11 +13,6 @@ import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const SiteSections = [
-  {
-    name: 'Get Started',
-    href: '/get-started',
-    icon: CommandLineIcon,
-  },
   {
     name: 'Guides',
     href: '/guides',
@@ -149,8 +143,8 @@ export default function Header() {
                 </nav>
               </div>
             </div>
-            <div className="space-y-6 py-6 px-5">
-              <div className="flex">
+            <div className="space-y-6 pt-5 pb-6 px-5">
+              <div className="flex items-center">
                 {ExternalLinks.map((item) => (
                   <Link key={item.href} href={item.href}>
                     <a
@@ -162,6 +156,14 @@ export default function Header() {
                     </a>
                   </Link>
                 ))}
+                <Link href="/waitlist">
+                  <a
+                    href="/waitlist"
+                    className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8"
+                  >
+                    Join the waitlist
+                  </a>
+                </Link>
               </div>
             </div>
           </div>

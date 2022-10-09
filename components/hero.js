@@ -90,12 +90,12 @@ export default function Hero() {
             </p>
             <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
-                <Link href="/get-started">
+                <Link href="/waitlist">
                   <a
-                    href="/get-started"
+                    href="/waitlist"
                     className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg"
                   >
-                    Get started
+                    Join the waitlist
                   </a>
                 </Link>
               </div>
@@ -105,7 +105,7 @@ export default function Hero() {
                     href="/guides"
                     className="flex w-full items-center justify-center rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-blue-600 hover:bg-gray-50 md:py-4 md:px-10 md:text-lg"
                   >
-                    Guides
+                    Learn more
                   </a>
                 </Link>
               </div>
