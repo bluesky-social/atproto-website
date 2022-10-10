@@ -26,32 +26,17 @@ export default function ContentGrid({ pages }) {
           )}
         >
           {!page.empty && (
-            <div class="flex">
-              <div>
-                <span className="bg-blue-500 text-white rounded-lg inline-flex p-3 ring-4 ring-white">
-                  {page.href.startsWith('/spec') && (
-                    <DocumentTextIcon className="h-6 w-6" aria-hidden="true" />
-                  )}
-                  {page.href.startsWith('/guides') && (
-                    <AcademicCapIcon className="h-6 w-6" aria-hidden="true" />
-                  )}
-                  {page.href.startsWith('/lexicons') && (
-                    <BookOpenIcon className="h-6 w-6" aria-hidden="true" />
-                  )}
-                </span>
-              </div>
-              <div className="ml-4">
-                <h3 className="text-xl font-semibold leading-6">
-                  <Link href={page.href}>
-                    <a className="focus:outline-none">
-                      {/* Extend touch target to entire panel */}
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      {page.name}
-                    </a>
-                  </Link>
-                </h3>
-                <p className="text-md text-gray-500">{page.description}</p>
-              </div>
+            <div>
+              <h3 className="text-xl font-semibold leading-6">
+                <Link href={page.href}>
+                  <a className="focus:outline-none">
+                    {/* Extend touch target to entire panel */}
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    {page.name}
+                  </a>
+                </Link>
+              </h3>
+              <p className="text-md text-gray-500">{page.description}</p>
             </div>
           )}
         </div>

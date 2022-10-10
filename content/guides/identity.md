@@ -33,18 +33,18 @@ at://did:plc:bv6ggog3tya2z3vxsub7hnal
 
 The relationship between them can be visualized as:
 
-<pre style="line-height: 1.2;"><code> ┌─────────────┐                     ┌───────────────┐ 
- │ DNS name    ├────resolves to────→ │ DID           │
- │ (alice.com) │                     │ (did:plc:...) │
- └─────────────┘                     └──────┬────────┘
-        ↑                                   │
-        │                               resolves to
-        │                                   │
-        │                                   ↓
-        │                            ┌───────────────┐ 
-        └───────────references───────┤ DID Document  │
-                                     │ {"id":"..."}  │
-                                     └───────────────┘
+<pre style="line-height: 1.2;"><code>┌─────────────┐                     ┌───────────────┐ 
+│ DNS name    ├────resolves to────→ │ DID           │
+│ (alice.com) │                     │ (did:plc:...) │
+└─────────────┘                     └──────┬────────┘
+       ↑                                   │
+       │                               resolves to
+       │                                   │
+       │                                   ↓
+       │                            ┌───────────────┐ 
+       └───────────references───────┤ DID Document  │
+                                    │ {"id":"..."}  │
+                                    └───────────────┘
 </code></pre>
 
 The DNS username is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve usernames to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.

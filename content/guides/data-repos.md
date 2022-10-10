@@ -15,21 +15,21 @@ A "Data Repository” is a collection of data published by a single user. Reposi
 
 The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash. It can be visualized as the following layout:
 
-<pre style="line-height: 1.2;"><code>    ┌────────────────┐
-    │     Commit     │  (Signed Root)
-    └───────┬────────┘
-            ↓
-    ┌────────────────┐
-    │      Root      │
-    └───────┬────────┘
-            ↓
-    ┌────────────────┐
-    │   Collection   │
-    └───────┬────────┘
-            ↓
-    ┌────────────────┐
-    │     Record     │
-    └────────────────┘
+<pre style="line-height: 1.2;"><code>┌────────────────┐
+│     Commit     │  (Signed Root)
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│      Root      │
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│   Collection   │
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│     Record     │
+└────────────────┘
 </code></pre>
 
 Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is referenced by a [CID](https://github.com/multiformats/cid) hash. The arrows in the diagram above represent a CID reference.
@@ -43,14 +43,14 @@ Record     | at://alice.com/app.bsky.post/1234
 
 A “commit” to a data repository is simply a keypair signature over a Root node’s CID. Each mutation to the repository produces a new Root node, and every Root node includes the CID of the previous Commit. This produces a linked list which represents the history of changes in a Repository.
 
-<pre style="line-height: 1.2;"><code> ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
- │     Commit     │  │     Commit     │  │     Commit     │
- └───────┬────────┘  └───────┬────────┘  └───────┬────────┘
-         │     ↑             │     ↑             │
-         ↓     └──prev─┐     ↓     └──prev─┐     ↓
- ┌────────────────┐  ┌─┴──────────────┐  ┌─┴──────────────┐
- │      Root      │  │      Root      │  │      Root      │
- └────────────────┘  └────────────────┘  └────────────────┘
+<pre style="line-height: 1.2;"><code>┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│     Commit     │  │     Commit     │  │     Commit     │
+└───────┬────────┘  └───────┬────────┘  └───────┬────────┘
+        │     ↑             │     ↑             │
+        ↓     └──prev─┐     ↓     └──prev─┐     ↓
+┌────────────────┐  ┌─┴──────────────┐  ┌─┴──────────────┐
+│      Root      │  │      Root      │  │      Root      │
+└────────────────┘  └────────────────┘  └────────────────┘
 </code></pre>
 
 ## Identifier Types

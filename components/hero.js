@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function Hero() {
   return (
     <div className="relative overflow-hidden bg-blue-900 bg-cover bg-center bg-[url(/img/home-hero.jpg)]">
-      <div className="relative pt-6 pb-16 sm:pb-24">
+      <div className="relative pt-10 pb-20 sm:pt-16 sm:pb-32">
         <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

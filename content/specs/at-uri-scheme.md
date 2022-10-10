@@ -3,6 +3,22 @@ title: at:// URI Scheme
 summary: A URI scheme for addressing ATP repository data.
 ---
 
+
+<style>
+@media(max-width: 500px) {
+  .uri-examples tr > td:first-child {
+    padding-top: 0.5rem;
+  }
+  .uri-examples tr > td:last-child {
+    padding-bottom: 0.5rem;
+  }
+  .uri-examples td {
+    display: block;
+    padding: 0;
+  }
+}
+</style>
+
 # ATP URI Scheme
 
 The `at` URL scheme is used to address records in the ATP network.
@@ -29,7 +45,7 @@ The fragment segment only has meaning if the URL references a record. Its value 
 
 Some example `at` URLs:
 
-<table>
+<table class="uri-examples">
   <tr>
     <td>Repository</td>
     <td><code>at://bob.com</code></td>

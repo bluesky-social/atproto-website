@@ -39,7 +39,7 @@ export default function Guide({ navigation, file }) {
     <div>
       <Meta title={file.title} description={file.summary} />
       <Header />
-      <div className="max-w-4xl mx-auto px-4 py-4">
+      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">

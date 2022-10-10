@@ -19,18 +19,21 @@ export default function Guides({ navigation }) {
     <div>
       <Meta title="Guides" />
       <Header />
-      <div className="max-w-4xl mx-auto px-4 py-4">
+      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">
         <div className="flex-1 px-4">
-          <div class="relative flex px-6 py-6 border border-gray-200 rounded-lg mb-6">
-            <div>
-              <span className="bg-blue-500 text-white rounded-lg inline-flex p-3 ring-4 ring-white">
-                <AcademicCapIcon className="h-10 w-10" aria-hidden="true" />
+          <div className="relative flex px-6 py-6 border border-gray-200 rounded-lg mb-6">
+            <div className="mr-4 hidden sm:block">
+              <span className="bg-blue-500 text-white rounded-lg inline-flex p-2 sm:p-3 ring-4 ring-white">
+                <AcademicCapIcon
+                  className="h-8 sm:h-10 w-8 sm:w-10"
+                  aria-hidden="true"
+                />
               </span>
             </div>
-            <div className="ml-4 pt-1.5">
+            <div className="pt-1.5">
               <h3 className="text-2xl font-bold leading-6 mb-1">
                 <Link href={firstPage.href}>
                   <a className="focus:outline-none">

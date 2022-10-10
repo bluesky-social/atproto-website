@@ -38,9 +38,13 @@ app.bsky.follow
 
 These names resolve to [Lexicon Documents](/specs/lexicon) which strictly define the permitted schemas of the records and method inputs/outputs. They are also used to construct semantic URLs, as in these examples:
 
-<pre><code>at://alice.com/app.bsky.post/1      - a post by alice.com
-at://bob.com/app.bsky.profile/self  - the profile of bob.com
-</code></pre>
+```text
+A post by alice.com:
+at://alice.com/app.bsky.post/1
+
+The profile of bob.com:
+at://bob.com/app.bsky.profile/self
+```
 
 Lexicons make it possible to interoperate across services with high confidence of correctness. While the Web exchanges documents, the @ Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
@@ -53,14 +57,16 @@ ATP distinguishes between "small-world" vs "big-world" networking. *Small-world*
 
 Personal Data Servers (PDS) are responsible for small-world networking while indexing services separately crawl the network to provide big-world networking.
 
-<pre style="line-height: 1.2;"><code>             ┌──────────────────┐ 
-        ┌─ → │ Crawling Indexer │ ← ─┐        (Big world)
-        │    └──────────────────┘    │
-        │             ↑              │
-        ↓             ↓              ↓
-    ┌───────┐     ┌───────┐     ┌───────┐ 
-    │  PDS  │ ← → │  PDS  │ ← → │  PDS  │     (Small world)
-    └───────┘     └───────┘     └───────┘
+<pre style="line-height: 1.2;"><code>             (Big world)
+         ┌──────────────────┐ 
+    ┌─ → │ Crawling Indexer │ ← ─┐        
+    │    └──────────────────┘    │
+    │             ↑              │
+    ↓             ↓              ↓
+┌───────┐     ┌───────┐     ┌───────┐ 
+│  PDS  │ ← → │  PDS  │ ← → │  PDS  │
+└───────┘     └───────┘     └───────┘
+            (Small world)
 </code></pre>
 
 The small-world/big-world distinction is intended to achieve scale as well as a high degree of user-choice. As with Web search-engines, users are free to select their big-world indexers. It's likely that most feed algorithms will be modeled as these big-world indexers, and users may therefore select multiple of them to drive their social experience.
@@ -84,17 +90,19 @@ The goal of a social network is to provide access to information and people. Its
 
 ATP's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain neutral, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
-<pre style="line-height: 1.2;"><code>    ┌────────────────┐
-    │  Reach layer   │  Flexible, scaleable
-    └─┬─────┬─────┬──┘
-      │     │     │
-      ↑     ↑     ↑
-  Curation and Moderation
-      ↑     ↑     ↑ 
-      │     │     │
-    ┌─┴─────┴─────┴──┐ 
-    │  Speech layer  │  Distributed, locked open
-    └────────────────┘
+<pre style="line-height: 1.2;"><code> (Flexible, scaleable)
+   ┌────────────────┐
+   │  Reach layer   │
+   └─┬─────┬─────┬──┘
+     │     │     │
+     ↑     ↑     ↑
+ Curation and Moderation
+     ↑     ↑     ↑ 
+     │     │     │
+   ┌─┴─────┴─────┴──┐ 
+   │  Speech layer  │
+   └────────────────┘
+(Distributed, locked open)
 </code></pre>
 
 The base layer of ATP (Personal Data Repositories and Federated Networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The Indexing services then enable reach by aggregating content from the network. Curation occurs in multiple layers through the system, including in aggregation algorithms, thresholds based on reputation, and end-user choice. There's no one company that can decide what gets published; instead there is a marketplace of companies deciding what to carry to their audiences.
@@ -115,24 +123,24 @@ Five primary specs comprise the v1 of the @-protocol. These specs are:
 
 These specs can be organize into three layers of dependency:
 
-<pre style="line-height: 1.2;"><code>─────────────────────────────────────────────────────
+<pre style="line-height: 1.2;"><code>──────────────────────────────────────
 ┌───────────────┐
-│  Social apps  │
+│   bsky.app    │   Applications
 └─┰──────────┰──┘
-──╂──────────╂───────────────────────────────────────
+──╂──────────╂────────────────────────
   ┃          ▽
-  ┃       ┌─────┐
-  ┃       │ ATP │  Identity, Block & record storage
-  ┃       └──┰──┘
-──╂──────────╂───────────────────────────────────────
+  ┃ ┌────────────┐
+  ┃ │ @ Protocol │  Core Network
+  ┃ └────────┰───┘
+──╂──────────╂────────────────────────
   ▽          ▽
- ┌────────────┐ 
- │    XRPC    │    Wire protocol
- └────────────┘
+ ┌─────────────┐ 
+ │    XRPC     │    Supporting Specs
+ └─────────────┘
  ┌───────┐ ┌─────────┐ ┌─────────┐
- │ NSIDs │ │ Lexicon │ │ did:plc │  Supporting specs
+ │ NSIDs │ │ Lexicon │ │ did:plc │ 
  └───────┘ └─────────┘ └─────────┘
-─────────────────────────────────────────────────────
+──────────────────────────────────────
 </code></pre>
 
 From here you can continue reading the [high level guides](/guides), read the [individual specs](/specs), or read the [lexicon schemas](/lexicons).

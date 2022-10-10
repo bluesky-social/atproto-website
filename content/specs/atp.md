@@ -16,6 +16,18 @@ wip: true
 .api-table tr > td:first-child {
   padding-left: 0.5rem;
 }
+@media(max-width: 500px) {
+  .uri-examples tr > td:first-child {
+    padding-top: 0.5rem;
+  }
+  .uri-examples tr > td:last-child {
+    padding-bottom: 0.5rem;
+  }
+  .uri-examples td {
+    display: block;
+    padding: 0;
+  }
+}
 </style>
 
 # Authenticated Transfer Protocol
@@ -67,7 +79,7 @@ DIDs resolve to "DID Documents" which provide the address of the repo's host and
 
 ATP uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some example `at` URLs:
 
-<table>
+<table class="uri-examples">
   <tr>
     <td>Repository</td>
     <td><code>at://bob.com</code></td>

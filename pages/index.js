@@ -127,11 +127,8 @@ function LinksSection() {
     },
   ]
   return (
-    <div className="bg-gray-100 pt-8 pb-12">
+    <div className="bg-gray-100 py-12">
       <div className="mx-auto max-w-xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h2 className="text-sm text-center font-mono font-bold mb-4 text-gray-700">
-          {'/*'} Developers {'*/'}
-        </h2>
         <dl className="space-y-10 lg:grid lg:grid-cols-3 lg:gap-8 lg:space-y-0">
           {links.map((link) => (
             <div key={link.name} className="relative">
@@ -139,7 +136,10 @@ function LinksSection() {
                 <p className="text-lg font-medium leading-6 text-blue-600">
                   <Link href={link.href}>
                     <a className="hover:underline">
-                      <span class="absolute inset-0" aria-hidden="true"></span>
+                      <span
+                        className="absolute inset-0"
+                        aria-hidden="true"
+                      ></span>
                       {link.name}
                     </a>
                   </Link>
