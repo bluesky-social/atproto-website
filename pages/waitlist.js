@@ -83,9 +83,8 @@ function Form() {
                   Join the private beta waitlist.
                 </h2>
                 <p className="mx-auto mt-6 max-w-2xl text-lg text-blue-200">
-                  The <code>at://</code> protocol will launch soon. Join the
-                  waitlist to stay updated and try the beta before it&#39;s
-                  publicly available.
+                  The @ protocol will launch soon. Join the waitlist to stay
+                  updated and try the beta before it&#39;s publicly available.
                 </p>
               </div>
               <form action="#" className="mt-12 sm:mx-auto sm:flex sm:max-w-lg">

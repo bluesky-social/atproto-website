@@ -96,9 +96,8 @@ export default function RoadmapPage() {
           Development Roadmap
         </h3>
         <p className="mx-auto mb-10 text-xl">
-          The <code>at://</code> protocol is in early alpha. This page can help
-          you track which technologies are complete and which are in development
-          at this stage.
+          The @ Protocol is in early alpha. This page can help you track which
+          technologies are complete and which are in development at this stage.
         </p>
         <div className="mb-10">
           <div className="bg-blue-50 px-4 pt-3 pb-4 mb-4 rounded-md">

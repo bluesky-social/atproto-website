@@ -1,6 +1,6 @@
 ---
 title: ATP
-summary: The specification for the at:// protocol.
+summary: The specification for the @ Protocol.
 wip: true
 ---
 

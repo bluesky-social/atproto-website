@@ -1,6 +1,6 @@
 ---
 title: at:// URI Scheme
-summary: A URI scheme for addressing at:// repository data.
+summary: A URI scheme for addressing ATP repository data.
 ---
 
 # ATP URI Scheme

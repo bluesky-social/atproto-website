@@ -1,6 +1,6 @@
 ---
 title: Identity
-summary: How the at:// protocol handles user identity.
+summary: How the @ Protocol handles user identity.
 tldr:
   - Every user has a domain name like @alice.com
   - Every user also has a persistent "DID" which enables migration between hosts
@@ -9,7 +9,7 @@ tldr:
 
 # Identity
 
-The `at://` identity system has a number of requirements:
+The ATP identity system has a number of requirements:
 
 * **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should rarely change to ensure that links to their content are stable.
 * **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data and provide end-to-end privacy. The identity system must publish their public keys with strong security.
