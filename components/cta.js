@@ -17,6 +17,11 @@ export default function CTA() {
             Join the waitlist
           </a>
         </Link>
+        <Link href="/guides/overview">
+          <a className="mt-8 inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-base font-medium text-blue-100 hover:bg-blue-600 sm:w-auto sm:ml-4">
+            Learn more
+          </a>
+        </Link>
       </div>
     </div>
   )

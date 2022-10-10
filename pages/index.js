@@ -40,7 +40,7 @@ export default function Home() {
       <Hero />
       <FeaturesSection />
       <RoadmapSection />
-      <LinksSection />
+      {undefined /*<LinksSection />*/}
       <CTA />
       <Footer />
     </div>
@@ -97,7 +97,7 @@ function RoadmapSection() {
       <h3 className="text-center text-3xl mb-8 font-bold">Roadmap</h3>
       <Roadmap />
       <div className="text-center mt-8">
-        <Link href="/roadmap">
+        <Link href="/guides/overview">
           <a className="text-blue-600 hover:underline">
             Learn more
             <span aria-hidden="true"> &rarr;</span>
