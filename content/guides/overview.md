@@ -29,17 +29,7 @@ ATP syncs the repositories in a federated networking model. Federation was chose
 
 A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/atproto.com) for syncing user repositories and the [Bsky Lexicon](/lexicons/bsky.app) to provide basic social behaviors.
 
-**A microblog post:**
-
-```text
-at://alice.com/app.bsky.post/1
-```
-
-**A user profile:**
-
-```text
-at://bob.com/app.bsky.profile/self
-```
+![Interop](/img/interop.jpg)
 
 While the Web exchanges documents, the @ Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
@@ -68,12 +58,18 @@ We assume that a Personal Data Server may fail at any time, either by going offl
 
 User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. The are expected to be secure, reliable, a-political, and independent of the users' PDS.
 
+![DID Documents](/img/did-doc.jpg)
+
 Each DID Document publishes two public keys: a signing key and a recovery key.
 
 * **Signing key**: Asserts changes to the DID Document *and* to the user's data repository.
 * **Recovery key**: Asserts changes to the DID Document; may override the signing key within a 72-hour window.
 
-The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, eg as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help. To prevent data loss, the user's data repository is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
+The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, eg as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+
+![Account recovery](/img/recovery.jpg)
+
+To prevent data loss, the user's data repository is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
 
 ## Speech, reach, and moderation
 
