@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Popover, Transition } from '@headlessui/react'
 import {
   AcademicCapIcon,
@@ -10,7 +9,6 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGlobe } from '@fortawesome/free-solid-svg-icons'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const SiteSections = [
@@ -32,13 +30,6 @@ const SiteSections = [
 ]
 
 const ExternalLinks = [
-  {
-    name: 'Website',
-    href: 'https://blueskyweb.xyz',
-    icon: ({ className }) => (
-      <FontAwesomeIcon icon={faGlobe} className={className} />
-    ),
-  },
   {
     name: 'Twitter',
     href: 'https://twitter.com/bluesky',

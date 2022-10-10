@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { GlobeAltIcon } from '@heroicons/react/24/outline'
+import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 
 const navigation = {
   main: [
     { name: 'Guides', href: '/guides' },
     { name: 'Specs', href: '/specs' },
     { name: 'Lexicons', href: '/lexicons' },
-    { name: 'About', href: 'https://blueskyweb.xyz' },
+    { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
     { name: 'Blog', href: 'https://blueskyweb.xyz/blog/' },
     { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },
   ],
@@ -14,7 +14,7 @@ const navigation = {
     {
       name: 'Bluesky Website',
       href: 'https://blueskyweb.xyz',
-      icon: GlobeAltIcon,
+      icon: BuildingOfficeIcon,
     },
     {
       name: 'Twitter',
