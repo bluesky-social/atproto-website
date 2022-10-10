@@ -58,18 +58,12 @@ const ExternalLinks = [
 export default function Header() {
   return (
     <Popover className="relative z-10 bg-white">
-      <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-6 md:justify-start md:space-x-10">
+      <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
         <div className="flex justify-start lg:w-0 lg:flex-1">
           <Link href="/">
             <a>
               <span className="sr-only">ATP</span>
-              <Image
-                className="h-8 w-auto sm:h-10"
-                src="/logo.png"
-                alt=""
-                width="40"
-                height="40"
-              />
+              <img className="h-10 w-auto" src="/logo.jpg" alt="" />
             </a>
           </Link>
         </div>
@@ -119,13 +113,7 @@ export default function Header() {
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <Image
-                    className="h-8 w-auto"
-                    src="/logo.png"
-                    alt="ATP"
-                    width="32"
-                    height="32"
-                  />
+                  <img className="h-8 w-auto" src="/logo.jpg" alt="ATP" />
                 </div>
                 <div className="-mr-2">
                   <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
