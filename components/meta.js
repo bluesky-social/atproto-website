@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 export default function Meta({ title, description, image }) {
-  title = title ? `${title} | @ Protocol` : '@ Protocol'
+  title = title ? `${title} | @ Protocol` : 'The @ Protocol'
   description =
     description ||
     'A social networking protocol created by Bluesky. Federated hosting, global interoperability, and portable user accounts. MIT licensed.'
