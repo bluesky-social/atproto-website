@@ -16,7 +16,7 @@ export default function Hero() {
             </p>
             <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
-                <Link href="/waitlist">
+                <Link href="https://bsky.app">
                   <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg">
                     Join the waitlist
                   </a>

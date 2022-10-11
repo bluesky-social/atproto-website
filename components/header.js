@@ -140,7 +140,7 @@ export default function Header() {
                     </a>
                   </Link>
                 ))}
-                <Link href="/waitlist">
+                <Link href="https://bsky.app">
                   <a className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8">
                     Join the waitlist
                   </a>
