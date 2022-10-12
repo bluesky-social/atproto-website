@@ -15,7 +15,7 @@ In this guide, we'll step through a couple of common patterns (with simple code 
 
 ## Signing in
 
-Sign-in and authentication is a simple session-oriented process. The [atproto.com lexicon](/lexicons/atproto.com) includes APIs for creating and managing these sessions.
+Sign-in and authentication is a simple session-oriented process. The [atproto.com lexicon](/lexicons/atproto-com) includes APIs for creating and managing these sessions.
 
 ```typescript
 // create an API instance with my PDS
@@ -73,7 +73,7 @@ You may notice that the repo above is identified by a domain name `alice.com`. T
 
 If you're noticing the "type" field and wondering how that works, see the [Intro to Lexicon guide](./lexicon). Here is a short list of types that are currently used by the ATP software:
 
-### <a href="/lexicons/bsky.app#follow">app.bsky.follow</a>
+### <a href="/lexicons/bsky-app#follow">app.bsky.follow</a>
 
 A social follow. Example:
 
@@ -85,7 +85,7 @@ A social follow. Example:
 }
 ```
 
-### <a href="/lexicons/bsky.app#like">app.bsky.like</a>
+### <a href="/lexicons/bsky-app#like">app.bsky.like</a>
 
 A like on a piece of content. Example:
 
@@ -97,7 +97,7 @@ A like on a piece of content. Example:
 }
 ```
 
-### <a href="/lexicons/bsky.app#post">app.bsky.post</a>
+### <a href="/lexicons/bsky-app#post">app.bsky.post</a>
 
 A microblog post. Example:
 
@@ -109,7 +109,7 @@ A microblog post. Example:
 }
 ```
 
-### <a href="/lexicons/bsky.app#profile">app.bsky.profile</a>
+### <a href="/lexicons/bsky-app#profile">app.bsky.profile</a>
 
 A user profile. Example:
 
@@ -121,7 +121,7 @@ A user profile. Example:
 }
 ```
 
-### <a href="/lexicons/bsky.app#repost">app.bsky.repost</a>
+### <a href="/lexicons/bsky-app#repost">app.bsky.repost</a>
 
 A repost of an existing microblog post (similar to retweets). Example:
 
@@ -135,7 +135,7 @@ A repost of an existing microblog post (similar to retweets). Example:
 
 ## Social APIs
 
-While there's a lot that can be done by repo CRUD and other low-level [atproto.com APIs](/lexicons/atproto.com), the [bsky.app lexicon](/lexicons/bsky.app) provides more powerful and easy-to-use APIs for social applications.
+While there's a lot that can be done by repo CRUD and other low-level [atproto.com APIs](/lexicons/atproto-com), the [bsky.app lexicon](/lexicons/bsky-app) provides more powerful and easy-to-use APIs for social applications.
 
 ```typescript
 await api.app.bsky.getHomeFeed()

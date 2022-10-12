@@ -53,7 +53,7 @@ The DNS username is a user-facing identifier — it should be shown in UIs and p
   <tr>
    <td><strong>Usernames</strong>
    </td>
-   <td>Usernames are DNS names. They are resolved using the <a href="/lexicons/atproto.com">resolveName()</a> XRPC method and should be confirmed by a matching entry in the DID document.
+   <td>Usernames are DNS names. They are resolved using the <a href="/lexicons/atproto-com">resolveName()</a> XRPC method and should be confirmed by a matching entry in the DID document.
    </td>
   </tr>
   <tr>
@@ -94,7 +94,7 @@ At present, none of the DID methods meet our standards fully. Many existing DID 
 
 Usernames in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Name resolution uses the [`todo.adx.resolveName`](/lexicons/atproto.com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
+Name resolution uses the [`todo.adx.resolveName`](/lexicons/atproto-com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
 
 Here is the algorithm in pseudo-typescript:
 

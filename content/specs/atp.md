@@ -43,7 +43,7 @@ wip: true
 
 ## Wire protocol (XRPC)
 
-ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The [atproto.com lexicon](/lexicons/atproto.com) enumerates all xrpc methods used in ATP.
+ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The [atproto.com lexicon](/lexicons/atproto-com) enumerates all xrpc methods used in ATP.
 
 ## Identifiers
 
@@ -257,7 +257,7 @@ ATP uses dollar (`$`) prefixed fields as system fields. The following fields are
 
 ## Client-to-server API
 
-The client-to-server API drives communication between a client application and the user's PDS. The APIs are dictated by the lexicons implemented by the PDS. It's recommended that every PDS support the full [atproto.com lexicon](/lexicons/atproto.com). Application-level lexicons such as [bsky.app](/lexicons/bsky.app) are also recommended.
+The client-to-server API drives communication between a client application and the user's PDS. The APIs are dictated by the lexicons implemented by the PDS. It's recommended that every PDS support the full [atproto.com lexicon](/lexicons/atproto-com). Application-level lexicons such as [bsky.app](/lexicons/bsky-app) are also recommended.
 
 ### Authentication
 
@@ -265,7 +265,7 @@ The client-to-server API drives communication between a client application and t
 
 ### ATP core lexicon
 
-The [atproto.com lexicon](/lexicons/atproto.com) provides the following behaviors:
+The [atproto.com lexicon](/lexicons/atproto-com) provides the following behaviors:
 
 <table class="api-table">
   <tr>
@@ -279,82 +279,82 @@ The [atproto.com lexicon](/lexicons/atproto.com) provides the following behavior
     <td colspan="2" class="api-table-head">Names</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotoresolvename">resolveName()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotoresolvename">resolveName()</a></code></td>
     <td>Resolves a domain name to a DID.</td>
   </tr>
   <tr>
     <td colspan="2" class="api-table-head">Repository operations</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepobatchwrite">repoBatchWrite()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepobatchwrite">repoBatchWrite()</a></code></td>
     <td>Executes a batch of put and delete operations in a single atomic transaction.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepocreaterecord">repoCreateRecord()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepocreaterecord">repoCreateRecord()</a></code></td>
     <td>Adds a new record to a repo collection, automatically generating a unique TID.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepodeleterecord">repoDeleteRecord()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepodeleterecord">repoDeleteRecord()</a></code></td>
     <td>Deletes a record from a repo collection.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepodescribe">repoDescribe()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepodescribe">repoDescribe()</a></code></td>
     <td>Describes the repo, including a list of the available collections.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepogetrecord">repoGetRecord()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepogetrecord">repoGetRecord()</a></code></td>
     <td>Fetches a record from a repo collection.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepolistrecords">repoListRecords()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepolistrecords">repoListRecords()</a></code></td>
     <td>Lists records in a repo collection.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotorepoputrecord">repoPutRecord()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotorepoputrecord">repoPutRecord()</a></code></td>
     <td>Overwrites a record in a repo collection at a given key.</td>
   </tr>
   <tr>
     <td colspan="2" class="api-table-head">Account management</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotocreateaccount">createAccount()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotocreateaccount">createAccount()</a></code></td>
     <td>Creates a new account. May need to supply data according to the `getAccountsConfig()` data.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotogetaccount">getAccount()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotogetaccount">getAccount()</a></code></td>
     <td>Gets the current session's account data.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotodeleteaccount">deleteAccount()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotodeleteaccount">deleteAccount()</a></code></td>
     <td>Deletes the current session's account.</td>
   </tr>
   <tr>
     <td colspan="2" class="api-table-head">Session management</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotocreatesession">createSession()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotocreatesession">createSession()</a></code></td>
     <td>Creates a new active session with the service.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotogetsession">getSession()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotogetsession">getSession()</a></code></td>
     <td>Fetches information about the active session with the service.</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotodeletesession">deleteSession()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotodeletesession">deleteSession()</a></code></td>
     <td>Removes any record of the active session with the service.</td>
   </tr>
   <tr>
     <td colspan="2" class="api-table-head">Administration</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotocreateinvitecode">createInviteCode()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotocreateinvitecode">createInviteCode()</a></code></td>
     <td>Creates an invite code to be used in account creation.</td>
   </tr>
 </table>
 
 ### Additional lexicons
 
-For ATP to be practically useful, it needs to support a variety of sophisticated queries and behaviors. While these sophisticated behaviors could be implemented on the user device, doing so would perform more slowly than on the server. Therefore, the PDS is expected to implement lexicons which provide higher-level APIs. The reference PDS created by Bluesky implements the [bsky.app lexicon](/lexicons/bsky.app).
+For ATP to be practically useful, it needs to support a variety of sophisticated queries and behaviors. While these sophisticated behaviors could be implemented on the user device, doing so would perform more slowly than on the server. Therefore, the PDS is expected to implement lexicons which provide higher-level APIs. The reference PDS created by Bluesky implements the [bsky.app lexicon](/lexicons/bsky-app).
 
 ## Server-to-server API
 
@@ -366,22 +366,22 @@ The server-to-server APIs enable federation, event delivery, and global indexing
 
 ### ATP core lexicon
 
-The [atproto.com lexicon](/lexicons/atproto.com) provides the following behaviors:
+The [atproto.com lexicon](/lexicons/atproto-com) provides the following behaviors:
 
 <table class="api-table">
   <tr>
     <td colspan="2" class="api-table-head">Repository sync</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotosyncgetrepo">syncGetRepo()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotosyncgetrepo">syncGetRepo()</a></code></td>
     <td>TODO</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotosyncgetroot">syncGetRoot()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotosyncgetroot">syncGetRoot()</a></code></td>
     <td>TODO</td>
   </tr>
   <tr>
-    <td><code><a href="/lexicons/atproto.com#comatprotoupdaterepo">updateRepo()</a></code></td>
+    <td><code><a href="/lexicons/atproto-com#comatprotoupdaterepo">updateRepo()</a></code></td>
     <td>TODO</td>
   </tr>
 </table>
