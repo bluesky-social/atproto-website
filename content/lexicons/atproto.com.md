@@ -3,234 +3,557 @@ title: atproto.com
 summary: Schemas used in ATP.
 ---
 
-# ATProto.com Lexicon
+# atproto.com Lexicon
 
-## `todo.adx.resolveName`
+<!-- START lex generated content. Please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
+---
 
-Provides the DID of the repo indicated by the Host parameter.
+## com.atproto.createAccount
 
-- Params
-  - `name` Required string. The name to resolve.
-- Output
-  - `json` [NameResolution](#nameresolution)
+<mark>RPC procedure</mark> Create an account.
 
-## `todo.adx.sync.getRoot`
 
-Gets the current root CID of a repo.
+Input:
 
-- Params
-  - `did` Required string. The DID of the repo to request.
-- Output
-  - `json` [RepoRoot](#reporoot)
+- Encoding: application/json
+- Schema:
 
-## `todo.adx.sync.getRepo`
-
-Gets the repo state.
-
-- Params
-  - `did` Required string. The DID of the repo to request.
-  - `from` Optional string. The CID of a previous commit.
-- Output
-  - `octet-stream` A CAR file.
-
-## `todo.adx.sync.updateRepo`
-
-Writes commits to a repo.
-
-- Params
-  - `did` Required string. The DID of the repo to modify.
-- Input
-  - `octet-stream` A CAR file.
-
-## `todo.adx.accounts.getAccount`
-
-Get information about an account.
-
-TODO
-
-## `todo.adx.accounts.createAccount`
-
-Create an account.
-
-TODO
-
-## `todo.adx.accounts.deleteAccount`
-
-Delete an account.
-
-TODO
-
-## `todo.adx.accounts.getSession`
-
-Get information about the current session.
-
-TODO
-
-## `todo.adx.accounts.createSession`
-
-Create an authentication session.
-
-TODO
-
-## `todo.adx.accounts.deleteSession`
-
-Delete the current session.
-
-TODO
-
-## `todo.adx.repo.describe`
-
-Get information about the repo, including the list of collections.
-
-- Parameters
-  - `did` Required string. The DID of the repo to describe.
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.batchWrite`
-
-Apply a batch transaction of creates, puts, and deletes.
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `validate` Boolean. Validate the records? Default true.
-- Input
-  - `json` [BatchWrite](#batchwrite)
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.listRecords`
-
-List a range of records in a collection.
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `type` Required string. The NSID of the record type.
-  - `limit` Optional number. The number of records to return. Defaults to 50. TODO- max number?
-  - `before` Optional string. A TID to filter the range of records returned.
-  - `after` Optional string. A TID to filter the range of records returned.
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.createRecord`
-
-Create a new record.
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `type` Required string. The NSID of the record type.
-  - `validate` Boolean. Validate the record? Default true.
-- Input
-  - `json` The record value.
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.getRecord`
-
-Fetch a record.
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `type` Required string. The NSID of the record type.
-  - `tid` Required string. The TID of the record.
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.putRecord`
-
-Write a record.
-
-### Parameters
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `type` Required string. The NSID of the record type.
-  - `tid` Required string. The TID of the record.
-  - `validate` Boolean. Validate the record? Default true.
-- Input
-  - `json` The record value.
-- Output
-  - `json` TODO
-
-## `todo.adx.repo.deleteRecord`
-
-Delete a record.
-
-- Parameters
-  - `did` Required string. The DID of the repo.
-  - `type` Required string. The NSID of the record type.
-  - `tid` Required string. The TID of the record.
-- Output
-  - `json` TODO
-
-## Schemas
-
-### NameResolution
-
-```json
-{
-  "type": "object",
-  "required": ["did"],
-  "properties": {
-    "did": {"type": "string"}
-  }
+```typescript
+export interface InputBody {
+  email: string;
+  username: string;
+  inviteCode?: string;
+  password: string;
 }
 ```
 
-### RepoRoot
+Output:
 
-```json
-{
-  "type": "object",
-  "required": ["root"],
-  "properties": {
-    "root": {"type": "string"}
-  }
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  jwt: string;
+  username: string;
+  did: string;
 }
 ```
 
-### BatchWrite
+---
 
-```json
-{
-  "type": "object",
-  "required": ["writes"],
-  "properties": {
-    "writes": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "required": ["action", "collection", "value"],
-            "properties": {
-              "action": {"type": "string", "const": "create"},
-              "collection": {"type": "string"},
-              "value": {}
-            }
-          },
-          {
-            "type": "object",
-            "required": ["action", "collection", "tid", "value"],
-            "properties": {
-              "action": {"type": "string", "const": "update"},
-              "collection": {"type": "string"},
-              "tid": {"type": "string"},
-              "value": {}
-            }
-          },
-          {
-            "type": "object",
-            "required": ["action", "collection", "tid"],
-            "properties": {
-              "action": {"type": "string", "const": "delete"},
-              "collection": {"type": "string"},
-              "tid": {"type": "string"}
-            }
-          }
-        ]
+## com.atproto.createInviteCode
+
+<mark>RPC procedure</mark> Create an invite code.
+
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  useCount: number;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  code: string;
+}
+```
+
+---
+
+## com.atproto.createSession
+
+<mark>RPC procedure</mark> Create an authentication session.
+
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  username: string;
+  password: string;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  jwt: string;
+  name: string;
+  did: string;
+}
+```
+
+---
+
+## com.atproto.deleteAccount
+
+<mark>RPC procedure</mark> Delete an account.
+
+
+Input:
+
+- Schema:
+
+```typescript
+export interface InputBody {
+  [k: string]: unknown;
+}
+```
+
+Output:
+
+- Schema:
+
+```typescript
+export interface OutputBody {
+  [k: string]: unknown;
+}
+```
+
+---
+
+## com.atproto.deleteSession
+
+<mark>RPC procedure</mark> Delete the current session.
+
+
+Input:
+
+- Schema:
+
+```typescript
+export interface InputBody {
+  [k: string]: unknown;
+}
+```
+
+Output:
+
+- Schema:
+
+```typescript
+export interface OutputBody {
+  [k: string]: unknown;
+}
+```
+
+---
+
+## com.atproto.getAccount
+
+<mark>RPC query</mark> Get information about an account.
+
+
+Input:
+
+- Schema:
+
+```typescript
+export interface InputBody {
+  [k: string]: unknown;
+}
+```
+
+Output:
+
+- Schema:
+
+```typescript
+export interface OutputBody {
+  [k: string]: unknown;
+}
+```
+
+---
+
+## com.atproto.getAccountsConfig
+
+<mark>RPC query</mark> Get a document describing the service's accounts configuration.
+
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  inviteCodeRequired?: boolean;
+  availableUserDomains: string[];
+}
+```
+
+---
+
+## com.atproto.getSession
+
+<mark>RPC query</mark> Get information about the current session.
+
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  name: string;
+  did: string;
+}
+```
+
+---
+
+## com.atproto.repoBatchWrite
+
+<mark>RPC procedure</mark> Apply a batch transaction of creates, puts, and deletes.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+- `validate` Optional boolean. Validate the records? Defaults to true.
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  writes: (
+    | {
+        action: "create";
+        collection: string;
+        value: unknown;
       }
-    }
-  }
+    | {
+        action: "update";
+        collection: string;
+        tid: string;
+        value: unknown;
+      }
+    | {
+        action: "delete";
+        collection: string;
+        tid: string;
+      }
+  )[];
 }
 ```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  [k: string]: unknown;
+}
+```
+
+---
+
+## com.atproto.repoCreateRecord
+
+<mark>RPC procedure</mark> Create a new record.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+- `type` Required string. The NSID of the record type.
+- `validate` Optional boolean. Validate the record? Defaults to true.
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  [k: string]: unknown;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  uri: string;
+}
+```
+
+---
+
+## com.atproto.repoDeleteRecord
+
+<mark>RPC procedure</mark> Delete a record.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+- `type` Required string. The NSID of the record type.
+- `tid` Required string. The TID of the record.
+
+---
+
+## com.atproto.repoDescribe
+
+<mark>RPC query</mark> Get information about the repo, including the list of collections.
+
+Parameters:
+
+- `nameOrDid` Required string. The username or DID of the repo.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  name: string;
+  did: string;
+  didDoc: {};
+  collections: string[];
+  nameIsCorrect: boolean;
+}
+```
+
+---
+
+## com.atproto.repoGetRecord
+
+<mark>RPC query</mark> Fetch a record.
+
+Parameters:
+
+- `nameOrDid` Required string. The name or DID of the repo.
+- `type` Required string. The NSID of the record type.
+- `tid` Required string. The TID of the record.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  uri: string;
+  value: {};
+}
+```
+
+---
+
+## com.atproto.repoListRecords
+
+<mark>RPC query</mark> List a range of records in a collection.
+
+Parameters:
+
+- `nameOrDid` Required string. The username or DID of the repo.
+- `type` Required string. The NSID of the record type.
+- `limit` Optional number. The number of records to return. TODO-max number? Min value 1. Defaults to 50.
+- `before` Optional string. A TID to filter the range of records returned.
+- `after` Optional string. A TID to filter the range of records returned.
+- `reverse` Optional boolean. Reverse the order of the returned records? Defaults to false.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  records: {
+    uri: string;
+    value: {};
+  }[];
+}
+```
+
+---
+
+## com.atproto.repoPutRecord
+
+<mark>RPC procedure</mark> Write a record.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+- `type` Required string. The NSID of the record type.
+- `tid` Required string. The TID of the record.
+- `validate` Optional boolean. Validate the record? Defaults to true.
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  [k: string]: unknown;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  uri: string;
+}
+```
+
+---
+
+## com.atproto.requestAccountPasswordReset
+
+<mark>RPC procedure</mark> Initiate a user account password reset via email
+
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  email: string;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {}
+```
+
+---
+
+## com.atproto.resetAccountPassword
+
+<mark>RPC procedure</mark> Reset a user account password using a token
+
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  token: string;
+  password: string;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {}
+```
+
+---
+
+## com.atproto.resolveName
+
+<mark>RPC query</mark> Provides the DID of a repo.
+
+Parameters:
+
+- `name` Optional string. The name to resolve. If not supplied, will resolve the host's own name.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  did: string;
+}
+```
+
+---
+
+## com.atproto.syncGetRepo
+
+<mark>RPC query</mark> Gets the repo state.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+- `from` Optional string. A past commit CID
+
+Output:
+
+- Encoding: application/cbor
+
+---
+
+## com.atproto.syncGetRoot
+
+<mark>RPC query</mark> Gets the current root CID of a repo.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  root: string;
+}
+```
+
+---
+
+## com.atproto.syncUpdateRepo
+
+<mark>RPC procedure</mark> Writes commits to a repo.
+
+Parameters:
+
+- `did` Required string. The DID of the repo.
+
+Input:
+
+- Encoding: application/cbor
+
+<!-- END lex generated TOC please keep comment here to allow auto update -->

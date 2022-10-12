@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+mark {
+  background-color: rgb(219, 234, 254);
+  color: rgb(29, 78, 216);
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  padding-bottom: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 2px;
+  position: relative;
+  top: -2px
+}
+
 .heading-link {
   font-size: 80%;
   margin-left: 0.4rem;
