@@ -280,7 +280,7 @@ export interface OutputBody {
 Parameters:
 
 - `did` Required string. The DID of the repo.
-- `type` Required string. The NSID of the record type.
+- `collection` Required string. The NSID of the record collection.
 - `validate` Optional boolean. Validate the record? Defaults to true.
 
 Input:
@@ -302,6 +302,7 @@ Output:
 ```typescript
 export interface OutputBody {
   uri: string;
+  cid: string;
 }
 ```
 
@@ -314,8 +315,8 @@ export interface OutputBody {
 Parameters:
 
 - `did` Required string. The DID of the repo.
-- `type` Required string. The NSID of the record type.
-- `tid` Required string. The TID of the record.
+- `collection` Required string. The NSID of the record collection.
+- `rkey` Required string. The key of the record.
 
 ---
 
@@ -325,7 +326,7 @@ Parameters:
 
 Parameters:
 
-- `nameOrDid` Required string. The username or DID of the repo.
+- `user` Required string. The username or DID of the repo.
 
 Output:
 
@@ -350,9 +351,10 @@ export interface OutputBody {
 
 Parameters:
 
-- `nameOrDid` Required string. The name or DID of the repo.
-- `type` Required string. The NSID of the record type.
-- `tid` Required string. The TID of the record.
+- `user` Required string. The username or DID of the repo.
+- `collection` Required string. The NSID of the collection.
+- `rkey` Required string. The key of the record.
+- `cid` Optional string. The CID of the version of the record. If not specified, then return the most recent version.
 
 Output:
 
@@ -362,6 +364,7 @@ Output:
 ```typescript
 export interface OutputBody {
   uri: string;
+  cid?: string;
   value: {};
 }
 ```
@@ -374,8 +377,8 @@ export interface OutputBody {
 
 Parameters:
 
-- `nameOrDid` Required string. The username or DID of the repo.
-- `type` Required string. The NSID of the record type.
+- `user` Required string. The username or DID of the repo.
+- `collection` Required string. The NSID of the record type.
 - `limit` Optional number. The number of records to return. TODO-max number? Min value 1. Defaults to 50.
 - `before` Optional string. A TID to filter the range of records returned.
 - `after` Optional string. A TID to filter the range of records returned.
@@ -390,6 +393,7 @@ Output:
 export interface OutputBody {
   records: {
     uri: string;
+    cid: string;
     value: {};
   }[];
 }
@@ -404,8 +408,8 @@ export interface OutputBody {
 Parameters:
 
 - `did` Required string. The DID of the repo.
-- `type` Required string. The NSID of the record type.
-- `tid` Required string. The TID of the record.
+- `collection` Required string. The NSID of the record type.
+- `rkey` Required string. The TID of the record.
 - `validate` Optional boolean. Validate the record? Defaults to true.
 
 Input:
@@ -427,6 +431,7 @@ Output:
 ```typescript
 export interface OutputBody {
   uri: string;
+  cid: string;
 }
 ```
 
