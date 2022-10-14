@@ -40,7 +40,7 @@ export default function Home() {
       <Header />
       <Hero />
       <FeaturesSection />
-      <RoadmapSection />
+      {undefined /*<RoadmapSection />*/}
       {undefined /*<LinksSection />*/}
       <CTA />
       <Footer />
