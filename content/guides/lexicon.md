@@ -47,6 +47,7 @@ interface LexiconDoc {
   type: 'query' | 'procedure' | 'record'
   revision?: number
   description?: string
+  defs?: JSONSchema
 
   // if type == record
   record?: JSONSchema

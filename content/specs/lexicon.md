@@ -16,6 +16,7 @@ interface LexiconDoc {
   type: 'query' | 'procedure' | 'record'
   revision?: number
   description?: string
+  defs?: JSONSchema
 }
 
 interface RecordLexiconDoc extends LexiconDoc {
@@ -43,6 +44,7 @@ interface XrpcParameter {
 interface XrpcBody {
   encoding: string|string[]
   schema: JSONSchema
+  description?: string
 }
 
 interface XrpcError {
