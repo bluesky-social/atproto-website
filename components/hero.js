@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Hero() {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-tr from-[#06142B] to-[#0B3250]">
+    <div className="relative overflow-hidden bg-[#06142B] bg-[url(/img/hero-bg.jpg)] bg-center bg-cover">
       <div className="relative pt-10 pb-20 sm:pt-4 sm:pb-24">
         <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
