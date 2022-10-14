@@ -15,7 +15,8 @@ import {
 const features = [
   {
     name: 'Federated social',
-    description: 'Connect with anyone on any network using the @ protocol.',
+    description:
+      "Connect with anyone on any service that's using the @ protocol.",
     icon: AtSymbolIcon,
   },
   {
@@ -25,7 +26,7 @@ const features = [
     icon: CodeBracketSquareIcon,
   },
   {
-    name: 'Migrate anytime',
+    name: 'Portable accounts',
     description:
       'Change hosts without losing your content, your follows, or your identity.',
     icon: ArrowsUpDownIcon,
@@ -56,9 +57,12 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          Connect to friends, family, and communities without ever being locked
-          into a service. The @ protocol puts you in control of your online
-          world.
+          The @ Protocol is a new technology for creating social networks. It's
+          being created by{' '}
+          <Link href="https://blueskyweb.xyz">
+            <a className="text-blue-500 hover:underline">Bluesky</a>
+          </Link>{' '}
+          to power an open ecosystem of interconnected services.
         </p>
         <div className="mt-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 text-center">
