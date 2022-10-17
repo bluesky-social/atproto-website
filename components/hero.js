@@ -7,8 +7,8 @@ export default function Hero() {
         <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
             <img
-              src="/img/hero-logo.png"
-              className="mx-auto w-48 sm:w-80 mb-10"
+              src="/img/hero-img.png"
+              className="mx-auto w-48 sm:w-64 mb-10"
             />
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block xl:inline text-blue-50">
@@ -16,9 +16,7 @@ export default function Hero() {
               </span>
             </h1>
             <p className="mx-auto mt-3 max-w-md text-base text-blue-100 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">
-              A social networking protocol created by Bluesky. Federated
-              hosting, global interoperability, and portable user accounts. MIT
-              licensed.
+              Social networking technology created by Bluesky
             </p>
             <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">

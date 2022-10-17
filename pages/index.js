@@ -22,7 +22,7 @@ const features = [
   {
     name: 'Algorithmic choice',
     description:
-      'Control how you see the world through an open platform of algorithms.',
+      'Control how you see the world through an open market of algorithms.',
     icon: CodeBracketSquareIcon,
   },
   {
@@ -57,12 +57,11 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          The @ Protocol is a new technology for creating social networks. It's
-          being created by{' '}
+          The @ Protocol is a networking technology created by{' '}
           <Link href="https://blueskyweb.xyz">
             <a className="text-blue-500 hover:underline">Bluesky</a>
           </Link>{' '}
-          to power an open ecosystem of interconnected services.
+          to power the next generation of social applications.
         </p>
         <div className="mt-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 text-center">
