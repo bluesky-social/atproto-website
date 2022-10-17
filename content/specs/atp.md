@@ -32,8 +32,6 @@ wip: true
 
 # Authenticated Transfer Protocol
 
-<div class=todo>Summary</div>
-
 ## Glossary
 
 - **Client**: The application running on the user's device. Interacts with the network through a PDS.

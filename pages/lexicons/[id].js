@@ -8,9 +8,9 @@ import CTA from '../../components/cta'
 import { getNavigation, getFile } from '../../lib/content'
 
 export async function getStaticPaths() {
-  const navigation = await getNavigation('lexicons', '/lexicons')
+  const navigation = await getNavigation()
   return {
-    paths: navigation
+    paths: navigation.lexicons
       .map((item) => {
         return {
           params: { id: item.href.slice('/lexicons/'.length) },
@@ -22,17 +22,14 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  const navigation = await getNavigation(
-    'lexicons',
-    `/lexicons/${context.params.id}`
-  )
+  const navigation = await getNavigation()
   const file = await getFile('lexicons', context.params.id)
   return { props: { navigation, file } }
 }
 
 export default function Guide({ navigation, file }) {
   const pages = [
-    { name: 'Lexicons', href: '/lexicons', current: false },
+    { name: 'Docs', href: '/docs', current: false },
     { name: file.title, href: file.path, current: true },
   ]
   return (
@@ -43,7 +40,7 @@ export default function Guide({ navigation, file }) {
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">
-        <Sidebar navigation={navigation} />
+        <Sidebar navigation={navigation} current={file.path} />
         <div className="flex-1 px-4 pb-16">
           <div
             className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"

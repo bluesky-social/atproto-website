@@ -3,9 +3,7 @@ import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 
 const navigation = {
   main: [
-    { name: 'Guides', href: '/guides' },
-    { name: 'Specs', href: '/specs' },
-    { name: 'Lexicons', href: '/lexicons' },
+    { name: 'Developers', href: '/docs' },
     { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
     { name: 'Blog', href: 'https://blueskyweb.xyz/blog/' },
     { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },
