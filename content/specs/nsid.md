@@ -5,7 +5,7 @@ summary: A specification for global semantic IDs.
 
 # NameSpaced IDs (NSIDs)
 
-NameSpaced IDs (NSIDs) are used throughout ADX to identify methods, records types, and other semantic information.
+NameSpaced IDs (NSIDs) are used throughout ATP to identify methods, records types, and other semantic information.
 
 NSIDs use [Reverse Domain-Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) with the additional constraint that the segments prior to the final segment *must* map to a valid domain name. For instance, the owner of `example.com` could use the ID of `com.example.foo` but could not use `com.example.foo.bar` unless they also control `foo.example.com`. These rules are to ensure that schemas are globally unique, have a clear authority mapping (to a registered domain), and can potentially be resolved by request.
 
