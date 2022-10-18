@@ -48,7 +48,7 @@ The small-world/big-world distinction is intended to achieve scale as well as a 
 
 ## Algorithmic choice
 
-As with Web search-engines, users are free to select their indexers. Each feed, discovery section, or search interface is integrated into the PDS while being served from a third party service.
+As with Web search engines, users are free to select their indexers. Each feed, discovery section, or search interface is integrated into the PDS while being served from a third party service.
 
 ![Algorithmic choice](/img/algorithmic-choice.jpg)
 
