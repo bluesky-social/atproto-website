@@ -5,7 +5,7 @@ guides:
     href: /guides/identity
   - name: Data Repositories
     href: /guides/data-repos
-  - name: Intro to Lexicon
+  - name: Lexicon
     href: /guides/lexicon
   - name: Applications
     href: /guides/applications
@@ -14,7 +14,7 @@ specs:
     href: /specs/atp
   - name: URI Scheme
     href: /specs/at-uri-scheme
-  - name: Lexicon
+  - name: Lexicon Schemas
     href: /specs/lexicon
   - name: XRPC
     href: /specs/xrpc

@@ -1,6 +1,6 @@
 ---
-title: Intro to Lexicon
-summary: Applying Lexicon schemas in ATP method calls and data records.
+title: Lexicon
+summary: A schema-driven interoperability framework
 tldr:
  - Lexicon is a global schema system
  - It uses reverse-DNS names like "com.example.ping()"

@@ -1,6 +1,6 @@
 ---
 title: ATP
-summary: The specification for the @ Protocol.
+summary: The specification for the Authenticated Transport Protocol (aka "@ Protocol").
 wip: true
 ---
 
