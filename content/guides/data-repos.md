@@ -13,7 +13,13 @@ A "Data Repository” is a collection of data published by a single user. Reposi
 
 ## Data Layout
 
-The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash. It can be visualized as the following layout:
+The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash and keeps records in sort-order by their key.
+
+Every node in the repo is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is hash-referenced by a [CID](https://github.com/multiformats/cid).
+
+We then layer collection and record semantics on top of the MST through the use of structured URLs.
+
+This results in a repository that can be visualized as having the following layout:
 
 <pre style="line-height: 1.2;"><code>┌────────────────┐
 │     Commit     │  (Signed Root)
@@ -31,8 +37,6 @@ The content of a repository is laid out in a [Merkle Search Tree (MST)](https://
 │     Record     │
 └────────────────┘
 </code></pre>
-
-Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is referenced by a [CID](https://github.com/multiformats/cid) hash. The arrows in the diagram above represent a CID reference.
 
 This layout is reflected in the URLs:
 
@@ -67,13 +71,13 @@ Multiple types of identifiers are used within a Personal Data Repository.
   <tr>
    <td><strong>CIDs</strong>
    </td>
-   <td><a href="https://github.com/multiformats/cid">Content IDs (CIDs)</a> identify content using a fingerprint hash. They are used throughout the repository to reference the objects (nodes) within it. When a node in the repository changes, its CID also changes. Parents which reference the node must then update their reference, which in turn changes the parent’s CID as well. This chains all the way to the Root node, which is then signed to produce a new commit.
+   <td><a href="https://github.com/multiformats/cid">Content IDs (CIDs)</a> identify content using a fingerprint hash. They are used throughout the repository to reference the objects (nodes) within it. When a node in the repository changes, its CID also changes. Parents which reference the node must then update their reference, which in turn changes the parent’s CID as well. This chains all the way to the Root node, which is then signed to produce a new commit. A CID may also be used as an immutable reference to a record at a specific point in time.
    </td>
   </tr>
   <tr>
    <td><strong>TIDs</strong>
    </td>
-   <td>Timestamp IDs (TIDs) identify records. They are used in Collections as a key to Records. TIDs are produced using the local device’s monotonic clock e.g. microseconds since Unix epoch. To reduce the potential for collisions, a 10-bit clockID is appended . The resulting number is encoded as a 13 character string in a sort-order-invariant base32 encoding (`3hgb-r7t-ngir-t4`).
+   <td>Timestamp IDs (TIDs) identify records. They are used in Collections as a key to Records. TIDs are produced using the local device’s monotonic clock e.g. microseconds since Unix epoch. To reduce the potential for collisions, a 10-bit clockID is appended . The resulting number is encoded as a 13 character string in a sort-order-invariant base32 encoding (`3hgb-r7t-ngir-t4`). TIDs are a mutable reference to an record that may point to a new CID if the record is updated.
    </td>
   </tr>
 </table>
