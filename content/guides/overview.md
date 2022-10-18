@@ -93,4 +93,4 @@ These specs can be organize into three layers of dependency:
 
 ![Spec diagram](/img/spec-diagram.jpg)
 
-From here you can continue reading the [high level guides](/guides), read the [individual specs](/specs), or read the [lexicon schemas](/lexicons).
+From here you can continue reading the [guides and specs](/docs).
