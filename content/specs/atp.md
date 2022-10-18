@@ -302,7 +302,7 @@ The [atproto.com lexicon](/lexicons/atproto-com) provides the following behavior
   </tr>
   <tr>
     <td><code><a href="/lexicons/atproto-com#comatprotorepocreaterecord">repoCreateRecord()</a></code></td>
-    <td>Adds a new record to a repo collection, automatically generating a unique TID.</td>
+    <td>Adds a new record to a repo collection, automatically generating a unique record key.</td>
   </tr>
   <tr>
     <td><code><a href="/lexicons/atproto-com#comatprotorepodeleterecord">repoDeleteRecord()</a></code></td>
