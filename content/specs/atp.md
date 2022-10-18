@@ -126,7 +126,7 @@ The repository data layout establishes the units of network-transmissable data. 
 |**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](./nsid). Collections only contain records of the type identified by their NSID.|
 |**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a [TID](#timestamp-ids-tid).|
 
-Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/) to be specific) which is referenced by a [CID](https://github.com/multiformats/cid) hash.
+Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/) to be specific) which is hash-referenced by a [CID](https://github.com/multiformats/cid).
 
 <table>
   <thead>

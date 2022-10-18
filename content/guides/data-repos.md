@@ -13,7 +13,13 @@ A "Data Repository” is a collection of data published by a single user. Reposi
 
 ## Data Layout
 
-The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash. It can be visualized as the following layout:
+The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash and keeps records in sort-order by their key.
+
+Every node in the repo is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is hash-referenced by a [CID](https://github.com/multiformats/cid).
+
+We then layer collection and record semantics on top of the MST through the use of structured URLs.
+
+It can be visualized as the following layout:
 
 <pre style="line-height: 1.2;"><code>┌────────────────┐
 │     Commit     │  (Signed Root)
@@ -31,8 +37,6 @@ The content of a repository is laid out in a [Merkle Search Tree (MST)](https://
 │     Record     │
 └────────────────┘
 </code></pre>
-
-Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is referenced by a [CID](https://github.com/multiformats/cid) hash. The arrows in the diagram above represent a CID reference.
 
 This layout is reflected in the URLs:
 
