@@ -125,7 +125,7 @@ The repository data layout establishes the units of network-transmissable data. 
 |-|-|
 |**Repository**|Repositories are the dataset of a single "user" in the ATP network. Every user has a single repository which is identified by a [DID](https://w3c.github.io/did-core/).|
 |**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](./nsid). Collections only contain records of the type identified by their NSID.|
-|**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a [TID](#timestamp-ids-tid).|
+|**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a record key. This is often, but not necessarily, a [TID](#timestamp-ids-tid).|
 
 Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/) to be specific) which is hash-referenced by a [CID](https://github.com/multiformats/cid).
 
