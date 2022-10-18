@@ -1,6 +1,6 @@
 ---
 title: Applications model
-summary: How applications work on the @ Protocol.
+summary: How applications work on the AT Protocol.
 tldr:
   - Apps sign into the user's PDS to access their account
   - Apps can directly read and write repo records
@@ -9,7 +9,7 @@ tldr:
 
 # Applications model
 
-Applications on the @ Protocol connect to the user's Personal Data Server (PDS) to access their account. Once a session is established, the app can use the [lexicons](./lexicon) implemented by the PDS to drive behaviors.
+Applications on the AT Protocol connect to the user's Personal Data Server (PDS) to access their account. Once a session is established, the app can use the [lexicons](./lexicon) implemented by the PDS to drive behaviors.
 
 In this guide, we'll step through a couple of common patterns (with simple code examples) to help you develop an intuition about this. All APIs shown below are generated using Lexicon's code-generator CLI.
 

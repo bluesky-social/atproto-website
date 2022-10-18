@@ -70,7 +70,7 @@ Notice the structure differs depending on the `type`. The meanings of the type a
 
 ## RPC methods
 
-@ Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. A call to:
+AT Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. A call to:
 
 ```typescript
 app.bsky.getPostThread()

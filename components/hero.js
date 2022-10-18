@@ -12,7 +12,7 @@ export default function Hero() {
             />
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block xl:inline text-blue-50">
-                The @ Protocol
+                The AT Protocol
               </span>
             </h1>
             <p className="mx-auto mt-3 max-w-md text-base text-blue-100 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">

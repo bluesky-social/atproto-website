@@ -7,10 +7,10 @@ export default function PreviewWarning({ rounded } = {}) {
         <div className="pr-16 sm:px-16 sm:text-center">
           <p className="font-medium text-white">
             <span className="md:hidden">
-              The @ Protocol is still in development.
+              The AT Protocol is still in development.
             </span>
             <span className="hidden md:inline">
-              The @ Protocol is still in active development.
+              The AT Protocol is still in active development.
             </span>
             <span className="block sm:ml-2 sm:inline-block">
               <Link href="/roadmap">

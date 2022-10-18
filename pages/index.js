@@ -16,7 +16,7 @@ const features = [
   {
     name: 'Federated social',
     description:
-      "Connect with anyone on any service that's using the @ protocol.",
+      "Connect with anyone on any service that's using the AT Protocol.",
     icon: AtSymbolIcon,
   },
   {
@@ -57,7 +57,7 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          The @ Protocol is a networking technology created by{' '}
+          The AT Protocol is a networking technology created by{' '}
           <Link href="https://blueskyweb.xyz">
             <a className="text-blue-500 hover:underline">Bluesky</a>
           </Link>{' '}
@@ -116,7 +116,7 @@ function LinksSection() {
     {
       href: '/guides',
       name: 'Guides',
-      description: 'Learn how the @ protocol works at a high level.',
+      description: 'Learn how the AT protocol works at a high level.',
     },
     {
       href: '/specs',
@@ -126,7 +126,7 @@ function LinksSection() {
     {
       href: '/lexicons',
       name: 'Lexicons',
-      description: 'Schema reference for @ and its apps.',
+      description: 'Schema reference for AT and its apps.',
     },
   ]
   return (

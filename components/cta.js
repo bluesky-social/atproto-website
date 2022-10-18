@@ -9,7 +9,7 @@ export default function CTA() {
           <span className="block">Join the private beta.</span>
         </h2>
         <p className="mt-4 text-lg leading-6 text-blue-200">
-          The @ protocol will launch soon.
+          The AT Protocol will launch soon.
           <br />
           Join the waitlist to try the beta before it&#39;s publicly available.
         </p>

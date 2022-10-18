@@ -1,15 +1,15 @@
 ---
 title: Protocol Overview
-summary: An introduction to the @ Protocol.
+summary: An introduction to the AT Protocol.
 ---
 
 # Protocol Overview
 
-The **Authenticated Transfer Protocol**, aka **ATP**, aka **@ Protocol**, is a protocol for large-scale distributed social applications. This document will introduce you to the ideas behind the @ Protocol.
+The **Authenticated Transfer Protocol**, aka **ATP**, is a protocol for large-scale distributed social applications. This document will introduce you to the ideas behind the AT Protocol.
 
 ## Identity
 
-Users are identified by domain names in @ Protocol. These domains map to cryptographic URLs which secure the user's account and its data.
+Users are identified by domain names in AT Protocol. These domains map to cryptographic URLs which secure the user's account and its data.
 
 ![Identities](/img/identities.jpg)
 
@@ -31,7 +31,7 @@ A global schemas network called [Lexicon](/specs/lexicon) is used to unify the n
 
 ![Interop](/img/interop.jpg)
 
-While the Web exchanges documents, the @ Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
+While the Web exchanges documents, the AT Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives ATP clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
 ## Achieving scale
 

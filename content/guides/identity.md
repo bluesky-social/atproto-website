@@ -1,6 +1,6 @@
 ---
 title: Identity
-summary: How the @ Protocol handles user identity.
+summary: How the AT Protocol handles user identity.
 tldr:
   - Every user has a domain name like @alice.com
   - Every user also has a persistent "DID" which enables migration between hosts
