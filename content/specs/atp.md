@@ -52,6 +52,7 @@ The following identifiers are used in ATP:
 |Domain names|A unique global identifier which weakly identify repositories.|
 |[DID](https://w3c.github.io/did-core/)|A unique global identifier which strongly identify repositories.|
 |[NSID](./nsid)|A unique global identifier which identifies record types and XRPC methods.|
+|[CID](https://github.com/multiformats/cid)|A hash-based identifier which identifies a particular version of an object.|
 |TID|A timestamp-based ID which identifies records.|
 
 ### Domain names
@@ -152,10 +153,22 @@ Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/doc
     <td>
       The Root node contains:
       <ul>
-        <li><strong>did</strong> The DID of this repository.</li>
+        <li><strong>meta</strong> The CID of the metadata of this repository.</li>
         <li><strong>prev</strong> The CID(s) of the previous commit node(s) in this repository’s history.</li>
         <li><strong>data</strong> The Merkle Search Tree topmost node.</li>
         <li><strong>auth_token</strong> The jwt-encoded UCAN that gives authority to make the write which produced this root.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Metadata</strong>
+    </td>
+    <td>
+      The Metadata node contains:
+      <ul>
+        <li><strong>did</strong> The DID of this repository.</li>
+        <li><strong>version</strong> A numerical version of this repository layout (currently only `1`).</li>
+        <li><strong>datastore</strong> A string identifier of the datastore this repository uses (current only `"mst"`).</li>
       </ul>
     </td>
   </tr>
