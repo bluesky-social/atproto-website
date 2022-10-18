@@ -1,6 +1,6 @@
 ---
 title: ATP
-summary: The specification for the Authenticated Transport Protocol (aka "AT Protocol").
+summary: The specification for the Authenticated Transfer Protocol (aka "AT Protocol").
 wip: true
 ---
 
