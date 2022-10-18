@@ -54,9 +54,9 @@ As with Web search engines, users are free to select their indexers. Each feed, 
 
 ## Account portability
 
-We assume that a Personal Data Server may fail at any time, either by going offline in its entirety or by ceasing service for specific users. ATP's goal is to ensure that a user can migrate their account to a new PDS without their involvement.
+We assume that a Personal Data Server may fail at any time, either by going offline in its entirety or by ceasing service for specific users. ATP's goal is to ensure that a user can migrate their account to a new PDS without the server's involvement.
 
-User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. The are expected to be secure, reliable, a-political, and independent of the users' PDS.
+User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. They are expected to be secure, reliable, and independent of the users' PDS.
 
 ![DID Documents](/img/did-doc.jpg)
 
@@ -69,21 +69,15 @@ The signing key is entrusted to the PDS so that it can manage the user's data, b
 
 ![Account recovery](/img/recovery.jpg)
 
-To prevent data loss, the user's data repository is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
+A backup of the user’s data is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
 
 ## Speech, reach, and moderation
-
-The goal of a social network is to provide access to information and people. Its tooling should model a healthy society in which individuals are free from imposition and communities are enabled to self-determine. Decentralization seeks first to disassociate hosting from authority over content, but the design of the protocol has many second-order effects which must be considered.
 
 ATP's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain neutral, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
 ![Speech vs Reach](/img/speech-vs-reach.jpg)
 
-The base layer of ATP (Personal Data Repositories and Federated Networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The Indexing services then enable reach by aggregating content from the network. Curation occurs in multiple layers through the system, including in aggregation algorithms, thresholds based on reputation, and end-user choice. There's no one company that can decide what gets published; instead there is a marketplace of companies deciding what to carry to their audiences.
-
-Separating speech and reach gives indexing services more freedom to curate and moderate. Curation by an indexing service doesn't remove a user's identity or destroy their social graph – it only affects the services' own indexes. Users choose their indexers, and so can choose a different service or to supplement with additional services if they're unhappy with the policies of any particular service.
-
-It's important to recognize that hosting providers will be obligated to remove illegal content according to their local laws. To help providers fulfill this obligation, services can publish labels which providers act upon at their discretion.
+The base layer of ATP (Personal Data Repositories and Federated Networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The Indexing services then enable reach by aggregating content from the network, analogous to a search engine.
 
 ## Specifications
 
