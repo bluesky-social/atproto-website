@@ -50,6 +50,7 @@ interface LexiconDoc {
   defs?: JSONSchema
 
   // if type == record
+  key?: string
   record?: JSONSchema
 
   // if type == query or procedure
@@ -180,7 +181,7 @@ Here is an example of a record with an optional extension:
 
 ## Versioning
 
-Once a schema is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, schemas may only add optional constraint to previously unconstrained fields.
+Once a schema is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, schemas may only add optional constraints to previously unconstrained fields.
 
 If a schema must change a previously-published constraint, it should be published as a new schema under a new NSID.
 

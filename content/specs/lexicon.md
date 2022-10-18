@@ -20,6 +20,7 @@ interface LexiconDoc {
 }
 
 interface RecordLexiconDoc extends LexiconDoc {
+  key?: string
   record: JSONSchema
 }
 
