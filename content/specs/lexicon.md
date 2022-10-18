@@ -61,7 +61,7 @@ interface XrpcError {
 ```json
 {
   "lexicon": 1,
-  "id": "todo.adx.createAccount",
+  "id": "com.atproto.createAccount",
   "type": "procedure",
   "description": "Create an account.",
   "parameters": {},

@@ -94,14 +94,14 @@ At present, none of the DID methods meet our standards fully. Many existing DID 
 
 Usernames in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Name resolution uses the [`todo.adx.resolveName`](/lexicons/atproto-com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
+Name resolution uses the [`com.atproto.resolveName`](/lexicons/atproto-com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
 
 Here is the algorithm in pseudo-typescript:
 
 ```typescript
 async function resolveName(name: string) {
   const origin = `https://${name}`
-  const res = await xrpc(origin, 'todo.adx.resolveName', {name})
+  const res = await xrpc(origin, 'com.atproto.resolveName', {name})
   assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
   return res.did
 }
@@ -115,10 +115,10 @@ Consider a scenario where a hosting service is using PLC and is providing the us
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-At first, all we know is `alice.pds.com`, so we call `todo.adx.resolveName()` on `alice.pds.com`. This tells us the DID.
+At first, all we know is `alice.pds.com`, so we call `com.atproto.resolveName()` on `alice.pds.com`. This tells us the DID.
 
 ```typescript
-await xrpc.service('https://alice.pds.com').todo.adx.resolveName() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.pds.com').com.atproto.resolveName() // => {did: 'did:plc:12345'}
 ```
 
 Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
@@ -142,10 +142,10 @@ Suppose we have the same scenario as before, except the user has supplied their 
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-We call `todo.adx.resolveName()` on `alice.com` to get the DID.
+We call `com.atproto.resolveName()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').todo.adx.resolveName() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.com').com.atproto.resolveName() // => {did: 'did:plc:12345'}
 ```
 
 Then we resolve the DID as before:
@@ -159,7 +159,7 @@ await didPlc.resolve('did:pcl:12345') /* => {
 }*/
 ```
 
-We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `todo.adx.resolveName()` call. The actual userdata lives on `pds.com`.
+We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.resolveName()` call. The actual userdata lives on `pds.com`.
 
 ### Example: Self-hosted
 
@@ -175,10 +175,10 @@ However, **if the self-hoster is confident they will retain ownership of the dom
 - The DID: `did:web:alice.com`
 - The hosting service: `https://alice.com`
 
-We call `todo.adx.resolveName()` on `alice.com` to get the DID.
+We call `com.atproto.resolveName()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').todo.adx.resolveName() // => {did: 'did:web:alice.com'}
+await xrpc.service('https://alice.com').com.atproto.resolveName() // => {did: 'did:web:alice.com'}
 ```
 
 We then resolve using did:web:
