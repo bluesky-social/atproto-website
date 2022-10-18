@@ -19,7 +19,7 @@ Every node in the repo is an [IPLD](https://ipld.io/) object ([dag-cbor](https:/
 
 We then layer collection and record semantics on top of the MST through the use of structured URLs.
 
-It can be visualized as the following layout:
+This results in a repository that can be visualized as having the following layout:
 
 <pre style="line-height: 1.2;"><code>┌────────────────┐
 │     Commit     │  (Signed Root)
