@@ -20,7 +20,6 @@ export interface Record {
     | AppBskyBadgeEmployeeAssertion
     | AppBskyBadgeTagAssertion
     | AppBskyBadgeUnknownAssertion;
-  subject: string;
   createdAt: string;
 }
 export interface AppBskyBadgeInviteAssertion {
@@ -35,6 +34,42 @@ export interface AppBskyBadgeTagAssertion {
 }
 export interface AppBskyBadgeUnknownAssertion {
   type: string;
+}
+```
+
+---
+
+## app.bsky.badgeAccept
+
+<mark>Record type</mark> 
+
+```typescript
+export interface Record {
+  badge: AppBskyBadgeAcceptSubject;
+  offer: AppBskyBadgeAcceptSubject;
+  createdAt: string;
+}
+export interface AppBskyBadgeAcceptSubject {
+  uri: string;
+  cid: string;
+}
+```
+
+---
+
+## app.bsky.badgeOffer
+
+<mark>Record type</mark> 
+
+```typescript
+export interface Record {
+  badge: AppBskyBadgeOfferBadge;
+  subject: string;
+  createdAt: string;
+}
+export interface AppBskyBadgeOfferBadge {
+  uri: string;
+  cid: string;
 }
 ```
 
@@ -132,7 +167,7 @@ export interface AppBskyPostPostRef {
 export interface Record {
   displayName: string;
   description?: string;
-  badges?: AppBskyProfileBadgeRef[];
+  pinnedBadges?: AppBskyProfileBadgeRef[];
 }
 export interface AppBskyProfileBadgeRef {
   uri: string;
@@ -176,10 +211,10 @@ Output:
 
 ```typescript
 export interface OutputBody {
+  cursor?: string;
   feed: AppBskyGetAuthorFeedFeedItem[];
 }
 export interface AppBskyGetAuthorFeedFeedItem {
-  cursor: string;
   uri: string;
   cid: string;
   author: AppBskyGetAuthorFeedUser;
@@ -219,6 +254,39 @@ export interface AppBskyGetAuthorFeedUnknownEmbed {
 
 ---
 
+## app.bsky.getBadgeMembers
+
+<mark>RPC query</mark> 
+
+Parameters:
+
+- `uri` Required string.
+- `cid` Optional string.
+- `limit` Optional number. Max value 100.
+- `before` Optional string.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  uri: string;
+  cid?: string;
+  cursor?: string;
+  members: {
+    did: string;
+    name: string;
+    displayName?: string;
+    offeredAt: string;
+    acceptedAt: string;
+  }[];
+}
+```
+
+---
+
 ## app.bsky.getHomeFeed
 
 <mark>RPC query</mark> A view of the user's home feed
@@ -236,10 +304,10 @@ Output:
 
 ```typescript
 export interface OutputBody {
+  cursor?: string;
   feed: AppBskyGetHomeFeedFeedItem[];
 }
 export interface AppBskyGetHomeFeedFeedItem {
-  cursor: string;
   uri: string;
   cid: string;
   author: AppBskyGetHomeFeedUser;
@@ -299,6 +367,7 @@ Output:
 export interface OutputBody {
   uri: string;
   cid?: string;
+  cursor?: string;
   likedBy: {
     did: string;
     name: string;
@@ -345,6 +414,7 @@ Output:
 
 ```typescript
 export interface OutputBody {
+  cursor?: string;
   notifications: AppBskyGetNotificationsNotification[];
 }
 export interface AppBskyGetNotificationsNotification {
@@ -446,7 +516,7 @@ export interface OutputBody {
   followersCount: number;
   followsCount: number;
   postsCount: number;
-  badges: AppBskyGetProfileBadge[];
+  pinnedBadges: AppBskyGetProfileBadge[];
   myState?: {
     follow?: string;
   };
@@ -458,10 +528,11 @@ export interface AppBskyGetProfileBadge {
   issuer?: {
     did: string;
     name: string;
-    displayName: string;
+    displayName?: string;
   };
   assertion?: {
     type: string;
+    tag?: string;
   };
   createdAt?: string;
 }
@@ -488,6 +559,8 @@ Output:
 ```typescript
 export interface OutputBody {
   uri: string;
+  cid?: string;
+  cursor?: string;
   repostedBy: {
     did: string;
     name: string;
@@ -522,6 +595,7 @@ export interface OutputBody {
     name: string;
     displayName?: string;
   };
+  cursor?: string;
   followers: {
     did: string;
     name: string;
@@ -556,12 +630,70 @@ export interface OutputBody {
     name: string;
     displayName?: string;
   };
+  cursor?: string;
   follows: {
     did: string;
     name: string;
     displayName?: string;
     createdAt?: string;
     indexedAt: string;
+  }[];
+}
+```
+
+---
+
+## app.bsky.getUsersSearch
+
+<mark>RPC query</mark> Find users matching search criteria
+
+Parameters:
+
+- `term` Required string.
+- `limit` Optional number. Max value 100.
+- `before` Optional string.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  cursor?: string;
+  users: {
+    did: string;
+    name: string;
+    displayName?: string;
+    description?: string;
+    createdAt: string;
+    indexedAt: string;
+  }[];
+}
+```
+
+---
+
+## app.bsky.getUsersTypeahead
+
+<mark>RPC query</mark> Find user suggestions for a search term
+
+Parameters:
+
+- `term` Required string.
+- `limit` Optional number. Max value 100.
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  users: {
+    did: string;
+    name: string;
+    displayName?: string;
   }[];
 }
 ```
@@ -592,6 +724,43 @@ Output:
 ```typescript
 export interface OutputBody {
   [k: string]: unknown;
+}
+```
+
+---
+
+## app.bsky.updateProfile
+
+<mark>RPC procedure</mark> Notify server that the user has seen notifications
+
+
+Input:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface InputBody {
+  displayName?: string;
+  description?: string;
+  pinnedBadges?: AppBskyProfileBadgeRef[];
+}
+export interface AppBskyProfileBadgeRef {
+  uri: string;
+  cid: string;
+}
+```
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  uri: string;
+  cid: string;
+  record: {};
 }
 ```
 

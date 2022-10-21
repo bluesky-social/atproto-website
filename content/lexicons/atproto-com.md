@@ -243,18 +243,19 @@ export interface InputBody {
     | {
         action: "create";
         collection: string;
+        rkey?: string;
         value: unknown;
       }
     | {
         action: "update";
         collection: string;
-        tid: string;
+        rkey: string;
         value: unknown;
       }
     | {
         action: "delete";
         collection: string;
-        tid: string;
+        rkey: string;
       }
   )[];
 }
@@ -391,6 +392,7 @@ Output:
 
 ```typescript
 export interface OutputBody {
+  cursor?: string;
   records: {
     uri: string;
     cid: string;
