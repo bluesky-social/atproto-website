@@ -9,6 +9,8 @@ guides:
     href: /guides/lexicon
   - name: Applications
     href: /guides/applications
+  - name: FAQ
+    href: /guides/faq
 specs:
   - name: ATP
     href: /specs/atp
