@@ -71,7 +71,7 @@ function Links({ pages }) {
           key={page.href}
           className="relative flex items-center px-6 py-6 border border-gray-300 rounded-xl mb-4 hover:border-blue-500"
         >
-          <div class="flex-1">
+          <div className="flex-1">
             <h3 className="text-xl leading-6 font-light">
               <Link href={page.href}>
                 <a className="focus:outline-none">
