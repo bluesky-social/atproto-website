@@ -15,24 +15,20 @@ summary: Schemas used in the Bluesky social application.
 
 ```typescript
 export interface Record {
-  assertion:
-    | AppBskyBadgeInviteAssertion
-    | AppBskyBadgeEmployeeAssertion
-    | AppBskyBadgeTagAssertion
-    | AppBskyBadgeUnknownAssertion;
+  assertion: InviteAssertion | EmployeeAssertion | TagAssertion | UnknownAssertion;
   createdAt: string;
 }
-export interface AppBskyBadgeInviteAssertion {
+export interface InviteAssertion {
   type: "invite";
 }
-export interface AppBskyBadgeEmployeeAssertion {
+export interface EmployeeAssertion {
   type: "employee";
 }
-export interface AppBskyBadgeTagAssertion {
+export interface TagAssertion {
   type: "tag";
   tag: string;
 }
-export interface AppBskyBadgeUnknownAssertion {
+export interface UnknownAssertion {
   type: string;
 }
 ```
@@ -45,11 +41,11 @@ export interface AppBskyBadgeUnknownAssertion {
 
 ```typescript
 export interface Record {
-  badge: AppBskyBadgeAcceptSubject;
-  offer: AppBskyBadgeAcceptSubject;
+  badge: Subject;
+  offer: Subject;
   createdAt: string;
 }
-export interface AppBskyBadgeAcceptSubject {
+export interface Subject {
   uri: string;
   cid: string;
 }
@@ -63,11 +59,11 @@ export interface AppBskyBadgeAcceptSubject {
 
 ```typescript
 export interface Record {
-  badge: AppBskyBadgeOfferBadge;
+  badge: Badge;
   subject: string;
   createdAt: string;
 }
-export interface AppBskyBadgeOfferBadge {
+export interface Badge {
   uri: string;
   cid: string;
 }
@@ -94,10 +90,10 @@ export interface Record {
 
 ```typescript
 export interface Record {
-  subject: AppBskyLikeSubject;
+  subject: Subject;
   createdAt: string;
 }
-export interface AppBskyLikeSubject {
+export interface Subject {
   uri: string;
   cid: string;
 }
@@ -111,14 +107,14 @@ export interface AppBskyLikeSubject {
 
 ```typescript
 export interface Record {
-  media: AppBskyMediaEmbedMediaEmbed[];
+  media: MediaEmbed[];
 }
-export interface AppBskyMediaEmbedMediaEmbed {
+export interface MediaEmbed {
   alt?: string;
-  thumb?: AppBskyMediaEmbedMediaEmbedBlob;
-  original: AppBskyMediaEmbedMediaEmbedBlob;
+  thumb?: MediaEmbedBlob;
+  original: MediaEmbedBlob;
 }
-export interface AppBskyMediaEmbedMediaEmbedBlob {
+export interface MediaEmbedBlob {
   mimeType: string;
   blobId: string;
 }
@@ -135,23 +131,23 @@ export interface AppBskyMediaEmbedMediaEmbedBlob {
  * @minItems 2
  * @maxItems 2
  */
-export type AppBskyPostTextSlice = [number, number];
-export type AppBskyPostEntity = {
-  index: AppBskyPostTextSlice;
+export type TextSlice = [number, number];
+export type Entity = {
+  index: TextSlice;
   type: string;
   value: string;
 }[];
 
 export interface Record {
   text: string;
-  entities?: AppBskyPostEntity;
+  entities?: Entity;
   reply?: {
-    root: AppBskyPostPostRef;
-    parent: AppBskyPostPostRef;
+    root: PostRef;
+    parent: PostRef;
   };
   createdAt: string;
 }
-export interface AppBskyPostPostRef {
+export interface PostRef {
   uri: string;
   cid: string;
 }
@@ -167,9 +163,9 @@ export interface AppBskyPostPostRef {
 export interface Record {
   displayName: string;
   description?: string;
-  pinnedBadges?: AppBskyProfileBadgeRef[];
+  pinnedBadges?: BadgeRef[];
 }
-export interface AppBskyProfileBadgeRef {
+export interface BadgeRef {
   uri: string;
   cid: string;
 }
@@ -183,10 +179,10 @@ export interface AppBskyProfileBadgeRef {
 
 ```typescript
 export interface Record {
-  subject: AppBskyRepostSubject;
+  subject: Subject;
   createdAt: string;
 }
-export interface AppBskyRepostSubject {
+export interface Subject {
   uri: string;
   cid: string;
 }
@@ -212,15 +208,15 @@ Output:
 ```typescript
 export interface OutputBody {
   cursor?: string;
-  feed: AppBskyGetAuthorFeedFeedItem[];
+  feed: FeedItem[];
 }
-export interface AppBskyGetAuthorFeedFeedItem {
+export interface FeedItem {
   uri: string;
   cid: string;
-  author: AppBskyGetAuthorFeedUser;
-  repostedBy?: AppBskyGetAuthorFeedUser;
+  author: User;
+  repostedBy?: User;
   record: {};
-  embed?: AppBskyGetAuthorFeedRecordEmbed | AppBskyGetAuthorFeedExternalEmbed | AppBskyGetAuthorFeedUnknownEmbed;
+  embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
   replyCount: number;
   repostCount: number;
   likeCount: number;
@@ -230,24 +226,24 @@ export interface AppBskyGetAuthorFeedFeedItem {
     like?: string;
   };
 }
-export interface AppBskyGetAuthorFeedUser {
+export interface User {
   did: string;
   name: string;
   displayName?: string;
 }
-export interface AppBskyGetAuthorFeedRecordEmbed {
+export interface RecordEmbed {
   type: "record";
-  author: AppBskyGetAuthorFeedUser;
+  author: User;
   record: {};
 }
-export interface AppBskyGetAuthorFeedExternalEmbed {
+export interface ExternalEmbed {
   type: "external";
   uri: string;
   title: string;
   description: string;
   imageUri: string;
 }
-export interface AppBskyGetAuthorFeedUnknownEmbed {
+export interface UnknownEmbed {
   type: string;
 }
 ```
@@ -305,15 +301,15 @@ Output:
 ```typescript
 export interface OutputBody {
   cursor?: string;
-  feed: AppBskyGetHomeFeedFeedItem[];
+  feed: FeedItem[];
 }
-export interface AppBskyGetHomeFeedFeedItem {
+export interface FeedItem {
   uri: string;
   cid: string;
-  author: AppBskyGetHomeFeedUser;
-  repostedBy?: AppBskyGetHomeFeedUser;
+  author: User;
+  repostedBy?: User;
   record: {};
-  embed?: AppBskyGetHomeFeedRecordEmbed | AppBskyGetHomeFeedExternalEmbed | AppBskyGetHomeFeedUnknownEmbed;
+  embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
   replyCount: number;
   repostCount: number;
   likeCount: number;
@@ -323,24 +319,24 @@ export interface AppBskyGetHomeFeedFeedItem {
     like?: string;
   };
 }
-export interface AppBskyGetHomeFeedUser {
+export interface User {
   did: string;
   name: string;
   displayName?: string;
 }
-export interface AppBskyGetHomeFeedRecordEmbed {
+export interface RecordEmbed {
   type: "record";
-  author: AppBskyGetHomeFeedUser;
+  author: User;
   record: {};
 }
-export interface AppBskyGetHomeFeedExternalEmbed {
+export interface ExternalEmbed {
   type: "external";
   uri: string;
   title: string;
   description: string;
   imageUri: string;
 }
-export interface AppBskyGetHomeFeedUnknownEmbed {
+export interface UnknownEmbed {
   type: string;
 }
 ```
@@ -415,9 +411,9 @@ Output:
 ```typescript
 export interface OutputBody {
   cursor?: string;
-  notifications: AppBskyGetNotificationsNotification[];
+  notifications: Notification[];
 }
-export interface AppBskyGetNotificationsNotification {
+export interface Notification {
   uri: string;
   cid: string;
   author: {
@@ -451,17 +447,17 @@ Output:
 
 ```typescript
 export interface OutputBody {
-  thread: AppBskyGetPostThreadPost;
+  thread: Post;
 }
-export interface AppBskyGetPostThreadPost {
+export interface Post {
   uri: string;
   cid: string;
-  author: AppBskyGetPostThreadUser;
+  author: User;
   record: {};
-  embed?: AppBskyGetPostThreadRecordEmbed | AppBskyGetPostThreadExternalEmbed | AppBskyGetPostThreadUnknownEmbed;
-  parent?: AppBskyGetPostThreadPost;
+  embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
+  parent?: Post;
   replyCount: number;
-  replies?: AppBskyGetPostThreadPost[];
+  replies?: Post[];
   likeCount: number;
   repostCount: number;
   indexedAt: string;
@@ -470,24 +466,24 @@ export interface AppBskyGetPostThreadPost {
     like?: string;
   };
 }
-export interface AppBskyGetPostThreadUser {
+export interface User {
   did: string;
   name: string;
   displayName?: string;
 }
-export interface AppBskyGetPostThreadRecordEmbed {
+export interface RecordEmbed {
   type: "record";
-  author: AppBskyGetPostThreadUser;
+  author: User;
   record: {};
 }
-export interface AppBskyGetPostThreadExternalEmbed {
+export interface ExternalEmbed {
   type: "external";
   uri: string;
   title: string;
   description: string;
   imageUri: string;
 }
-export interface AppBskyGetPostThreadUnknownEmbed {
+export interface UnknownEmbed {
   type: string;
 }
 ```
@@ -516,12 +512,12 @@ export interface OutputBody {
   followersCount: number;
   followsCount: number;
   postsCount: number;
-  pinnedBadges: AppBskyGetProfileBadge[];
+  pinnedBadges: Badge[];
   myState?: {
     follow?: string;
   };
 }
-export interface AppBskyGetProfileBadge {
+export interface Badge {
   uri: string;
   cid: string;
   error?: string;
@@ -743,9 +739,9 @@ Input:
 export interface InputBody {
   displayName?: string;
   description?: string;
-  pinnedBadges?: AppBskyProfileBadgeRef[];
+  pinnedBadges?: BadgeRef[];
 }
-export interface AppBskyProfileBadgeRef {
+export interface BadgeRef {
   uri: string;
   cid: string;
 }
