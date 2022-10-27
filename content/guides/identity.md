@@ -124,8 +124,8 @@ await xrpc.service('https://alice.pds.com').com.atproto.resolveName() // => {did
 Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
 
 ```typescript
-await didPlc.resolve('did:pcl:12345') /* => {
-  id: 'did:pcl:12345',
+await didPlc.resolve('did:plc:12345') /* => {
+  id: 'did:plc:12345',
   alsoKnownAs: `https://alice.pds.com`,
   verificationMethod: [...],
   service: [{serviceEndpoint: 'https://pds.com', ...}]
@@ -151,8 +151,8 @@ await xrpc.service('https://alice.com').com.atproto.resolveName() // => {did: 'd
 Then we resolve the DID as before:
 
 ```typescript
-await didPlc.resolve('did:pcl:12345') /* => {
-  id: 'did:pcl:12345',
+await didPlc.resolve('did:plc:12345') /* => {
+  id: 'did:plc:12345',
   alsoKnownAs: `https://alice.com`,
   verificationMethod: [...],
   service: [{serviceEndpoint: 'https://pds.com', ...}]
