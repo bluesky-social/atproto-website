@@ -38,13 +38,13 @@ Lexicon is not RDF. While RDF is effective at describing data, it is not ideal f
 
 ## Schema format
 
-Schemas are JSON objects which follow this interface:
+Schemas are JSON objects which follow this Typescript interface:
 
 ```typescript
 interface LexiconDoc {
   lexicon: 1
   id: string // an NSID
-  type: 'query' | 'procedure' | 'record'
+  type: 'query' | 'procedure' | 'record' | 'token'
   revision?: number
   description?: string
   defs?: JSONSchema
@@ -68,6 +68,7 @@ Notice the structure differs depending on the `type`. The meanings of the type a
 |`query`|An XRPC "read" method (aka GET).|
 |`procedure`|An XRPC "modify" method (aka POST).|
 |`record`|An ATP repository record type.|
+|`token`|A declared identifier with no behaviors associated.|
 
 ## RPC methods
 
@@ -150,6 +151,94 @@ at://bob.com/com.example.follow/1234
     "properties": {
       "subject": { "type": "string" },
       "createdAt": {"type": "string", "format": "date-time"}
+    }
+  }
+}
+```
+
+## Tokens
+
+Tokens declare global identifiers which can be used in data.
+
+Let's say a record schema wanted to specify three possible states for a traffic light: 'red', 'yellow', and 'green'.
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": { "type": "string", "enum": ["red", "yellow", "green"] },
+    }
+  }
+}
+```
+
+This is perfectly acceptable, but it's not extensible. You could never add new states, like "flashing yellow" or "purple" (who knows, it could happen).
+
+To add flexibility, you could remove the enum constraint and just document the possible values:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": {
+        "type": "string",
+        "description": "Suggested values: red, yellow, green"
+      },
+    }
+  }
+}
+```
+
+This isn't bad, but it lacks specificity. People inventing new values for state are likely to collide with each other, and there won't be clear documentation on each state.
+
+Instead, you can define Lexicon tokens for the values you use:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.green",
+  "type": "token",
+  "description": "A possible traffic light state.",
+}
+{
+  "lexicon": 1,
+  "id": "com.example.yellow",
+  "type": "token",
+  "description": "A possible traffic light state.",
+}
+{
+  "lexicon": 1,
+  "id": "com.example.red",
+  "type": "token",
+  "description": "A possible traffic light state.",
+}
+```
+
+This gives us unambiguous values to use in our trafficLight state. The final schema will still use flexible validation, but other teams will have more clarity on where the values originate from and how to add their own:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": {
+        "type": "string",
+        "description": "Suggested values: com.example.red, com.example.yellow, com.example.green"
+      },
     }
   }
 }

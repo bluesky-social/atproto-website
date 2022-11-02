@@ -13,7 +13,7 @@ Lexicon is a schemas document format used to define [XRPC](./xrpc) methods and r
 interface LexiconDoc {
   lexicon: 1
   id: string // an NSID
-  type: 'query' | 'procedure' | 'record'
+  type: 'query' | 'procedure' | 'record' | 'token'
   revision?: number
   description?: string
   defs?: JSONSchema
@@ -105,7 +105,7 @@ interface XrpcError {
 ```json
 {
   "lexicon": 1,
-  "id": "todo.social.repost",
+  "id": "com.socialapp.repost",
   "type": "record",
   "record": {
     "type": "object",
@@ -115,5 +115,16 @@ interface XrpcError {
       "createdAt": {"type": "string", "format": "date-time"}
     }
   }
+}
+```
+
+### Token
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.socialapp.actorUser",
+  "type": "token",
+  "description": "Actor type of 'User'"
 }
 ```
