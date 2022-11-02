@@ -25,6 +25,7 @@ export interface InputBody {
   username: string;
   inviteCode?: string;
   password: string;
+  recoveryKey?: string;
 }
 ```
 
@@ -35,9 +36,11 @@ Output:
 
 ```typescript
 export interface OutputBody {
-  jwt: string;
+  accessJwt: string;
+  refreshJwt: string;
   username: string;
   did: string;
+  declarationCid: string;
 }
 ```
 
@@ -96,7 +99,8 @@ Output:
 
 ```typescript
 export interface OutputBody {
-  jwt: string;
+  accessJwt: string;
+  refreshJwt: string;
   name: string;
   did: string;
 }
@@ -136,18 +140,9 @@ export interface OutputBody {
 <mark>RPC procedure</mark> Delete the current session.
 
 
-Input:
-
-- Schema:
-
-```typescript
-export interface InputBody {
-  [k: string]: unknown;
-}
-```
-
 Output:
 
+- Encoding: application/json
 - Schema:
 
 ```typescript
@@ -216,6 +211,27 @@ Output:
 
 ```typescript
 export interface OutputBody {
+  name: string;
+  did: string;
+}
+```
+
+---
+
+## com.atproto.refreshSession
+
+<mark>RPC procedure</mark> Refresh an authentication session.
+
+
+Output:
+
+- Encoding: application/json
+- Schema:
+
+```typescript
+export interface OutputBody {
+  accessJwt: string;
+  refreshJwt: string;
   name: string;
   did: string;
 }

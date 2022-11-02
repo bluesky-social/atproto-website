@@ -71,13 +71,68 @@ export interface Badge {
 
 ---
 
+## app.bsky.declaration
+
+<mark>Record type</mark> Context for an account that is considered intrinsic to it and alters the fundamental understanding of an account of changed. A declaration should be treated as immutable.
+
+```typescript
+export type ActorKnown = "app.bsky.actorUser" | "app.bsky.actorScene";
+export type ActorUnknown = string;
+
+export interface Record {
+  actorType: ActorKnown | ActorUnknown;
+}
+```
+
+---
+
 ## app.bsky.follow
 
 <mark>Record type</mark> A social follow
 
 ```typescript
 export interface Record {
-  subject: string;
+  subject: {
+    did: string;
+    declarationCid: string;
+  };
+  createdAt: string;
+}
+```
+
+---
+
+## app.bsky.invite
+
+<mark>Record type</mark> 
+
+```typescript
+export interface Record {
+  group: string;
+  subject: {
+    did: string;
+    declarationCid: string;
+  };
+  createdAt: string;
+}
+```
+
+---
+
+## app.bsky.inviteAccept
+
+<mark>Record type</mark> 
+
+```typescript
+export interface Record {
+  group: {
+    did: string;
+    declarationCid: string;
+  };
+  invite: {
+    uri: string;
+    cid: string;
+  };
   createdAt: string;
 }
 ```
@@ -132,20 +187,20 @@ export interface MediaEmbedBlob {
  * @maxItems 2
  */
 export type TextSlice = [number, number];
-export type Entity = {
-  index: TextSlice;
-  type: string;
-  value: string;
-}[];
 
 export interface Record {
   text: string;
-  entities?: Entity;
+  entities?: Entity[];
   reply?: {
     root: PostRef;
     parent: PostRef;
   };
   createdAt: string;
+}
+export interface Entity {
+  index: TextSlice;
+  type: string;
+  value: string;
 }
 export interface PostRef {
   uri: string;
@@ -662,8 +717,7 @@ export interface OutputBody {
     name: string;
     displayName?: string;
     description?: string;
-    createdAt: string;
-    indexedAt: string;
+    indexedAt?: string;
   }[];
 }
 ```
@@ -759,5 +813,17 @@ export interface OutputBody {
   record: {};
 }
 ```
+
+---
+
+## app.bsky.actorScene
+
+<mark>Token</mark> Actor type: Scene. Defined for app.bsky.declaration's actorType.
+
+---
+
+## app.bsky.actorUser
+
+<mark>Token</mark> Actor type: User. Defined for app.bsky.declaration's actorType.
 
 <!-- END lex generated TOC please keep comment here to allow auto update -->
