@@ -15,19 +15,19 @@ Lexicon is a schema system used to define RPC methods and record types. Every Le
 The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS format. Here are some example methods:
 
 ```typescript
-com.atproto.repoGetRecord()
-com.atproto.syncGetRepo()
-app.bsky.getPostThread()
-app.bsky.getNotifications()
+com.atproto.repo.getRecord()
+com.atproto.handle.resolve()
+app.bsky.feed.getPostThread()
+app.bsky.notification.list()
 ```
 
 And here are some example record types:
 
 ```typescript
-app.bsky.post
-app.bsky.profile
-app.bsky.like
-app.bsky.follow
+app.bsky.fed.post
+app.bsky.feed.like
+app.bsky.actor.profile
+app.bsky.graph.follow
 ```
 
 ## Why is Lexicon needed?
@@ -75,13 +75,13 @@ Notice the structure differs depending on the `type`. The meanings of the type a
 AT Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. A call to:
 
 ```typescript
-app.bsky.getPostThread()
+com.example.getProfile()
 ```
 
 is actually just an HTTP request:
 
 ```text
-GET /xrpc/app.bsky.getPostThread
+GET /xrpc/com.example.getProfile
 ```
 
 The schemas establish valid query parameters, request bodies, and response bodies.

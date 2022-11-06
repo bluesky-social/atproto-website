@@ -36,18 +36,18 @@ We looked very closely at using RDF but just didn't love the DX or the tooling i
 XRPC uses [Lexicon](/guides/lexicon) to describe HTTP calls and maps them to `/xrpc/{methodId}`. For example, this API call:
 
 ```typescript
-await api.com.atproto.repoListRecords({
+await api.com.atproto.repo.listRecords({
   user: 'alice.com',
-  collection: 'app.bsky.post'
+  collection: 'app.bsky.feed.post'
 })
 ```
 
 Maps to
 
 ```text
-GET /xrpc/com.atproto.repoListRecords
+GET /xrpc/com.atproto.repo.listRecords
   ?user=alice.com
-  &collection=app.bsky.post
+  &collection=app.bsky.feed.post
 ```
 
-Lexicon establishes a shared method id (`com.atproto.repoListRecords`) and the expected query params, input body, and output body. By using Lexicon we get runtime checks on the inputs and outputs of the call, and can generate typed code like the API call example above.
+Lexicon establishes a shared method id (`com.atproto.repo.listRecords`) and the expected query params, input body, and output body. By using Lexicon we get runtime checks on the inputs and outputs of the call, and can generate typed code like the API call example above.

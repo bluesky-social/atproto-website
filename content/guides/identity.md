@@ -2,7 +2,7 @@
 title: Identity
 summary: How the AT Protocol handles user identity.
 tldr:
-  - Every user has a domain name like @alice.com
+  - Every user has a domain name like @alice.host.com or just @alice.com
   - Every user also has a persistent "DID" which enables migration between hosts
   - The DID maps to users' keys and host addresses
 ---
@@ -22,21 +22,21 @@ Adopting this system should give applications the tools for end-to-end encryptio
 
 ## Identifiers
 
-We use two interrelated forms of identifiers: the _username_ and the _DID_. Usernames are DNS names while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
+We use two interrelated forms of identifiers: the _handle_ and the _DID_. Handles are DNS names while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
 
 The following are all valid user identifers:
 
-<pre><code>@alice.com
-at://alice.com
+<pre><code>@alice.host.com
+at://alice.host.com
 at://did:plc:bv6ggog3tya2z3vxsub7hnal
 </code></pre>
 
 The relationship between them can be visualized as:
 
-<pre style="line-height: 1.2;"><code>┌─────────────┐                     ┌───────────────┐ 
-│ DNS name    ├────resolves to────→ │ DID           │
-│ (alice.com) │                     │ (did:plc:...) │
-└─────────────┘                     └──────┬────────┘
+<pre style="line-height: 1.2;"><code>┌──────────────────┐                 ┌───────────────┐ 
+│ DNS name         ├──resolves to──→ │ DID           │
+│ (alice.host.com) │                 │ (did:plc:...) │
+└──────────────────┘                 └─────┬─────────┘
        ↑                                   │
        │                               resolves to
        │                                   │
@@ -47,13 +47,13 @@ The relationship between them can be visualized as:
                                     └───────────────┘
 </code></pre>
 
-The DNS username is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve usernames to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.
+The DNS handle is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve handles to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.
 
 <table>
   <tr>
-   <td><strong>Usernames</strong>
+   <td><strong>Handles</strong>
    </td>
-   <td>Usernames are DNS names. They are resolved using the <a href="/lexicons/atproto-com">resolveName()</a> XRPC method and should be confirmed by a matching entry in the DID document.
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-handle">com.atproto.handle.resolve()</a> XRPC method and should be confirmed by a matching entry in the DID document.
    </td>
   </tr>
   <tr>
@@ -68,7 +68,7 @@ The DNS username is a user-facing identifier — it should be shown in UIs and p
    <td>
     DID Documents are standardized objects which are hosted by DID registries. They include the following information:
     <ul>
-      <li>The username associated with the DID.</li>
+      <li>The handle associated with the DID.</li>
       <li>The signing key.</li>
       <li>The URL of the user’s PDS.</li>
     </ul>
@@ -90,18 +90,18 @@ The [DID standard](https://www.w3.org/TR/did-core/) supports custom "methods" of
 
 At present, none of the DID methods meet our standards fully. **Therefore we have chosen to support [did-web](https://w3c-ccg.github.io/did-method-web/) and a temporary method we've created called [did-placeholder](/specs/did-plc).** We expect this situation to evolve as new solutions emerge.
 
-## Name Resolution
+## Handle Resolution
 
-Usernames in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
+Handles in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Name resolution uses the [`com.atproto.resolveName`](/lexicons/atproto-com) xrpc method. The method call should be sent to the server identified by the username, and the name should be passed as a parameter.
+Handle resolution uses the [`com.atproto.handle.resolve`](/lexicons/com-atproto-handle) xrpc method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
 
 Here is the algorithm in pseudo-typescript:
 
 ```typescript
-async function resolveName(name: string) {
-  const origin = `https://${name}`
-  const res = await xrpc(origin, 'com.atproto.resolveName', {name})
+async function resolveHandle(handle: string) {
+  const origin = `https://${handle}`
+  const res = await xrpc(origin, 'com.atproto.handle.resolve', {handle})
   assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
   return res.did
 }
@@ -109,16 +109,16 @@ async function resolveName(name: string) {
 
 ### Example: Hosting service
 
-Consider a scenario where a hosting service is using PLC and is providing the username for the user as a subdomain:
+Consider a scenario where a hosting service is using PLC and is providing the handle for the user as a subdomain:
 
-- The username: `alice.pds.com`
+- The handle: `alice.pds.com`
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-At first, all we know is `alice.pds.com`, so we call `com.atproto.resolveName()` on `alice.pds.com`. This tells us the DID.
+At first, all we know is `alice.pds.com`, so we call `com.atproto.handle.resolve()` on `alice.pds.com`. This tells us the DID.
 
 ```typescript
-await xrpc.service('https://alice.pds.com').com.atproto.resolveName() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.pds.com').com.atproto.handle.resolve() // => {did: 'did:plc:12345'}
 ```
 
 Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
@@ -138,14 +138,14 @@ We can now communicate with `https://pds.com` to access Alice's data.
 
 Suppose we have the same scenario as before, except the user has supplied their own domain name:
 
-- The username: `alice.com` (this differs from before)
+- The handle: `alice.com` (this differs from before)
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-We call `com.atproto.resolveName()` on `alice.com` to get the DID.
+We call `com.atproto.handle.resolve()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').com.atproto.resolveName() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.com').com.atproto.handle.resolve() // => {did: 'did:plc:12345'}
 ```
 
 Then we resolve the DID as before:
@@ -159,26 +159,26 @@ await didPlc.resolve('did:plc:12345') /* => {
 }*/
 ```
 
-We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.resolveName()` call. The actual userdata lives on `pds.com`.
+We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.handle.resolve()` call. The actual userdata lives on `pds.com`.
 
 ### Example: Self-hosted
 
 Let's consider a self-hosting scenario. If using did:plc, it would look something like:
 
-- The username: `alice.com`
+- The handle: `alice.com`
 - The DID: `did:plc:12345`
 - The hosting service: `https://alice.com`
 
 However, **if the self-hoster is confident they will retain ownership of the domain name**, they can use did:web instead of did:plc:
 
-- The username: `alice.com`
+- The handle: `alice.com`
 - The DID: `did:web:alice.com`
 - The hosting service: `https://alice.com`
 
-We call `com.atproto.resolveName()` on `alice.com` to get the DID.
+We call `com.atproto.handle.resolve()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').com.atproto.resolveName() // => {did: 'did:web:alice.com'}
+await xrpc.service('https://alice.com').com.atproto.handle.resolve() // => {did: 'did:web:alice.com'}
 ```
 
 We then resolve using did:web:

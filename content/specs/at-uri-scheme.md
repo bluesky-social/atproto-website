@@ -48,7 +48,7 @@ Some example `at` URLs:
 <table class="uri-examples">
   <tr>
     <td>Repository</td>
-    <td><code>at://bob.com</code></td>
+    <td><code>at://alice.host.com</code></td>
   </tr>
   <tr>
     <td>Repository</td>
@@ -56,15 +56,15 @@ Some example `at` URLs:
   </tr>
   <tr>
     <td>Collection</td>
-    <td><code>at://bob.com/io.example.song</code></td>
+    <td><code>at://alice.host.com/io.example.song</code></td>
   </tr>
   <tr>
     <td>Record</td>
-    <td><code>at://bob.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
+    <td><code>at://alice.host.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
   </tr>
   <tr>
     <td>Record Field</td>
-    <td><code>at://bob.com/io.example.song/3yI5-c1z-cc2p-1a#/title</code></td>
+    <td><code>at://alice.host.com/io.example.song/3yI5-c1z-cc2p-1a#/title</code></td>
   </tr>
 </table>
 

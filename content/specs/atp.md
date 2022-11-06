@@ -36,12 +36,12 @@ wip: true
 
 - **Client**: The application running on the user's device. Interacts with the network through a PDS.
 - **Personal Data Server (PDS)**: A server hosting user data. Acts as the user's personal agent on the network.
-- **Name server**. A server mapping domains to DIDs via the `resolveName()` API. Often a PDS.
+- **Name server**. A server mapping domains to DIDs via the `com.atproto.handle.resolve()` API. Often a PDS.
 - **Crawling indexer**. A service that is crawling the server to produce aggregated views.
 
 ## Wire protocol (XRPC)
 
-ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The [atproto.com lexicon](/lexicons/atproto-com) enumerates all xrpc methods used in ATP.
+ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The atproto.com lexicons enumerate all xrpc methods used in ATP.
 
 ## Identifiers
 
@@ -56,7 +56,7 @@ The following identifiers are used in ATP:
 
 ### Domain names
 
-Domain names (aka "usernames") weakly identify repositories. They are a convenience which should be used in UIs but rarely used within records to reference data as they may change at any time. The repo DID is preferred to provide a stable identifier.
+Domain names (aka "handles") weakly identify repositories. They are a convenience which should be used in UIs but rarely used within records to reference data as they may change at any time. The repo DID is preferred to provide a stable identifier.
 
 ### DIDs
 
@@ -80,7 +80,7 @@ ATP uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some exampl
 <table class="uri-examples">
   <tr>
     <td>Repository</td>
-    <td><code>at://bob.com</code></td>
+    <td><code>at://alice.host.com</code></td>
   </tr>
   <tr>
     <td>Repository</td>
@@ -88,11 +88,11 @@ ATP uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some exampl
   </tr>
   <tr>
     <td>Collection</td>
-    <td><code>at://bob.com/io.example.song</code></td>
+    <td><code>at://alice.host.com/io.example.song</code></td>
   </tr>
   <tr>
     <td>Record</td>
-    <td><code>at://bob.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
+    <td><code>at://alice.host.com/io.example.song/3yI5-c1z-cc2p-1a</code></td>
   </tr>
   <tr>
     <td>Record Field</td>
@@ -263,92 +263,14 @@ The client-to-server API drives communication between a client application and t
 
 ### ATP core lexicon
 
-The [atproto.com lexicon](/lexicons/atproto-com) provides the following behaviors:
+The com.atproto.* lexicons provides the following behaviors:
 
-<table class="api-table">
-  <tr>
-    <td colspan="2" class="api-table-head">Service information</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atprotatpotogetaccountsconfig">getAccountsConfig()</a></code></td>
-    <td>Fetches information about the service's accounts system, including supported features and user requirements for signup.</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="api-table-head">Names</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotoresolvename">resolveName()</a></code></td>
-    <td>Resolves a domain name to a DID.</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="api-table-head">Repository operations</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepobatchwrite">repoBatchWrite()</a></code></td>
-    <td>Executes a batch of put and delete operations in a single atomic transaction.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepocreaterecord">repoCreateRecord()</a></code></td>
-    <td>Adds a new record to a repo collection, automatically generating a unique TID.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepodeleterecord">repoDeleteRecord()</a></code></td>
-    <td>Deletes a record from a repo collection.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepodescribe">repoDescribe()</a></code></td>
-    <td>Describes the repo, including a list of the available collections.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepogetrecord">repoGetRecord()</a></code></td>
-    <td>Fetches a record from a repo collection.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepolistrecords">repoListRecords()</a></code></td>
-    <td>Lists records in a repo collection.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotorepoputrecord">repoPutRecord()</a></code></td>
-    <td>Overwrites a record in a repo collection at a given key.</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="api-table-head">Account management</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotocreateaccount">createAccount()</a></code></td>
-    <td>Creates a new account. May need to supply data according to the `getAccountsConfig()` data.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotogetaccount">getAccount()</a></code></td>
-    <td>Gets the current session's account data.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotodeleteaccount">deleteAccount()</a></code></td>
-    <td>Deletes the current session's account.</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="api-table-head">Session management</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotocreatesession">createSession()</a></code></td>
-    <td>Creates a new active session with the service.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotogetsession">getSession()</a></code></td>
-    <td>Fetches information about the active session with the service.</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotodeletesession">deleteSession()</a></code></td>
-    <td>Removes any record of the active session with the service.</td>
-  </tr>
-  <tr>
-    <td colspan="2" class="api-table-head">Administration</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotocreateinvitecode">createInviteCode()</a></code></td>
-    <td>Creates an invite code to be used in account creation.</td>
-  </tr>
-</table>
+- [com.atproto.server](/lexicons/com-atproto-server). Server information.
+- [com.atproto.session](/lexicons/com-atproto-session). Session management.
+- [com.atproto.account](/lexicons/com-atproto-account). Account management.
+- [com.atproto.handle](/lexicons/com-atproto-handle). Handle resolution.
+- [com.atproto.repo](/lexicons/com-atproto-repo). Repo CRUD operations.
+- [com.atproto.sync](/lexicons/com-atproto-sync). Repo sync.
 
 ### Additional lexicons
 
@@ -361,25 +283,3 @@ The server-to-server APIs enable federation, event delivery, and global indexing
 ### Authentication
 
 <div class="todo">Describe how servers may authenticate with each other</div>
-
-### ATP core lexicon
-
-The [atproto.com lexicon](/lexicons/atproto-com) provides the following behaviors:
-
-<table class="api-table">
-  <tr>
-    <td colspan="2" class="api-table-head">Repository sync</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotosyncgetrepo">syncGetRepo()</a></code></td>
-    <td>TODO</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotosyncgetroot">syncGetRoot()</a></code></td>
-    <td>TODO</td>
-  </tr>
-  <tr>
-    <td><code><a href="/lexicons/atproto-com#comatprotoupdaterepo">updateRepo()</a></code></td>
-    <td>TODO</td>
-  </tr>
-</table>

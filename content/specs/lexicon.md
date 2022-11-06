@@ -61,20 +61,20 @@ interface XrpcError {
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.createAccount",
+  "id": "com.atproto.account.create",
   "type": "procedure",
   "description": "Create an account.",
-  "parameters": {},
   "input": {
     "encoding": "application/json",
     "schema": {
       "type": "object",
-      "required": ["email", "username", "password"],
+      "required": ["handle", "email", "password"],
       "properties": {
         "email": {"type": "string"},
-        "username": {"type": "string"},
+        "handle": {"type": "string"},
         "inviteCode": {"type": "string"},
-        "password": {"type": "string"}
+        "password": {"type": "string"},
+        "recoveryKey": {"type": "string"}
       }
     }
   },
@@ -82,22 +82,24 @@ interface XrpcError {
     "encoding": "application/json",
     "schema": {
       "type": "object",
-      "required": ["jwt", "name", "did"],
+      "required": ["accessJwt", "refreshJwt", "handle", "did", "declarationCid"],
       "properties": {
-        "jwt": { "type": "string" },
-        "name": {"type": "string"},
-        "did": {"type": "string"}
+        "accessJwt": { "type": "string" },
+        "refreshJwt": { "type": "string" },
+        "handle": { "type": "string" },
+        "did": { "type": "string" },
+        "declarationCid": { "type": "string" }
       }
     }
   },
   "errors": [
-    {"name": "InvalidEmail"},
-    {"name": "InvalidUsername"},
+    {"name": "InvalidHandle"},
     {"name": "InvalidPassword"},
     {"name": "InvalidInviteCode"},
-    {"name": "UsernameTaken"},
+    {"name": "HandleNotAvailable"}
   ]
 }
+
 ```
 
 ### ATP Record Type
