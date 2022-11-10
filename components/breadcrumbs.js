@@ -8,7 +8,7 @@ export default function Breadcrumbs({ pages }) {
         <li>
           <div>
             <Link href="/">
-              <a className="text-gray-400 hover:text-gray-500">
+              <a className="text-gray-500 hover:text-gray-600">
                 <HomeIcon
                   className="h-5 w-5 flex-shrink-0"
                   aria-hidden="true"

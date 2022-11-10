@@ -56,7 +56,7 @@ export default function Header() {
       <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
         <div className="flex justify-start">
           <Link href="/">
-            <a>
+            <a tabIndex="0">
               <span className="sr-only">ATP</span>
               <img className="h-10 w-auto" src="/logo.jpg" alt="" />
             </a>
@@ -69,11 +69,12 @@ export default function Header() {
           </Popover.Button>
         </div>
         <nav className="hidden space-x-10 md:flex">
-          {SiteSections.map((item) => (
+          {SiteSections.map((item, i) => (
             <Link key={item.href} href={item.href}>
               <a
                 title={item.name}
                 className="text-base font-medium text-gray-500 hover:text-gray-900"
+                tabIndex={i}
               >
                 {item.name}
               </a>

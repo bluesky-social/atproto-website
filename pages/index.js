@@ -59,7 +59,7 @@ function FeaturesSection() {
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
           The AT Protocol is a networking technology created by{' '}
           <Link href="https://blueskyweb.xyz">
-            <a className="text-blue-500 hover:underline">Bluesky</a>
+            <a className="text-blue-600 hover:underline">Bluesky</a>
           </Link>{' '}
           to power the next generation of social applications.
         </p>

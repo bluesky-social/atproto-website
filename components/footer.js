@@ -60,14 +60,14 @@ export default function Footer() {
         <div className="mt-8 flex justify-center space-x-6">
           {navigation.social.map((item) => (
             <Link key={item.name} href={item.href}>
-              <a className="text-gray-400 hover:text-gray-500">
+              <a className="text-gray-500 hover:text-gray-600">
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>
             </Link>
           ))}
         </div>
-        <p className="mt-8 text-center text-base text-gray-400">
+        <p className="mt-8 text-center text-base text-gray-500">
           &copy; 2022 Bluesky, PBLLC. All rights reserved.
         </p>
       </div>
