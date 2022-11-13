@@ -11,7 +11,7 @@ Definitions related to content & activity published in Bluesky.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## app.bsky.feed.like
+## app.bsky.feed.vote
 
 <mark>Record type</mark> 
 
@@ -128,11 +128,12 @@ export interface FeedItem {
   embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
   replyCount: number;
   repostCount: number;
-  likeCount: number;
+  upvoteCount: number;
   indexedAt: string;
   myState?: {
     repost?: string;
-    like?: string;
+    upvote?: string;
+    downvote?: string;
   };
 }
 export interface User {
@@ -159,7 +160,7 @@ export interface UnknownEmbed {
 
 ---
 
-## app.bsky.feed.getLikedBy
+## app.bsky.feed.getVotes
 
 <mark>RPC query</mark> 
 
@@ -167,6 +168,7 @@ Parameters:
 
 - `uri` Required string.
 - `cid` Optional string.
+- `direction` Optional string ('up' or 'down').
 - `limit` Optional number. Max value 100.
 - `before` Optional string.
 
@@ -177,16 +179,15 @@ Response:
 
 ```typescript
 export interface Response {
-  uri: string;
-  cid?: string;
-  cursor?: string;
-  likedBy: {
-    did: string;
-    handle: string;
-    displayName?: string;
-    createdAt?: string;
-    indexedAt: string;
-  }[];
+    uri: string;
+    cid?: string;
+    cursor?: string;
+    votes: {
+        direction: 'up' | 'down';
+        indexedAt: string;
+        createdAt: string;
+        actor: Actor;
+    }[];
 }
 ```
 
@@ -211,21 +212,23 @@ export interface Response {
   thread: Post;
 }
 export interface Post {
-  uri: string;
-  cid: string;
-  author: User;
-  record: {};
-  embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
-  parent?: Post;
-  replyCount: number;
-  replies?: Post[];
-  likeCount: number;
-  repostCount: number;
-  indexedAt: string;
-  myState?: {
-    repost?: string;
-    like?: string;
-  };
+    uri: string;
+    cid: string;
+    author: User;
+    record: {};
+    embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
+    parent?: Post;
+    replyCount: number;
+    replies?: Post[];
+    repostCount: number;
+    upvoteCount: number;
+    downvoteCount: number;
+    indexedAt: string;
+    myState?: {
+        repost?: string;
+        upvote?: string;
+        downvote?: string;
+    };
 }
 export interface User {
   did: string;
@@ -305,20 +308,23 @@ export interface Response {
   feed: FeedItem[];
 }
 export interface FeedItem {
-  uri: string;
-  cid: string;
-  author: User;
-  repostedBy?: User;
-  record: {};
-  embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
-  replyCount: number;
-  repostCount: number;
-  likeCount: number;
-  indexedAt: string;
-  myState?: {
-    repost?: string;
-    like?: string;
-  };
+    uri: string;
+    cid: string;
+    author: Actor;
+    trendedBy?: Actor;
+    repostedBy?: Actor;
+    record: {};
+    embed?: RecordEmbed | ExternalEmbed | UnknownEmbed;
+    replyCount: number;
+    repostCount: number;
+    upvoteCount: number;
+    downvoteCount: number;
+    indexedAt: string;
+    myState?: {
+        repost?: string;
+        upvote?: string;
+        downvote?: string;
+    };
 }
 export interface User {
   did: string;
