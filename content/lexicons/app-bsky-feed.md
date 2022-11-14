@@ -129,6 +129,7 @@ export interface FeedItem {
   replyCount: number;
   repostCount: number;
   upvoteCount: number;
+  downvoteCount: number;
   indexedAt: string;
   myState?: {
     repost?: string;
