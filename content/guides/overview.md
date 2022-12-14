@@ -1,6 +1,7 @@
 ---
 title: Protocol Overview
 summary: An introduction to the AT Protocol.
+
 ---
 
 # Protocol Overview
@@ -9,13 +10,13 @@ The **Authenticated Transfer Protocol**, aka **ATP**, is a protocol for large-sc
 
 ## Identity
 
-Users are identified by domain names in AT Protocol. These domains map to cryptographic URLs which secure the user's account and its data.
+Participants are identified by domain names in AT Protocol. These domains map to cryptographic URLs which secure the participant's account and its data.
 
 ![Identities](/img/identities.jpg)
 
 ## Data repositories
 
-User data is exchanged in [signed data repositories](/guides/data-repos). These repositories are collections of records which include posts, comments, likes, follows, media blobs, etc.
+Participant data is exchanged in [signed data repositories](/guides/data-repos). These repositories are collections of records which include posts, comments, likes, follows, media blobs, etc.
 
 ![Data repos](/img/data-repos.jpg)
 
@@ -27,7 +28,7 @@ ATP syncs the repositories in a federated networking model. Federation was chose
 
 ## Interoperation
 
-A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/atproto-com) for syncing user repositories and the [Bsky Lexicon](/lexicons/bsky-app) to provide basic social behaviors.
+A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/atproto-com) for syncing participant repositories and the [Bsky Lexicon](/lexicons/bsky-app) to provide basic social behaviors.
 
 ![Interop](/img/interop.jpg)
 
@@ -37,39 +38,39 @@ While the Web exchanges documents, the AT Protocol exchanges schematic and seman
 
 ATP distinguishes between "small-world" vs "big-world" networking. *Small-world* networking encompass inter-personal activity while *big-world* networking aggregates activity outside of the user's personal interactions. 
 
-* **Small-world**: delivery of events targeted at specific users such as mentions, replies, and DMs, and sync of datasets according to follow graphs.
-* **Big-world**: large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
+* **Small-world**: delivery of events targeted at specific participants such as mentions, replies, and DMs, and sync of datasets according to follow graphs.
+* **Big-world**: large-scale metrics (likes, reposts, followers), content discovery (algorithms), and participant search.
 
 Personal Data Servers (PDS) are responsible for small-world networking while indexing services separately crawl the network to provide big-world networking.
 
 ![Small world, Big world](/img/small-big-world.jpg)
 
-The small-world/big-world distinction is intended to achieve scale as well as a high degree of user-choice. 
+The small-world/big-world distinction is intended to achieve scale as well as a high degree of customization.
 
 ## Algorithmic choice
 
-As with Web search engines, users are free to select their indexers. Each feed, discovery section, or search interface is integrated into the PDS while being served from a third party service.
+As with Web search engines, participants are free to select their indexers. Each feed, discovery section, or search interface is integrated into the PDS while being served from a third party service.
 
 ![Algorithmic choice](/img/algorithmic-choice.jpg)
 
 ## Account portability
 
-We assume that a Personal Data Server may fail at any time, either by going offline in its entirety or by ceasing service for specific users. ATP's goal is to ensure that a user can migrate their account to a new PDS without the server's involvement.
+We assume that a Personal Data Server may fail at any time, either by going offline in its entirety or by ceasing service for specific participants. ATP's goal is to ensure that a participant can migrate their account to a new PDS without the server's involvement.
 
-User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. They are expected to be secure, reliable, and independent of the users' PDS.
+Participant data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of participant certificates, similar in some ways to the TLS certificate system. They are expected to be secure, reliable, and independent of the participants' PDS.
 
 ![DID Documents](/img/did-doc.jpg)
 
 Each DID Document publishes two public keys: a signing key and a recovery key.
 
-* **Signing key**: Asserts changes to the DID Document *and* to the user's data repository.
+* **Signing key**: Asserts changes to the DID Document *and* to the participant's data repository.
 * **Recovery key**: Asserts changes to the DID Document; may override the signing key within a 72-hour window.
 
-The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, eg as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+The signing key is entrusted to the PDS so that it can manage the participant's data, but the recovery key is saved by the participant, e.g. as a paper key. This makes it possible for the participant to update their account to a new PDS without the original host's help.
 
 ![Account recovery](/img/recovery.jpg)
 
-A backup of the user’s data is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
+A backup of the participant’s data is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the participant should be able to migrate to a new provider by updating their DID Document and uploading the backup.
 
 ## Speech, reach, and moderation
 
