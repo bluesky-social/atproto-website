@@ -35,7 +35,7 @@ While the Web exchanges documents, the AT Protocol exchanges schematic and seman
 
 ## Achieving scale
 
-ATP distinguishes between "small-world" vs "big-world" networking. *Small-world* networking encompass inter-personal activity while *big-world* networking aggregates activity outside of the user's personal interactions. 
+ATP distinguishes between "small-world" vs "big-world" networking. *Small-world* networking encompasses inter-personal activity while *big-world* networking aggregates activity outside of the user's personal interactions. 
 
 * **Small-world**: delivery of events targeted at specific users such as mentions, replies, and DMs, and sync of datasets according to follow graphs.
 * **Big-world**: large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
@@ -54,7 +54,7 @@ As with Web search engines, users are free to select their indexers. Each feed, 
 
 ## Account portability
 
-We assume that a Personal Data Server may fail at any time, either by going offline in its entirety or by ceasing service for specific users. ATP's goal is to ensure that a user can migrate their account to a new PDS without the server's involvement.
+We assume that a Personal Data Server may fail at any time, either by going offline in its entirety, or by ceasing service for specific users. ATP's goal is to ensure that a user can migrate their account to a new PDS without the server's involvement.
 
 User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. They are expected to be secure, reliable, and independent of the users' PDS.
 
@@ -65,7 +65,7 @@ Each DID Document publishes two public keys: a signing key and a recovery key.
 * **Signing key**: Asserts changes to the DID Document *and* to the user's data repository.
 * **Recovery key**: Asserts changes to the DID Document; may override the signing key within a 72-hour window.
 
-The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, eg as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
 
 ![Account recovery](/img/recovery.jpg)
 
