@@ -73,7 +73,7 @@ A backup of the user’s data is persistently synced to their client as a backup
 
 ## Speech, reach, and moderation
 
-ATP's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain a neutral, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+ATP's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain neutral, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
 ![Speech vs Reach](/img/speech-vs-reach.jpg)
 
