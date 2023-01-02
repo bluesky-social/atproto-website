@@ -13,50 +13,108 @@ Definitions related to cross-server sync in ATP.
 
 ## com.atproto.sync.getRepo
 
-<mark>RPC query</mark> Gets the repo state.
-
-Parameters:
-
-- `did` Required string. The DID of the repo.
-- `from` Optional string. A past commit CID
-
-Response:
-
-- Encoding: application/cbor
-
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.sync.getRepo",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Gets the repo state.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "did"
+        ],
+        "properties": {
+          "did": {
+            "type": "string",
+            "description": "The DID of the repo."
+          },
+          "from": {
+            "type": "string",
+            "description": "A past commit CID."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/cbor"
+      }
+    }
+  }
+}
+```
 ---
 
 ## com.atproto.sync.getRoot
 
-<mark>RPC query</mark> Gets the current root CID of a repo.
-
-Parameters:
-
-- `did` Required string. The DID of the repo.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  root: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.sync.getRoot",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Gets the current root CID of a repo.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "did"
+        ],
+        "properties": {
+          "did": {
+            "type": "string",
+            "description": "The DID of the repo."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "root"
+          ],
+          "properties": {
+            "root": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.sync.updateRepo
 
-<mark>RPC procedure</mark> Writes commits to a repo.
-
-QP options:
-
-- `did` Required string. The DID of the repo.
-
-Parameters:
-
-- Encoding: application/cbor
-
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.sync.updateRepo",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Writes commits to a repo.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "did"
+        ],
+        "properties": {
+          "did": {
+            "type": "string",
+            "description": "The DID of the repo."
+          }
+        }
+      },
+      "input": {
+        "encoding": "application/cbor"
+      }
+    }
+  }
+}
+```
 <!-- END lex generated TOC please keep comment here to allow auto update -->

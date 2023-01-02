@@ -13,260 +13,536 @@ Definitions related to repositories in ATP.
 
 ## com.atproto.repo.batchWrite
 
-<mark>RPC procedure</mark> Apply a batch transaction of creates, puts, and deletes.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  /**
-   * The DID of the repo.
-   */
-  did: string;
-  /**
-   * Validate the records?
-   */
-  validate?: boolean;
-  writes: (
-    | {
-        action: "create";
-        collection: string;
-        rkey?: string;
-        value: unknown;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.batchWrite",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Apply a batch transaction of creates, puts, and deletes.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "writes"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "description": "The DID of the repo."
+            },
+            "validate": {
+              "type": "boolean",
+              "default": true,
+              "description": "Validate the records?"
+            },
+            "writes": {
+              "type": "array",
+              "items": {
+                "type": "union",
+                "refs": [
+                  "#create",
+                  "#update",
+                  "#delete"
+                ],
+                "closed": true
+              }
+            }
+          }
+        }
       }
-    | {
-        action: "update";
-        collection: string;
-        rkey: string;
-        value: unknown;
+    },
+    "create": {
+      "type": "object",
+      "required": [
+        "action",
+        "collection",
+        "value"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "create"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "rkey": {
+          "type": "string"
+        },
+        "value": {
+          "type": "unknown"
+        }
       }
-    | {
-        action: "delete";
-        collection: string;
-        rkey: string;
+    },
+    "update": {
+      "type": "object",
+      "required": [
+        "action",
+        "collection",
+        "rkey",
+        "value"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "update"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "rkey": {
+          "type": "string"
+        },
+        "value": {
+          "type": "unknown"
+        }
       }
-  )[];
+    },
+    "delete": {
+      "type": "object",
+      "required": [
+        "action",
+        "collection",
+        "rkey"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "delete"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "rkey": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  [k: string]: unknown;
-}
-```
-
 ---
 
 ## com.atproto.repo.createRecord
 
-<mark>RPC procedure</mark> Create a new record.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  /**
-   * The DID of the repo.
-   */
-  did: string;
-  /**
-   * The NSID of the record collection.
-   */
-  collection: string;
-  /**
-   * Validate the record?
-   */
-  validate?: boolean;
-  /**
-   * The record to create
-   */
-  record: {};
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.createRecord",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create a new record.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "collection",
+            "record"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "description": "The DID of the repo."
+            },
+            "collection": {
+              "type": "string",
+              "description": "The NSID of the record collection."
+            },
+            "validate": {
+              "type": "boolean",
+              "default": true,
+              "description": "Validate the record?"
+            },
+            "record": {
+              "type": "unknown",
+              "description": "The record to create."
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "uri",
+            "cid"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string"
+            },
+            "cid": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  uri: string;
-  cid: string;
-}
-```
-
 ---
 
 ## com.atproto.repo.deleteRecord
 
-<mark>RPC procedure</mark> Delete a record.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  /**
-   * The DID of the repo.
-   */
-  did: string;
-  /**
-   * The NSID of the record collection.
-   */
-  collection: string;
-  /**
-   * The key of the record.
-   */
-  rkey: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.deleteRecord",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Delete a record.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "collection",
+            "rkey"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "description": "The DID of the repo."
+            },
+            "collection": {
+              "type": "string",
+              "description": "The NSID of the record collection."
+            },
+            "rkey": {
+              "type": "string",
+              "description": "The key of the record."
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.repo.describe
 
-<mark>RPC query</mark> Get information about the repo, including the list of collections.
-
-Parameters:
-
-- `user` Required string. The handle or DID of the repo.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  handle: string;
-  did: string;
-  didDoc: {};
-  collections: string[];
-  handleIsCorrect: boolean;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.describe",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get information about the repo, including the list of collections.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "user"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the repo."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "handle",
+            "did",
+            "didDoc",
+            "collections",
+            "handleIsCorrect"
+          ],
+          "properties": {
+            "handle": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            },
+            "didDoc": {
+              "type": "unknown"
+            },
+            "collections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "handleIsCorrect": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.repo.getRecord
 
-<mark>RPC query</mark> Fetch a record.
-
-Parameters:
-
-- `user` Required string. The handle or DID of the repo.
-- `collection` Required string. The NSID of the collection.
-- `rkey` Required string. The key of the record.
-- `cid` Optional string. The CID of the version of the record. If not specified, then return the most recent version.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  uri: string;
-  cid?: string;
-  value: {};
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.getRecord",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Fetch a record.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "user",
+          "collection",
+          "rkey"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the repo."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The NSID of the collection."
+          },
+          "rkey": {
+            "type": "string",
+            "description": "The key of the record."
+          },
+          "cid": {
+            "type": "string",
+            "description": "The CID of the version of the record. If not specified, then return the most recent version."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "uri",
+            "value"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string"
+            },
+            "cid": {
+              "type": "string"
+            },
+            "value": {
+              "type": "unknown"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.repo.listRecords
 
-<mark>RPC query</mark> List a range of records in a collection.
-
-Parameters:
-
-- `user` Required string. The handle or DID of the repo.
-- `collection` Required string. The NSID of the record type.
-- `limit` Optional number. The number of records to return. TODO-max number? Min value 1. Defaults to 50.
-- `before` Optional string. A TID to filter the range of records returned.
-- `after` Optional string. A TID to filter the range of records returned.
-- `reverse` Optional boolean. Reverse the order of the returned records? Defaults to false.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  cursor?: string;
-  records: {
-    uri: string;
-    cid: string;
-    value: {};
-  }[];
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.listRecords",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "List a range of records in a collection.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "user",
+          "collection"
+        ],
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "The handle or DID of the repo."
+          },
+          "collection": {
+            "type": "string",
+            "description": "The NSID of the record type."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "The number of records to return."
+          },
+          "before": {
+            "type": "string",
+            "description": "A TID to filter the range of records returned."
+          },
+          "after": {
+            "type": "string",
+            "description": "A TID to filter the range of records returned."
+          },
+          "reverse": {
+            "type": "boolean",
+            "description": "Reverse the order of the returned records?"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "records"
+          ],
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "records": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#record"
+              }
+            }
+          }
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "value"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "string"
+        },
+        "value": {
+          "type": "unknown"
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.repo.putRecord
 
-<mark>RPC procedure</mark> Write a record.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  /**
-   * The DID of the repo.
-   */
-  did: string;
-  /**
-   * The NSID of the record type.
-   */
-  collection: string;
-  /**
-   * The TID of the record.
-   */
-  rkey: string;
-  /**
-   * Validate the record?
-   */
-  validate?: boolean;
-  /**
-   * The record to create
-   */
-  record: {};
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.putRecord",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Write a record.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "collection",
+            "rkey",
+            "record"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "description": "The DID of the repo."
+            },
+            "collection": {
+              "type": "string",
+              "description": "The NSID of the record type."
+            },
+            "rkey": {
+              "type": "string",
+              "description": "The TID of the record."
+            },
+            "validate": {
+              "type": "boolean",
+              "default": true,
+              "description": "Validate the record?"
+            },
+            "record": {
+              "type": "unknown",
+              "description": "The record to create."
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "uri",
+            "cid"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string"
+            },
+            "cid": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
+---
 
-Response:
+## com.atproto.repo.strongRef
 
-- Encoding: application/json
-- Schema:
+A URI with a content-hash fingerprint.
 
-```typescript
-export interface Response {
-  uri: string;
-  cid: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.strongRef",
+  "description": "A URI with a content-hash fingerprint.",
+  "defs": {
+    "main": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
 ```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->

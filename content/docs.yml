@@ -27,6 +27,8 @@ specs:
 lexicons:
   - name: com.atproto.account
     href: /lexicons/com-atproto-account
+  - name: com.atproto.blob
+    href: /lexicons/com-atproto-blob
   - name: com.atproto.handle
     href: /lexicons/com-atproto-handle
   - name: com.atproto.repo
@@ -39,6 +41,8 @@ lexicons:
     href: /lexicons/com-atproto-sync
   - name: app.bsky.actor
     href: /lexicons/app-bsky-actor
+  - name: app.bsky.embed
+    href: /lexicons/app-bsky-embed
   - name: app.bsky.feed
     href: /lexicons/app-bsky-feed
   - name: app.bsky.graph

@@ -13,165 +13,232 @@ Definitions related to account-management in ATP services.
 
 ## com.atproto.account.create
 
-<mark>RPC procedure</mark> Create an account.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  email: string;
-  handle: string;
-  inviteCode?: string;
-  password: string;
-  recoveryKey?: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.create",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create an account.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "handle",
+            "email",
+            "password"
+          ],
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "inviteCode": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "recoveryKey": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "accessJwt",
+            "refreshJwt",
+            "handle",
+            "did"
+          ],
+          "properties": {
+            "accessJwt": {
+              "type": "string"
+            },
+            "refreshJwt": {
+              "type": "string"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "InvalidHandle"
+        },
+        {
+          "name": "InvalidPassword"
+        },
+        {
+          "name": "InvalidInviteCode"
+        },
+        {
+          "name": "HandleNotAvailable"
+        }
+      ]
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  accessJwt: string;
-  refreshJwt: string;
-  handle: string;
-  did: string;
-  declarationCid: string;
-}
-```
-
 ---
 
 ## com.atproto.account.createInviteCode
 
-<mark>RPC procedure</mark> Create an invite code.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  useCount: number;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.createInviteCode",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create an invite code.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "useCount"
+          ],
+          "properties": {
+            "useCount": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  code: string;
-}
-```
-
 ---
 
 ## com.atproto.account.delete
 
-<mark>RPC procedure</mark> Delete an account.
-
-
-Parameters:
-
-- Schema:
-
-```typescript
-export interface Parameters {
-  [k: string]: unknown;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.delete",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Delete an account."
+    }
+  }
 }
 ```
-
-Response:
-
-- Schema:
-
-```typescript
-export interface Response {
-  [k: string]: unknown;
-}
-```
-
 ---
 
 ## com.atproto.account.get
 
-<mark>RPC query</mark> Get information about an account.
-
-
-Response:
-
-- Schema:
-
-```typescript
-export interface Response {
-  [k: string]: unknown;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.get",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get information about an account."
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.account.requestPasswordReset
 
-<mark>RPC procedure</mark> Initiate a user account password reset via email
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  email: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.requestPasswordReset",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Initiate a user account password reset via email.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "email"
+          ],
+          "properties": {
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {}
-```
-
 ---
 
 ## com.atproto.account.resetPassword
 
-<mark>RPC procedure</mark> Reset a user account password using a token
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  token: string;
-  password: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.account.resetPassword",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Reset a user account password using a token.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "token",
+            "password"
+          ],
+          "properties": {
+            "token": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "ExpiredToken"
+        },
+        {
+          "name": "InvalidToken"
+        }
+      ]
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {}
-```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->

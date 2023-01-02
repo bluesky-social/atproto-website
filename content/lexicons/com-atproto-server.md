@@ -13,19 +13,51 @@ Definitions related to server behaviors in ATP.
 
 ## com.atproto.server.getAccountsConfig
 
-<mark>RPC query</mark> Get a document describing the service's accounts configuration.
-
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  inviteCodeRequired?: boolean;
-  availableUserDomains: string[];
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.getAccountsConfig",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get a document describing the service's accounts configuration.",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "availableUserDomains"
+          ],
+          "properties": {
+            "inviteCodeRequired": {
+              "type": "boolean"
+            },
+            "availableUserDomains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "links": {
+              "type": "ref",
+              "ref": "#links"
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "privacyPolicy": {
+          "type": "string"
+        },
+        "termsOfService": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
 ```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->

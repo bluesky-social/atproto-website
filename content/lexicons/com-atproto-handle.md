@@ -13,21 +13,39 @@ Definitions related to handles (aka usernames) in ATP.
 
 ## com.atproto.handle.resolve
 
-<mark>RPC query</mark> Provides the DID of a repo.
-
-Parameters:
-
-- `handle` Optional string. The handle to resolve. If not supplied, will resolve the host's own handle.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  did: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.handle.resolve",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Provides the DID of a repo.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "handle": {
+            "type": "string",
+            "description": "The handle to resolve. If not supplied, will resolve the host's own handle."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did"
+          ],
+          "properties": {
+            "did": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->

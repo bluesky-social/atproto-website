@@ -13,91 +13,152 @@ Definitions related to session-management in ATP.
 
 ## com.atproto.session.create
 
-<mark>RPC procedure</mark> Create an authentication session.
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  handle: string;
-  password: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.session.create",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create an authentication session.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "handle",
+            "password"
+          ],
+          "properties": {
+            "handle": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "accessJwt",
+            "refreshJwt",
+            "handle",
+            "did"
+          ],
+          "properties": {
+            "accessJwt": {
+              "type": "string"
+            },
+            "refreshJwt": {
+              "type": "string"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  accessJwt: string;
-  refreshJwt: string;
-  handle: string;
-  did: string;
-}
-```
-
 ---
 
 ## com.atproto.session.delete
 
-<mark>RPC procedure</mark> Delete the current session.
-
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  [k: string]: unknown;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.session.delete",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Delete the current session."
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.session.get
 
-<mark>RPC query</mark> Get information about the current session.
-
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  handle: string;
-  did: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.session.get",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get information about the current session.",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "handle",
+            "did"
+          ],
+          "properties": {
+            "handle": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## com.atproto.session.refresh
 
-<mark>RPC procedure</mark> Refresh an authentication session.
-
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  accessJwt: string;
-  refreshJwt: string;
-  handle: string;
-  did: string;
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.session.refresh",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Refresh an authentication session.",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "accessJwt",
+            "refreshJwt",
+            "handle",
+            "did"
+          ],
+          "properties": {
+            "accessJwt": {
+              "type": "string"
+            },
+            "refreshJwt": {
+              "type": "string"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->

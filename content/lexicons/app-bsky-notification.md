@@ -13,84 +13,158 @@ Definitions related to notifications.
 
 ## app.bsky.notification.getCount
 
-<mark>RPC query</mark> 
-
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  count: number;
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.notification.getCount",
+  "defs": {
+    "main": {
+      "type": "query",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "count"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## app.bsky.notification.list
 
-<mark>RPC query</mark> 
-
-Parameters:
-
-- `limit` Optional number. Max value 100.
-- `before` Optional string.
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  cursor?: string;
-  notifications: Notification[];
-}
-export interface Notification {
-  uri: string;
-  cid: string;
-  author: {
-    did: string;
-    handle: string;
-    displayName?: string;
-  };
-  reason: string;
-  reasonSubject?: string;
-  record: {};
-  isRead: boolean;
-  indexedAt: string;
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.notification.list",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "before": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "notifications"
+          ],
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "notifications": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#notification"
+              }
+            }
+          }
+        }
+      }
+    },
+    "notification": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "reason",
+        "record",
+        "isRead",
+        "indexedAt"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "string"
+        },
+        "author": {
+          "type": "ref",
+          "ref": "app.bsky.actor.ref#withInfo"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Expected values are 'vote', 'repost', 'trend', 'follow', 'invite', 'mention' and 'reply'.",
+          "knownValues": [
+            "vote",
+            "repost",
+            "trend",
+            "follow",
+            "invite",
+            "mention",
+            "reply"
+          ]
+        },
+        "reasonSubject": {
+          "type": "string"
+        },
+        "record": {
+          "type": "unknown"
+        },
+        "isRead": {
+          "type": "boolean"
+        },
+        "indexedAt": {
+          "type": "datetime"
+        }
+      }
+    }
+  }
 }
 ```
-
 ---
 
 ## app.bsky.notification.updateSeen
 
-<mark>RPC procedure</mark> Notify server that the user has seen notifications
-
-
-Parameters:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Parameters {
-  seenAt: string;
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.notification.updateSeen",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Notify server that the user has seen notifications.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "seenAt"
+          ],
+          "properties": {
+            "seenAt": {
+              "type": "datetime"
+            }
+          }
+        }
+      }
+    }
+  }
 }
 ```
-
-Response:
-
-- Encoding: application/json
-- Schema:
-
-```typescript
-export interface Response {
-  [k: string]: unknown;
-}
-```
-
 <!-- END lex generated TOC please keep comment here to allow auto update -->
