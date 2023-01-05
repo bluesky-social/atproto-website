@@ -68,7 +68,7 @@ interface LexRecord extends LexUserType {
   record: LexObject
 }
 
-// xrpc
+// XRPC
 // =
 
 interface LexXrpcQuery extends LexUserType {

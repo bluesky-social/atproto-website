@@ -51,7 +51,7 @@ To illustrate:
 
 Operations are verified, ordered, and made available by the PLC server. 
 
-The PLC server is contrained in its capabilities.
+The PLC server is constrained in its capabilities.
 The operation logs are fully self-certifying, with the exception of their ordering.
 
 Therefore, the PLC server's attacks are limited to:

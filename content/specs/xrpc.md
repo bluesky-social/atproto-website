@@ -80,7 +80,7 @@ Method schemas are encoded in JSON using [Lexicon Schema Documents](./lexicon).
 
 #### Schema distribution
 
-Method schemas are designed to be machine-readable and network-accessible. While it is not current _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
+Method schemas are designed to be machine-readable and network-accessible. While it is not currently _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
 
 To fetch a schema, a request must be sent to the builtin [`getSchema`](#getschema) method. This request is sent to the authority of the NSID.
 

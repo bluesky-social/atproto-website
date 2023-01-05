@@ -24,7 +24,7 @@ Adopting this system should give applications the tools for end-to-end encryptio
 
 We use two interrelated forms of identifiers: the _handle_ and the _DID_. Handles are DNS names while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
 
-The following are all valid user identifers:
+The following are all valid user identifiers:
 
 <pre><code>@alice.host.com
 at://alice.host.com
@@ -94,7 +94,7 @@ At present, none of the DID methods meet our standards fully. **Therefore we hav
 
 Handles in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Handle resolution uses the [`com.atproto.handle.resolve`](/lexicons/com-atproto-handle) xrpc method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
+Handle resolution uses the [`com.atproto.handle.resolve`](/lexicons/com-atproto-handle) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
 
 Here is the algorithm in pseudo-typescript:
 

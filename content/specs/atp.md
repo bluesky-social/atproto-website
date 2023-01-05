@@ -41,7 +41,7 @@ wip: true
 
 ## Wire protocol (XRPC)
 
-ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The atproto.com lexicons enumerate all xrpc methods used in ATP.
+ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The atproto.com lexicons enumerate all XRPC methods used in ATP.
 
 ## Identifiers
 
@@ -110,7 +110,7 @@ A "repository" is a collection of signed records.
 
 It is an implementation of a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document). The MST is an ordered, insert-order-independent, deterministic tree. Keys are laid out in alphabetic order. The key insight of an MST is that each key is hashed and starting 0s are counted to determine which layer it falls on (5 zeros for ~32 fanout).
 
-This is a merkle tree, so each subtree is referred to by it's hash (CID). When a leaf is changed, ever tree on the path to that leaf is changed as well, thereby updating the root hash.
+This is a Merkle tree, so each subtree is referred to by its hash (CID). When a leaf is changed, every tree on the path to that leaf is changed as well, thereby updating the root hash.
 
 ### Repo data layout
 
@@ -118,7 +118,7 @@ This is a merkle tree, so each subtree is referred to by it's hash (CID). When a
   Provide a more detailed description of the data layout and how the MST is organized.
 </div>
 
-The repository data layout establishes the units of network-transmissable data. It includes the following three major groupings:
+The repository data layout establishes the units of network-transmissible data. It includes the following three major groupings:
 
 |Grouping|Description|
 |-|-|
