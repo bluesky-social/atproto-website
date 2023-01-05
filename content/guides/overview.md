@@ -89,7 +89,7 @@ Five primary specs comprise the v1 of the @-protocol. These specs are:
 - [NameSpaced IDs (NSIDs)](/specs/nsid)
 - [DID:Placeholder (did:plc)](/specs/did-plc)
 
-These specs can be organize into three layers of dependency:
+These specs can be organized into three layers of dependency:
 
 ![Spec diagram](/img/spec-diagram.jpg)
 
