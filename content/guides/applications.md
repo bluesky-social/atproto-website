@@ -99,7 +99,7 @@ A like on a piece of content. Example:
   $type: 'app.bsky.feed.like',
   subject: {
     uri: 'at://did:plc:bv6ggog3tya2z3vxsub7hnal/app.bsky.post/1',
-    cid: 'bafyreif5lqnk3tgbhi5vgqd6wy5dtovfgndhwta6bwla4iqaohuf2yd764
+    cid: 'bafyreif5lqnk3tgbhi5vgqd6wy5dtovfgndhwta6bwla4iqaohuf2yd764'
   }
   createdAt: '2022-10-10T00:39:08.609Z'
 }
