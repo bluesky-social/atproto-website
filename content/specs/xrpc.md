@@ -124,7 +124,7 @@ If a default value is specified in the method schema, that value should be inclu
 |Header|Usage|
 |-|-|
 |`Content-Type`|Must specify the encoding of the request body if present.|
-|`Authentication`|May specify the authentication data if present. See [Authentication](#authentication) for more information.|
+|`Authorization`|May specify the authentication data if present. See [Authentication](#authentication) for more information.|
 
 ### Responses
 
