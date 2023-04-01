@@ -384,6 +384,12 @@ A reference to an actor in the network.
       "properties": {
         "muted": {
           "type": "boolean"
+        },
+        "following": {
+          "type": "string"
+        },
+        "followedBy": {
+          "type": "string"
         }
       }
     }
