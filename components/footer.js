@@ -68,7 +68,7 @@ export default function Footer() {
           ))}
         </div>
         <p className="mt-8 text-center text-base text-gray-500">
-          &copy; 2022 Bluesky, PBLLC. All rights reserved.
+          &copy; {new Date().getFullYear()} Bluesky, PBLLC. All rights reserved.
         </p>
       </div>
     </footer>
