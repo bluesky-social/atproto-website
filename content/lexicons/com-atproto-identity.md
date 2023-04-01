@@ -1,22 +1,17 @@
 ---
-title: com.atproto.handle
-summary: ATP Lexicon - Handle Schemas
+title: com.atproto.identity
+summary: ATP Lexicon - Identity Schemas
 ---
-
-# com.atproto.handle Lexicon
-
-Definitions related to handles (aka usernames) in ATP.
 
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
----
 
-## com.atproto.handle.resolve
+## com.atproto.identity.resolveHandle
 
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.handle.resolve",
+  "id": "com.atproto.identity.resolveHandle",
   "defs": {
     "main": {
       "type": "query",
@@ -26,6 +21,7 @@ Definitions related to handles (aka usernames) in ATP.
         "properties": {
           "handle": {
             "type": "string",
+            "format": "handle",
             "description": "The handle to resolve. If not supplied, will resolve the host's own handle."
           }
         }
@@ -39,7 +35,39 @@ Definitions related to handles (aka usernames) in ATP.
           ],
           "properties": {
             "did": {
-              "type": "string"
+              "type": "string",
+              "format": "did"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.identity.updateHandle
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.identity.updateHandle",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Updates the handle of the account",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "handle"
+          ],
+          "properties": {
+            "handle": {
+              "type": "string",
+              "format": "handle"
             }
           }
         }

@@ -11,12 +11,12 @@ Definitions related to notifications.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## app.bsky.notification.getCount
+## app.bsky.notification.getUnreadCount
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.notification.getCount",
+  "id": "app.bsky.notification.getUnreadCount",
   "defs": {
     "main": {
       "type": "query",
@@ -40,12 +40,12 @@ Definitions related to notifications.
 ```
 ---
 
-## app.bsky.notification.list
+## app.bsky.notification.listNotifications
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.notification.list",
+  "id": "app.bsky.notification.listNotifications",
   "defs": {
     "main": {
       "type": "query",
@@ -58,7 +58,7 @@ Definitions related to notifications.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -98,30 +98,32 @@ Definitions related to notifications.
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "at-uri"
         },
         "cid": {
-          "type": "string"
+          "type": "string",
+          "format": "cid"
         },
         "author": {
           "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
+          "ref": "app.bsky.actor.defs#profileView"
         },
         "reason": {
           "type": "string",
-          "description": "Expected values are 'vote', 'repost', 'trend', 'follow', 'invite', 'mention' and 'reply'.",
+          "description": "Expected values are 'like', 'repost', 'follow', 'mention', 'reply', and 'quote'.",
           "knownValues": [
-            "vote",
+            "like",
             "repost",
-            "trend",
             "follow",
-            "invite",
             "mention",
-            "reply"
+            "reply",
+            "quote"
           ]
         },
         "reasonSubject": {
-          "type": "string"
+          "type": "string",
+          "format": "at-uri"
         },
         "record": {
           "type": "unknown"
@@ -130,7 +132,8 @@ Definitions related to notifications.
           "type": "boolean"
         },
         "indexedAt": {
-          "type": "datetime"
+          "type": "string",
+          "format": "datetime"
         }
       }
     }
@@ -158,7 +161,8 @@ Definitions related to notifications.
           ],
           "properties": {
             "seenAt": {
-              "type": "datetime"
+              "type": "string",
+              "format": "datetime"
             }
           }
         }

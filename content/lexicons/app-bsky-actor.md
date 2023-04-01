@@ -11,64 +11,143 @@ Definitions related to "actors," a general term for users in Bluesky.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## app.bsky.actor.createScene
+## app.bsky.actor.defs
+
+A reference to an actor in the network.
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.actor.createScene",
+  "id": "app.bsky.actor.defs",
+  "description": "A reference to an actor in the network.",
   "defs": {
-    "main": {
-      "type": "procedure",
-      "description": "Create a scene.",
-      "input": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "handle"
-          ],
-          "properties": {
-            "handle": {
-              "type": "string"
-            },
-            "recoveryKey": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "handle",
-            "did",
-            "declaration"
-          ],
-          "properties": {
-            "handle": {
-              "type": "string"
-            },
-            "did": {
-              "type": "string"
-            },
-            "declaration": {
-              "type": "ref",
-              "ref": "app.bsky.system.declRef"
-            }
-          }
-        }
-      },
-      "errors": [
-        {
-          "name": "InvalidHandle"
+    "profileViewBasic": {
+      "type": "object",
+      "required": [
+        "did",
+        "handle"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
         },
-        {
-          "name": "HandleNotAvailable"
+        "handle": {
+          "type": "string",
+          "format": "handle"
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
         }
-      ]
+      }
+    },
+    "profileView": {
+      "type": "object",
+      "required": [
+        "did",
+        "handle"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
+        },
+        "handle": {
+          "type": "string",
+          "format": "handle"
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
+        }
+      }
+    },
+    "profileViewDetailed": {
+      "type": "object",
+      "required": [
+        "did",
+        "handle"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
+        },
+        "handle": {
+          "type": "string",
+          "format": "handle"
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "banner": {
+          "type": "string"
+        },
+        "followersCount": {
+          "type": "integer"
+        },
+        "followsCount": {
+          "type": "integer"
+        },
+        "postsCount": {
+          "type": "integer"
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
+        }
+      }
+    },
+    "viewerState": {
+      "type": "object",
+      "properties": {
+        "muted": {
+          "type": "boolean"
+        },
+        "following": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "followedBy": {
+          "type": "string",
+          "format": "at-uri"
+        }
+      }
     }
   }
 }
@@ -91,7 +170,46 @@ Definitions related to "actors," a general term for users in Bluesky.
         ],
         "properties": {
           "actor": {
-            "type": "string"
+            "type": "string",
+            "format": "at-identifier"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "ref",
+          "ref": "app.bsky.actor.defs#profileViewDetailed"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.actor.getProfiles
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.actor.getProfiles",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "actors"
+        ],
+        "properties": {
+          "actors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "at-identifier"
+            },
+            "maxLength": 25
           }
         }
       },
@@ -100,74 +218,17 @@ Definitions related to "actors," a general term for users in Bluesky.
         "schema": {
           "type": "object",
           "required": [
-            "did",
-            "declaration",
-            "handle",
-            "creator",
-            "followersCount",
-            "followsCount",
-            "membersCount",
-            "postsCount"
+            "profiles"
           ],
           "properties": {
-            "did": {
-              "type": "string"
-            },
-            "declaration": {
-              "type": "ref",
-              "ref": "app.bsky.system.declRef"
-            },
-            "handle": {
-              "type": "string"
-            },
-            "creator": {
-              "type": "string"
-            },
-            "displayName": {
-              "type": "string",
-              "maxLength": 64
-            },
-            "description": {
-              "type": "string",
-              "maxLength": 256
-            },
-            "avatar": {
-              "type": "string"
-            },
-            "banner": {
-              "type": "string"
-            },
-            "followersCount": {
-              "type": "integer"
-            },
-            "followsCount": {
-              "type": "integer"
-            },
-            "membersCount": {
-              "type": "integer"
-            },
-            "postsCount": {
-              "type": "integer"
-            },
-            "myState": {
-              "type": "ref",
-              "ref": "#myState"
+            "profiles": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "app.bsky.actor.defs#profileViewDetailed"
+              }
             }
           }
-        }
-      }
-    },
-    "myState": {
-      "type": "object",
-      "properties": {
-        "follow": {
-          "type": "string"
-        },
-        "member": {
-          "type": "string"
-        },
-        "muted": {
-          "type": "boolean"
         }
       }
     }
@@ -215,55 +276,10 @@ Definitions related to "actors," a general term for users in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#actor"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "actor": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "description": {
-          "type": "string"
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        },
-        "myState": {
-          "type": "ref",
-          "ref": "#myState"
-        }
-      }
-    },
-    "myState": {
-      "type": "object",
-      "properties": {
-        "follow": {
-          "type": "string"
         }
       }
     }
@@ -284,9 +300,6 @@ Definitions related to "actors," a general term for users in Bluesky.
       "key": "literal:self",
       "record": {
         "type": "object",
-        "required": [
-          "displayName"
-        ],
         "properties": {
           "displayName": {
             "type": "string",
@@ -297,24 +310,20 @@ Definitions related to "actors," a general term for users in Bluesky.
             "maxLength": 256
           },
           "avatar": {
-            "type": "image",
+            "type": "blob",
             "accept": [
               "image/png",
               "image/jpeg"
             ],
-            "maxWidth": 1000,
-            "maxHeight": 1000,
-            "maxSize": 300000
+            "maxSize": 1000000
           },
           "banner": {
-            "type": "image",
+            "type": "blob",
             "accept": [
               "image/png",
               "image/jpeg"
             ],
-            "maxWidth": 3000,
-            "maxHeight": 1000,
-            "maxSize": 500000
+            "maxSize": 1000000
           }
         }
       }
@@ -324,90 +333,18 @@ Definitions related to "actors," a general term for users in Bluesky.
 ```
 ---
 
-## app.bsky.actor.ref
-
-A reference to an actor in the network.
+## app.bsky.actor.searchActors
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.actor.ref",
-  "description": "A reference to an actor in the network.",
-  "defs": {
-    "main": {
-      "type": "object",
-      "required": [
-        "did",
-        "declarationCid"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declarationCid": {
-          "type": "string"
-        }
-      }
-    },
-    "withInfo": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "viewer": {
-          "type": "ref",
-          "ref": "#viewerState"
-        }
-      }
-    },
-    "viewerState": {
-      "type": "object",
-      "properties": {
-        "muted": {
-          "type": "boolean"
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.actor.search
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.actor.search",
+  "id": "app.bsky.actor.searchActors",
   "defs": {
     "main": {
       "type": "query",
-      "description": "Find users matching search criteria.",
+      "description": "Find actors matching search criteria.",
       "parameters": {
         "type": "params",
-        "required": [
-          "term"
-        ],
         "properties": {
           "term": {
             "type": "string"
@@ -418,7 +355,7 @@ A reference to an actor in the network.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -428,53 +365,20 @@ A reference to an actor in the network.
         "schema": {
           "type": "object",
           "required": [
-            "users"
+            "actors"
           ],
           "properties": {
             "cursor": {
               "type": "string"
             },
-            "users": {
+            "actors": {
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#user"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "user": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "indexedAt": {
-          "type": "datetime"
         }
       }
     }
@@ -483,21 +387,18 @@ A reference to an actor in the network.
 ```
 ---
 
-## app.bsky.actor.searchTypeahead
+## app.bsky.actor.searchActorsTypeahead
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.actor.searchTypeahead",
+  "id": "app.bsky.actor.searchActorsTypeahead",
   "defs": {
     "main": {
       "type": "query",
-      "description": "Find user suggestions for a search term.",
+      "description": "Find actor suggestions for a search term.",
       "parameters": {
         "type": "params",
-        "required": [
-          "term"
-        ],
         "properties": {
           "term": {
             "type": "string"
@@ -515,137 +416,19 @@ A reference to an actor in the network.
         "schema": {
           "type": "object",
           "required": [
-            "users"
+            "actors"
           ],
           "properties": {
-            "users": {
+            "actors": {
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#user"
+                "ref": "app.bsky.actor.defs#profileViewBasic"
               }
             }
           }
         }
       }
-    },
-    "user": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "avatar": {
-          "type": "string"
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.actor.updateProfile
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.actor.updateProfile",
-  "defs": {
-    "main": {
-      "type": "procedure",
-      "description": "Notify server that the user has seen notifications.",
-      "input": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "did": {
-              "type": "string"
-            },
-            "displayName": {
-              "type": "string",
-              "maxLength": 64
-            },
-            "description": {
-              "type": "string",
-              "maxLength": 256
-            },
-            "avatar": {
-              "type": "image",
-              "accept": [
-                "image/png",
-                "image/jpeg"
-              ],
-              "maxWidth": 500,
-              "maxHeight": 500,
-              "maxSize": 100000
-            },
-            "banner": {
-              "type": "image",
-              "accept": [
-                "image/png",
-                "image/jpeg"
-              ],
-              "maxWidth": 1500,
-              "maxHeight": 500,
-              "maxSize": 500000
-            }
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "uri",
-            "cid",
-            "record"
-          ],
-          "properties": {
-            "uri": {
-              "type": "string"
-            },
-            "cid": {
-              "type": "string"
-            },
-            "record": {
-              "type": "unknown"
-            }
-          }
-        }
-      },
-      "errors": [
-        {
-          "name": "InvalidBlob"
-        },
-        {
-          "name": "BlobTooLarge"
-        },
-        {
-          "name": "InvalidMimeType"
-        },
-        {
-          "name": "InvalidImageDimensions"
-        }
-      ]
     }
   }
 }
