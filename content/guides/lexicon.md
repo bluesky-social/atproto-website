@@ -24,7 +24,7 @@ app.bsky.notification.list()
 And here are some example record types:
 
 ```typescript
-app.bsky.fed.post
+app.bsky.feed.post
 app.bsky.feed.like
 app.bsky.actor.profile
 app.bsky.graph.follow
@@ -63,12 +63,12 @@ interface LexiconDoc {
 
 Notice the structure differs depending on the `type`. The meanings of the type are:
 
-|Type|Meaning|
-|-|-|
-|`query`|An XRPC "read" method (aka GET).|
-|`procedure`|An XRPC "modify" method (aka POST).|
-|`record`|An ATP repository record type.|
-|`token`|A declared identifier with no behaviors associated.|
+| Type        | Meaning                                             |
+| ----------- | --------------------------------------------------- |
+| `query`     | An XRPC "read" method (aka GET).                    |
+| `procedure` | An XRPC "modify" method (aka POST).                 |
+| `record`    | An ATP repository record type.                      |
+| `token`     | A declared identifier with no behaviors associated. |
 
 ## RPC methods
 
@@ -134,7 +134,7 @@ For instance, this "follow" record:
 ...would have a URL like:
 
 ```text
-at://bob.com/com.example.follow/1234
+at://bob.com/com.example.follow/12345
 ```
 
 ...and a schema like:
