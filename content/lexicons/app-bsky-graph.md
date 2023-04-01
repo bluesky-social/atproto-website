@@ -11,111 +11,6 @@ Definitions related to the social graph in Bluesky.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## app.bsky.graph.assertCreator
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.assertCreator",
-  "defs": {
-    "main": {
-      "type": "token",
-      "description": "Assertion type: Creator. Defined for app.bsky.graph.assertions's assertion."
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.assertMember
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.assertMember",
-  "defs": {
-    "main": {
-      "type": "token",
-      "description": "Assertion type: Member. Defined for app.bsky.graph.assertions's assertion."
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.assertion
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.assertion",
-  "defs": {
-    "main": {
-      "type": "record",
-      "key": "tid",
-      "record": {
-        "type": "object",
-        "required": [
-          "assertion",
-          "subject",
-          "createdAt"
-        ],
-        "properties": {
-          "assertion": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "ref",
-            "ref": "app.bsky.actor.ref"
-          },
-          "createdAt": {
-            "type": "datetime"
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.confirmation
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.confirmation",
-  "defs": {
-    "main": {
-      "type": "record",
-      "key": "tid",
-      "record": {
-        "type": "object",
-        "required": [
-          "originator",
-          "assertion",
-          "createdAt"
-        ],
-        "properties": {
-          "originator": {
-            "type": "ref",
-            "ref": "app.bsky.actor.ref"
-          },
-          "assertion": {
-            "type": "ref",
-            "ref": "com.atproto.repo.strongRef"
-          },
-          "createdAt": {
-            "type": "datetime"
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
 ## app.bsky.graph.follow
 
 ```json
@@ -135,139 +30,13 @@ Definitions related to the social graph in Bluesky.
         ],
         "properties": {
           "subject": {
-            "type": "ref",
-            "ref": "app.bsky.actor.ref"
+            "type": "string",
+            "format": "did"
           },
           "createdAt": {
-            "type": "datetime"
+            "type": "string",
+            "format": "datetime"
           }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.getAssertions
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.getAssertions",
-  "defs": {
-    "main": {
-      "type": "query",
-      "description": "General-purpose query for assertions.",
-      "parameters": {
-        "type": "params",
-        "properties": {
-          "author": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "assertion": {
-            "type": "string"
-          },
-          "confirmed": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50
-          },
-          "before": {
-            "type": "string"
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "assertions"
-          ],
-          "properties": {
-            "cursor": {
-              "type": "string"
-            },
-            "assertions": {
-              "type": "array",
-              "items": {
-                "type": "ref",
-                "ref": "#assertion"
-              }
-            }
-          }
-        }
-      }
-    },
-    "assertion": {
-      "type": "object",
-      "required": [
-        "uri",
-        "cid",
-        "assertion",
-        "author",
-        "subject",
-        "indexedAt",
-        "createdAt"
-      ],
-      "properties": {
-        "uri": {
-          "type": "string"
-        },
-        "cid": {
-          "type": "string"
-        },
-        "assertion": {
-          "type": "string"
-        },
-        "confirmation": {
-          "type": "ref",
-          "ref": "#confirmation"
-        },
-        "author": {
-          "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
-        },
-        "subject": {
-          "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        },
-        "createdAt": {
-          "type": "datetime"
-        }
-      }
-    },
-    "confirmation": {
-      "type": "object",
-      "required": [
-        "uri",
-        "cid",
-        "indexedAt",
-        "createdAt"
-      ],
-      "properties": {
-        "uri": {
-          "type": "string"
-        },
-        "cid": {
-          "type": "string"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        },
-        "createdAt": {
-          "type": "datetime"
         }
       }
     }
@@ -285,15 +54,16 @@ Definitions related to the social graph in Bluesky.
   "defs": {
     "main": {
       "type": "query",
-      "description": "Who is following a user?",
+      "description": "Who is following an actor?",
       "parameters": {
         "type": "params",
         "required": [
-          "user"
+          "actor"
         ],
         "properties": {
-          "user": {
-            "type": "string"
+          "actor": {
+            "type": "string",
+            "format": "at-identifier"
           },
           "limit": {
             "type": "integer",
@@ -301,7 +71,7 @@ Definitions related to the social graph in Bluesky.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -317,7 +87,7 @@ Definitions related to the social graph in Bluesky.
           "properties": {
             "subject": {
               "type": "ref",
-              "ref": "app.bsky.actor.ref#withInfo"
+              "ref": "app.bsky.actor.defs#profileView"
             },
             "cursor": {
               "type": "string"
@@ -326,44 +96,10 @@ Definitions related to the social graph in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#follower"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "follower": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "indexedAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "indexedAt": {
-          "type": "datetime"
         }
       }
     }
@@ -381,15 +117,16 @@ Definitions related to the social graph in Bluesky.
   "defs": {
     "main": {
       "type": "query",
-      "description": "Who is a user following?",
+      "description": "Who is an actor following?",
       "parameters": {
         "type": "params",
         "required": [
-          "user"
+          "actor"
         ],
         "properties": {
-          "user": {
-            "type": "string"
+          "actor": {
+            "type": "string",
+            "format": "at-identifier"
           },
           "limit": {
             "type": "integer",
@@ -397,7 +134,7 @@ Definitions related to the social graph in Bluesky.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -413,7 +150,7 @@ Definitions related to the social graph in Bluesky.
           "properties": {
             "subject": {
               "type": "ref",
-              "ref": "app.bsky.actor.ref#withInfo"
+              "ref": "app.bsky.actor.defs#profileView"
             },
             "cursor": {
               "type": "string"
@@ -422,227 +159,10 @@ Definitions related to the social graph in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#follow"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "follow": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "indexedAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.getMembers
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.getMembers",
-  "defs": {
-    "main": {
-      "type": "query",
-      "description": "Who is a member of the group?",
-      "parameters": {
-        "type": "params",
-        "required": [
-          "actor"
-        ],
-        "properties": {
-          "actor": {
-            "type": "string"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50
-          },
-          "before": {
-            "type": "string"
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "subject",
-            "members"
-          ],
-          "properties": {
-            "subject": {
-              "type": "ref",
-              "ref": "app.bsky.actor.ref#withInfo"
-            },
-            "cursor": {
-              "type": "string"
-            },
-            "members": {
-              "type": "array",
-              "items": {
-                "type": "ref",
-                "ref": "#member"
-              }
-            }
-          }
-        }
-      }
-    },
-    "member": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "indexedAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.graph.getMemberships
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.graph.getMemberships",
-  "defs": {
-    "main": {
-      "type": "query",
-      "description": "Which groups is the actor a member of?",
-      "parameters": {
-        "type": "params",
-        "required": [
-          "actor"
-        ],
-        "properties": {
-          "actor": {
-            "type": "string"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50
-          },
-          "before": {
-            "type": "string"
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "subject",
-            "memberships"
-          ],
-          "properties": {
-            "subject": {
-              "type": "ref",
-              "ref": "app.bsky.actor.ref#withInfo"
-            },
-            "cursor": {
-              "type": "string"
-            },
-            "memberships": {
-              "type": "array",
-              "items": {
-                "type": "ref",
-                "ref": "#membership"
-              }
-            }
-          }
-        }
-      }
-    },
-    "membership": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "indexedAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "indexedAt": {
-          "type": "datetime"
         }
       }
     }
@@ -670,7 +190,7 @@ Definitions related to the social graph in Bluesky.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -690,38 +210,10 @@ Definitions related to the social graph in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#mute"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "mute": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "createdAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "createdAt": {
-          "type": "datetime"
         }
       }
     }
@@ -730,12 +222,12 @@ Definitions related to the social graph in Bluesky.
 ```
 ---
 
-## app.bsky.graph.mute
+## app.bsky.graph.muteActor
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.graph.mute",
+  "id": "app.bsky.graph.muteActor",
   "defs": {
     "main": {
       "type": "procedure",
@@ -745,11 +237,12 @@ Definitions related to the social graph in Bluesky.
         "schema": {
           "type": "object",
           "required": [
-            "user"
+            "actor"
           ],
           "properties": {
-            "user": {
-              "type": "string"
+            "actor": {
+              "type": "string",
+              "format": "at-identifier"
             }
           }
         }
@@ -760,12 +253,12 @@ Definitions related to the social graph in Bluesky.
 ```
 ---
 
-## app.bsky.graph.unmute
+## app.bsky.graph.unmuteActor
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.graph.unmute",
+  "id": "app.bsky.graph.unmuteActor",
   "defs": {
     "main": {
       "type": "procedure",
@@ -775,11 +268,12 @@ Definitions related to the social graph in Bluesky.
         "schema": {
           "type": "object",
           "required": [
-            "user"
+            "actor"
           ],
           "properties": {
-            "user": {
-              "type": "string"
+            "actor": {
+              "type": "string",
+              "format": "at-identifier"
             }
           }
         }

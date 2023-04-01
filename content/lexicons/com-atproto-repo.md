@@ -11,28 +11,29 @@ Definitions related to repositories in ATP.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## com.atproto.repo.batchWrite
+## com.atproto.repo.applyWrites
 
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.repo.batchWrite",
+  "id": "com.atproto.repo.applyWrites",
   "defs": {
     "main": {
       "type": "procedure",
-      "description": "Apply a batch transaction of creates, puts, and deletes.",
+      "description": "Apply a batch transaction of creates, updates, and deletes.",
       "input": {
         "encoding": "application/json",
         "schema": {
           "type": "object",
           "required": [
-            "did",
+            "repo",
             "writes"
           ],
           "properties": {
-            "did": {
+            "repo": {
               "type": "string",
-              "description": "The DID of the repo."
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo."
             },
             "validate": {
               "type": "boolean",
@@ -50,25 +51,32 @@ Definitions related to repositories in ATP.
                 ],
                 "closed": true
               }
+            },
+            "swapCommit": {
+              "type": "string",
+              "format": "cid"
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "InvalidSwap"
+        }
+      ]
     },
     "create": {
       "type": "object",
+      "description": "Create a new record.",
       "required": [
         "action",
         "collection",
         "value"
       ],
       "properties": {
-        "action": {
-          "type": "string",
-          "const": "create"
-        },
         "collection": {
-          "type": "string"
+          "type": "string",
+          "format": "nsid"
         },
         "rkey": {
           "type": "string"
@@ -80,6 +88,7 @@ Definitions related to repositories in ATP.
     },
     "update": {
       "type": "object",
+      "description": "Update an existing record.",
       "required": [
         "action",
         "collection",
@@ -87,12 +96,9 @@ Definitions related to repositories in ATP.
         "value"
       ],
       "properties": {
-        "action": {
-          "type": "string",
-          "const": "update"
-        },
         "collection": {
-          "type": "string"
+          "type": "string",
+          "format": "nsid"
         },
         "rkey": {
           "type": "string"
@@ -104,18 +110,16 @@ Definitions related to repositories in ATP.
     },
     "delete": {
       "type": "object",
+      "description": "Delete an existing record.",
       "required": [
         "action",
         "collection",
         "rkey"
       ],
       "properties": {
-        "action": {
-          "type": "string",
-          "const": "delete"
-        },
         "collection": {
-          "type": "string"
+          "type": "string",
+          "format": "nsid"
         },
         "rkey": {
           "type": "string"
@@ -142,18 +146,24 @@ Definitions related to repositories in ATP.
         "schema": {
           "type": "object",
           "required": [
-            "did",
+            "repo",
             "collection",
             "record"
           ],
           "properties": {
-            "did": {
+            "repo": {
               "type": "string",
-              "description": "The DID of the repo."
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo."
             },
             "collection": {
               "type": "string",
+              "format": "nsid",
               "description": "The NSID of the record collection."
+            },
+            "rkey": {
+              "type": "string",
+              "description": "The key of the record."
             },
             "validate": {
               "type": "boolean",
@@ -163,6 +173,11 @@ Definitions related to repositories in ATP.
             "record": {
               "type": "unknown",
               "description": "The record to create."
+            },
+            "swapCommit": {
+              "type": "string",
+              "format": "cid",
+              "description": "Compare and swap with the previous commit by cid."
             }
           }
         }
@@ -177,14 +192,21 @@ Definitions related to repositories in ATP.
           ],
           "properties": {
             "uri": {
-              "type": "string"
+              "type": "string",
+              "format": "at-uri"
             },
             "cid": {
-              "type": "string"
+              "type": "string",
+              "format": "cid"
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "InvalidSwap"
+        }
+      ]
     }
   }
 }
@@ -200,44 +222,61 @@ Definitions related to repositories in ATP.
   "defs": {
     "main": {
       "type": "procedure",
-      "description": "Delete a record.",
+      "description": "Delete a record, or ensure it doesn't exist.",
       "input": {
         "encoding": "application/json",
         "schema": {
           "type": "object",
           "required": [
-            "did",
+            "repo",
             "collection",
             "rkey"
           ],
           "properties": {
-            "did": {
+            "repo": {
               "type": "string",
-              "description": "The DID of the repo."
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo."
             },
             "collection": {
               "type": "string",
+              "format": "nsid",
               "description": "The NSID of the record collection."
             },
             "rkey": {
               "type": "string",
               "description": "The key of the record."
+            },
+            "swapRecord": {
+              "type": "string",
+              "format": "cid",
+              "description": "Compare and swap with the previous record by cid."
+            },
+            "swapCommit": {
+              "type": "string",
+              "format": "cid",
+              "description": "Compare and swap with the previous commit by cid."
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "InvalidSwap"
+        }
+      ]
     }
   }
 }
 ```
 ---
 
-## com.atproto.repo.describe
+## com.atproto.repo.describeRepo
 
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.repo.describe",
+  "id": "com.atproto.repo.describeRepo",
   "defs": {
     "main": {
       "type": "query",
@@ -245,11 +284,12 @@ Definitions related to repositories in ATP.
       "parameters": {
         "type": "params",
         "required": [
-          "user"
+          "repo"
         ],
         "properties": {
-          "user": {
+          "repo": {
             "type": "string",
+            "format": "at-identifier",
             "description": "The handle or DID of the repo."
           }
         }
@@ -267,10 +307,12 @@ Definitions related to repositories in ATP.
           ],
           "properties": {
             "handle": {
-              "type": "string"
+              "type": "string",
+              "format": "handle"
             },
             "did": {
-              "type": "string"
+              "type": "string",
+              "format": "did"
             },
             "didDoc": {
               "type": "unknown"
@@ -278,7 +320,8 @@ Definitions related to repositories in ATP.
             "collections": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "format": "nsid"
               }
             },
             "handleIsCorrect": {
@@ -302,22 +345,24 @@ Definitions related to repositories in ATP.
   "defs": {
     "main": {
       "type": "query",
-      "description": "Fetch a record.",
+      "description": "Get a record.",
       "parameters": {
         "type": "params",
         "required": [
-          "user",
+          "repo",
           "collection",
           "rkey"
         ],
         "properties": {
-          "user": {
+          "repo": {
             "type": "string",
+            "format": "at-identifier",
             "description": "The handle or DID of the repo."
           },
           "collection": {
             "type": "string",
-            "description": "The NSID of the collection."
+            "format": "nsid",
+            "description": "The NSID of the record collection."
           },
           "rkey": {
             "type": "string",
@@ -325,6 +370,7 @@ Definitions related to repositories in ATP.
           },
           "cid": {
             "type": "string",
+            "format": "cid",
             "description": "The CID of the version of the record. If not specified, then return the most recent version."
           }
         }
@@ -339,10 +385,12 @@ Definitions related to repositories in ATP.
           ],
           "properties": {
             "uri": {
-              "type": "string"
+              "type": "string",
+              "format": "at-uri"
             },
             "cid": {
-              "type": "string"
+              "type": "string",
+              "format": "cid"
             },
             "value": {
               "type": "unknown"
@@ -369,16 +417,18 @@ Definitions related to repositories in ATP.
       "parameters": {
         "type": "params",
         "required": [
-          "user",
+          "repo",
           "collection"
         ],
         "properties": {
-          "user": {
+          "repo": {
             "type": "string",
+            "format": "at-identifier",
             "description": "The handle or DID of the repo."
           },
           "collection": {
             "type": "string",
+            "format": "nsid",
             "description": "The NSID of the record type."
           },
           "limit": {
@@ -388,13 +438,13 @@ Definitions related to repositories in ATP.
             "default": 50,
             "description": "The number of records to return."
           },
-          "before": {
+          "rkeyStart": {
             "type": "string",
-            "description": "A TID to filter the range of records returned."
+            "description": "The lowest sort-ordered rkey to start from (exclusive)"
           },
-          "after": {
+          "rkeyEnd": {
             "type": "string",
-            "description": "A TID to filter the range of records returned."
+            "description": "The highest sort-ordered rkey to stop at (exclusive)"
           },
           "reverse": {
             "type": "boolean",
@@ -433,10 +483,12 @@ Definitions related to repositories in ATP.
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "at-uri"
         },
         "cid": {
-          "type": "string"
+          "type": "string",
+          "format": "cid"
         },
         "value": {
           "type": "unknown"
@@ -457,29 +509,34 @@ Definitions related to repositories in ATP.
   "defs": {
     "main": {
       "type": "procedure",
-      "description": "Write a record.",
+      "description": "Write a record, creating or updating it as needed.",
       "input": {
         "encoding": "application/json",
         "schema": {
           "type": "object",
           "required": [
-            "did",
+            "repo",
             "collection",
             "rkey",
             "record"
           ],
+          "nullable": [
+            "swapRecord"
+          ],
           "properties": {
-            "did": {
+            "repo": {
               "type": "string",
-              "description": "The DID of the repo."
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo."
             },
             "collection": {
               "type": "string",
-              "description": "The NSID of the record type."
+              "format": "nsid",
+              "description": "The NSID of the record collection."
             },
             "rkey": {
               "type": "string",
-              "description": "The TID of the record."
+              "description": "The key of the record."
             },
             "validate": {
               "type": "boolean",
@@ -488,7 +545,17 @@ Definitions related to repositories in ATP.
             },
             "record": {
               "type": "unknown",
-              "description": "The record to create."
+              "description": "The record to write."
+            },
+            "swapRecord": {
+              "type": "string",
+              "format": "cid",
+              "description": "Compare and swap with the previous record by cid."
+            },
+            "swapCommit": {
+              "type": "string",
+              "format": "cid",
+              "description": "Compare and swap with the previous commit by cid."
             }
           }
         }
@@ -503,14 +570,21 @@ Definitions related to repositories in ATP.
           ],
           "properties": {
             "uri": {
-              "type": "string"
+              "type": "string",
+              "format": "at-uri"
             },
             "cid": {
-              "type": "string"
+              "type": "string",
+              "format": "cid"
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "InvalidSwap"
+        }
+      ]
     }
   }
 }
@@ -535,10 +609,45 @@ A URI with a content-hash fingerprint.
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "at-uri"
         },
         "cid": {
-          "type": "string"
+          "type": "string",
+          "format": "cid"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.repo.uploadBlob
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.repo.uploadBlob",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Upload a new blob to be added to repo in a later request.",
+      "input": {
+        "encoding": "*/*"
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "blob"
+          ],
+          "properties": {
+            "blob": {
+              "type": "blob"
+            }
+          }
         }
       }
     }

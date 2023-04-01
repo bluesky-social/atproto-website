@@ -11,14 +11,80 @@ Definitions related to content & activity published in Bluesky.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
-## app.bsky.feed.feedViewPost
+## app.bsky.feed.defs
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.feed.feedViewPost",
+  "id": "app.bsky.feed.defs",
   "defs": {
-    "main": {
+    "postView": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "record",
+        "indexedAt"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "cid": {
+          "type": "string",
+          "format": "cid"
+        },
+        "author": {
+          "type": "ref",
+          "ref": "app.bsky.actor.defs#profileViewBasic"
+        },
+        "record": {
+          "type": "unknown"
+        },
+        "embed": {
+          "type": "union",
+          "refs": [
+            "app.bsky.embed.images#view",
+            "app.bsky.embed.external#view",
+            "app.bsky.embed.record#view",
+            "app.bsky.embed.recordWithMedia#view"
+          ]
+        },
+        "replyCount": {
+          "type": "integer"
+        },
+        "repostCount": {
+          "type": "integer"
+        },
+        "likeCount": {
+          "type": "integer"
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
+        }
+      }
+    },
+    "viewerState": {
+      "type": "object",
+      "properties": {
+        "repost": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "like": {
+          "type": "string",
+          "format": "at-uri"
+        }
+      }
+    },
+    "feedViewPost": {
       "type": "object",
       "required": [
         "post"
@@ -26,7 +92,7 @@ Definitions related to content & activity published in Bluesky.
       "properties": {
         "post": {
           "type": "ref",
-          "ref": "app.bsky.feed.post#view"
+          "ref": "app.bsky.feed.defs#postView"
         },
         "reply": {
           "type": "ref",
@@ -35,7 +101,6 @@ Definitions related to content & activity published in Bluesky.
         "reason": {
           "type": "union",
           "refs": [
-            "#reasonTrend",
             "#reasonRepost"
           ]
         }
@@ -50,27 +115,11 @@ Definitions related to content & activity published in Bluesky.
       "properties": {
         "root": {
           "type": "ref",
-          "ref": "app.bsky.feed.post#view"
+          "ref": "app.bsky.feed.defs#postView"
         },
         "parent": {
           "type": "ref",
-          "ref": "app.bsky.feed.post#view"
-        }
-      }
-    },
-    "reasonTrend": {
-      "type": "object",
-      "required": [
-        "by",
-        "indexedAt"
-      ],
-      "properties": {
-        "by": {
-          "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
-        },
-        "indexedAt": {
-          "type": "datetime"
+          "ref": "app.bsky.feed.defs#postView"
         }
       }
     },
@@ -83,121 +132,13 @@ Definitions related to content & activity published in Bluesky.
       "properties": {
         "by": {
           "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
+          "ref": "app.bsky.actor.defs#profileViewBasic"
         },
         "indexedAt": {
-          "type": "datetime"
+          "type": "string",
+          "format": "datetime"
         }
       }
-    }
-  }
-}
-```
----
-
-## app.bsky.feed.getAuthorFeed
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.feed.getAuthorFeed",
-  "defs": {
-    "main": {
-      "type": "query",
-      "description": "A view of a user's feed.",
-      "parameters": {
-        "type": "params",
-        "required": [
-          "author"
-        ],
-        "properties": {
-          "author": {
-            "type": "string"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50
-          },
-          "before": {
-            "type": "string"
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "feed"
-          ],
-          "properties": {
-            "cursor": {
-              "type": "string"
-            },
-            "feed": {
-              "type": "array",
-              "items": {
-                "type": "ref",
-                "ref": "app.bsky.feed.feedViewPost"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.feed.getPostThread
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.feed.getPostThread",
-  "defs": {
-    "main": {
-      "type": "query",
-      "parameters": {
-        "type": "params",
-        "required": [
-          "uri"
-        ],
-        "properties": {
-          "uri": {
-            "type": "string"
-          },
-          "depth": {
-            "type": "integer"
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "thread"
-          ],
-          "properties": {
-            "thread": {
-              "type": "union",
-              "refs": [
-                "#threadViewPost",
-                "#notFoundPost"
-              ]
-            }
-          }
-        }
-      },
-      "errors": [
-        {
-          "name": "NotFound"
-        }
-      ]
     },
     "threadViewPost": {
       "type": "object",
@@ -207,7 +148,7 @@ Definitions related to content & activity published in Bluesky.
       "properties": {
         "post": {
           "type": "ref",
-          "ref": "app.bsky.feed.post#view"
+          "ref": "#postView"
         },
         "parent": {
           "type": "union",
@@ -236,13 +177,217 @@ Definitions related to content & activity published in Bluesky.
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "at-uri"
         },
         "notFound": {
           "type": "boolean",
           "const": true
         }
       }
+    }
+  }
+}
+```
+---
+
+## app.bsky.feed.getAuthorFeed
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getAuthorFeed",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A view of an actor's feed.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "actor"
+        ],
+        "properties": {
+          "actor": {
+            "type": "string",
+            "format": "at-identifier"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "feed"
+          ],
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "feed": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "app.bsky.feed.defs#feedViewPost"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.feed.getLikes
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getLikes",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "uri"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "format": "at-uri"
+          },
+          "cid": {
+            "type": "string",
+            "format": "cid"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "uri",
+            "likes"
+          ],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "cid": {
+              "type": "string",
+              "format": "cid"
+            },
+            "cursor": {
+              "type": "string"
+            },
+            "likes": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#like"
+              }
+            }
+          }
+        }
+      }
+    },
+    "like": {
+      "type": "object",
+      "required": [
+        "indexedAt",
+        "createdAt",
+        "actor"
+      ],
+      "properties": {
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "actor": {
+          "type": "ref",
+          "ref": "app.bsky.actor.defs#profileView"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.feed.getPostThread
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getPostThread",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "uri"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "format": "at-uri"
+          },
+          "depth": {
+            "type": "integer"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread"
+          ],
+          "properties": {
+            "thread": {
+              "type": "union",
+              "refs": [
+                "app.bsky.feed.defs#threadViewPost",
+                "app.bsky.feed.defs#notFoundPost"
+              ]
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
     }
   }
 }
@@ -265,10 +410,12 @@ Definitions related to content & activity published in Bluesky.
         ],
         "properties": {
           "uri": {
-            "type": "string"
+            "type": "string",
+            "format": "at-uri"
           },
           "cid": {
-            "type": "string"
+            "type": "string",
+            "format": "cid"
           },
           "limit": {
             "type": "integer",
@@ -276,7 +423,7 @@ Definitions related to content & activity published in Bluesky.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -291,10 +438,12 @@ Definitions related to content & activity published in Bluesky.
           ],
           "properties": {
             "uri": {
-              "type": "string"
+              "type": "string",
+              "format": "at-uri"
             },
             "cid": {
-              "type": "string"
+              "type": "string",
+              "format": "cid"
             },
             "cursor": {
               "type": "string"
@@ -303,44 +452,10 @@ Definitions related to content & activity published in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "#repostedBy"
+                "ref": "app.bsky.actor.defs#profileView"
               }
             }
           }
-        }
-      }
-    },
-    "repostedBy": {
-      "type": "object",
-      "required": [
-        "did",
-        "declaration",
-        "handle",
-        "indexedAt"
-      ],
-      "properties": {
-        "did": {
-          "type": "string"
-        },
-        "declaration": {
-          "type": "ref",
-          "ref": "app.bsky.system.declRef"
-        },
-        "handle": {
-          "type": "string"
-        },
-        "displayName": {
-          "type": "string",
-          "maxLength": 64
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "indexedAt": {
-          "type": "datetime"
         }
       }
     }
@@ -371,7 +486,7 @@ Definitions related to content & activity published in Bluesky.
             "maximum": 100,
             "default": 50
           },
-          "before": {
+          "cursor": {
             "type": "string"
           }
         }
@@ -391,7 +506,7 @@ Definitions related to content & activity published in Bluesky.
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "app.bsky.feed.feedViewPost"
+                "ref": "app.bsky.feed.defs#feedViewPost"
               }
             }
           }
@@ -403,99 +518,31 @@ Definitions related to content & activity published in Bluesky.
 ```
 ---
 
-## app.bsky.feed.getVotes
+## app.bsky.feed.like
 
 ```json
 {
   "lexicon": 1,
-  "id": "app.bsky.feed.getVotes",
+  "id": "app.bsky.feed.like",
   "defs": {
     "main": {
-      "type": "query",
-      "parameters": {
-        "type": "params",
+      "type": "record",
+      "key": "tid",
+      "record": {
+        "type": "object",
         "required": [
-          "uri"
+          "subject",
+          "createdAt"
         ],
         "properties": {
-          "uri": {
-            "type": "string"
+          "subject": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef"
           },
-          "cid": {
-            "type": "string"
-          },
-          "direction": {
+          "createdAt": {
             "type": "string",
-            "enum": [
-              "up",
-              "down"
-            ]
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50
-          },
-          "before": {
-            "type": "string"
+            "format": "datetime"
           }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "uri",
-            "votes"
-          ],
-          "properties": {
-            "uri": {
-              "type": "string"
-            },
-            "cid": {
-              "type": "string"
-            },
-            "cursor": {
-              "type": "string"
-            },
-            "votes": {
-              "type": "array",
-              "items": {
-                "type": "ref",
-                "ref": "#vote"
-              }
-            }
-          }
-        }
-      }
-    },
-    "vote": {
-      "type": "object",
-      "required": [
-        "direction",
-        "indexedAt",
-        "createdAt",
-        "actor"
-      ],
-      "properties": {
-        "direction": {
-          "type": "string",
-          "enum": [
-            "up",
-            "down"
-          ]
-        },
-        "indexedAt": {
-          "type": "datetime"
-        },
-        "createdAt": {
-          "type": "datetime"
-        },
-        "actor": {
-          "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
         }
       }
     }
@@ -523,13 +570,22 @@ Definitions related to content & activity published in Bluesky.
         "properties": {
           "text": {
             "type": "string",
-            "maxLength": 256
+            "maxLength": 3000,
+            "maxGraphemes": 300
           },
           "entities": {
             "type": "array",
+            "description": "Deprecated: replaced by app.bsky.richtext.facet.",
             "items": {
               "type": "ref",
               "ref": "#entity"
+            }
+          },
+          "facets": {
+            "type": "array",
+            "items": {
+              "type": "ref",
+              "ref": "app.bsky.richtext.facet"
             }
           },
           "reply": {
@@ -540,11 +596,14 @@ Definitions related to content & activity published in Bluesky.
             "type": "union",
             "refs": [
               "app.bsky.embed.images",
-              "app.bsky.embed.external"
+              "app.bsky.embed.external",
+              "app.bsky.embed.record",
+              "app.bsky.embed.recordWithMedia"
             ]
           },
           "createdAt": {
-            "type": "datetime"
+            "type": "string",
+            "format": "datetime"
           }
         }
       }
@@ -568,6 +627,7 @@ Definitions related to content & activity published in Bluesky.
     },
     "entity": {
       "type": "object",
+      "description": "Deprecated: use facets instead.",
       "required": [
         "index",
         "type",
@@ -580,7 +640,7 @@ Definitions related to content & activity published in Bluesky.
         },
         "type": {
           "type": "string",
-          "description": "Expected values are 'mention', 'hashtag', and 'link'."
+          "description": "Expected values are 'mention' and 'link'."
         },
         "value": {
           "type": "string"
@@ -589,7 +649,7 @@ Definitions related to content & activity published in Bluesky.
     },
     "textSlice": {
       "type": "object",
-      "description": "A text segment. Start is inclusive, end is exclusive.",
+      "description": "Deprecated. Use app.bsky.richtext instead -- A text segment. Start is inclusive, end is exclusive. Indices are for utf16-encoded strings.",
       "required": [
         "start",
         "end"
@@ -602,79 +662,6 @@ Definitions related to content & activity published in Bluesky.
         "end": {
           "type": "integer",
           "minimum": 0
-        }
-      }
-    },
-    "view": {
-      "type": "object",
-      "required": [
-        "uri",
-        "cid",
-        "author",
-        "record",
-        "replyCount",
-        "repostCount",
-        "upvoteCount",
-        "downvoteCount",
-        "indexedAt",
-        "viewer"
-      ],
-      "properties": {
-        "uri": {
-          "type": "string"
-        },
-        "cid": {
-          "type": "string"
-        },
-        "author": {
-          "type": "ref",
-          "ref": "app.bsky.actor.ref#withInfo"
-        },
-        "record": {
-          "type": "unknown"
-        },
-        "embed": {
-          "type": "union",
-          "refs": [
-            "app.bsky.embed.images#presented",
-            "app.bsky.embed.external#presented"
-          ]
-        },
-        "replyCount": {
-          "type": "integer"
-        },
-        "repostCount": {
-          "type": "integer"
-        },
-        "upvoteCount": {
-          "type": "integer"
-        },
-        "downvoteCount": {
-          "type": "integer"
-        },
-        "indexedAt": {
-          "type": "datetime"
-        },
-        "viewer": {
-          "type": "ref",
-          "ref": "#viewerState"
-        }
-      }
-    },
-    "viewerState": {
-      "type": "object",
-      "properties": {
-        "repost": {
-          "type": "string"
-        },
-        "upvote": {
-          "type": "string"
-        },
-        "downvote": {
-          "type": "string"
-        },
-        "muted": {
-          "type": "boolean"
         }
       }
     }
@@ -705,133 +692,8 @@ Definitions related to content & activity published in Bluesky.
             "ref": "com.atproto.repo.strongRef"
           },
           "createdAt": {
-            "type": "datetime"
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.feed.setVote
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.feed.setVote",
-  "defs": {
-    "main": {
-      "type": "procedure",
-      "description": "Upvote, downvote, or clear the user's vote for a post.",
-      "input": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": [
-            "subject",
-            "direction"
-          ],
-          "properties": {
-            "subject": {
-              "type": "ref",
-              "ref": "com.atproto.repo.strongRef"
-            },
-            "direction": {
-              "type": "string",
-              "enum": [
-                "up",
-                "down",
-                "none"
-              ]
-            }
-          }
-        }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "upvote": {
-              "type": "string"
-            },
-            "downvote": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.feed.trend
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.feed.trend",
-  "defs": {
-    "main": {
-      "type": "record",
-      "key": "tid",
-      "record": {
-        "type": "object",
-        "required": [
-          "subject",
-          "createdAt"
-        ],
-        "properties": {
-          "subject": {
-            "type": "ref",
-            "ref": "com.atproto.repo.strongRef"
-          },
-          "createdAt": {
-            "type": "datetime"
-          }
-        }
-      }
-    }
-  }
-}
-```
----
-
-## app.bsky.feed.vote
-
-```json
-{
-  "lexicon": 1,
-  "id": "app.bsky.feed.vote",
-  "defs": {
-    "main": {
-      "type": "record",
-      "key": "tid",
-      "record": {
-        "type": "object",
-        "required": [
-          "subject",
-          "direction",
-          "createdAt"
-        ],
-        "properties": {
-          "subject": {
-            "type": "ref",
-            "ref": "com.atproto.repo.strongRef"
-          },
-          "direction": {
             "type": "string",
-            "enum": [
-              "up",
-              "down"
-            ]
-          },
-          "createdAt": {
-            "type": "datetime"
+            "format": "datetime"
           }
         }
       }

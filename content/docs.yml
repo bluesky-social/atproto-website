@@ -25,18 +25,16 @@ specs:
   - name: DID:Placeholder
     href: /specs/did-plc
 lexicons:
-  - name: com.atproto.account
-    href: /lexicons/com-atproto-account
-  - name: com.atproto.blob
-    href: /lexicons/com-atproto-blob
-  - name: com.atproto.handle
-    href: /lexicons/com-atproto-handle
+  - name: com.atproto.admin
+    href: /lexicons/com-atproto-admin
+  - name: com.atproto.identity
+    href: /lexicons/com-atproto-identity
+  - name: com.atproto.moderation
+    href: /lexicons/com-atproto-moderation
   - name: com.atproto.repo
     href: /lexicons/com-atproto-repo
   - name: com.atproto.server
     href: /lexicons/com-atproto-server
-  - name: com.atproto.session
-    href: /lexicons/com-atproto-session
   - name: com.atproto.sync
     href: /lexicons/com-atproto-sync
   - name: app.bsky.actor
@@ -49,5 +47,5 @@ lexicons:
     href: /lexicons/app-bsky-graph
   - name: app.bsky.notification
     href: /lexicons/app-bsky-notification
-  - name: app.bsky.system
-    href: /lexicons/app-bsky-system
+  - name: app.bsky.richtext
+    href: /lexicons/app-bsky-richtext

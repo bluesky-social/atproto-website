@@ -13,13 +13,13 @@ Definitions related to "embeds," content which is embedded within other records 
 
 ## app.bsky.embed.external
 
-An representation of some externally linked content, embedded in another form of content
+A representation of some externally linked content, embedded in another form of content
 
 ```json
 {
   "lexicon": 1,
   "id": "app.bsky.embed.external",
-  "description": "An representation of some externally linked content, embedded in another form of content",
+  "description": "A representation of some externally linked content, embedded in another form of content",
   "defs": {
     "main": {
       "type": "object",
@@ -42,7 +42,8 @@ An representation of some externally linked content, embedded in another form of
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         },
         "title": {
           "type": "string"
@@ -51,17 +52,15 @@ An representation of some externally linked content, embedded in another form of
           "type": "string"
         },
         "thumb": {
-          "type": "image",
+          "type": "blob",
           "accept": [
             "image/*"
           ],
-          "maxWidth": 1000,
-          "maxHeight": 1000,
-          "maxSize": 300000
+          "maxSize": 1000000
         }
       }
     },
-    "presented": {
+    "view": {
       "type": "object",
       "required": [
         "external"
@@ -69,11 +68,11 @@ An representation of some externally linked content, embedded in another form of
       "properties": {
         "external": {
           "type": "ref",
-          "ref": "#presentedExternal"
+          "ref": "#viewExternal"
         }
       }
     },
-    "presentedExternal": {
+    "viewExternal": {
       "type": "object",
       "required": [
         "uri",
@@ -82,7 +81,8 @@ An representation of some externally linked content, embedded in another form of
       ],
       "properties": {
         "uri": {
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         },
         "title": {
           "type": "string"
@@ -134,20 +134,18 @@ A set of images embedded in some other form of content
       ],
       "properties": {
         "image": {
-          "type": "image",
+          "type": "blob",
           "accept": [
             "image/*"
           ],
-          "maxWidth": 1000,
-          "maxHeight": 1000,
-          "maxSize": 300000
+          "maxSize": 1000000
         },
         "alt": {
           "type": "string"
         }
       }
     },
-    "presented": {
+    "view": {
       "type": "object",
       "required": [
         "images"
@@ -157,13 +155,13 @@ A set of images embedded in some other form of content
           "type": "array",
           "items": {
             "type": "ref",
-            "ref": "#presentedImage"
+            "ref": "#viewImage"
           },
           "maxLength": 4
         }
       }
     },
-    "presentedImage": {
+    "viewImage": {
       "type": "object",
       "required": [
         "thumb",
@@ -179,6 +177,158 @@ A set of images embedded in some other form of content
         },
         "alt": {
           "type": "string"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.embed.record
+
+A representation of a record embedded in another form of content
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.embed.record",
+  "description": "A representation of a record embedded in another form of content",
+  "defs": {
+    "main": {
+      "type": "object",
+      "required": [
+        "record"
+      ],
+      "properties": {
+        "record": {
+          "type": "ref",
+          "ref": "com.atproto.repo.strongRef"
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "required": [
+        "record"
+      ],
+      "properties": {
+        "record": {
+          "type": "union",
+          "refs": [
+            "#viewRecord",
+            "#viewNotFound"
+          ]
+        }
+      }
+    },
+    "viewRecord": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "value",
+        "indexedAt"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "cid": {
+          "type": "string",
+          "format": "cid"
+        },
+        "author": {
+          "type": "ref",
+          "ref": "app.bsky.actor.defs#profileViewBasic"
+        },
+        "value": {
+          "type": "unknown"
+        },
+        "embeds": {
+          "type": "array",
+          "items": {
+            "type": "union",
+            "refs": [
+              "app.bsky.embed.images#view",
+              "app.bsky.embed.external#view",
+              "app.bsky.embed.record#view",
+              "app.bsky.embed.recordWithMedia#view"
+            ]
+          }
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    },
+    "viewNotFound": {
+      "type": "object",
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.embed.recordWithMedia
+
+A representation of a record embedded in another form of content, alongside other compatible embeds
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.embed.recordWithMedia",
+  "description": "A representation of a record embedded in another form of content, alongside other compatible embeds",
+  "defs": {
+    "main": {
+      "type": "object",
+      "required": [
+        "record",
+        "media"
+      ],
+      "properties": {
+        "record": {
+          "type": "ref",
+          "ref": "app.bsky.embed.record"
+        },
+        "media": {
+          "type": "union",
+          "refs": [
+            "app.bsky.embed.images",
+            "app.bsky.embed.external"
+          ]
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "required": [
+        "record",
+        "media"
+      ],
+      "properties": {
+        "record": {
+          "type": "ref",
+          "ref": "app.bsky.embed.record#view"
+        },
+        "media": {
+          "type": "union",
+          "refs": [
+            "app.bsky.embed.images#view",
+            "app.bsky.embed.external#view"
+          ]
         }
       }
     }
