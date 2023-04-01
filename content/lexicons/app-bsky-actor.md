@@ -335,6 +335,7 @@ A reference to an actor in the network.
 
 ## app.bsky.actor.searchActors
 
+
 ```json
 {
   "lexicon": 1,
