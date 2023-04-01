@@ -106,7 +106,6 @@ Definitions related to "actors," a general term for users in Bluesky.
             "creator",
             "followersCount",
             "followsCount",
-            "membersCount",
             "postsCount"
           ],
           "properties": {
