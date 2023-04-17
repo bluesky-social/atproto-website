@@ -68,6 +68,13 @@ Definitions related to content & activity published in Bluesky.
         "viewer": {
           "type": "ref",
           "ref": "#viewerState"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
         }
       }
     },

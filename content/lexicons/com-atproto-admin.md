@@ -5,6 +5,7 @@ summary: ATP Lexicon - Admin Schemas
 
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
+---
 
 ## com.atproto.admin.defs
 
@@ -41,6 +42,18 @@ summary: ATP Lexicon - Admin Schemas
           ]
         },
         "subjectBlobCids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createLabelVals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "negateLabelVals": {
           "type": "array",
           "items": {
             "type": "string"
@@ -101,6 +114,18 @@ summary: ATP Lexicon - Admin Schemas
           "items": {
             "type": "ref",
             "ref": "#blobView"
+          }
+        },
+        "createLabelVals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "negateLabelVals": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         },
         "reason": {
@@ -307,6 +332,10 @@ summary: ATP Lexicon - Admin Schemas
         "moderation": {
           "type": "ref",
           "ref": "#moderation"
+        },
+        "invitedBy": {
+          "type": "ref",
+          "ref": "com.atproto.server.defs#inviteCode"
         }
       }
     },
@@ -344,6 +373,24 @@ summary: ATP Lexicon - Admin Schemas
         "moderation": {
           "type": "ref",
           "ref": "#moderationDetail"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
+        },
+        "invitedBy": {
+          "type": "ref",
+          "ref": "com.atproto.server.defs#inviteCode"
+        },
+        "invites": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.server.defs#inviteCode"
+          }
         }
       }
     },
@@ -431,6 +478,13 @@ summary: ATP Lexicon - Admin Schemas
           "items": {
             "type": "ref",
             "ref": "#blobView"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
           }
         },
         "indexedAt": {
@@ -551,6 +605,101 @@ summary: ATP Lexicon - Admin Schemas
         },
         "length": {
           "type": "integer"
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.admin.disableInviteCodes
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.admin.disableInviteCodes",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Disable some set of codes and/or all codes associated with a set of users",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "codes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "accounts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.admin.getInviteCodes
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.admin.getInviteCodes",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Admin view of invite codes",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "sort": {
+            "type": "string",
+            "knownValues": [
+              "recent",
+              "usage"
+            ],
+            "default": "recent"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500,
+            "default": 100
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "codes"
+          ],
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "codes": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "com.atproto.server.defs#inviteCode"
+              }
+            }
+          }
         }
       }
     }
@@ -923,6 +1072,9 @@ summary: ATP Lexicon - Admin Schemas
           "term": {
             "type": "string"
           },
+          "invitedBy": {
+            "type": "string"
+          },
           "limit": {
             "type": "integer",
             "minimum": 1,
@@ -1004,6 +1156,18 @@ summary: ATP Lexicon - Admin Schemas
                 "format": "cid"
               }
             },
+            "createLabelVals": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "negateLabelVals": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "reason": {
               "type": "string"
             },
@@ -1026,6 +1190,78 @@ summary: ATP Lexicon - Admin Schemas
           "name": "SubjectHasAction"
         }
       ]
+    }
+  }
+}
+```
+---
+
+## com.atproto.admin.updateAccountEmail
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.admin.updateAccountEmail",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Administrative action to update an account's email",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "account",
+            "email"
+          ],
+          "properties": {
+            "account": {
+              "type": "string",
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo."
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.admin.updateAccountHandle
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.admin.updateAccountHandle",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Administrative action to update an account's handle",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "handle"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "format": "did"
+            },
+            "handle": {
+              "type": "string",
+              "format": "handle"
+            }
+          }
+        }
+      }
     }
   }
 }

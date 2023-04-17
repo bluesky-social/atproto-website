@@ -121,6 +121,10 @@ Definitions related to server behaviors in ATP.
           "properties": {
             "useCount": {
               "type": "integer"
+            },
+            "forAccount": {
+              "type": "string",
+              "format": "did"
             }
           }
         }
@@ -145,30 +149,35 @@ Definitions related to server behaviors in ATP.
 ```
 ---
 
-## com.atproto.server.createSession
+## com.atproto.server.createInviteCodes
 
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.server.createSession",
+  "id": "com.atproto.server.createInviteCodes",
   "defs": {
     "main": {
       "type": "procedure",
-      "description": "Create an authentication session.",
+      "description": "Create an invite code.",
       "input": {
         "encoding": "application/json",
         "schema": {
           "type": "object",
           "required": [
-            "password"
+            "codeCount",
+            "useCount"
           ],
           "properties": {
-            "identifier": {
-              "type": "string",
-              "description": "Handle or other identifier supported by the server for the authenticating user."
+            "codeCount": {
+              "type": "integer",
+              "default": 1
             },
-            "password": {
-              "type": "string"
+            "useCount": {
+              "type": "integer"
+            },
+            "forAccount": {
+              "type": "string",
+              "format": "did"
             }
           }
         }
@@ -178,34 +187,87 @@ Definitions related to server behaviors in ATP.
         "schema": {
           "type": "object",
           "required": [
-            "accessJwt",
-            "refreshJwt",
-            "handle",
-            "did"
+            "codes"
           ],
           "properties": {
-            "accessJwt": {
-              "type": "string"
-            },
-            "refreshJwt": {
-              "type": "string"
-            },
-            "handle": {
-              "type": "string",
-              "format": "handle"
-            },
-            "did": {
-              "type": "string",
-              "format": "did"
+            "codes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
-      },
-      "errors": [
-        {
-          "name": "AccountTakedown"
+      }
+    }
+  }
+}
+```
+---
+
+## com.atproto.server.defs
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.defs",
+  "defs": {
+    "inviteCode": {
+      "type": "object",
+      "required": [
+        "code",
+        "available",
+        "disabled",
+        "forAccount",
+        "createdBy",
+        "createdAt",
+        "uses"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "available": {
+          "type": "integer"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "forAccount": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "uses": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#inviteCodeUse"
+          }
         }
-      ]
+      }
+    },
+    "inviteCodeUse": {
+      "type": "object",
+      "required": [
+        "usedBy",
+        "usedAt"
+      ],
+      "properties": {
+        "usedBy": {
+          "type": "string",
+          "format": "did"
+        },
+        "usedAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
     }
   }
 }
@@ -326,6 +388,58 @@ Definitions related to server behaviors in ATP.
 ```
 ---
 
+## com.atproto.server.getAccountInviteCodes
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.getAccountInviteCodes",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get all invite codes for a given account",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "includeUsed": {
+            "type": "boolean",
+            "default": true
+          },
+          "createAvailable": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "codes"
+          ],
+          "properties": {
+            "codes": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "com.atproto.server.defs#inviteCode"
+              }
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "DuplicateCreate"
+        }
+      ]
+    }
+  }
+}
+```
+---
+
 ## com.atproto.server.getSession
 
 ```json
@@ -352,6 +466,9 @@ Definitions related to server behaviors in ATP.
             "did": {
               "type": "string",
               "format": "did"
+            },
+            "email": {
+              "type": "string"
             }
           }
         }

@@ -38,7 +38,8 @@ A reference to an actor in the network.
         },
         "displayName": {
           "type": "string",
-          "maxLength": 64
+          "maxGraphemes": 64,
+          "maxLength": 640
         },
         "avatar": {
           "type": "string"
@@ -46,6 +47,13 @@ A reference to an actor in the network.
         "viewer": {
           "type": "ref",
           "ref": "#viewerState"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
         }
       }
     },
@@ -66,11 +74,13 @@ A reference to an actor in the network.
         },
         "displayName": {
           "type": "string",
-          "maxLength": 64
+          "maxGraphemes": 64,
+          "maxLength": 640
         },
         "description": {
           "type": "string",
-          "maxLength": 256
+          "maxGraphemes": 256,
+          "maxLength": 2560
         },
         "avatar": {
           "type": "string"
@@ -82,6 +92,13 @@ A reference to an actor in the network.
         "viewer": {
           "type": "ref",
           "ref": "#viewerState"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
         }
       }
     },
@@ -102,11 +119,13 @@ A reference to an actor in the network.
         },
         "displayName": {
           "type": "string",
-          "maxLength": 64
+          "maxGraphemes": 64,
+          "maxLength": 640
         },
         "description": {
           "type": "string",
-          "maxLength": 256
+          "maxGraphemes": 256,
+          "maxLength": 2560
         },
         "avatar": {
           "type": "string"
@@ -130,6 +149,13 @@ A reference to an actor in the network.
         "viewer": {
           "type": "ref",
           "ref": "#viewerState"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
         }
       }
     },
@@ -303,11 +329,13 @@ A reference to an actor in the network.
         "properties": {
           "displayName": {
             "type": "string",
-            "maxLength": 64
+            "maxGraphemes": 64,
+            "maxLength": 640
           },
           "description": {
             "type": "string",
-            "maxLength": 256
+            "maxGraphemes": 256,
+            "maxLength": 2560
           },
           "avatar": {
             "type": "blob",
@@ -334,7 +362,6 @@ A reference to an actor in the network.
 ---
 
 ## app.bsky.actor.searchActors
-
 
 ```json
 {

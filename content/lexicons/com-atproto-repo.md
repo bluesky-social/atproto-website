@@ -438,13 +438,16 @@ Definitions related to repositories in ATP.
             "default": 50,
             "description": "The number of records to return."
           },
+          "cursor": {
+            "type": "string"
+          },
           "rkeyStart": {
             "type": "string",
-            "description": "The lowest sort-ordered rkey to start from (exclusive)"
+            "description": "DEPRECATED: The lowest sort-ordered rkey to start from (exclusive)"
           },
           "rkeyEnd": {
             "type": "string",
-            "description": "The highest sort-ordered rkey to stop at (exclusive)"
+            "description": "DEPRECATED: The highest sort-ordered rkey to stop at (exclusive)"
           },
           "reverse": {
             "type": "boolean",

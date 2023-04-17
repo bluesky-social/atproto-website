@@ -5,6 +5,7 @@ summary: ATP Lexicon - Moderation Schemas
 
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
+---
 
 ## com.atproto.moderation.createReport
 
@@ -99,16 +100,36 @@ summary: ATP Lexicon - Moderation Schemas
       "type": "string",
       "knownValues": [
         "com.atproto.moderation.defs#reasonSpam",
+        "com.atproto.moderation.defs#reasonViolation",
+        "com.atproto.moderation.defs#reasonMisleading",
+        "com.atproto.moderation.defs#reasonSexual",
+        "com.atproto.moderation.defs#reasonRude",
         "com.atproto.moderation.defs#reasonOther"
       ]
     },
     "reasonSpam": {
       "type": "token",
-      "description": "Moderation report reason: Spam."
+      "description": "Spam: frequent unwanted promotion, replies, mentions"
+    },
+    "reasonViolation": {
+      "type": "token",
+      "description": "Direct violation of server rules, laws, terms of service"
+    },
+    "reasonMisleading": {
+      "type": "token",
+      "description": "Misleading identity, affiliation, or content"
+    },
+    "reasonSexual": {
+      "type": "token",
+      "description": "Unwanted or mis-labeled sexual content"
+    },
+    "reasonRude": {
+      "type": "token",
+      "description": "Rude, harassing, explicit, or otherwise unwelcoming behavior"
     },
     "reasonOther": {
       "type": "token",
-      "description": "Moderation report reason: Other."
+      "description": "Other: reports not falling under another report category"
     }
   }
 }

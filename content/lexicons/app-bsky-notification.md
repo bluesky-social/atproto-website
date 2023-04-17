@@ -134,6 +134,13 @@ Definitions related to notifications.
         "indexedAt": {
           "type": "string",
           "format": "datetime"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
         }
       }
     }
