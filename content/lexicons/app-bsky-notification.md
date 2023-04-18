@@ -20,6 +20,15 @@ Definitions related to notifications.
   "defs": {
     "main": {
       "type": "query",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "seenAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      },
       "output": {
         "encoding": "application/json",
         "schema": {
@@ -60,6 +69,10 @@ Definitions related to notifications.
           },
           "cursor": {
             "type": "string"
+          },
+          "seenAt": {
+            "type": "string",
+            "format": "datetime"
           }
         }
       },
