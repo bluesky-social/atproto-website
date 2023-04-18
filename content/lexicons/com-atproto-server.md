@@ -101,6 +101,68 @@ Definitions related to server behaviors in ATP.
 ```
 ---
 
+## com.atproto.server.createAppPassword
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.createAppPassword",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create an app-specific password.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "ref",
+          "ref": "#appPassword"
+        }
+      },
+      "errors": [
+        {
+          "name": "AccountTakedown"
+        }
+      ]
+    },
+    "appPassword": {
+      "type": "object",
+      "required": [
+        "name",
+        "password",
+        "createdAt"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    }
+  }
+}
+```
+---
+
 ## com.atproto.server.createInviteCode
 
 ```json
@@ -175,9 +237,12 @@ Definitions related to server behaviors in ATP.
             "useCount": {
               "type": "integer"
             },
-            "forAccount": {
-              "type": "string",
-              "format": "did"
+            "forAccounts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "did"
+              }
             }
           }
         }
@@ -193,9 +258,28 @@ Definitions related to server behaviors in ATP.
             "codes": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "ref",
+                "ref": "#accountCodes"
               }
             }
+          }
+        }
+      }
+    },
+    "accountCodes": {
+      "type": "object",
+      "required": [
+        "account",
+        "codes"
+      ],
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -550,6 +634,61 @@ Definitions related to server behaviors in ATP.
 ```
 ---
 
+## com.atproto.server.listAppPasswords
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.listAppPasswords",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "List all app-specific passwords.",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "passwords"
+          ],
+          "properties": {
+            "passwords": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#appPassword"
+              }
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "AccountTakedown"
+        }
+      ]
+    },
+    "appPassword": {
+      "type": "object",
+      "required": [
+        "name",
+        "createdAt"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    }
+  }
+}
+```
+---
+
 ## com.atproto.server.refreshSession
 
 ```json
@@ -681,6 +820,36 @@ Definitions related to server behaviors in ATP.
           "name": "InvalidToken"
         }
       ]
+    }
+  }
+}
+```
+---
+
+## com.atproto.server.revokeAppPassword
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.atproto.server.revokeAppPassword",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Revoke an app-specific password by name.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }
