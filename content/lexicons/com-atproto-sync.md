@@ -302,7 +302,7 @@ Definitions related to cross-server sync in ATP.
           "latest": {
             "type": "string",
             "format": "cid",
-            "description": "The latest commit you in the commit range (inclusive"
+            "description": "The latest commit in the commit range (inclusive)"
           }
         }
       },
