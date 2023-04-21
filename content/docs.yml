@@ -29,6 +29,8 @@ lexicons:
     href: /lexicons/com-atproto-admin
   - name: com.atproto.identity
     href: /lexicons/com-atproto-identity
+  - name: com.atproto.label
+    href: /lexicons/com-atproto-label
   - name: com.atproto.moderation
     href: /lexicons/com-atproto-moderation
   - name: com.atproto.repo
