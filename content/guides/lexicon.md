@@ -16,9 +16,9 @@ The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS fo
 
 ```typescript
 com.atproto.repo.getRecord()
-com.atproto.handle.resolve()
+com.atproto.identity.resolveHandle()
 app.bsky.feed.getPostThread()
-app.bsky.notification.list()
+app.bsky.notification.listNotifications()
 ```
 
 And here are some example record types:
