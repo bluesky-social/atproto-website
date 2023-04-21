@@ -3,6 +3,10 @@ title: com.atproto.label
 summary: ATP Lexicon - Label Schemas
 ---
 
+# com.atproto.label Lexicon
+
+Definitions related to "labels," a general term for metadata in ATP.
+
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---

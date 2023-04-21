@@ -3,6 +3,10 @@ title: com.atproto.admin
 summary: ATP Lexicon - Admin Schemas
 ---
 
+# com.atproto.admin Lexicon
+
+Definitions related to administration in ATP.
+
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---

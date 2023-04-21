@@ -3,6 +3,10 @@ title: app.bsky.richtext
 summary: Bluesky Lexicon - Richtext Schemas
 ---
 
+# app.bsky.richtext Lexicon
+
+Definitions related to RichText in Bluesky.
+
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 

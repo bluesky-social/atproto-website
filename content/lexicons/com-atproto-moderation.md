@@ -3,6 +3,10 @@ title: com.atproto.moderation
 summary: ATP Lexicon - Moderation Schemas
 ---
 
+# com.atproto.moderation Lexicon
+
+Definitions related to moderation in ATP.
+
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---

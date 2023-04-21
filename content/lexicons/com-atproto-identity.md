@@ -3,6 +3,10 @@ title: com.atproto.identity
 summary: ATP Lexicon - Identity Schemas
 ---
 
+# com.atproto.identity Lexicon
+
+Definitions related to identities in ATP.
+
 <!-- START lex generated content. Please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 
