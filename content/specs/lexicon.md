@@ -250,51 +250,48 @@ interface LexiconDoc {
 ```json
 {
   "lexicon": 1,
-  "id": "com.atproto.account.create",
+  "id": "com.atproto.server.createAccount",
   "defs": {
     "main": {
       "type": "procedure",
       "description": "Create an account.",
       "input": {
         "encoding": "application/json",
-        "schema": "#inputSchema"
+        "schema": {
+          "type": "object",
+          "required": ["handle", "email", "password"],
+          "properties": {
+            "email": {"type": "string"},
+            "handle": {"type": "string", "format": "handle"},
+            "inviteCode": {"type": "string"},
+            "password": {"type": "string"},
+            "recoveryKey": {"type": "string"}
+          }
+        }
       },
       "output": {
         "encoding": "application/json",
-        "schema": "#outputSchema"
+        "schema": {
+          "type": "object",
+          "required": ["accessJwt", "refreshJwt", "handle", "did"],
+          "properties": {
+            "accessJwt": { "type": "string" },
+            "refreshJwt": { "type": "string" },
+            "handle": { "type": "string", "format": "handle" },
+            "did": { "type": "string", "format": "did" }
+          }
+        }
       },
       "errors": [
         {"name": "InvalidHandle"},
         {"name": "InvalidPassword"},
         {"name": "InvalidInviteCode"},
-        {"name": "HandleNotAvailable"}
+        {"name": "HandleNotAvailable"},
+        {"name": "UnsupportedDomain"}
       ]
-    },
-    "inputSchema": {
-      "type": "object",
-      "required": ["handle", "email", "password"],
-      "properties": {
-        "email": {"type": "string"},
-        "handle": {"type": "string"},
-        "inviteCode": {"type": "string"},
-        "password": {"type": "string"},
-        "recoveryKey": {"type": "string"}
-      }
-    },
-    "outputSchema": {
-      "type": "object",
-      "required": ["accessJwt", "refreshJwt", "handle", "did", "declarationCid"],
-      "properties": {
-        "accessJwt": { "type": "string" },
-        "refreshJwt": { "type": "string" },
-        "handle": { "type": "string" },
-        "did": { "type": "string" },
-        "declarationCid": { "type": "string" }
-      }
     }
   }
 }
-
 ```
 
 ### ATP Record Type
@@ -311,43 +308,54 @@ interface LexiconDoc {
         "type": "object",
         "required": ["text", "createdAt"],
         "properties": {
-          "text": {"type": "string", "maxLength": 256},
-          "entities": {"type": "array", "items": "#entity"},
-          "reply": "#reply",
-          "createdAt": {"type": "string"}
+          "text": {"type": "string", "maxLength": 3000, "maxGraphemes": 300},
+          "entities": {
+            "type": "array",
+            "description": "Deprecated: replaced by app.bsky.richtext.facet.",
+            "items": {"type": "ref", "ref": "#entity"}
+          },
+          "facets": {
+            "type": "array",
+            "items": {"type": "ref", "ref": "app.bsky.richtext.facet"}
+          },
+          "reply": {"type": "ref", "ref": "#replyRef"},
+          "embed": {
+            "type": "union",
+            "refs": [
+              "app.bsky.embed.images",
+              "app.bsky.embed.external",
+              "app.bsky.embed.record",
+              "app.bsky.embed.recordWithMedia"
+            ]
+          },
+          "createdAt": {"type": "string", "format": "datetime"}
         }
       }
     },
-    "reply": {
+    "replyRef":{
       "type": "object",
       "required": ["root", "parent"],
       "properties": {
-        "root": "#postRef",
-        "parent": "#postRef"
-      }
-    },
-    "postRef": {
-      "type": "object",
-      "required": ["uri", "cid"],
-      "properties": {
-        "uri": {"type": "string"},
-        "cid": {"type": "string"}
+        "root": {"type": "ref", "ref": "com.atproto.repo.strongRef"},
+        "parent": {"type": "ref", "ref": "com.atproto.repo.strongRef"}
       }
     },
     "entity": {
       "type": "object",
+      "description": "Deprecated: use facets instead.",
       "required": ["index", "type", "value"],
       "properties": {
-        "index": "#textSlice",
+        "index": {"type": "ref", "ref": "#textSlice"},
         "type": {
           "type": "string",
-          "description": "Expected values are 'mention', 'hashtag', and 'link'."
+          "description": "Expected values are 'mention' and 'link'."
         },
         "value": {"type": "string"}
       }
     },
     "textSlice": {
       "type": "object",
+      "description": "Deprecated. Use app.bsky.richtext instead -- A text segment. Start is inclusive, end is exclusive. Indices are for utf16-encoded strings.",
       "required": ["start", "end"],
       "properties": {
         "start": {"type": "integer", "minimum": 0},
