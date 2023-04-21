@@ -23,73 +23,155 @@ The `def-id` maps to the keys of the `defs` subobject within a document. If no `
 ## Interface
 
 ```typescript
-// core
+// primitives
 // =
 
-type LexRef = string
+type LexPrimitive =
+  | LexBoolean
+  | LexInteger
+  | LexString
+  | LexUnknown
 
-interface LexiconDoc {
-  lexicon: 1
-  id: string // an NSID
-  revision?: number
+interface LexBoolean {
+  type: 'boolean'
   description?: string
-  defs: Record<string, LexUserType|LexArray|LexPrimitive|LexRef[]>
+  default?: boolean
+  const?: boolean
 }
 
-interface LexUserType {
-  type: 'query'
-    | 'procedure'
-    | 'record'
-    | 'token'
-    | 'object'
-    | 'blob'
-    | 'image'
-    | 'video'
-    | 'audio'
+interface LexInteger {
+  type: 'integer'
+  description?: string
+  default?: string
+  minimum?: number
+  maximum?: number
+  enum?: number[]
+  const?: number
+}
+
+type LexStringFormat =
+  | 'datetime'
+  | 'uri'
+  | 'at-uri'
+  | 'did'
+  | 'handle'
+  | 'at-identifier'
+  | 'nsid'
+  | 'cid'
+
+interface LexString {
+  type: 'string'
+  format?: LexStringFormat
+  description?: string
+  default?: string
+  minLength?: number
+  maxLength?: number
+  minGraphemes?: number
+  maxGraphemes?: number
+  enum?: string[]
+  const?: string
+  knownValues?: string[]
+}
+
+interface LexUnknown {
+  type: 'unknown'
   description?: string
 }
 
-interface LexToken extends LexUserType {
-  type = 'token'
+// ipld types
+// =
+
+type LexIpldType = LexBytes | LexCidLink
+
+interface LexBytes {
+  type: 'bytes'
+  description?: string
+  maxLength?: number
+  minLength?: number
 }
 
-interface LexObject extends LexUserType {
-  type = 'object'
+interface LexCidLink {
+  type: 'cid-link'
+  description?: string
+}
+
+// references
+// =
+
+type LexRefVariant = LexRef | LexRefUnion
+
+interface LexRef {
+  type: 'ref'
+  description?: string
+  ref: string
+}
+
+interface LexRefUnion {
+  type: 'union'
+  description?: string
+  refs: string[]
+  closed?: boolean
+}
+// blobs
+// =
+
+interface LexBlob {
+  type: 'blob'
+  description?: string
+  accept?: string[]
+  maxSize?: number
+}
+
+// complex types
+// =
+
+interface LexArray {
+  type: 'array'
+  description?: string
+  items: LexPrimitive | LexIpldType | LexBlob | LexRefVariant
+  maxLength?: number
+  minLength?: number
+}
+
+interface LexPrimitiveArray extends LexArray {
+  items: LexPrimitive
+}
+
+interface LexToken {
+  type: 'token'
+  description?: string
+}
+
+interface LexObject {
+  type: 'object'
+  description?: string
   required?: string[]
-  properties: Record<string, LexRef | LexArray | LexPrimitive | LexRef[]>
+  nullable?: string[]
+  properties?: Record<
+    string,
+    LexRefVariant | LexIpldType | LexArray | LexBlob | LexPrimitive
+  >
 }
 
-// database
+// xrpc
 // =
 
-interface LexRecord extends LexUserType {
-  type = 'record'
-  key?: string
-  record: LexObject
-}
-
-// XRPC
-// =
-
-interface LexXrpcQuery extends LexUserType {
-  type = 'query'
-  parameters?: Record<string, LexPrimitive>
-  output?: LexXrpcBody
-  errors?: LexXrpcError[]
-}
-
-interface LexXrpcProcedure extends LexUserType {
-  type = 'procedure'
-  parameters?: Record<string, LexPrimitive>
-  input?: LexXrpcBody
-  output?: LexXrpcBody
-  errors?: LexXrpcError[]
+interface LexXrpcParameters {
+  type: 'params'
+  description?: string
+  required?: string[]
+  properties: Record<string, LexPrimitive | LexPrimitiveArray>
 }
 
 interface LexXrpcBody {
   description?: string
-  encoding: string|string[]
-  schema: LexObject
+  encoding: string
+  schema?: LexRefVariant | LexObject
+}
+
+interface LexXrpcSubscriptionMessage {
+  description?: string
+  schema?: LexRefVariant | LexObject
 }
 
 interface LexXrpcError {
@@ -97,87 +179,67 @@ interface LexXrpcError {
   description?: string
 }
 
-// blobs
+interface LexXrpcQuery {
+  type: 'query'
+  description?: string
+  parameters?: LexXrpcParameters
+  output?: LexXrpcBody
+  errors?: LexXrpcError[]
+}
+
+interface LexXrpcProcedure {
+  type: 'procedure'
+  description?: string
+  parameters?: LexXrpcParameters
+  input?: LexXrpcBody
+  output?: LexXrpcBody
+  errors?: LexXrpcError[]
+}
+
+interface LexXrpcSubscription {
+  type: 'subscription'
+  description?: string
+  parameters?: LexXrpcParameters
+  message?: LexXrpcSubscriptionMessage
+  infos?: LexXrpcError[]
+  errors?: LexXrpcError[]
+}
+
+// database
 // =
 
-interface LexBlob extends LexUserType {
-  type = 'blob'
-  accept?: string[]
-  maxSize?: number
+interface LexRecord {
+  type: 'record'
+  description?: string
+  key?: string
+  record: LexObject
 }
 
-interface LexImage extends LexUserType {
-  type = 'image'
-  accept?: string[]
-  maxSize?: number
-  maxWidth?: number
-  maxHeight?: number
-}
-
-interface LexVideo extends LexUserType {
-  type = 'video'
-  accept?: string[]
-  maxSize?: number
-  maxWidth?: number
-  maxHeight?: number
-  maxLength?: number
-}
-
-interface LexAudio extends LexUserType {
-  type = 'audio'
-  accept?: string[]
-  maxSize?: number
-  maxLength?: number
-}
-
-// primitives
+// core
 // =
 
-interface LexArray {
-  type = 'array'
+type LexUserType =
+  | LexRecord
+  | LexXrpcQuery
+  | LexXrpcProcedure
+  | LexXrpcSubscription
+  | LexBlob
+  | LexArray
+  | LexToken
+  | LexObject
+  | LexBoolean
+  | LexInteger
+  | LexString
+  | LexBytes
+  | LexCidLink
+  | LexUnknown
+
+interface LexiconDoc {
+  lexicon: 1
+  id: string // Must be a valid NSID
+  revision?: number
   description?: string
-  items: LexRef | LexPrimitive | LexRef[]
-  minLength?: number
-  maxLength?: number
-}
-
-interface LexPrimitive {
-  type: 'boolean' | 'number' | 'integer' | 'string'
-  description?: string
-}
-
-interface LexBoolean extends LexPrimitive {
-  type = 'boolean'
-  default?: boolean
-  const?: boolean
-}
-
-interface LexNumber extends LexPrimitive {
-  type = 'number'
-  default?: number
-  minimum?: number
-  maximum?: number
-  enum?: number[]
-  const?: number
-}
-
-interface LexInteger extends LexPrimitive {
-  type = 'integer'
-  default?: number
-  minimum?: number
-  maximum?: number
-  enum?: number[]
-  const?: number
-}
-
-interface LexString extends LexPrimitive {
-  type = 'string'
-  default?: string
-  minLength?: number
-  maxLength?: number
-  enum?: string[]
-  const?: string
-  knownValues?: string[]
+  defs: Record<string, LexUserType>
 }
 ```
 
