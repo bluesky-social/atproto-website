@@ -4,13 +4,13 @@ summary: A schema-driven interoperability framework
 tldr:
  - Lexicon is a global schema system
  - It uses reverse-DNS names like "com.example.ping()"
- - The definitions are mainly JSON-Schema documents
+ - The definitions are JSON documents, similar to JSON-Schema
  - It's currently used for RPC methods and repo records
 ---
 
 # Intro to Lexicon
 
-Lexicon is a schema system used to define RPC methods and record types. Every Lexicon schema is written in JSON and uses [JSON-Schema](https://json-schema.org/) to define constraints.
+Lexicon is a schema system used to define RPC methods and record types. Every Lexicon schema is written in JSON, in a format similar to [JSON-Schema](https://json-schema.org/) for defining constraints.
 
 The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS format. Here are some example methods:
 
@@ -244,30 +244,6 @@ This gives us unambiguous values to use in our trafficLight state. The final sch
 }
 ```
 
-## Extensibility
-
-Records may introduce additional schemas using the `#/$ext` field. This is a standard field which encodes a map of schema NSIDs to "extension objects."
-
-Extension objects use two standard fields: `$required` and `$fallback`. The `$required` field tells us if the extension *must* be understood by the software to use it properly. Meanwhile the `$fallback` field gives us a string instructing the software how to tell the user what's wrong.
-
-Here is an example of a record with an optional extension:
-
-```json
-{
-  "$type": "com.example.post",
-  "text": "Hello, world!",
-  "createdAt": "2022-09-15T16:37:17.131Z",
-  "$ext": {
-    "com.example.poll": {
-      "$required": false,
-      "$fallback": "This post includes a poll which your app can't render.",
-      "question": "How are you today?",
-      "options": ["Good", "Meh", "Bad"]
-    }
-  }
-}
-```
-
 ## Versioning
 
 Once a schema is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, schemas may only add optional constraints to previously unconstrained fields.
@@ -277,5 +253,3 @@ If a schema must change a previously-published constraint, it should be publishe
 ## Schema distribution
 
 Schemas are designed to be machine-readable and network-accessible. While it is not currently _required_ that a schema is available on the network, it is strongly advised to publish schemas so that a single canonical & authoritative representation is available to consumers of the method.
-
-To fetch a schema, a request is sent via the XRPC [`getSchema`](/specs/xrpc#getschema) method. This request is sent to the authority of the NSID.
