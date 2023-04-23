@@ -50,7 +50,7 @@ export default function Footer() {
           {navigation.main.map((item) => (
             <div key={item.name} className="px-5 py-2">
               <Link href={item.href}>
-                <a className="text-base text-gray-500 hover:text-gray-900">
+                <a className="text-base text-gray-500 hover:text-gray-900" target="_blank" rel="noopener noreferrer">
                   {item.name}
                 </a>
               </Link>
@@ -60,7 +60,7 @@ export default function Footer() {
         <div className="mt-8 flex justify-center space-x-6">
           {navigation.social.map((item) => (
             <Link key={item.name} href={item.href}>
-              <a className="text-gray-500 hover:text-gray-600">
+              <a className="text-gray-500 hover:text-gray-600" target="_blank" rel="noopener noreferrer">
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>
@@ -70,7 +70,7 @@ export default function Footer() {
         <p className="mt-8 text-center text-base text-gray-500">
           &copy; {new Date().getFullYear()} Bluesky, PBLLC. All rights reserved.
         </p>
-      </div>
-    </footer>
+      </div >
+    </footer >
   )
 }
