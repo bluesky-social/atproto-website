@@ -1,6 +1,7 @@
 ---
 title: Lexicon
 summary: A schemas format and distribution network.
+wip: true
 ---
 
 # Lexicon

@@ -248,10 +248,7 @@ ATP uses dollar (`$`) prefixed fields as system fields. The following fields are
 
 |Field|Usage|
 |-|-|
-|`$type`|Declares the type of a record. (Required)|
-|`$ext`|Contains extensions to a record's base schema.|
-|`$required`|Used by extensions to flag whether their support is required.|
-|`$fallback`|Used by extensions to give a description of the missing data.|
+|`$type`|Declares the type of a record. (Required on records and Union objects)|
 
 ## Client-to-server API
 
@@ -265,12 +262,11 @@ The client-to-server API drives communication between a client application and t
 
 The com.atproto.* lexicons provides the following behaviors:
 
-- [com.atproto.server](/lexicons/com-atproto-server). Server information.
-- [com.atproto.session](/lexicons/com-atproto-session). Session management.
-- [com.atproto.account](/lexicons/com-atproto-account). Account management.
-- [com.atproto.handle](/lexicons/com-atproto-handle). Handle resolution.
+- [com.atproto.identity](/lexicons/com-atproto-identity). Handle resolution and changes.
+- [com.atproto.server](/lexicons/com-atproto-server). Account and session management.
+- [com.atproto.handle](/lexicons/com-atproto-moderation). Moderation reporting.
 - [com.atproto.repo](/lexicons/com-atproto-repo). Repo CRUD operations.
-- [com.atproto.sync](/lexicons/com-atproto-sync). Repo sync.
+- [com.atproto.sync](/lexicons/com-atproto-sync). Repo content sync and streaming.
 
 ### Additional lexicons
 

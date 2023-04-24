@@ -53,7 +53,7 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
   <tr>
    <td><strong>Handles</strong>
    </td>
-   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-handle">com.atproto.handle.resolve()</a> XRPC method and should be confirmed by a matching entry in the DID document.
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-handle">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document.
    </td>
   </tr>
   <tr>
@@ -94,14 +94,14 @@ At present, none of the DID methods meet our standards fully. **Therefore we hav
 
 Handles in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Handle resolution uses the [`com.atproto.handle.resolve`](/lexicons/com-atproto-handle) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
+Handle resolution uses the [`com.atproto.identity.resolveHandle`](/lexicons/com-atproto-handle) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
 
 Here is the algorithm in pseudo-typescript:
 
 ```typescript
 async function resolveHandle(handle: string) {
   const origin = `https://${handle}`
-  const res = await xrpc(origin, 'com.atproto.handle.resolve', {handle})
+  const res = await xrpc(origin, 'com.atproto.identity.resolveHandle', {handle})
   assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
   return res.did
 }
@@ -115,10 +115,10 @@ Consider a scenario where a hosting service is using PLC and is providing the ha
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-At first, all we know is `alice.pds.com`, so we call `com.atproto.handle.resolve()` on `alice.pds.com`. This tells us the DID.
+At first, all we know is `alice.pds.com`, so we call `com.atproto.identity.resolveHandle()` on `alice.pds.com`. This tells us the DID.
 
 ```typescript
-await xrpc.service('https://alice.pds.com').com.atproto.handle.resolve() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.pds.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
 ```
 
 Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
@@ -142,10 +142,10 @@ Suppose we have the same scenario as before, except the user has supplied their 
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-We call `com.atproto.handle.resolve()` on `alice.com` to get the DID.
+We call `com.atproto.identity.resolveHandle()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').com.atproto.handle.resolve() // => {did: 'did:plc:12345'}
+await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
 ```
 
 Then we resolve the DID as before:
@@ -159,7 +159,7 @@ await didPlc.resolve('did:plc:12345') /* => {
 }*/
 ```
 
-We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.handle.resolve()` call. The actual userdata lives on `pds.com`.
+We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.identity.resolveHandle()` call. The actual userdata lives on `pds.com`.
 
 ### Example: Self-hosted
 
@@ -175,10 +175,10 @@ However, **if the self-hoster is confident they will retain ownership of the dom
 - The DID: `did:web:alice.com`
 - The hosting service: `https://alice.com`
 
-We call `com.atproto.handle.resolve()` on `alice.com` to get the DID.
+We call `com.atproto.identity.resolveHandle()` on `alice.com` to get the DID.
 
 ```typescript
-await xrpc.service('https://alice.com').com.atproto.handle.resolve() // => {did: 'did:web:alice.com'}
+await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:web:alice.com'}
 ```
 
 We then resolve using did:web:
