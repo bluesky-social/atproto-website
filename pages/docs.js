@@ -25,7 +25,6 @@ export default function Docs({ navigation }) {
 
       <div className="max-w-4xl mx-auto px-4">
         <h3 className="text-3xl mb-2 font-normal">Guides</h3>
-
         <Link href={firstPage.href}>
           <a className="relative flex px-6 py-6 border border-gray-300 rounded-xl mb-4 w-full focus:outline-none focus:border-blue-500 hover:border-blue-500">
             <div className="mr-4 hidden sm:block">
@@ -49,7 +48,6 @@ export default function Docs({ navigation }) {
             </div>
           </a>
         </Link>
-
         <Links pages={navigation.guides.slice(1)} />
 
         <h3 className="text-3xl mb-2 font-normal">Specs</h3>
