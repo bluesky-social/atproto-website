@@ -401,6 +401,56 @@ Definitions related to content & activity published in Bluesky.
 ```
 ---
 
+## app.bsky.feed.getPosts
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getPosts",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A view of an actor's feed.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "uris"
+        ],
+        "properties": {
+          "uris": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "maxLength": 25
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "posts"
+          ],
+          "properties": {
+            "posts": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "app.bsky.feed.defs#postView"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
 ## app.bsky.feed.getRepostedBy
 
 ```json
