@@ -255,7 +255,7 @@ ATP uses dollar (`$`) prefixed fields as system fields. The following fields are
 
 ## Client-to-server API
 
-The client-to-server API drives communication between a client application and the user's PDS. The APIs are dictated by the lexicons implemented by the PDS. It's recommended that every PDS support the full [atproto.com lexicon](/lexicons/atproto-com). Application-level lexicons such as [bsky.app](/lexicons/bsky-app) are also recommended.
+The client-to-server API drives communication between a client application and the user's PDS. The APIs are dictated by the lexicons implemented by the PDS. It's recommended that every PDS support the full [atproto.com lexicon](/lexicons/com-atproto-identity). Application-level lexicons such as [bsky.app](/lexicons/app-bsky-actor) are also recommended.
 
 ### Authentication
 
