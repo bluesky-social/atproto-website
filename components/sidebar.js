@@ -7,7 +7,7 @@ function classNames(...classes) {
 export default function Sidebar({ navigation, current }) {
   return (
     <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
-      <nav className="sticky top-[10px] px-2 overflow-y-scroll h-vh pb-4" aria-label="Sidebar">
+      <nav className="sticky top-[10px] px-2 overflow-y-scroll h-vh pb-4 max-h-screen" aria-label="Sidebar">
         <h4 className="font-bold text-sm mb-1">Guides</h4>
         <LinksGroup links={navigation.guides} current={current} />
         <h4 className="font-bold text-sm mb-1 mt-4">Specs</h4>
