@@ -247,6 +247,13 @@ A representation of a record embedded in another form of content
         "value": {
           "type": "unknown"
         },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
+        },
         "embeds": {
           "type": "array",
           "items": {
