@@ -36,7 +36,7 @@ wip: true
 
 - **Client**: The application running on the user's device. Interacts with the network through a PDS.
 - **Personal Data Server (PDS)**: A server hosting user data. Acts as the user's personal agent on the network.
-- **Name server**. A server mapping domains to DIDs via the `com.atproto.handle.resolve()` API. Often a PDS.
+- **Name server**. A server mapping domains to DIDs via the `com.atproto.identity.resolveHandle()` API. Often a PDS.
 - **Crawling indexer**. A service that is crawling the server to produce aggregated views.
 
 ## Wire protocol (XRPC)
@@ -264,7 +264,7 @@ The com.atproto.* lexicons provides the following behaviors:
 
 - [com.atproto.identity](/lexicons/com-atproto-identity). Handle resolution and changes.
 - [com.atproto.server](/lexicons/com-atproto-server). Account and session management.
-- [com.atproto.handle](/lexicons/com-atproto-moderation). Moderation reporting.
+- [com.atproto.moderation](/lexicons/com-atproto-moderation). Moderation reporting.
 - [com.atproto.repo](/lexicons/com-atproto-repo). Repo CRUD operations.
 - [com.atproto.sync](/lexicons/com-atproto-sync). Repo content sync and streaming.
 
