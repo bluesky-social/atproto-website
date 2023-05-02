@@ -161,7 +161,8 @@ Definitions related to content & activity published in Bluesky.
           "type": "union",
           "refs": [
             "#threadViewPost",
-            "#notFoundPost"
+            "#notFoundPost",
+            "#blockedPost"
           ]
         },
         "replies": {
@@ -170,7 +171,8 @@ Definitions related to content & activity published in Bluesky.
             "type": "union",
             "refs": [
               "#threadViewPost",
-              "#notFoundPost"
+              "#notFoundPost",
+              "#blockedPost"
             ]
           }
         }
@@ -188,6 +190,23 @@ Definitions related to content & activity published in Bluesky.
           "format": "at-uri"
         },
         "notFound": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "blockedPost": {
+      "type": "object",
+      "required": [
+        "uri",
+        "blocked"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "blocked": {
           "type": "boolean",
           "const": true
         }
@@ -249,7 +268,15 @@ Definitions related to content & activity published in Bluesky.
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "BlockedActor"
+        },
+        {
+          "name": "BlockedByActor"
+        }
+      ]
     }
   }
 }
@@ -384,7 +411,8 @@ Definitions related to content & activity published in Bluesky.
               "type": "union",
               "refs": [
                 "app.bsky.feed.defs#threadViewPost",
-                "app.bsky.feed.defs#notFoundPost"
+                "app.bsky.feed.defs#notFoundPost",
+                "app.bsky.feed.defs#blockedPost"
               ]
             }
           }
