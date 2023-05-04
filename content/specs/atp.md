@@ -263,7 +263,7 @@ We also have app passwords, an initial solution for authentication that will let
 
 Users can log into third-party apps with an app password in the same way that they login with their account password. App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
-No client changes are required to adopt app passwords. However, we strongly encourage you to prompt users to use an app password on login and avoid ever entering their password. For account creation, we encourage redirecting a user to the bluesky client (https://staging.bsky.app).
+No client changes are required to adopt app passwords. However, we strongly encourage you to prompt users to use an app password on login and avoid ever entering their password. For account creation, we encourage redirecting a user to the [Bluesky web client](https://staging.bsky.app).
 
 We also strongly encourage you to delete all existing refresh tokens and re-fetch access/refresh tokens using an app password.
 
