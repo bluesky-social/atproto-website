@@ -259,7 +259,7 @@ The client-to-server API drives communication between a client application and t
 Authentication is a simple session-oriented process. View the API call in the applications model section of the docs [here](https://atproto.com/guides/applications#signing-in).
 
 #### App passwords
-We also have app passwords, a short-term solution for authentication that will let users experiment with third-party clients without having to fully trust them with their passwords. In the long term, we plan to implement SSO (Single Sign-On) with scoped permissions.
+We also have app passwords, an initial solution for authentication that will let users use third-party clients without having to trust them with their primary password. In the long term, we plan add SSO (Single Sign-On) authentication with scoped permissions.
 
 Users can log into third-party apps with an app password in the same way that they login with their account password. App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
