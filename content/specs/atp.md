@@ -256,7 +256,20 @@ The client-to-server API drives communication between a client application and t
 
 ### Authentication
 
-<div class="todo">Describe how the client authenticates with the PDS. (It's a simple JWT-based session.)</div>
+Authentication is a simple session-oriented process. View the API call in the applications model section of the docs [here](https://atproto.com/guides/applications#signing-in).
+
+#### App passwords
+We also have app passwords, a short-term solution for authentication that will let users experiment with third-party clients without having to fully trust them with their passwords. In the long term, we plan to implement SSO (Single Sign-On) with scoped permissions.
+
+Users can log into third-party apps with an app password in the same way that they login with their account password. App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
+
+No client changes are required to adopt app passwords. However, we strongly encourage you to prompt users to use an app password on login and avoid ever entering their password. For account creation, we encourage redirecting a user to the bluesky client (https://staging.bsky.app).
+
+We also strongly encourage you to delete all existing refresh tokens and re-fetch access/refresh tokens using an app password.
+
+App passwords are of the form `xxxx-xxxx-xxxx-xxxx`. For your users' safety, you could run a quick check to ensure that they are logging in with an app password and not their account password.
+
+For users to generate an app password, navigate to Settings > Advanced > App passwords.
 
 ### ATP core lexicon
 
