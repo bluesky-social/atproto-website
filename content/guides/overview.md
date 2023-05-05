@@ -5,7 +5,7 @@ summary: An introduction to the AT Protocol.
 
 # Protocol Overview
 
-The **Authenticated Transfer Protocol**, aka **ATP**, is a federated protocol for large-scale distributed social applications. This document will introduce you to the ideas behind the AT Protocol.
+The **Authenticated Transfer Protocol**, aka **atproto**, is a federated protocol for large-scale distributed social applications. This document will introduce you to the ideas behind the AT Protocol.
 
 ## Identity
 
