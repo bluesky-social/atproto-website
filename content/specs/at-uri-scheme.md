@@ -19,9 +19,9 @@ summary: A URI scheme for addressing ATP repository data.
 }
 </style>
 
-# ATP URI Scheme
+# Atproto URI Scheme
 
-The `at` URL scheme is used to address records in the ATP network.
+The `at` URL scheme is used to address records in the atproto network.
 
 ```
 atp-url   = "at://" authority path [ "#" fragment ]
@@ -70,7 +70,7 @@ Some example `at` URLs:
 
 ### Field pathing
 
-All fields in ATP records are addressed using [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901) in the fragment section of the URL.
+All fields in atproto records are addressed using [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901) in the fragment section of the URL.
 
 ```javascript
 const obj = {
