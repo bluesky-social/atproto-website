@@ -13,7 +13,7 @@ DID Placeholder is a cryptographic, strongly-consistent, and recoverable [DID](h
 We introduced DID Placeholder because we weren't totally satisfied with any of the existing DID methods. 
 We wanted a strongly consistent, highly available, recoverable, and cryptographically secure method with cheap and fast propagation of updates.
 
-We cheekily titled the method "Placeholder", because we _don't_ want it to stick around. We're actively hoping to replace it with something less centralized. 
+We cheekily titled the method "Placeholder," because we _don't_ want it to stick around. We're actively hoping to replace it with something less centralized. 
 We expect a method to emerge that fits the bill within the next few years, likely a permissioned DID consortium. 
 
 ## How it works
