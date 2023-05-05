@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import Meta from '../components/meta'
-import Header from '../components/header'
-import Footer from '../components/footer'
-import Hero from '../components/hero'
-import Roadmap from '../components/roadmap'
-import CTA from '../components/cta'
+import Meta from '@/components/meta'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+import Hero from '@/components/hero'
+import Roadmap from '@/components/roadmap'
+import CTA from '@/components/cta'
 
 import {
   AtSymbolIcon,

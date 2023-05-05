@@ -1,12 +1,12 @@
-import Meta from '../../components/meta'
-import Header from '../../components/header'
-import Footer from '../../components/footer'
-import Sidebar from '../../components/sidebar'
-import Breadcrumbs from '../../components/breadcrumbs'
-import Alert from '../../components/alert'
-import CTA from '../../components/cta'
-import TLDR from '../../components/tldr'
-import { getNavigation, getFile } from '../../lib/content'
+import Meta from '@/components/meta'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+import Sidebar from '@/components/sidebar'
+import Breadcrumbs from '@/components/breadcrumbs'
+import Alert from '@/components/alert'
+import CTA from '@/components/cta'
+import TLDR from '@/components/tldr'
+import { getNavigation, getFile } from '@/lib/content'
 
 export async function getStaticPaths() {
   const navigation = await getNavigation()

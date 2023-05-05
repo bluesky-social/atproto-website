@@ -1,11 +1,11 @@
-import Meta from '../components/meta'
+import Meta from '@/components/meta'
 import Link from 'next/link'
 import { AcademicCapIcon } from '@heroicons/react/24/outline'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
-import Header from '../components/header'
-import Footer from '../components/footer'
-import Breadcrumbs from '../components/breadcrumbs'
-import { getNavigationWithDesc } from '../lib/content'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+import Breadcrumbs from '@/components/breadcrumbs'
+import { getNavigationWithDesc } from '@/lib/content'
 
 export async function getStaticProps(context) {
   const navigation = await getNavigationWithDesc()
