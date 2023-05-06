@@ -1,23 +1,21 @@
-import Meta from '../components/meta'
-import Link from 'next/link'
-import { AcademicCapIcon } from '@heroicons/react/24/outline'
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
-import Header from '../components/header'
-import Footer from '../components/footer'
-import Breadcrumbs from '../components/breadcrumbs'
-import { getNavigationWithDesc } from '../lib/content'
+import { getMetadata } from "../../components/meta";
+import Link from "next/link";
+import { AcademicCapIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
+import Breadcrumbs from "../../components/breadcrumbs";
+import { getNavigationWithDesc } from "../../lib/content";
 
-export async function getStaticProps(context) {
-  const navigation = await getNavigationWithDesc()
-  return { props: { navigation } }
-}
+export const metadata = getMetadata({ title: "Docs" });
 
-export default function Docs({ navigation }) {
-  const pages = [{ name: 'Docs', href: '/docs', current: true }]
-  const firstPage = navigation.guides[0]
+export default async function Docs() {
+  const navigation = await getNavigationWithDesc();
+
+  const pages = [{ name: "Docs", href: "/docs", current: true }];
+  const firstPage = navigation.guides[0];
   return (
     <div>
-      <Meta title="Docs" />
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
         <Breadcrumbs pages={pages} />
@@ -36,15 +34,13 @@ export default function Docs({ navigation }) {
           </div>
           <div className="pt-1.5">
             <h3 className="text-2xl font-bold leading-6 mb-1">
-              <Link href={firstPage.href}>
-                <a className="focus:outline-none">
-                  {/* Extend touch target to entire panel */}
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  {firstPage.name}{' '}
-                  <span className="bg-blue-100 text-blue-700 font-mono text-xs px-1.5 pt-0.5 pb-0.5 rounded-md -top-0.5 relative">
-                    Start&nbsp;here
-                  </span>
-                </a>
+              <Link href={firstPage.href} className="focus:outline-none">
+                {/* Extend touch target to entire panel */}
+                <span className="absolute inset-0" aria-hidden="true" />
+                {firstPage.name}{" "}
+                <span className="bg-blue-100 text-blue-700 font-mono text-xs px-1.5 pt-0.5 pb-0.5 rounded-md -top-0.5 relative">
+                  Start&nbsp;here
+                </span>
               </Link>
             </h3>
             <p className="text-md">{firstPage.description}</p>
@@ -60,7 +56,7 @@ export default function Docs({ navigation }) {
       </div>
       <Footer />
     </div>
-  )
+  );
 }
 
 function Links({ pages }) {
@@ -73,12 +69,10 @@ function Links({ pages }) {
         >
           <div className="flex-1">
             <h3 className="text-xl leading-6 font-light">
-              <Link href={page.href}>
-                <a className="focus:outline-none">
-                  {/* Extend touch target to entire panel */}
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  {page.name}
-                </a>
+              <Link href={page.href} className="focus:outline-none">
+                {/* Extend touch target to entire panel */}
+                <span className="absolute inset-0" aria-hidden="true" />
+                {page.name}
               </Link>
             </h3>
             <p className="text-md text-gray-500 font-light">
@@ -92,5 +86,5 @@ function Links({ pages }) {
         </div>
       ))}
     </div>
-  )
+  );
 }

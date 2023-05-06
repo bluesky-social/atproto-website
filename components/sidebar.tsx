@@ -23,9 +23,7 @@ function LinksGroup({ links, current }) {
   return (
     <>
       {links.map((item) => (
-        <Link key={item.name} href={item.href}>
-          <a
-            className={classNames(
+        <Link  key={item.name} href={item.href} className={classNames(
               item.href === current
                 ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
@@ -44,7 +42,7 @@ function LinksGroup({ links, current }) {
               />
             )}
             <span className="flex-1">{item.name}</span>
-          </a>
+       
         </Link>
       ))}
     </>

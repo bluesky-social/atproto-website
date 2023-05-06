@@ -1,42 +1,43 @@
-import Link from 'next/link'
-import Meta from '../components/meta'
-import Header from '../components/header'
-import Footer from '../components/footer'
-import Hero from '../components/hero'
-import Roadmap from '../components/roadmap'
-import CTA from '../components/cta'
+import Link from "next/link";
+import Header from "../components/header";
+import Footer from "../components/footer";
+import Hero from "../components/hero";
+import Roadmap from "../components/roadmap";
+import CTA from "../components/cta";
 
 import {
   AtSymbolIcon,
   CodeBracketSquareIcon,
   ArrowsUpDownIcon,
-} from '@heroicons/react/24/outline'
+} from "@heroicons/react/24/outline";
+import { getMetadata } from "../components/meta";
 
 const features = [
   {
-    name: 'Federated social',
+    name: "Federated social",
     description:
       "Connect with anyone on any service that's using the AT Protocol.",
     icon: AtSymbolIcon,
   },
   {
-    name: 'Algorithmic choice',
+    name: "Algorithmic choice",
     description:
-      'Control how you see the world through an open market of algorithms.',
+      "Control how you see the world through an open market of algorithms.",
     icon: CodeBracketSquareIcon,
   },
   {
-    name: 'Portable accounts',
+    name: "Portable accounts",
     description:
-      'Change hosts without losing your content, your follows, or your identity.',
+      "Change hosts without losing your content, your follows, or your identity.",
     icon: ArrowsUpDownIcon,
   },
-]
+];
+
+export const metadata = getMetadata();
 
 export default function Home() {
   return (
     <div>
-      <Meta />
       <Header />
       <Hero />
       <FeaturesSection />
@@ -45,7 +46,7 @@ export default function Home() {
       <CTA />
       <Footer />
     </div>
-  )
+  );
 }
 
 function FeaturesSection() {
@@ -57,10 +58,13 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          The AT Protocol is a networking technology created by{' '}
-          <Link href="https://blueskyweb.xyz">
-            <a className="text-blue-600 hover:underline">Bluesky</a>
-          </Link>{' '}
+          The AT Protocol is a networking technology created by{" "}
+          <Link
+            href="https://blueskyweb.xyz"
+            className="text-blue-600 hover:underline"
+          >
+            Bluesky
+          </Link>{" "}
           to power the next generation of social applications.
         </p>
         <div className="mt-12">
@@ -68,7 +72,7 @@ function FeaturesSection() {
             {features.map((feature) => (
               <div key={feature.name} className="pt-6">
                 <div className="flow-root rounded-lg bg-gray-50 px-6 pb-8">
-                  <div className="block -mt-6" href={feature.href}>
+                  <div className="block -mt-6">
                     <span>
                       <span className="inline-flex items-center justify-center rounded-md bg-blue-500 p-3 shadow-lg">
                         <feature.icon
@@ -91,7 +95,7 @@ function FeaturesSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function RoadmapSection() {
@@ -100,35 +104,33 @@ function RoadmapSection() {
       <h3 className="text-center text-3xl mb-8 font-bold">Roadmap</h3>
       <Roadmap />
       <div className="text-center mt-8">
-        <Link href="/guides/overview">
-          <a className="text-blue-600 hover:underline">
-            Learn more
-            <span aria-hidden="true"> &rarr;</span>
-          </a>
+        <Link href="/guides/overview" className="text-blue-600 hover:underline">
+          Learn more
+          <span aria-hidden="true"> &rarr;</span>
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
 function LinksSection() {
   const links = [
     {
-      href: '/guides',
-      name: 'Guides',
-      description: 'Learn how the AT protocol works at a high level.',
+      href: "/guides",
+      name: "Guides",
+      description: "Learn how the AT protocol works at a high level.",
     },
     {
-      href: '/specs',
-      name: 'Specs',
-      description: 'Read detailed specifications for the protocol.',
+      href: "/specs",
+      name: "Specs",
+      description: "Read detailed specifications for the protocol.",
     },
     {
-      href: '/lexicons',
-      name: 'Lexicons',
-      description: 'Schema reference for AT and its apps.',
+      href: "/lexicons",
+      name: "Lexicons",
+      description: "Schema reference for AT and its apps.",
     },
-  ]
+  ];
   return (
     <div className="bg-gray-100 py-12">
       <div className="mx-auto max-w-xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -137,14 +139,12 @@ function LinksSection() {
             <div key={link.name} className="relative">
               <dt>
                 <p className="text-lg font-medium leading-6 text-blue-600">
-                  <Link href={link.href}>
-                    <a className="hover:underline">
-                      <span
-                        className="absolute inset-0"
-                        aria-hidden="true"
-                      ></span>
-                      {link.name}
-                    </a>
+                  <Link href={link.href} className="hover:underline">
+                    <span
+                      className="absolute inset-0"
+                      aria-hidden="true"
+                    ></span>
+                    {link.name}
                   </Link>
                 </p>
               </dt>
@@ -156,5 +156,5 @@ function LinksSection() {
         </dl>
       </div>
     </div>
-  )
+  );
 }
