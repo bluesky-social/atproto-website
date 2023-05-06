@@ -23,6 +23,10 @@ User data is exchanged in [signed data repositories](/guides/data-repos). These 
 
 The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc).
 
+The three main services of our first federation are personal data servers (PDS), big graph services (BGS), and App Views. We're also working on feed generators and labelers.
+
+The lower-level primitives that can get stacked together differently are the repositories, lexicons, and DIDs. We published an overview of our technical decisions around federation architecture [on our blog](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture).
+
 ![Federation](/img/federation.jpg)
 
 ## Interoperation
