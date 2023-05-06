@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    appDir: true,
+  },
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -8,34 +11,34 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/guides',
-        destination: '/docs',
+        source: "/guides",
+        destination: "/docs",
         permanent: false,
       },
       {
-        source: '/specs',
-        destination: '/docs',
+        source: "/specs",
+        destination: "/docs",
         permanent: false,
       },
       {
-        source: '/lexicons',
-        destination: '/docs',
+        source: "/lexicons",
+        destination: "/docs",
         permanent: false,
       },
 
       // legacy docs
       {
-        source: '/lexicons/atproto-com',
-        destination: '/lexicons/com-atproto-identity',
+        source: "/lexicons/atproto-com",
+        destination: "/lexicons/com-atproto-identity",
         permanent: false,
       },
       {
-        source: '/lexicons/bsky-app',
-        destination: '/lexicons/app-bsky-actor',
+        source: "/lexicons/bsky-app",
+        destination: "/lexicons/app-bsky-actor",
         permanent: false,
       },
-    ]
+    ];
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
