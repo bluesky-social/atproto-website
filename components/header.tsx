@@ -1,3 +1,4 @@
+'use client';
 import { Fragment } from 'react'
 import Link from 'next/link'
 import { Popover, Transition } from '@headlessui/react'
@@ -40,13 +41,10 @@ function classNames(...classes) {
 
 /*
 {SiteSections.map((item) => (
-  <Link key={item.href} href={item.href}>
-    <a
-      title={item.name}
+  <Link key={item.href} href={item.href} title={item.name}
       className="text-base font-medium text-gray-500 hover:text-gray-900"
     >
       {item.name}
-    </a>
   </Link>
 ))}*/
 
@@ -55,11 +53,9 @@ export default function Header() {
     <Popover className="relative z-[20] bg-white">
       <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
         <div className="flex justify-start">
-          <Link href="/">
-            <a tabIndex="0">
+          <Link  href="/" tabIndex={0}> 
               <span className="sr-only">ATP</span>
               <img className="h-10 w-auto" src="/logo.jpg" alt="" />
-            </a>
           </Link>
         </div>
         <div className="-my-2 -mr-2 md:hidden">
@@ -70,23 +66,18 @@ export default function Header() {
         </div>
         <nav className="hidden space-x-10 md:flex">
           {SiteSections.map((item, i) => (
-            <Link key={item.href} href={item.href}>
-              <a
-                title={item.name}
-                className="text-base font-medium text-gray-500 hover:text-gray-900"
-                tabIndex={i}
-              >
+            <Link  key={item.href} href={item.href} 
+            title={item.name}
+            className="text-base font-medium text-gray-500 hover:text-gray-900"
+            tabIndex={i}>
                 {item.name}
-              </a>
             </Link>
           ))}
         </nav>
         <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
           {ExternalLinks.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a title={item.name} className="ml-6">
+            <Link  key={item.href} href={item.href} title={item.name} className="ml-6">
                 <item.icon className="h-6 w-6" />
-              </a>
             </Link>
           ))}
         </div>
@@ -121,8 +112,8 @@ export default function Header() {
               <div className="mt-6">
                 <nav className="grid gap-y-8">
                   {SiteSections.map((item) => (
-                    <Link key={item.name} href={item.href}>
-                      <a className="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50">
+                    <Link  key={item.name} href={item.href} className="-m-3 flex items-center rounded-md p-3 hover:bg-gray-50">
+                   
                         <item.icon
                           className="h-6 w-6 flex-shrink-0 text-blue-600"
                           aria-hidden="true"
@@ -130,7 +121,6 @@ export default function Header() {
                         <span className="ml-3 text-base font-medium text-gray-900">
                           {item.name}
                         </span>
-                      </a>
                     </Link>
                   ))}
                 </nav>
@@ -139,16 +129,13 @@ export default function Header() {
             <div className="space-y-6 pt-5 pb-6 px-5">
               <div className="flex items-center">
                 {ExternalLinks.map((item) => (
-                  <Link key={item.href} href={item.href}>
-                    <a title={item.name} className="mr-6 block">
+                  <Link  key={item.href} href={item.href} title={item.name} className="mr-6 block">
                       <item.icon className="h-8 w-8" />
-                    </a>
                   </Link>
                 ))}
-                <Link href="https://bsky.app">
-                  <a className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8">
+                <Link  href="https://bsky.app" className="ml-auto block bg-blue-500 text-white px-6 py-1 rounded-md leading-8">
+            
                     Join the waitlist
-                  </a>
                 </Link>
               </div>
             </div>

@@ -13,13 +13,12 @@ export default function CTA() {
           <br />
           Join the waitlist to try the beta before it&#39;s publicly available.
         </p>
-        <Link href="https://bsky.app">
-          <a className="mt-8 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-white px-5 py-3 text-base font-medium text-blue-600 hover:bg-blue-50 sm:w-auto">
+        <Link  href="https://bsky.app"  className="mt-8 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-white px-5 py-3 text-base font-medium text-blue-600 hover:bg-blue-50 sm:w-auto">
             Join the waitlist
-          </a>
+        
         </Link>
         {
-          undefined /*<Link href="/guides/overview">
+          undefined /*<Link legacyBehavior href="/guides/overview">
           <a className="mt-8 inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-base font-medium text-blue-100 hover:bg-blue-600 sm:w-auto sm:ml-4">
             Learn more
           </a>
