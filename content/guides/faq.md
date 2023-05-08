@@ -27,7 +27,7 @@ We want engineers to feel comfortable using and creating new schemas, and we wan
 
 [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) is intended for extremely general cases in which the systems share very little infrastructure. It’s conceptually elegant but difficult to use, often adding a lot of syntax which devs don't understand. JSON-LD simplifies the task of consuming RDF vocabularies, but it does so by hiding the underlying concepts, not by making RDF more legible.
 
-We looked very closely at using RDF but just didn't love the DX or the tooling it offered.
+We looked very closely at using RDF but just didn't love the developer experience (DX) or the tooling it offered.
 
 ## What is “XRPC,” and why not use ___?
 
