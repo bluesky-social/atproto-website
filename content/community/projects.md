@@ -15,7 +15,7 @@ When using any third-party clients, please generate an [app password](/specs/atp
 
 Read our disclaimer [below](/community/projects#disclaimer).
 
-## Protocol Implementations
+## AT Protocol Implementations
 
 - [atproto](https://github.com/bluesky-social/atproto) (Typescript): this is the leading protocol implementation, developed by Bluesky PBLLC
 - [indigo](https://github.com/bluesky-social/indigo) (Go): not stable
