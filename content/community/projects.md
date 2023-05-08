@@ -83,7 +83,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Skynames](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/darn.fish)
 - [Add Bluesky feed embeds](https://bsky.app/profile/felicitas.pojtinger.com/post/3juerzwcl4424) by [@felicitas.pojtinger.com](https://bsky.app/profile/felicitas.pojtinger.com)
 - [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/gautham.bsky.social)
-- [Firesky](firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/johnspurlock.com)
+- [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/johnspurlock.com)
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/charles.dardaman.com)
 - [bsky.link](https://bsky.link/), generate embeddable link previews for Bluesky posts, by [@jamesg.blog](https://bsky.app/profile/jamesg.blog)
 - [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://bsky.app/profile/blisstweeting.ingroup.social)
