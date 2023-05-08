@@ -44,7 +44,7 @@ The official Bluesky app is available on the iOS App and Google Play stores as w
 - [Tokimeki](https://bsky.app/profile/tokimeki.bsky.social) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
 - [Klearsky](https://klearsky.pages.dev/#/home) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
 - [Laika](laika-bluesky.web.app) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
-- [Skylight](https://penpenpng.github.io/skylight/#/login) by [@@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
+- [Skylight](https://penpenpng.github.io/skylight/#/login) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
 - [The Blue](the-blue.shino3.net) by [@shino3.bsky.social](https://bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
 - [Ucho-ten](ucho-ten.net) by [@kawaikute-gomen.com](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite](callmearta.github.io/kite) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
