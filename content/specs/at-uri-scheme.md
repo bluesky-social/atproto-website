@@ -19,7 +19,7 @@ summary: A URI scheme for addressing ATP repository data.
 }
 </style>
 
-# Atproto URI Scheme
+# AT URI Scheme
 
 The `at` URL scheme is used to address records in the atproto network.
 
