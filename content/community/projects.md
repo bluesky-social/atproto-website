@@ -48,6 +48,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [The Blue](the-blue.shino3.net) by [@shino3.bsky.social](https://bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
 - [Ucho-ten](ucho-ten.net) by [@kawaikute-gomen.com](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite](callmearta.github.io/kite) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
+- [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/telmo.is)
 
 ### iOS
 - [Moot](https://bsky.app/profile/moot.social), native iOS client by [@moot.social](https://bsky.app/profile/moot.social)
