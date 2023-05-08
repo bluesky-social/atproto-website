@@ -10,5 +10,4 @@ The Bluesky team monitors a Matrix chat for developers, which you can join [here
 Community members have also organized their own groups below:
 
 - [Bluesky API Touchers](discord.gg/3srmDsHSZJ), a Discord server for developers
-
-
+- [Web0.club](https://discord.gg/d4yZZqAxDV), a Discord server for startup ideas on atproto
