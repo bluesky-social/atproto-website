@@ -6,7 +6,7 @@ import { faSquare } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
   main: [
-    { name: 'Developers', href: '/docs' },
+    { name: 'Docs', href: '/docs' },
     { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
     { name: 'Blog', href: 'https://blueskyweb.xyz/blog/' },
     { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },

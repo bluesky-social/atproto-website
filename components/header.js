@@ -13,9 +13,13 @@ import { faSquare } from '@fortawesome/free-solid-svg-icons'
 
 const SiteSections = [
   {
-    name: 'Developers',
+    name: 'Documentation',
     href: '/docs',
     icon: DocumentTextIcon,
+  },
+  {
+    name: 'Community',
+    href: '/community'
   },
 ]
 
