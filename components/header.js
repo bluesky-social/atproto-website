@@ -8,6 +8,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faSquare } from '@fortawesome/free-solid-svg-icons'
+
 
 const SiteSections = [
   {
@@ -30,6 +32,13 @@ const ExternalLinks = [
     href: 'https://github.com/bluesky-social',
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faGithub} className={className} />
+    ),
+  },
+  {
+    name: 'Bluesky',
+    href: 'https://bsky.app/profile/bsky.app',
+    icon: ({ className }) => (
+      <FontAwesomeIcon icon={faSquare} className={className} />
     ),
   },
 ]

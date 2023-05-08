@@ -2,14 +2,14 @@
 title: Personal Data Repositories
 summary: A guide to the AT Protocol repo structure.
 tldr:
-  - A "Data Repository” is a collection of signed data
+  - A data repository is a collection of signed data
   - They're like Git repos but for database records
   - Users put their public activity in these repos
 ---
 
 # Data Repositories
 
-A "Data Repository” is a collection of data published by a single user. Repositories are self-authenticating data structures, meaning each update is signed and can be verified by anyone.
+A data repository is a collection of data published by a single user. Repositories are self-authenticating data structures, meaning each update is signed and can be verified by anyone.
 
 ## Data Layout
 

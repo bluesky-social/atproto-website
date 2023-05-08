@@ -6,7 +6,7 @@ wip: true
 
 # XRPC
 
-XRPC is a general purpose server-to-server messaging protocol. It was created for the AT Protocol but is a generic communications layer which can be applied to multiple use-cases (and which does not include any ATP-specific semantics). The [repository data layer](./atp) and social applications operate as layers atop XRPC.
+XRPC is a general purpose server-to-server messaging protocol. It was created for the AT Protocol but is a generic communications layer which can be applied to multiple use-cases (and which does not include any atproto-specific semantics). The [repository data layer](./atp) and social applications operate as layers atop XRPC.
 
 <pre style="line-height: 1.2;"><code>┌─────────────────────┐
 │ Social Applications │  Application semantics

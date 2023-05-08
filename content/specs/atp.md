@@ -1,5 +1,5 @@
 ---
-title: ATP
+title: AT Protocol
 summary: The specification for the Authenticated Transfer Protocol (aka "AT Protocol").
 wip: true
 ---
@@ -37,15 +37,15 @@ wip: true
 - **Client**: The application running on the user's device. Interacts with the network through a PDS.
 - **Personal Data Server (PDS)**: A server hosting user data. Acts as the user's personal agent on the network.
 - **Name server**. A server mapping domains to DIDs via the `com.atproto.identity.resolveHandle()` API. Often a PDS.
-- **Crawling indexer**. A service that is crawling the server to produce aggregated views.
+- **Big Graph Service (BGS)**. A service that handles all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
 
 ## Wire protocol (XRPC)
 
-ATP uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The atproto.com lexicons enumerate all XRPC methods used in ATP.
+Atproto uses a light wrapper over HTTPS called [XRPC](./xrpc). XRPC uses [Lexicon](./lexicon), a global schema system, to unify behaviors across hosts. The atproto.com lexicons enumerate all XRPC methods used in ATP.
 
 ## Identifiers
 
-The following identifiers are used in ATP:
+The following identifiers are used in atproto:
 
 |Identifier|Usage|
 |-|-|
@@ -62,10 +62,10 @@ Domain names (aka "handles") weakly identify repositories. They are a convenienc
 
 DIDs are unique global identifiers which strongly identify repositories. They are considered "strong" because they should never change during the lifecycle of a user. They should rarely be used in UIs, but should *always* be used in records to reference data.
 
-ATP supports two DID methods:
+Atproto supports two DID methods:
 
 - [Web (`did:web`)](https://w3c-ccg.github.io/did-method-web/). Should be used only when the user is "self-hosting" and therefore directly controls the domain name & server. May also be used during testing.
-- [Placeholder (`did:plc`)](/specs/did-plc). A method developed in conjunction with ATP to provide global secure IDs which are host-independent.
+- [Placeholder (`did:plc`)](/specs/did-plc). A method developed in conjunction with atproto to provide global secure IDs which are host-independent.
 
 DIDs resolve to "DID Documents" which provide the address of the repo's host and the public key used to sign the repo's updates.
 
@@ -75,7 +75,7 @@ DIDs resolve to "DID Documents" which provide the address of the repo's host and
 
 ## URI scheme
 
-ATP uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some example `at` URLs:
+Atproto uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some example `at` URLs:
 
 <table class="uri-examples">
   <tr>
@@ -102,11 +102,11 @@ ATP uses the `at://` URI scheme ([specified here](./at-uri-scheme)). Some exampl
 
 ## Schemas
 
-ATP uses strict schema definitions for XRPC methods and record types. These schemas are identified using [NSIDs](./nsid) and defined using [Lexicon](./lexicon).
+Atproto uses strict schema definitions for XRPC methods and record types. These schemas are identified using [NSIDs](./nsid) and defined using [Lexicon](./lexicon).
 
 ## Repositories
 
-A "repository" is a collection of signed records.
+A data repository is a collection of signed records.
 
 It is an implementation of a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document). The MST is an ordered, insert-order-independent, deterministic tree. Keys are laid out in alphabetic order. The key insight of an MST is that each key is hashed and starting 0s are counted to determine which layer it falls on (5 zeros for ~32 fanout).
 
@@ -122,7 +122,7 @@ The repository data layout establishes the units of network-transmissible data. 
 
 |Grouping|Description|
 |-|-|
-|**Repository**|Repositories are the dataset of a single "user" in the ATP network. Every user has a single repository which is identified by a [DID](https://w3c.github.io/did-core/).|
+|**Repository**|Repositories are the dataset of a single "user" in the atproto network. Every user has a single repository which is identified by a [DID](https://w3c.github.io/did-core/).|
 |**Collection**|A collection is an ordered list of records. Every collection is identified by an [NSID](./nsid). Collections only contain records of the type identified by their NSID.|
 |**Record**|A record is a key/value document. It is the smallest unit of data which can be transmitted over the network. Every record has a type and is identified by a [TID](#timestamp-ids-tid).|
 
@@ -244,7 +244,7 @@ All data in the repository is encoded using [CBOR](https://cbor.io/). The follow
 
 Repo records are CBOR-encoded objects (using only JSON-compatible CBOR types). Each record has a "type" which is defined by a [lexicon](./lexicon). The type defines which collection will contain the record as well as the expected schema of the record.
 
-ATP uses dollar (`$`) prefixed fields as system fields. The following fields are given a system-meaning:
+The AT Protocol uses dollar (`$`) prefixed fields as system fields. The following fields are given a system-meaning:
 
 |Field|Usage|
 |-|-|
@@ -271,7 +271,7 @@ App passwords are of the form `xxxx-xxxx-xxxx-xxxx`. For your users' safety, you
 
 For users to generate an app password, navigate to Settings > Advanced > App passwords.
 
-### ATP core lexicon
+### Atproto core lexicon
 
 The com.atproto.* lexicons provides the following behaviors:
 
@@ -283,7 +283,7 @@ The com.atproto.* lexicons provides the following behaviors:
 
 ### Additional lexicons
 
-For ATP to be practically useful, it needs to support a variety of sophisticated queries and behaviors. While these sophisticated behaviors could be implemented on the user device, doing so would perform more slowly than on the server. Therefore, the PDS is expected to implement lexicons which provide higher-level APIs. The reference PDS created by Bluesky implements the [bsky.app lexicon](/lexicons/bsky-app).
+For atproto to be practically useful, it needs to support a variety of sophisticated queries and behaviors. While these sophisticated behaviors could be implemented on the user device, doing so would perform more slowly than on the server. Therefore, the PDS is expected to implement lexicons which provide higher-level APIs. The reference PDS created by Bluesky implements the [bsky.app lexicon](/lexicons/bsky-app).
 
 ## Server-to-server API
 
