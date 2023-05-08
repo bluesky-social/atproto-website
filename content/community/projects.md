@@ -38,7 +38,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 ## Clients
 
-The official Bluesky app is available on the iOS App and Google Play stores as well as on [desktop](https://staging.bsky.app/). 
+The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://staging.bsky.app/).
 
 ### Web
 - [Tokimeki](https://bsky.app/profile/tokimeki.bsky.social) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
