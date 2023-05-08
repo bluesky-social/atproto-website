@@ -51,3 +51,10 @@ lexicons:
     href: /lexicons/app-bsky-notification
   - name: app.bsky.richtext
     href: /lexicons/app-bsky-richtext
+community:
+  - name: Quick Start Guide
+    href: /community/quick-start
+  - name: Projects
+    href: /community/projects
+  - name: Groups
+    href: /community/groups
