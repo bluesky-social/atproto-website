@@ -4,8 +4,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Sidebar({ navigation, current }) {
-  return (
+export function Sidebar({ navigation, current }) {
+  return  (
     <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
       <nav className="sticky top-[10px] px-2" aria-label="Sidebar">
         <h4 className="font-bold text-sm mb-1">Guides</h4>
@@ -16,7 +16,18 @@ export default function Sidebar({ navigation, current }) {
         <LinksGroup links={navigation.lexicons} current={current} />
       </nav>
     </div>
-  )
+  );
+}
+
+export function CommunitySidebar({ navigation, current }) {
+  return  (
+    <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
+      <nav className="sticky top-[10px] px-2" aria-label="Sidebar">
+        <h4 className="font-bold text-sm mb-1">Community</h4>
+        <LinksGroup links={navigation.community} current={current} />
+      </nav>
+    </div>
+  );
 }
 
 function LinksGroup({ links, current }) {
@@ -50,3 +61,6 @@ function LinksGroup({ links, current }) {
     </>
   )
 }
+
+
+export default {Sidebar, CommunitySidebar};
