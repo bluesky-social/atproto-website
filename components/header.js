@@ -11,9 +11,13 @@ import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const SiteSections = [
   {
-    name: 'Developers',
+    name: 'Documentation',
     href: '/docs',
     icon: DocumentTextIcon,
+  },
+  {
+    name: 'Community',
+    href: '/community'
   },
 ]
 
