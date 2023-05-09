@@ -11,3 +11,4 @@ Community members have also organized their own groups below:
 
 - [Bluesky API Touchers](https://discord.gg/3srmDsHSZJ), a Discord server for developers
 - [Web0.club](https://discord.gg/d4yZZqAxDV), a Discord server for startup ideas on atproto
+- [Bluesky NYC Community](https://www.meetup.com/bluesky-nyc/), a Meetup group for the Bluesky community in the NYC area.
