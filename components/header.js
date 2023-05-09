@@ -46,7 +46,7 @@ const ExternalLinks = [
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faSquare} className={className} />
     ),
-  },
+  }
 ]
 
 function classNames(...classes) {
