@@ -5,6 +5,7 @@ import {
   Bars3Icon,
   DocumentTextIcon,
   XMarkIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -19,8 +20,9 @@ const SiteSections = [
   },
   {
     name: 'Community',
-    href: '/community'
-  },
+    href: '/community',
+    icon: ChatBubbleLeftRightIcon
+  }
 ]
 
 const ExternalLinks = [
