@@ -33,7 +33,7 @@ const navigation = {
     },
     {
       name: 'Bluesky',
-      href: 'https://bsky.app/profile/bsky.app',
+      href: 'https://staging.bsky.app/profile/bsky.app',
       icon: ({ className }) => (
         <FontAwesomeIcon icon={faSquare} className={className} />
       ),
