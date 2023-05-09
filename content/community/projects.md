@@ -5,7 +5,7 @@ summary: Built by third-party community developers.
 
 # Community Projects
 
-To submit or remove your project to this list, please email hello@blueskyweb.xyz with a link to your project and your handle.
+This is an incomplete list of community projects. To submit or remove your project to this list, please email hello@blueskyweb.xyz with a link to your project and your handle.
 
 **We're particularly excited to see more tooling for moderation and curation.**
 
@@ -42,7 +42,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://staging.bsky.app/).
 
 ### Web
-- [Tokimeki](https://bsky.app/profile/tokimeki.bsky.social) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
+- [Tokimeki](https://tokimekibluesky.vercel.app/) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
 - [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
 - [Laika](laika-bluesky.web.app) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
 - [Skylight](https://penpenpng.github.io/skylight) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
@@ -50,6 +50,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Ucho-ten](ucho-ten.net) by [@kawaikute-gomen.com](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite](callmearta.github.io/kite) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/telmo.is)
+- [Flat](https://flat-bs.vercel.app/) ([Github](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
 
 ### iOS
 - [Moot](https://bsky.app/profile/moot.social), native iOS client by [@moot.social](https://bsky.app/profile/moot.social)
