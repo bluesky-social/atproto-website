@@ -22,7 +22,7 @@ const SiteSections = [
     name: 'Community',
     href: '/community',
     icon: ChatBubbleLeftRightIcon
-  },
+  }
 ]
 
 const ExternalLinks = [
