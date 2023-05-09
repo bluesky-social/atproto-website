@@ -26,6 +26,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [bskyrb](https://github.com/ShreyanJain9/bskyrb) (Ruby): new, not stable
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
 - [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
+- [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
 
 
 ## Tutorials and Guides
@@ -60,9 +61,9 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### CLI
 - [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
-- [adenosine-cli](https://gitlab.com/bnewbold/adenosine/-/blob/main/adenosine-cli/README.md) (Rust) developed by [@bnewbold.bsky.team](https://staging.bsky.app/profile/bnewbold.bsky.team)
-- [bsky](https://github.com/mattn/bsky) (Golang) developed by [@mattn.bsky.social](https://staging.bsky.app/profile/mattn.bsky.social)
-- [atr](https://github.com/syui/atr) (Rust) developed by [@syui.ai](https://staging.bsky.app/profile/syui.ai)
+- [adenosine-cli](https://gitlab.com/bnewbold/adenosine/-/blob/main/adenosine-cli/README.md) (Rust) developed by [@bnewbold.bsky.team](https://bsky.app/profile/bnewbold.bsky.team)
+- [bsky](https://github.com/mattn/bsky) (Golang) developed by [@mattn.bsky.social](https://bsky.app/profile/mattn.bsky.social)
+- [atr](https://github.com/syui/atr) (Rust) developed by [@syui.ai](https://bsky.app/profile/syui.ai)
 - [bluesky_cli](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_cli) (Dart) developed by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 
 ## Bridges
@@ -88,6 +89,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bsky.link](https://bsky.link/), generate embeddable link previews for Bluesky posts, by [@jamesg.blog](https://bsky.app/profile/jamesg.blog)
 - [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://bsky.app/profile/blisstweeting.ingroup.social)
 - [atp tooling](https://blue.amazingca.dev/tools), cache and follow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
+- Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/adhdjesse.com)
 
 ## Bots
 
@@ -95,6 +97,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Limerick bot](https://bsky.app/profile/limerick.bot.gar.lol) by [@gar.lol](https://bsky.app/profile/did:plc:4r2qco7eb644cpyga5r6vdib)
 - [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://bsky.app/profile/goose.art)
 - [Earthquake bot](https://github.com/emilyliu7321/bsky-earthquake-bot) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team)
+- [Song of songs bot](https://bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 
 ### Disclaimer
 
