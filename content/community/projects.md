@@ -43,9 +43,9 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### Web
 - [Tokimeki](https://bsky.app/profile/tokimeki.bsky.social) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
-- [Klearsky](https://klearsky.pages.dev/#/home) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
+- [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
 - [Laika](laika-bluesky.web.app) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
-- [Skylight](https://penpenpng.github.io/skylight/#/login) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
+- [Skylight](https://penpenpng.github.io/skylight) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
 - [The Blue](the-blue.shino3.net) by [@shino3.bsky.social](https://bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
 - [Ucho-ten](ucho-ten.net) by [@kawaikute-gomen.com](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite](callmearta.github.io/kite) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
@@ -90,6 +90,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://bsky.app/profile/blisstweeting.ingroup.social)
 - [atp tooling](https://blue.amazingca.dev/tools), cache and follow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 - Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/adhdjesse.com)
+- [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/sugyan.com)
 
 ## Bots
 
