@@ -98,6 +98,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://bsky.app/profile/goose.art)
 - [Earthquake bot](https://github.com/emilyliu7321/bsky-earthquake-bot) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team)
 - [Song of songs bot](https://bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://bsky.app/profile/dcsan.xyz)
 
 ### Disclaimer
 
