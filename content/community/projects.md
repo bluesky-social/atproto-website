@@ -82,7 +82,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://bsky.app/profile/geeken.tv)
 - [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Skyspace](https://bsky.app/profile/did:plc:dxu2v6dt7ppqdnyjf3p53ram), a Myspace clone by [@jem.fm](https://bsky.app/profile/jem.fm)
-- [Skynames](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/darn.fish)
+- [Skyname](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/darn.fish)
 - [Add Bluesky feed embeds](https://bsky.app/profile/felicitas.pojtinger.com/post/3juerzwcl4424) by [@felicitas.pojtinger.com](https://bsky.app/profile/felicitas.pojtinger.com)
 - [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/gautham.bsky.social)
 - [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/johnspurlock.com)
