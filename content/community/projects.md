@@ -5,9 +5,7 @@ summary: Built by third-party community developers.
 
 # Community Projects
 
-This is an incomplete list of community projects. To submit or remove your project to this list, please email hello@blueskyweb.xyz with a link to your project and your handle.
-
-**We're particularly excited to see more tooling for moderation and curation.**
+This is a partial list of community projects. **We're particularly excited to see more tooling for moderation and curation.**
 
 ### App Passwords
 
@@ -98,12 +96,17 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [MTA Alerts](https://bsky.app/profile/mtaalerts.bsky.social) by [@ryanskinner.com](https://bsky.app/profile/ryanskinner.com)
 - [Limerick bot](https://bsky.app/profile/limerick.bot.gar.lol) by [@gar.lol](https://bsky.app/profile/did:plc:4r2qco7eb644cpyga5r6vdib)
 - [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://bsky.app/profile/goose.art)
-- [Earthquake bot](https://github.com/emilyliu7321/bsky-earthquake-bot) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team)
+- [Earthquake bot](https://bsky.app/profile/earthquake.bsky.social) ([GitHub](https://github.com/emilyliu7321/bsky-earthquake-bot)) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team)
 - [Song of songs bot](https://bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://bsky.app/profile/dcsan.xyz)
+- [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
 
 ### Disclaimer
 
 This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging in to their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
 
 We are not responsible for any damage, loss, or unauthorized access to your account that may result from using these third-party clients. By using any of these clients, you acknowledge and accept these risks and limitations.
+
+### Submit your project
+
+To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. Alternatively, you can email hello@blueskyweb.xyz with a link to your project and your handle.
