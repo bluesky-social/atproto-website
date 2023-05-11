@@ -5,9 +5,7 @@ summary: Built by third-party community developers.
 
 # Community Projects
 
-This is an incomplete list of community projects. To submit or remove your project to this list, please email hello@blueskyweb.xyz with a link to your project and your handle.
-
-**We're particularly excited to see more tooling for moderation and curation.**
+This is a partial list of community projects. **We're particularly excited to see more tooling for moderation and curation.**
 
 ### App Passwords
 
@@ -42,23 +40,26 @@ Read our disclaimer [below](/community/projects#disclaimer).
 The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://staging.bsky.app/).
 
 ### Web
-- [Tokimeki](https://tokimekibluesky.vercel.app/) by [@holybea](https://staging.bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
-- [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://staging.bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
-- [Laika](https://laika-bluesky.web.app/) by [@makoto.bsky.social](https://staging.bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
-- [Skylight](https://penpenpng.github.io/skylight) by [@penpenpng.bsky.social](https://staging.bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
-- [The Blue](https://the-blue.shino3.net) by [@shino3.bsky.social](https://staging.bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
-- [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://staging.bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://staging.bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
-- [Kite](https://callmearta.github.io/kite) by [@arta.bsky.social](https://staging.bsky.app/profile/arta.bsky.social)
-- [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://staging.bsky.app/profile/telmo.is)
-- [Flat](https://flat-bs.vercel.app/) ([Github](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://staging.bsky.app/profile/sabigara.bsky.social)
+- [Tokimeki](https://tokimekibluesky.vercel.app/) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
+- [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
+- [Laika](https://laika-bluesky.web.app/) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
+- [Skylight](https://penpenpng.github.io/skylight) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
+- [The Blue](https://the-blue.shino3.net) by [@shino3.bsky.social](https://bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
+- [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
+- [Kite](https://callmearta.github.io/kite) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
+- [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/telmo.is)
+- [Flat](https://flat-bs.vercel.app/) ([Github](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
+- [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 
 ### iOS
-- [Moot](https://staging.bsky.app/profile/moot.social), native iOS client by [@moot.social](https://staging.bsky.app/profile/moot.social)
-- [Graysky](https://staging.bsky.app/profile/graysky.app) by [@mozzius.dev](https://staging.bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://staging.bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf).
+- [Moot](https://bsky.app/profile/moot.social), native iOS client by [@moot.social](https://bsky.app/profile/moot.social)
+- [Graysky](https://bsky.app/profile/graysky.app) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 
 ### Android
-- [Seiun](https://github.com/akiomik/seiun) by [@omi.bsky.social](https://staging.bsky.app/profile/omi.bsky.social)
-- [Ozone](https://github.com/christiandeange/ozone) by [@chr.bsky.social](https://staging.bsky.app/profile/chr.bsky.social)
+- [Seiun](https://github.com/akiomik/seiun) by [@omi.bsky.social](https://bsky.app/profile/omi.bsky.social)
+- [Ozone](https://github.com/christiandeange/ozone) by [@chr.bsky.social](https://bsky.app/profile/chr.bsky.social)
+- [Graysky](https://bsky.app/profile/graysky.app) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+
 
 ### CLI
 - [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
@@ -77,33 +78,39 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ## Other Tools
 
-- [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://staging.bsky.app/profile/louis02x.com)
-- [Bluesky social graph generator](https://bsky.jazco.dev/) by [@jaz.bsky.social](https://staging.bsky.app/profile/jaz.bsky.social)
-- [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://staging.bsky.app/profile/geeken.tv)
-- [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://staging.bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
-- [Skyspace](https://staging.bsky.app/profile/did:plc:dxu2v6dt7ppqdnyjf3p53ram), a Myspace clone by [@jem.fm](https://staging.bsky.app/profile/jem.fm)
-- [Skynames](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://staging.bsky.app/profile/darn.fish)
-- [Add Bluesky feed embeds](https://staging.bsky.app/profile/felicitas.pojtinger.com/post/3juerzwcl4424) by [@felicitas.pojtinger.com](https://staging.bsky.app/profile/felicitas.pojtinger.com)
-- [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://staging.bsky.app/profile/gautham.bsky.social)
-- [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://staging.bsky.app/profile/johnspurlock.com)
-- [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://staging.bsky.app/profile/charles.dardaman.com)
-- [bsky.link](https://bsky.link/), generate embeddable link previews for Bluesky posts, by [@jamesg.blog](https://staging.bsky.app/profile/jamesg.blog)
-- [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://staging.bsky.app/profile/blisstweeting.ingroup.social)
-- [atp tooling](https://blue.amazingca.dev/tools), cache and follow repos and users, by [@caleb.bsky.social](https://staging.bsky.app/profile/caleb.bsky.social)
-- Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://staging.bsky.app/profile/adhdjesse.com)
-- [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://staging.bsky.app/profile/sugyan.com)
+- [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/louis02x.com)
+- [Bluesky social graph generator](https://bsky.jazco.dev/) by [@jaz.bsky.social](https://bsky.app/profile/jaz.bsky.social)
+- [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://bsky.app/profile/geeken.tv)
+- [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [Skyspace](https://bsky.app/profile/did:plc:dxu2v6dt7ppqdnyjf3p53ram), a Myspace clone by [@jem.fm](https://bsky.app/profile/jem.fm)
+- [Skyname](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/darn.fish)
+- [Add Bluesky feed embeds](https://bsky.app/profile/felicitas.pojtinger.com/post/3juerzwcl4424) by [@felicitas.pojtinger.com](https://bsky.app/profile/felicitas.pojtinger.com)
+- [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/gautham.bsky.social)
+- [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/johnspurlock.com)
+- [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/charles.dardaman.com)
+- [bsky.link](https://bsky.link/), generate embeddable link previews for Bluesky posts, by [@jamesg.blog](https://bsky.app/profile/jamesg.blog)
+- [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://bsky.app/profile/blisstweeting.ingroup.social)
+- [atp tooling](https://blue.amazingca.dev/tools), cache and follow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
+- Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/adhdjesse.com)
+- [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/sugyan.com)
 
 ## Bots
 
-- [MTA Alerts](https://staging.bsky.app/profile/mtaalerts.bsky.social) by [@ryanskinner.com](https://staging.bsky.app/profile/ryanskinner.com)
-- [Limerick bot](https://staging.bsky.app/profile/limerick.bot.gar.lol) by [@gar.lol](https://staging.bsky.app/profile/did:plc:4r2qco7eb644cpyga5r6vdib)
-- [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://staging.bsky.app/profile/goose.art)
-- [Earthquake bot](https://github.com/emilyliu7321/bsky-earthquake-bot) by [@emily.bsky.team](https://staging.bsky.app/profile/emily.bsky.team)
-- [Song of songs bot](https://staging.bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://staging.bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
-- [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://staging.bsky.app/profile/dcsan.xyz)
+- [MTA Alerts](https://bsky.app/profile/mtaalerts.bsky.social) by [@ryanskinner.com](https://bsky.app/profile/ryanskinner.com)
+- [Limerick bot](https://bsky.app/profile/limerick.bot.gar.lol) by [@gar.lol](https://bsky.app/profile/did:plc:4r2qco7eb644cpyga5r6vdib)
+- [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://bsky.app/profile/goose.art)
+- [Earthquake bot](https://bsky.app/profile/earthquake.bsky.social) ([GitHub](https://github.com/emilyliu7321/bsky-earthquake-bot)) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team)
+- [Song of songs bot](https://bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://bsky.app/profile/dcsan.xyz)
+- [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
+- [Bsky Weathercam Bot - blueskies.bsky.social !](https://staging.bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://staging.bsky.app/profile/klatz.co)
 
 ### Disclaimer
 
 This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging in to their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
 
 We are not responsible for any damage, loss, or unauthorized access to your account that may result from using these third-party clients. By using any of these clients, you acknowledge and accept these risks and limitations.
+
+### Submit your project
+
+To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. Alternatively, you can email hello@blueskyweb.xyz with a link to your project and your handle.
