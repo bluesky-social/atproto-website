@@ -58,6 +58,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 ### Android
 - [Seiun](https://github.com/akiomik/seiun) by [@omi.bsky.social](https://bsky.app/profile/omi.bsky.social)
 - [Ozone](https://github.com/christiandeange/ozone) by [@chr.bsky.social](https://bsky.app/profile/chr.bsky.social)
+- [Graysky](https://bsky.app/profile/graysky.app) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf).
+
 
 ### CLI
 - [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
