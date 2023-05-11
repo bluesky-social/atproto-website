@@ -786,4 +786,45 @@ Definitions related to content & activity published in Bluesky.
   }
 }
 ```
+---
+
+## app.bsky.feed.getFeedSkeleton
+
+We are actively developing Feed Generator integration into the Bluesky PDS. Though we are reasonably confident about the general shape laid out here, this lexicon is subject to change.
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getFeedSkeleton",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A skeleton of a feed provided by a feed generator",
+      "parameters": {
+        "type": "params",
+        "required": ["feed"],
+        "properties": {
+          "feed": {"type": "string", "format": "at-uri"},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 50},
+          "cursor": {"type": "string"}
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["feed"],
+          "properties": {
+            "cursor": {"type": "string"},
+            "feed": {
+              "type": "array",
+              "items": {"type": "ref", "ref": "app.bsky.feed.defs#skeletonFeedPost"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 <!-- END lex generated TOC please keep comment here to allow auto update -->
