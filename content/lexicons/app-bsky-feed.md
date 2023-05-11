@@ -790,6 +790,8 @@ Definitions related to content & activity published in Bluesky.
 
 ## app.bsky.feed.getFeedSkeleton
 
+We are actively developing Feed Generator integration into the Bluesky PDS. Though we are reasonably confident about the general shape laid out here, this lexicon is subject to change.
+
 ```json
 {
   "lexicon": 1,
