@@ -68,6 +68,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bsky](https://github.com/mattn/bsky) (Golang) developed by [@mattn.bsky.social](https://bsky.app/profile/mattn.bsky.social)
 - [atr](https://github.com/syui/atr) (Rust) developed by [@syui.ai](https://bsky.app/profile/syui.ai)
 - [bluesky_cli](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_cli) (Dart) developed by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
+- [blue-sky-cli](https://github.com/wesbos/blue-sky-cli) (Typescript) developed by [@wesbos](https://bsky.app/profile/wesbos)
 
 ## Bridges
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/videah.net)
