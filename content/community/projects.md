@@ -63,6 +63,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### macOS
 - [Bluesky for Raycast](https://www.raycast.com/dharamkapila/bluesky): A Bluesky client for [Raycast](https://www.raycast.com) by [@dharam.bsky.social](https://bsky.app/profile/dharam.bsky.social)
+- [swiftsky](https://github.com/rmcan/swiftsky): A Bluesky client for macOS by [@can.bsky.social](https://bsky.app/profile/can.bsky.social)
 
 ### CLI
 - [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
