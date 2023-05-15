@@ -108,6 +108,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://bsky.app/profile/dcsan.xyz)
 - [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
 - [Bsky Weathercam Bot - blueskies.bsky.social !](https://staging.bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://staging.bsky.app/profile/klatz.co)
+- [Get Alt Text](https://staging.bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://staging.bsky.app/profile/holden.bsky.social)
 
 ### Disclaimer
 
