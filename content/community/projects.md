@@ -25,6 +25,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
 - [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
 - [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
+- [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
 
 
 ## Tutorials and Guides
@@ -79,7 +80,6 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/klatz.co)
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from Github Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/snarfed.org)
-- [Bridgy Fed](https://fed.brid.gy/), includes implementations of the [AT Protocol Merkle search tree](https://github.com/snarfed/bridgy-fed/blob/main/atproto_mst.py) and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py), by [@snarfed.org](https://bsky.app/profile/snarfed.org)
 
 ## Other Tools
 
