@@ -1,17 +1,18 @@
 # atproto-website
 
-This is the repository for the documentation for the AT Protocol. You can read the documentation [here](https://atproto.com/).
+This repository contains the documentation for the AT Protocol, available to read at [atproto.com](https://atproto.com/).
 
-## Installation
+---
 
-To make edits to the documentation, clone this repo. Run `npm install`. 
+### Making edits to atproto.com
 
-Run the development server with `npm run dev` or `yarn dev`. 
+- clone this repo
+- run `npm install`
+- run the development server with `npm run dev` or `yarn dev`
+- open [http://localhost:3000](http://localhost:3000) with your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+[pages/index.js](https://github.com/bluesky-social/atproto-website/blob/main/pages/index.js) generates [http://localhost:3000](http://localhost:3000) -- start there if you'd like to make changes.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The page auto-updates as you edit the file.
