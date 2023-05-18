@@ -53,6 +53,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/anku.bsky.social)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/mattstypa.bsky.social)
+- [SkyFeed](https://skyfeed.app) by [@redsolver.net](https://bsky.app/profile/redsolver.net)
 
 ### iOS
 - [Moot](https://bsky.app/profile/moot.social), native iOS client by [@moot.social](https://bsky.app/profile/moot.social)
