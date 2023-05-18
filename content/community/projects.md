@@ -111,6 +111,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
 - [Bsky Weathercam Bot - blueskies.bsky.social !](https://bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://bsky.app/profile/klatz.co)
 - [Get Alt Text](https://bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://bsky.app/profile/holden.bsky.social)
+- [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
+- [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which recive the most replies, quotes, reposts and likes, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
 
 ### Disclaimer
 
