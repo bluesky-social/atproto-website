@@ -38,7 +38,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 ## Clients
 
-The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://staging.bsky.app/).
+The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://bsky.app/).
 
 ### Web
 - [Tokimeki](https://tokimekibluesky.vercel.app/) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
@@ -109,8 +109,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Song of songs bot](https://bsky.app/profile/songofsongsbot.bsky.social) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [FAQ bot](https://github.com/dcsan/bsky-faq-bot) by [@dcsan.xyz](https://bsky.app/profile/dcsan.xyz)
 - [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
-- [Bsky Weathercam Bot - blueskies.bsky.social !](https://staging.bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://staging.bsky.app/profile/klatz.co)
-- [Get Alt Text](https://staging.bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://staging.bsky.app/profile/holden.bsky.social)
+- [Bsky Weathercam Bot - blueskies.bsky.social !](https://bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://bsky.app/profile/klatz.co)
+- [Get Alt Text](https://bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://bsky.app/profile/holden.bsky.social)
 
 ### Disclaimer
 
