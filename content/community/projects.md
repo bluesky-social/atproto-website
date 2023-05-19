@@ -100,6 +100,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [atp tooling](https://blue.amazingca.dev/tools), cache and follow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 - Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/adhdjesse.com)
 - [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/sugyan.com)
+- [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/nirsd.bsky.social)
 
 ## Bots
 
