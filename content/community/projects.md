@@ -13,19 +13,31 @@ When using any third-party clients, please generate an [app password](/specs/atp
 
 Read our disclaimer [below](/community/projects#disclaimer).
 
+
 ## AT Protocol Implementations
 
-- [atproto](https://github.com/bluesky-social/atproto) (Typescript): this is the leading protocol implementation, developed by Bluesky PBLLC
-- [indigo](https://github.com/bluesky-social/indigo) (Go): not stable
-- [adenosine](https://gitlab.com/bnewbold/adenosine) (Rust): not stable
-- [lexrpc](https://github.com/snarfed/lexrpc) (Python): not stable
-- [atprototools](https://github.com/ianklatzco/atprototools) (Python): new, not stable
-- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky) (Dart)
-- [bskyrb](https://github.com/ShreyanJain9/bskyrb) (Ruby): new, not stable
-- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
-- [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
-- [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
-- [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
+### Typescript
+- [atproto](https://github.com/bluesky-social/atproto), the reference protocol implementation—developed by Bluesky PBLLC
+
+### Rust
+- [adenosine](https://gitlab.com/bnewbold/adenosine), not stable
+- [atrium](https://github.com/sugyan/atrium), not stable
+- [bisky](https://github.com/jesopo/bisky), not stable
+
+### Python
+- [arroba](https://github.com/snarfed/arroba), not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
+- [atproto](https://github.com/MarshalX/atproto), not stable
+- [atprototools](https://github.com/ianklatzco/atprototools), not stable
+- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky), not stable
+- [chitose](https://github.com/mnogu/chitose), not stable
+- [lexrpc](https://github.com/snarfed/lexrpc), not stable
+
+### Go
+- [indigo](https://github.com/bluesky-social/indigo), not stable
+
+### Dart
+- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky), not stable
+- [bskyrb](https://github.com/ShreyanJain9/bskyrb), not stable
 
 
 ## Tutorials and Guides
@@ -76,12 +88,14 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bluesky_cli](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_cli) (Dart) developed by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [blue-sky-cli](https://github.com/wesbos/blue-sky-cli) (Typescript) developed by [@wesbos](https://bsky.app/profile/wesbos)
 
+
 ## Bridges
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/videah.net)
 - [Bluestream](https://bluestream.deno.dev/), RSS feed generator for Bluesky by [@kawarimidoll.bsky.social](https://bsky.app/profile/kawarimidoll.bsky.social)
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/klatz.co)
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from Github Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/snarfed.org)
+
 
 ## Other Tools
 
@@ -102,6 +116,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/sugyan.com)
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/nirsd.bsky.social)
 
+
 ## Bots
 
 - [MTA Alerts](https://bsky.app/profile/mtaalerts.bsky.social) by [@ryanskinner.com](https://bsky.app/profile/ryanskinner.com)
@@ -116,12 +131,13 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
 - [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which recive the most replies, quotes, reposts and likes, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
 
-### Disclaimer
+
+## Disclaimer
 
 This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging in to their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
 
 We are not responsible for any damage, loss, or unauthorized access to your account that may result from using these third-party clients. By using any of these clients, you acknowledge and accept these risks and limitations.
 
-### Submit your project
+## Submit your project
 
 To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. Alternatively, you can email hello@blueskyweb.xyz with a link to your project and your handle.
