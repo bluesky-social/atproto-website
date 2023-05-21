@@ -49,7 +49,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite🪁](https://kite.black) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/telmo.is)
-- [Flat](https://flat-bs.vercel.app/) ([Github](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
+- [Flat](https://flat-bs.vercel.app/) ([GitHub](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
 - [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/anku.bsky.social)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/mattstypa.bsky.social)
@@ -80,7 +80,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/videah.net)
 - [Bluestream](https://bluestream.deno.dev/), RSS feed generator for Bluesky by [@kawarimidoll.bsky.social](https://bsky.app/profile/kawarimidoll.bsky.social)
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/klatz.co)
-- [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from Github Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
+- [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/snarfed.org)
 
 ## Other Tools
