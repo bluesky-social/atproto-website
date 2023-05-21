@@ -26,6 +26,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
 - [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
 - [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
+- [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
 
 
 ## Tutorials and Guides
