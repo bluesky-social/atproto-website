@@ -26,6 +26,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
 - [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
 - [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
+- [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation and more.
 
 ## Tutorials and Guides
@@ -34,7 +35,6 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto starter kit](https://github.com/aliceisjustplaying/atproto-starter-kit), TypeScript/Node template, by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [How to build a Bluesky bot using ATProto and OpenAI API](https://ashevat.medium.com/how-to-build-a-bluesky-bot-using-atproto-and-openai-api-77a26a154b) by [@amir.blue](https://bsky.app/profile/amir.blue)
 - [Bluesky bot tutorial](https://github.com/emilyliu7321/bluesky-emoji-bot/blob/main/TUTORIAL.md) by [@emily.bsky.team](https://bsky.app/profile/emily.bsky.team) 
-
 
 ## Clients
 
