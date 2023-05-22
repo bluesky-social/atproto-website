@@ -49,7 +49,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite🪁](https://kite.black) by [@arta.bsky.social](https://bsky.app/profile/arta.bsky.social)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/telmo.is)
-- [Flat](https://flat-bs.vercel.app/) ([Github](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
+- [Flat](https://flat-bs.vercel.app/) ([GitHub](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/sabigara.bsky.social)
 - [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/caleb.bsky.social)
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/anku.bsky.social)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/mattstypa.bsky.social)
@@ -80,7 +80,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/videah.net)
 - [Bluestream](https://bluestream.deno.dev/), RSS feed generator for Bluesky by [@kawarimidoll.bsky.social](https://bsky.app/profile/kawarimidoll.bsky.social)
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/klatz.co)
-- [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from Github Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
+- [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/snarfed.org)
 
 ## Other Tools
@@ -114,11 +114,11 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Bsky Weathercam Bot - blueskies.bsky.social !](https://bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://bsky.app/profile/klatz.co)
 - [Get Alt Text](https://bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://bsky.app/profile/holden.bsky.social)
 - [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
-- [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which recive the most replies, quotes, reposts and likes, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
+- [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which receive the most replies, quotes, reposts and likes, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
 
 ### Disclaimer
 
-This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging in to their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
+This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging into their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
 
 We are not responsible for any damage, loss, or unauthorized access to your account that may result from using these third-party clients. By using any of these clients, you acknowledge and accept these risks and limitations.
 
