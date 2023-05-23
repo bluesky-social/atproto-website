@@ -27,7 +27,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
 - [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and [`com.atproto.sync`](https://github.com/snarfed/bridgy-fed/blob/main/atproto.py) XRPC methods
 - [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
-- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation and more.
+- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
 
 ## Tutorials and Guides
 
@@ -113,8 +113,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [GitHub Trending bot](https://bsky.app/profile/github-trending.bsky.social) ([GitHub](https://github.com/kawamataryo/bsky-github-trending-bot)) by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
 - [Bsky Weathercam Bot - blueskies.bsky.social !](https://bsky.app/profile/blueskies.bsky.social) by [ianklatzco](https://bsky.app/profile/klatz.co)
 - [Get Alt Text](https://bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://bsky.app/profile/holden.bsky.social)
-- [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
-- [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which receive the most replies, quotes, reposts and likes, by [lamrongol](https://bsky.app/profile/lamrongol.bsky.social)
+- [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [@lamrongol.bsky.social](https://bsky.app/profile/lamrongol.bsky.social)
+- [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which receive the most replies, quotes, reposts and likes, by [@lamrongol.bsky.social](https://bsky.app/profile/lamrongol.bsky.social)
 
 ### Disclaimer
 
