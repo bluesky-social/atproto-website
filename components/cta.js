@@ -12,7 +12,7 @@ export default function CTA() {
           <br />
         </p>
         <Link href="https://bsky.app">
-          <a className="mt-8 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-white px-5 py-3 text-base font-medium text-blue-600 hover:bg-blue-50 sm:w-auto">
+          <a className="mt-8 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-white px-5 py-3 text-base font-medium text-blue-600 hover:bg-blue-50 focus-visible:outline outline-yellow-500 outline-2 sm:w-auto">
             Join the waitlist
           </a>
         </Link>

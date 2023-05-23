@@ -32,7 +32,7 @@ const navigation = {
       ),
     },
     {
-      name: 'Bluesky',
+      name: 'Bluesky Social',
       href: 'https://bsky.app/profile/bsky.app',
       icon: ({ className }) => (
         <FontAwesomeIcon icon={faSquare} className={className} />
@@ -47,7 +47,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
         <nav
           className="-mx-5 -my-2 flex flex-wrap justify-center"
-          aria-label="Footer"
+          aria-label="Bluesky website"
         >
           {navigation.main.map((item) => (
             <div key={item.name} className="px-5 py-2">

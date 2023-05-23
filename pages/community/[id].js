@@ -43,7 +43,7 @@ export default function Guide({ navigation, file }) {
       </div>
       <div className="flex max-w-4xl mx-auto">
         <CommunitySidebar navigation={navigation} current={file.path} />
-        <div className="flex-1 px-4 pb-16">
+        <main className="flex-1 px-4 pb-16">
           {file.tldr ? <TLDR items={file.tldr} /> : ''}
           <div
             className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
@@ -57,7 +57,7 @@ export default function Guide({ navigation, file }) {
               />
             </div>
           ) : undefined}
-        </div>
+        </main>
       </div>
       <CTA />
       <Footer />

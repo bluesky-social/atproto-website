@@ -41,7 +41,7 @@ const ExternalLinks = [
     ),
   },
   {
-    name: 'Bluesky',
+    name: 'Bluesky Social',
     href: 'https://bsky.app/profile/bsky.app',
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faSquare} className={className} />
@@ -68,12 +68,12 @@ function classNames(...classes) {
 export default function Header() {
   return (
     <Popover className="relative z-[20] bg-white">
+      <header>
       <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
         <div className="flex justify-start">
           <Link href="/">
-            <a tabIndex="0">
-              <span className="sr-only">ATP</span>
-              <img className="h-10 w-auto" src="/logo.jpg" alt="" />
+            <a>
+              <img className="h-10 w-auto" src="/logo.jpg" alt="The AT Protocol homepage" />
             </a>
           </Link>
         </div>
@@ -83,20 +83,19 @@ export default function Header() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </Popover.Button>
         </div>
-        <nav className="hidden space-x-10 md:flex">
+        <nav aria-label="AT Protocol" className="hidden space-x-10 md:flex">
           {SiteSections.map((item, i) => (
             <Link key={item.href} href={item.href}>
               <a
                 title={item.name}
                 className="text-base font-medium text-gray-500 hover:text-gray-900"
-                tabIndex={i}
               >
                 {item.name}
               </a>
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+        <nav aria-label="External links" className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
           {ExternalLinks.map((item) => (
             <Link key={item.href} href={item.href}>
               <a title={item.name} className="ml-6">
@@ -104,7 +103,7 @@ export default function Header() {
               </a>
             </Link>
           ))}
-        </div>
+        </nav>
       </div>
 
       <Transition
@@ -170,6 +169,7 @@ export default function Header() {
           </div>
         </Popover.Panel>
       </Transition>
+      </header>
     </Popover>
   )
 }
