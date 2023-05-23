@@ -9,7 +9,7 @@ export default function Hero() {
             <img
               src="/img/hero-img.png"
               className="mx-auto w-48 sm:w-64 mb-10"
-              alt="The @ symbol, with a blue sky and clouds in the background"
+              alt="The AT Protocol logo, an @ symbol with a blue sky and clouds in the background"
             />
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block xl:inline text-blue-50">
