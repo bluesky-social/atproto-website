@@ -9,7 +9,7 @@ tldr:
 
 # Identity
 
-The ATP identity system has a number of requirements:
+The atproto identity system has a number of requirements:
 
 * **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should rarely change to ensure that links to their content are stable.
 * **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data and provide end-to-end privacy. The identity system must publish their public keys with strong security.
@@ -53,7 +53,7 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
   <tr>
    <td><strong>Handles</strong>
    </td>
-   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-handle">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document.
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document.
    </td>
   </tr>
   <tr>
@@ -88,15 +88,15 @@ The [DID standard](https://www.w3.org/TR/did-core/) supports custom "methods" of
 - **Key rotation**. Users must be able to rotate keypairs without losing their identity.
 - **Decentralized governance**. The network should not be governed by a single stakeholder; it must be an open network or a consortium of providers.
 
-At present, none of the DID methods meet our standards fully. **Therefore we have chosen to support [did-web](https://w3c-ccg.github.io/did-method-web/) and a temporary method we've created called [did-placeholder](/specs/did-plc).** We expect this situation to evolve as new solutions emerge.
+At present, none of the DID methods meet our standards fully. **Therefore, we have chosen to support [did-web](https://w3c-ccg.github.io/did-method-web/) and a temporary method we've created called [did-placeholder](/specs/did-plc).** We expect this situation to evolve as new solutions emerge.
 
 ## Handle Resolution
 
-Handles in ATP are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
+Handles in atproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Handle resolution uses the [`com.atproto.identity.resolveHandle`](/lexicons/com-atproto-handle) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
+Handle resolution uses the [`com.atproto.identity.resolveHandle`](/lexicons/com-atproto-identity) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
 
-Here is the algorithm in pseudo-typescript:
+Here is the algorithm in pseudo-TypeScript:
 
 ```typescript
 async function resolveHandle(handle: string) {
@@ -134,7 +134,7 @@ await didPlc.resolve('did:plc:12345') /* => {
 
 We can now communicate with `https://pds.com` to access Alice's data.
 
-### Example: Hosting service w/separate domain name
+### Example: Hosting service with separate domain name
 
 Suppose we have the same scenario as before, except the user has supplied their own domain name:
 
@@ -159,11 +159,11 @@ await didPlc.resolve('did:plc:12345') /* => {
 }*/
 ```
 
-We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.identity.resolveHandle()` call. The actual userdata lives on `pds.com`.
+We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.identity.resolveHandle()` call. The actual user data lives on `pds.com`.
 
 ### Example: Self-hosted
 
-Let's consider a self-hosting scenario. If using did:plc, it would look something like:
+Let's consider a self-hosting scenario. If it's using did:plc, it would look something like:
 
 - The handle: `alice.com`
 - The DID: `did:plc:12345`

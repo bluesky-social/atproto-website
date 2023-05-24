@@ -5,11 +5,11 @@ summary: Frequently Asked Questions about ATP
 
 # FAQ
 
-Frequently Asked Questions about the Authenticated Transfer Protocol (ATP).
+Frequently Asked Questions about the Authenticated Transfer Protocol (ATP). For FAQ about Bluesky, visit [here](https://blueskyweb.xyz/faq).
 
-## Is ATP a blockchain?
+## Is the AT Protocol a blockchain?
 
-No. ATP is a [federated protocol](https://en.wikipedia.org/wiki/Federation_(information_technology)). It's not a blockchain nor does it use a blockchain.
+No. The AT Protocol is a [federated protocol](https://en.wikipedia.org/wiki/Federation_(information_technology)). It's not a blockchain nor does it use a blockchain.
 
 ## Why not use ActivityPub?
 
@@ -21,13 +21,13 @@ Other smaller differences include: a different viewpoint about how schemas shoul
 
 ## Why create Lexicon instead of using JSON-LD or RDF?
 
-ATP exchanges data and RPC commands across organizations. For the data and RPC to be useful, the software needs to correctly handle schemas created by separate teams. This is the purpose of [Lexicon](/guides/lexicon).
+Atproto exchanges data and RPC commands across organizations. For the data and RPC to be useful, the software needs to correctly handle schemas created by separate teams. This is the purpose of [Lexicon](/guides/lexicon).
 
 We want engineers to feel comfortable using and creating new schemas, and we want developers to enjoy the DX of the system. Lexicon helps us produce strongly typed APIs which are extremely familiar to developers and which provides a variety of runtime correctness checks (which are vital in distributed systems).
 
 [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) is intended for extremely general cases in which the systems share very little infrastructure. It’s conceptually elegant but difficult to use, often adding a lot of syntax which devs don't understand. JSON-LD simplifies the task of consuming RDF vocabularies, but it does so by hiding the underlying concepts, not by making RDF more legible.
 
-We looked very closely at using RDF but just didn't love the DX or the tooling it offered.
+We looked very closely at using RDF but just didn't love the developer experience (DX) or the tooling it offered.
 
 ## What is “XRPC,” and why not use ___?
 
@@ -42,7 +42,7 @@ await api.com.atproto.repo.listRecords({
 })
 ```
 
-Maps to
+...maps to:
 
 ```text
 GET /xrpc/com.atproto.repo.listRecords

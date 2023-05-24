@@ -11,6 +11,40 @@ Definitions related to the social graph in Bluesky.
 <!-- DON'T EDIT THIS SECTION! INSTEAD RE-RUN lex TO UPDATE -->
 ---
 
+## app.bsky.graph.block
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.graph.block",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A block.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "subject",
+          "createdAt"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "format": "did"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
 ## app.bsky.graph.follow
 
 ```json
@@ -36,6 +70,57 @@ Definitions related to the social graph in Bluesky.
           "createdAt": {
             "type": "string",
             "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.graph.getBlocks
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.graph.getBlocks",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Who is the requester's account blocking?",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "blocks"
+          ],
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "blocks": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "app.bsky.actor.defs#profileView"
+              }
+            }
           }
         }
       }

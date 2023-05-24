@@ -161,7 +161,8 @@ Definitions related to content & activity published in Bluesky.
           "type": "union",
           "refs": [
             "#threadViewPost",
-            "#notFoundPost"
+            "#notFoundPost",
+            "#blockedPost"
           ]
         },
         "replies": {
@@ -170,7 +171,8 @@ Definitions related to content & activity published in Bluesky.
             "type": "union",
             "refs": [
               "#threadViewPost",
-              "#notFoundPost"
+              "#notFoundPost",
+              "#blockedPost"
             ]
           }
         }
@@ -188,6 +190,23 @@ Definitions related to content & activity published in Bluesky.
           "format": "at-uri"
         },
         "notFound": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "blockedPost": {
+      "type": "object",
+      "required": [
+        "uri",
+        "blocked"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "blocked": {
           "type": "boolean",
           "const": true
         }
@@ -249,7 +268,15 @@ Definitions related to content & activity published in Bluesky.
             }
           }
         }
-      }
+      },
+      "errors": [
+        {
+          "name": "BlockedActor"
+        },
+        {
+          "name": "BlockedByActor"
+        }
+      ]
     }
   }
 }
@@ -384,7 +411,8 @@ Definitions related to content & activity published in Bluesky.
               "type": "union",
               "refs": [
                 "app.bsky.feed.defs#threadViewPost",
-                "app.bsky.feed.defs#notFoundPost"
+                "app.bsky.feed.defs#notFoundPost",
+                "app.bsky.feed.defs#blockedPost"
               ]
             }
           }
@@ -395,6 +423,56 @@ Definitions related to content & activity published in Bluesky.
           "name": "NotFound"
         }
       ]
+    }
+  }
+}
+```
+---
+
+## app.bsky.feed.getPosts
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getPosts",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A view of an actor's feed.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "uris"
+        ],
+        "properties": {
+          "uris": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "maxLength": 25
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "posts"
+          ],
+          "properties": {
+            "posts": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "app.bsky.feed.defs#postView"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -701,6 +779,47 @@ Definitions related to content & activity published in Bluesky.
           "createdAt": {
             "type": "string",
             "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
+```
+---
+
+## app.bsky.feed.getFeedSkeleton
+
+We are actively developing Feed Generator integration into the Bluesky PDS. Though we are reasonably confident about the general shape laid out here, this lexicon is subject to change.
+
+```json
+{
+  "lexicon": 1,
+  "id": "app.bsky.feed.getFeedSkeleton",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A skeleton of a feed provided by a feed generator",
+      "parameters": {
+        "type": "params",
+        "required": ["feed"],
+        "properties": {
+          "feed": {"type": "string", "format": "at-uri"},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 50},
+          "cursor": {"type": "string"}
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["feed"],
+          "properties": {
+            "cursor": {"type": "string"},
+            "feed": {
+              "type": "array",
+              "items": {"type": "ref", "ref": "app.bsky.feed.defs#skeletonFeedPost"}
+            }
           }
         }
       }

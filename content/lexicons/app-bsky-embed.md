@@ -217,7 +217,8 @@ A representation of a record embedded in another form of content
           "type": "union",
           "refs": [
             "#viewRecord",
-            "#viewNotFound"
+            "#viewNotFound",
+            "#viewBlocked"
           ]
         }
       }
@@ -247,6 +248,13 @@ A representation of a record embedded in another form of content
         "value": {
           "type": "unknown"
         },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "com.atproto.label.defs#label"
+          }
+        },
         "embeds": {
           "type": "array",
           "items": {
@@ -266,6 +274,18 @@ A representation of a record embedded in another form of content
       }
     },
     "viewNotFound": {
+      "type": "object",
+      "required": [
+        "uri"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        }
+      }
+    },
+    "viewBlocked": {
       "type": "object",
       "required": [
         "uri"

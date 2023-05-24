@@ -9,7 +9,7 @@ export default function Hero() {
             <img
               src="/img/hero-img.png"
               className="mx-auto w-48 sm:w-64 mb-10"
-              title="The AT Protocol"
+              alt="The AT Protocol logo, an @ symbol with a blue sky and clouds in the background"
             />
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               <span className="block xl:inline text-blue-50">
@@ -22,15 +22,15 @@ export default function Hero() {
             <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
                 <Link href="https://bsky.app">
-                  <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg">
+                  <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg focus-visible:outline outline-yellow-500 outline-2">
                     Join the waitlist
                   </a>
                 </Link>
               </div>
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                 <Link href="/docs">
-                  <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-blue-600 hover:bg-gray-50 md:py-4 md:px-10 md:text-lg">
-                    Developers
+                  <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-blue-600 hover:bg-gray-50 md:py-4 md:px-10 md:text-lg focus-visible:outline outline-yellow-500 outline-2">
+                    Docs
                   </a>
                 </Link>
               </div>

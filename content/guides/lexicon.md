@@ -32,9 +32,9 @@ app.bsky.graph.follow
 
 ## Why is Lexicon needed?
 
-Interoperability. An open network like ATP needs a way to agree on behaviors and semantics. Lexicon solves this while making it relatively simple for developers to introduce new schemas.
+**Interoperability.** An open network like atproto needs a way to agree on behaviors and semantics. Lexicon solves this while making it relatively simple for developers to introduce new schemas.
 
-Lexicon is not RDF. While RDF is effective at describing data, it is not ideal for enforcing schemas. Lexicon is easier to use because it doesn't need the generality that RDF provides. In fact, Lexicon's schemas enable code-generation with types and validation, which makes life much easier!
+**Lexicon is not RDF.** While RDF is effective at describing data, it is not ideal for enforcing schemas. Lexicon is easier to use because it doesn't need the generality that RDF provides. In fact, Lexicon's schemas enable code-generation with types and validation, which makes life much easier!
 
 ## Schema format
 
@@ -72,7 +72,9 @@ Notice the structure differs depending on the `type`. The meanings of the type a
 
 ## RPC methods
 
-AT Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. A call to:
+The AT Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. 
+
+For example, a call to:
 
 ```typescript
 com.example.getProfile()

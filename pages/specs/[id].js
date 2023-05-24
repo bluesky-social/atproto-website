@@ -1,10 +1,10 @@
 import Meta from '../../components/meta'
 import Header from '../../components/header'
 import Footer from '../../components/footer'
-import Sidebar from '../../components/sidebar'
 import Breadcrumbs from '../../components/breadcrumbs'
 import Alert from '../../components/alert'
 import CTA from '../../components/cta'
+import {Sidebar} from '../../components/sidebar'
 import { getNavigation, getFile } from '../../lib/content'
 
 export async function getStaticPaths() {
@@ -41,7 +41,7 @@ export default function Spec({ navigation, file }) {
       </div>
       <div className="flex max-w-4xl mx-auto">
         <Sidebar navigation={navigation} current={file.path} />
-        <div className="flex-1 px-4 pb-16">
+        <main className="flex-1 px-4 pb-16">
           {file.wip ? (
             <Alert
               title="Work in progress"
@@ -58,7 +58,7 @@ export default function Spec({ navigation, file }) {
               message="This document has not yet been written. Please check back soon for updates."
             />
           ) : undefined}
-        </div>
+        </main>
       </div>
       <CTA />
       <Footer />

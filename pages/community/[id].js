@@ -5,16 +5,17 @@ import Breadcrumbs from '../../components/breadcrumbs'
 import Alert from '../../components/alert'
 import CTA from '../../components/cta'
 import TLDR from '../../components/tldr'
-import {Sidebar} from '../../components/sidebar'
 import { getNavigation, getFile } from '../../lib/content'
+import { CommunitySidebar } from '../../components/sidebar'
+
 
 export async function getStaticPaths() {
   const navigation = await getNavigation()
   return {
-    paths: navigation.guides
+    paths: navigation.community
       .map((item) => {
         return {
-          params: { id: item.href.slice('/guides/'.length) },
+          params: { id: item.href.slice('/community/'.length) },
         }
       })
       .filter((item) => item.params.id.length > 0),
@@ -24,13 +25,13 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   const navigation = await getNavigation()
-  const file = await getFile('guides', context.params.id)
+  const file = await getFile('community', context.params.id)
   return { props: { navigation, file } }
 }
 
 export default function Guide({ navigation, file }) {
   const pages = [
-    { name: 'Docs', href: '/docs', current: false },
+    { name: 'Community', href: '/community', current: false },
     { name: file.title, href: file.path, current: true },
   ]
   return (
@@ -41,7 +42,7 @@ export default function Guide({ navigation, file }) {
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">
-        <Sidebar navigation={navigation} current={file.path} />
+        <CommunitySidebar navigation={navigation} current={file.path} />
         <main className="flex-1 px-4 pb-16">
           {file.tldr ? <TLDR items={file.tldr} /> : ''}
           <div

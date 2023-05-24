@@ -15,15 +15,15 @@ In this guide, we'll step through a couple of common patterns (with simple code 
 
 ## Signing in
 
-Sign-in and authentication is a simple session-oriented process. The [com.atproto.session lexicon](/lexicons/com-atproto-session) includes APIs for creating and managing these sessions.
+Sign-in and authentication is a simple session-oriented process. The [com.atproto.server lexicon](/lexicons/com-atproto-server) includes APIs for creating and managing these sessions.
 
 ```typescript
 // create an API instance with my PDS
 const api = AtpApi.service('my-pds.com')
 
-// sign in using my username and password
-const res = await api.com.atproto.session.create({}, {
-  username: 'alice.host.com',
+// sign in using my identifier and password
+const res = await api.com.atproto.server.createSession({
+  identifier: 'alice.host.com',
   password: 'hunter2'
 })
 

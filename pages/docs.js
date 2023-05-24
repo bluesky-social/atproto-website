@@ -50,10 +50,10 @@ export default function Docs({ navigation }) {
         </Link>
         <Links pages={navigation.guides.slice(1)} />
 
-        <h3 className="text-3xl mb-2 font-normal">Specs</h3>
+        <h2 className="text-3xl mb-2 font-normal">Specs</h2>
         <Links pages={navigation.specs} />
 
-        <h3 className="text-3xl mb-2 font-normal">Lexicons</h3>
+        <h2 className="text-3xl mb-2 font-normal">Lexicons</h2>
         <Links pages={navigation.lexicons} />
       </div>
       <Footer />

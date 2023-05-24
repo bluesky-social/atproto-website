@@ -165,6 +165,13 @@ A reference to an actor in the network.
         "muted": {
           "type": "boolean"
         },
+        "blockedBy": {
+          "type": "boolean"
+        },
+        "blocking": {
+          "type": "string",
+          "format": "at-uri"
+        },
         "following": {
           "type": "string",
           "format": "at-uri"

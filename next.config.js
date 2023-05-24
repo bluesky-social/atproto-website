@@ -34,8 +34,14 @@ const nextConfig = {
         destination: '/lexicons/app-bsky-actor',
         permanent: false,
       },
+      {
+        source: '/faq',
+        destination: 'https://atproto.com/guides/faq',
+        permanent: false,
+      },
     ]
   },
 }
+
 
 module.exports = nextConfig
