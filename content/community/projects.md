@@ -82,6 +82,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/klatz.co)
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/shinyakato.dev)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/snarfed.org)
+- [Sky Follower Brdige](https://github.com/kawamataryo/sky-follower-bridge), Instantly find and follow the same users from your Twitter follower on Bluesky, by [@kawamataryo.bsky.social](https://bsky.app/profile/kawamataryo.bsky.social)
 
 ## Other Tools
 
