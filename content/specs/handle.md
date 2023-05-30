@@ -7,7 +7,7 @@ summary: A specification for human-friendly account identifiers.
 
 DIDs are the long-term persistent identifiers for accounts in atproto, but they can be opaque and unfriendly for human use. Handles are a less-permanent identifier for accounts. The mechanism for verifying the link between an account handle and an account DID relies on DNS, and possibly connections to a network host, so every handle must be a valid network hostname. *Almost* every valid “hostname” is also a valid handle, though there are a small number of exceptions.
 
-The definition “hostnames” (as a subset of all possible “DNS names”) has evolved over time and across several RFCs. Some relevant documents are RFC-1035, RFC-3696 section 2, and RFC-3986 section 3.
+The definition “hostnames” (as a subset of all possible “DNS names”) has evolved over time and across several RFCs. Some relevant documents are [RFC-1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC-3696](https://www.rfc-editor.org/rfc/rfc3696) section 2, and [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) section 3.
 
 ### Handle Syntax
 
