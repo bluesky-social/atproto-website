@@ -98,13 +98,13 @@ Handles may be prefixed with the “at” symbol (like `@jay.bsky.team`) in user
 
 Internationalized Domain Names (”IDN”, or “punycode”) are not directly relevant to the low-level handle syntax. In their encoded form, IDNs are already valid hostnames, and thus valid handles. Such handles must be stored and transmitted in encoded ASCII form. Handles that “look like” IDNs, but do not parse as valid IDNs, are valid handles, just as they are valid hostnames. Applications may, optionally, parse and display IDN handles as Unicode.
 
-Handles are not case-sensitive, which means they can be safely normalized from user input to lower-case (ASCII) form. Only normalized (lower-case) handles should be stored in records or used in outbound API calls. Applications should not preserve user-provided case information and attempt to display handles in anything other than lower-case. For example, the handle input string `[BlueskyWeb.xyz](http://www.BlueskyWeb.xyz)`  should be normalized, stored, and displayed as `blueskyweb.xyz`.
+Handles are not case-sensitive, which means they can be safely normalized from user input to lower-case (ASCII) form. Only normalized (lower-case) handles should be stored in records or used in outbound API calls. Applications should not preserve user-provided case information and attempt to display handles in anything other than lower-case. For example, the handle input string `BlueskyWeb.xyz`  should be normalized, stored, and displayed as `blueskyweb.xyz`.
 
 Very long handles are known to present user interface challenges, but they are allowed in the protocol, and application developers are expected to support them.
 
-Handles which look similar to a well-known domain present security and impersonation challenges. For example, handles like `[paypa1.com](http://paypa1.com/`paypal.com`)` or `[paypal.cc](http://paypal.cc)` being confused for `paypal.com`. Very long handles can result in similar issues when truncated at the start or end (`paypal.com…`).
+Handles which look similar to a well-known domain present security and impersonation challenges. For example, handles like `paypa1.com` or `paypal.cc` being confused for `paypal.com`. Very long handles can result in similar issues when truncated at the start or end (`paypal.com…`).
 
-Handles should generally not be truncated to local context. For example, the handle `@jay.[bsky.social](http://bsky.social)` should not be displayed as `@jay`, even in the local context of a `bsky.social` service.
+Handles should generally not be truncated to local context. For example, the handle `@jay.bsky.social` should not be displayed as `@jay`, even in the local context of a `bsky.social` service.
 
 Providers of handle “namespaces” (eg, as subdomains on a registered domain) may impose any additional limits on handles that they wish. It is recommended to constrain the allowed segment length to something reasonable, and to reserve a common set of segment strings like `www`, `admin`, `mail`, etc. There are multiple public lists of “commonly disallowed usernames” that can be used as a starting point.
 
