@@ -54,6 +54,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/anku.bsky.social)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/mattstypa.bsky.social)
 - [SkyFeed](https://skyfeed.app) by [@redsolver.net](https://bsky.app/profile/redsolver.net)
+- [redocean](https://redocean.forza7.org/) ([GitHub](https://github.com/forza7taka/redocean)) by [@forza7.bsky.social](https://bsky.app/profile/forza7.bsky.social)
 
 ### iOS
 - [Moot](https://bsky.app/profile/moot.social), native iOS client by [@moot.social](https://bsky.app/profile/moot.social)
