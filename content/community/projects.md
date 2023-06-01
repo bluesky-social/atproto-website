@@ -115,6 +115,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Get Alt Text](https://bsky.app/profile/alt-text.bsky.social) ([GitHub](https://github.com/hs4man21/bluesky-alt-text-ocr)) by [@holden.bsky.social](https://bsky.app/profile/holden.bsky.social)
 - [Trend Words](https://bsky.app/profile/trend-words-en.bsky.social), display words posted more than usual, by [@lamrongol.bsky.social](https://bsky.app/profile/lamrongol.bsky.social)
 - [Most Attention-Grabbing Posts](https://bsky.app/profile/most-attention-en.bsky.social), repost posts which receive the most replies, quotes, reposts and likes, by [@lamrongol.bsky.social](https://bsky.app/profile/lamrongol.bsky.social)
+- [Linux Kernel Releases](https://bsky.app/profile/linuxkreleases.adilson.net.br) by [@adilson.net.br](https://bsky.app/profile/adilson.net.br)
 
 ### Disclaimer
 
