@@ -15,17 +15,17 @@ Lexicon string type: `handle`
 
 To synthesize other standards, and define “handle” syntax specifically:
 
-- the overall handle must contain only ASCII characters, and can be at most 253 characters long (in practice, handles may be restricted to a slightly shorter length)
-- the overall handle is split in to multiple segments (referred to as “labels” in standards documents), separated by ASCII periods (`.`)
-- no proceeding or trailing ASCII periods are allowed, and there must be at least two segments. that is, ”bare” top-level domains are not allowed as handles, even if valid “hostnames” and “DNS names”. and “tailing dot” syntax for DNS names is not allowed for handles
-- each segment must have at least 1 and at most 63 characters (not including the periods). the allowed characters are ASCII letters (`a-z`), digits (`0-9`), and hyphens (`-`)
-- segments can not start or end with a hyphen.
-- the last segment (the “top level domain”) can not start with a numeric digit
-- handles are not case-sensitive, and should be normalized to lower-case (that is, normalize ASCII `A-Z` to `a-z`)
+- The overall handle must contain only ASCII characters, and can be at most 253 characters long (in practice, handles may be restricted to a slightly shorter length)
+- The overall handle is split in to multiple segments (referred to as “labels” in standards documents), separated by ASCII periods (`.`)
+- No proceeding or trailing ASCII periods are allowed, and there must be at least two segments. That is, ”bare” top-level domains are not allowed as handles, even if valid “hostnames” and “DNS names.” “Tailing dot” syntax for DNS names is not allowed for handles.
+- Each segment must have at least 1 and at most 63 characters (not including the periods). The allowed characters are ASCII letters (`a-z`), digits (`0-9`), and hyphens (`-`).
+- Segments can not start or end with a hyphen
+- The last segment (the “top level domain”) can not start with a numeric digit
+- Handles are not case-sensitive, and should be normalized to lowercase (that is, normalize ASCII `A-Z` to `a-z`)
 
 To be explicit (the above rules already specify this), no whitespace, null bytes, joining characters, or other ASCII control characters are allowed in the handle, including as prefix/suffix.
 
-Modern “hostnames” (and thus handles) allow ASCII digits in most positions, with the exception that the last segment (top-level domain, TLD) can not start with a digit.
+Modern “hostnames” (and thus handles) allow ASCII digits in most positions, with the exception that the last segment (top-level domain, TLD) cannot start with a digit.
 
 IP addresses are not valid syntax: IPv4 addresses have a final segment starting with a digit, and IPv6 addresses are separated by colons (`:`).
 
@@ -98,7 +98,7 @@ Handles may be prefixed with the “at” symbol (like `@jay.bsky.team`) in user
 
 Internationalized Domain Names (”IDN”, or “punycode”) are not directly relevant to the low-level handle syntax. In their encoded form, IDNs are already valid hostnames, and thus valid handles. Such handles must be stored and transmitted in encoded ASCII form. Handles that “look like” IDNs, but do not parse as valid IDNs, are valid handles, just as they are valid hostnames. Applications may, optionally, parse and display IDN handles as Unicode.
 
-Handles are not case-sensitive, which means they can be safely normalized from user input to lower-case (ASCII) form. Only normalized (lower-case) handles should be stored in records or used in outbound API calls. Applications should not preserve user-provided case information and attempt to display handles in anything other than lower-case. For example, the handle input string `BlueskyWeb.xyz`  should be normalized, stored, and displayed as `blueskyweb.xyz`.
+Handles are not case-sensitive, which means they can be safely normalized from user input to lower-case (ASCII) form. Only normalized (lowercase) handles should be stored in records or used in outbound API calls. Applications should not preserve user-provided case information and attempt to display handles in anything other than lower-case. For example, the handle input string `BlueskyWeb.xyz`  should be normalized, stored, and displayed as `blueskyweb.xyz`. Long all-lowercase handles can be a readability and accessibility challenge. Sub-domain separation (periods), hyphenation, or use of "display names" in application protocols can all help.
 
 Very long handles are known to present user interface challenges, but they are allowed in the protocol, and application developers are expected to support them.
 
