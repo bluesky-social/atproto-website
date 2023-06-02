@@ -22,6 +22,8 @@ specs:
     href: /specs/repository
   - name: XRPC
     href: /specs/xrpc
+  - name: DID
+    href: /specs/did
   - name: NSID
     href: /specs/nsid
   - name: Record Key
