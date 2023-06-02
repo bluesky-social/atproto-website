@@ -30,6 +30,17 @@ export function CommunitySidebar({ navigation, current }) {
   );
 }
 
+export function BlogSidebar({ navigation, current }) {
+  return  (
+    <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
+      <nav className="sticky top-[10px] px-2" aria-label="Sidebar">
+        <h4 className="font-bold text-sm mb-1">Dev Blog</h4>
+        <LinksGroup links={navigation.blog} current={current} />
+      </nav>
+    </div>
+  );
+}
+
 function LinksGroup({ links, current }) {
   return (
     <>
