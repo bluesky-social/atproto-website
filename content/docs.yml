@@ -22,6 +22,8 @@ specs:
     href: /specs/xrpc
   - name: NSID
     href: /specs/nsid
+  - name: Record Key
+    href: /specs/record-key
   - name: DID:Placeholder
     href: /specs/did-plc
   - name: Handle
