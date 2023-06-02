@@ -9,9 +9,9 @@ summary: Self-authenticating storage for public account content
 
 Public atproto content ("records") is stored in per-account "repositories" (frequently shortened to "repo"). All currently active records are stored in the repository, and current repository contents are publicly available, but both content deletions and account deletions are fully supported.
 
-The repository data structure is content-addressed (a Merkle-tree), and every mutation of repository contents (eg, addition, removal, and updates to records) results in a new "commit" version. Commits are cryptographically signed, with rotatable "signing keys", which allows recursive validation of content as a whole or in part.
+The repository data structure is content-addressed (a [Merkle-tree](https://en.wikipedia.org/wiki/Merkle_tree)), and every mutation of repository contents (eg, addition, removal, and updates to records) results in a new "commit" version. Commits are cryptographically signed, with rotatable "signing keys", which allows recursive validation of content as a whole or in part.
 
-Repositories and their contents are canonically stored in binary DAG-CBOR format, as a graph of IPLD data objects referencing each other by content hash (CID Links). Large binary "blobs" are not stored directly in repositories, though they are referenced by hash (CID). This includes images are other media objects. Repositories can be exported as CAR files for offline backup, account migration, or other purposes.
+Repositories and their contents are canonically stored in binary [DAG-CBOR](ttps://ipld.io/docs/codecs/known/dag-cbor/) format, as a graph of [IPLD](https://ipld.io/docs/data-model/) data objects referencing each other by content hash (CID Links). Large binary "blobs" are not stored directly in repositories, though they are referenced by hash ([CID](https://github.com/multiformats/cid)). This includes images are other media objects. Repositories can be exported as [CAR](https://ipld.io/specs/transport/car/carv1/) files for offline backup, account migration, or other purposes.
 
 In the atproto federation architecture, the authoritative location of an account's repository is the associated Personal Data Server (PDS). An account's current PDS location is authoritatively indicated in the DID Document.
 
@@ -20,19 +20,19 @@ In real-world use, it is expected that individual repositories will contain anyw
 
 ## Repo Data Structure (v2)
 
-This describes version `2` of the repository binary format. Version `1` had a different MST fanout configuration, and an incompatible schema for commits and repository metadata.
+This describes version `2` of the repository binary format. Version `1` had a different MST fanout configuration, and an incompatible schema for commits and repository metadata. Version `1` is deprecated, no repositories in this format exist in the network, and implementations do not need to support it.
 
 At a high level, a repository is a key/value mapping where the keys are path names (as strings) and the values are records (DAG-CBOR objects).
 
 A "Merkle Search Tree" (MST) is used to store this mapping. This content-addressed deterministic data structure stores data in key-sorted order. It is reasonably efficient for key lookups, key range scans, and appends (assuming sorted record paths). The properties of MSTs in general are described in this academic publication:
 
-> Alex Auvolat, François Taïani. Merkle Search Trees: Efficient State-Based CRDTs in Open Networks. SRDS 2019 - 38th IEEE International Symposium on Reliable Distributed Systems, Oct 2019, Lyon, France. pp.1-10, ff10.1109/SRDS.2019.00032
+> Alex Auvolat, François Taïani. Merkle Search Trees: Efficient State-Based CRDTs in Open Networks. SRDS 2019 - 38th IEEE International Symposium on Reliable Distributed Systems, Oct 2019, Lyon, France. pp.1-10, ff10.1109/SRDS.2019.00032 ([pdf](https://inria.hal.science/hal-02303490/document))
 
 The specific details of the MST as used in atproto repositories are described below.
 
 Repo paths are strings, while MST keys are byte arrays. Neither may be empty (zero-length). While repo path strings are currently limited to a subset of ASCII (making encoding a no-op), the encoding is specified as UTF-8.
 
-Repo paths currently have a fixed structure of `<collection>/<record-key>`, which translates to a valid, normalized NSID, followed by a `/`, followed by a valid Record Key. The path should not start with a leading `/`, and should always have exactly two path segments. The ASCII characters allowed in the entire path string are currently: letters (`A-Za-z`), digits (`0-9`), slash (`/`), period (`.`), hyphen (`-`), underscore (`_`), and tilde (`~`).
+Repo paths currently have a fixed structure of `<collection>/<record-key>`. This means a valid, normalized [NSID](./nsid), followed by a `/`, followed by a valid [Record Key](./record-key). The path should not start with a leading `/`, and should always have exactly two path segments. The ASCII characters allowed in the entire path string are currently: letters (`A-Za-z`), digits (`0-9`), slash (`/`), period (`.`), hyphen (`-`), underscore (`_`), and tilde (`~`).
 
 Note that repo paths for all records in the same collection are sorted together in the MST, making enumeration (via key scan) and export efficient. Additionally, the TID Record Key scheme was intentionally selected to provide chronological sorting of MST keys within the scope of a collection. Appends are more efficient than random insertions/mutations within the tree, and when enumerating records within a collection they will be in chronological order (assuming that TID generation was done "correctly", which can not be relied on in general).
 
@@ -43,7 +43,7 @@ The top-level data object in a repository is a signed Commit. The IPLD schema fi
 
 - `did` (string, required): the account DID associated with the repo, in strictly normalized form (eg, lowercase as appropriate)
 - `version` (integer, required): fixed value of `2` for this repo format version
-- `prev` (CID link, nullable): an optional pointer (by hash) to the most recent previous commit in this repository. any commit without a "prev" pointer, including the first commit, is considered a "rebase"
+- `prev` (CID link, nullable): an optional pointer (by hash) to the most recent previous commit in this repository. History is optional, and it is accpetable to publish a new commit with no `prev` pointer at any time, even if a previous commit did exists.
 - `data` (CID link, required): pointer to the top of the repo contents tree structure (MST)
 - `sig` (byte array, required): cryptographic signature of this commit, as raw bytes
 
