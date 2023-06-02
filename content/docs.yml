@@ -24,6 +24,8 @@ specs:
     href: /specs/nsid
   - name: DID:Placeholder
     href: /specs/did-plc
+  - name: Handle
+    href: /specs/handle
 lexicons:
   - name: com.atproto.admin
     href: /lexicons/com-atproto-admin
