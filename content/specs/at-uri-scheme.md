@@ -67,7 +67,7 @@ The full syntax for AT URIs is flexible to a variety of future use cases, includ
 A restricted sub-set of valid AT URIs are currently used in Lexicons for the `at-uri` type. Query parameters and fragments are not currently used. Trailing slashes are not allowed, including a trailing slash after the authority with no other path. The URI should be in normalized form (see "Normalization" section), with all of the individual sub-identifiers also normalized.
 
 ```
-AT-URI        = "at://" AURHOTIRY [ "/" COLLECTION [ "/" RKEY ] ]
+AT-URI        = "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 
 AUTHORITY     = HANDLE | DID
 COLLECTION    = NSID
