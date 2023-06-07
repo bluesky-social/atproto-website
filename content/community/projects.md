@@ -120,6 +120,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Trend Words](https://bsky.app/profile/did:plc:7ktx3oe2zbompu3cjwthlest), display words posted more than usual, by [@lamrongol.bsky.social](https://bsky.app/profile/did:plc:wwqlk2n45es2ywkwrf4dwsr2)
 - [Most Attention-Grabbing Posts](https://bsky.app/profile/did:plc:boopgqnkg2inpleusxo7kj4l), repost posts which receive the most replies, quotes, reposts and likes, by [@lamrongol.bsky.social](https://bsky.app/profile/did:plc:wwqlk2n45es2ywkwrf4dwsr2)
 - [Linux Kernel Releases](https://bsky.app/profile/did:plc:35c6qworuvguvwnpjwfq3b5p) by [@adilson.net.br](https://bsky.app/profile/did:plc:kw6k5btwuh4hazzygvhxygx3)
+- [ai bot](https://bsky.app/profile/did:plc:4hqjfn7m6n5hno3doamuhgef) that reply on command and chat by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
 
 ### Disclaimer
 
