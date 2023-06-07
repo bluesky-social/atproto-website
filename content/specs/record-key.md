@@ -18,7 +18,7 @@ The characteristics of a TID are:
 
 - 64-bit integer
 - big-endian byte ordering
-- encoded as `base42-sortable`. That is, encoded with characters `234567abcdefghijklmnopqrstuvwxyz`, with no padding, yielding 13 ASCII characters.
+- encoded as `base32-sortable`. That is, encoded with characters `234567abcdefghijklmnopqrstuvwxyz`, with no padding, yielding 13 ASCII characters.
 - hyphens should not be included in a TID (unlike in previous iterations of the scheme)
 
 The layout of the 64-bit integer is:
