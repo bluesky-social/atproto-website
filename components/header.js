@@ -5,11 +5,13 @@ import {
   Bars3Icon,
   DocumentTextIcon,
   XMarkIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  PencilIcon
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import { faSquare } from '@fortawesome/free-solid-svg-icons'
+
 
 
 const SiteSections = [
@@ -22,6 +24,11 @@ const SiteSections = [
     name: 'Community',
     href: '/community',
     icon: ChatBubbleLeftRightIcon
+  },
+  {
+    name: 'Developer Blog',
+    href: '/blog',
+    icon: PencilIcon
   }
 ]
 

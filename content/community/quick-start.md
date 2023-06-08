@@ -46,7 +46,9 @@ For libraries in more languages, visit the [community projects page](/community/
 
 # Blog
 
-We publish blog posts on the Bluesky site [here](https://blueskyweb.xyz/blog), for example:
+We publish blogs for a developer audience [here](https://atproto.com/blog).
+
+We publish blog posts for a general audience on the Bluesky site [here](https://blueskyweb.xyz/blog), for example:
 - [Federation Architecture Overview](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture)
 - [Algorithmic Choice](https://blueskyweb.xyz/blog/3-30-2023-algorithmic-choice)
 - [Composable Moderation](https://blueskyweb.xyz/blog/4-13-2023-moderation)
