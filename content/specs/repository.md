@@ -83,6 +83,8 @@ The node IPLD schema fields are:
 
 When parsing MST data structures, the depth and sort order of keys should be verified. This is particularly true for untrusted inputs, but is simplest to just verify every time. Additional checks on node size and other parameters of the tree structure also need to be limited; see the "Security Considerations" section of this document.
 
+An empty repository with no records is represented as a single MST node with an empty array of entries. This is the only situation in which an empty array of entries is allowed.
+
 ### CID Formats
 
 The IPFS CID specification is very flexible, and supports a wide variety of hash types, a field indicating the type of content being linked to, and various string encoding options. These features are valuable to allow evolution of the repo format over time, but to maximize interoperability among implementations, only a specific "blessed" set of CID types are allowed.
