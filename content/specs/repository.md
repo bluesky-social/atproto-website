@@ -114,6 +114,8 @@ The CARv1 format is very simple. It contains a small metadata header (which can 
 
 When importing CAR files, note that there may existing dangling CID references. For example, repositories may contain CID Links to blobs or records in other repositories, and the IPLD blocks corresponding to those blobs or references would likely not be included in the CAR file.
 
+The CARv1 specification is agnostic about the same block appearing multiple times in the same file ("Duplicate Blocks)". Implementations should be robust to both duplication and de-duplication of blocks, and should also ignore any unnecessary or unlinked blocks.
+
 
 ## Security Considerations
 
