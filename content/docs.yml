@@ -18,6 +18,8 @@ specs:
     href: /specs/at-uri-scheme
   - name: Lexicon Schemas
     href: /specs/lexicon
+  - name: Repository
+    href: /specs/repository
   - name: XRPC
     href: /specs/xrpc
   - name: NSID
