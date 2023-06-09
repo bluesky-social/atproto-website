@@ -14,7 +14,7 @@ Both of these AT URIs reference the same record in the same repository; one uses
 
 The full, general structure of an AT URI is:
 
-```
+```text
 "at://" AUTHORITY [ PATH ] [ "?" QUERY ] [ "#" FRAGMENT ]
 ```
 
@@ -22,7 +22,7 @@ The **authority** part of the URI can be either a handle or a DID, indicating th
 
 In current atproto Lexicon use, the **query** and **fragment** parts are not yet supported, and only a fixed pattern of paths are allowed:
 
-```
+```text
 "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 ```
 
@@ -66,7 +66,7 @@ The full syntax for AT URIs is flexible to a variety of future use cases, includ
 
 A restricted sub-set of valid AT URIs are currently used in Lexicons for the `at-uri` type. Query parameters and fragments are not currently used. Trailing slashes are not allowed, including a trailing slash after the authority with no other path. The URI should be in normalized form (see "Normalization" section), with all of the individual sub-identifiers also normalized.
 
-```
+```text
 AT-URI        = "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 
 AUTHORITY     = HANDLE | DID
@@ -97,13 +97,13 @@ Refer to [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) for generic rules to
 
 Valid AT URIs (both general and Lexicon syntax):
 
-```
+```text
 at://foo.com/com.example.foo/123
 ```
 
 Valid general AT URI syntax, invalid in current Lexicon:
 
-```
+```text
 at://foo.com/example/123     // invalid NSID
 at://computer                // not a valid DID or handle
 at://example.com:3000        // not a valid DID or handle
@@ -111,7 +111,7 @@ at://example.com:3000        // not a valid DID or handle
 
 Invalid AT URI (in both contexts)
 
-```
+```text
 at://foo.com/                // trailing slash
 at://user:pass@foo.com       // userinfo not currently supported
 ```
