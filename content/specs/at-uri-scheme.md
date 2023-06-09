@@ -52,7 +52,7 @@ The full syntax for AT URIs is flexible to a variety of future use cases, includ
 
 - The overall URI is restricted to a subset of ASCII characters
 - For reference below, the set of unreserved characters, as defined in [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986), includes alphanumeric (`A-Za-z0-9`), period, hyphen, underscore, and tilde (`.-_~`)
-- Maximum overall length is 8 KB (which may be shortened in the future)
+- Maximum overall length is 8 kilobytes (which may be shortened in the future)
 - Hex-encoding of characters is permitted (but in practice not necessary)
 - The URI scheme is `at`, and an authority part preceded with double slashes is always required, so the URI always starts `at://`
 - An authority section is required and must be non-empty. the authority can be either an atproto Handle, or a DID meeting the restrictions for use with atproto. note that the authority part can *not* be interpreted as a host:port pair, because of the use of colon characters (`:`) in DIDs. Colons and unreserved characters should not be escaped in DIDs, but other reserved characters (including `#`, `/`, `$`, `&`, `@`) must be escaped.
