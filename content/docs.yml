@@ -64,3 +64,6 @@ community:
     href: /community/projects
   - name: Groups
     href: /community/groups
+blog:
+  - name: Why are blocks on Bluesky public?
+    href: /blog/block-implementation
