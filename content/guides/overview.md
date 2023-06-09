@@ -88,7 +88,7 @@ Five primary specs comprise the v1 of the AT Protocol. These specs are:
 - [Cross-system RPC (XRPC)](/specs/xrpc)
 - [Lexicon Schemas](/specs/lexicon)
 - [Namespaced IDs (NSIDs)](/specs/nsid)
-- [DID:Placeholder (did:plc)](/specs/did-plc)
+- [DIDs](/specs/did)
 
 These specs can be organized into three layers of dependency:
 

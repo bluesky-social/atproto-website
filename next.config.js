@@ -39,6 +39,11 @@ const nextConfig = {
         destination: 'https://atproto.com/guides/faq',
         permanent: false,
       },
+      {
+        source: '/specs/did-plc',
+        destination: 'https://github.com/bluesky-social/did-method-plc',
+        permanent: false,
+      },
     ]
   },
 }
