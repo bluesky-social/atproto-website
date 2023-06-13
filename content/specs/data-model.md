@@ -44,7 +44,7 @@ Lexicon string fields can have additional `format` type information associated w
 
 In the atproto data model there is a semantic difference between explicitly setting an map field to `null` and not including the field at all. Both JSON and CBOR have the same distinction.
 
-Null or missing fields are also distinct from "false-y" value like `false` (for booleans) or `0` (for integers).
+Null or missing fields are also distinct from "false-y" value like `false` (for booleans), `0` (for integers), empty lists, or empty objects.
 
 ### Why No Floats?
 
