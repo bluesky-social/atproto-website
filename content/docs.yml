@@ -22,6 +22,8 @@ specs:
     href: /specs/repository
   - name: XRPC
     href: /specs/xrpc
+  - name: Event Stream
+    href: /specs/event-stream
   - name: DID
     href: /specs/did
   - name: NSID
