@@ -3,6 +3,8 @@ title: AT Protocol
 summary: Specification for the Authenticated Transfer Protocol (AT Protocol)
 ---
 
+# AT Protocol
+
 The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federated protocol for building open social media applications. Some recurring themes and features are:
 
 - self-authenticating data and identity, allowing seamless account migrations and redistribution of content
