@@ -3,6 +3,8 @@ title: Lexicon
 summary: A schema definition language.
 ---
 
+# Lexicon
+
 Lexicon is a schema definition language used to describe atproto records, HTTP endpoints (XRPC), and event stream messages. It builds on top of the atproto [Data Model](/specs/data-model).
 
 The schema language is similar to [JSON Schema](http://json-schema.org/) and [OpenAPI](https://en.wikipedia.org/wiki/OpenAPI_Specification), but includes some atproto-specific features and semantics.
