@@ -12,7 +12,7 @@ guides:
   - name: FAQ
     href: /guides/faq
 specs:
-  - name: ATP
+  - name: AT Protocol
     href: /specs/atp
   - name: Data Model
     href: /specs/data-model
