@@ -20,7 +20,7 @@ specs:
     href: /specs/lexicon
   - name: Repository
     href: /specs/repository
-  - name: XRPC
+  - name: HTTP API (XRPC)
     href: /specs/xrpc
   - name: DID
     href: /specs/did
