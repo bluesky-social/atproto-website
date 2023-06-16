@@ -29,6 +29,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
 - [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
+- [blue_factory](https://github.com/mackuba/blue_factory) (Ruby): implementation of a feed generator service
 
 ## Tutorials and Guides
 
