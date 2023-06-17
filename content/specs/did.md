@@ -8,7 +8,7 @@ summary: Persistent decentralized identifiers (as used in atproto)
 The AT Protocol uses [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier) (DIDs) as persistent, long-term account identifiers. DID is a W3C standard, with many standardized and proposed DID method implementations.
 
 
-### Blessed DID Methods
+## Blessed DID Methods
 
 Currently, atproto supports two DID methods:
 
@@ -18,9 +18,9 @@ Currently, atproto supports two DID methods:
 In the future, a small number of additional methods may be supported. It is not the intention to support all or even many DID methods, even with the existence of universal resolver software.
 
 
-### AT Protocol DID Syntax
+## AT Protocol DID Identifier Syntax
 
-Lexicon string type: `did`
+Lexicon string format type: `did`
 
 The DID Core specification constraints on DID identifier syntax, regardless of the method used. A summary of those syntax constraints, which may be used to validate DID generically in atproto are:
 
@@ -76,8 +76,62 @@ did:method:val?two
 did:method:val#two
 ```
 
+## DID Documents
 
-### Usage and Implementation Guidelines
+After a DID document has been resolved, atproto-specific information needs to be extracted. This parsing process is agnostic to the DID method used to resolve the document.
+
+The current **handle** for the DID is found in the `alsoKnownAs` array. Each element of this array is a URI. Handles will have the URI scheme `at://`, followed by the handle, with no path or other URI parts. The current primary handle is the first valid handle URI found in the ordered list. Any other handle URIs should be ignored.
+
+It is crucial to validate the handle bidirectionally, by resolving the handle to a DID and checking that it matches the current DID document.
+
+The DID is the primary account identifier, and an account whose DID document does not contain a valid and confirmed handle can still, in theory, participate in the atproto ecosystem. Software should be careful to either not display any handle for such account, or obviously indicate that any handle associated with it is invalid.
+
+The public **signing key** for the account is found under the `verificationMethod` array, in an object with `id` matching `#atproto`, and the `controller` matching the DID itself. The first valid atproto signing key in the array should be used, and any others ignored. The `type` field will indicate the cryptographic curve type, and the `publicKeyMultibase` field will be the public key in multibase encoding. See below for details for parsing these fields.
+
+A valid signing key is required for atproto functionality, and an account with no valid key in their DID document is broken.
+
+The **PDS service network location** for the account is found under the `service` array, with `id` matching `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
+
+A working PDS is required for atproto functionality, and an account with no valid PDS location in their DID document is broken.
+
+Note that a valid URL doesn't mean the the PDS itself is currently functional or hosting content for the account. During account migrations or server downtime there may be windows when the PDS is not accessible, but this does not mean the account should immediately be considered broken or invalid.
+
+## Public Key Encoding
+
+The atproto cryptographic systems are described in the [AT Protocol Overview](/specs/atp).
+
+Public keys in DID documents under `verificationMethod`, including atproto signing keys, are represented as an object with the following fields:
+
+- `id` (string, required): always `#atproto` for atproto signing keys
+- `type` (string, required): a fixed name identifying the key's curve type
+    - `p256`: `EcdsaSecp256r1VerificationKey2019` (note the "r")
+    - `k256`: `EcdsaSecp256k1VerificationKey2019` (note the "k")
+- `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
+- `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format
+
+A summary of the multibase encoding in this context:
+
+- Start with the full public key bytes. Do not use the "compressed" or "compact" representation (unlike for `did:key`, described below)
+- Encode the key bytes with `base58btc`, yielding a string
+- Add the character `z` as a prefix, to indicate the multibase, and include no other multicodec indicators
+
+The decoding process is the same in reverse, using the curve type as context.
+
+As an internal detail of the DID PLC method, the W3C-standardized `did:key` encoding is used to represent public keys in DID PLC operations. Software only needs to process keys in this format if they are trying to validate PLC operation chains, but the details are described here anyways.
+
+This encoding includes metadata about the type of key, so they can be parsed and used unambiguously. The encoding process is:
+
+- Encode the public key curve "point" as bytes. Be sure to use the smaller "compact" or "compressed" representation. This is usually easy for `k256`, but might require a special argument or configuration for `p256` keys
+- Prepend the appropriate curve multicodec value, as varint-encoded bytes, in front of the key bytes:
+    - `p256` (compressed, 33 byte key length): `p256-pub`, code 0x1200, varint-encoded bytes: [0x80, 0x24]
+    - `k256` (compressed, 33 byte key length): `secp256k1-pub`, code 0xE7, varint bytes: [0xE7, 0x01]
+- Encode the combined bytes with `base58btc`, yielding a string
+- Add `did:key:` as a prefix, forming a DID Key identifier string
+
+The decoding process is the same in reverse, using the identified curve type as context.
+
+
+## Usage and Implementation Guidelines
 
 Protocol implementations should be flexible to processing content containing DIDs based on unsupported DID methods. This is important to allow gradual evolution of the protocol ecosystem over time. In other words, implementations should distinguish between at least the distinct cases "invalid DID syntax", "unsupported DID method" and "supported DID method, but specific DID resolution failed".
 
@@ -86,7 +140,7 @@ While longer DIDs are supported in the protocol, a good best practice is to use 
 DIDs are case-sensitive. While the currently-supported methods are *not* case sensitive, and could be safely lowercased, protocol implementations should reject DIDs with invalid casing. It is permissible to attempt case normalization when receiving user-controlled input, such as when parsing public URL path components, or text input fields.
 
 
-### Possible Future Changes
+## Possible Future Changes
 
 The hard maximum DID length limit may be reduced, at the protocol level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
 
