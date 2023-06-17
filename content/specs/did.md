@@ -98,7 +98,7 @@ Note that a valid URL doesn't mean the the PDS itself is currently functional or
 
 ## Public Key Encoding
 
-The atproto cryptographic systems are described in the [AT Protocol Overview](https://www.notion.so/specs/atp).
+The atproto cryptographic systems are described in the [AT Protocol Overview](/specs/atp).
 
 Public keys in DID documents under `verificationMethod`, including atproto signing keys, are represented as an object with the following fields:
 
@@ -122,9 +122,9 @@ As an internal detail of the DID PLC method, the W3C-standardized `did:key` enco
 This encoding includes metadata about the type of key, so they can be parsed and used unambiguously. The encoding process is:
 
 - Encode the public key curve "point" as bytes. Be sure to use the smaller "compact" or "compressed" representation. This is usually easy for `k256`, but might require a special argument or configuration for `p256` keys
-- Prepend the appropriate curve multicode indicator bytes in front of the key bytes:
-    - `p256`: [0x80, 0x24]
-    - `k256`: [0xE7, 0x01]
+- Prepend the appropriate curve multicodec value, as varint-encoded bytes, in front of the key bytes:
+    - `p256` (compressed, 33 byte key length): `p256-pub`, code 0x1200, varint-encoded bytes: [0x80, 0x24]
+    - `k256` (compressed, 33 byte key length): `secp256k1-pub`, code 0xE7, varint bytes: [0xE7, 0x01]
 - Encode the combined bytes with `base58btc`, yielding a string
 - Add `did:key:` as a prefix, forming a DID Key identifier string
 
