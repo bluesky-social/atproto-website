@@ -11,7 +11,7 @@ HTTP APIs for client-server and server-server requests in atproto use a set of c
 
 The HTTP request path starts with `/xrpc/`, followed by an NSID. Paths must always be top-level, not below a prefix. The NSID maps to the `id` field in the associated Lexicon.
 
-The two requests types that can be expressed in Lexicons are "query" (HTTP GET) and "procedure" (HTTP POST). Following HTTP REST semantics, queries (GET) are cachable and should not mutate resource state. Procedures are not cachable and may mutate state.
+The two requests types that can be expressed in Lexicons are "query" (HTTP GET) and "procedure" (HTTP POST). Following HTTP REST semantics, queries (GET) are cacheable and should not mutate resource state. Procedures are not cacheable and may mutate state.
 
 Lexicon `params` (under the `parameters` field) map to HTTP URL query parameters. Only certain Lexicon types can be included in params, as specified by the `params` type. Multiple query parameters with the same name can be used to represent an array of parameters. When encoding `boolean` parameters, the strings `true` and `false` should be used. Strings should not be quoted. If a `default` value is included in the schema, it should be included in every request to ensure consistent caching behavior.
 
@@ -122,7 +122,7 @@ PDS implementations are free to restrict blob uploads as they see fit. For examp
 
 Only HTTPS should be used over the open internet.
 
-Care should be taken with personally identifiable information in blobs, such as EXIF metadata. It is currently the *client's* responsibility to strip any sensitive EXIF metadata from blobs before uploading.
+Care should be taken with personally identifiable information in blobs, such as EXIF metadata. It is currently the *client's* responsibility to strip any sensitive EXIF metadata from blobs before uploading. It would be reasonable for a PDS to help prevent accidental metadata leakage as well; see future changes section below.
 
 ## Possible Future Changes
 
@@ -135,3 +135,5 @@ The role of the PDS as a generic gateway may be formalized and extended. A gener
 An explicit decision about whether HTTP redirects are supported.
 
 Cursor pagination behavior should be clarified when a cursor is returned but the result list is empty, and when a cursor value is repeated.
+
+To help prevent accidental publishing of sensitive metadata embedded in media blobs, a query parameter may be added to the upload blob endpoint to opt-out of metadata stripping, and default to either blocking upload or auto-striping such metadata for all blobs.
