@@ -5,7 +5,7 @@ summary: Cross-system queries and procedures over HTTP
 
 # HTTP API (XRPC)
 
-HTTP APIs for client-server and server-server requests in atproto use a set of common conventions called XRPC. Endpoint path names include an NSID indicating the [Lexicon](https://www.notion.so/specs/lexicon) specifying the request and response schemas, usually with JSON content type.
+HTTP APIs for client-server and server-server requests in atproto use a set of common conventions called XRPC. Endpoint path names include an NSID indicating the [Lexicon](/specs/lexicon) specifying the request and response schemas, usually with JSON content type.
 
 ## Lexicon HTTP Endpoints
 
@@ -48,7 +48,7 @@ The current authentication scheme for XRPC is HTTP Bearer auth with JWT tokens, 
 
 Not all endpoints require authentication, but there is not yet a consistent way to enumerate which endpoints do or do not.
 
-Initial login uses the `com.atproto.server.createSession` endpoint, including the password and an accoun tidentifier (eg, handle or registered email address). This returns a `refreshJwt` (as well as an initial `accessJwt`).
+Initial login uses the `com.atproto.server.createSession` endpoint, including the password and an account identifier (eg, handle or registered email address). This returns a `refreshJwt` (as well as an initial `accessJwt`).
 
 Most requests should be authenticated using an access JWT, but the validity lifetime for these tokens is short. Every couple minutes, a new access JWT can be requested by hitting the `com.atproto.server.refreshSession` endpoint, using the refresh JWT instead of an access JWT.
 
