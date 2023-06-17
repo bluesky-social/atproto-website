@@ -84,7 +84,7 @@ Type-specific fields:
 - `input` (object, optional, only for `procedure`): describes HTTP request body schema, with the same format as the `output` field
 - `errors` (array of objects, optional): set of string error codes which might be returned
     - `name` (string, required): short name for the error type, with no whitespace
-    - `descriptoin` (string, optional): short description, one or two sentences
+    - `description` (string, optional): short description, one or two sentences
 
 ### Subscription (Event Stream)
 
