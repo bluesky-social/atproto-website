@@ -23,18 +23,18 @@ In atproto, object nodes often include a string field `$type` that specifies the
 
 ## Data Types
 
-| Lexicon Type | IPLD Type | JSON | CBOR | Note |
-| --- | --- | --- | --- | --- |
-| null | null | Null | Special Value (major 7) |  |
-| boolean | boolean | Boolean | Special Value (major 7) |  |
-| integer | integer | Number | Integer (majors 0,1) | signed, 64-bit |
-| string | string | String | UTF-8 String (major 3) | Unicode, UTF-8 |
-| - | float | Number | Special (major 7) | not allowed in atproto |
-| bytes | bytes | $bytes Object | Byte String (major 2) |  |
-| cid-link | link | $link Object | CID (tag 42) | CID |
-| array | list | Array | Array (major 4) |  |
-| object | map | Object | Map (major 5) | keys are always strings |
-| blob | - | $type: blob Object | $type: blob Map |  |
+| Lexicon Type  | IPLD Type | JSON                 | CBOR                    | Note                    |
+| ---           | ---       | ---                  | ---                     | ---                     |
+| `null`        | null      | Null                 | Special Value (major 7) |                         |
+| `boolean`     | boolean   | Boolean              | Special Value (major 7) |                         |
+| `integer`     | integer   | Number               | Integer (majors 0,1)    | signed, 64-bit          |
+| `string`      | string    | String               | UTF-8 String (major 3)  | Unicode, UTF-8          |
+| -             | float     | Number               | Special (major 7)       | not allowed in atproto  |
+| `bytes`       | bytes     | `$bytes` Object      | Byte String (major 2)   |                         |
+| `cid-link`    | link      | `$link` Object       | CID (tag 42)            | CID                     |
+| `array`       | list      | Array                | Array (major 4)         |                         |
+| `object`      | map       | Object               | Map (major 5)           | keys are always strings |
+| `blob`        | -         | `$type: blob` Object | `$type: blob` Map       |                         |
 
 `blob` is for references to files, such as images. It includes basic metadata like MIME Type and size (in bytes).
 
