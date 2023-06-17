@@ -70,6 +70,25 @@ Valid Record Keys:
 self
 example.com
 ~1.2-3_
+dHJ1ZQ
+```
+
+Invalid Record Keys:
+
+```
+literal:self
+alpha/beta
+.
+..
+#extra
+@handle
+any space
+any+space
+number[3]
+number(3)
+"quote"
+pre:fix
+dHJ1ZQ==
 ```
 
 ### Usage and Implementation Guidelines
