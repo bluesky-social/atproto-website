@@ -110,7 +110,7 @@ URLs referencing a stream endpoint at a particular host should generally use `ws
 
 As mentioned in the "Connection" section, only `wss://` (SSL) should be used for stream connections over the internet. Public services should reject non-SSL connections.
 
-Most HTTP XRPC endpoints work with content in JSON form, while stream endpoints work directly with DAG-CBOR objects as untrusted input. Precautions must be taken against hostile data encoding and data structure manipulation. Specific issues are discussed in the [Data Model](https://www.notion.so/blueskyweb/specs/data-model) and [Repository](https://www.notion.so/blueskyweb/specs/repository) specifications.
+Most HTTP XRPC endpoints work with content in JSON form, while stream endpoints work directly with DAG-CBOR objects as untrusted input. Precautions must be taken against hostile data encoding and data structure manipulation. Specific issues are discussed in the [Data Model](/specs/data-model) and [Repository](/specs/repository) specifications.
 
 ## Possible Future Changes
 
