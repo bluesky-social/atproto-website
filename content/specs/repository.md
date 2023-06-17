@@ -75,7 +75,7 @@ Some examples, with the given ASCII strings mapping to byte arrays:
 - `app.bsky.feed.post/454397e440ec`: depth "4"
 - `app.bsky.feed.post/9adeb165882c`: depth "8"
 
-There are many MST nodes in repositories, so it is important that they have a compact binary representation, for storage efficiency. Within every node, keys (byte arrays) are compressed by eliding common prefixes, with each entry indicating how many bytes it shares with the previous key in the array. The first entry in the array for a given node should contain the full key, and a common prefix length of 0. This key compaction is internal to nodes, it does not extend across multiple nodes in the tree.
+There are many MST nodes in repositories, so it is important that they have a compact binary representation, for storage efficiency. Within every node, keys (byte arrays) are compressed by eliding common prefixes, with each entry indicating how many bytes it shares with the previous key in the array. The first entry in the array for a given node must contain the full key, and a common prefix length of 0. This key compaction is internal to nodes, it does not extend across multiple nodes in the tree. The compaction scheme is mandatory, to ensure that the MST structure is deterministic across implementations.
 
 The node IPLD schema fields are:
 
