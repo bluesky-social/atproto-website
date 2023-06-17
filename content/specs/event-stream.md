@@ -1,6 +1,6 @@
 ---
 title: Event Stream
-summary: Wire protocol for streaming Lexicon objects over a network connection
+summary: Network wire protocol for subscribing to a stream of Lexicon objects
 wip: true
 ---
 
@@ -10,11 +10,13 @@ In addition to regular [HTTP API](/specs/xrpc) endpoints, atproto supports conti
 
 The Lexicon type for streams is `subscription`. The schema includes an identifier (`id`) for the endpoint, a `message` schema (usually a union, allowing multiple message types), and a list of error types (`errors`).
 
-Clients subscribe to a specific stream by initiating a connection at the indicated endpoint. Streams are currently one-way, with messages only flowing from the server to the client. Clients may provide query parameters to configure the stream when opening the connection.
+Clients subscribe to a specific stream by initiating a connection at the indicated endpoint. Streams are currently one-way, with messages flowing from the server to the client. Clients may provide query parameters to configure the stream when opening the connection.
 
 A **backfill window** mechanism allows clients to catch up with stream messages they may have missed. At a high level, this works by assigning monotonically increasing sequence numbers to stream events, and allowing clients to specify an initial sequence number when initiating a connection. The intent of this mechanism is to ensure reliable delivery of events following disruptions during a reasonable time window (eg, hours or days). It is not to enable clients to roll all the way back to the beginning of the stream.
 
-All of the streaming APIs we have now or are considering use backfill. However, a backfill mechanism (and even cursors, which we define below) is not _required_ for streams. For example, there could be a streaming API that has no concerns for dropping or redelivering events.
+All of the initial subscription Lexicons in the `com.atproto` namespace use the backfill mechanism. However, a backfill mechanism (and even cursors, which we define below) is not _required_ for streams. Subscription endpoints which do not require reliable delivery do not need to implement a backfill mechanism or use sequence numbers.
+
+The initial subscription endpoints are also public and do not require authentication or prior permission to subscribe (though resource limits may be imposed on client). But subscription endpoints may require authentication at connection time, using the existing HTTP API (XRPC) authentication methods.
 
 
 ## Streaming Wire Protocol (v0)
@@ -88,9 +90,7 @@ The scope for sequence numbers is the combination of service provider (hostname)
 
 Services should ensure that sequence numbers are not re-used, usually by committing events (with sequence number) to robust persistent storage before transmitting them over streams.
 
-If a server deletes all their sequenced events or their service, or suffers a hard crash and loses some events, the client needs to be able to recover a connection with them. In this case, the server will send back a `FutureCursor` error to the client. The client can then choose what to do. 
-
-One option for the client is restart at the earliest backfill time. We suggest that clients treat out-of-order or duplicate sequence numbers as an error, not process the message, and drop the connection. This includes across re-connection attempts. Clients should not reset sequence state without human operator intervention.
+In some catastrophic failure modes, or large changes in infrastructure, it is possible that a server would both data from the backfill window, and need to reset the sequence number back to `1`. In this case, if a client re-connects with a higher number, the server would send back a `FutureCursor` error to the client. The client needs to decide what strategy to follow in these scenarios. We suggest that clients treat out-of-order or duplicate sequence numbers as an error, not process the message, and drop the connection. Most clients should not reset sequence state without human operator intervention, though this may be a reasonable behavior for some ephemeral clients not requiring reliable delivery of every event in the stream.
 
 ## Usage and Implementation Guidelines
 
