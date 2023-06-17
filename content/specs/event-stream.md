@@ -14,13 +14,14 @@ Clients subscribe to a specific stream by initiating a connection at the indicat
 
 A **backfill window** mechanism allows clients to catch up with stream messages they may have missed. At a high level, this works by assigning monotonically increasing sequence numbers to stream events, and allowing clients to specify an initial sequence number when initiating a connection. The intent of this mechanism is to ensure reliable delivery of events following disruptions during a reasonable time window (eg, hours or days). It is not to enable clients to roll all the way back to the beginning of the stream.
 
-Streams are open by default. No authentication or prior permission is required to subscribe, though resource limits may be imposed at large scales.
+All of the streaming APIs we have now or are considering use backfill. However, a backfill mechanism (and even cursors, which we define below) is not _required_ for streams. For example, there could be a streaming API that has no concerns for dropping or redelivering events.
+
 
 ## Streaming Wire Protocol (v0)
 
 To summarize, messages are encoded as DAG-CBOR and sent over a binary WebSocket. Clients connect to to a specific HTTP endpoint, with query parameters, then upgrade to WebSocket. Every WebSocket frame contains two DAG-CBOR objects, with bytes concatenated together: a header (indicating message type), and the actual message.
 
-The WebSockets "living standard" is currently maintained by [WHATWG](https://en.wikipedia.org/wiki/WHATWG), and can be found in full at: [https://websockets.spec.whatwg.org/](https://websockets.spec.whatwg.org/)
+The WebSockets "living standard" is currently maintained by [WHATWG](https://en.wikipedia.org/wiki/WHATWG), and can be found in full at [https://websockets.spec.whatwg.org/](https://websockets.spec.whatwg.org/).
 
 ### Connection
 
@@ -28,10 +29,10 @@ Clients initialize stream subscriptions by opening an HTTP connection and upgrad
 
 Query parameters may be provided in the initial HTTP request to configure the stream in an application-specific way, as specified in the endpoint's Lexicon schema.
 
-Errors are usually returned through the stream itself. Connection-time error are sent as the first message on the stream, and then the server drops the connection. But some errors can not be handled through the stream, and are returned as HTTP errors:
+Errors are usually returned through the stream itself. Connection-time errors are sent as the first message on the stream, and then the server drops the connection. But some errors can not be handled through the stream, and are returned as HTTP errors:
 
 - `405 Method Not Allowed`: Returned to client for non-GET HTTP requests to a stream endpoint.
-- `426 Upgrade Required`: Returned to client if if `Upgrade` header is not included in a request to a stream endpoint.
+- `426 Upgrade Required`: Returned to client if `Upgrade` header is not included in a request to a stream endpoint.
 - `429 Too Many Requests`: Frequently used for rate-limiting. Client may try again after a delay. Support for the `Retry-After` header is encouraged.
 - `500 Internal Server Error`: Client may try again after a delay
 - `501 Not Implemented`: Service does not implement WebSockets or streams, at least for this endpoint. Client should not try again.
@@ -43,14 +44,14 @@ Either the server or the client may decided to drop an open stream connection if
 
 ### Framing
 
-Each binary WebSocket frame contains two DAG-CBOR objects, concatenated. The first is a "header" and the second is the "payload".
+Each binary WebSocket frame contains two DAG-CBOR objects, concatenated. The first is a **header** and the second is the **payload.**
 
 The header DAG-CBOR object has the following fields:
 
 - `op` ("operation", integer, required): fixed values, indicating what this frame contains
     - `1`: a regular message, with type indicated by `t`
     - `-1`: an error message
-- `t` ("type", string, optional): required if `op` is `1`, indicating the Lexicon sub-type for this message, in short form. Does not include the full Lexicon identifier, just a fragment. Eg: `#commit`. Should not be included in header if `op` is `1`
+- `t` ("type", string, optional): required if `op` is `1`, indicating the Lexicon sub-type for this message, in short form. Does not include the full Lexicon identifier, just a fragment. Eg: `#commit`. Should not be included in header if `op` is `1`.
 
 Clients should ignore frames with headers that have unknown `op` or `t` values. Unknown fields in both headers and payloads should be ignored. Invalid framing or invalid DAG-CBOR encoding are hard errors, and the client should drop the entire connection instead of skipping the frame. Servers should ignore any frames received from the client, not treat them as errors.
 
@@ -61,7 +62,7 @@ Error payloads all have the following fields:
 
 Streams should be closed immediately following transmitting or receiving an error frame.
 
-Message payloads must always be objects. They should omit the `$type` field, as this information is already indicated in the header. There is no specific limit on the size of WebSocket frames in atproto, but they should be kept reasonably small. A couple megabytes is an informal guideline.
+Message payloads must always be objects. They should omit the `$type` field, as this information is already indicated in the header. There is no specific limit on the size of WebSocket frames in atproto, but they should be kept reasonably small (around a couple megabytes).
 
 If a client can not keep up with the rate of messages, the server may send a "too slow" error and close the connection.
 
@@ -87,7 +88,9 @@ The scope for sequence numbers is the combination of service provider (hostname)
 
 Services should ensure that sequence numbers are not re-used, usually by committing events (with sequence number) to robust persistent storage before transmitting them over streams.
 
-Clients should treat out-of-order or duplicate sequence numbers as an error, not process the message, and drop the connection. This includes across re-connection attempts. Clients should not reset sequence state without human operator intervention.
+If a server deletes all their sequenced events or their service, or suffers a hard crash and loses some events, the client needs to be able to recover a connection with them. In this case, the server will send back a `FutureCursor` error to the client. The client can then choose what to do. 
+
+One option for the client is restart at the earliest backfill time. We suggest that clients treat out-of-order or duplicate sequence numbers as an error, not process the message, and drop the connection. This includes across re-connection attempts. Clients should not reset sequence state without human operator intervention.
 
 ## Usage and Implementation Guidelines
 
