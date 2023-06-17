@@ -7,13 +7,17 @@ summary: Consistent data encoding for records and messages.
 
 Records and messages in atproto are stored, transmitted, encoded, and authenticated in a consistent way. The core "data model" is based on [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/), a specification for hash-linked data structures from the IPFS ecosystem.
 
-When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. IPLD specifies a normalized subset of CBOR called "DAG-CBOR", which is what atproto uses.
+When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. IPLD specifies a normalized subset of CBOR called **DAG-CBOR,** which is what atproto uses.
 
-IPLD also specifies an analogous set of conventions of JSON called "DAG-JSON", but atproto uses a different set of conventions when encoding JSON data.
+IPLD also specifies an analogous set of conventions of JSON called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data.
 
 The schema definition language for atproto is [Lexicon](/specs/lexicon). The IPLD Schema language is not used. Other lower-level data structures, like [repository](/specs/repository) internals, are not specified with Lexicons, but use the same data model and encodings.
 
-In IPLD, distinct pieces of data are called "nodes", and when encoded in binary (DAG-CBOR) result in a "block". A node may have internal nested structure (maps or lists). Nodes may reference each other by string URLs or URIs, just like with regular JSON on the web. In IPLD, they can also reference each other strongly by hash, referred to in IPLD as a "link". A set of linked nodes can form higher-level data structures like [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) or [Directed Acyclical Graphs (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Links can also refer to arbitrary binary data ("blobs"). Unlike URLs, hash references (links) do not encode a specific network location where the content can be found. The location and access mechanism must be inferred by protocol-level context. Hash references do have the property of being "self-certifying", meaning that returned data can be verified against the link hash. This makes it possible to redistribute content and trust copies even if coming from an untrusted party.
+In IPLD, distinct pieces of data are called **nodes,** and when encoded in binary (DAG-CBOR) result in a **block.** A node may have internal nested structure (maps or lists). Nodes may reference each other by string URLs or URIs, just like with regular JSON on the web. In IPLD, they can also reference each other strongly by hash, referred to in IPLD as a **link.** A set of linked nodes can form higher-level data structures like [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) or [Directed Acyclical Graphs (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Links can also refer to arbitrary binary data (blobs).
+
+Links are encoded as CIDs here. You can tell what is behind the data by looking at the codec of the CID (whether it is DAG-CBOR or arbitrary binary).
+
+Unlike URLs, hash references (links) do not encode a specific network location where the content can be found. The location and access mechanism must be inferred by protocol-level context. Hash references do have the property of being "self-certifying", meaning that returned data can be verified against the link hash. This makes it possible to redistribute content and trust copies even if coming from an untrusted party.
 
 In atproto, object nodes often include a string field `$type` that specifies their Lexicon schema. Data is mostly self-describing and can be processed in schema-agnostic ways (including decoding and re-encoding), but can not be fully validated without the schema on-hand or known ahead of time.
 
@@ -76,7 +80,7 @@ Note that the legacy format has no `$type` and can only be parsed for known Lexi
 
 ## JSON Representation
 
-atproto uses it's own conventions for JSON, instead of using DAG-JSON directly. Normalizations like key sorting are also not required or enforced: only DAG-JSON is used as a byte-reproducible representation.
+atproto uses its own conventions for JSON, instead of using DAG-JSON directly. Normalizations like key sorting are also not required or enforced: only DAG-JSON is used as a byte-reproducible representation.
 
 The encoding for most of the core and compound types is obvious, with only `link` and `bytes` needing special treatment.
 
