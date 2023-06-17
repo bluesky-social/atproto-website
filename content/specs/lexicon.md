@@ -42,12 +42,15 @@ A Lexicon JSON file is an object with the following fields:
 
 - `lexicon` (integer, required): indicates Lexicon language version. In this version, a fixed value of `1`
 - `id` (string, required): the NSID of the Lexicon
+- `revision` (integer, optional): indicates the version of this Lexicon, if changes have occured
 - `description` (string, optional): short overview of the Lexicon, usually one or two sentences
 - `defs` (map of strings-to-objects, required): set of definitions, each with a distinct name (key)
 
 Schema definitions under `defs` all have a `type` field to distinguish their type. A file can have at most one definition with one of the "primary" types. Primary types should always have the name `main`. It is possible for `main` to describe a non-primary type.
 
 References to specific definitions within a Lexicon use fragment syntax, like `com.example.defs#someView`. If a `main` definition exists, it can be referenced without a fragment, just using the NSID.
+
+The semantics of the `revision` field have not been worked out yet, but are intended to help third parties identity the most recent among multiple versions or copies of a Lexicon.
 
 Related Lexicons are often grouped together in the NSID hierarchy. As a convention, any definitions used by multiple Lexicons are defined in a dedicated `*.defs` Lexicon (eg, `com.atproto.server.defs`) within the group. A `*.defs` Lexicon should not include a definition named `main`, though it is not strictly invalid to do so.
 
