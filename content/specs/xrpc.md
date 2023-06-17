@@ -5,7 +5,7 @@ summary: Cross-system queries and procedures over HTTP
 
 # HTTP API (XRPC)
 
-HTTP APIs for client-server and server-server requests in atproto use a set of common conventions called XRPC. Endpoint path names include an NSID indicating the [Lexicon](https://www.notion.so/specs/lexicon) specifying the request and response schemas, usually with JSON content type.
+HTTP APIs for client-server and server-server requests in atproto use a set of common conventions called XRPC. Endpoint path names include an NSID indicating the [Lexicon](/specs/lexicon) specifying the request and response schemas, usually with JSON content type.
 
 ## Lexicon HTTP Endpoints
 
