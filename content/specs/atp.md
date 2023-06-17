@@ -14,7 +14,7 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 ## Protocol Structure
 
-**Identity:** account control is rooted in stable [DID](/specs/did) identifiers, which can be rapidly resolved to determine the current service provider location and cryptographic keys associated with the account. [Handles](/specs/handle) provide a more human-recognizable and mutable identifier for accounts.
+**Identity:** account control is rooted in stable [DID](/specs/did) identifiers, which can be rapidly resolved to determine the current service provider location and [Cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) provide a more human-recognizable and mutable identifier for accounts.
 
 **Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) ([IPLD](https://ipld.io/docs/data-model/), with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations).
 
@@ -23,25 +23,6 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 **Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers](/specs/nsid) (NSIDs). Application-specific aggregations (such as search) are provided by an Application View (App View) service. Clients can include mobile apps, desktop software, or web interfaces.
 
 The AT Protocol itself does not specify common social media conventions like follows or avatars, leaving these to application-level Lexicons. The `com.atproto.*` Lexicons provide common APIs for things like account signup and login. These could be considered part of AT Protocol itself, though they can also be extended or replaced over time as needed. Bluesky is a microblogging social app built on top of AT Protocol, with lexicons under the `app.bsky.*` namespace.
-
-## Cryptography
-
-Two elliptic curves are currently supported throughout the protocol, and implementations are expected to fully support both:
-
-- `p256` elliptic curve: aka "NIST P-256", aka `secp256r1` (note the `r`), aka `prime256v1`
-    - This curve *is* included in the WebCrypto API. It is commonly supported by personal device hardware (Trusted Platform Modules (TPMs) and mobile Secure Enclaves), and by cloud Hardware Security Modules (HSMs)
-- `k256` elliptic curve: aka "NIST K-256", aka `secp256k1` (note the `k`)
-    - This curve *is not* included in the WebCrypto API. It is used in Bitcoin and other cryptocurrencies, and as a result is broadly supported by personal secret key management technologies. It is also supported by cloud HSMs.
-
-Because of the subtle visual distinction when the full curve names are written out, we often refer to them as `p256` or `k256`.
-
-The atproto reference implementation from Bluesky supports both curves in all contexts, and creates `k256`  key pairs by default.
-
-Key points for both systems have loss-less "compressed" representations, which are useful when sharing the public keys. This is usually supported natively for `k256`, but sometimes requires extra methods or jumping through hoops for `p256`. You can read more about this at: [02, 03 or 04? So What Are Compressed and Uncompressed Public Keys?](https://medium.com/asecuritysite-when-bob-met-alice/02-03-or-04-so-what-are-compressed-and-uncompressed-public-keys-6abcb57efeb6).
-
-A common pattern when signing data in atproto is to encode the data in DAG-CBOR, hash the CBOR bytes with SHA-256, yielding raw bytes (not a hex-encoded string), and then sign the hash bytes.
-
-The set of supported cryptographic systems is expected to evolve slowly. There are significant interoperability and implementation advantages to having as few systems as possible at any point in time.
 
 ## Protocol Extension and Applications
 
@@ -78,5 +59,4 @@ Smaller changes are described in individual specification documents, but a few l
 **Non-Public Content:** mechanisms for private group and one-to-one communication will be an entire second phase of protocol development. This encompasses primitives like "private accounts", direct messages, encrypted data, and more. We recommend against simply "bolting on" encryption or private content using the existing protocol primitives.
 
 **Protocol Governance and Formal Standards Process:** The current development focus is to demonstrate all the core protocol features via the reference implementation, including open federation. After that milestone, the intent is to stabilize the lower-level protocol and submit the specification for independent review and revision through a standards body such as the IETF or the W3C.
-
 
