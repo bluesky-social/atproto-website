@@ -93,10 +93,10 @@ Type-specific fields:
 - `parameters` (object, optional): same as Query and Procedure
 - `message` (object, optional): specifies what messages can be
     - `description` (string, optional): short description
-    - `schema` (object, required): schema definition, either an `object`, a `ref`, or a `union` of refs
+    - `schema` (object, required): schema definition, which must be a `union` of refs
 - `errors` (array of objects, optional): same as Query and Procedure
 
-Subscription schemas are almost always a `union` of refs, not an `object` type.
+Subscription schemas (referenced by the `schema` field under `message`) must be a `union` of refs, not an `object` type.
 
 ## Field Type Definitions
 
@@ -228,9 +228,13 @@ Type-specific fields:
 - `refs` (array of strings, required): references to schema definitions
 - `closed` (boolean, optional): indicates if a union is "open" or "closed". defaults to `false` (open union)
 
-Unions represent that multiple possible types could be present at this location in the schema. The references follow the same syntax as `ref`, allowing references to both global or local schema definitions. Only a single type can be included; the union does not *combine* fields from multiple schemas. The different types are referred to as **variants**.
+Unions represent that multiple possible types could be present at this location in the schema. The references follow the same syntax as `ref`, allowing references to both global or local schema definitions. Actual data will validate against a single specific type: the union does not *combine* fields from multiple schemas, or define a new *hybrid* data type. The different types are referred to as **variants**.
 
 By default unions are "open", meaning that future revisions of the schema could add more types to the list of refs (though can not remove types). This means that implementations should be permissive when validating, in case they do not have the most recent version of the Lexicon. The `closed` flag (boolean) can indicate that the set of types is fixed and can not be extended in the future.
+
+A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). An empty refs list with `closed` set to true is an invalid schema.
+
+The schema definitions pointed to by a `union` are generally objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and include a `$type` field indicating the variant type.
 
 ### `unknown`
 
@@ -330,7 +334,7 @@ Lexicons are allowed to change over time, within some bounds to ensure both forw
 
 If larger breaking changes are necessary, a new Lexicon name must be used.
 
-It can be ambiguous when a Lexicon has been published and becomes "set in stone". At a minimum, public adoption and implementation by a third party, even without explicit permission, indicates that the Lexicon has been released and should not break compatibility. A best practice is clearly indicate in the Lexicon type name any experimental or development status. Eg, `com.corp.experimental.newRecord`.
+It can be ambiguous when a Lexicon has been published and becomes "set in stone". At a minimum, public adoption and implementation by a third party, even without explicit permission, indicates that the Lexicon has been released and should not break compatibility. A best practice is to clearly indicate in the Lexicon type name any experimental or development status. Eg, `com.corp.experimental.newRecord`.
 
 ## Authority and Control
 
@@ -353,5 +357,3 @@ Implementations which serialize and deserialize data from JSON or CBOR in to str
 ## Possible Future Changes
 
 The validation rules for unexpected additional fields may change. For example, a mechanism for Lexicons to indicate that the schema is "closed" and unexpected fields are not allowed, or a convention around field name prefixes (`x-`) to indicate unofficial extension.
-
-Enums are somewhat redundant with Unions, and might be removed.
