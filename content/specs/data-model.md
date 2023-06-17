@@ -15,9 +15,9 @@ The schema definition language for atproto is [Lexicon](/specs/lexicon). The IPL
 
 In IPLD, distinct pieces of data are called **nodes,** and when encoded in binary (DAG-CBOR) result in a **block.** A node may have internal nested structure (maps or lists). Nodes may reference each other by string URLs or URIs, just like with regular JSON on the web. In IPLD, they can also reference each other strongly by hash, referred to in IPLD as a **link.** A set of linked nodes can form higher-level data structures like [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) or [Directed Acyclical Graphs (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Links can also refer to arbitrary binary data (blobs).
 
-Links are encoded as CIDs here. You can tell what is behind the data by looking at the codec of the CID (whether it is DAG-CBOR or arbitrary binary).
-
 Unlike URLs, hash references (links) do not encode a specific network location where the content can be found. The location and access mechanism must be inferred by protocol-level context. Hash references do have the property of being "self-certifying", meaning that returned data can be verified against the link hash. This makes it possible to redistribute content and trust copies even if coming from an untrusted party.
+
+Links are encoded as [IPFS Content Identifiers](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (CIDs), which have both binary and string representations. CIDs include a metadata code which indicates whether it links to a node (DAG-CBOR) or arbitrary binary data. Some additional constraints on the use of CIDs in atproto are described below.
 
 In atproto, object nodes often include a string field `$type` that specifies their Lexicon schema. Data is mostly self-describing and can be processed in schema-agnostic ways (including decoding and re-encoding), but can not be fully validated without the schema on-hand or known ahead of time.
 
@@ -80,9 +80,11 @@ Note that the legacy format has no `$type` and can only be parsed for known Lexi
 
 ## JSON Representation
 
-atproto uses its own conventions for JSON, instead of using DAG-JSON directly. Normalizations like key sorting are also not required or enforced: only DAG-JSON is used as a byte-reproducible representation.
+atproto uses its own conventions for JSON, instead of using DAG-JSON directly. The main motivation was to have more idiomatic and human-readable representations for `link` and `bytes` in HTTP APIs. The DAG-JSON specification itself mentions that it is primarily oriented toward debugging and development environments, and we found that the use of `/` as a field key was confusing to developers.
 
-The encoding for most of the core and compound types is obvious, with only `link` and `bytes` needing special treatment.
+Normalizations like key sorting are also not required or enforced when using JSON in atproto: only DAG-CBOR is used as a byte-reproducible representation.
+
+The encoding for most of the core and compound types is straight forward, with only `link` and `bytes` needing special treatment.
 
 ### `link`
 
@@ -105,7 +107,7 @@ For comparison, this is very similar to the DAG-JSON encoding, but substitutes `
 
 The JSON encoding for bytes is an object with the single key `$bytes` and string value with the base64-encoded bytes. The base64 scheme is the one specified in [RFC-4648, section 4](https://datatracker.ietf.org/doc/html/rfc4648#section-4), frequently referred to as simple "base64". This scheme is not URL-safe, and `=` padding is optional.
 
-For example, a node with a single field `"exampleBytes"` with type `bytes` woudl in JSON like:
+For example, a node with a single field `"exampleBytes"` with type `bytes` would be represented in JSON like:
 
 ```
 {
@@ -129,6 +131,8 @@ The blessed formats for CIDs in atproto are:
 - multicodec: `dag-cbor` (0x71) for links to data objects, and `raw` (0x55) for links to blobs
 - multihash: `sha-256` with 256 bits (0x12) is preferred
 
+The use of SHA-256 is a stable requirement in some contexts, such as the repository MST nodes. In other contexts, like referencing media blobs, there will likely be a set of "blessed" hash types which evolve over time. A balance needs to be struck between protocol flexibility on the one hand (to adopt improved hashes and remove weak ones), and ensuring broad and consistent interoperability throughout an ecosystem of protocol implementations.
+
 There are several ways to include a CID hash reference in an atproto object:
 
 - `link` field type (Lexicon type `cid-link`). In DAG-CBOR encodes as a binary CID (multibase type 0x00) in a bytestring with CBOR tag 42. In JSON, encodes as `$link` object (see above)
@@ -148,3 +152,5 @@ There are a number of resource-consumption attacks possible when parsing untrust
 Floats may be supported in one form or another.
 
 The legacy "blob" format may be entirely removed, if all known records and repositories can be rewritten.
+
+Additional hash types are likely to be included in the set of "blessed" CID configurations.
