@@ -42,7 +42,7 @@ A Lexicon JSON file is an object with the following fields:
 
 - `lexicon` (integer, required): indicates Lexicon language version. In this version, a fixed value of `1`
 - `id` (string, required): the NSID of the Lexicon
-- `revision` (integer, optional): indicates the version of this Lexicon, if changes have occured
+- `revision` (integer, optional): indicates the version of this Lexicon, if changes have occurred
 - `description` (string, optional): short overview of the Lexicon, usually one or two sentences
 - `defs` (map of strings-to-objects, required): set of definitions, each with a distinct name (key)
 
