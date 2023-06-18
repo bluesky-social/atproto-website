@@ -24,6 +24,9 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 The AT Protocol itself does not specify common social media conventions like follows or avatars, leaving these to application-level Lexicons. The `com.atproto.*` Lexicons provide common APIs for things like account signup and login. These could be considered part of AT Protocol itself, though they can also be extended or replaced over time as needed. Bluesky is a microblogging social app built on top of AT Protocol, with lexicons under the `app.bsky.*` namespace.
 
+While atproto borrows several formats and specifications from the IPFS ecosystem (such as IPLD and CID), atproto data does not need to be stored in the IPFS network, and the atproto reference implementation does not use the IPFS network at all, though it would be a reasonable technology for other atproto implementations to adopt.
+
+
 ## Protocol Extension and Applications
 
 AT Protocol was designed from the beginning to balance stability and interoperation against flexibility for third-party application development.
