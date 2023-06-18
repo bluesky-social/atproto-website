@@ -60,7 +60,7 @@ App Passwords are a mechanism to reduce security risks when logging in to third-
 
 Clients and apps themselves do not need to do anything special to use app passwords. It is a best practice for most clients and apps to include a reminder to use an app password when logging in. App passwords usually have the form `xxxx-xxxx-xxxx-xxxx`, and clients can check against this format to prevent accidental logins with primary passwords (unless the primary password itself has this format).
 
-### Admin Token
+### Admin Token (Temporary Specification)
 
 Some administrative XRPC endpoints require authentication with admin privileges. The current scheme for this is to use HTTP Basic authentication with user "admin" and a fixed token in the password field, instead of HTTP Bearer auth with a JWT. This means that admin requests do not have a link to the account or identity of the client beyond "admin".
 
@@ -77,6 +77,30 @@ The set of endpoints requiring admin auth is likely to get out of date in this s
 - `com.atproto.admin.*`
 - `com.atproto.server.createInviteCode`
 - `com.atproto.server.createInviteCodes`
+
+### Inter-Service Authentication (Temporary Specification)
+
+This section describes a mechanism for authentication between services using signed JWTs. Note that this is not the long-term solution for inter-service authentication, and is likely to be replaced with a more robust mechanism in the near future.
+
+The current mechanism is to use short-lived JWTs signed by the account's atproto signing key. The receiving service can validate the signature by checking this key against the account's DID document.
+
+The JWT parameters are:
+
+- `alg` header field: indicates the signing key type (see [Cryptography](/specs/cryptography))
+    - use `ES256K` for `k256` keys
+    - use `ES256` for `p256` keys
+- `iss` body field: account DID that the request is being sent on behalf of
+- `aud` body field: service DID associated with the service that the request is being sent to
+- `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
+- JWT signature: base64url-encoded signature using the account DID's signing key
+
+The signature is computed using the regular JWT process. As Typescript pseudo-code, this looks like:
+
+```
+const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))
+const signature = sign(sha256(utf8Bytes(headerPayload)))
+const jwt = headerPayload + '.' + bytesToBase64Url(signature)
+```
 
 ## Summary of HTTP Headers
 
