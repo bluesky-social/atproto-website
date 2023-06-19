@@ -21,6 +21,15 @@ Key points for both systems have loss-less "compressed" representations, which a
 A common pattern when signing data in atproto is to encode the data in DAG-CBOR, hash the CBOR bytes with SHA-256, yielding raw bytes (not a hex-encoded string), and then sign the hash bytes.
 
 
+### ECDSA Signature Malleability
+
+Some ECDSA signatures can be transformed to yield a new distinct but still-valid signature. This does not require access to the private signing key or the data that was signed. The scope of attacks possible using this property is limited, but it is an unexpected property.
+
+For `k256` specifically, the distinction is between "low-S" and "high-S" signatures, as discussed in [Bitcoin BIP-0062](https://github.com/bitcoin/bips/blob/master/bip-0062.mediawiki). In atproto, use of the "low-S" signature variant is required.
+
+In atproto, signatures should always be verified using the verification routines provided by the cryptographic library, never by comparing signature values as raw bytes.
+
+
 ### Possible Future Changes
 
 The set of supported cryptographic systems is expected to evolve slowly. There are significant interoperability and implementation advantages to having as few systems as possible at any point in time.
