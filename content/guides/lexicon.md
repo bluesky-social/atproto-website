@@ -5,7 +5,7 @@ tldr:
  - Lexicon is a global schema system
  - It uses reverse-DNS names like "com.example.ping()"
  - The definitions are JSON documents, similar to JSON-Schema
- - It's currently used for RPC methods and repo records
+ - It's currently used for HTTP endpoints, event streams, and repo records
 ---
 
 # Intro to Lexicon
@@ -30,49 +30,17 @@ app.bsky.actor.profile
 app.bsky.graph.follow
 ```
 
+The schema types, definition language, and validation constraints are described in the [Lexicon specification](/specs/lexicon), and representations in JSON and CBOR are described in the [Data Model specification](/specs/data-model).
+
 ## Why is Lexicon needed?
 
 **Interoperability.** An open network like atproto needs a way to agree on behaviors and semantics. Lexicon solves this while making it relatively simple for developers to introduce new schemas.
 
 **Lexicon is not RDF.** While RDF is effective at describing data, it is not ideal for enforcing schemas. Lexicon is easier to use because it doesn't need the generality that RDF provides. In fact, Lexicon's schemas enable code-generation with types and validation, which makes life much easier!
 
-## Schema format
+## HTTP API methods
 
-Schemas are JSON objects which follow this Typescript interface:
-
-```typescript
-interface LexiconDoc {
-  lexicon: 1
-  id: string // an NSID
-  type: 'query' | 'procedure' | 'record' | 'token'
-  revision?: number
-  description?: string
-  defs?: JSONSchema
-
-  // if type == record
-  key?: string
-  record?: JSONSchema
-
-  // if type == query or procedure
-  parameters?: Record<string, XrpcParameter>
-  input?: XrpcBody
-  output?: XrpcBody
-  errors?: XrpcError[]
-}
-```
-
-Notice the structure differs depending on the `type`. The meanings of the type are:
-
-| Type        | Meaning                                             |
-| ----------- | --------------------------------------------------- |
-| `query`     | An XRPC "read" method (aka GET).                    |
-| `procedure` | An XRPC "modify" method (aka POST).                 |
-| `record`    | An ATP repository record type.                      |
-| `token`     | A declared identifier with no behaviors associated. |
-
-## RPC methods
-
-The AT Protocol's RPC system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. 
+The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. 
 
 For example, a call to:
 
@@ -152,7 +120,7 @@ at://bob.com/com.example.follow/12345
     "required": ["subject", "createdAt"],
     "properties": {
       "subject": { "type": "string" },
-      "createdAt": {"type": "string", "format": "date-time"}
+      "createdAt": {"type": "string", "format": "datetime"}
     }
   }
 }
@@ -210,19 +178,19 @@ Instead, you can define Lexicon tokens for the values you use:
   "lexicon": 1,
   "id": "com.example.green",
   "type": "token",
-  "description": "A possible traffic light state.",
+  "description": "Traffic light state representing 'Go!'.",
 }
 {
   "lexicon": 1,
   "id": "com.example.yellow",
   "type": "token",
-  "description": "A possible traffic light state.",
+  "description": "Traffic light state representing 'Stop Soon!'.",
 }
 {
   "lexicon": 1,
   "id": "com.example.red",
   "type": "token",
-  "description": "A possible traffic light state.",
+  "description": "Traffic light state representing 'Stop!'.",
 }
 ```
 
@@ -239,7 +207,11 @@ This gives us unambiguous values to use in our trafficLight state. The final sch
     "properties": {
       "state": {
         "type": "string",
-        "description": "Suggested values: com.example.red, com.example.yellow, com.example.green"
+        "knownValues": [
+          "com.example.green",
+          "com.example.yellow",
+          "com.example.red"
+        ]
       },
     }
   }
