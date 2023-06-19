@@ -54,6 +54,7 @@ Regardless of the type, Record Keys must fulfill some baseline syntax constraint
 
 - restricted to a subset of ASCII characters — the allowed characters are alphanumeric (`A-Za-z0-9`), period, dash, underscore, or tilde (`.-_~`)
 - must have at least 1 and at most 512 characters
+- the specific record key values `.` and `..` are not allowed
 - must be a permissible part of repository MST path string (the above constraints satisfy this condition)
 - must be permissible to include in a path component of a URI (following RFC-3986, section 3.3).  The above constraints satisfy this condition, by matching the "unreserved" characters allowed in generic URI paths.
 
@@ -69,6 +70,25 @@ Valid Record Keys:
 self
 example.com
 ~1.2-3_
+dHJ1ZQ
+```
+
+Invalid Record Keys:
+
+```
+literal:self
+alpha/beta
+.
+..
+#extra
+@handle
+any space
+any+space
+number[3]
+number(3)
+"quote"
+pre:fix
+dHJ1ZQ==
 ```
 
 ### Usage and Implementation Guidelines
@@ -94,3 +114,5 @@ Additional Record Key types may be defined.
 The maximum length may be tweaked.
 
 The `%` character is reserved for possible use with URL encoding, but note that such encoding is not currently supported.
+
+Additional constraints on the generic syntax may be added. For example, requiring at least one alphanumeric character.
