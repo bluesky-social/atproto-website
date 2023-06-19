@@ -2,9 +2,9 @@
 title: Identity
 summary: How the AT Protocol handles user identity.
 tldr:
-  - Every user has a domain name like @alice.host.com or just @alice.com
+  - Every user has a domain name handle like alice.host.com or just alice.com
   - Every user also has a persistent "DID" which enables migration between hosts
-  - The DID maps to users' keys and host addresses
+  - The DID maps to users' keys and current host addresses
 ---
 
 # Identity
@@ -26,7 +26,7 @@ We use two interrelated forms of identifiers: the _handle_ and the _DID_. Handle
 
 The following are all valid user identifiers:
 
-<pre><code>@alice.host.com
+<pre><code>alice.host.com
 at://alice.host.com
 at://did:plc:bv6ggog3tya2z3vxsub7hnal
 </code></pre>
@@ -53,13 +53,13 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
   <tr>
    <td><strong>Handles</strong>
    </td>
-   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document.
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document. Details in the [Handle specification](/specs/handle).
    </td>
   </tr>
   <tr>
    <td><strong>DIDs</strong>
    </td>
-   <td>DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users.
+   <td>DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users. Details of how they are used in AT Protocol in the [DID specification](/specs/did).
    </td>
   </tr>
   <tr>
