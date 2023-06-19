@@ -38,32 +38,32 @@ Every user has a public data repository. The application can do basic CRUD on re
 ```typescript
 await api.com.atproto.repo.listRecords({
   repo: 'alice.com',
-  type: 'app.bsky.post'
+  collection: 'app.bsky.post'
 })
 await api.com.atproto.repo.getRecord({
   repo: 'alice.com',
-  type: 'app.bsky.post',
-  tid: '1'
+  collection: 'app.bsky.post',
+  rkey: '3jyfrk3olgd2h'
 })
 await api.com.atproto.repo.createRecord({
   repo: 'alice.com',
-  type: 'app.bsky.post'
+  collection: 'app.bsky.post'
 }, {
   text: 'Second post!',
   createdAt: (new Date()).toISOString()
 })
 await api.com.atproto.repo.putRecord({
   repo: 'alice.com',
-  type: 'app.bsky.post',
-  tid: '1'
+  collection: 'app.bsky.post',
+  rkey: '3jyfrk3olgd2h'
 }, {
   text: 'Hello universe!',
   createdAt: originalPost.data.createdAt
 })
 await api.com.atproto.repo.deleteRecord({
   repo: 'alice.com',
-  type: 'app.bsky.post',
-  tid: '1'
+  collection: 'app.bsky.post',
+  rkey: '3jyfrk3olgd2h'
 })
 ```
 
@@ -82,10 +82,7 @@ A social follow. Example:
 ```typescript
 {
   $type: 'app.bsky.graph.follow',
-  subject: {
-    did: 'did:plc:bv6ggog3tya2z3vxsub7hnal',
-    declarationCid: 'bafyreid27zk7lbis4zw5fz4podbvbs4fc5ivwji3dmrwa6zggnj4bnd57u'
-  },
+  subject: 'did:plc:bv6ggog3tya2z3vxsub7hnal',
   createdAt: '2022-10-10T00:39:08.609Z'
 }
 ```
@@ -137,7 +134,7 @@ A repost of an existing microblog post (similar to retweets). Example:
 {
   $type: 'app.bsky.feed.repost',
   subject: {
-    uri: 'at://did:plc:bv6ggog3tya2z3vxsub7hnal/app.bsky.post/1',
+    uri: 'at://did:plc:bv6ggog3tya2z3vxsub7hnal/app.bsky.post/3jyfrk3olgd2h',
     cid: 'bafyreif5lqnk3tgbhi5vgqd6wy5dtovfgndhwta6bwla4iqaohuf2yd764'
   }
   createdAt: '2022-10-10T00:39:08.609Z'
@@ -146,17 +143,17 @@ A repost of an existing microblog post (similar to retweets). Example:
 
 ## Social APIs
 
-While there's a lot that can be done by repo CRUD and other low-level com.atproto.* APIs, the app.bsky.* lexicon provides more powerful and easy-to-use APIs for social applications.
+While there's a lot that can be done by repo CRUD and other low-level `com.atproto.*` APIs, the `app.bsky.*` lexicon provides more powerful and easy-to-use APIs for social applications.
 
 ```typescript
 await api.app.bsky.feed.getTimeline()
 await api.app.bsky.feed.getAuthorFeed({author: 'alice.com'})
-await api.app.bsky.feed.getPostThread({uri: 'at://alice.com/app.bsky.post/1'})
-await api.app.bsky.feed.getLikes({uri: 'at://alice.com/app.bsky.post/1'})
-await api.app.bsky.feed.getRepostedBy({uri: 'at://alice.com/app.bsky.post/1'})
-await api.app.bsky.actor.getProfile({user: 'alice.com'})
-await api.app.bsky.graph.getFollowers({user: 'alice.com'})
-await api.app.bsky.graph.getFollows({user: 'alice.com'})
+await api.app.bsky.feed.getPostThread({uri: 'at://alice.com/app.bsky.post/3jyfrk3olgd2h'})
+await api.app.bsky.feed.getLikes({uri: 'at://alice.com/app.bsky.post/3jyfrk3olgd2h'})
+await api.app.bsky.feed.getRepostedBy({uri: 'at://alice.com/app.bsky.post/3jyfrk3olgd2h'})
+await api.app.bsky.actor.getProfile({actor: 'alice.com'})
+await api.app.bsky.graph.getFollowers({actor: 'alice.com'})
+await api.app.bsky.graph.getFollows({actor: 'alice.com'})
 await api.app.bsky.notification.listNotifications()
 await api.app.bsky.notification.getUnreadCount()
 await api.app.bsky.notification.updateSeen()
