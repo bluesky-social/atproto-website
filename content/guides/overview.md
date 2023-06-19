@@ -21,13 +21,11 @@ User data is exchanged in [signed data repositories](/guides/data-repos). These 
 
 ## Federation
 
-The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Commands are sent between servers using [HTTPS + XRPC](/specs/xrpc).
+The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
 
-The three main services of our first federation are personal data servers (PDS), big graph services (BGS), and App Views. We're also working on feed generators and labelers.
+The three core services in our network are Personal Data Servers (PDS), Big Graph Services (BGS), and App Views. We're also working on feed generators and labelers.
 
 The lower-level primitives that can get stacked together differently are the repositories, lexicons, and DIDs. We published an overview of our technical decisions around federation architecture [on our blog](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture).
-
-![Federation](/img/federation.jpg)
 
 ## Interoperation
 
@@ -49,7 +47,7 @@ This distinction is intended to achieve scale as well as a high degree of user-c
 
 ## Algorithmic choice
 
-As with Web search engines, users are free to select their indexers. Each feed, discovery section, or search interface is integrated into the PDS while being served from a third party service.
+As with Web search engines, users are free to select their aggregators. Feeds, App Views, and search indices can be provided by independent third parties, with requests routed by the PDS based on user configuration.
 
 ![Algorithmic choice](/img/algorithmic-choice.jpg)
 
@@ -70,11 +68,11 @@ The signing key is entrusted to the PDS so that it can manage the user's data, b
 
 ![Account recovery](/img/recovery.jpg)
 
-A backup of the user’s data is persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
+A backup of the user’s data will be persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
 
 ## Speech, reach, and moderation
 
-Atproto's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain neutral, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+Atproto's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
 ![Speech vs Reach](/img/speech-vs-reach.jpg)
 
@@ -82,13 +80,13 @@ The base layer of atproto (personal data repositories and federated networking) 
 
 ## Specifications
 
-Five primary specs comprise the v1 of the AT Protocol. These specs are:
+Some of the primary specifications comprising the initial version of the AT Protocol are:
 
 - [Authenticated Transfer Protocol](/specs/atp)
-- [Cross-system RPC (XRPC)](/specs/xrpc)
-- [Lexicon Schemas](/specs/lexicon)
-- [Namespaced IDs (NSIDs)](/specs/nsid)
-- [DIDs](/specs/did)
+- [DIDs](/specs/did) and [Handles](/specs/handle)
+- [Repository](/specs/repository) and [Data Model](/specs/data-model)
+- [Lexicon](/specs/lexicon) 
+- [HTTP API (XRPC)](/specs/xrpc) and [Event Streams](/specs/event-stream)
 
 These specs can be organized into three layers of dependency:
 
