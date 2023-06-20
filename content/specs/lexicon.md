@@ -164,7 +164,7 @@ Type-specific fields:
 
 No type-specific fields.
 
-See [Data Model spec](/spec/data-model) for CID restrictions.
+See [Data Model spec](/specs/data-model) for CID restrictions.
 
 ### `array`
 

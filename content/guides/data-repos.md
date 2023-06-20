@@ -32,7 +32,7 @@ The content of a repository is laid out in a [Merkle Search Tree (MST)](https://
 
 Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is referenced by a [CID](https://github.com/multiformats/cid) hash. The arrows in the diagram above represent a CID reference.
 
-This layout is reflected in the [AT URIs](/specs/at-uri-schema):
+This layout is reflected in the [AT URIs](/specs/at-uri-scheme):
 
 <pre><code>Root       | at://alice.com
 Collection | at://alice.com/app.bsky.feed.post
@@ -61,13 +61,13 @@ Multiple types of identifiers are used within a Personal Data Repository.
   <tr>
    <td><strong>NSIDs</strong>
    </td>
-   <td>[Namespaced Identifiers](/specs/nsid) identify the Lexicon type for groups of records within a repository.
+   <td><a href="/specs/nsid">Namespaced Identifiers (NSIDs)</a> identify the Lexicon type for groups of records within a repository.
    </td>
   </tr>
   <tr>
    <td><strong>rkey</strong>
    </td>
-   <td>[Record Keys](/specs/nsid) identify individual records within a collection in a given repository. The format is specified by the collection Lexicon, with some collections having only a single record with a key like "self", and other collections having many records, with keys using a base32-encoded timestamp called a Timestamp Identifier (TID).
+   <td><a href="/specs/record-key">Record Keys</a> ("rkeys") identify individual records within a collection in a given repository. The format is specified by the collection Lexicon, with some collections having only a single record with a key like "self", and other collections having many records, with keys using a base32-encoded timestamp called a Timestamp Identifier (TID).
    </td>
   </tr>
 </table>
