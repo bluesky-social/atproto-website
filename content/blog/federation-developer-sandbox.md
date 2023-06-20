@@ -1,7 +1,7 @@
 ---
 title: Federation Developer Sandbox
 summary: We're releasing a developer sandbox for federation. Read our sandbox guidelines and set up instructions here.
-date: June 19, 2023
+date: June 20, 2023
 ---
 # Federation Developer Sandbox Guidelines
 
