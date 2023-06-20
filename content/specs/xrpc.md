@@ -94,11 +94,11 @@ The JWT parameters are:
 - `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
 - JWT signature: base64url-encoded signature using the account DID's signing key
 
-The signature is computed using the regular JWT process. As Typescript pseudo-code, this looks like:
+The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As Typescript pseudo-code, this looks like:
 
 ```
 const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))
-const signature = sign(sha256(utf8Bytes(headerPayload)))
+const signature = hashAndSign(accountSigningKey, utf8Bytes(headerPayload))
 const jwt = headerPayload + '.' + bytesToBase64Url(signature)
 ```
 
