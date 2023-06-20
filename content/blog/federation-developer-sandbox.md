@@ -49,7 +49,7 @@ When we wipe data, we will be wiping it on all services (BGS, App View, PLC). We
 
 # Getting started ✨
 
-Now that you've read the sandbox guidelines, you're ready to self-host a PDS in the developer sandbox. **For complete instructions on getting your PDS set up, check out the [README](./README.md).**
+Now that you've read the sandbox guidelines, you're ready to self-host a PDS in the developer sandbox. **For complete instructions on getting your PDS set up, check out the [README](https://github.com/bluesky-social/pds).**
 
 To access your account, you’ll log in with the client of your choice in the exact same way that you log into production Bluesky, for instance the [Bluesky web client](https://app.bsky-sandbox.dev/). When you do so, please provide the url of *your PDS* as the service that you wish to log in to.
 
