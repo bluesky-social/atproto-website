@@ -25,7 +25,9 @@ A common pattern when signing data in atproto is to encode the data in DAG-CBOR,
 
 Some ECDSA signatures can be transformed to yield a new distinct but still-valid signature. This does not require access to the private signing key or the data that was signed. The scope of attacks possible using this property is limited, but it is an unexpected property.
 
-For `k256` specifically, the distinction is between "low-S" and "high-S" signatures, as discussed in [Bitcoin BIP-0062](https://github.com/bitcoin/bips/blob/master/bip-0062.mediawiki). In atproto, use of the "low-S" signature variant is required.
+For `k256` specifically, the distinction is between "low-S" and "high-S" signatures, as discussed in [Bitcoin BIP-0062](https://github.com/bitcoin/bips/blob/master/bip-0062.mediawiki).
+
+In atproto, use of the "low-S" signature variant is required for both `p256` and `k256` curves.
 
 In atproto, signatures should always be verified using the verification routines provided by the cryptographic library, never by comparing signature values as raw bytes.
 
