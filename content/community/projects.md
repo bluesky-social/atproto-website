@@ -9,9 +9,9 @@ This is a partial list of community projects. **We're particularly excited to se
 
 ### App Passwords
 
-For your safety, when using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
+For the security of your account, when using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
 
-App passwords have most of the same abilities as the user's account password, however they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
+App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
 Read our disclaimer [below](/community/projects#disclaimer).
 
