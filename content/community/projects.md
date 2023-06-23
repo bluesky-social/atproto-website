@@ -9,7 +9,7 @@ This is a partial list of community projects. **We're particularly excited to se
 
 ### App Passwords
 
-When using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
+When using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > App passwords.
 
 Read our disclaimer [below](/community/projects#disclaimer).
 
@@ -36,13 +36,14 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto docs in Japanese](https://github.com/encrypteduse/atproto-website-docs-jp) by [@encrypteduse](https://github.com/encrypteduse)
 - [atproto starter kit](https://github.com/aliceisjustplaying/atproto-starter-kit), TypeScript/Node template, by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [How to build a Bluesky bot using ATProto and OpenAI API](https://ashevat.medium.com/how-to-build-a-bluesky-bot-using-atproto-and-openai-api-77a26a154b) by [@amir.blue](https://bsky.app/profile/did:plc:ua6usdc4hzvzjsokoenba4zt)
-- [Bluesky bot tutorial](https://github.com/emilyliu7321/bluesky-emoji-bot/blob/main/TUTORIAL.md) by [@emily.bsky.team](https://bsky.app/profile/did:plc:vjug55kidv6sye7ykr5faxxn) 
+- [Bluesky bot tutorial](https://github.com/emilyliu7321/bluesky-emoji-bot/blob/main/TUTORIAL.md) by [@emily.bsky.team](https://bsky.app/profile/did:plc:vjug55kidv6sye7ykr5faxxn)
 
 ## Clients
 
 The official Bluesky app is available on the [iOS App](https://apps.apple.com/us/app/bluesky-social/id6444370199) and [Google Play](https://play.google.com/store/apps/details?id=xyz.blueskyweb.app&hl=en_US) stores as well as on [desktop](https://bsky.app/).
 
 ### Web
+
 - [Tokimeki](https://tokimekibluesky.vercel.app/) by [@holybea](https://bsky.app/profile/did:plc:hiptcrt4k63szzz4ty3dhwcp)
 - [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
 - [Laika](https://laika-bluesky.web.app/) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
@@ -59,19 +60,23 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [redocean](https://redocean.forza7.org/) ([GitHub](https://github.com/forza7taka/redocean)) by [@forza7.bsky.social](https://bsky.app/profile/did:plc:au6x2h2niz27male2krpwmzz)
 
 ### iOS
+
 - [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 
 ### Android
+
 - [Seiun](https://github.com/akiomik/seiun) by [@omi.bsky.social](https://bsky.app/profile/did:plc:j5cxpczcvzajlxhfuq7abivp)
 - [Ozone](https://github.com/christiandeange/ozone) by [@chr.bsky.social](https://bsky.app/profile/did:plc:soed46hcvg3l24tshb352cy6)
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 
 ### macOS
+
 - [Bluesky for Raycast](https://www.raycast.com/dharamkapila/bluesky): A Bluesky client for [Raycast](https://www.raycast.com) by [@dharam.bsky.social](https://bsky.app/profile/did:plc:qqoncpemipyncukz3esxjcbg)
 - [swiftsky](https://github.com/rmcan/swiftsky): A Bluesky client for macOS by [@can.bsky.social](https://bsky.app/profile/did:plc:oaerst6hznvwkeqtar5dtqry)
 
 ### CLI
+
 - [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
 - [adenosine-cli](https://gitlab.com/bnewbold/adenosine/-/blob/main/adenosine-cli/README.md) (Rust) developed by [@bnewbold.bsky.team](https://bsky.app/profile/did:plc:44ybard66vv44zksje25o7dz)
 - [bsky](https://github.com/mattn/bsky) (Golang) developed by [@mattn.bsky.social](https://bsky.app/profile/did:plc:ituhatvv5pyz4rwsj4hfrslh)
@@ -80,6 +85,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [blue-sky-cli](https://github.com/wesbos/blue-sky-cli) (Typescript) developed by [@wesbos](https://bsky.app/profile/did:plc:etdjdgnly5tz5l5xdd4jq76d)
 
 ## Bridges
+
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/did:plc:inze6wrmsm7pjl7yta3oig77)
 - [Bluestream](https://bluestream.deno.dev/), RSS feed generator for Bluesky by [@kawarimidoll.bsky.social](https://bsky.app/profile/did:plc:okalufxun5rpqzdrwf5bpu3d)
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/did:plc:o2hywbrivbyxugiukoexum57)
