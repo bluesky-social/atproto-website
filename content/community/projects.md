@@ -120,6 +120,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ## Bots
 
+- [Pulse News](https://bsky.app/profile/did:plc:jbnriginiqitcc4h5cngn3qy) by [@thm](https://bsky.app/profile/did:plc:bmflqy6qpwnhb2grnk5q2jl2)
+- [BizToc News](https://bsky.app/profile/did:plc:ir2b7mnp3f7qouemawhhew72) by [@thm](https://bsky.app/profile/did:plc:bmflqy6qpwnhb2grnk5q2jl2)
 - [MTA Alerts](https://bsky.app/profile/did:plc:jvhf36loasspmffobuyfpopz) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 - [Limerick bot](https://bsky.app/profile/did:plc:kqz6gh5hiukhcfg7i3hgpzzh) by [@gar.lol](https://bsky.app/profile/did:plc:4r2qco7eb644cpyga5r6vdib)
 - [Assorted bots](https://github.com/QuietImCoding/bskybots) that reply on command by [@goose.art](https://bsky.app/profile/did:plc:hsqwcidfez66lwm3gxhfv5in)
