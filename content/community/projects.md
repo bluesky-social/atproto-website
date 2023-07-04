@@ -117,6 +117,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
 - [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [Yup](https://app.yup.io/), an app to cross-post to Bluesky and other social apps
+- [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/kcchu.xyz)
 
 ## Bots
 
