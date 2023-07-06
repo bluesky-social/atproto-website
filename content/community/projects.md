@@ -28,6 +28,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
 - [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
 - [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
+- [picopds](https://github.com/DavidBuchanan314/picopds) (Python): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
 - [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
