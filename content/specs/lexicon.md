@@ -255,7 +255,7 @@ Strings can optionally be constrained to one of the following `format` types:
 - `datetime`: timestamp, details specified below
 - `did`: generic [DID Identifier](/specs/did)
 - `handle`: [Handle Identifier](/specs/handle)
-- `nsid`: [Namespaced Identifier](/specs/handle)
+- `nsid`: [Namespaced Identifier](/specs/nsid)
 - `uri`: generic URI, details specified below
 
 For the various identifier formats, when doing Lexicon schema validation the most expansive identifier syntax format should be permitted. Problems with identifiers which do pass basic syntax validation should be reported as application errors, not lexicon data validation errors. For example, data with any kind of DID in a `did` format string field should pass Lexicon validation, with unsupported DID methods being raised separately as an application error.

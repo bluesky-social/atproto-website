@@ -53,7 +53,7 @@ The header DAG-CBOR object has the following fields:
 - `op` ("operation", integer, required): fixed values, indicating what this frame contains
     - `1`: a regular message, with type indicated by `t`
     - `-1`: an error message
-- `t` ("type", string, optional): required if `op` is `1`, indicating the Lexicon sub-type for this message, in short form. Does not include the full Lexicon identifier, just a fragment. Eg: `#commit`. Should not be included in header if `op` is `1`.
+- `t` ("type", string, optional): required if `op` is `1`, indicating the Lexicon sub-type for this message, in short form. Does not include the full Lexicon identifier, just a fragment. Eg: `#commit`. Should not be included in header if `op` is `-1`.
 
 Clients should ignore frames with headers that have unknown `op` or `t` values. Unknown fields in both headers and payloads should be ignored. Invalid framing or invalid DAG-CBOR encoding are hard errors, and the client should drop the entire connection instead of skipping the frame. Servers should ignore any frames received from the client, not treat them as errors.
 
