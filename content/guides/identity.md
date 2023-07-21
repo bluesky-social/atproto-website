@@ -33,7 +33,7 @@ at://did:plc:bv6ggog3tya2z3vxsub7hnal
 
 The relationship between them can be visualized as:
 
-<pre style="line-height: 1.2;"><code>┌──────────────────┐                 ┌───────────────┐ 
+<pre style="line-height: 1.2;"><code>┌──────────────────┐                 ┌───────────────┐
 │ DNS name         ├──resolves to──→ │ DID           │
 │ (alice.host.com) │                 │ (did:plc:...) │
 └──────────────────┘                 └─────┬─────────┘
@@ -41,7 +41,7 @@ The relationship between them can be visualized as:
        │                               resolves to
        │                                   │
        │                                   ↓
-       │                            ┌───────────────┐ 
+       │                            ┌───────────────┐
        └───────────references───────┤ DID Document  │
                                     │ {"id":"..."}  │
                                     └───────────────┘
@@ -53,13 +53,13 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
   <tr>
    <td><strong>Handles</strong>
    </td>
-   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document. Details in the [Handle specification](/specs/handle).
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document. Details in the <a href="/specs/handle">Handle specification</a>.
    </td>
   </tr>
   <tr>
    <td><strong>DIDs</strong>
    </td>
-   <td>DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users. Details of how they are used in AT Protocol in the [DID specification](/specs/did).
+   <td>DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users. Details of how they are used in AT Protocol in the <a href="/specs/did">DID specification</a>.
    </td>
   </tr>
   <tr>
