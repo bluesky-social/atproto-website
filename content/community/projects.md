@@ -103,6 +103,7 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 - [Skyfeed](https://skyfeed.app), a dashboard-like experience with a custom feed builder, by [@redsolver.dev](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
 - [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze) 
 - [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
+- [Bossett's Custom Feeds](https://github.com/Bossett/bsky-feeds) ([guide](https://bossett.io/setting-up-bossetts-bluesky-feed-generator/)), fork of official generator for What's Science 🧪 feed & to easily host multiple algorithms with more advanced matching, by [@bossett.bsky.social](https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a)
 
 ## Stats
 
