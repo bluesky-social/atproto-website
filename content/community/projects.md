@@ -106,9 +106,11 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 
 ## Stats
 
+- [ATScan](https://atscan.net) by [@tree.fail](https://bsky.app/profile/did:plc:524tuhdhh3m7li5gycdn6boe)
 - [Bluesky social graph generator](https://bsky.jazco.dev/) by [@jaz.bsky.social](https://bsky.app/profile/did:plc:q6gjnaw2blty4crticxkmujt)
 - [Bluesky stats](https://bsky.jazco.dev/stats) by [@jaz.bsky.social](https://bsky.app/profile/did:plc:q6gjnaw2blty4crticxkmujt)
 - [Bluesky user growth](https://vqv.app/stats/chart) by [@m3ta.uk](https://bsky.app/profile/did:plc:ui7jfx3hdkfb4qr4ncfbqgvv) and [vqv.app](https://bsky.app/profile/did:plc:md6i2csjmkfoie6u4ot4kjmn)
+- [Skyfeed Builder Feed Stats](https://stats.skyfeed.me/)
 
 ## Custom domains and handles
 
