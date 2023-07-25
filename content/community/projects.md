@@ -5,7 +5,7 @@ summary: Built by third-party community developers.
 
 # Community Projects
 
-This is a partial list of community projects. **We're particularly excited to see more tooling for moderation and curation.**
+This is a partial list of community projects. Read instructions for how to submit your project to this page [here](/community/projects#submit-your-project).
 
 ### App Passwords
 
@@ -65,8 +65,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### iOS
 
-- [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 
 ### Android
 
@@ -97,30 +97,50 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/did:plc:fdme4gb7mu7zrie7peay7tst)
 - [Sky Follower Bridge](https://github.com/kawamataryo/sky-follower-bridge), instantly find and follow Twitter followers on Bluesky, by [@kawamataryo.bsky.social](https://bsky.app/profile/did:plc:hcp53er6pefwijpdceo5x4bp)
 
+## Custom Feeds
+
+To build your own custom feed, you can use Bluesky's official feed generator starter kit [here](https://github.com/bluesky-social/feed-generator).
+- [Skyfeed](https://skyfeed.app), a dashboard-like experience with a custom feed builder, by [@redsolver.dev](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
+- [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze). 
+- [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
+
+## Stats
+
+- [Bluesky social graph generator](https://bsky.jazco.dev/) by [@jaz.bsky.social](https://bsky.app/profile/did:plc:q6gjnaw2blty4crticxkmujt)
+- [Bluesky stats](https://bsky.jazco.dev/stats) by [@jaz.bsky.social](https://bsky.app/profile/did:plc:q6gjnaw2blty4crticxkmujt)
+- [Bluesky user growth](https://vqv.app/stats/chart) by [@m3ta.uk](https://bsky.app/profile/did:plc:ui7jfx3hdkfb4qr4ncfbqgvv) and [vqv.app](https://bsky.app/profile/did:plc:md6i2csjmkfoie6u4ot4kjmn)
+
+## Custom domains and handles
+
+You can purchase and manage a custom domain through Bluesky [here](https://account.bsky.app/). Read more about this service [here](https://blueskyweb.xyz/blog/7-05-2023-namecheap).
+- [Skyname](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/did:plc:7qw3ldjppmwmtjoak3egctdb)
+- [Open Handles](https://github.com/SlickDomique/open-handles), an app to let others create a handle with your domains, by [@domi.zip](https://bsky.app/profile/did:plc:7bwr7mioqql34n2mrqwqypbz)
+- [swifties.social](https://swifties.social/), claim a `swifties.social` handle, by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep)
+
+## Firehose
+
+- [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/did:plc:mceyt3qjswifxtikqqwvnnge)
+- [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/did:plc:sqhiuhi54wjzwsglrduhwxm6)
+- [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
+- [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
+
+
 ## Other Tools
 
-- [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
-- [Bluesky social graph generator](https://bsky.jazco.dev/) by [@jaz.bsky.social](https://bsky.app/profile/did:plc:q6gjnaw2blty4crticxkmujt)
+- Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/did:plc:f55kfczvcsjlaota4ep2xvhx)
 - [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://bsky.app/profile/did:plc:lbjhpk3a473cuufkenjcer3v)
 - [Glamorous Toolkit for AT Protocol](https://github.com/feenkcom/gt4atproto), a moldable development environment
 - [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Skyspace](https://bsky.app/profile/did:plc:dxu2v6dt7ppqdnyjf3p53ram), a Myspace clone by [@jem.fm](https://bsky.app/profile/did:plc:7ry4kiemzesxucqv26q73znv)
-- [Skyname](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/did:plc:7qw3ldjppmwmtjoak3egctdb)
 - [Add Bluesky feed embeds](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu/post/3juerzwcl4424) by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
-- [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/did:plc:sqhiuhi54wjzwsglrduhwxm6)
-- [Firesky](https://firesky.tv), real-time stream of every Bluesky post, by [@johnspurlock.com](https://bsky.app/profile/did:plc:mceyt3qjswifxtikqqwvnnge)
-- [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
 - [bsky.link](https://bsky.link/), generate embeddable link previews for Bluesky posts, by [@jamesg.blog](https://bsky.app/profile/did:plc:6wwzaz5n4ordx762esmflyhx)
 - [Bluesky Overhaul](https://github.com/xenohunter/bluesky-overhaul), browser extension that improves UX on the web app by [@blisstweeting.ingroup.social](https://bsky.app/profile/did:plc:ihbptowbt4tkcjqespanfbez)
 - [atp tooling](https://blue.amazingca.dev/tools), cache and unfollow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/did:plc:e2nwnarqo7kdbt7ngr3gejp6)
-- Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/did:plc:f55kfczvcsjlaota4ep2xvhx)
 - [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/did:plc:4ee6oesrsbtmuln4gqsqf6fp)
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
 - [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [Yup](https://app.yup.io/), an app to cross-post to Bluesky and other social apps
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
-- [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
-- [Open Handles](https://github.com/SlickDomique/open-handles), an app to let others create a handle with your domains, by [@domi.zip](https://bsky.app/profile/did:plc:7bwr7mioqql34n2mrqwqypbz)
 
 ## Bots
 
