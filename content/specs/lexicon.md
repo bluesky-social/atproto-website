@@ -257,6 +257,7 @@ Strings can optionally be constrained to one of the following `format` types:
 - `handle`: [Handle Identifier](/specs/handle)
 - `nsid`: [Namespaced Identifier](/specs/nsid)
 - `uri`: generic URI, details specified below
+- `language`: language code, details specified below
 
 For the various identifier formats, when doing Lexicon schema validation the most expansive identifier syntax format should be permitted. Problems with identifiers which do pass basic syntax validation should be reported as application errors, not lexicon data validation errors. For example, data with any kind of DID in a `did` format string field should pass Lexicon validation, with unsupported DID methods being raised separately as an application error.
 
@@ -314,6 +315,14 @@ Invalid examples:
 
 Flexible to any URI schema, following the generic RFC-3986 on URIs. This includes, but isn’t limited to: `did`, `https`, `wss`, `ipfs` (for CIDs), `dns`, and of course `at`.
 Maximum length in Lexicons is 8 KBytes.
+
+### `language`
+
+An [IETF Language Tag](https://en.wikipedia.org/wiki/IETF_language_tag) string, compliant with [BCP 47](https://www.rfc-editor.org/info/bcp47), defined in [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646.txt) ("Tags for Identifying Languages"). This is the same standard used to identify languages in HTTP, HTML, and other web standards.
+
+ISO 639 two-character and three-character language codes can be used on their own, lower-cased, such as `ja` (Japanese) or `ban` (Balinese). Regional sub-tags can be added, like `pt-BR` (Brazilian Portuguese). Additional subtags can also be added, such as `hy-Latn-IT-arevela`.
+
+Language codes generally need to be parsed, normalized, and matched semantically, not simply string-compared. For example, a search engine might simplify language tags to ISO 639 codes for indexing and filtering, while a client application (user agent) would retain the full language code for presentation (text rendering) locally.
 
 ## When to use `$type`
 
