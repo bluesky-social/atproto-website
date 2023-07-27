@@ -31,6 +31,9 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [picopds](https://github.com/DavidBuchanan314/picopds) (Python): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
+- [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
+- [blue_factory](https://github.com/mackuba/blue_factory) (Ruby): implementation of a feed generator service
+- [FishyFlip](https://github.com/drasticactions/FishyFlip) (csharp): new, not stable
 
 ## Tutorials and Guides
 
@@ -60,6 +63,8 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [SkyFeed](https://skyfeed.app) by [@redsolver.net](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
 - [redocean](https://redocean.forza7.org/) ([GitHub](https://github.com/forza7taka/redocean)) by [@forza7.bsky.social](https://bsky.app/profile/did:plc:au6x2h2niz27male2krpwmzz)
 - [Langit](https://langit.pages.dev/) ([GitHub](https://github.com/intrnl/langit)) by [@intrnl.bsky.social](https://bsky.app/profile/did:plc:qezk54orevt3dtm4ijcyadnq)
+- [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
+- [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
 
 ### iOS
 
