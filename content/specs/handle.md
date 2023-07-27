@@ -47,12 +47,13 @@ To summarize the above, the initial list of disallowed TLDs includes:
 
 - `.local`
 - `.arpa`
-- `.invalid`
 - `.localhost`
 - `.internal`
 - `.onion`
 
 The `.test` TLD is intended for examples, testing, and development. It may be used in atproto development, but should fail in real-world environments.
+
+The `.invalid` TLD should only be used for the special `handle.invalid` value (see below). This value is syntactically valid in the Lexicon schema language, but should not be accepted as a valid handle in most contexts.
 
 ## Identifier Examples
 
@@ -138,6 +139,10 @@ Secure HTTPS on the default port (443) is required for all real-world handle res
 
 HTTP redirects (eg, 301, 302) are allowed, up to a reasonable number of redirect hops.
 
+### Invalid Handles
+
+If the handle for a known DID is confirmed to no longer resolve, it should be marked as invalid. In API responses, the special handle value `handle.invalid` can be used to indicate that there is no bi-directionally valid handle for the given DID. This handle can not be used in most situations (search queries, API requests, etc).
+
 ### Resolution Best Practices
 
 It is ok to attempt both resolution methods in parallel, and to use the first successful result available. If the two methods return conflicting results (aka, different DIDs), the DNS TXT result should be preferred, though it is also acceptable to record the result as ambiguous and try again later.
@@ -168,6 +173,8 @@ Providers of handle "namespaces" (eg, as subdomains on a registered domain) may 
 From a practical standpoint, handles should be limited to at most 244 characters, fewer than the 253 allowed for DNS names. This is because DNS verification works with the prefix `_atproto.`, which adds 9 characters, and that overall name needs to be valid.
 
 Handle hostnames are expected to be mainstream DNS domain names, registered through the mainstream DNS name system. Handles with non-standard TLDs, or using non-standard naming systems, will fail to interoperate with other network services and protocol implementations in the atproto ecosystem.
+
+PDS implementations hosting an account *may* prevent repo mutation if the account's handle can no longer be verified (aka, `handle.invalid` situation). Other network services should generally continue to display the content (to prevent breakage), possibly with a contextual note or warning indicator.
 
 ## Possible Future Changes
 
