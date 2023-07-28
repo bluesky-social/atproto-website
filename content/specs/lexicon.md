@@ -318,7 +318,7 @@ Maximum length in Lexicons is 8 KBytes.
 
 ### `language`
 
-An [IETF Language Tag](https://en.wikipedia.org/wiki/IETF_language_tag) string, compliant with [BCP 47](https://www.rfc-editor.org/info/bcp47), defined in [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646.txt) ("Tags for Identifying Languages"). This is the same standard used to identify languages in HTTP, HTML, and other web standards. The Lexicon string must validate as a "well-formated" language tag, as defined in the RFC. Clients should ignore language strings which are "well-formed" but not "valid" according to the RFC.
+An [IETF Language Tag](https://en.wikipedia.org/wiki/IETF_language_tag) string, compliant with [BCP 47](https://www.rfc-editor.org/info/bcp47), defined in [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646.txt) ("Tags for Identifying Languages"). This is the same standard used to identify languages in HTTP, HTML, and other web standards. The Lexicon string must validate as a "well-formed" language tag, as defined in the RFC. Clients should ignore language strings which are "well-formed" but not "valid" according to the RFC.
 
 As specified in the RFC, ISO 639 two-character and three-character language codes can be used on their own, lower-cased, such as `ja` (Japanese) or `ban` (Balinese). Regional sub-tags can be added, like `pt-BR` (Brazilian Portuguese). Additional subtags can also be added, such as `hy-Latn-IT-arevela`.
 
