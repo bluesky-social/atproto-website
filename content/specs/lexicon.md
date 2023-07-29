@@ -83,7 +83,7 @@ Type-specific fields:
 - `output` (object, optional): describes the HTTP response body
     - `description` (string, optional): short description
     - `encoding` (string, required): MIME type for body contents
-    - `schema` (object, required): schema definition, either an `object`, a `ref`, or a `union` of refs
+    - `schema` (object, required when `encoding` is `application/json`, ignored otherwise): schema definition, either an `object`, a `ref`, or a `union` of refs
 - `input` (object, optional, only for `procedure`): describes HTTP request body schema, with the same format as the `output` field
 - `errors` (array of objects, optional): set of string error codes which might be returned
     - `name` (string, required): short name for the error type, with no whitespace
