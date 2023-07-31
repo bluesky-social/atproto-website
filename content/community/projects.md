@@ -107,6 +107,8 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 - [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze) 
 - [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
 - [Bossett's Custom Feeds](https://github.com/Bossett/bsky-feeds) ([guide](https://bossett.io/setting-up-bossetts-bluesky-feed-generator/)), fork of official generator for What's Science 🧪 feed & to easily host multiple algorithms with more advanced matching, by [@bossett.bsky.social](https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a)
+- [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [bluesky-feeds-rb](https://github.com/mackuba/bluesky-feeds-rb), a complete example of a custom feed service in Ruby, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 
 ## Stats
 
@@ -129,6 +131,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Blue skies ahead](https://blue-skies-ahead.glitch.me/), view a feed of Bluesky posts, by [@gautham.bsky.social](https://bsky.app/profile/did:plc:sqhiuhi54wjzwsglrduhwxm6)
 - [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
+- [Skyfall](https://github.com/mackuba/skyfall), a Ruby gem for streaming events from the firehose, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 
 
 ## Other Tools
