@@ -16,3 +16,9 @@ This repository contains the documentation for the AT Protocol, available to rea
 [pages/index.js](https://github.com/bluesky-social/atproto-website/blob/main/pages/index.js) generates [http://localhost:3000](http://localhost:3000) -- start there if you'd like to make changes.
 
 The page auto-updates as you edit the file.
+
+### Are you a developer interested in building on atproto?
+
+Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
+
+If you're a developer interested in building on atproto, we'd love to email you a Bluesky invite code. Simply share your GitHub (or similar) profile with us via [this form](https://forms.gle/BF21oxVNZiDjDhXF9).
