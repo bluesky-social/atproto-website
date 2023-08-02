@@ -18,7 +18,7 @@ Both of these AT URIs reference the same record in the same repository; one uses
 > 
 > If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
 >
-> If you choose to store AT URIs as strings, make sure they reference a repo DID.
+> If you choose to store AT URIs within a record, always reference the repo DID. The same goes for storing URIs in a database.
 
 The full, general structure of an AT URI is:
 
