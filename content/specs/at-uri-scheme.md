@@ -12,6 +12,14 @@ Both of these AT URIs reference the same record in the same repository; one uses
 - `at://did:plc:44ybard66vv44zksje25o7dz/app.bsky.feed.post/3jwdwj2ctlk26`
 - `at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26`
 
+> **Caveats for Handle-based AT URIs**
+> 
+> AT URIs referencing handles are not durable.
+> 
+> If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
+>
+> If you choose to store AT URIs as strings, make sure they reference a repo DID.
+
 The full, general structure of an AT URI is:
 
 ```text
