@@ -20,6 +20,8 @@ If a user changes their handle, any AT URIs using that handle will become invali
 
 If you choose to store AT URIs within a record, always reference the repo DID. The same goes for storing URIs in a database.
 
+For application display, a handle can be used as a more human-readable alternative. In HTML, it is permissible to *display* the handle version of an AT-URI and *link* (`href`) to the DID version.
+
 ### Structure
 
 The full, general structure of an AT URI is:
@@ -130,8 +132,6 @@ at://user:pass@foo.com       // userinfo not currently supported
 ### Usage and Implementation Guidelines
 
 Generic URI and URL parsing libraries can sometimes be used with AT URIs, but not always. A key requirement is the ability to work with the authority (or origin) part of the URI as a simple string, without being parsed in to userinfo, host, and port sub-parts. Specifically: the Python 3 `urllib` module (from the standard library) works; the Javascript `url-parse` package works; the Golang `net/url` package does not work; and most of the popular Rust URL parsing crates do not work.
-
-When referencing records, especially from other records, best practice is to use a DID in the authority part, not a handle. For application display, a handle can be used as a more human-readable alternative. In HTML, it is permissible to *display* the handle version of an AT-URI and *link* (`href`) to the DID version.
 
 Do not confuse the JSON Path fragment syntax with the Lexicon reference syntax. They both use `#`-based fragments to reference other fields in JSON documents, but, for example, JSON Path syntax starts with a slash (`#/key`).
 
