@@ -12,6 +12,3 @@ Bluesky is an open social network built on the AT Protocol, a flexible technolog
 **If you're a developer interested in building on atproto, we'd love to email you an invite code.** Simply share your GitHub (or similar) profile with us via [this form](https://forms.gle/gHe4cyBrGCGRzqZt7).
 
 Read more about the AT Protocol [here](https://atproto.com/) and check out some third-party developer projects [here](https://atproto.com/community/projects).
-
-
-
