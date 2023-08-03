@@ -12,15 +12,15 @@ Both of these AT URIs reference the same record in the same repository; one uses
 - `at://did:plc:44ybard66vv44zksje25o7dz/app.bsky.feed.post/3jwdwj2ctlk26`
 - `at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26`
 
+:::note
 **Caveats for Handle-based AT URIs**
  
 AT URIs referencing handles are not durable.
  
 If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
 
-If you choose to store AT URIs within a record, always reference the repo DID. The same goes for storing URIs in a database.
-
-For application display, a handle can be used as a more human-readable alternative. In HTML, it is permissible to *display* the handle version of an AT-URI and *link* (`href`) to the DID version.
+AT URIs are not content-addressed, so the _contents_ of the record they refer to may also change over time.
+:::
 
 ### Structure
 
@@ -30,7 +30,7 @@ The full, general structure of an AT URI is:
 "at://" AUTHORITY [ PATH ] [ "?" QUERY ] [ "#" FRAGMENT ]
 ```
 
-The **authority** part of the URI can be either a handle or a DID, indicating the identity associated with the repository.
+The **authority** part of the URI can be either a handle or a DID, indicating the identity associated with the repository. Note that a handle can refer to different DIDs (and thus different repositories) over time. See discussion below about strong references, and in "Usage and Implementation".
 
 In current atproto Lexicon use, the **query** and **fragment** parts are not yet supported, and only a fixed pattern of paths are allowed:
 
@@ -39,6 +39,8 @@ In current atproto Lexicon use, the **query** and **fragment** parts are not yet
 ```
 
 The **authority** section is required, must be normalized, and if a DID must be one of the "blessed" DID methods. The optional **collection** part of the path must be a normalized [NSID](./nsid). The optional **rkey** part of the path must be a valid [Record Key](./record-key).
+
+An AT URI pointing to a specific record in a repository is not a *strong* reference, in that it is not content-addressed. The record may change or be removed over time, or the DID itself may be deleted or unavailable. For `did:web`, control of the DID (and thus repository) may change over time. For AT URIs with a handle in the authority section, the handle-to-DID mapping can also change.
 
 A major semantic difference between AT URIs and common URL formats like `https://`, `ftp://`, or `wss://` is that the "authority" part of an AT URI does not indicate a network location for the indicated resource. Even when a handle is in the authority part, the hostname is only used for identity lookup, and is often not the ultimate host for repository content (aka, the handle hostname is often not the PDS host).
 
@@ -132,6 +134,12 @@ at://user:pass@foo.com       // userinfo not currently supported
 ### Usage and Implementation Guidelines
 
 Generic URI and URL parsing libraries can sometimes be used with AT URIs, but not always. A key requirement is the ability to work with the authority (or origin) part of the URI as a simple string, without being parsed in to userinfo, host, and port sub-parts. Specifically: the Python 3 `urllib` module (from the standard library) works; the Javascript `url-parse` package works; the Golang `net/url` package does not work; and most of the popular Rust URL parsing crates do not work.
+
+When referencing records, especially from other repositories, best practice is to use a DID in the authority part, not a handle. For application display, a handle can be used as a more human-readable alternative. In HTML, it is permissible to *display* the handle version of an AT-URI and *link* (`href`) to the DID version.
+
+When a *strong* reference to another record is required, best practice is to use a CID hash in addition to the AT URI.
+
+In Lexicons (APIs, records, and other contexts), sometimes a specific variant of an AT URI is required, beyond the general purpose `at-uri` string format. For example, references to records from inside records usually require a DID in the authority section, and the URI must include the collection and rkey path segments. URIs not meeting these criteria will fail to validate.
 
 Do not confuse the JSON Path fragment syntax with the Lexicon reference syntax. They both use `#`-based fragments to reference other fields in JSON documents, but, for example, JSON Path syntax starts with a slash (`#/key`).
 
