@@ -167,6 +167,8 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Linux Kernel Releases](https://bsky.app/profile/did:plc:35c6qworuvguvwnpjwfq3b5p) by [@adilson.net.br](https://bsky.app/profile/did:plc:kw6k5btwuh4hazzygvhxygx3)
 - [ai bot](https://bsky.app/profile/did:plc:4hqjfn7m6n5hno3doamuhgef) that reply on command and chat by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
 - [Score My Wordle](https://bsky.app/profile/did:plc:wems3hfqqjsfenrrd325q6zo) ([GitHub](https://github.com/shaneafsar/wordlescorer/)), provides Wordle stats and scores across Bluesky, Mastodon, and Twitter, by [@shaneafsar.com](https://bsky.app/profile/did:plc:ksl6jmkhz7qli2ywletvvm2z)
+- [ElonJet](https://bsky.app/profile/did:plc:62cuohm6c6nefpnw4uujepty) bot tracking Elon Musk's private jet by [@jacks.grndcntrl.net](https://bsky.app/profile/did:plc:at2e7q6kwfhdwv7267mjsflz)
+- [Flight Emergency Alerts](https://bsky.app/profile/did:plc:2t6m3d7ei35iamwzgxz5qy43y) bot alerting of aircraft indicating emergencies by [@jacks.grndcntrl.net](https://bsky.app/profile/did:plc:at2e7q6kwfhdwv7267mjsflz)
 
 ### Disclaimer
 
