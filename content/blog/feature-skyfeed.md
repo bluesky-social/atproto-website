@@ -27,7 +27,7 @@ But most users are using the app because of the integrated **SkyFeed Builder**, 
 
 <img src="/blog/skyfeed-builder.png" alt="Screenshot of SkyFeed Builder" height=400/>
 
-### What inspired you to build Skyfeed?
+### What inspired you to build SkyFeed?
 
 As mentioned earlier, I've been really interested in decentralized social networks for a while. After getting a Bluesky invite and reading the atproto docs, the tech really caught my interest.
 
@@ -53,6 +53,6 @@ In summary: Make SkyFeed (apps, builder and more) the ultimate power user experi
 
 ---
 
-You can follow redsolver on Bluesky [here](https://bsky.app/profile/redsolver.dev), Skyfeed for project updates [here](https://bsky.app/profile/skyfeed.app), and be sure to try out Skyfeed yourself [here](https://skyfeed.app/).
+You can follow redsolver on Bluesky [here](https://bsky.app/profile/redsolver.dev), SkyFeed for project updates [here](https://bsky.app/profile/skyfeed.app), and be sure to try out SkyFeed yourself [here](https://skyfeed.app/).
 
 *Note: Use an [App Password](https://atproto.com/community/projects#app-passwords) when logging in to third-party tools for account security and read our [disclaimer](https://atproto.com/community/projects#disclaimer) for third-party applications.*
