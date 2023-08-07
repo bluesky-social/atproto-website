@@ -2,6 +2,7 @@
 title: "Featured Community Project: SkyFeed"
 summary: SkyFeed is a third-party client that allows users to create dashboards of their feeds, profiles, and more. Additionally, SkyFeed Builder allows Bluesky users to easily create their own custom feeds based off of regexes or lists. 
 date: Aug 8, 2023
+image: /blog/skyfeed.png
 ---
 
 # Featured Community Project: SkyFeed
