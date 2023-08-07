@@ -71,7 +71,7 @@ community:
   - name: Groups
     href: /community/groups
 blog:
-  - name: Nitty Gritties of Posting using the Bluesky API
+  - name: Posting via the Bluesky API
     href: /blog/create-post
   - name: Call for Developers
     href: /blog/call-for-developers
