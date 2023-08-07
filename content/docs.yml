@@ -71,10 +71,11 @@ community:
   - name: Groups
     href: /community/groups
 blog:
+  - name: Nitty Gritties of Posting using the Bluesky API
+    href: /blog/create-post
   - name: Call for Developers
     href: /blog/call-for-developers
   - name: Federation developer sandbox guidelines
     href: /blog/federation-developer-sandbox
   - name: Why are blocks on Bluesky public?
     href: /blog/block-implementation
-  
