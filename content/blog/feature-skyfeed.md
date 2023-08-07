@@ -26,7 +26,7 @@ There's the SkyFeed app, which is a **third-party web client (cross-platform soo
 
 But most users are using the app because of the integrated **SkyFeed Builder**, a tool to make building feeds easier for both developers and non-developers. It's really exciting watching a very diverse set of users build the over 6,000 feeds that are already published using the builder! The SkyFeed web app is available at[ https://skyfeed.app/](https://skyfeed.app/).
 
-![Screenshot of SkyFeed Builder test](/img/blog/skyfeed-builder.png)
+![Screenshot of SkyFeed Builder](/img/blog/skyfeed-builder.png)
 
 ### What inspired you to build SkyFeed?
 
