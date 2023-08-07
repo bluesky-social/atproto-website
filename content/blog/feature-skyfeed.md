@@ -2,7 +2,7 @@
 title: "Featured Community Project: SkyFeed"
 summary: SkyFeed is a third-party client that allows users to create dashboards of their feeds, profiles, and more. Additionally, SkyFeed Builder allows Bluesky users to easily create their own custom feeds based off of regexes or lists. 
 date: Aug 8, 2023
-image: /blog/skyfeed.png
+image: img/blog/skyfeed.png
 ---
 
 # Featured Community Project: SkyFeed
@@ -12,7 +12,7 @@ SkyFeed is a third-party client built by [redsolver](https://bsky.app/profile/re
 
 You can try SkyFeed yourself [here](https://skyfeed.app/), and follow [SkyFeed’s Bluesky account](https://bsky.app/profile/skyfeed.app) for updates.
 
-<img src="/blog/skyfeed.png" alt="Screenshot of SkyFeed" height=400/>
+![Screenshot of SkyFeed](/img/blog/skyfeed.png)
 
 ---
 
@@ -26,7 +26,7 @@ There's the SkyFeed app, which is a **third-party web client (cross-platform soo
 
 But most users are using the app because of the integrated **SkyFeed Builder**, a tool to make building feeds easier for both developers and non-developers. It's really exciting watching a very diverse set of users build the over 6,000 feeds that are already published using the builder! The SkyFeed web app is available at[ https://skyfeed.app/](https://skyfeed.app/).
 
-<img src="/blog/skyfeed-builder.png" alt="Screenshot of SkyFeed Builder" height=400/>
+![Screenshot of SkyFeed Builder test](/img/blog/skyfeed-builder.png)
 
 ### What inspired you to build SkyFeed?
 
