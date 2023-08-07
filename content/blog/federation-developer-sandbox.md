@@ -29,7 +29,7 @@ Using the sandbox environment means you agree to adhere to our Guidelines. Pleas
 
 **Don't advertise your service as being "Bluesky."** This is a developer sandbox and is meant for technical users. Do not promote your service as being a way for non-technical users to use Bluesky.
 
-**Do not mirror sandbox did:plcs to production.**
+**Do not mirror sandbox `did:plc`s to production.**
 
 ## Status and Wipes
 
