@@ -36,7 +36,7 @@ export default function Guide({ navigation, file }) {
   ]
   return (
     <div>
-      <Meta title={file.title} description={file.summary} date={file.date}/>
+      <Meta title={file.title} description={file.summary} date={file.date} image={file.image}/>
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
         <Breadcrumbs pages={pages} />
