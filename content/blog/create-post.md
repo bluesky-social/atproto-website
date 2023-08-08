@@ -230,7 +230,7 @@ def parse_facets(text: str) -> List[Dict]:
 The list of facets gets attached to the `facets` field of the post record:
 
 ```python
-post["text"] = "✨ example mentioning @bnewbold.staging.bsky.dev to share the URL 👨<200d>❤️<200d>👨 https://example.com/index.html."
+post["text"] = "✨ example mentioning @atproto.com to share the URL 👨‍❤️‍👨 https://en.wikipedia.org/wiki/CBOR.
 post["facets"] = parse_facets(post["text"])
 ```
 
@@ -239,30 +239,30 @@ The post record will then look like this::
 ```json
 {
   "$type": "app.bsky.feed.post",
-  "text": "\u2728 example mentioning @bnewbold.staging.bsky.dev to share the URL \ud83d\udc68\u200d\u2764\ufe0f\u200d\ud83d\udc68 https://example.com/index.html.",
-  "createdAt": "2023-08-07T05:46:10.493943Z",
+  "text": "\u2728 example mentioning @atproto.com to share the URL \ud83d\udc68\u200d\u2764\ufe0f\u200d\ud83d\udc68 https://en.wikipedia.org/wiki/CBOR.",
+  "createdAt": "2023-08-08T01:03:41.157302Z",
   "facets": [
     {
       "index": {
         "byteStart": 23,
-        "byteEnd": 49
+        "byteEnd": 35
       },
       "features": [
         {
           "$type": "app.bsky.richtext.facet#mention",
-          "did": "did:plc:u5cwb2mwiv2bfq53cjufe6yn"
+          "did": "did:plc:ewvi7nxzyoun6zhxrhs64oiz"
         }
       ]
     },
     {
       "index": {
-        "byteStart": 88,
-        "byteEnd": 118
+        "byteStart": 74,
+        "byteEnd": 108
       },
       "features": [
         {
           "$type": "app.bsky.richtext.facet#link",
-          "uri": "https://example.com/index.html"
+          "uri": "https://en.wikipedia.org/wiki/CBOR"
         }
       ]
     }
@@ -357,7 +357,7 @@ def get_reply_refs(parent_uri: str) -> Dict:
 The root and parent refs are stored in the `reply` field of posts:
 
 ```python
-post["reply"] = get_reply_refs("at://bnewbold.bsky.team/app.bsky.feed.post/3k43tv4rft22g")
+post["reply"] = get_reply_refs("at://atproto.com/app.bsky.feed.post/3k43tv4rft22g")
 ```
 
 A complete reply post record looks like:
@@ -411,7 +411,7 @@ def get_embed_ref(ref_uri: str) -> Dict:
 And then add to the post record itself:
 
 ```python
-post["embed"] = get_embed_ref("https://bsky.app/profile/bnewbold.bsky.team/post/3k44deefqdk2g")
+post["embed"] = get_embed_ref("https://bsky.app/profile/atproto.com/post/3k44deefqdk2g")
 ```
 
 A complete quote post record would look like:
