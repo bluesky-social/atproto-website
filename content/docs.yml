@@ -71,6 +71,8 @@ community:
   - name: Groups
     href: /community/groups
 blog:
+  - name: "Featured Community Project: SkyFeed"
+    href: /blog/feature-skyfeed
   - name: Call for Developers
     href: /blog/call-for-developers
   - name: Federation developer sandbox guidelines
