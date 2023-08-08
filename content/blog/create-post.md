@@ -22,11 +22,11 @@ export BLUESKY_APP_PASSWORD="123-456-789"
 Then, create a new session and post a simple text post with the below snippet. You may need to install [HTTPie](https://httpie.io/docs/cli/pypi) first: `brew install httpie`.
 
 ```sh
-export AUTH_TOKEN=`http post https://pds.bsky.social/xrpc/com.atproto.server.createSession \
+export AUTH_TOKEN=`http post https://bsky.social/xrpc/com.atproto.server.createSession \
         identifier="$BLUESKY_HANDLE" \
         password="$BLUESKY_APP_PASSWORD" \
     | jq .accessJwt -r`
-http post https://pds.bsky.social/xrpc/com.atproto.repo.createRecord \
+http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
     Authorization:"Bearer $AUTH_TOKEN" \
     repo="$BLUESKY_HANDLE" \
     collection=app.bsky.feed.post \
@@ -57,7 +57,7 @@ resp = requests.post(
 )
 resp.raise_for_status()
 session = resp.json()
-print(session["accessJwt"]
+print(session["accessJwt"])
 ```
 
 ## Post Record Structure
@@ -83,6 +83,7 @@ For some record types, you'll need to specify the record key (`rkey`), which is 
 This script below will create a simple post with just a text field and a timestamp. You'll need the `datetime` package installed.
 
 ```python
+import json
 from datetime import datetime, timezone
 
 # Fetch the current time
@@ -152,6 +153,9 @@ Facets are external rich text annotations on top of the plain text string that i
 In this Python example below, we'll check for handle mentions (which look like `@example.bsky.social`) and HTTP/S URLs (which look like `https://example.com`). Note that the regexes used here to identify mentions and URLs are fairly naive, and could be more rigorous.
 
 ```python
+import re
+from typing import List, Dict
+
 def parse_mentions(text: str) -> List[Dict]:
     spans = []
     # regex based on: https://atproto.com/specs/handle#handle-identifier-syntax
@@ -159,7 +163,7 @@ def parse_mentions(text: str) -> List[Dict]:
     text_bytes = text.encode("UTF-8")
     for m in re.finditer(mention_regex, text_bytes):
         spans.append({
-            "start": m.start(1)
+            "start": m.start(1),
             "end": m.end(1),
             "handle": m.group(1)[1:].decode("UTF-8")
         })
@@ -175,7 +179,7 @@ def parse_urls(text: str) -> List[Dict]:
         spans.append({
             "start": m.start(1),
             "end": m.end(1),
-            "url": m.group(1).decode("UTF-8")),
+            "url": m.group(1).decode("UTF-8"),
         })
     return spans
 ```
@@ -230,7 +234,7 @@ def parse_facets(text: str) -> List[Dict]:
 The list of facets gets attached to the `facets` field of the post record:
 
 ```python
-post["text"] = "✨ example mentioning @atproto.com to share the URL 👨‍❤️‍👨 https://en.wikipedia.org/wiki/CBOR.
+post["text"] = "✨ example mentioning @atproto.com to share the URL 👨‍❤️‍👨 https://en.wikipedia.org/wiki/CBOR."
 post["facets"] = parse_facets(post["text"])
 ```
 
@@ -284,7 +288,7 @@ A strong reference indicates the specific version of the record being referenced
 Here is a naive Python function which will parse either an AT URI or a `https://bsky.app/` URL in to components (repo identifier, collection NSID, and record key):
 
 ```python
-def parse_at_uri(uri: str) -> Dict:
+def parse_uri(uri: str) -> Dict:
     # Handle AT URIs
     if uri.startswith("at://"):
         repo, collection, rkey = uri.split("/")[2:5]
@@ -541,6 +545,8 @@ On Bluesky, each client fetches and embeds this card metadata, including blob up
 If there is an image URL tag (`og:image`), this example will additionally download that file, naively guess the mimetype from the URL, upload as a blob, and store the result as thumbnail (`thumb` field).
 
 ```python
+from bs4 import BeautifulSoup
+
 def fetch_embed_url_card(access_token: str, url: str) -> Dict:
 
     # the required fields for every embed card
@@ -572,7 +578,17 @@ def fetch_embed_url_card(access_token: str, url: str) -> Dict:
             img_url = url + img_url
         resp = requests.get(img_url)
         resp.raise_for_status()
-        card["thumb"] = upload_file(access_token, img_url, resp.content)
+
+        blob_resp = requests.post(
+            "https://bsky.social/xrpc/com.atproto.repo.uploadBlob",
+            headers={
+                "Content-Type": IMAGE_MIMETYPE,
+                "Authorization": "Bearer " + access_token,
+            },
+            data=resp.content,
+        )
+        blob_resp.raise_for_status()
+        card["thumb"] = blob_resp.json()["blob"]
 
     return {
         "$type": "app.bsky.embed.external",
@@ -584,7 +600,6 @@ An external embed is stored under `embed` like all the others:
 
 ```python
 post["embed"] = fetch_embed_url_card(session["accessJwt"], "https://bsky.app")
-)
 ```
 
 A complete post record with an external embed, including image thumbnail blob, looks like:
