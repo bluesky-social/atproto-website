@@ -35,7 +35,7 @@ http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
 
 Posts can get a lot more complicated — reply threads, mentions, quote posts, embedding images and link cards, and more. This guide will walk you through how to create these more complex posts in Python, but there are many [API clients and SDKs for other programming languages](https://atproto.com/community/projects#at-protocol-implementations) and Bluesky PBC publishes atproto code in [TypeScript](https://github.com/bluesky-social/atproto) and [Go](https://github.com/bluesky-social/indigo) as well.
 
-You can get a copy of the full script from [this Github Gist](https://gist.github.com/bnewbold/ebc172c927b6a64d536bdf46bd5c2925). It was tested with Python 3.11, with the `requests` and `bs4` (BeautifulSoup) packages installed.
+You can get a copy of the full script from [this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py). It was tested with Python 3.11, with the `requests` and `bs4` (BeautifulSoup) packages installed.
 
 ## Authentication
 
@@ -630,6 +630,6 @@ A complete post record with an external embed, including image thumbnail blob, l
 
 ## Putting It All Together
 
-A complete script, with command-line argument parsing, is available [as a Github gist](https://gist.github.com/bnewbold/ebc172c927b6a64d536bdf46bd5c2925).
+A complete script, with command-line argument parsing, is available [from this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py).
 
 As mentioned at the beginning, we expect most folks will use SDKs or libraries for their programming language of choice to help with most of the details described here. But sometimes it is helpful to see what is actually going on behind the abstractions.
