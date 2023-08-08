@@ -145,3 +145,5 @@ DIDs are case-sensitive. While the currently-supported methods are *not* case se
 The hard maximum DID length limit may be reduced, at the protocol level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
 
 There is a good chance that the set of "blessed" DID methods will slowly expand over time.
+
+The `EcdsaSecp256r1VerificationKey2019` `verificationMethod` is not a final W3C standard. We will move to whatever ends up standardized by W3C for representing P-256 public keys with `publicKeyMultibase`. This may mean a transition to `Multikey`, and we would transition K-256 representations to that `type` as well.
