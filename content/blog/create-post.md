@@ -140,7 +140,56 @@ You can include multiple values in the array if there are multiple languages pre
 
 ## Mentions and Links
 
-Mentions and links are actually just rich-text annotations, or "facets," that point to plain text strings and act like hyperlinks.
+Mentions and links are annotations that point into the text of a post. They are actually part of a broader system for rich-text "facets." Facets only support links and mentions for now, but can be extended to support features like bold and italics in the future.
+
+Suppose we have a post:
+
+```
+✨ example mentioning @atproto.com to share the URL 👨‍❤️‍👨 https://en.wikipedia.org/wiki/CBOR.
+```
+
+Our goal is to turn the handle (`@atproto.com`) into a mention and the URL (`https://en.wikipedia.org/wiki/CBOR`) into a link. To do that, we grab the starting and ending locations of each "facet".
+
+```
+✨ example mentioning @atproto.com to share the URL 👨‍❤️‍👨 https://en.wikipedia.org/wiki/CBOR.
+             start=23^     end=35^            start=74^                          end=108^
+```
+
+We then identify them in the facets array, using the _mention_ and _link_ feature types. (You can view the schema of a facet object [here](https://atproto.com/lexicons/app-bsky-richtext#appbskyrichtextfacet).) The post record will then look like this:
+
+```json
+{
+  "$type": "app.bsky.feed.post",
+  "text": "\u2728 example mentioning @atproto.com to share the URL \ud83d\udc68\u200d\u2764\ufe0f\u200d\ud83d\udc68 https://en.wikipedia.org/wiki/CBOR.",
+  "createdAt": "2023-08-08T01:03:41.157302Z",
+  "facets": [
+    {
+      "index": {
+        "byteStart": 23,
+        "byteEnd": 35
+      },
+      "features": [
+        {
+          "$type": "app.bsky.richtext.facet#mention",
+          "did": "did:plc:ewvi7nxzyoun6zhxrhs64oiz"
+        }
+      ]
+    },
+    {
+      "index": {
+        "byteStart": 74,
+        "byteEnd": 108
+      },
+      "features": [
+        {
+          "$type": "app.bsky.richtext.facet#link",
+          "uri": "https://en.wikipedia.org/wiki/CBOR"
+        }
+      ]
+    }
+  ]
+}
+```
 
 You can programmatically set the `start` and `end` points of a facet with regexes. Here's a script that parses mentions and links:
 ```python
@@ -222,42 +271,6 @@ post["text"] = "✨ example mentioning @atproto.com to share the URL 👨‍❤�
 post["facets"] = parse_facets(post["text"])
 ```
 
-The post record will then look like this:
-
-```json
-{
-  "$type": "app.bsky.feed.post",
-  "text": "\u2728 example mentioning @atproto.com to share the URL \ud83d\udc68\u200d\u2764\ufe0f\u200d\ud83d\udc68 https://en.wikipedia.org/wiki/CBOR.",
-  "createdAt": "2023-08-08T01:03:41.157302Z",
-  "facets": [
-    {
-      "index": {
-        "byteStart": 23,
-        "byteEnd": 35
-      },
-      "features": [
-        {
-          "$type": "app.bsky.richtext.facet#mention",
-          "did": "did:plc:ewvi7nxzyoun6zhxrhs64oiz"
-        }
-      ]
-    },
-    {
-      "index": {
-        "byteStart": 74,
-        "byteEnd": 108
-      },
-      "features": [
-        {
-          "$type": "app.bsky.richtext.facet#link",
-          "uri": "https://en.wikipedia.org/wiki/CBOR"
-        }
-      ]
-    }
-  ]
-}
-```
-You can view the schema of a facet object [here](https://atproto.com/lexicons/app-bsky-richtext#appbskyrichtextfacet).
 
 
 ## Replies, Quote Posts, and Embeds
