@@ -7,25 +7,19 @@ date: Aug 8, 2023
 # Posting via the Bluesky API
 *Published on: Aug 8, 2023*
 
-Note: This blog post is a snapshot in time and may get out of date as new features are added to atproto and the Bluesky application schemas. The source of truth for the application API is the Lexicons themselves (currently [versioned on Github](https://github.com/bluesky-social/atproto/tree/main/lexicons)). The overall protocol is described at [atproto.com](https://atproto.com).
+> Note: This blog post is a snapshot in time and may get out of date as new features are added to atproto and the Bluesky application schemas. The source of truth for the application API is the Lexicons themselves (currently [versioned on Github](https://github.com/bluesky-social/atproto/tree/main/lexicons)). The overall protocol is described at [atproto.com](https://atproto.com).
 
-## How do I make a Bluesky post via the API?
+First, you'll need a Bluesky account. (If you're a developer in need of an invite, fill out the developer waitlist [here](https://atproto.com/blog/call-for-developers) and we'll send you an invite code.) We'll create a session with [HTTPie](https://httpie.io/docs/cli/pypi) (`brew install httpie`).
 
-First, you'll need a Bluesky account. If you're a developer in need of an invite, fill out the developer waitlist [here](https://atproto.com/blog/call-for-developers) and we'll send you an invite code.
-
-The basics of posting to Bluesky via the API are straightforward. Let's try this via your terminal. Set your Bluesky handle and App Password as environment variables.
 ```sh
-export BLUESKY_HANDLE="example.bsky.social"
-export BLUESKY_APP_PASSWORD="123-456-789"
+http post https://bsky.social/xrpc/com.atproto.server.createSession \
+        identifier="$BLUESKY_HANDLE" \
+        password="$BLUESKY_APP_PASSWORD"
 ```
 
-Then, create a new session and post a simple text post with the below snippet. You may need to install [HTTPie](https://httpie.io/docs/cli/pypi) first: `brew install httpie`.
+With your session, you can create a post by sending a POST request to the `createRecord` endpoint.
 
 ```sh
-export AUTH_TOKEN=`http post https://bsky.social/xrpc/com.atproto.server.createSession \
-        identifier="$BLUESKY_HANDLE" \
-        password="$BLUESKY_APP_PASSWORD" \
-    | jq .accessJwt -r`
 http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
     Authorization:"Bearer $AUTH_TOKEN" \
     repo="$BLUESKY_HANDLE" \
@@ -35,15 +29,11 @@ http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
 
 Posts can get a lot more complicated — reply threads, mentions, quote posts, embedding images and link cards, and more. This guide will walk you through how to create these more complex posts in Python, but there are many [API clients and SDKs for other programming languages](https://atproto.com/community/projects#at-protocol-implementations) and Bluesky PBC publishes atproto code in [TypeScript](https://github.com/bluesky-social/atproto) and [Go](https://github.com/bluesky-social/indigo) as well.
 
-You can get a copy of the full script from [this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py). It was tested with Python 3.11, with the `requests` and `bs4` (BeautifulSoup) packages installed.
+> You can get a copy of the full script from [this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py). It was tested with Python 3.11, with the `requests` and `bs4` (BeautifulSoup) packages installed.
 
 ## Authentication
 
-Posting something on Bluesky requires authentication (that is, you'll need to be logged in to your account). Make sure to have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy. You also need to know the service URL of your hosting provider — this is the server that hosts your content. If you're using Bluesky's default, this is `https://bsky.social/` — that's our primary PDS service.
-
-The `com.atproto.server.createSession` API endpoint returns a session object containing two API tokens: an **access token** (`accessJwt`) which is used to authenticate requests but expires after a few minutes, and a **refresh token** (`refreshJwt`) which lasts longer and is used only to update the session with a new access token. Since we're just publishing a single post, we can get away with a single session and not bother with refreshing.
-
-This script will create a session and authenticate with your account handle and App Password.
+Posting something on Bluesky requires authentication (that is, you'll need to be logged in to your account). Make sure to have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy.
 
 ```python
 import requests
@@ -51,6 +41,7 @@ import requests
 BLUESKY_HANDLE = "example.bsky.social"
 BLUESKY_APP_PASSWORD = "123-456-789"
 
+# comment explaining the next line
 resp = requests.post(
     "https://bsky.social/xrpc/com.atproto.server.createSession",
     json={"identifier": BLUESKY_HANDLE, "password": BLUESKY_APP_PASSWORD},
@@ -60,13 +51,10 @@ session = resp.json()
 print(session["accessJwt"])
 ```
 
+The `com.atproto.server.createSession` API endpoint returns a session object containing two API tokens: an **access token** (`accessJwt`) which is used to authenticate requests but expires after a few minutes, and a **refresh token** (`refreshJwt`) which lasts longer and is used only to update the session with a new access token. Since we're just publishing a single post, we can get away with a single session and not bother with refreshing.
+
+
 ## Post Record Structure
-
-Now that we're authenticated, we can create a simple post. Bluesky posts are repository records with the [Lexicon type](https://atproto.com/lexicons/app-bsky-feed#appbskyfeedpost) `app.bsky.feed.post` — this just defines the schema for what a post looks like.
-
-The `com.atproto.repo.createRecord` endpoint is used to actually create **records** in the repository. A post is a type of record.
-
-Each post requires these fields: `text` and `createdAt` (a timestamp). The `$type` field should also be included in every record, though the server will fill this in for you based on the collection indicated in the `createRecord` request body if it isn't included.
 
 Here is what a basic post record should look like, as a JSON object:
 
@@ -78,7 +66,9 @@ Here is what a basic post record should look like, as a JSON object:
 }
 ```
 
-For some record types, you'll need to specify the record key (`rkey`), which is like a filename for the record. For posts, it's fine and easier to just let the server create one automatically.
+Bluesky posts are repository records with the [Lexicon type](https://atproto.com/lexicons/app-bsky-feed#appbskyfeedpost) `app.bsky.feed.post` — this just defines the schema for what a post looks like.
+
+Each post requires these fields: `text` and `createdAt` (a timestamp).
 
 This script below will create a simple post with just a text field and a timestamp. You'll need the `datetime` package installed.
 
