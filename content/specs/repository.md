@@ -93,7 +93,7 @@ The IPFS CID specification is very flexible, and supports a wide variety of hash
 
 The blessed format for commit objects and MST node objects, when linking to commit objects (aka, `prev`), MST nodes (aka, `data`, or MST internal links), or records (aka, MST leaf nodes to records), is:
 
-- CIDv
+- CIDv1
 - Multibase: binary serialization within DAG-CBOR (or `base32` for JSON mappings)
 - Multicodec: `dag-cbor` (0x71)
 - Multihash: `sha-256` with 256 bits (0x12)

@@ -109,6 +109,7 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 - [Bossett's Custom Feeds](https://github.com/Bossett/bsky-feeds) ([guide](https://bossett.io/setting-up-bossetts-bluesky-feed-generator/)), fork of official generator for What's Science 🧪 feed & to easily host multiple algorithms with more advanced matching, by [@bossett.bsky.social](https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a)
 - [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [bluesky-feeds-rb](https://github.com/mackuba/bluesky-feeds-rb), a complete example of a custom feed service in Ruby, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [Bluesky Social Feeds](https://blueskyfeeds.com), a tool to search and build custom feeds without code or regex, by [@blueskyfeeds.com](https://bsky.app/profile/did:plc:eubjsqnf5edgvcc6zuoyixhw)
 
 ## Stats
 
@@ -167,6 +168,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Linux Kernel Releases](https://bsky.app/profile/did:plc:35c6qworuvguvwnpjwfq3b5p) by [@adilson.net.br](https://bsky.app/profile/did:plc:kw6k5btwuh4hazzygvhxygx3)
 - [ai bot](https://bsky.app/profile/did:plc:4hqjfn7m6n5hno3doamuhgef) that reply on command and chat by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
 - [Score My Wordle](https://bsky.app/profile/did:plc:wems3hfqqjsfenrrd325q6zo) ([GitHub](https://github.com/shaneafsar/wordlescorer/)), provides Wordle stats and scores across Bluesky, Mastodon, and Twitter, by [@shaneafsar.com](https://bsky.app/profile/did:plc:ksl6jmkhz7qli2ywletvvm2z)
+- [Rijden de Treinen](https://bsky.app/profile/did:plc:ijgkhvxpubqao7yiwtbzpyrm), posts train disruptions in the Netherlands, by [@djiwie.bsky.social](https://bsky.app/profile/did:plc:kvbm4te3fersn2nrxukajsql)
 - [ElonJet](https://bsky.app/profile/did:plc:62cuohm6c6nefpnw4uujepty) bot tracking Elon Musk's private jet by [@jacks.grndcntrl.net](https://bsky.app/profile/did:plc:at2e7q6kwfhdwv7267mjsflz)
 - [Flight Emergency Alerts](https://bsky.app/profile/did:plc:2t6m3d7ei35iamwzgxz5qy43y) bot alerting of aircraft indicating emergencies by [@jacks.grndcntrl.net](https://bsky.app/profile/did:plc:at2e7q6kwfhdwv7267mjsflz)
 
