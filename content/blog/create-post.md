@@ -5,9 +5,12 @@ date: Aug 11, 2023
 ---
 
 # Posting via the Bluesky API
-*Published on: Aug 11, 2023. This blog post may become outdated as new features are added to [atproto]((https://atproto.com)) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
+*Published on: Aug 11, 2023.*
 
-First, you'll need a Bluesky account. (If you're a developer in need of an invite, fill out the developer waitlist [here](https://atproto.com/blog/call-for-developers) and we'll send you an invite code.) We'll create a session with [HTTPie](https://httpie.io/docs/cli/pypi) (`brew install httpie`).
+*This blog post may become outdated as new features are added to [atproto]((https://atproto.com)) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
+
+---
+First, you'll need a [Bluesky account](https://atproto.com/blog/call-for-developers). We'll create a session with [HTTPie](https://httpie.io/docs/cli/pypi) (`brew install httpie`).
 
 ```sh
 http post https://bsky.social/xrpc/com.atproto.server.createSession \
@@ -25,15 +28,17 @@ http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
     record:="{\"text\": \"Hello world! I posted this via the API.\", \"createdAt\": \"`date -u +"%Y-%m-%dT%H:%M:%SZ"`\"}"
 ```
 
-Posts can get a lot more complicated — reply threads, mentions, quote posts, embedding images and link cards, and more. This guide will walk you through how to create these more complex posts in Python, but there are many [API clients and SDKs for other programming languages](https://atproto.com/community/projects#at-protocol-implementations) and Bluesky PBC publishes atproto code in [TypeScript](https://github.com/bluesky-social/atproto) and [Go](https://github.com/bluesky-social/indigo) as well.
+Posts can get a lot more complicated with replies, mentions, embedding images, and more. This guide will walk you through how to create these more complex posts in Python, but there are many [API clients and SDKs for other programming languages](https://atproto.com/community/projects#at-protocol-implementations) and Bluesky PBC publishes atproto code in [TypeScript](https://github.com/bluesky-social/atproto) and [Go](https://github.com/bluesky-social/indigo) as well.
 
 <span style="display: inline-block; background-color: #DDD59D; width: 100%; height: 100%;border-radius: 5px; padding: 10px;">
 Skip the steps below and get the full script <a href="https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py">here</a>. It was tested with Python 3.11, with the <code>requests</code> and <code>bs4</code> (BeautifulSoup) packages installed.
 </span>
 
+---
+
 ## Authentication
 
-Posting something on Bluesky requires account authentication. Have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy.
+Posting on Bluesky requires account authentication. Have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy.
 
 ```python
 import requests
@@ -133,12 +138,11 @@ The `langs` field indicates the post language, which can be an array of strings 
 
 You can include multiple values in the array if there are multiple languages present in the post. The Bluesky Social client auto-detects the languages in each post and sets them as the default `langs` value, but a user can override the configuration on a per-post basis.
 
-## Parsing Mentions and URLs
+## Mentions and Links
 
-Mentions (tags of other accounts) and URLs are rendered in the Bluesky client as "facets" — rich text annotations on top of the plain text string that is the post text itself, like hyperlinks.
+Mentions and links are actually just rich-text annotations, or "facets," that point to plain text strings and act like hyperlinks.
 
-This script check for handle mentions (which look like `@example.bsky.social`) and HTTP/S URLs (which look like `https://example.com`).
-
+You can programmatically set the `start` and `end` points of a facet with regexes. Here's a script that parses mentions and links:
 ```python
 import re
 from typing import List, Dict
@@ -262,35 +266,32 @@ Replies and quote posts contain **strong references** to other records. A strong
 - **AT URI:** indicates the repository DID, collection, and record key
 - **CID:** the hash of the record itself
 
-Here is a function that parses either an AT URI or a `https://bsky.app/` URL in to components (repo identifier, collection NSID, and record key):
-
-```python
-def parse_uri(uri: str) -> Dict:
-    # Handle AT URIs
-    if uri.startswith("at://"):
-        repo, collection, rkey = uri.split("/")[2:5]
-        return {"repo": repo, "collection": collection, "rkey": rkey}
-    # Handle bsky.app URLs
-    elif uri.startswith("https://bsky.app/"):
-        repo, collection, rkey = uri.split("/")[4:7]
-        if collection == "post":
-            collection = "app.bsky.feed.post"
-        elif collection == "lists":
-            collection = "app.bsky.graph.list"
-        elif collection == "feed":
-            collection = "app.bsky.feed.generator"
-        return {"repo": repo, "collection": collection, "rkey": rkey}
-    else:
-        raise Exception("unhandled URI format: " + uri)
-```
-
-To fetch the CID for an existing record, use the `com.atproto.repo.getRecord` endpoint (supplying `repo`, `collection`, and `rkey` query parameters). Note that this function will also handle resolving a handle to a DID, if needed.
+Posts can have several types of embeds: record embeds, images and exernal embeds (like link/webpage cards, which is the preview that shows up when you post a URL).
 
 ### Replies
 
-Reply posts need to reference both the immediate "parent" post and the original "root" post of the thread.
+A complete reply post record looks like:
 
-Here's a Python snippet to find the parent and root values:
+```json
+{
+  "$type": "app.bsky.feed.post",
+  "text": "example of a reply",
+  "createdAt": "2023-08-07T05:49:40.501974Z",
+  "reply": {
+    "root": {
+      "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k43tv4rft22g",
+      "cid": "bafyreig2fjxi3rptqdgylg7e5hmjl6mcke7rn2b6cugzlqq3i4zu6rq52q"
+    },
+    "parent": {
+      "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k43tv4rft22g",
+      "cid": "bafyreig2fjxi3rptqdgylg7e5hmjl6mcke7rn2b6cugzlqq3i4zu6rq52q"
+    }
+  }
+}
+```
+Since threads of replies can get pretty long, reply posts need to reference both the immediate "parent" post and the original "root" post of the thread.
+
+Here's a Python script to find the parent and root values:
 ```python
 # Resolve the parent record and copy whatever the root reply reference there is
 # If none exists, then the parent record was a top-level post, so that parent reference can be reused as the root value
@@ -340,59 +341,9 @@ The root and parent refs are stored in the `reply` field of posts:
 post["reply"] = get_reply_refs("at://atproto.com/app.bsky.feed.post/3k43tv4rft22g")
 ```
 
-A complete reply post record looks like:
-
-```json
-{
-  "$type": "app.bsky.feed.post",
-  "text": "example of a reply",
-  "createdAt": "2023-08-07T05:49:40.501974Z",
-  "reply": {
-    "root": {
-      "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k43tv4rft22g",
-      "cid": "bafyreig2fjxi3rptqdgylg7e5hmjl6mcke7rn2b6cugzlqq3i4zu6rq52q"
-    },
-    "parent": {
-      "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k43tv4rft22g",
-      "cid": "bafyreig2fjxi3rptqdgylg7e5hmjl6mcke7rn2b6cugzlqq3i4zu6rq52q"
-    }
-  }
-}
-```
-
 ### Quote Posts
 
-A quote post embeds a reference to another post record (the original post). The post record type is `app.bsky.feed.post`, but you can also embed other record types in a post, like lists (`app.bsky.graph.list`) and feed generators (`app.bsky.feed.generator`).
-
-A record embed reference (`app.bsky.embed.record`) is a strong reference, similar to reply post references. We can use the same helpers to parse a reference (AT URI or `https://bsky.app` URL) and call `com.atproto.repo.getRecord` to get the CID:
-
-```python
-def get_embed_ref(ref_uri: str) -> Dict:
-    uri_parts = parse_uri(ref_uri)
-    resp = requests.get(
-        "https://bsky.social/xrpc/com.atproto.repo.getRecord",
-        params=uri_parts,
-    )
-    print(resp.json())
-    resp.raise_for_status()
-    record = resp.json()
-
-    return {
-        "$type": "app.bsky.embed.record",
-        "record": {
-            "uri": record["uri"],
-            "cid": record["cid"],
-        },
-    }
-```
-
-And then add to the post record itself:
-
-```python
-post["embed"] = get_embed_ref("https://bsky.app/profile/atproto.com/post/3k44deefqdk2g")
-```
-
-A complete quote post record would look like:
+A quote post embeds a reference to another post record. A complete quote post record would look like:
 
 ```json
 {
@@ -408,14 +359,11 @@ A complete quote post record would look like:
   }
 }
 ```
-
-Posts can have several types of embeds: record embeds, images and exernal embeds (like link/webpage cards, which is the preview that shows up when you post a URL). The [Lexicon for embeds](https://atproto.com/lexicons/app-bsky-embed) specifies that only a single embed type can be included per post, and that the embedded object needs to include a `$type` field. In practice, this means that, for example, you cannot embed both a post record ("quote post") *and* embed images in the same post.
+The record embedded here is the post that's getting quoted. The post record type is `app.bsky.feed.post`, but you can also embed other record types in a post, like lists (`app.bsky.graph.list`) and feed generators (`app.bsky.feed.generator`).
 
 ### Images Embeds
 
-Images are also embedded objects in a post. Each post can contain up to four images, and each image can have its own alt text and is limited to 1,000,000 bytes in size.
-
-This example code demonstrates reading an image file from disk and uploading it, capturing a `blob` in the response:
+Images are also embedded objects in a post. This example code demonstrates reading an image file from disk and uploading it, capturing a `blob` in the response:
 ```python
 IMAGE_PATH = "./example.png"
 IMAGE_MIMETYPE = "image/png"
@@ -457,7 +405,7 @@ The blob object, as JSON, would look something like:
 }
 ```
 
-The blob is then included in a `app.bsky.embed.images` array, along with an alt-text string. The `alt` field is required for each image. You should pass an empty string if there is no alt-text available instead of something like "not available." 
+The blob is then included in a `app.bsky.embed.images` array, along with an alt-text string. The `alt` field is required for each image. Pass an empty string if there is no alt text available.
 
 ```python
 post["embed"] = {
@@ -505,15 +453,38 @@ A complete post record, containing two images, would look something like:
   }
 }
 ```
-Image files are *referenced* by posts, but are not actually *included* in the post (eg, using `bytes` with base64 encoding). The image files are first uploaded as "blobs" using `com.atproto.repo.uploadBlob`, which returns a `blob` metadata object, which is then embedded in the post record itself.
 
- It is a strongly recommended best practice to strip image metadata before uploading. The server (PDS) may be more strict about blocking upload of such metadata by default in the future, but it is currently the responsibility of clients (and apps) to sanitize files before upload today.
+Each post contains up to four images, and each image can have its own alt text and is limited to 1,000,000 bytes in size. Image files are *referenced* by posts, but are not actually *included* in the post (eg, using `bytes` with base64 encoding). The image files are first uploaded as "blobs" using `com.atproto.repo.uploadBlob`, which returns a `blob` metadata object, which is then embedded in the post record itself.
 
-The mimetype for an image must be provided at upload time, via the `Content-Type` HTTP header. 
+It's strongly recommended best practice to strip image metadata before uploading. The server (PDS) may be more strict about blocking upload of such metadata by default in the future, but it is currently the responsibility of clients (and apps) to sanitize files before upload today.
 
 ### Website Card Embeds
 
-A website card embed, often called a "social card," is the rendered preview of a website link. View the lexicon for external embeds `app.bsky.embed.external` [here](https://atproto.com/lexicons/app-bsky-embed#appbskyembedexternal).
+A website card embed, often called a "social card," is the rendered preview of a website link. A complete post record with an external embed, including image thumbnail blob, looks like:
+
+```json
+{
+  "$type": "app.bsky.feed.post",
+  "text": "post which embeds an external URL as a card",
+  "createdAt": "2023-08-07T05:46:14.423045Z",
+  "embed": {
+    "$type": "app.bsky.embed.external",
+    "external": {
+      "uri": "https://bsky.app",
+      "title": "Bluesky Social",
+      "description": "See what's next.",
+      "thumb": {
+        "$type": "blob",
+        "ref": {
+          "$link": "bafkreiash5eihfku2jg4skhyh5kes7j5d5fd6xxloaytdywcvb3r3zrzhu"
+        },
+        "mimeType": "image/png",
+        "size": 23527
+      }
+    }
+  }
+}
+```
 
 Here's an example of embedding a website card:
 ```python
@@ -574,35 +545,7 @@ An external embed is stored under `embed` like all the others:
 post["embed"] = fetch_embed_url_card(session["accessJwt"], "https://bsky.app")
 ```
 
-A complete post record with an external embed, including image thumbnail blob, looks like:
-
-```json
-{
-  "$type": "app.bsky.feed.post",
-  "text": "post which embeds an external URL as a card",
-  "createdAt": "2023-08-07T05:46:14.423045Z",
-  "embed": {
-    "$type": "app.bsky.embed.external",
-    "external": {
-      "uri": "https://bsky.app",
-      "title": "Bluesky Social",
-      "description": "See what's next.",
-      "thumb": {
-        "$type": "blob",
-        "ref": {
-          "$link": "bafkreiash5eihfku2jg4skhyh5kes7j5d5fd6xxloaytdywcvb3r3zrzhu"
-        },
-        "mimeType": "image/png",
-        "size": 23527
-      }
-    }
-  }
-}
-```
-
 On Bluesky, each client fetches and embeds this card metadata, including blob upload if needed. Embedding the card content in the record ensures that it appears consistently to everyone and reduces waves of automated traffic being sent to the referenced website, but it does require some extra work by the client. 
-
-If there is an image URL tag (`og:image`), this example will additionally download that file, naively guess the mimetype from the URL, upload as a blob, and store the result as thumbnail (`thumb` field).
 
 ## Putting It All Together
 
