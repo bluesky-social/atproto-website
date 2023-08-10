@@ -1,13 +1,11 @@
 ---
 title: Posting via the Bluesky API
 summary: The Bluesky post record type has many features, including replies, quote-posts, embedded social cards, mentions, and images. Here's some example code for all the common post formats.
-date: Aug 8, 2023
+date: Aug 11, 2023
 ---
 
 # Posting via the Bluesky API
-*Published on: Aug 8, 2023*
-
-> Note: This blog post is a snapshot in time and may get out of date as new features are added to atproto and the Bluesky application schemas. The source of truth for the application API is the Lexicons themselves (currently [versioned on Github](https://github.com/bluesky-social/atproto/tree/main/lexicons)). The overall protocol is described at [atproto.com](https://atproto.com).
+*Published on: Aug 11, 2023. This blog post may become outdated as new features are added to [atproto]((https://atproto.com)) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
 
 First, you'll need a Bluesky account. (If you're a developer in need of an invite, fill out the developer waitlist [here](https://atproto.com/blog/call-for-developers) and we'll send you an invite code.) We'll create a session with [HTTPie](https://httpie.io/docs/cli/pypi) (`brew install httpie`).
 
@@ -17,7 +15,7 @@ http post https://bsky.social/xrpc/com.atproto.server.createSession \
         password="$BLUESKY_APP_PASSWORD"
 ```
 
-With your session, you can create a post by sending a POST request to the `createRecord` endpoint.
+Now you can create a post by sending a POST request to the `createRecord` endpoint.
 
 ```sh
 http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
@@ -29,11 +27,13 @@ http post https://bsky.social/xrpc/com.atproto.repo.createRecord \
 
 Posts can get a lot more complicated — reply threads, mentions, quote posts, embedding images and link cards, and more. This guide will walk you through how to create these more complex posts in Python, but there are many [API clients and SDKs for other programming languages](https://atproto.com/community/projects#at-protocol-implementations) and Bluesky PBC publishes atproto code in [TypeScript](https://github.com/bluesky-social/atproto) and [Go](https://github.com/bluesky-social/indigo) as well.
 
-> You can get a copy of the full script from [this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py). It was tested with Python 3.11, with the `requests` and `bs4` (BeautifulSoup) packages installed.
+<span style="display: inline-block; background-color: #DDD59D; width: 100%; height: 100%;border-radius: 5px; padding: 10px;">
+Skip the steps below and get the full script <a href="https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py">here</a>. It was tested with Python 3.11, with the <code>requests</code> and <code>bs4</code> (BeautifulSoup) packages installed.
+</span>
 
 ## Authentication
 
-Posting something on Bluesky requires authentication (that is, you'll need to be logged in to your account). Make sure to have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy.
+Posting something on Bluesky requires account authentication. Have your Bluesky account handle and [App Password](https://atproto.com/specs/xrpc#app-passwords) handy.
 
 ```python
 import requests
@@ -41,7 +41,6 @@ import requests
 BLUESKY_HANDLE = "example.bsky.social"
 BLUESKY_APP_PASSWORD = "123-456-789"
 
-# comment explaining the next line
 resp = requests.post(
     "https://bsky.social/xrpc/com.atproto.server.createSession",
     json={"identifier": BLUESKY_HANDLE, "password": BLUESKY_APP_PASSWORD},
@@ -111,11 +110,7 @@ The full reposistory path (including the auto-generated `rkey`) will be returned
 
 ## Setting the Post's Language
 
-You can set the post's (human) language, which help will custom feeds or other services parse the post. For example, perhaps a user only wants to show English-language posts in their feed — they would use this field to filter out posts in other languages.
-
-Use the `langs` field to indicate the post language, which can be an array of strings in BCP-47 format. (This is the same standard and format used by web browsers to encode language and localization context.)
-
-You can include multiple values in the array if there are multiple languages present in the post. The Bluesky Social client auto-detects the languages in each post and sets them as the default `langs` value, but a user can override the configuration on a per-post basis.
+Setting the post's language helps custom feeds or other services filter and parse posts.
 
 This snippet sets the `text` and `langs` value of a post to be Thai and English.
 ```python
@@ -134,13 +129,15 @@ The resulting post record object looks like:
 }
 ```
 
+The `langs` field indicates the post language, which can be an array of strings in BCP-47 format.
+
+You can include multiple values in the array if there are multiple languages present in the post. The Bluesky Social client auto-detects the languages in each post and sets them as the default `langs` value, but a user can override the configuration on a per-post basis.
+
 ## Parsing Mentions and URLs
 
-Mentions (tags of other accounts) and URLs are rendered in rich-text in the Bluesky client to make them visibly clickable. They're expected to look and act like hyperlinks. The client, not the server, is responsible for parsing these patterns and creating links (or "facets").
+Mentions (tags of other accounts) and URLs are rendered in the Bluesky client as "facets" — rich text annotations on top of the plain text string that is the post text itself, like hyperlinks.
 
-Facets are external rich text annotations on top of the plain text string that is the post text itself. 
-
-In this Python example below, we'll check for handle mentions (which look like `@example.bsky.social`) and HTTP/S URLs (which look like `https://example.com`). Note that the regexes used here to identify mentions and URLs are fairly naive, and could be more rigorous.
+This script check for handle mentions (which look like `@example.bsky.social`) and HTTP/S URLs (which look like `https://example.com`).
 
 ```python
 import re
@@ -174,17 +171,10 @@ def parse_urls(text: str) -> List[Dict]:
     return spans
 ```
 
-Note: The facet `start` and `stop` values are counted by UTF-8 bytes, not Unicode codepoints, graphemes, or grapheme clusters. In the above Python snippet, we use regex matching over bytestrings directly (which is supported by the Python standard library).
-
-Once the facet segments have been parsed out, we can then turn them into `app.bsky.richtext.facet` objects. You can view the schema of a facet object [here](https://atproto.com/lexicons/app-bsky-richtext#appbskyrichtextfacet).
-
-This schema requires:
-- Handles must be resolved to DIDs, which can be done server-side using the `com.atproto.identity.resolveHandle` endpoint.
-- Since both `app.bsky.richtext.facet#mention` and `app.bsky.richtext.facet#link` objects can appear in the `features` array of a facet, a `$type` field needs to be included in each object to disambiguate between the two.
-
-Here's a Python script to parse the facets from the text and resolve the handles to DIDs:
+Once the facet segments have been parsed out, we can then turn them into `app.bsky.richtext.facet` objects.
 
 ```python
+# Parse facets from text and resolve the handles to DIDs
 def parse_facets(text: str) -> List[Dict]:
     facets = []
     for m in parse_mentions(text):
@@ -228,7 +218,7 @@ post["text"] = "✨ example mentioning @atproto.com to share the URL 👨‍❤�
 post["facets"] = parse_facets(post["text"])
 ```
 
-The post record will then look like this::
+The post record will then look like this:
 
 ```json
 {
@@ -263,19 +253,16 @@ The post record will then look like this::
   ]
 }
 ```
+You can view the schema of a facet object [here](https://atproto.com/lexicons/app-bsky-richtext#appbskyrichtextfacet).
 
 
 ## Replies, Quote Posts, and Embeds
 
-When you post a reply or a quote post, this post will contain a **strong reference** to another record — either the post you're replying to, or the post you're quoting, etc.
-
-A strong reference is a combination of:
+Replies and quote posts contain **strong references** to other records. A strong reference is a combination of:
 - **AT URI:** indicates the repository DID, collection, and record key
 - **CID:** the hash of the record itself
 
-A strong reference indicates the specific version of the record being referenced, a concept known as content addressing. This lets client software detect if the current content no longer matches what existed at the time the reference was made. An AT URI alone does not do this.
-
-Here is a naive Python function which will parse either an AT URI or a `https://bsky.app/` URL in to components (repo identifier, collection NSID, and record key):
+Here is a function that parses either an AT URI or a `https://bsky.app/` URL in to components (repo identifier, collection NSID, and record key):
 
 ```python
 def parse_uri(uri: str) -> Dict:
@@ -301,13 +288,12 @@ To fetch the CID for an existing record, use the `com.atproto.repo.getRecord` en
 
 ### Replies
 
-Because reply threads can get long and contain many replies, Bluesky requires reply posts to reference both to the immediate "parent" post, and the original "root" post which started the thread. For direct replies to the original post, these will be the same reference, but they are both still required.
-
-The easiest way to find a post's root reference is to just resolve its parent record and copy whatever the root reply reference value there is. If none exists, then the parent record was a top-level post, so that parent reference can be reused as the root value.
+Reply posts need to reference both the immediate "parent" post and the original "root" post of the thread.
 
 Here's a Python snippet to find the parent and root values:
-
 ```python
+# Resolve the parent record and copy whatever the root reply reference there is
+# If none exists, then the parent record was a top-level post, so that parent reference can be reused as the root value
 def get_reply_refs(parent_uri: str) -> Dict:
     uri_parts = parse_uri(parent_uri)
 
@@ -376,9 +362,7 @@ A complete reply post record looks like:
 
 ### Quote Posts
 
-When you post a quote post, you're embedding a reference to another post record (the original post) in a post (the quote post). The post record type is `app.bsky.feed.post`, but you can also embed other record types in a post, like lists (`app.bsky.graph.list`) and feed generators (`app.bsky.feed.generator`).
-
-Posts can have several types of embeds: record embeds, images and exernal embeds (like link/webpage cards, which is the preview that shows up when you post a URL). The [Lexicon for embeds](https://atproto.com/lexicons/app-bsky-embed) specifies that only a single embed type can be included per post, and that the embedded object needs to include a `$type` field. In practice, this means that, for example, you cannot embed both a post record ("quote post") *and* embed images in the same post.
+A quote post embeds a reference to another post record (the original post). The post record type is `app.bsky.feed.post`, but you can also embed other record types in a post, like lists (`app.bsky.graph.list`) and feed generators (`app.bsky.feed.generator`).
 
 A record embed reference (`app.bsky.embed.record`) is a strong reference, similar to reply post references. We can use the same helpers to parse a reference (AT URI or `https://bsky.app` URL) and call `com.atproto.repo.getRecord` to get the CID:
 
@@ -425,17 +409,13 @@ A complete quote post record would look like:
 }
 ```
 
+Posts can have several types of embeds: record embeds, images and exernal embeds (like link/webpage cards, which is the preview that shows up when you post a URL). The [Lexicon for embeds](https://atproto.com/lexicons/app-bsky-embed) specifies that only a single embed type can be included per post, and that the embedded object needs to include a `$type` field. In practice, this means that, for example, you cannot embed both a post record ("quote post") *and* embed images in the same post.
+
 ### Images Embeds
 
-When you post an image on Bluesky, that image is treated as an embedded object to a post. Each post can contain up to four images, and each image can have its own alt text and is limited to 1,000,000 bytes in size.
+Images are also embedded objects in a post. Each post can contain up to four images, and each image can have its own alt text and is limited to 1,000,000 bytes in size.
 
-Image files are *referenced* by posts, but are not actually *included* in the post (eg, using `bytes` with base64 encoding). The image files are first uploaded as "blobs" using `com.atproto.repo.uploadBlob`, which returns a `blob` metadata object, which is then embedded in the post record itself.
-
-**Warning:** Image files in particular often contain personally identifiable metadata (EXIF metadata), including the time and GPS coordinates where the image was created, and information about the camera hardware which could be used to link back to a specific device or individual. It is a strongly recommended best practice to strip this metadata from image files before uploading, unless there is a specific informed intent to share that metadata. The server (PDS) may be more strict about blocking upload of such metadata by default in the future, but it is currently the responsibility of clients (and apps) to sanitize files before upload today.
-
-The mimetype for an image must be provided at upload time, via the `Content-Type` HTTP header. This example code demonstrates reading an image file from disk and uploading it, capturing a `blob` in the response:
-
-
+This example code demonstrates reading an image file from disk and uploading it, capturing a `blob` in the response:
 ```python
 IMAGE_PATH = "./example.png"
 IMAGE_MIMETYPE = "image/png"
@@ -525,15 +505,17 @@ A complete post record, containing two images, would look something like:
   }
 }
 ```
+Image files are *referenced* by posts, but are not actually *included* in the post (eg, using `bytes` with base64 encoding). The image files are first uploaded as "blobs" using `com.atproto.repo.uploadBlob`, which returns a `blob` metadata object, which is then embedded in the post record itself.
+
+ It is a strongly recommended best practice to strip image metadata before uploading. The server (PDS) may be more strict about blocking upload of such metadata by default in the future, but it is currently the responsibility of clients (and apps) to sanitize files before upload today.
+
+The mimetype for an image must be provided at upload time, via the `Content-Type` HTTP header. 
 
 ### Website Card Embeds
 
-A website card embed, often called a "social card," is the rendered preview of a website link. It includes the link, a title, and optionally a preview image. View the lexicon for external embeds `app.bsky.embed.external` [here](https://atproto.com/lexicons/app-bsky-embed#appbskyembedexternal).
+A website card embed, often called a "social card," is the rendered preview of a website link. View the lexicon for external embeds `app.bsky.embed.external` [here](https://atproto.com/lexicons/app-bsky-embed#appbskyembedexternal).
 
-On Bluesky, each client fetches and embeds this card metadata, including blob upload if needed. Embedding the card content in the record ensures that it appears consistently to everyone and reduces waves of automated traffic being sent to the referenced website, but it does require some extra work by the client. There are many software libraries and even remove API services to help scrape and parse social card metadata. We provide a naive example for "opengraph" metadata below, using the popular `bs4` (BeautifulSoup) Python library for parsing HTML.
-
-If there is an image URL tag (`og:image`), this example will additionally download that file, naively guess the mimetype from the URL, upload as a blob, and store the result as thumbnail (`thumb` field).
-
+Here's an example of embedding a website card:
 ```python
 from bs4 import BeautifulSoup
 
@@ -618,8 +600,12 @@ A complete post record with an external embed, including image thumbnail blob, l
 }
 ```
 
+On Bluesky, each client fetches and embeds this card metadata, including blob upload if needed. Embedding the card content in the record ensures that it appears consistently to everyone and reduces waves of automated traffic being sent to the referenced website, but it does require some extra work by the client. 
+
+If there is an image URL tag (`og:image`), this example will additionally download that file, naively guess the mimetype from the URL, upload as a blob, and store the result as thumbnail (`thumb` field).
+
 ## Putting It All Together
 
-A complete script, with command-line argument parsing, is available [from this git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py).
+A complete script, with command-line argument parsing, is available [from this Git repository](https://github.com/bluesky-social/atproto-website/blob/main/examples/create_bsky_post.py).
 
 As mentioned at the beginning, we expect most folks will use SDKs or libraries for their programming language of choice to help with most of the details described here. But sometimes it is helpful to see what is actually going on behind the abstractions.
