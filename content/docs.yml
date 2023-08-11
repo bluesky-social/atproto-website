@@ -71,6 +71,8 @@ community:
   - name: Groups
     href: /community/groups
 blog:
+  - name: Posting via the Bluesky API
+    href: /blog/create-post
   - name: "Featured Community Project: SkyFeed"
     href: /blog/feature-skyfeed
   - name: Call for Developers
@@ -79,4 +81,3 @@ blog:
     href: /blog/federation-developer-sandbox
   - name: Why are blocks on Bluesky public?
     href: /blog/block-implementation
-  
