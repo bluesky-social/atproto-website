@@ -125,6 +125,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Skyname](https://skyna.me/), register a free unique username for your Bluesky account, by [@darn.fish](https://bsky.app/profile/did:plc:7qw3ldjppmwmtjoak3egctdb)
 - [Open Handles](https://github.com/SlickDomique/open-handles), an app to let others create a handle with your domains, by [@domi.zip](https://bsky.app/profile/did:plc:7bwr7mioqql34n2mrqwqypbz)
 - [swifties.social](https://swifties.social/), claim a `swifties.social` handle, by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep)
+- [Yeni.Page](https://yeni.page), You can use every page you create with Yeni.Page as a Handle at the same time. [@yeni.page](https://bsky.app/profile/yeni.page)
 
 ## Firehose
 
