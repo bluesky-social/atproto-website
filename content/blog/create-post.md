@@ -104,7 +104,7 @@ print(json.dumps(resp.json(), indent=2))
 resp.raise_for_status()
 ```
 
-The full reposistory path (including the auto-generated `rkey`) will be returned as a response to the `createRecord` request. It looks like:
+The full repository path (including the auto-generated `rkey`) will be returned as a response to the `createRecord` request. It looks like:
 
 ```json
 {
