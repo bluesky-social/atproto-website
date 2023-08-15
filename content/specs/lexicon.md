@@ -82,8 +82,8 @@ Type-specific fields:
 - `parameters` (object, optional): a schema definition with type `params`, describing the HTTP query parameters for this endpoint
 - `output` (object, optional): describes the HTTP response body
     - `description` (string, optional): short description
-    - `encoding` (string, required): MIME type for body contents
-    - `schema` (object, required when `encoding` is `application/json`, ignored otherwise): schema definition, either an `object`, a `ref`, or a `union` of refs
+    - `encoding` (string, required): MIME type for body contents. Use `application/json` for JSON responses.
+    - `schema` (object, optional): schema definition, either an `object`, a `ref`, or a `union` of refs. Used to describe JSON encoded responses, though schema is optional even for JSON responses.
 - `input` (object, optional, only for `procedure`): describes HTTP request body schema, with the same format as the `output` field
 - `errors` (array of objects, optional): set of string error codes which might be returned
     - `name` (string, required): short name for the error type, with no whitespace
