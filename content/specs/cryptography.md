@@ -40,7 +40,7 @@ When encoding public keys as strings, the preferred representation uses multibas
 - Prepend the appropriate curve multicodec value, as varint-encoded bytes, in front of the key bytes:
     - `p256` (compressed, 33 byte key length): `p256-pub`, code 0x1200, varint-encoded bytes: [0x80, 0x24]
     - `k256` (compressed, 33 byte key length): `secp256k1-pub`, code 0xE7, varint bytes: [0xE7, 0x01]
-- Encode the combined bytes with `base58btc`, yielding a string
+- Encode the combined bytes with with `base58btc`, and prefix with a `z` character, yielding a multibase-encoded string
 
 The decoding process is the same in reverse, using the identified curve type as context.
 
@@ -48,6 +48,21 @@ To encode a key as a `did:key` identifier, use the above multibase encoding, and
 
 Note that there is a variant legacy multibase encoding described in the [atproto DID specification document](/specs/did), which does not include a multicodec type value, and uses uncompressed byte encoding of keys. This format is deprecated.
 
+### Encoded Examples
+
+A P-256 public key, encoded in multibase (with multicodec), and as `did:key`:
+
+```
+zDnaembgSGUhZULN2Caob4HLJPaxBh92N7rtH21TErzqf8HQo
+did:key:zDnaembgSGUhZULN2Caob4HLJPaxBh92N7rtH21TErzqf8HQo
+```
+
+A K-256 public key, encoded in multibase (with multicodec), and as `did:key`:
+
+```
+zQ3shqwJEJyMBsBXCWyCBpUBMqxcon9oHB7mCvx4sSpMdLJwc
+did:key:zQ3shqwJEJyMBsBXCWyCBpUBMqxcon9oHB7mCvx4sSpMdLJwc
+```
 
 ## Usage and Implementation Guidelines
 
