@@ -99,7 +99,7 @@ Note that a valid URL doesn't mean the the PDS itself is currently functional or
 
 ## Representation of Public Keys
 
-The atproto cryptographic systems are described in [Cryptography](/specs/crypto), including details of byte and string encoding of public keys.
+The atproto cryptographic systems are described in [Cryptography](/specs/cryptography), including details of byte and string encoding of public keys.
 
 Public keys in DID documents under `verificationMethod`, including atproto signing keys, are represented as an object with the following fields:
 
@@ -108,7 +108,7 @@ Public keys in DID documents under `verificationMethod`, including atproto signi
 - `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
 - `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format (with multicodec type indicator, and "compressed" key bytes)
 
-The `publicKeyMultibase` format for `Multikey` is the same encoding scheme as used with `did:key`, but without the `did:key:` prefix. See [Cryptography](/specs/crypto) for details.
+The `publicKeyMultibase` format for `Multikey` is the same encoding scheme as used with `did:key`, but without the `did:key:` prefix. See [Cryptography](/specs/cryptography) for details.
 
 Note that there is not yet a formal W3C standard for using P-256 public keys in DID `verificationMethod` sections, but that the `Multikey` standard does clarify what the encoding encoding should be for this key type.
 
