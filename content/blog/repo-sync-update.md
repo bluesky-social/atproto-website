@@ -1,6 +1,6 @@
 ---
 title: Updates to Repository Sync Semantics
-summary: Test
+summary: We’re excited to announce that we’re rolling out a new version of atproto repos that removes history from the canonical structure, and replaces it with a logical clock.
 date: Aug 24, 2023
 ---
 # Updates to Repository Sync Semantics
