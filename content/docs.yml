@@ -71,6 +71,8 @@ community:
   - name: Groups
     href: /community/groups
 blog:
+  - name: Updates to Repository Sync Semantics
+    href: /blog/repo-sync-update
   - name: Posting via the Bluesky API
     href: /blog/create-post
   - name: "Featured Community Project: SkyFeed"
