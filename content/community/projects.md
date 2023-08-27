@@ -169,6 +169,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [ai bot](https://bsky.app/profile/did:plc:4hqjfn7m6n5hno3doamuhgef) that reply on command and chat by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
 - [Score My Wordle](https://bsky.app/profile/did:plc:wems3hfqqjsfenrrd325q6zo) ([GitHub](https://github.com/shaneafsar/wordlescorer/)), provides Wordle stats and scores across Bluesky, Mastodon, and Twitter, by [@shaneafsar.com](https://bsky.app/profile/did:plc:ksl6jmkhz7qli2ywletvvm2z)
 - [Rijden de Treinen](https://bsky.app/profile/did:plc:ijgkhvxpubqao7yiwtbzpyrm), posts train disruptions in the Netherlands, by [@djiwie.bsky.social](https://bsky.app/profile/did:plc:kvbm4te3fersn2nrxukajsql)
+- [Adopt a Pet](https://bsky.app/profile/did:plc:huey5xufsv67u3fmmtatj2ox), posts an adoptable pet every 10 minutes, by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 
 ### Disclaimer
 
