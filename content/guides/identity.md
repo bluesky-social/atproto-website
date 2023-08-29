@@ -163,13 +163,13 @@ We can now communicate with `https://pds.com` to access Alice's data. The `https
 
 ### Example: Self-hosted
 
-Let's consider a self-hosting scenario. If it's using did:plc, it would look something like:
+Let's consider a self-hosting scenario. If it's using `did:plc`, it would look something like:
 
 - The handle: `alice.com`
 - The DID: `did:plc:12345`
 - The hosting service: `https://alice.com`
 
-However, **if the self-hoster is confident they will retain ownership of the domain name**, they can use did:web instead of did:plc:
+However, **if the self-hoster is confident they will retain ownership of the domain name**, they can use `did:web` instead of `did:plc`:
 
 - The handle: `alice.com`
 - The DID: `did:web:alice.com`
@@ -181,7 +181,7 @@ We call `com.atproto.identity.resolveHandle()` on `alice.com` to get the DID.
 await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:web:alice.com'}
 ```
 
-We then resolve using did:web:
+We then resolve using `did:web`:
 
 ```typescript
 await didWeb.resolve('did:web:alice.com') /* => {
