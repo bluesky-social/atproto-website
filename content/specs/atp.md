@@ -43,7 +43,7 @@ These specifications cover most details as implemented in Bluesky's reference im
 
 **Account Migration:** the identity and repository systems were designed to enable easy migration of accounts between PDS service providers, even in the face of a non-cooperative service provider, without impact on the social graph. Some details have not been worked out yet: optional PDS-to-PDS repository transfer; downstream behavior during transfer grace periods; rate-limit norms to prevent network abuse; blob migration; etc.
 
-**Repository Sync:** the current repository structure and `com.atproto.sync.*` Lexicons include optional `rev` fields. These are used to do partial fetches of repository content "since" a previous revision. This mechanism is largely settled, but not specified here in detail.
+**Repository Sync:** the repository commit schema has a revision field, and the `com.atproto.sync.*` Lexicons can reference these via a `since` parameter to do partial fetches of repository content. This mechanism is largely settled, but not yet specified here in detail.
 
 **Repository Event Stream:** the `com.atproto.sync.subscribeRepos` subscription Lexicon is a core part of the protocol and the details need to be described in more detail. This includes the semantics of the "commit" message type, which includes both a "CAR slice" of new repository blocks, and an operation list.
 
