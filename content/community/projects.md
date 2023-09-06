@@ -17,23 +17,49 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 ## AT Protocol Implementations
 
-- [atproto](https://github.com/bluesky-social/atproto) (Typescript): this is the leading protocol implementation, developed by Bluesky PBLLC
-- [indigo](https://github.com/bluesky-social/indigo) (Go): not stable
-- [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
-- [adenosine](https://gitlab.com/bnewbold/adenosine) (Rust): not stable
-- [lexrpc](https://github.com/snarfed/lexrpc) (Python): not stable
-- [atprototools](https://github.com/ianklatzco/atprototools) (Python): new, not stable
-- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky) (Dart)
-- [bskyrb](https://github.com/ShreyanJain9/bskyrb) (Ruby): new, not stable
-- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
-- [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
-- [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
-- [picopds](https://github.com/DavidBuchanan314/picopds) (Python): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
-- [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
-- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
-- [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
-- [blue_factory](https://github.com/mackuba/blue_factory) (Ruby): implementation of a feed generator service
-- [FishyFlip](https://github.com/drasticactions/FishyFlip) (csharp): new, not stable
+#### TypeScript
+
+- [atproto](https://github.com/bluesky-social/atproto): this is the leading protocol implementation, developed by Bluesky PBC
+
+#### Go
+
+- [indigo](https://github.com/bluesky-social/indigo): not stable
+
+#### Python
+
+- [atproto](https://github.com/MarshalX/atproto): new, not stable
+- [lexrpc](https://github.com/snarfed/lexrpc): not stable
+- [atprototools](https://github.com/ianklatzco/atprototools): new, not stable
+- [Chitose](https://github.com/mnogu/chitose): new, not stable
+- [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
+- [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
+- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
+
+#### Dart
+
+- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
+
+#### C#
+
+- [FishyFlip](https://github.com/drasticactions/FishyFlip): new, not stable
+
+#### Java
+
+- [bsky4j](https://github.com/uakihir0/bsky4j): new, not stable
+
+#### PHP
+
+- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
+
+
+#### Ruby
+
+- [bskyrb](https://github.com/ShreyanJain9/bskyrb): new, not stable
+
+#### Rust
+
+- [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
+
 
 ## Tutorials and Guides
 
