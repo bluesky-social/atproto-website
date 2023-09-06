@@ -17,29 +17,13 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 ## AT Protocol Implementations
 
-#### C#
+#### TypeScript
 
-- [FishyFlip](https://github.com/drasticactions/FishyFlip): new, not stable
-
-#### Dart
-
-- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
+- [atproto](https://github.com/bluesky-social/atproto): this is the leading protocol implementation, developed by Bluesky PBC
 
 #### Go
 
 - [indigo](https://github.com/bluesky-social/indigo): not stable
-
-#### Java
-
-- [bsky4j](https://github.com/uakihir0/bsky4j): new, not stable
-
-#### JavaScript
-
-- [atproto](https://github.com/bluesky-social/atproto) (TypeScript): this is the leading protocol implementation, developed by Bluesky PBLLC
-
-#### PHP
-
-- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
 
 #### Python
 
@@ -50,6 +34,23 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
+
+#### Dart
+
+- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
+
+#### C#
+
+- [FishyFlip](https://github.com/drasticactions/FishyFlip): new, not stable
+
+#### Java
+
+- [bsky4j](https://github.com/uakihir0/bsky4j): new, not stable
+
+#### PHP
+
+- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
+
 
 #### Ruby
 
