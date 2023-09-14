@@ -42,11 +42,11 @@ lexicons:
   - name: com.atproto
     href: /lexicons/com-atproto
 community:
-  - name: Quick Start Guide
+  - name: Typescript Quick Start
     href: /community/quick-start
   - name: Projects
     href: /community/projects
-  - name: Groups
+  - name: Community Groups
     href: /community/groups
 blog:
   - name: Updates to Repository Sync Semantics

@@ -1,5 +1,5 @@
 ---
-title: Quick Start Guide
+title: Typescript Quick Start
 summary: Get started with the atproto API.
 ---
 
