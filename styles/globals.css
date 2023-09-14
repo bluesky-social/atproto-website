@@ -25,6 +25,14 @@ mark {
   text-decoration: none;
 }
 
+.url-link {
+  font-size: 80%;
+  margin-left: 0.4rem;
+  color: #757575;
+  text-decoration: none;
+  display: inline-block;
+}
+
 .todo {
   position: relative;
   border-radius: 0.5rem;
