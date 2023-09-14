@@ -26,12 +26,12 @@ const nextConfig = {
       // legacy docs
       {
         source: '/lexicons/atproto-com',
-        destination: '/lexicons/com-atproto-identity',
+        destination: '/lexicons/com-atproto',
         permanent: false,
       },
       {
         source: '/lexicons/bsky-app',
-        destination: '/lexicons/app-bsky-actor',
+        destination: '/lexicons/app-bsky',
         permanent: false,
       },
       {
@@ -44,6 +44,76 @@ const nextConfig = {
         destination: 'https://github.com/bluesky-social/did-method-plc',
         permanent: false,
       },
+      {
+        source: '/lexicons/com-atproto-admin',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-identity',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-label',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-moderation',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-repo',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-server',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-sync',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/com-atproto-sync',
+        destination: '/lexicons/com-atproto',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-actor',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-embed',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-feed',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-graph',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-notification',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      },
+      {
+        source: '/lexicons/app-bsky-richtext',
+        destination: '/lexicons/app-bsky',
+        permanent: false,
+      }
     ]
   },
 }

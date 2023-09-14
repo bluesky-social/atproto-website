@@ -37,32 +37,10 @@ specs:
   - name: URI Scheme
     href: /specs/at-uri-scheme
 lexicons:
-  - name: com.atproto.admin
-    href: /lexicons/com-atproto-admin
-  - name: com.atproto.identity
-    href: /lexicons/com-atproto-identity
-  - name: com.atproto.label
-    href: /lexicons/com-atproto-label
-  - name: com.atproto.moderation
-    href: /lexicons/com-atproto-moderation
-  - name: com.atproto.repo
-    href: /lexicons/com-atproto-repo
-  - name: com.atproto.server
-    href: /lexicons/com-atproto-server
-  - name: com.atproto.sync
-    href: /lexicons/com-atproto-sync
-  - name: app.bsky.actor
-    href: /lexicons/app-bsky-actor
-  - name: app.bsky.embed
-    href: /lexicons/app-bsky-embed
-  - name: app.bsky.feed
-    href: /lexicons/app-bsky-feed
-  - name: app.bsky.graph
-    href: /lexicons/app-bsky-graph
-  - name: app.bsky.notification
-    href: /lexicons/app-bsky-notification
-  - name: app.bsky.richtext
-    href: /lexicons/app-bsky-richtext
+  - name: app.bsky
+    href: /lexicons/app-bsky
+  - name: com.atproto
+    href: /lexicons/com-atproto
 community:
   - name: Quick Start Guide
     href: /community/quick-start
