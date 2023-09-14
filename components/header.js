@@ -57,7 +57,7 @@ const ExternalLinks = [
   },
   {
     name: 'Bluesky Social',
-    href: 'https://bsky.app/profile/bsky.app',
+    href: 'https://bsky.app/profile/atproto.com',
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faSquare} className={className} />
     ),
