@@ -7,7 +7,7 @@ date: Aug 11, 2023
 # Posting via the Bluesky API
 *Published on: Aug 11, 2023.*
 
-*This blog post may become outdated as new features are added to [atproto]((https://atproto.com)) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
+*This blog post may become outdated as new features are added to [atproto](https://atproto.com) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
 
 ---
 First, you'll need a [Bluesky account](https://atproto.com/blog/call-for-developers). We'll create a session with [HTTPie](https://httpie.io/docs/cli/pypi) (`brew install httpie`).
