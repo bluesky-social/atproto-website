@@ -5,11 +5,7 @@ import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
-  main: [
-    { name: 'Docs', href: '/docs' },
-    { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
-    { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },
-  ],
+  main: [],
   social: [
     {
       name: 'Bluesky Website',
