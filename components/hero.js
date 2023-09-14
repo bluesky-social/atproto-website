@@ -21,16 +21,16 @@ export default function Hero() {
             </p>
             <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
-                <Link href="https://bsky.app">
+                <Link href="/guides/overview">
                   <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg focus-visible:outline outline-yellow-500 outline-2">
-                    Join the waitlist
+                    Protocol Overview
                   </a>
                 </Link>
               </div>
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                <Link href="/docs">
+                <Link href="/specs/atp">
                   <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-white px-8 py-3 text-base font-medium text-blue-600 hover:bg-gray-50 md:py-4 md:px-10 md:text-lg focus-visible:outline outline-yellow-500 outline-2">
-                    Docs
+                    Specification
                   </a>
                 </Link>
               </div>
