@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
-import { faSquare } from '@fortawesome/free-solid-svg-icons'
+import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 import { DocSearch } from '@docsearch/react';
 import '@docsearch/css';
 
@@ -46,6 +46,13 @@ const ExternalLinks = [
     href: 'https://github.com/bluesky-social',
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faGithub} className={className} />
+    ),
+  },
+  {
+    name: 'Discuss',
+    href: 'https://github.com/bluesky-social/atproto/discussions',
+    icon: ({ className }) => (
+      <FontAwesomeIcon icon={faComments} className={className} />
     ),
   },
   {

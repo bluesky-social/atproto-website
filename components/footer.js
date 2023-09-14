@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
-import { faSquare } from '@fortawesome/free-solid-svg-icons'
+import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
   main: [
@@ -28,6 +28,13 @@ const navigation = {
       href: 'https://github.com/bluesky-social',
       icon: ({ className }) => (
         <FontAwesomeIcon icon={faGithub} className={className} />
+      ),
+    },
+    {
+      name: 'Discuss',
+      href: 'https://github.com/bluesky-social/atproto/discussions',
+      icon: ({ className }) => (
+        <FontAwesomeIcon icon={faComments} className={className} />
       ),
     },
     {
