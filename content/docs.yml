@@ -49,6 +49,8 @@ community:
   - name: Groups
     href: /community/groups
 blog:
+  - name: Rate Limits, PDS Distribution v3, and More
+    href: /blog/rate-limits-pds-v3
   - name: Updates to Repository Sync Semantics
     href: /blog/repo-sync-update
   - name: Posting via the Bluesky API
