@@ -46,7 +46,7 @@ We’re adding a rate limit for the number of created actions per DID. **These n
 
 To reiterate, these limits should be high enough to affect no human users, but low enough to constrain abusive or spammy bots. We decided to release this new rate limit immediately instead of giving developers an advance notice to secure the network from abusive behavior as soon as possible, especially since bad actors might take this blog post as an open invite!
 
-Per this system, an account may create at most 1,666 records per hour and 11,666 records per day. That means an account can like up to 1,666 records in one hour with no problem. We took our most active human users into account when we set this threshold (you surpassed our expectations!). 
+Per this system, an account may create at most 1,666 records per hour and 11,666 records per day. That means an account can like up to 1,666 records in one hour with no problem. We took the most active human users on the network into account when we set this threshold (you surpassed our expectations!).
 
 In case you missed it, in [August](https://bsky.app/profile/atproto.com/post/3k5ivi6or4d2r), we added some other rate limits as well. 
 
