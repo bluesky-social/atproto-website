@@ -8,7 +8,7 @@ export default function CTA() {
           <span className="block">Join the Federated Sandbox</span>
         </h2>
         <p className="mt-4 text-lg leading-6 text-blue-200">
-          Self-hosted, no waitlist or invite code required. The production network will open to federation soon.
+          No waitlist or invite code required to join this self-hosted sandbox environment. The production network will open to federation soon.
           <br />
         </p>
         <Link href="/blog/federation-developer-sandbox">

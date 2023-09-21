@@ -42,7 +42,7 @@ lexicons:
   - name: com.atproto
     href: /lexicons/com-atproto
 community:
-  - name: Typescript Quick Start
+  - name: Typescript Quick Start Guide
     href: /community/quick-start
   - name: Projects
     href: /community/projects
