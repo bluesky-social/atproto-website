@@ -2,14 +2,10 @@ import Link from 'next/link'
 import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
-import { faSquare } from '@fortawesome/free-solid-svg-icons'
+import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
-  main: [
-    { name: 'Docs', href: '/docs' },
-    { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
-    { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },
-  ],
+  main: [],
   social: [
     {
       name: 'Bluesky Website',
@@ -31,8 +27,15 @@ const navigation = {
       ),
     },
     {
+      name: 'Discuss',
+      href: 'https://github.com/bluesky-social/atproto/discussions',
+      icon: ({ className }) => (
+        <FontAwesomeIcon icon={faComments} className={className} />
+      ),
+    },
+    {
       name: 'Bluesky Social',
-      href: 'https://bsky.app/profile/bsky.app',
+      href: 'https://bsky.app/profile/atproto.com',
       icon: ({ className }) => (
         <FontAwesomeIcon icon={faSquare} className={className} />
       ),

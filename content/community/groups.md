@@ -1,6 +1,6 @@
 ---
 title: Community Groups
-summary: Get connected to the atproto dev community.
+summary: Get connected to the atproto dev community, online or in-person
 ---
 
 # Community Groups
