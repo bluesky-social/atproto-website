@@ -127,6 +127,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/did:plc:iijrtk7ocored6zuziwmqq3c)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/did:plc:fdme4gb7mu7zrie7peay7tst)
 - [Sky Follower Bridge](https://github.com/kawamataryo/sky-follower-bridge), instantly find and follow Twitter followers on Bluesky, by [@kawamataryo.bsky.social](https://bsky.app/profile/did:plc:hcp53er6pefwijpdceo5x4bp)
+- [bluesky-sms-service](https://github.com/kylefmohr/bluesky-sms-service), allows you to post via SMS, by [@assf.art](https://bsky.app/profile/did:plc:os4uvzzv76z34z6qhgylfnqm)
 
 ## Custom Feeds
 
