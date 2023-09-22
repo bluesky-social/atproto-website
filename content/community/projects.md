@@ -94,7 +94,6 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 ### iOS
 
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
-- [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
 
 ### Android
