@@ -78,6 +78,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Klearsky](https://klearsky.pages.dev/) by [@mimonelu.net](https://bsky.app/profile/did:plc:ilxxgyz7oz7mysber4omeqrg)
 - [Laika](https://laika-bluesky.web.app/) by [@makoto.bsky.social](https://bsky.app/profile/did:plc:tr5cijtwcpl2dqrtmjsmmcow)
 - [Skylight](https://penpenpng.github.io/skylight) by [@penpenpng.bsky.social](https://bsky.app/profile/did:plc:ahj2yuo63gaxyhbgn5ai6jt2)
+- [The Blue](https://the-blue.shino3.net) by [@shino3.bsky.social](https://bsky.app/profile/did:plc:rpwpuzu2yyiuufm3232d7pm5)
 - [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite🪁](https://kite.black) by [@arta.bsky.social](https://bsky.app/profile/did:plc:cqednx7rqstpsgdgec4byd6g)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/did:plc:gtbohpin5op22ispn4gdnt7n)
