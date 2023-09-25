@@ -178,7 +178,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
 - [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
-- [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/mbanusic.com)
+- [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
 
 ## Bots
 
