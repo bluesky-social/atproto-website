@@ -82,7 +82,6 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite🪁](https://kite.black) by [@arta.bsky.social](https://bsky.app/profile/did:plc:cqednx7rqstpsgdgec4byd6g)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/did:plc:gtbohpin5op22ispn4gdnt7n)
-- [Flat](https://flat-bs.vercel.app/) ([GitHub](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/did:plc:dyee7keje7ekwiteykjapw5t)
 - [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/did:plc:e2nwnarqo7kdbt7ngr3gejp6)
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/did:plc:5t2x7mmh4ofspj7apwpgif5l)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/did:plc:hnbglrwshrdspimiliyoohhu)
@@ -96,7 +95,6 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 ### iOS
 
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
-- [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
 
 ### Android
@@ -180,6 +178,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
 - [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
+- [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
 
 ## Bots
 
