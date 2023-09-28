@@ -86,49 +86,78 @@ It is crucial to validate the handle bidirectionally, by resolving the handle to
 
 The DID is the primary account identifier, and an account whose DID document does not contain a valid and confirmed handle can still, in theory, participate in the atproto ecosystem. Software should be careful to either not display any handle for such account, or obviously indicate that any handle associated with it is invalid.
 
-The public **signing key** for the account is found under the `verificationMethod` array, in an object with `id` matching `#atproto`, and the `controller` matching the DID itself. The first valid atproto signing key in the array should be used, and any others ignored. The `type` field will indicate the cryptographic curve type, and the `publicKeyMultibase` field will be the public key in multibase encoding. See below for details for parsing these fields.
+The public **signing key** for the account is found under the `verificationMethod` array, in an object with `id` ending `#atproto`, and the `controller` matching the DID itself. The first valid atproto signing key in the array should be used, and any others ignored. The `type` field will indicate the cryptographic curve type, and the `publicKeyMultibase` field will be the public key in multibase encoding. See below for details for parsing these fields.
 
 A valid signing key is required for atproto functionality, and an account with no valid key in their DID document is broken.
 
-The **PDS service network location** for the account is found under the `service` array, with `id` matching `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
+The **PDS service network location** for the account is found under the `service` array, with `id` ending `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
 
-A working PDS is required for atproto functionality, and an account with no valid PDS location in their DID document is broken.
+A working PDS is required for atproto account functionality, and an account with no valid PDS location in their DID document is broken.
 
 Note that a valid URL doesn't mean the the PDS itself is currently functional or hosting content for the account. During account migrations or server downtime there may be windows when the PDS is not accessible, but this does not mean the account should immediately be considered broken or invalid.
 
-## Public Key Encoding
 
-The atproto cryptographic systems are described in the [AT Protocol Overview](/specs/atp).
+## Representation of Public Keys
+
+The atproto cryptographic systems are described in [Cryptography](/specs/cryptography), including details of byte and string encoding of public keys.
 
 Public keys in DID documents under `verificationMethod`, including atproto signing keys, are represented as an object with the following fields:
 
-- `id` (string, required): always `#atproto` for atproto signing keys
+- `id` (string, required): the DID followed by an identifying fragment. Use `#atproto` as the fragment for atproto signing keys
+- `type` (string, required): the fixed string `Multikey`
+- `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
+- `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format (with multicodec type indicator, and "compressed" key bytes)
+
+The `publicKeyMultibase` format for `Multikey` is the same encoding scheme as used with `did:key`, but without the `did:key:` prefix. See [Cryptography](/specs/cryptography) for details.
+
+Note that there is not yet a formal W3C standard for using P-256 public keys in DID `verificationMethod` sections, but that the `Multikey` standard does clarify what the encoding encoding should be for this key type.
+
+
+### Legacy Representation
+
+Some older DID documents, which may still appear in `did:web` docs, had slightly different key encodings and `verificationMethod` syntax. Implementations may support these older DID documents during a transition period, but the intentent is to require DID specification compliance going forward.
+
+The older `verificationMethod` for atproto signing keys contained:
+
+- `id` (string, required): the fixed string `#atproto`, without the full DID included
 - `type` (string, required): a fixed name identifying the key's curve type
     - `p256`: `EcdsaSecp256r1VerificationKey2019` (note the "r")
     - `k256`: `EcdsaSecp256k1VerificationKey2019` (note the "k")
 - `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
-- `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format
+- `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format (*without* multicodec, and *uncompressed* key bytes)
+
+Note that the `EcdsaSecp256r1VerificationKey2019` type is not a final W3C standard.
+
+The `EcdsaSecp256r1VerificationKey2019` `verificationMethod` is not a final W3C standard. We will move to whatever ends up standardized by W3C for representing P-256 public keys with `publicKeyMultibase`. This may mean a transition to `Multikey`, and we would transition K-256 representations to that `type` as well.
 
 A summary of the multibase encoding in this context:
 
-- Start with the full public key bytes. Do not use the "compressed" or "compact" representation (unlike for `did:key`, described below)
+- Start with the full public key bytes. Do not use the "compressed" or "compact" representation (unlike for `did:key` or `Multikey` encoding)
+- Do *not* prefix with a multicodec value indicating the key type
 - Encode the key bytes with `base58btc`, yielding a string
 - Add the character `z` as a prefix, to indicate the multibase, and include no other multicodec indicators
 
 The decoding process is the same in reverse, using the curve type as context.
 
-As an internal detail of the DID PLC method, the W3C-standardized `did:key` encoding is used to represent public keys in DID PLC operations. Software only needs to process keys in this format if they are trying to validate PLC operation chains, but the details are described here anyways.
+Here is an example of a single public key encoded in the legacy and current formats:
 
-This encoding includes metadata about the type of key, so they can be parsed and used unambiguously. The encoding process is:
+```
+// legacy multibase encoding of K-256 public key
+{
+    "id": ...,
+    "controller": ...,
+    "type": "EcdsaSecp256k1VerificationKey2019",
+    "publicKeyMultibase": "zQYEBzXeuTM9UR3rfvNag6L3RNAs5pQZyYPsomTsgQhsxLdEgCrPTLgFna8yqCnxPpNT7DBk6Ym3dgPKNu86vt9GR"
+}
 
-- Encode the public key curve "point" as bytes. Be sure to use the smaller "compact" or "compressed" representation. This is usually easy for `k256`, but might require a special argument or configuration for `p256` keys
-- Prepend the appropriate curve multicodec value, as varint-encoded bytes, in front of the key bytes:
-    - `p256` (compressed, 33 byte key length): `p256-pub`, code 0x1200, varint-encoded bytes: [0x80, 0x24]
-    - `k256` (compressed, 33 byte key length): `secp256k1-pub`, code 0xE7, varint bytes: [0xE7, 0x01]
-- Encode the combined bytes with `base58btc`, yielding a string
-- Add `did:key:` as a prefix, forming a DID Key identifier string
-
-The decoding process is the same in reverse, using the identified curve type as context.
+// preferred multibase encoding of same K-256 public key
+{
+    "id": ...,
+    "controller": ...,
+    "type": "Multikey",
+    "publicKeyMultibase": "zQ3shXjHeiBuRCKmM36cuYnm7YEMzhGnCmCyW92sRJ9pribSF"
+}
+```
 
 
 ## Usage and Implementation Guidelines
@@ -139,11 +168,8 @@ While longer DIDs are supported in the protocol, a good best practice is to use 
 
 DIDs are case-sensitive. While the currently-supported methods are *not* case sensitive, and could be safely lowercased, protocol implementations should reject DIDs with invalid casing. It is permissible to attempt case normalization when receiving user-controlled input, such as when parsing public URL path components, or text input fields.
 
-
 ## Possible Future Changes
 
-The hard maximum DID length limit may be reduced, at the protocol level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
+The hard maximum DID length limit may be reduced, at the protocol syntax level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
 
 There is a good chance that the set of "blessed" DID methods will slowly expand over time.
-
-The `EcdsaSecp256r1VerificationKey2019` `verificationMethod` is not a final W3C standard. We will move to whatever ends up standardized by W3C for representing P-256 public keys with `publicKeyMultibase`. This may mean a transition to `Multikey`, and we would transition K-256 representations to that `type` as well.
