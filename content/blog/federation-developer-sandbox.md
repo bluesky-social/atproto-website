@@ -93,7 +93,7 @@ We are running three services: PLC, BGS, Bluesky "App View"
 
 **Hostname:** `plc.bsky-sandbox.dev`
 
-**Code:** https://github.com/bluesky-social/did-method-plc
+**Code:** https://github.com/did-method-plc/did-method-plc
 
 PLC is the default DID provider for the network. DIDs are the root of your identity in the network. Sandbox PLC functions exactly the same as production PLC, but it is run as a separate service with a separate dataset. The DID resolution client in the self-hosted PDS package is set up to talk the correct PLC service.
 
