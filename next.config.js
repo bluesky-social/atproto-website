@@ -41,7 +41,7 @@ const nextConfig = {
       },
       {
         source: '/specs/did-plc',
-        destination: 'https://github.com/bluesky-social/did-method-plc',
+        destination: 'https://github.com/did-method-plc/did-method-plc',
         permanent: false,
       },
       {

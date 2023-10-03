@@ -13,7 +13,7 @@ The AT Protocol uses [Decentralized Identifiers](https://en.wikipedia.org/wiki/D
 Currently, atproto supports two DID methods:
 
 - `did:web`, which is a W3C standard based on HTTPS (and DNS). The identifier section is a hostname. This method is supported in atproto to provide an independent alternative to `did:plc`. The method is inherently tied to the domain name used, and does not provide a mechanism for migration or recovering from loss of control of the domain name. In the context of atproto, only hostname-level `did:web` DIDs are supported: path-based DIDs are not supported. The same restrictions on top-level domains that apply to handles (eg, no `.arpa`) also apply to `did:web` domains. The special `localhost` hostname is allowed, but only in testing and development environments. Port numbers (with separating colon hex-encoded) are only allowed for `localhost`, and only in testing and development.
-- `did:plc`, which is a novel DID method developed by Bluesky. See the [did-method-plc](https://github.com/bluesky-social/did-method-plc) GitHub repository for details. Even though this method is referred to as "placeholder", it will be supported indefinitely.
+- `did:plc`, which is a novel DID method developed by Bluesky. See the [did-method-plc](https://github.com/did-method-plc/did-method-plc) GitHub repository for details. Even though this method is referred to as "placeholder", it will be supported indefinitely.
 
 In the future, a small number of additional methods may be supported. It is not the intention to support all or even many DID methods, even with the existence of universal resolver software.
 
