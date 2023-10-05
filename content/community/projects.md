@@ -51,10 +51,10 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
 
-
 #### Ruby
 
 - [bskyrb](https://github.com/ShreyanJain9/bskyrb): new, not stable
+- [minisky](https://github.com/mackuba/minisky): a minimal client for making requests to the Bluesky/AtProto API, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 
 #### Rust
 
