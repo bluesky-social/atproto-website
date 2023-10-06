@@ -68,7 +68,7 @@ mark {
   border-radius: 4px;
   width: 20%;
   font-size: 90%;
-  margin-right: 10px;
+  margin: 8px 10px 16px 0;
   transition: all 0.3s ease;
 }
 
