@@ -49,6 +49,8 @@ community:
   - name: Community Groups
     href: /community/groups
 blog:
+  - name: BGS and DID Document Formatting Changes
+    href: /blog/bgs-and-did-doc
   - name: Rate Limits, PDS Distribution v3, and More
     href: /blog/rate-limits-pds-v3
   - name: Updates to Repository Sync Semantics
