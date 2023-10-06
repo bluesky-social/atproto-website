@@ -33,6 +33,64 @@ mark {
   display: inline-block;
 }
 
+.dev-subscription {
+  font-size: 90%;
+  color: #757575;
+}
+
+.dev-subscription-footer {
+  font-size: 90%;
+  color: #757575;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.dev-subscription-bar {
+  border: 0;
+  height: 2px;
+  background: #333;
+  margin: 20px 0;
+}
+
+.email-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 50%;
+  font-size: 90%;
+  margin-right: 10px;
+  transition: all 0.3s ease;
+}
+
+.email-input-footer {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 20%;
+  font-size: 90%;
+  margin: 8px 10px 16px 0;
+  transition: all 0.3s ease;
+}
+
+.email-input:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.subscribe-button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.subscribe-button:hover {
+  background-color: #1c4ed8;
+}
+
 .todo {
   position: relative;
   border-radius: 0.5rem;

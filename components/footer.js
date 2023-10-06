@@ -1,3 +1,4 @@
+import DevMailingListSubscription from './mailing-list'
 import Link from 'next/link'
 import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -47,6 +48,7 @@ export default function Footer() {
   return (
     <footer className="bg-white">
       <div className="mx-auto max-w-7xl overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+        <DevMailingListSubscription isFooter={true}/>
         <nav
           className="-mx-5 -my-2 flex flex-wrap justify-center"
           aria-label="Bluesky website"
