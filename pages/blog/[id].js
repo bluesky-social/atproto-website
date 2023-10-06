@@ -1,6 +1,7 @@
 import Meta from '../../components/meta'
 import Header from '../../components/header'
 import Footer from '../../components/footer'
+import DevMailingListSubscription from '../../components/mailing-list'
 import Breadcrumbs from '../../components/breadcrumbs'
 import Alert from '../../components/alert'
 import CTA from '../../components/cta'
@@ -49,6 +50,7 @@ export default function Guide({ navigation, file }) {
             className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
             dangerouslySetInnerHTML={{ __html: file.bodyHTML }}
           ></div>
+          <DevMailingListSubscription isFooter={false}/>
           {file.todo ? (
             <div className="py-6">
               <Alert

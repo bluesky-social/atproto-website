@@ -7,7 +7,7 @@ date: Sep 15, 2023
 # Developer Updates: Rate Limits, PDS Distribution v3, and More
 *Published on: Sep 15, 2023*
 
-To get future blog posts directly in your email, you can now subscribe to Bluesky’s Developer Mailing List [here](https://docs.google.com/forms/d/e/1FAIpQLScWaZof-cBm8rhHbw2yc4je0BYsyhuyZYoSyD1Ugxqd0gVRHA/viewform).
+To get future blog posts directly in your email, you can now subscribe to Bluesky’s Developer Mailing List [here](/blog/rate-limits-pds-v3#subscribe-for-developer-updates).
 
 ### Adding Rate Limits
 
@@ -102,6 +102,6 @@ If that still isn’t working for you, file a support ticket through the app (�
 
 ### Subscribe for Developer Updates
 
-You can subscribe to Bluesky’s Developer Mailing List [here](https://docs.google.com/forms/d/e/1FAIpQLScWaZof-cBm8rhHbw2yc4je0BYsyhuyZYoSyD1Ugxqd0gVRHA/viewform) to receive future updates in your email. If you received your invite code from the [developer waitlist](https://atproto.com/blog/call-for-developers), you’re already subscribed. Each email will have the option to unsubscribe.
+You can subscribe to Bluesky’s Developer Mailing List below to receive future updates in your email. If you received your invite code from the [developer waitlist](https://atproto.com/blog/call-for-developers), you’re already subscribed. Each email will have the option to unsubscribe.
 
 We’ll continue to publish updates to our [technical blog](https://atproto.com/blog) as well as on the app from [@atproto.com](https://bsky.app/profile/atproto.com).
