@@ -1,6 +1,6 @@
 ---
 title: "Bluesky BGS and DID Document Formatting Changes"
-summary: The technical implementation of public blocks and some possibilities for more privacy preserving block implementations — an area of active research and experimentation. 
+summary:  The Bluesky AppView now consumes from a Bluesky BGS, instead of directly from the PDS. Also, we'll be updating the DID document public key syntax.
 date: Oct 6, 2023
 ---
 
