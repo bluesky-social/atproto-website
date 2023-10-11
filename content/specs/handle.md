@@ -45,10 +45,13 @@ The `.onion` TLD is a special case for Tor protocol hidden services. Resolution 
 
 To summarize the above, the initial list of disallowed TLDs includes:
 
-- `.local`
+- `.alt`
 - `.arpa`
-- `.localhost`
+- `.example`
 - `.internal`
+- `.invalid`
+- `.local`
+- `.localhost`
 - `.onion`
 
 The `.test` TLD is intended for examples, testing, and development. It may be used in atproto development, but should fail in real-world environments.

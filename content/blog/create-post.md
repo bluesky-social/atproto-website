@@ -70,7 +70,7 @@ Here is what a basic post record should look like, as a JSON object:
 }
 ```
 
-Bluesky posts are repository records with the [Lexicon type](https://atproto.com/lexicons/app-bsky-feed#appbskyfeedpost) `app.bsky.feed.post` — this just defines the schema for what a post looks like.
+Bluesky posts are repository records with the [Lexicon type](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/post.json) `app.bsky.feed.post` — this just defines the schema for what a post looks like.
 
 Each post requires these fields: `text` and `createdAt` (a timestamp).
 
@@ -155,7 +155,7 @@ Our goal is to turn the handle (`@atproto.com`) into a mention and the URL (`htt
              start=23^     end=35^            start=74^                          end=108^
 ```
 
-We then identify them in the facets array, using the _mention_ and _link_ feature types. (You can view the schema of a facet object [here](https://atproto.com/lexicons/app-bsky-richtext#appbskyrichtextfacet).) The post record will then look like this:
+We then identify them in the facets array, using the _mention_ and _link_ feature types. (You can view the schema of a facet object [here](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/richtext/facet.json).) The post record will then look like this:
 
 ```json
 {
