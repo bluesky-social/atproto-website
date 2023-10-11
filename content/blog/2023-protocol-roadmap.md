@@ -12,9 +12,7 @@ At a high level:
 * A series of related infrastructure and operational changes to Bluesky services are underway to ensure we can handle a large influx of content from federated instances in a resource and cost-efficient way.
 * We plan to submit future governance and formalization of the core protocol to an independent standards body. These are consensus processes relying on interest and support of a community of volunteers, and we have already done some initial outreach, but we expect to start conversations in earnest around the same time as opening up federation.
 
-Feel free to share your thoughts via Github Discussions [here](https://github.com/bluesky-social/atproto/discussions).
-
-<!-- TODO: update link to specific discussion thread just before posting -->
+Feel free to share your thoughts via Github Discussions [here](https://github.com/bluesky-social/atproto/discussions/1735).
 
 ## Getting to Federation
 
