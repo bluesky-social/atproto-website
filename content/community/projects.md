@@ -51,6 +51,9 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
 
+#### R
+
+- [atr](https://github.com/JBGruber/atr): auto-generated functions (unstable & unexposed) + user facing functions for selected endpoints (planned to be stable)
 
 #### Ruby
 
