@@ -57,7 +57,7 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          The AT Protocol is a networking technology created by to power the next generation of social applications.
+          The AT Protocol is a networking technology created to power the next generation of social applications.
           The initial reference application, {' '}
           <Link href="https://bsky.app">
             <a className="text-blue-600 hover:underline">bsky.app</a>
