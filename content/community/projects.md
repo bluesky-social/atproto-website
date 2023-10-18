@@ -91,7 +91,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 - [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
-- [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) schedule posts and threads. Crosspost to other platforms
+- [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
 
 ### iOS
 
