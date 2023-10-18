@@ -177,7 +177,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [atp tooling](https://blue.amazingca.dev/tools), cache and unfollow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/did:plc:e2nwnarqo7kdbt7ngr3gejp6)
 - [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/did:plc:4ee6oesrsbtmuln4gqsqf6fp)
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
-- [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [Skythread](https://blue.mackuba.eu/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
 - [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
 - [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
