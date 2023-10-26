@@ -2,7 +2,7 @@ import DevMailingListSubscription from './mailing-list'
 import Link from 'next/link'
 import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
+import { faXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
@@ -17,7 +17,7 @@ const navigation = {
       name: 'Twitter',
       href: 'https://twitter.com/bluesky',
       icon: ({ className }) => (
-        <FontAwesomeIcon icon={faTwitter} className={className} />
+        <FontAwesomeIcon icon={faXTwitter} className={className} />
       ),
     },
     {

@@ -9,7 +9,7 @@ import {
   PencilIcon
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 import { DocSearch } from '@docsearch/react';
 import '@docsearch/css';
@@ -38,7 +38,7 @@ const ExternalLinks = [
     name: 'Twitter',
     href: 'https://twitter.com/bluesky',
     icon: ({ className }) => (
-      <FontAwesomeIcon icon={faTwitter} className={className} />
+      <FontAwesomeIcon icon={faXTwitter} className={className} />
     ),
   },
   {
