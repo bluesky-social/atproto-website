@@ -1,11 +1,11 @@
 ---
-title: Quick Start Guide
+title: TypeScript Quick Start Guide
 summary: Get started with the atproto API.
 ---
 
 # Quick Start Guide
 
-Bluesky PBLLC maintains a TypeScript protocol implementation. The API is available for use [here](https://www.npmjs.com/package/@atproto/api?activeTab=readme).
+Bluesky PBC maintains a TypeScript protocol implementation. The API is available for use [here](https://www.npmjs.com/package/@atproto/api?activeTab=readme).
 
 To get started with this package, install:
 

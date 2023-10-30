@@ -17,7 +17,7 @@ To synthesize other standards, and define "handle" syntax specifically:
 
 - The overall handle must contain only ASCII characters, and can be at most 253 characters long (in practice, handles may be restricted to a slightly shorter length)
 - The overall handle is split in to multiple segments (referred to as "labels" in standards documents), separated by ASCII periods (`.`)
-- No proceeding or trailing ASCII periods are allowed, and there must be at least two segments. That is, "bare" top-level domains are not allowed as handles, even if valid "hostnames" and "DNS names." "Tailing dot" syntax for DNS names is not allowed for handles.
+- No proceeding or trailing ASCII periods are allowed, and there must be at least two segments. That is, "bare" top-level domains are not allowed as handles, even if valid "hostnames" and "DNS names." "Trailing dot" syntax for DNS names is not allowed for handles.
 - Each segment must have at least 1 and at most 63 characters (not including the periods). The allowed characters are ASCII letters (`a-z`), digits (`0-9`), and hyphens (`-`).
 - Segments can not start or end with a hyphen
 - The last segment (the "top level domain") can not start with a numeric digit
@@ -45,10 +45,13 @@ The `.onion` TLD is a special case for Tor protocol hidden services. Resolution 
 
 To summarize the above, the initial list of disallowed TLDs includes:
 
-- `.local`
+- `.alt`
 - `.arpa`
-- `.localhost`
+- `.example`
 - `.internal`
+- `.invalid`
+- `.local`
+- `.localhost`
 - `.onion`
 
 The `.test` TLD is intended for examples, testing, and development. It may be used in atproto development, but should fail in real-world environments.

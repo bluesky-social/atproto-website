@@ -10,8 +10,9 @@ import {
 } from '@heroicons/react/24/outline'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
-import { faSquare } from '@fortawesome/free-solid-svg-icons'
-
+import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
+import { DocSearch } from '@docsearch/react';
+import '@docsearch/css';
 
 
 const SiteSections = [
@@ -48,8 +49,15 @@ const ExternalLinks = [
     ),
   },
   {
+    name: 'Discuss',
+    href: 'https://github.com/bluesky-social/atproto/discussions',
+    icon: ({ className }) => (
+      <FontAwesomeIcon icon={faComments} className={className} />
+    ),
+  },
+  {
     name: 'Bluesky Social',
-    href: 'https://bsky.app/profile/bsky.app',
+    href: 'https://bsky.app/profile/atproto.com',
     icon: ({ className }) => (
       <FontAwesomeIcon icon={faSquare} className={className} />
     ),
@@ -77,41 +85,53 @@ export default function Header() {
     <Popover className="relative z-[20] bg-white">
       <header>
       <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
-        <div className="flex justify-start">
+      <div className="flex justify-start">
           <Link href="/">
-            <a>
-              <img className="h-10 w-auto" src="/logo.jpg" alt="The AT Protocol homepage" />
-            </a>
+              <a>
+                  <img className="h-10 w-auto" src="/logo.jpg" alt="The AT Protocol homepage" />
+              </a>
           </Link>
-        </div>
-        <div className="-my-2 -mr-2 md:hidden">
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-            <span className="sr-only">Open menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-          </Popover.Button>
-        </div>
-        <nav aria-label="AT Protocol" className="hidden space-x-10 md:flex">
-          {SiteSections.map((item, i) => (
-            <Link key={item.href} href={item.href}>
-              <a
-                title={item.name}
-                className="text-base font-medium text-gray-500 hover:text-gray-900"
-              >
-                {item.name}
-              </a>
-            </Link>
-          ))}
-        </nav>
-        <nav aria-label="External links" className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-          {ExternalLinks.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a title={item.name} className="ml-6">
-                <item.icon className="h-6 w-6" />
-              </a>
-            </Link>
-          ))}
-        </nav>
       </div>
+      <nav aria-label="AT Protocol" className="hidden space-x-10 md:flex">
+          {SiteSections.map((item, i) => (
+              <Link key={item.href} href={item.href}>
+                  <a
+                      title={item.name}
+                      className="text-base font-medium text-gray-500 hover:text-gray-900"
+                  >
+                      {item.name}
+                  </a>
+              </Link>
+          ))}
+      </nav>
+      <div className="flex items-center">
+      <nav aria-label="Search bar" className="flex justify-start">
+          <DocSearch className="justify-start"
+                  appId="Y5AKKROMIR"
+                  indexName="atproto-web"
+                  // public search key that can safely be used in front end code
+                  // used for search queries & listing indices
+                  apiKey="9b7e0221b5cfa0c83f10de66e365c511"
+          />
+      </nav>
+      <div className="-my-2 -mr-2 md:hidden">
+          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+              <span className="sr-only">Open menu</span>
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+          </Popover.Button>
+      </div>
+    </div>
+
+    <nav aria-label="External links" className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+        {ExternalLinks.map((item) => (
+            <Link key={item.href} href={item.href}>
+                <a title={item.name} className="ml-6">
+                    <item.icon className="h-6 w-6" />
+                </a>
+            </Link>
+        ))}
+    </nav>
+</div>
 
       <Transition
         as={Fragment}

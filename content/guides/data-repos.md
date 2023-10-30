@@ -11,7 +11,7 @@ tldr:
 
 A data repository is a collection of data published by a single user. Repositories are self-authenticating data structures, meaning each update is signed and can be verified by anyone.
 
-They are described in both depth in the [Repository specification](/specs/repository).
+They are described in more depth in the [Repository specification](/specs/repository).
 
 ## Data Layout
 

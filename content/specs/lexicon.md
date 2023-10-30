@@ -82,8 +82,8 @@ Type-specific fields:
 - `parameters` (object, optional): a schema definition with type `params`, describing the HTTP query parameters for this endpoint
 - `output` (object, optional): describes the HTTP response body
     - `description` (string, optional): short description
-    - `encoding` (string, required): MIME type for body contents
-    - `schema` (object, required): schema definition, either an `object`, a `ref`, or a `union` of refs
+    - `encoding` (string, required): MIME type for body contents. Use `application/json` for JSON responses.
+    - `schema` (object, optional): schema definition, either an `object`, a `ref`, or a `union` of refs. Used to describe JSON encoded responses, though schema is optional even for JSON responses.
 - `input` (object, optional, only for `procedure`): describes HTTP request body schema, with the same format as the `output` field
 - `errors` (array of objects, optional): set of string error codes which might be returned
     - `name` (string, required): short name for the error type, with no whitespace
@@ -269,46 +269,66 @@ A string type which is either a DID (type: did) or a handle (handle). Mostly use
 
 Full-precision date and time, with timezone information.
 
-Datetime format standards are notoriously flexible and overlapping. Datetime strings in atproto should meet the [intersecting](https://ijmacd.github.io/rfc3339-iso8601/) requirements of RFC 3339, ISO 8601, and the WHATWG HTML standard.
+This format is intended for use with computer-generated timestamps in the modern computing era (eg, after the UNIX epoch). If you need to represent historical or ancient events, ambiguity, or far-future times, a different format is probably more appropriate. Datetimes before the Current Era (year zero) as specifically disallowed.
 
-Best practice is to use UTC timezone, and represent this is a capitalized `Z` suffix. An upper-case `T` is required for separating the "date" and "time" parts.
+Datetime format standards are notoriously flexible and overlapping. Datetime strings in atproto should meet the [intersecting](https://ijmacd.github.io/rfc3339-iso8601/) requirements of the [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339), [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), and [WHATWG HTML](https://html.spec.whatwg.org/#dates-and-times) datetime standards.
+
+The character separating "date" and "time" parts must be an upper-case `T`.
+
+Timezone specification is required. It is *strongly* preferred to use the UTC timezone, and to represent the timezone with a simple capital `Z` suffix (lower-case is not allowed). While hour/minute suffix syntax (like `+01:00` or `-10:30`) is supported, "negative zero" (`-00:00`) is specifically disallowed (by ISO 8601).
 
 Whole seconds precision is required, and arbitrary fractional precision digits are allowed. Best practice is to use at least millisecond precision, and to pad with zeros to the generated precision (eg, trailing `:12.340Z` instead of `:12.34Z`). Not all datetime formatting libraries support trailing zero formatting. Both millisecond and microsecond precision have reasonable cross-language support; nanosecond precision does not.
 
 Implementations should be aware when round-tripping records containing datetimes of two ambiguities: loss-of-precision, and ambiguity with trailing fractional second zeros. If de-serializing Lexicon records in to native types, and then re-serializing, the string representation may not be the same, which could result in broken hash references, sanity check failures, or repository update churn. A safer thing to do is to deserialize the datetime as a simple string, which ensures round-trip re-serialization.
 
+Implementations "should" validate that the semantics of the datetime are valid. For example, a month or day `00` is invalid.
+
 Valid examples:
 
-```
-// preferred
+```text
+# preferred
 1985-04-12T23:20:50.123Z
 1985-04-12T23:20:50.123456Z
 1985-04-12T23:20:50.120Z
 1985-04-12T23:20:50.120000Z
 
-// supported
-1985-04-12T23:20:50.1235678912345Z
-1985-04-12T23:20:50.100Z
+# supported
+1985-04-12T23:20:50.12345678912345Z
 1985-04-12T23:20:50Z
 1985-04-12T23:20:50.0Z
 1985-04-12T23:20:50.123+00:00
 1985-04-12T23:20:50.123-07:00
-
 ```
 
 Invalid examples:
 
-```
-1985-04-12 23:20:50.123Z
-1985-04-12t23:20:50.123Z
-1985-04-12T23:20:50.123z
+```text
 1985-04-12
 1985-04-12T23:20Z
 1985-04-12T23:20:5Z
 1985-04-12T23:20:50.123
 +001985-04-12T23:20:50.123Z
 23:20:50.123Z
+-1985-04-12T23:20:50.123Z
+1985-4-12T23:20:50.123Z
+01985-04-12T23:20:50.123Z
+1985-04-12T23:20:50.123+00
+1985-04-12T23:20:50.123+0000
 
+# ISO-8601 strict capitalization
+1985-04-12t23:20:50.123Z
+1985-04-12T23:20:50.123z
+
+# RFC-3339, but not ISO-8601
+1985-04-12T23:20:50.123-00:00
+1985-04-12 23:20:50.123Z
+
+# timezone is required
+1985-04-12T23:20:50.123
+
+# syntax looks ok, but datetime is not valid
+1985-04-12T23:99:50.123Z
+1985-00-12T23:20:50.123Z
 ```
 
 ### `uri`

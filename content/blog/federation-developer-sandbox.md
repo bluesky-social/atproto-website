@@ -77,7 +77,7 @@ You are within your rights to disable Watchtower auto-updates, but we strongly e
 
 📣 This is a sandbox version of a **public broadcast protocol** - please do not share sensitive information.
 
-🤝 Help each other out! Respond to issues & discussions, chat in [Matrix](https://matrix.to/#/%23bluesky-dev:matrix.org) or the community-run [Discord](https://discord.gg/3srmDsHSZJ), etc.
+🤝 Help each other out! Respond to issues & discussions, chat in the community-run [Matrix](https://matrix.to/#/%23bluesky-dev:matrix.org) or [Discord](https://discord.gg/3srmDsHSZJ), etc.
 
 # Learn more about atproto federation
 
@@ -93,7 +93,7 @@ We are running three services: PLC, BGS, Bluesky "App View"
 
 **Hostname:** `plc.bsky-sandbox.dev`
 
-**Code:** https://github.com/bluesky-social/did-method-plc
+**Code:** https://github.com/did-method-plc/did-method-plc
 
 PLC is the default DID provider for the network. DIDs are the root of your identity in the network. Sandbox PLC functions exactly the same as production PLC, but it is run as a separate service with a separate dataset. The DID resolution client in the self-hosted PDS package is set up to talk the correct PLC service.
 

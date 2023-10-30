@@ -57,11 +57,12 @@ function FeaturesSection() {
           The Social Internet
         </p>
         <p className="mx-auto mt-5 max-w-prose text-xl text-gray-500">
-          The AT Protocol is a networking technology created by{' '}
-          <Link href="https://blueskyweb.xyz">
-            <a className="text-blue-600 hover:underline">Bluesky</a>
-          </Link>{' '}
-          to power the next generation of social applications.
+          The AT Protocol is a networking technology created to power the next generation of social applications.
+          The initial reference application, {' '}
+          <Link href="https://bsky.app">
+            <a className="text-blue-600 hover:underline">bsky.app</a>
+          </Link>,{' '}
+          provides a global-scale microblogging experience.
         </p>
         <div className="mt-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 text-center">

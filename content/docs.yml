@@ -37,40 +37,28 @@ specs:
   - name: URI Scheme
     href: /specs/at-uri-scheme
 lexicons:
-  - name: com.atproto.admin
-    href: /lexicons/com-atproto-admin
-  - name: com.atproto.identity
-    href: /lexicons/com-atproto-identity
-  - name: com.atproto.label
-    href: /lexicons/com-atproto-label
-  - name: com.atproto.moderation
-    href: /lexicons/com-atproto-moderation
-  - name: com.atproto.repo
-    href: /lexicons/com-atproto-repo
-  - name: com.atproto.server
-    href: /lexicons/com-atproto-server
-  - name: com.atproto.sync
-    href: /lexicons/com-atproto-sync
-  - name: app.bsky.actor
-    href: /lexicons/app-bsky-actor
-  - name: app.bsky.embed
-    href: /lexicons/app-bsky-embed
-  - name: app.bsky.feed
-    href: /lexicons/app-bsky-feed
-  - name: app.bsky.graph
-    href: /lexicons/app-bsky-graph
-  - name: app.bsky.notification
-    href: /lexicons/app-bsky-notification
-  - name: app.bsky.richtext
-    href: /lexicons/app-bsky-richtext
+  - name: app.bsky
+    href: /lexicons/app-bsky
+  - name: com.atproto
+    href: /lexicons/com-atproto
 community:
-  - name: Quick Start Guide
+  - name: Typescript Quick Start Guide
     href: /community/quick-start
   - name: Projects
     href: /community/projects
-  - name: Groups
+  - name: Community Groups
     href: /community/groups
 blog:
+  - name: Protocol Roadmap
+    href: /blog/2023-protocol-roadmap
+  - name: Building on atproto
+    href: /blog/building-on-atproto
+  - name: BGS and DID Document Formatting Changes
+    href: /blog/bgs-and-did-doc
+  - name: Rate Limits, PDS Distribution v3, and More
+    href: /blog/rate-limits-pds-v3
+  - name: Updates to Repository Sync Semantics
+    href: /blog/repo-sync-update
   - name: Posting via the Bluesky API
     href: /blog/create-post
   - name: "Featured Community Project: SkyFeed"

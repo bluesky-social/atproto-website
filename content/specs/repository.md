@@ -9,7 +9,7 @@ summary: Self-authenticating storage for public account content
 
 Public atproto content (**records**) is stored in per-account repositories (frequently shortened to **repo**). All currently active records are stored in the repository, and current repository contents are publicly available, but both content deletions and account deletions are fully supported.
 
-The repository data structure is content-addressed (a [Merkle-tree](https://en.wikipedia.org/wiki/Merkle_tree)), and every mutation of repository contents (eg, addition, removal, and updates to records) results in a new commit version. Commits are cryptographically signed, with rotatable signing keys, which allows recursive validation of content as a whole or in part.
+The repository data structure is content-addressed (a [Merkle-tree](https://en.wikipedia.org/wiki/Merkle_tree)), and every mutation of repository contents (eg, addition, removal, and updates to records) results in a new commit `data` hash value (CID). Commits are cryptographically signed, with rotatable signing keys, which allows recursive validation of content as a whole or in part.
 
 Repositories and their contents are canonically stored in binary [DAG-CBOR](https://ipld.io/docs/codecs/known/dag-cbor/) format, as a graph of [IPLD](https://ipld.io/docs/data-model/) data objects referencing each other by content hash (CID Links). Large binary blobs are not stored directly in repositories, though they are referenced by hash ([CID](https://github.com/multiformats/cid)). This includes images and other media objects. Repositories can be exported as [CAR](https://ipld.io/specs/transport/car/carv1/) files for offline backup, account migration, or other purposes.
 
@@ -18,9 +18,13 @@ In the atproto federation architecture, the authoritative location of an account
 In real-world use, it is expected that individual repositories will contain anywhere from dozens to millions of records.
 
 
-## Repo Data Structure (v2)
+## Repo Data Structure (v3)
 
-This describes version `2` of the repository binary format. Version `1` had a different MST fanout configuration, and an incompatible schema for commits and repository metadata. Version `1` is deprecated, no repositories in this format exist in the network, and implementations do not need to support it.
+This describes version `3` of the repository binary format.
+
+Version `2` had a slightly different commit object schema, but is mostly compatible with `3`.
+
+Version `1` had a different MST fanout configuration, and an incompatible schema for commits and repository metadata. Version `1` is deprecated, no repositories in this format exist in the network, and implementations do not need to support it.
 
 At a high level, a repository is a key/value mapping where the keys are path names (as strings) and the values are records (DAG-CBOR objects).
 
@@ -42,9 +46,10 @@ Note that repo paths for all records in the same collection are sorted together 
 The top-level data object in a repository is a signed commit. The IPLD schema fields are:
 
 - `did` (string, required): the account DID associated with the repo, in strictly normalized form (eg, lowercase as appropriate)
-- `version` (integer, required): fixed value of `2` for this repo format version
-- `prev` (CID link, nullable): an optional pointer (by hash) to the most recent previous commit in this repository. History is optional, and it is acceptable to publish a new commit with no `prev` pointer at any time, even if a previous commit did exists.
+- `version` (integer, required): fixed value of `3` for this repo format version
 - `data` (CID link, required): pointer to the top of the repo contents tree structure (MST)
+- `rev` (string, TID format, required): revision of the repo, used as a logical clock. Must increase monotonically. Recommend using current timestamp as TID; `rev` values in the "future" (beyond a fudge factor) should be ignored and not processed.
+- `prev` (CID link, optional, nullable): an *optional* pointer (by hash) to a previous commit object for this repository. Could be used to create a chain of history, but largely unused (included for v2 backwards compatibility).
 - `sig` (byte array, required): cryptographic signature of this commit, as raw bytes
 
 An UnsignedCommit data object has all the same fields except for `sig`. The process for signing a commit is to populate all the data fields, and then serialize the UnsignedCommit with DAG-CBOR. The output bytes are then hashed with SHA-256, and the binary hash output (without hex encoding) is then signed using the current "signing key" for the account. The signature is then stored as raw bytes in a commit object, along with all the other data fields.
@@ -91,7 +96,7 @@ When parsing MST data structures, the depth and sort order of keys should be ver
 
 The IPFS CID specification is very flexible, and supports a wide variety of hash types, a field indicating the type of content being linked to, and various string encoding options. These features are valuable to allow evolution of the repo format over time, but to maximize interoperability among implementations, only a specific "blessed" set of CID types are allowed.
 
-The blessed format for commit objects and MST node objects, when linking to commit objects (aka, `prev`), MST nodes (aka, `data`, or MST internal links), or records (aka, MST leaf nodes to records), is:
+The blessed format for commit objects and MST node objects, when linking to commit objects, MST nodes (aka, `data`, or MST internal links), or records (aka, MST leaf nodes to records), is:
 
 - CIDv1
 - Multibase: binary serialization within DAG-CBOR (or `base32` for JSON mappings)
@@ -131,8 +136,6 @@ When importing CAR files, the completeness of the repository structure should be
 
 
 ## Possible Future Changes
-
-Retaining version history via the `prev` link may be deprecated. In other words, in the future, every commit may be a rebase.
 
 An optional in-repo mechanism for storing multiple versions of the same record (by path) may be implemented. Eg, adding additional path field to indicate the version by CID, timestamp, or monotonically increasing version integer.
 

@@ -1,15 +1,12 @@
+import DevMailingListSubscription from './mailing-list'
 import Link from 'next/link'
 import { BuildingOfficeIcon } from '@heroicons/react/24/solid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter, faGithub } from '@fortawesome/free-brands-svg-icons'
-import { faSquare } from '@fortawesome/free-solid-svg-icons'
+import { faSquare, faComments } from '@fortawesome/free-solid-svg-icons'
 
 const navigation = {
-  main: [
-    { name: 'Docs', href: '/docs' },
-    { name: 'Bluesky', href: 'https://blueskyweb.xyz' },
-    { name: 'Jobs', href: 'https://blueskyweb.xyz/join/' },
-  ],
+  main: [],
   social: [
     {
       name: 'Bluesky Website',
@@ -31,8 +28,15 @@ const navigation = {
       ),
     },
     {
+      name: 'Discuss',
+      href: 'https://github.com/bluesky-social/atproto/discussions',
+      icon: ({ className }) => (
+        <FontAwesomeIcon icon={faComments} className={className} />
+      ),
+    },
+    {
       name: 'Bluesky Social',
-      href: 'https://bsky.app/profile/bsky.app',
+      href: 'https://bsky.app/profile/atproto.com',
       icon: ({ className }) => (
         <FontAwesomeIcon icon={faSquare} className={className} />
       ),
@@ -44,6 +48,7 @@ export default function Footer() {
   return (
     <footer className="bg-white">
       <div className="mx-auto max-w-7xl overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+        <DevMailingListSubscription isFooter={true}/>
         <nav
           className="-mx-5 -my-2 flex flex-wrap justify-center"
           aria-label="Bluesky website"
@@ -69,7 +74,7 @@ export default function Footer() {
           ))}
         </div>
         <p className="mt-8 text-center text-base text-gray-500">
-          &copy; {new Date().getFullYear()} Bluesky, PBLLC. All rights reserved.
+          &copy; {new Date().getFullYear()} Bluesky, PBC. All rights reserved.
         </p>
       </div>
     </footer>

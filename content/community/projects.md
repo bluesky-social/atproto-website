@@ -9,7 +9,7 @@ This is a partial list of community projects. Read instructions for how to submi
 
 ### App Passwords
 
-For the security of your account, when using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
+For the security of your account, when using any third-party clients, please generate an [app password](/specs/xrpc#app-passwords) at Settings > Advanced > App passwords.
 
 App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
@@ -17,24 +17,49 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 ## AT Protocol Implementations
 
-- [atproto](https://github.com/bluesky-social/atproto) (Typescript): this is the leading protocol implementation, developed by Bluesky PBLLC
-- [indigo](https://github.com/bluesky-social/indigo) (Go): not stable
-- [atproto](https://github.com/MarshalX/atproto) (Python): new, not stable
-- [adenosine](https://gitlab.com/bnewbold/adenosine) (Rust): not stable
-- [lexrpc](https://github.com/snarfed/lexrpc) (Python): not stable
-- [atprototools](https://github.com/ianklatzco/atprototools) (Python): new, not stable
-- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky) (Dart)
-- [bskyrb](https://github.com/ShreyanJain9/bskyrb) (Ruby): new, not stable
-- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky) (Python): new, not stable
-- [Chitose](https://github.com/mnogu/chitose) (Python): new, not stable
-- [arroba](https://github.com/snarfed/arroba) (Python): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
-- [picopds](https://github.com/DavidBuchanan314/picopds) (Python): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
-- [bsky4j](https://github.com/uakihir0/bsky4j) (Java): new, not stable
-- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon) (PHP): Parses and resolves Lexicon schemas; useful for code generation
-- [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
-- [blue_factory](https://github.com/mackuba/blue_factory) (Ruby): implementation of a feed generator service
-- [FishyFlip](https://github.com/drasticactions/FishyFlip) (csharp): new, not stable
-- [gokyuzu](https://github.com/kiliczsh/gokyuzu) (Python): not stable
+#### TypeScript
+
+- [atproto](https://github.com/bluesky-social/atproto): this is the leading protocol implementation, developed by Bluesky PBC
+
+#### Go
+
+- [indigo](https://github.com/bluesky-social/indigo): not stable
+
+#### Python
+
+- [atproto](https://github.com/MarshalX/atproto): new, not stable
+- [lexrpc](https://github.com/snarfed/lexrpc): not stable
+- [atprototools](https://github.com/ianklatzco/atprototools): new, not stable
+- [Chitose](https://github.com/mnogu/chitose): new, not stable
+- [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
+- [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
+- [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
+- [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
+- 
+#### Dart
+
+- [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
+
+#### C#
+
+- [FishyFlip](https://github.com/drasticactions/FishyFlip): new, not stable
+
+#### Java
+
+- [bsky4j](https://github.com/uakihir0/bsky4j): new, not stable
+
+#### PHP
+
+- [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
+
+#### Ruby
+
+- [bskyrb](https://github.com/ShreyanJain9/bskyrb): new, not stable
+- [minisky](https://github.com/mackuba/minisky): minimal client
+
+#### Rust
+
+- [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
 
 ## Tutorials and Guides
 
@@ -42,6 +67,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto starter kit](https://github.com/aliceisjustplaying/atproto-starter-kit), TypeScript/Node template, by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [How to build a Bluesky bot using ATProto and OpenAI API](https://ashevat.medium.com/how-to-build-a-bluesky-bot-using-atproto-and-openai-api-77a26a154b) by [@amir.blue](https://bsky.app/profile/did:plc:ua6usdc4hzvzjsokoenba4zt)
 - [Bluesky bot tutorial](https://github.com/emilyliu7321/bluesky-emoji-bot/blob/main/TUTORIAL.md) by [@emily.bsky.team](https://bsky.app/profile/did:plc:vjug55kidv6sye7ykr5faxxn)
+- [Getting started with #atdev](https://graysky.app/blog/2023-10-17-getting-started-atproto) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep)
 
 ## Clients
 
@@ -57,7 +83,6 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Ucho-ten](https://ucho-ten.net) by [@bisn.ucho-ten.net](https://bsky.app/profile/did:plc:txandrhc7afdozk6a2itgltm) and [@hota1024.com](https://bsky.app/profile/did:plc:qhnfzuuv33o7gggw6mmu2ks4)
 - [Kite🪁](https://kite.black) by [@arta.bsky.social](https://bsky.app/profile/did:plc:cqednx7rqstpsgdgec4byd6g)
 - [Sunrise](https://sunrise.li/auth/login) by [@telmo.is](https://bsky.app/profile/did:plc:gtbohpin5op22ispn4gdnt7n)
-- [Flat](https://flat-bs.vercel.app/) ([GitHub](https://github.com/sabigara/flat)) by [@sabigara.bsky.social](https://bsky.app/profile/did:plc:dyee7keje7ekwiteykjapw5t)
 - [Blue Wrapper](https://blue.amazingca.dev) by [@caleb.bsky.social](https://bsky.app/profile/did:plc:e2nwnarqo7kdbt7ngr3gejp6)
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/did:plc:5t2x7mmh4ofspj7apwpgif5l)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/did:plc:hnbglrwshrdspimiliyoohhu)
@@ -66,11 +91,12 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Langit](https://langit.pages.dev/) ([GitHub](https://github.com/intrnl/langit)) by [@intrnl.bsky.social](https://bsky.app/profile/did:plc:qezk54orevt3dtm4ijcyadnq)
 - [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 - [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
+- [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
+- [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
 
 ### iOS
 
 - [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
-- [Moot](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm), native iOS client by [@moot.social](https://bsky.app/profile/did:plc:3qom5jgzb6ny6ydnlsnmlhmm)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
 
 ### Android
@@ -86,7 +112,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### CLI
 
-- [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBLLC
+- [gosky](https://github.com/bluesky-social/indigo/tree/main/cmd/gosky) (Golang) developed by Bluesky PBC
 - [adenosine-cli](https://gitlab.com/bnewbold/adenosine/-/blob/main/adenosine-cli/README.md) (Rust) developed by [@bnewbold.bsky.team](https://bsky.app/profile/did:plc:44ybard66vv44zksje25o7dz)
 - [bsky](https://github.com/mattn/bsky) (Golang) developed by [@mattn.bsky.social](https://bsky.app/profile/did:plc:ituhatvv5pyz4rwsj4hfrslh)
 - [atr](https://github.com/syui/atr) (Rust) developed by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
@@ -101,6 +127,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/did:plc:iijrtk7ocored6zuziwmqq3c)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/did:plc:fdme4gb7mu7zrie7peay7tst)
 - [Sky Follower Bridge](https://github.com/kawamataryo/sky-follower-bridge), instantly find and follow Twitter followers on Bluesky, by [@kawamataryo.bsky.social](https://bsky.app/profile/did:plc:hcp53er6pefwijpdceo5x4bp)
+- [bluesky-sms-service](https://github.com/kylefmohr/bluesky-sms-service), allows you to post via SMS, by [@assf.art](https://bsky.app/profile/did:plc:os4uvzzv76z34z6qhgylfnqm)
 
 ## Custom Feeds
 
@@ -152,6 +179,9 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
 - [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
+- [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
+- [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
+- [SkySweeper](https://github.com/pojntfx/skysweeper), service which automatically deletes your old skeets from Bluesky, by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
 
 ## Bots
 
@@ -170,10 +200,11 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [ai bot](https://bsky.app/profile/did:plc:4hqjfn7m6n5hno3doamuhgef) that reply on command and chat by [@syui.ai](https://bsky.app/profile/did:plc:uqzpqmrjnptsxezjx4xuh2mn)
 - [Score My Wordle](https://bsky.app/profile/did:plc:wems3hfqqjsfenrrd325q6zo) ([GitHub](https://github.com/shaneafsar/wordlescorer/)), provides Wordle stats and scores across Bluesky, Mastodon, and Twitter, by [@shaneafsar.com](https://bsky.app/profile/did:plc:ksl6jmkhz7qli2ywletvvm2z)
 - [Rijden de Treinen](https://bsky.app/profile/did:plc:ijgkhvxpubqao7yiwtbzpyrm), posts train disruptions in the Netherlands, by [@djiwie.bsky.social](https://bsky.app/profile/did:plc:kvbm4te3fersn2nrxukajsql)
+- [Adopt a Pet](https://bsky.app/profile/did:plc:huey5xufsv67u3fmmtatj2ox), posts an adoptable pet every 10 minutes, by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 
 ### Disclaimer
 
-This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBLLC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging into their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
+This list of third-party developer clients is provided for informational purposes only. These clients are not affiliated with the Bluesky PBC company, unless otherwise indicated, and we do not endorse or guarantee their performance or security. Users should be aware that logging into their accounts through these third-party clients carries inherent risks, including the possibility of account compromise or data loss. It is important to only use third-party clients that are trusted and reputable. We strongly advise users to exercise caution and use these third-party clients at their own risk. Only log in to your account through a third-party client if you trust the developer and are confident in their ability to safeguard your account information.
 
 We are not responsible for any damage, loss, or unauthorized access to your account that may result from using these third-party clients. By using any of these clients, you acknowledge and accept these risks and limitations.
 
