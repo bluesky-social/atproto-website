@@ -9,7 +9,7 @@ This is a partial list of community projects. Read instructions for how to submi
 
 ### App Passwords
 
-For the security of your account, when using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
+For the security of your account, when using any third-party clients, please generate an [app password](/specs/xrpc#app-passwords) at Settings > Advanced > App passwords.
 
 App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
@@ -34,7 +34,8 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
-
+- [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
+- 
 #### Dart
 
 - [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
@@ -58,11 +59,11 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### Ruby
 
 - [bskyrb](https://github.com/ShreyanJain9/bskyrb): new, not stable
+- [minisky](https://github.com/mackuba/minisky): minimal client
 
 #### Rust
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
-
 
 ## Tutorials and Guides
 
@@ -70,6 +71,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [atproto starter kit](https://github.com/aliceisjustplaying/atproto-starter-kit), TypeScript/Node template, by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [How to build a Bluesky bot using ATProto and OpenAI API](https://ashevat.medium.com/how-to-build-a-bluesky-bot-using-atproto-and-openai-api-77a26a154b) by [@amir.blue](https://bsky.app/profile/did:plc:ua6usdc4hzvzjsokoenba4zt)
 - [Bluesky bot tutorial](https://github.com/emilyliu7321/bluesky-emoji-bot/blob/main/TUTORIAL.md) by [@emily.bsky.team](https://bsky.app/profile/did:plc:vjug55kidv6sye7ykr5faxxn)
+- [Getting started with #atdev](https://graysky.app/blog/2023-10-17-getting-started-atproto) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep)
 
 ## Clients
 
@@ -94,6 +96,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 - [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
+- [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
 
 ### iOS
 
