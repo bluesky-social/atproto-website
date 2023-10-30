@@ -34,7 +34,8 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
-
+- [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
+- 
 #### Dart
 
 - [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
@@ -59,7 +60,6 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### Rust
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
-
 
 ## Tutorials and Guides
 
