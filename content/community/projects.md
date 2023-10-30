@@ -34,7 +34,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [skyfall](https://github.com/mackuba/skyfall) (Ruby): new, not stable; only handles streaming from the firehose
 - [blue_factory](https://github.com/mackuba/blue_factory) (Ruby): implementation of a feed generator service
 - [FishyFlip](https://github.com/drasticactions/FishyFlip) (csharp): new, not stable
-- [gokyuzu](https://github.com/kiliczsh/gokyuzu) (python): not stable
+- [gokyuzu](https://github.com/kiliczsh/gokyuzu) (Python): not stable
 
 ## Tutorials and Guides
 
