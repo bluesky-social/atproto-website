@@ -9,7 +9,7 @@ This is a partial list of community projects. Read instructions for how to submi
 
 ### App Passwords
 
-For the security of your account, when using any third-party clients, please generate an [app password](/specs/atp#app-passwords) at Settings > Advanced > App passwords.
+For the security of your account, when using any third-party clients, please generate an [app password](/specs/xrpc#app-passwords) at Settings > Advanced > App passwords.
 
 App passwords have most of the same abilities as the user's account password, but they're restricted from destructive actions such as account deletion or account migration. They are also restricted from creating additional app passwords.
 
@@ -34,7 +34,8 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [arroba](https://github.com/snarfed/arroba): new, not stable. PDS implementation with MST, commit repo, diff and `com.atproto.sync` XRPC methods
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
-
+- [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
+- 
 #### Dart
 
 - [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
@@ -52,14 +53,18 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
 - [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable 
 
+#### R
+
+- [atr](https://github.com/JBGruber/atr): auto-generated functions (unstable & unexposed) + user facing functions for selected endpoints (planned to be stable)
+
 #### Ruby
 
 - [bskyrb](https://github.com/ShreyanJain9/bskyrb): new, not stable
+- [minisky](https://github.com/mackuba/minisky): minimal client
 
 #### Rust
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
-
 
 ## Tutorials and Guides
 
@@ -96,14 +101,14 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 ### iOS
 
-- [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [Graysky](https://apps.apple.com/gb/app/graysky/id6448234181) ([GitHub](https://github.com/mozzius/graysky)) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
 
 ### Android
 
 - [Seiun](https://github.com/akiomik/seiun) by [@omi.bsky.social](https://bsky.app/profile/did:plc:j5cxpczcvzajlxhfuq7abivp)
 - [Ozone](https://github.com/christiandeange/ozone) by [@chr.bsky.social](https://bsky.app/profile/did:plc:soed46hcvg3l24tshb352cy6)
-- [Graysky](https://bsky.app/profile/did:plc:sq6aa2wa32tiiqrbub64vcja) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
+- [Graysky](https://play.google.com/store/apps/details?id=dev.mozzius.graysky) ([GitHub](https://github.com/mozzius/graysky)) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 
 ### macOS
 
@@ -167,6 +172,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 ## Other Tools
 
 - Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/did:plc:f55kfczvcsjlaota4ep2xvhx)
+- [Skycle.app](https://skycle.app) - visualize your circle of friends on Bluesky, by [@pirmax.fr](https://bsky.app/profile/pirmax.fr)
 - [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://bsky.app/profile/did:plc:lbjhpk3a473cuufkenjcer3v)
 - [Glamorous Toolkit for AT Protocol](https://github.com/feenkcom/gt4atproto), a moldable development environment
 - [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
@@ -177,7 +183,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [atp tooling](https://blue.amazingca.dev/tools), cache and unfollow repos and users, by [@caleb.bsky.social](https://bsky.app/profile/did:plc:e2nwnarqo7kdbt7ngr3gejp6)
 - [bluesky-esphome](https://github.com/softplus/bluesky_esphome), basic ESPHOME / ESP32 configuration to display Bluesky data, by [@sugyan.com](https://bsky.app/profile/did:plc:4ee6oesrsbtmuln4gqsqf6fp)
 - [Airspace](https://bsky-airspace.onrender.com/) Social Blade for Bluesky showing history of follows/followers/posts count for any user, by [@nirsd.bsky.social](https://bsky.app/profile/did:plc:gzs37etm32zvsznn775hy35w)
-- [Skythread](http://mackuba.github.io/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [Skythread](https://blue.mackuba.eu/skythread/), a tool for reading threads in a tree layout, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [SkyPicker](https://skypicker.site/), a tool to do raffles in Bluesky by [@joseli.to](https://bsky.app/profile/did:plc:uorsid6pyxlcoggl3b65mzfy)
 - [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
 - [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)

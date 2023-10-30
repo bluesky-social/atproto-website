@@ -1,6 +1,6 @@
 ---
 title: "Featured Community Project: SkyFeed"
-summary: SkyFeed is a third-party client that allows users to create dashboards of their feeds, profiles, and more. Additionally, SkyFeed Builder allows Bluesky users to easily create their own custom feeds based off of regexes or lists. 
+summary: SkyFeed is a third-party client that allows users to create dashboards of their feeds, profiles, and more. Additionally, SkyFeed Builder allows Bluesky users to easily create their own custom feeds based off of regexes or lists.
 date: Aug 8, 2023
 image: blog/skyfeed.png
 ---
@@ -22,7 +22,7 @@ Hi, I’m [redsolver](https://bsky.app/profile/redsolver.dev), a developer from 
 
 ### What is SkyFeed?
 
-There's the SkyFeed app, which is a **third-party web client (cross-platform soon) for using Bluesky**. Some users compare the experience to TweetDeck. A unique feature is that it subscribes to a custom minimal version of the Bluesky firehose (all events happening on the network). This makes it possible to have all like/reply/repost counts update in real-time and new posts pop up in near real-time everywhere in the app! Another cool feature is the collapsable thread view which makes following big discussions a lot easier.
+There's the SkyFeed app, which is a **third-party web client (cross-platform soon) for using Bluesky**. Some users compare the experience to TweetDeck. A unique feature is that it subscribes to a custom minimal version of the Bluesky firehose (all events happening on the network). This makes it possible to have all like/reply/repost counts update in real-time and new posts pop up in near real-time everywhere in the app! Another cool feature is the collapsible thread view which makes following big discussions a lot easier.
 
 But most users are using the app because of the integrated **SkyFeed Builder**, a tool to make building feeds easier for both developers and non-developers. It's really exciting watching a very diverse set of users build the over 6,000 feeds that are already published using the builder! The SkyFeed web app is available at[ https://skyfeed.app/](https://skyfeed.app/).
 
