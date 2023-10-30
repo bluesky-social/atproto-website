@@ -51,6 +51,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### PHP
 
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
+- [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable 
 
 #### R
 
