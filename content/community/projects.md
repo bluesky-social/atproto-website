@@ -171,6 +171,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 ## Other Tools
 
 - Skylink [Chrome](https://skylinkchrome.com) and [Firefox](https://skylinkff.com/) extension to detect DIDs while browsing the web, by [@adhdjesse.com](https://bsky.app/profile/did:plc:f55kfczvcsjlaota4ep2xvhx)
+- [Skycle.app](https://skycle.app) - visualize your circle of friends on Bluesky, by [@pirmax.fr](https://bsky.app/profile/pirmax.fr)
 - [Skyspaces](https://www.skyspaces.net/) audio rooms by [@geeken.tv](https://bsky.app/profile/did:plc:lbjhpk3a473cuufkenjcer3v)
 - [Glamorous Toolkit for AT Protocol](https://github.com/feenkcom/gt4atproto), a moldable development environment
 - [Bluesky post heatmap generator](https://bluesky-heatmap.fly.dev/) by [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
