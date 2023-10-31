@@ -1,0 +1,13 @@
+Creative Commons Attribution (CC-BY)
+
+Copyright (c) 2022-2023 Bluesky PBC, and Contributors
+
+Documentation, specifications, and code examples in this repository are licensed under a permissive CC-BY license.
+
+For anybody interested in derivative works of documents and specifications, remember that:
+
+- you must give attribution (credit) to the original work
+- you must indicate any changes made
+- trademark rights are *not* granted (for example, to "Bluesky", "AT Protocol", or "atproto", or any logos or icons)
+
+Inline code examples and snippets are can be considered Creative Commons Zero (CC-0, aka Public Domain) and copy/pasted without attribution.
