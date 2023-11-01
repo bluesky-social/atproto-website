@@ -103,6 +103,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 - [Graysky](https://apps.apple.com/gb/app/graysky/id6448234181) ([GitHub](https://github.com/mozzius/graysky)) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
+- [Mofu](https://apps.apple.com/en/app/mofu/id6463493340) by [@andooown](https://bsky.app/profile/andooown.bsky.social)
 
 ### Android
 
