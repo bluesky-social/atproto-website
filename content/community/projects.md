@@ -98,6 +98,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
 - [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
+- [Subium](https://subium.com) by [@oleksanovyk.com](https://bsky.app/profile/did:plc:rq6jsdmsptn4m7tfz7cd7nyv): web client with focus on smooth UI and mobile devices support
 
 ### iOS
 
