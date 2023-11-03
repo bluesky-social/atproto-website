@@ -25,8 +25,8 @@ If you're a developer interested in building on atproto, we'd love to email you 
 
 ## License
 
-Documentation and atproto specification are under Creative Commons Attribution (CC-BY).
+Documentation text and the atproto specifications are under Creative Commons Attribution (CC-BY).
 
-Inline code examples and snippets are can be considered Creative Commons Zero (CC-0, aka Public Domain) and copy/pasted without attribution.
+Inline code examples, example data, and regular expressions are under Creative Commons Zero (CC-0, aka Public Domain) and copy/pasted without attribution.
 
 Please see [LICENSE.txt]() with reminders about derivative works, and [LICENSE-CC-BY.txt]() for a copy of license legal text.
