@@ -4,8 +4,6 @@ summary: How to download and parse repository data exports using Go.
 date: Nov 2, 2023
 ---
 
-*This blog post may become outdated as new features are added to [atproto](https://atproto.com) and the Bluesky [application schemas](https://github.com/bluesky-social/atproto/tree/main/lexicons).*
-
 One of the core principles of the AT Protocol is simple access to public data, including posts, multimedia blobs, and social graph metadata. Account data, in the form of individual *records*, can be accessed in JSON format via HTTP API endpoints under the `com.atproto.sync.*` namespace. But internally, all the records for an account are stored in a *repository*, a binary (CBOR) content-addressed Merkle-tree data structure. The entire repository can be efficiently exported all together as a *CAR file* (`.car`).
 
 This post will describe how to download the repo CAR file for any account in the network, and parse the records out in to familiar JSON format.
