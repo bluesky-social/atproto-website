@@ -1,37 +1,47 @@
 ---
-title: Working with AT Protocol Repository Exports
+title: Download and Parse Repository Exports
 summary: How to download and parse repository data exports using Go.
-date: Nov 2, 2023
+date: Nov 6, 2023
 ---
 
-One of the core principles of the AT Protocol is simple access to public data, including posts, multimedia blobs, and social graph metadata. Account data, in the form of individual *records*, can be accessed in JSON format via HTTP API endpoints under the `com.atproto.sync.*` namespace. But internally, all the records for an account are stored in a *repository*, a binary (CBOR) content-addressed Merkle-tree data structure. The entire repository can be efficiently exported all together as a *CAR file* (`.car`).
+# Download and Parse Repository Exports
+*Published on: Nov 6, 2023*
 
-This post will describe how to download the repo CAR file for any account in the network, and parse the records out in to familiar JSON format.
+One of the core principles of the AT Protocol is simple access to public data, including posts, multimedia blobs, and social graph metadata. A user's data is stored in a repository, which can be efficiently exported all together as a CAR file (`.car`). This post will describe how to export and parse a data repository.
 
-The example code in this post is in the Go programming language, and uses the atproto SDK packages from [indigo](https://github.com/bluesky-social/indigo). You can find the full source code in our [example cookbook git repository](https://github.com/bluesky-social/cookbook).
+A user's [data repository](https://atproto.com/guides/data-repos#data-layout) consists of individual records, each of which can be accessed in JSON format via HTTP API endpoints.
 
-<span style="display: inline-block; background-color: #DDD59D; width: 100%; height: 100%;border-radius: 5px; padding: 10px;">
-These examples work for downloading your own account data, or other accounts. While atproto data is public, you should take care to respect the rights, intents, and expectations of others.
+The example code in this post is in the Go programming language, and uses the atproto SDK packages from [indigo](https://github.com/bluesky-social/indigo). You can find the full source code in our [example cookbook GitHub repository](https://github.com/bluesky-social/cookbook/go-repo-export).
+
+This post is written for a developer audience. We plan on adding a feature for users to easily export their own data from within the app in the future.
+
+## Privacy Notice
+
+While atproto data is public, you should take care to respect the rights, intents, and expectations of others. The following examples work for downloading any account's public data.
 
 This goes beyond following copyright law, and includes respecting content deletions and block relationships. Images and other media content does not come with any reuse rights, unless explicitly noted by the account holder.
-</span>
 
+## Download a Repository
 
-## Download Repo CAR File
+### On Bluesky's Main PDS Instance
 
-It is pretty simple to construct a direct download URL for repositories on Bluesky's main PDS instance. The PDS host is `https://bsky.social`, the Lexicon endpoint is `com.atproto.sync.getRepo`, and the account DID is passed as a query parameter.
+You can easily construct a URL to download a repository on Bluesky's main PDS instance. In this case, the PDS host is `https://bsky.social`, the Lexicon endpoint is `com.atproto.sync.getRepo`, and the account DID is passed as a query parameter.
 
-For example, the download URL for the `@atproto.com` account is:
+As a result, the download URL for the `@atproto.com` account is:
 
 ```
 https://bsky.social/xrpc/com.atproto.sync.getRepo?did=did:plc:ewvi7nxzyoun6zhxrhs64oiz
 ```
 
-Note that this endpoint intentionally does not require authentication: repository content is public and anybody can download it from the public web.
+Note that this endpoint intentionally does not require authentication: content in a user's repository is public (much like a public website), and anybody can download it from the web. Such content includes posts and likes, but does not include content like mutes and list subscriptions.
 
-In the more general case, we start with any "AT Identifier" (handle or DID), and need to find account's PDS instance. This involves first resolving the handle or DID to the account's DID document, then parsing out the `#atproto_pds` service entry.
+If you navigate to that URL, you'll download the repository for the `@atproto.com` account on Bluesky. But if you try to open that file, it won't make sense yet. We'll show you how to parse the data [later in this post](#parse-records-from-car-file-as-json).
 
-Fortunately, the `github.com/bluesky-social/indigo/atproto/identity` package handle all of this for us:
+### On Another Instance
+
+In the more general case, we start with any "AT Identifier" (handle or DID). We need to find account's PDS instance. This involves first resolving the handle or DID to the account's DID document, then parsing out the `#atproto_pds` service entry.
+
+The `github.com/bluesky-social/indigo/atproto/identity` package handles all of this for us already:
 
 ```go
 import (
@@ -96,11 +106,17 @@ resolving identity: atproto.com
 downloading from https://bsky.social to: did:plc:ewvi7nxzyoun6zhxrhs64oiz.car
 ```
 
+Now you know that the @atproto.com account's PDS instance is at `bsky.social`, and we've downloaded the repository's CAR file.
+
 ## Parse Records from CAR File as JSON
 
-CAR files are a [standard file format](https://ipld.io/specs/transport/car/carv1/) from the IPLD ecosystem. They stand for "Content Addressable aRchives". They have a simple binary format, with a series of binary (CBOR) "blocks" concatenated together, not dissimilar to `tar` files or git pack files. They are well-suited for efficient data processing and archival storage, but not the most accessible to developers.
+### What's a CAR File?
 
-The repository data structure is a key/value store, with the keys being a combination of a collection name (NSID) and "record key", separated by a slash (`<collection>/<rkey>`). The CAR file contains a reference (CID) pointing to a (signed) commit object, which then points to the top of the key/value tree. The commit object also has an atproto repo version number (currently `3`), the account DID, and a revision string.
+CAR files are a [standard file format](https://ipld.io/specs/transport/car/carv1/) from the IPLD ecosystem. They stand for "Content Addressable aRchives." They have a simple binary format, with a series of binary (CBOR) blocks concatenated together, not dissimilar to `tar` files or Git packfiles. They're well-suited for efficient data processing and archival storage, but they're not the most accessible to developers.
+
+### The Repository CAR File
+
+The repository data structure is a key-value store, with the keys being a combination of a collection name (NSID) and "record key", separated by a slash (`<collection>/<rkey>`). The CAR file contains a reference (CID) pointing to a (signed) commit object, which then points to the top of the key-value tree. The commit object also has an atproto repo version number (at time of writing, currently `3`), the account DID, and a revision string.
 
 Let's load the repository tree structure out of the CAR file in to memory, and list all of the record paths (keys).
 
@@ -150,7 +166,7 @@ func carList(carPath string) error {
 
 Note that the `ForEach` iterator provides a record path string as a key, and a CID as the value, instead of the record data itself. If we want to get the record itself, we need to fetch the "block" (CBOR bytes) from the repository, using the CID reference. 
 
-Let's also convert the binary CBOR data in to more-accessbile JSON format, and write out records to disk. The following code snippet could go in the `ForEach` function in the previous example:
+Let's also convert the binary CBOR data in to a more accessbile JSON format, and write out records to disk. The following code snippet could go in the `ForEach` function in the previous example:
 
 ```go
 // where to write out data on local disk
@@ -201,16 +217,20 @@ did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.like/3jucaj3qgmk2h.json
 [...]
 ```
 
-If you were downloading and working with CAR in real life, you would probably want to confirm the commit signature using the account's signing public key (included in the resolved identity metadata). Signing keys can change over time, meaning the signatures in old repo exports will no longer validate. It may be a good idea to keep a copy of the identity metadata along side the repository for long-term storage.
+If you were downloading and working with CAR in a higher-stakes situation than just running a one-off repository export, you would probably want to confirm the commit signature using the account's signing public key (included in the resolved identity metadata). Signing keys can change over time, meaning the signatures in old repo exports will no longer validate. It may be a good idea to keep a copy of the identity metadata along side the repository for long-term storage.
 
 
 ## Downloading Blobs
 
-An account's repository contains all the current (not deleted) records. Those records might refer to images and other media "blobs" by hash (CID), but the blobs aren't stored directly in the repository itself. If you want a full public account data export, you also need to fetch the blobs.
+An account's repository contains all the current (not deleted) records. These records include likes, posts, follows, etc. and may refer to images and other media "blobs" by hash (CID), but the blobs themselves aren't stored directly in the repository. So if you want a full public account data export, you also need to fetch the blobs.
 
-It is possible to parse through all the records in a repository and extract all the blob references (hint: they all have `$type: blob`). But PDS instances also implement a helpful `com.atproto.sync.listBlobs` endpoint, which returns all the CIDs for a specific account (DID). The `com.atproto.sync.getBlob` endpoint is used to download the original blob itself. Neither of these PDS endpoints require authentication, though they may be rate-limited by operators to prevent resource exhaustion or excessive bandwidth costs.
+It is possible to parse through all the records in a repository and extract all the blob references (tip: they all have `$type: blob`). But PDS instances also implement a helpful `com.atproto.sync.listBlobs` endpoint, which returns all the CIDs (blob hashes) for a specific account (DID).
 
-Note that the first part of the blob download function is very similar to the CAR download: resolving identity find the account's PDS:
+The `com.atproto.sync.getBlob` endpoint is used to download the original blob itself.
+
+Neither of these PDS endpoints require authentication, though they may be rate-limited by operators to prevent resource exhaustion or excessive bandwidth costs.
+
+Note that the first part of the blob download function is very similar to the CAR download: resolving identity to find the account's PDS:
 
 ```go
 func blobDownloadAll(raw string) error {
@@ -292,4 +312,6 @@ did:plc:ewvi7nxzyoun6zhxrhs64oiz/_blob/bafkreibdnsisdacjv3fswjic4dp7tju7mywfdlcr
 [...]
 ```
 
-A more real-world implementation would probably want to verify the blob CID (by hashing the downloaded bytes), at a minimum to detect corruption and errors.
+This will download blobs for a repository.
+
+A more rigorous implementation should verify the blob CID (by hashing the downloaded bytes), at a minimum to detect corruption and errors.
