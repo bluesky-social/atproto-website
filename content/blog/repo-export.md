@@ -11,7 +11,7 @@ One of the core principles of the AT Protocol is simple access to public data, i
 
 A user's [data repository](https://atproto.com/guides/data-repos#data-layout) consists of individual records, each of which can be accessed in JSON format via HTTP API endpoints.
 
-The example code in this post is in the Go programming language, and uses the atproto SDK packages from [indigo](https://github.com/bluesky-social/indigo). You can find the full source code in our [example cookbook GitHub repository](https://github.com/bluesky-social/cookbook/go-repo-export).
+The example code in this post is in the Go programming language, and uses the atproto SDK packages from [indigo](https://github.com/bluesky-social/indigo). You can find the full source code in our [example cookbook GitHub repository](https://github.com/bluesky-social/cookbook/tree/main/go-repo-export).
 
 This post is written for a developer audience. We plan on adding a feature for users to easily export their own data from within the app in the future.
 
