@@ -49,6 +49,8 @@ community:
   - name: Community Groups
     href: /community/groups
 blog:
+  - name: Download and Parse Repository Exports
+    href: /blog/repo-export
   - name: Protocol Roadmap
     href: /blog/2023-protocol-roadmap
   - name: Building on atproto
