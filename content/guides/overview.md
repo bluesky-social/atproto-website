@@ -29,7 +29,7 @@ The lower-level primitives that can get stacked together differently are the rep
 
 ## Interoperation
 
-A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/com-atproto-identity) for syncing user repositories and the [Bsky Lexicon](/lexicons/app-bsky-actor) to provide basic social behaviors.
+A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/com-atproto) for syncing user repositories and the [Bsky Lexicon](/lexicons/app-bsky) to provide basic social behaviors.
 
 ![Interop](/img/interop.jpg)
 
@@ -43,7 +43,7 @@ Big Graph Services (BGS) handle all of your events, like retrieving large-scale 
 
 ![PDS and BGS](/img/small-big-world.jpg)
 
-This distinction is intended to achieve scale as well as a high degree of user-choice. 
+This distinction is intended to achieve scale as well as a high degree of user-choice.
 
 ## Algorithmic choice
 
@@ -85,7 +85,7 @@ Some of the primary specifications comprising the initial version of the AT Prot
 - [Authenticated Transfer Protocol](/specs/atp)
 - [DIDs](/specs/did) and [Handles](/specs/handle)
 - [Repository](/specs/repository) and [Data Model](/specs/data-model)
-- [Lexicon](/specs/lexicon) 
+- [Lexicon](/specs/lexicon)
 - [HTTP API (XRPC)](/specs/xrpc) and [Event Streams](/specs/event-stream)
 
 These specs can be organized into three layers of dependency:
