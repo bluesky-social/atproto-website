@@ -65,7 +65,7 @@ You are within your rights to disable Watchtower auto-updates, but we strongly e
 
 # Odds & Ends & Warnings & Reminders
 
-🧪 Experiment & have fun! 
+🧪 Experiment & have fun!
 
 🤖 Run [feed generators](https://github.com/bluesky-social/feed-generator). They should work the exact same way as production - be sure to adjust your env to listen to Sandbox BGS!
 

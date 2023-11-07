@@ -62,7 +62,7 @@ func run() error {
     atid, err := syntax.ParseAtIdentifier("atproto.com")
     if err != nil {
         return err
-    }    
+    }
 
     dir := identity.DefaultDirectory()
     ident, err := dir.Lookup(ctx, *atid)
@@ -164,7 +164,7 @@ func carList(carPath string) error {
 }
 ```
 
-Note that the `ForEach` iterator provides a record path string as a key, and a CID as the value, instead of the record data itself. If we want to get the record itself, we need to fetch the "block" (CBOR bytes) from the repository, using the CID reference. 
+Note that the `ForEach` iterator provides a record path string as a key, and a CID as the value, instead of the record data itself. If we want to get the record itself, we need to fetch the "block" (CBOR bytes) from the repository, using the CID reference.
 
 Let's also convert the binary CBOR data in to a more accessbile JSON format, and write out records to disk. The following code snippet could go in the `ForEach` function in the previous example:
 
@@ -199,7 +199,7 @@ return nil
 In the cookbook repository, the `go-repo-export` example implements these as `list-records` and `unpack-record`:
 
 ```shell
-> ./go-export-repo list-records did:plc:ewvi7nxzyoun6zhxrhs64oiz.car                                                
+> ./go-export-repo list-records did:plc:ewvi7nxzyoun6zhxrhs64oiz.car
 === did:plc:ewvi7nxzyoun6zhxrhs64oiz ===
 key record_cid
 app.bsky.actor.profile/self bafyreifbxwvk2ewuduowdjkkjgspiy5li2dzyycrnlbu27gn3hfgthez3u
