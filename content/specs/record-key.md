@@ -31,7 +31,7 @@ TID generators should generate a random clock identifier number, chosen to avoid
 
 The primary motivation for the TID scheme is to provide a loose temporal ordering of records, which improves storage efficiency of the repository data structure (MST).
 
- Note: There are similarities to ["snowflake identifiers,"](https://en.wikipedia.org/wiki/Snowflake_ID). In the decentralized context of atproto, the global uniqueness of TIDs can not be guaranteed, and an antagonistic repo controller could trivially create records re-using known TIDs.
+ Note: There are similarities to ["snowflake identifiers"](https://en.wikipedia.org/wiki/Snowflake_ID). In the decentralized context of atproto, the global uniqueness of TIDs can not be guaranteed, and an antagonistic repo controller could trivially create records re-using known TIDs.
 
 
 ### Record Key Type: `literal:<value>`
