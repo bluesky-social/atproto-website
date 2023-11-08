@@ -29,7 +29,7 @@ await agent.login({
   password: process.env.BLUESKY_PASSWORD!,
 });
 ```
-To use this agent to create a post: 
+To use this agent to create a post:
 
 ```Typescript
 await agent.post({

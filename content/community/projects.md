@@ -35,7 +35,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
 - [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
-- 
+
 #### Dart
 
 - [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
@@ -51,7 +51,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### PHP
 
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
-- [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable 
+- [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable
 
 #### R
 
@@ -140,7 +140,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 To build your own custom feed, you can use Bluesky's official feed generator starter kit [here](https://github.com/bluesky-social/feed-generator).
 - [Skyfeed](https://skyfeed.app), a dashboard-like experience with a custom feed builder, by [@redsolver.dev](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
-- [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze) 
+- [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze)
 - [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
 - [Bossett's Custom Feeds](https://github.com/Bossett/bsky-feeds) ([guide](https://bossett.io/setting-up-bossetts-bluesky-feed-generator/)), fork of official generator for What's Science 🧪 feed & to easily host multiple algorithms with more advanced matching, by [@bossett.bsky.social](https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a)
 - [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)

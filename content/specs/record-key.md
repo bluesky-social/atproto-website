@@ -38,14 +38,14 @@ The primary motivation for the TID scheme is to provide a loose temporal orderin
 
 This key type is used when there should be only a single record in the collection, with a fixed, well-known Record Key.
 
-The most common value is `self`, specified as `literal:self` in a Lexicon schema. 
+The most common value is `self`, specified as `literal:self` in a Lexicon schema.
 
 
 ### Record Key Type: `any`
 
 Any string meeting the overall Record Key schema requirements (see below) is allowed. This is the most flexible type of Record Key.
 
-This may be used to encode semantics in the name, for example, a domain name, integer, or (transformed) AT URI. This enables de-duplication and known-URI lookups. 
+This may be used to encode semantics in the name, for example, a domain name, integer, or (transformed) AT URI. This enables de-duplication and known-URI lookups.
 
 
 ### Record Key Syntax

@@ -40,7 +40,7 @@ The schema types, definition language, and validation constraints are described 
 
 ## HTTP API methods
 
-The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS. 
+The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS.
 
 For example, a call to:
 
