@@ -1,0 +1,38 @@
+name: "\U0001F4A1 Feature Request"
+description: Request a new feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to propose a new idea
+  - type: textarea
+    id: problem
+    attributes:
+      label: Describe the problem
+      description: Please provide a clear and concise description the problem this feature would solve. The more information you can provide here, the better.
+      placeholder: I would like to...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the proposed solution
+      description: Try to provide a description or a design of what you would like to be implemented
+      placeholder: I would like to see...
+    validations:
+      required: true
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Have you checked if this issue has already been raised?
+      options:
+        - label: I did not find any similar issues
+          required: true
+  - type: checkboxes
+    id: CoC
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/bluesky-social/atproto-website/blob/main/CODE-OF-CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
