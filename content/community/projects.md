@@ -56,6 +56,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### R
 
 - [atr](https://github.com/JBGruber/atr): auto-generated functions (unstable & unexposed) + user facing functions for selected endpoints (planned to be stable)
+- [bskyr](https://christophertkenny.com/bskyr/): An R interface for posting to and collecting tidy data from Bluesky (stable)
 
 #### Ruby
 
