@@ -49,6 +49,8 @@ community:
   - name: Community Groups
     href: /community/groups
 blog:
+  - name: "Featured Community Project: Bridgy Fed"
+    href: /blog/feature-bridgyfed
   - name: Download and Parse Repository Exports
     href: /blog/repo-export
   - name: Protocol Roadmap
