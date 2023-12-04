@@ -2,7 +2,7 @@
 title: "Featured Community Project: Bridgy Fed"
 summary: Bridgy Fed is a bridge between decentralized social networks that already has initial Bluesky support. The project will launch publicly when Bluesky launches federation early next year.
 date: Dec 4, 2023
-image: blog/bridgy-fed.png
+image: blog/bridgyfed.png
 ---
 
 # Featured Community Project: Bridgy Fed
