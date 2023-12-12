@@ -219,4 +219,6 @@ We are not responsible for any damage, loss, or unauthorized access to your acco
 
 ### Submit your project
 
-To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. Alternatively, you can email projects@atproto.com with a link to your project and your handle.
+To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. For example, use your DID in the link to your profile so it's a stable link even if you change your handle.
+
+Alternatively, you can email projects@atproto.com with a link to your project and your handle.
