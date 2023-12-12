@@ -65,7 +65,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### Rust
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
-- [ATrium](https://github.com/sugyan/atrium) not stable
+- [ATrium](https://github.com/sugyan/atrium): not stable
 
 ## Tutorials and Guides
 
