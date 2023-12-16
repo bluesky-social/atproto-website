@@ -100,6 +100,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
 - [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
 - [Subium](https://subium.com) by [@oleksanovyk.com](https://bsky.app/profile/did:plc:rq6jsdmsptn4m7tfz7cd7nyv): web client with focus on smooth UI and mobile devices support
+- [Ouranos 🌸](https://useouranos.app) [(GitHub)](https://github.com/pdelfan/ouranos) by [@contrapunctus.bsky.social](https://bsky.app/profile/did:plc:3sapfnszmvjc6wa4ml3ybkwb)
 
 ### iOS
 
