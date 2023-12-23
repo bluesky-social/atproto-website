@@ -193,6 +193,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
 - [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
 - [SkySweeper](https://github.com/pojntfx/skysweeper), service which automatically deletes your old skeets from Bluesky, by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
+- [skeetgen](https://mary-ext.github.io/skeetgen), a tool for generating an easily viewable Bluesky archive, by [@mary.my.id](https://bsky.app/profile/did:plc:ia76kvnndjutgedggx2ibrem)
 
 ## Bots
 
