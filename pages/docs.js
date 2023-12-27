@@ -25,7 +25,7 @@ export default function Docs({ navigation }) {
 
       <div className="max-w-4xl mx-auto px-4">
         <h2 className="text-3xl mb-2 font-normal">Guides</h2>
-        <div className="relative flex px-6 py-6 border border-gray-300 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500">
+        <div className="relative flex px-6 py-6 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500">
           <div className="mr-4 hidden sm:block">
             <span className="bg-blue-500 text-white rounded-lg inline-flex p-2 sm:p-3 ring-4 ring-white">
               <AcademicCapIcon
@@ -69,7 +69,7 @@ function Links({ pages }) {
       {pages.map((page, pageIdx) => (
         <div
           key={page.href}
-          className="relative flex items-center px-6 py-6 border border-gray-300 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
+          className="relative flex items-center px-6 py-6 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
         >
           <div className="flex-1">
             <h3 className="text-xl leading-6 font-light">

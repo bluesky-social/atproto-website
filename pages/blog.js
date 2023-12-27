@@ -38,7 +38,7 @@ function Links({ pages }) {
       {pages.map((page, pageIdx) => (
         <div
           key={page.href}
-          className="relative flex items-center px-6 py-6 border border-gray-300 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
+          className="relative flex items-center px-6 py-6 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
         >
           <div className="flex-1">
             <h3 className="text-xl leading-6 font-light">
