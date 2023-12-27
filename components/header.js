@@ -85,9 +85,9 @@ function classNames(...classes) {
 
 export default function Header() {
   return (
-    <Popover className="relative z-[20] bg-white">
+    <Popover className="relative z-[20] bg-default">
       <header>
-      <div className="flex items-center justify-between border-b-2 border-gray-100 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
+      <div className="flex items-center justify-between border-b-2 border-gray-100 dark:border-gray-900 px-4 sm:px-6 py-4 sm:py-6 md:justify-start md:space-x-10">
       <div className="flex justify-start">
           <Link href="/">
               <a>
@@ -100,7 +100,7 @@ export default function Header() {
               <Link key={item.href} href={item.href}>
                   <a
                       title={item.name}
-                      className="text-base font-medium text-gray-500 hover:text-gray-900"
+                      className="text-base font-medium text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
                   >
                       {item.name}
                   </a>
@@ -117,8 +117,8 @@ export default function Header() {
                   apiKey="9b7e0221b5cfa0c83f10de66e365c511"
           />
       </nav>
-      <div className="-my-2 -mr-2 md:hidden">
-          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+      <div className="-my-2 -mr-2 ml-2 md:hidden">
+          <Popover.Button className="inline-flex items-center justify-center rounded-md bg-default p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
               <span className="sr-only">Open menu</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </Popover.Button>
@@ -149,14 +149,14 @@ export default function Header() {
           focus
           className="absolute inset-x-0 top-0 origin-top-right transform p-2 transition md:hidden"
         >
-          <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+          <div className="divide-y-2 divide-gray-50 dark:divide-gray-900 rounded-lg bg-default shadow-lg ring-1 ring-black dark:ring-white ring-opacity-5">
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <img className="h-8 w-auto" src="/logo.svg" alt="ATP" />
                 </div>
                 <div className="-mr-2">
-                  <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                  <Popover.Button className="inline-flex items-center justify-center rounded-md bg-default p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-500 dark:hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                     <span className="sr-only">Close menu</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </Popover.Button>
@@ -171,7 +171,7 @@ export default function Header() {
                           className="h-6 w-6 flex-shrink-0 text-blue-600"
                           aria-hidden="true"
                         />
-                        <span className="ml-3 text-base font-medium text-gray-900">
+                        <span className="ml-3 text-base font-medium text-gray-900 dark:text-gray-100">
                           {item.name}
                         </span>
                       </a>
