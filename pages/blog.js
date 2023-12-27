@@ -18,7 +18,7 @@ export default function Blog({ navigation }) {
     <div>
       <Meta title="Dev Blog" />
       <Header />
-      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
+      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-default z-10">
         <Breadcrumbs pages={pages} />
       </div>
 

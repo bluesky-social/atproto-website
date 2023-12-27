@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html, body {
+    @apply bg-white dark:bg-black text-black dark:text-white;
+  }
+}
+
+@layer utilities {
+  .bg-default {
+    @apply bg-white dark:bg-black;
+  }
+}
+
 mark {
   background-color: rgb(219, 234, 254);
   color: rgb(29, 78, 216);
