@@ -160,6 +160,10 @@ code {
   word-break: break-all;
 }
 
+img[src*="#rounded"] {
+  border-radius: 8px;
+}
+
 /*
  * Admonitions based roughly on https://github.com/elviswolcott/remark-admonitions
  *
