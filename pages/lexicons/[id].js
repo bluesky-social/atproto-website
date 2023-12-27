@@ -43,7 +43,7 @@ export default function Guide({ navigation, file }) {
         <Sidebar navigation={navigation} current={file.path} />
         <main className="flex-1 px-4 pb-16">
           <div
-            className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
+            className="prose dark:prose-invert prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
             dangerouslySetInnerHTML={{ __html: file.bodyHTML }}
           ></div>
           {file.todo ? (
