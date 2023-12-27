@@ -36,14 +36,14 @@ export default function Guide({ navigation, file }) {
     <div>
       <Meta title={file.title} description={file.summary} />
       <Header />
-      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
+      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-default z-10">
         <Breadcrumbs pages={pages} />
       </div>
       <div className="flex max-w-4xl mx-auto">
         <Sidebar navigation={navigation} current={file.path} />
         <main className="flex-1 px-4 pb-16">
           <div
-            className="prose prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
+            className="prose dark:prose-invert prose-pre:overflow-x-auto prose-pre:max-w-[90vw]"
             dangerouslySetInnerHTML={{ __html: file.bodyHTML }}
           ></div>
           {file.todo ? (

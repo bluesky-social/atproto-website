@@ -18,7 +18,7 @@ export default function Blog({ navigation }) {
     <div>
       <Meta title="Dev Blog" />
       <Header />
-      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-white z-10">
+      <div className="max-w-4xl mx-auto px-4 py-4 sticky lg:relative top-0 bg-default z-10">
         <Breadcrumbs pages={pages} />
       </div>
 
@@ -38,7 +38,7 @@ function Links({ pages }) {
       {pages.map((page, pageIdx) => (
         <div
           key={page.href}
-          className="relative flex items-center px-6 py-6 border border-gray-300 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
+          className="relative flex items-center px-6 py-6 border border-gray-300 dark:border-gray-600 rounded-xl mb-4 hover:border-blue-500 focus-within:border-blue-500"
         >
           <div className="flex-1">
             <h3 className="text-xl leading-6 font-light">
