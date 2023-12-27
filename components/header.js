@@ -91,7 +91,7 @@ export default function Header() {
       <div className="flex justify-start">
           <Link href="/">
               <a>
-                  <img className="h-10 w-auto" src="/logo.jpg" alt="The AT Protocol homepage" />
+                  <img className="h-10 w-auto" src="/logo.svg" alt="The AT Protocol homepage" />
               </a>
           </Link>
       </div>
@@ -153,7 +153,7 @@ export default function Header() {
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <img className="h-8 w-auto" src="/logo.jpg" alt="ATP" />
+                  <img className="h-8 w-auto" src="/logo.svg" alt="ATP" />
                 </div>
                 <div className="-mr-2">
                   <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
