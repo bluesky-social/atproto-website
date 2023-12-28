@@ -18,7 +18,7 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 **Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) ([IPLD](https://ipld.io/docs/data-model/), with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations).
 
-**Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A Personal Data Server (PDS) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A Big Graph Server (BGS) crawls many repositories and outputs a unified event firehose.
+**Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A Personal Data Server (PDS) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A relay (previously referred to as a Big Graph Service, or BGS) crawls many repositories and outputs a unified event firehose.
 
 **Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers](/specs/nsid) (NSIDs). Application-specific aggregations (such as search) are provided by an Application View (App View) service. Clients can include mobile apps, desktop software, or web interfaces.
 
