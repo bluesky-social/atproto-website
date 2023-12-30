@@ -169,7 +169,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
 - [Skyfall](https://github.com/mackuba/skyfall), a Ruby gem for streaming events from the firehose, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
-- [firehose.ts](https://github.com/badlogic/skychat/blob/main/firehose.ts), a minimal TypeScript code example how to access the firehose in a browser environment, based on [atproto-firehose](https://github.com/kcchu/atproto-firehose), by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [firehose.ts](https://github.com/badlogic/skychat/blob/85f93317ee389f34d2c7ddf99ddcaa36e1ee076f/src/firehose.ts), a minimal TypeScript code example how to access the firehose in a browser environment, based on [atproto-firehose](https://github.com/kcchu/atproto-firehose), by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 
 
 ## Other Tools
@@ -193,7 +193,6 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [SkySweeper](https://github.com/pojntfx/skysweeper), service which automatically deletes your old skeets from Bluesky, by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
 - [sum-up.xyz](https://sum-up.xyz), service which uses ChatGPT to humourously summarize a BlueSky user's last 50 posts, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [skyview.social](https://skyview.social), a thread reader app to read BlueSky threads in various forms and share them externally without needing an account, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
-- [skychat.social](https://skychat.social), explore and create BlueSky threads for hashtags in a chat-like interface, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [Skystats](https://skystats.social), view a user's 30 day BlueSky statistics such as people most interacted with, word cloud, posts per day/time of day/week day, etc., by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 
 ## Bots
