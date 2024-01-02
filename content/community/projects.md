@@ -68,6 +68,10 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
 - [ATrium](https://github.com/sugyan/atrium): not stable
 
+#### Swift
+
+- [swift-atproto](https://github.com/nnabeyang/swift-atproto): new, not stable
+
 ## Tutorials and Guides
 
 - [atproto docs in Japanese](https://github.com/encrypteduse/atproto-website-docs-jp) by [@encrypteduse](https://github.com/encrypteduse)
