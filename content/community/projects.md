@@ -27,7 +27,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 #### Python
 
-- [atproto](https://github.com/MarshalX/atproto): new, not stable
+- [atproto](https://github.com/MarshalX/atproto): not stable. XRPC clients, Firehose clients, DID and Handle resolvers, more.
 - [lexrpc](https://github.com/snarfed/lexrpc): not stable
 - [atprototools](https://github.com/ianklatzco/atprototools): new, not stable
 - [Chitose](https://github.com/mnogu/chitose): new, not stable
