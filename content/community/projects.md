@@ -178,6 +178,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
 - [Skyfall](https://github.com/mackuba/skyfall), a Ruby gem for streaming events from the firehose, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [Python Firehose](https://atproto.blue/en/latest/firehose.html), fast firehose client with decoding in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
 
 
 ## Other Tools
