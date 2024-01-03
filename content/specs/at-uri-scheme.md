@@ -14,9 +14,9 @@ Both of these AT URIs reference the same record in the same repository; one uses
 
 :::note
 **Caveats for Handle-based AT URIs**
- 
+
 AT URIs referencing handles are not durable.
- 
+
 If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
 
 AT URIs are not content-addressed, so the _contents_ of the record they refer to may also change over time.

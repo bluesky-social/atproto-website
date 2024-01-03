@@ -60,7 +60,7 @@ The `.invalid` TLD should only be used for the special `handle.invalid` value (s
 
 ## Identifier Examples
 
-Syntactically valid handles (which may or may not have existing TLDs): 
+Syntactically valid handles (which may or may not have existing TLDs):
 
 ```
 jay.bsky.social

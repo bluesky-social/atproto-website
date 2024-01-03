@@ -45,7 +45,7 @@ As part of the sandbox, we will be doing routine wipes of all network data.
 
 We expect to perform wipes on a weekly or bi-weekly basis, though we reserve the right to do a wipe at any point.
 
-When we wipe data, we will be wiping it on all services (BGS, App View, PLC). We will also mark any existing DIDs as “invalid” & will refuse to index those accounts in the next epoch of the network to discourage users from attempting to “rollover” their accounts across wipes.
+When we wipe data, we will be wiping it on all services (Relay, App View, PLC). We will also mark any existing DIDs as “invalid” & will refuse to index those accounts in the next epoch of the network to discourage users from attempting to “rollover” their accounts across wipes.
 
 # Getting started ✨
 
@@ -65,11 +65,11 @@ You are within your rights to disable Watchtower auto-updates, but we strongly e
 
 # Odds & Ends & Warnings & Reminders
 
-🧪 Experiment & have fun! 
+🧪 Experiment & have fun!
 
-🤖 Run [feed generators](https://github.com/bluesky-social/feed-generator). They should work the exact same way as production - be sure to adjust your env to listen to Sandbox BGS!
+🤖 Run [feed generators](https://github.com/bluesky-social/feed-generator). They should work the exact same way as production - be sure to adjust your env to listen to Sandbox Relay!
 
-🌈 Feel free to run your own AppView or BGS - although it’s a bit more involved & we’ll be providing limited support for this.
+🌈 Feel free to run your own AppView or Relay - although it’s a bit more involved & we’ll be providing limited support for this.
 
 👤 Your PDS will provide your handle by default. Custom domain handles should work exactly the same in sandbox as they do on production Bluesky. Although you will not be able to re-use your handle from production Bluesky as you can only have one DID set per handle.
 
@@ -87,7 +87,7 @@ Dive deeper with the [atproto docs](https://atproto.com/docs).
 
 ## Network Services
 
-We are running three services: PLC, BGS, Bluesky "App View"
+We are running three services: PLC, Relay, Bluesky "App View"
 
 ### PLC
 
@@ -97,17 +97,17 @@ We are running three services: PLC, BGS, Bluesky "App View"
 
 PLC is the default DID provider for the network. DIDs are the root of your identity in the network. Sandbox PLC functions exactly the same as production PLC, but it is run as a separate service with a separate dataset. The DID resolution client in the self-hosted PDS package is set up to talk the correct PLC service.
 
-### BGS
+### Relay
 
 **Hostname:** `bgs.bsky-sandbox.dev`
 
 **Code:** https://github.com/bluesky-social/indigo/tree/main/bgs
 
-BGS (Big Graph Service) is the firehose for the entire network. It collates data from PDSs & rebroadcasts them out on one giant websocket.
+The Relay is the firehose for the entire network. It collates data from PDSs & rebroadcasts them out on one giant websocket.
 
-BGS has to find out about your server somehow, so when we do any sort of write, we ping BGS with `com.atproto.sync.requestCrawl` to notify it of new data. This is done automatically in the self-hosted PDS package.
+The Relay has to find out about your server somehow, so when we do any sort of write, we ping the Relay with `com.atproto.sync.requestCrawl` to notify it of new data. This is done automatically in the self-hosted PDS package.
 
-If you’re familiar with the Bluesky production firehose, you can subscribe to the BGS firehose in the exact same manner, the interface & data should be identical
+If you’re familiar with the Bluesky production firehose, you can subscribe to the Relay firehose in the exact same manner, the interface & data should be identical
 
 ### Bluesky App View
 
@@ -115,7 +115,7 @@ If you’re familiar with the Bluesky production firehose, you can subscribe to 
 
 **Code:** https://github.com/bluesky-social/atproto/tree/main/packages/bsky
 
-The Bluesky App View aggregates data from across the network to service the Bluesky microblogging application.  It consumes the firehose from the BGS, processing it into serviceable views of the network such as feeds, post threads, and user profiles. It functions as a fairly traditional web service.
+The Bluesky App View aggregates data from across the network to service the Bluesky microblogging application.  It consumes the firehose from the Relay, processing it into serviceable views of the network such as feeds, post threads, and user profiles. It functions as a fairly traditional web service.
 
 When you request a Bluesky-related view from your PDS (`getProfile` for instance), your PDS will actually proxy the request up to App View.
 
