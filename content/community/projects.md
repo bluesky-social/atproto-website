@@ -155,6 +155,7 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 - [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [bluesky-feeds-rb](https://github.com/mackuba/bluesky-feeds-rb), a complete example of a custom feed service in Ruby, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [Bluesky Social Feeds](https://blueskyfeeds.com), a tool to search and build custom feeds without code or regex, by [@blueskyfeeds.com](https://bsky.app/profile/did:plc:eubjsqnf5edgvcc6zuoyixhw)
+- [bluesky-feed-generator](https://github.com/MarshalX/bluesky-feed-generator), community feed generator starter kit in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
 
 ## Stats
 
