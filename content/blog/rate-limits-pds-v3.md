@@ -11,7 +11,7 @@ To get future blog posts directly in your email, you can now subscribe to Bluesk
 
 ### Adding Rate Limits
 
-Now that we have a better sense of user activity on the network, we’re adding some application rate limits. This helps us keep the network secure — for example, by limiting the number of requests a user or bot can make in a given time period, it prevents bad actors from brute-forcing certain requests and helps us limit spammy behavior. 
+Now that we have a better sense of user activity on the network, we’re adding some application rate limits. This helps us keep the network secure — for example, by limiting the number of requests a user or bot can make in a given time period, it prevents bad actors from brute-forcing certain requests and helps us limit spammy behavior.
 
 We’re adding a rate limit for the number of created actions per DID. **These numbers shouldn’t affect typical Bluesky users**, and won’t affect the majority of developers either, but it will affect prolific bots, such as the ones that follow every user or like every post on the network. The limit is 5,000 points per hour and 35,000 points per day, where:
 
@@ -48,7 +48,7 @@ To reiterate, these limits should be high enough to affect no human users, but l
 
 Per this system, an account may create at most 1,666 records per hour and 11,666 records per day. That means an account can like up to 1,666 records in one hour with no problem. We took the most active human users on the network into account when we set this threshold (you surpassed our expectations!).
 
-In case you missed it, in [August](https://bsky.app/profile/atproto.com/post/3k5ivi6or4d2r), we added some other rate limits as well. 
+In case you missed it, in [August](https://bsky.app/profile/atproto.com/post/3k5ivi6or4d2r), we added some other rate limits as well.
 
 
 
@@ -82,10 +82,10 @@ In a future update (in about a week), we’re also [lowering](https://github.com
 
 We’re rolling out v3 of the PDS distribution. This shouldn’t be a breaking change, though we will be wiping the PLC sandbox. PDSs in parallel networks should still continue to operate with the new distribution.
 
-Reminder: The PDS distribution auto-updates via the Watchtower companion Docker container, unless you specifically disabled that option. We’re adding the admin `upgradeRepoVersion` endpoint to the upgraded PDS distribution, so PDS admins can also upgrade their repos by hand. 
+Reminder: The PDS distribution auto-updates via the Watchtower companion Docker container, unless you specifically disabled that option. We’re adding the admin `upgradeRepoVersion` endpoint to the upgraded PDS distribution, so PDS admins can also upgrade their repos by hand.
 
 
-### Handle Invalidations on App View 
+### Handle Invalidations on App View
 
 Last month, we began proxying requests to the App View. In our federation architecture, the App View is the piece of the stack that gives you all your views of data, such as profiles and threads. Initially, we started out by serving all of these requests from our `bsky.social` PDS, but proxying these to the App View is one way of scaling our infrastructure to handle many more users on the network. (Read our [federation architecture overview blog post](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture) for more information.)
 
@@ -93,7 +93,7 @@ For some users, this caused an invalid handle error. If you have an invalid hand
 
 ![Screenshot of a profile with an invalid handle](/img/blog/invalid-handle.png)
 
-You can use our debugging tool to investigate this: [https://bsky-debug.app/handle](https://bsky-debug.app/handle). Just type your handle in. If it shows no error, please try updating your handle to the same handle you currently have to resolve this issue. 
+You can use our debugging tool to investigate this: [https://bsky-debug.app/handle](https://bsky-debug.app/handle). Just type your handle in. If it shows no error, please try updating your handle to the same handle you currently have to resolve this issue.
 
 If the debugging page shows an error for your handle, follow [this guide](https://blueskyweb.xyz/blog/4-28-2023-domain-handle-tutorial) to make sure you set up your handle properly.
 

@@ -10,18 +10,18 @@ We’re excited to announce that we’re rolling out a new version of atproto [r
 
 For most developers with projects subscribed to the [firehose](https://atproto.com/community/projects#firehose), such as feed generators, this change shouldn’t affect you. These will only affect you if you’re doing commit-aware repo sync (a good rule of thumb is if you’ve ever passed `earliest` or `latest` to the `com.atproto.sync.getRepo` method) or are explicitly checking the repo version when processing commits.
 
-### Removing Repository History 
+### Removing Repository History
 
 Repositories on the AT Protocol are like Git repositories, but for structured records. Just like Git, each commit to an atproto repository currently includes a pointer to the previous commit. However, this approach has caused a couple of pain points:
 
-* **Record deletions are difficult to process.** If a user deletes a record, that commit needs to be erased from their repository to match their intent. 
+* **Record deletions are difficult to process.** If a user deletes a record, that commit needs to be erased from their repository to match their intent.
 * **Increased storage cost.** Maintaining repo history can cause anywhere from a 5-10x increase in repo size.
 
 We attempted to resolve both of these in the current model through rebases (discrete moments when the history of a repository is deleted/mutated, like in Git). However, this is a tricky and sensitive operation that is expensive to conduct and complex to communicate across the network.
 
-### Using a Logical Clock for Repositories 
+### Using a Logical Clock for Repositories
 
-To address the above issues, we’re replacing the `prev` pointer in commits with a logical clock. We originally published our intention to do so a [few weeks ago](https://github.com/bluesky-social/atproto/discussions/1410). These are the changes we’re making to the way we handle repository history: 
+To address the above issues, we’re replacing the `prev` pointer in commits with a logical clock. We originally published our intention to do so a [few weeks ago](https://github.com/bluesky-social/atproto/discussions/1410). These are the changes we’re making to the way we handle repository history:
 
 * Incrementing the repo version to `3`
 * Making the `prev` field on repo commits optional
@@ -38,7 +38,7 @@ Even though we are setting the prev field, this can be considered a “hint” a
 
 ## Repository Revisions
 
-The new sync semantics for the repository rely on a logical clock included in each signed commit. 
+The new sync semantics for the repository rely on a logical clock included in each signed commit.
 
 This “revision” takes the form of a [TID](https://atproto.com/specs/record-key#record-key-type-tid) and must be monotonically increasing.
 

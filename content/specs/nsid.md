@@ -91,4 +91,4 @@ The "glob" syntax variation may be modified to extended to make the distinction 
 
 The "fragment" syntax variation may be relaxed in the future to allow nested references.
 
-No automated mechanism for verifying control of a "domain authority" currently exists. Also, not automated mechanism exists for fetching a lexicon schema for a given NSID, or for enumerating all NSIDs for a base domain. 
+No automated mechanism for verifying control of a "domain authority" currently exists. Also, not automated mechanism exists for fetching a lexicon schema for a given NSID, or for enumerating all NSIDs for a base domain.

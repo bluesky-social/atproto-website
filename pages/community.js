@@ -40,7 +40,7 @@ export default function Community({ navigation }) {
                   {/* Extend touch target to entire panel */}
                   <span className="absolute inset-0" aria-hidden="true" />
                   {firstPage.name}{' '}
-  
+
                 </a>
               </Link>
             </h3>

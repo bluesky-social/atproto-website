@@ -27,7 +27,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 #### Python
 
-- [atproto](https://github.com/MarshalX/atproto): new, not stable
+- [atproto](https://github.com/MarshalX/atproto): not stable. XRPC clients, Firehose clients, DID and Handle resolvers, more.
 - [lexrpc](https://github.com/snarfed/lexrpc): not stable
 - [atprototools](https://github.com/ianklatzco/atprototools): new, not stable
 - [Chitose](https://github.com/mnogu/chitose): new, not stable
@@ -35,7 +35,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 - [picopds](https://github.com/DavidBuchanan314/picopds): new, not stable. A bare-minimum PDS implementation with just enough to federate with the sandbox network.
 - [blue-pyinthe-sky](https://github.com/robcerda/blue-pyinthe-sky): new, not stable
 - [gokyuzu](https://github.com/kiliczsh/gokyuzu): not stable
-- 
+
 #### Dart
 
 - [atproto](https://github.com/myConsciousness/atproto.dart/tree/main/packages/atproto) and [bluesky](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky)
@@ -51,11 +51,12 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### PHP
 
 - [socialweb/atproto-lexicon](https://github.com/socialweb-php/atproto-lexicon): Parses and resolves Lexicon schemas; useful for code generation
-- [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable 
+- [potibm/phluesky](https://github.com/potibm/phluesky): a small library for posting to Bluesky, new, not stable
 
 #### R
 
 - [atr](https://github.com/JBGruber/atr): auto-generated functions (unstable & unexposed) + user facing functions for selected endpoints (planned to be stable)
+- [bskyr](https://christophertkenny.com/bskyr/): An R interface for posting to and collecting tidy data from Bluesky (stable)
 
 #### Ruby
 
@@ -65,6 +66,11 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### Rust
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
+- [ATrium](https://github.com/sugyan/atrium): not stable
+
+#### Swift
+
+- [swift-atproto](https://github.com/nnabeyang/swift-atproto): new, not stable
 
 ## Tutorials and Guides
 
@@ -92,17 +98,20 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/did:plc:5t2x7mmh4ofspj7apwpgif5l)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/did:plc:hnbglrwshrdspimiliyoohhu)
 - [SkyFeed](https://skyfeed.app) by [@redsolver.net](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
+- [Swat.io](https://swat.io/en/) by [@swat.io](https://bsky.app/profile/did:plc:xp4xvmqtpeeav2yo3ua23yfn) 
 - [redocean](https://redocean.forza7.org/) ([GitHub](https://github.com/forza7taka/redocean)) by [@forza7.bsky.social](https://bsky.app/profile/did:plc:au6x2h2niz27male2krpwmzz)
 - [Langit](https://langit.pages.dev/) ([GitHub](https://github.com/intrnl/langit)) by [@intrnl.bsky.social](https://bsky.app/profile/did:plc:qezk54orevt3dtm4ijcyadnq)
 - [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
-- [Skylight Bluesky Style](https://skylight.louis-c-novel.com/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
+- [Skylight Bluesky Style](https://skylight-bluesky-style.vercel.app/#/) ([GitHub](https://github.com/louiscnovel2/skylight-bluesky-style)) by [@louis.bsky.social](https://bsky.app/profile/did:plc:fporki4626psbdnxzeh7lhg5)
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
 - [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
+- [Subium](https://subium.com) by [@oleksanovyk.com](https://bsky.app/profile/did:plc:rq6jsdmsptn4m7tfz7cd7nyv): web client with focus on smooth UI and mobile devices support
 
 ### iOS
 
 - [Graysky](https://apps.apple.com/gb/app/graysky/id6448234181) ([GitHub](https://github.com/mozzius/graysky)) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
+- [Skeets](https://bsky.app/profile/skeetsapp.com), an app that offers bookmarks, drafts, mute words, etc. by [@seabass.bsky.social](https://bsky.app/profile/did:plc:ituoear7k6qx3smjfoxhufm4)
 
 ### Android
 
@@ -140,12 +149,13 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 To build your own custom feed, you can use Bluesky's official feed generator starter kit [here](https://github.com/bluesky-social/feed-generator).
 - [Skyfeed](https://skyfeed.app), a dashboard-like experience with a custom feed builder, by [@redsolver.dev](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
-- [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze) 
+- [Goodfeeds](https://goodfeeds.co/), a tool to search custom feeds, by [@jcsalterego.bsky.social](https://bsky.app/profile/did:plc:vc7f4oafdgxsihk4cry2xpze)
 - [Skyline](https://skyline.gay/), create your own algorithm feeds, by [@louis02x.com](https://bsky.app/profile/did:plc:g74nxoyriqoo7jyclzlqkbj2)
 - [Bossett's Custom Feeds](https://github.com/Bossett/bsky-feeds) ([guide](https://bossett.io/setting-up-bossetts-bluesky-feed-generator/)), fork of official generator for What's Science 🧪 feed & to easily host multiple algorithms with more advanced matching, by [@bossett.bsky.social](https://bsky.app/profile/did:plc:jfhpnnst6flqway4eaeqzj2a)
 - [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [bluesky-feeds-rb](https://github.com/mackuba/bluesky-feeds-rb), a complete example of a custom feed service in Ruby, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [Bluesky Social Feeds](https://blueskyfeeds.com), a tool to search and build custom feeds without code or regex, by [@blueskyfeeds.com](https://bsky.app/profile/did:plc:eubjsqnf5edgvcc6zuoyixhw)
+- [bluesky-feed-generator](https://github.com/MarshalX/bluesky-feed-generator), community feed generator starter kit in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
 
 ## Stats
 
@@ -170,6 +180,8 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
 - [Skyfall](https://github.com/mackuba/skyfall), a Ruby gem for streaming events from the firehose, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [firehose.ts](https://github.com/badlogic/skychat/blob/85f93317ee389f34d2c7ddf99ddcaa36e1ee076f/src/firehose.ts), a minimal TypeScript code example how to access the firehose in a browser environment, based on [atproto-firehose](https://github.com/kcchu/atproto-firehose), by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [Python Firehose](https://atproto.blue/en/latest/firehose.html), fast firehose client with decoding in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
+
 
 
 ## Other Tools
@@ -223,4 +235,6 @@ We are not responsible for any damage, loss, or unauthorized access to your acco
 
 ### Submit your project
 
-To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. Alternatively, you can email projects@atproto.com with a link to your project and your handle.
+To submit or remove your project to this list, you may open a pull request [here](https://github.com/bluesky-social/atproto-website). Please follow the existing formatting as a guideline. For example, use your DID in the link to your profile so it's a stable link even if you change your handle.
+
+Alternatively, you can email projects@atproto.com with a link to your project and your handle.

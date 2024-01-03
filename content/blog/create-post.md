@@ -558,7 +558,7 @@ An external embed is stored under `embed` like all the others:
 post["embed"] = fetch_embed_url_card(session["accessJwt"], "https://bsky.app")
 ```
 
-On Bluesky, each client fetches and embeds this card metadata, including blob upload if needed. Embedding the card content in the record ensures that it appears consistently to everyone and reduces waves of automated traffic being sent to the referenced website, but it does require some extra work by the client. 
+On Bluesky, each client fetches and embeds this card metadata, including blob upload if needed. Embedding the card content in the record ensures that it appears consistently to everyone and reduces waves of automated traffic being sent to the referenced website, but it does require some extra work by the client.
 
 ## Putting It All Together
 

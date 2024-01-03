@@ -40,7 +40,7 @@ Blobs for a specific account can be listed and downloaded using endpoints in the
 
 ### Cursors and Pagination
 
-A common pattern in Lexicon design is to include a `cursor` parameter for pagination. The parameter should not include the parameter in the first request, and should keep all other parameters fixed between requests. If a cursor is included in a response, the next batch of responses can be fetched by including that value in a follow-on, continuing until the cursor is not included any longer, indicating the end of the result set has been reached.
+A common pattern in Lexicon design is to include a `cursor` parameter for pagination. The client should not include the `cursor` parameter in the first request, and should keep all other parameters fixed between requests. If a cursor is included in a response, the next batch of responses can be fetched by including that value in a follow-on, continuing until the cursor is not included any longer, indicating the end of the result set has been reached.
 
 ## Authentication
 
