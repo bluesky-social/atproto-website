@@ -206,6 +206,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Skircle](https://skircle.me), visualize Bluesky Interaction Circles by [@skircle.bsky.social](https://bsky.app/profile/did:plc:7neczgqjegyixcjlr4dlnkf5)
 - [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
 - [SkySweeper](https://github.com/pojntfx/skysweeper), service which automatically deletes your old skeets from Bluesky, by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
+- [skeetgen](https://mary-ext.github.io/skeetgen), a tool for generating an easily viewable Bluesky archive, by [@mary.my.id](https://bsky.app/profile/did:plc:ia76kvnndjutgedggx2ibrem)
 - [sum-up.xyz](https://sum-up.xyz), service which uses ChatGPT to humourously summarize a BlueSky user's last 50 posts, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [skyview.social](https://skyview.social), a thread reader app to read BlueSky threads in various forms and share them externally without needing an account, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [Skystats](https://skystats.social), view a user's 30 day BlueSky statistics such as people most interacted with, word cloud, posts per day/time of day/week day, etc., by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
