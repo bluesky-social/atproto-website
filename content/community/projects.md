@@ -23,7 +23,8 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 #### Go
 
-- [indigo](https://github.com/bluesky-social/indigo): not stable
+- [indigo](https://github.com/bluesky-social/indigo): developed by Bluesky PBC
+- [goat](https://codeberg.org/s877/goat): new, not stable
 
 #### Python
 
