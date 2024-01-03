@@ -48,11 +48,11 @@ A Lexicon JSON file is an object with the following fields:
 
 Schema definitions under `defs` all have a `type` field to distinguish their type. A file can have at most one definition with one of the "primary" types. Primary types should always have the name `main`. It is possible for `main` to describe a non-primary type.
 
-References to specific definitions within a Lexicon use fragment syntax, like `com.example.defs#someView`. If a `main` definition exists, it can be referenced without a fragment, just using the NSID.
+References to specific definitions within a Lexicon use fragment syntax, like `com.example.defs#someView`. If a `main` definition exists, it can be referenced without a fragment, just using the NSID. For references in the `$type` fields in data objects themselves (eg, records or contents of a union), this is a "must" (use of a `#main` suffix is invalid). For example, `com.example.record` not `com.example.record#main`.
 
 The semantics of the `revision` field have not been worked out yet, but are intended to help third parties identity the most recent among multiple versions or copies of a Lexicon.
 
-Related Lexicons are often grouped together in the NSID hierarchy. As a convention, any definitions used by multiple Lexicons are defined in a dedicated `*.defs` Lexicon (eg, `com.atproto.server.defs`) within the group. A `*.defs` Lexicon should not include a definition named `main`, though it is not strictly invalid to do so.
+Related Lexicons are often grouped together in the NSID hierarchy. As a convention, any definitions used by multiple Lexicons are defined in a dedicated `*.defs` Lexicon (eg, `com.atproto.server.defs`) within the group. A `*.defs` Lexicon should generally not include a definition named `main`, though it is not strictly invalid to do so.
 
 ## Primary Type Definitions
 
@@ -354,6 +354,8 @@ The specific rules are:
 - `union` variants must always include `$type`, except at the top level of `subscription` messages
 
 Note that `blob` objects always include `$type`, which allows generic processing.
+
+As a reminder, `main` types must be referenced in `$type` fields as just the NSID, not including a `#main` suffix.
 
 ## Lexicon Evolution
 

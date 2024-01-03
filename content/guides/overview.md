@@ -23,13 +23,13 @@ User data is exchanged in [signed data repositories](/guides/data-repos). These 
 
 The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
 
-The three core services in our network are Personal Data Servers (PDS), Big Graph Services (BGS), and App Views. We're also working on feed generators and labelers.
+The three core services in our network are Personal Data Servers (PDS), Relays, and App Views. We're also working on feed generators and labelers.
 
 The lower-level primitives that can get stacked together differently are the repositories, lexicons, and DIDs. We published an overview of our technical decisions around federation architecture [on our blog](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture).
 
 ## Interoperation
 
-A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/com-atproto-identity) for syncing user repositories and the [Bsky Lexicon](/lexicons/app-bsky-actor) to provide basic social behaviors.
+A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/com-atproto) for syncing user repositories and the [Bsky Lexicon](/lexicons/app-bsky) to provide basic social behaviors.
 
 ![Interop](/img/interop.jpg)
 
@@ -39,11 +39,11 @@ While the Web exchanges documents, the AT Protocol exchanges schematic and seman
 
 Personal data servers are your home in the cloud. They host your data, distribute it, manage your identity, and orchestrate requests to other services to give you your views.
 
-Big Graph Services (BGS) handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
+Relays handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
 
-![PDS and BGS](/img/small-big-world.jpg)
+![PDS and Relay](/img/small-big-world.jpg)
 
-This distinction is intended to achieve scale as well as a high degree of user-choice. 
+This distinction is intended to achieve scale as well as a high degree of user-choice.
 
 ## Algorithmic choice
 
@@ -85,7 +85,7 @@ Some of the primary specifications comprising the initial version of the AT Prot
 - [Authenticated Transfer Protocol](/specs/atp)
 - [DIDs](/specs/did) and [Handles](/specs/handle)
 - [Repository](/specs/repository) and [Data Model](/specs/data-model)
-- [Lexicon](/specs/lexicon) 
+- [Lexicon](/specs/lexicon)
 - [HTTP API (XRPC)](/specs/xrpc) and [Event Streams](/specs/event-stream)
 
 These specs can be organized into three layers of dependency:

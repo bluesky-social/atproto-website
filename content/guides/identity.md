@@ -53,7 +53,7 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
   <tr>
    <td><strong>Handles</strong>
    </td>
-   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto-identity">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document. Details in the <a href="/specs/handle">Handle specification</a>.
+   <td>Handles are DNS names. They are resolved using the <a href="/lexicons/com-atproto">com.atproto.identity.resolveHandle()</a> XRPC method and should be confirmed by a matching entry in the DID document. Details in the <a href="/specs/handle">Handle specification</a>.
    </td>
   </tr>
   <tr>
@@ -94,7 +94,7 @@ At present, none of the DID methods meet our standards fully. **Therefore, we ha
 
 Handles in atproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
 
-Handle resolution uses the [`com.atproto.identity.resolveHandle`](/lexicons/com-atproto-identity) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
+Handle resolution uses the [`com.atproto.identity.resolveHandle`](/lexicons/com-atproto) XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
 
 Here is the algorithm in pseudo-TypeScript:
 

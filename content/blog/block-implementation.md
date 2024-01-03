@@ -1,6 +1,6 @@
 ---
 title: Why are blocks on Bluesky public?
-summary: The technical implementation of public blocks and some possibilities for more privacy preserving block implementations — an area of active research and experimentation. 
+summary: The technical implementation of public blocks and some possibilities for more privacy preserving block implementations — an area of active research and experimentation.
 date: June 8, 2023
 ---
 
@@ -36,7 +36,7 @@ You can read more about blocking behaviors on other platforms:
 
 ### How are blocks currently implemented in Bluesky?
 
-Blocks prevent interaction. Blocked accounts will not be able to like, reply, mention, or follow you, and if they navigate directly to your profile, they will see that they have been blocked. Like other public social networks, if they log out of their account or use a different account, they will be able to view your content. (This much is standard across centralized social networks as well.) 
+Blocks prevent interaction. Blocked accounts will not be able to like, reply, mention, or follow you, and if they navigate directly to your profile, they will see that they have been blocked. Like other public social networks, if they log out of their account or use a different account, they will be able to view your content. (This much is standard across centralized social networks as well.)
 
 Currently, on Bluesky, you can view a list of your blocked accounts, and while the list of people who have blocked you is not surfaced in the app, developers familiar with the API could crawl the network to parse this information. This section will dive into the technical constraints that cause blocks to be public, and in a later section, we’ll discuss possible alternative implementations.
 
@@ -82,7 +82,7 @@ The team is still actively discussing this option, and it’s possible that the 
 Some other proposals we’re exploring include:
 
 * **[Label-based block enforcement.](https://github.com/bluesky-social/atproto/discussions/1131#discussioncomment-6066493)** Instead of trying to prevent all violations of blocking relationships across the network, scan for violations of them and label them.
-* **[Interaction gating.](https://github.com/bluesky-social/atproto/discussions/1131#discussioncomment-6066516)** Place authority for post threads and quote posts in the original poster’s PDS, so block information doesn’t need to leave that server. 
+* **[Interaction gating.](https://github.com/bluesky-social/atproto/discussions/1131#discussioncomment-6066516)** Place authority for post threads and quote posts in the original poster’s PDS, so block information doesn’t need to leave that server.
 * **[Zero-knowledge proofs.](https://github.com/bluesky-social/atproto/discussions/1131#discussioncomment-6066535)** We’re aware of existing ZK approaches to distributed blocks, such as [SNARKBlock](https://eprint.iacr.org/2021/1577.pdf), and we’re speaking with trusted advisors about this open area of research and experimentation. Perhaps this research might lead to us deploying a novel system in the future.
 * **[Trusted App Views.](https://github.com/bluesky-social/atproto/discussions/1131#discussioncomment-6066568)** Accounts could privately register their blocks with their PDS, and then these servers would forward block metadata to a small number of “blessed” App Views.
 
