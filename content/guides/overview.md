@@ -23,7 +23,7 @@ User data is exchanged in [signed data repositories](/guides/data-repos). These 
 
 The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
 
-The three core services in our network are Personal Data Servers (PDS), Big Graph Services (BGS), and App Views. We're also working on feed generators and labelers.
+The three core services in our network are Personal Data Servers (PDS), Relays, and App Views. We're also working on feed generators and labelers.
 
 The lower-level primitives that can get stacked together differently are the repositories, lexicons, and DIDs. We published an overview of our technical decisions around federation architecture [on our blog](https://blueskyweb.xyz/blog/5-5-2023-federation-architecture).
 
@@ -39,9 +39,9 @@ While the Web exchanges documents, the AT Protocol exchanges schematic and seman
 
 Personal data servers are your home in the cloud. They host your data, distribute it, manage your identity, and orchestrate requests to other services to give you your views.
 
-Big Graph Services (BGS) handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
+Relays handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
 
-![PDS and BGS](/img/small-big-world.jpg)
+![PDS and Relay](/img/small-big-world.jpg)
 
 This distinction is intended to achieve scale as well as a high degree of user-choice.
 

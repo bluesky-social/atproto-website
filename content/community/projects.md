@@ -27,7 +27,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 #### Python
 
-- [atproto](https://github.com/MarshalX/atproto): new, not stable
+- [atproto](https://github.com/MarshalX/atproto): not stable. XRPC clients, Firehose clients, DID and Handle resolvers, more.
 - [lexrpc](https://github.com/snarfed/lexrpc): not stable
 - [atprototools](https://github.com/ianklatzco/atprototools): new, not stable
 - [Chitose](https://github.com/mnogu/chitose): new, not stable
@@ -56,6 +56,7 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### R
 
 - [atr](https://github.com/JBGruber/atr): auto-generated functions (unstable & unexposed) + user facing functions for selected endpoints (planned to be stable)
+- [bskyr](https://christophertkenny.com/bskyr/): An R interface for posting to and collecting tidy data from Bluesky (stable)
 
 #### Ruby
 
@@ -66,6 +67,10 @@ Read our disclaimer [below](/community/projects#disclaimer).
 
 - [adenosine](https://gitlab.com/bnewbold/adenosine): not stable
 - [ATrium](https://github.com/sugyan/atrium): not stable
+
+#### Swift
+
+- [swift-atproto](https://github.com/nnabeyang/swift-atproto): new, not stable
 
 ## Tutorials and Guides
 
@@ -93,6 +98,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [Connectsky - Extension based AT Proto Client](https://chrome.google.com/webstore/detail/connectsky-an-at-proto-cl/dfjlfmdhkgcpendpfflnlaedfgaoiaed/related) by [@anku.bsky.social](https://bsky.app/profile/did:plc:5t2x7mmh4ofspj7apwpgif5l)
 - [SkyDeck](https://skydeck.social) by [@mattstypa.bsky.social](https://bsky.app/profile/did:plc:hnbglrwshrdspimiliyoohhu)
 - [SkyFeed](https://skyfeed.app) by [@redsolver.net](https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj)
+- [Swat.io](https://swat.io/en/) by [@swat.io](https://bsky.app/profile/did:plc:xp4xvmqtpeeav2yo3ua23yfn) 
 - [redocean](https://redocean.forza7.org/) ([GitHub](https://github.com/forza7taka/redocean)) by [@forza7.bsky.social](https://bsky.app/profile/did:plc:au6x2h2niz27male2krpwmzz)
 - [Langit](https://langit.pages.dev/) ([GitHub](https://github.com/intrnl/langit)) by [@intrnl.bsky.social](https://bsky.app/profile/did:plc:qezk54orevt3dtm4ijcyadnq)
 - [vSky](https://vsky.social) ([GitHub](https://github.com/skiniks/vsky)) by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
@@ -100,11 +106,14 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [deck.blue](https://deck.blue) by [@deck.blue](https://bsky.app/profile/did:plc:w342borqxtyo2pul67ec2pwt)
 - [Fedica](https://fedica.com/social-media/bluesky) by [@fedicahq.bsky.social](https://bsky.app/profile/did:plc:n7nimjfhrwsrgsuothysn2h6) can cross-post and schedule posts and threads
 - [Subium](https://subium.com) by [@oleksanovyk.com](https://bsky.app/profile/did:plc:rq6jsdmsptn4m7tfz7cd7nyv): web client with focus on smooth UI and mobile devices support
+- [Skeetdeck](https://skeetdeck.pages.dev) by [@mary.my.id](https://bsky.app/profile/did:plc:ia76kvnndjutgedggx2ibrem)
+- [Ouranos 🌸](https://useouranos.app) [(GitHub)](https://github.com/pdelfan/ouranos) by [@contrapunctus.bsky.social](https://bsky.app/profile/did:plc:3sapfnszmvjc6wa4ml3ybkwb)
 
 ### iOS
 
 - [Graysky](https://apps.apple.com/gb/app/graysky/id6448234181) ([GitHub](https://github.com/mozzius/graysky)) by [@mozzius.dev](https://bsky.app/profile/did:plc:p2cp5gopk7mgjegy6wadk3ep) and [@alice.bsky.sh](https://bsky.app/profile/did:plc:by3jhwdqgbtrcc7q4tkkv3cf)
 - [Yup](https://yup.io/), an app to cross-post to Bluesky and other social apps
+- [Sora](https://mszpro.com/sorasns/), a Fediverse app for Bluesky and other platforms by [@mszpro.com](https://bsky.app/profile/did:plc:fynelmajwyd4arrdpmm2mkqu)
 - [Skeets](https://bsky.app/profile/skeetsapp.com), an app that offers bookmarks, drafts, mute words, etc. by [@seabass.bsky.social](https://bsky.app/profile/did:plc:ituoear7k6qx3smjfoxhufm4)
 
 ### Android
@@ -149,6 +158,7 @@ To build your own custom feed, you can use Bluesky's official feed generator sta
 - [blue_factory](https://github.com/mackuba/blue_factory), a Ruby implementation of a feed generator, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [bluesky-feeds-rb](https://github.com/mackuba/bluesky-feeds-rb), a complete example of a custom feed service in Ruby, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
 - [Bluesky Social Feeds](https://blueskyfeeds.com), a tool to search and build custom feeds without code or regex, by [@blueskyfeeds.com](https://bsky.app/profile/did:plc:eubjsqnf5edgvcc6zuoyixhw)
+- [bluesky-feed-generator](https://github.com/MarshalX/bluesky-feed-generator), community feed generator starter kit in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
 
 ## Stats
 
@@ -172,6 +182,9 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [atproto-firehose](https://github.com/kcchu/atproto-firehose), NodeJS/Typescript library for accessing AT Protocol Event Stream (aka firehose),  and a CLI for streaming Bluesky Social events, by [@kcchu.xyz](https://bsky.app/profile/did:plc:ocko5cww67whp5lejhh57zdd)
 - [blueskyfirehose](https://github.com/CharlesDardaman/blueskyfirehose), view a firehose of all bsky.social posts, by [@charles.dardaman.com](https://bsky.app/profile/did:plc:ibuqevx5au345anhlfeneo2m)
 - [Skyfall](https://github.com/mackuba/skyfall), a Ruby gem for streaming events from the firehose, by [@mackuba.eu](https://bsky.app/profile/did:plc:oio4hkxaop4ao4wz2pp3f4cr)
+- [firehose.ts](https://github.com/badlogic/skychat/blob/85f93317ee389f34d2c7ddf99ddcaa36e1ee076f/src/firehose.ts), a minimal TypeScript code example how to access the firehose in a browser environment, based on [atproto-firehose](https://github.com/kcchu/atproto-firehose), by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [Python Firehose](https://atproto.blue/en/latest/firehose.html), fast firehose client with decoding in Python, by [@marshal.dev](https://bsky.app/profile/did:plc:s6jnht6koorxz7trghirytmf)
+
 
 
 ## Other Tools
@@ -194,6 +207,9 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Neznam Atproto share](https://github.com/ne-znam/neznam-atproto-share), WordPress plugin to automatically share posts from WordPress to timeline, by [@mbanusic.com](https://bsky.app/profile/did:plc:diud5hvgw7ssqvhwm5zamiwe)
 - [SkySweeper](https://github.com/pojntfx/skysweeper), service which automatically deletes your old skeets from Bluesky, by [@felicitas.pojtinger.com](https://bsky.app/profile/did:plc:ijpidtwscybqhs5fxyzjojmu)
 - [skeetgen](https://mary-ext.github.io/skeetgen), a tool for generating an easily viewable Bluesky archive, by [@mary.my.id](https://bsky.app/profile/did:plc:ia76kvnndjutgedggx2ibrem)
+- [sum-up.xyz](https://sum-up.xyz), service which uses ChatGPT to humourously summarize a BlueSky user's last 50 posts, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [skyview.social](https://skyview.social), a thread reader app to read BlueSky threads in various forms and share them externally without needing an account, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [Skystats](https://skystats.social), view a user's 30 day BlueSky statistics such as people most interacted with, word cloud, posts per day/time of day/week day, etc., by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 
 ## Bots
 
@@ -213,6 +229,9 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Score My Wordle](https://bsky.app/profile/did:plc:wems3hfqqjsfenrrd325q6zo) ([GitHub](https://github.com/shaneafsar/wordlescorer/)), provides Wordle stats and scores across Bluesky, Mastodon, and Twitter, by [@shaneafsar.com](https://bsky.app/profile/did:plc:ksl6jmkhz7qli2ywletvvm2z)
 - [Rijden de Treinen](https://bsky.app/profile/did:plc:ijgkhvxpubqao7yiwtbzpyrm), posts train disruptions in the Netherlands, by [@djiwie.bsky.social](https://bsky.app/profile/did:plc:kvbm4te3fersn2nrxukajsql)
 - [Adopt a Pet](https://bsky.app/profile/did:plc:huey5xufsv67u3fmmtatj2ox), posts an adoptable pet every 10 minutes, by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
+- [AirportStatusBot](https://bsky.app/profile/did:plc:vu37eou7slndxzs3bc3cjkrv) ([GitHub](https://github.com/fishcharlie/AirportStatusBot)), posts delay information about US airports by [@charlie.fish](https://bsky.app/profile/did:plc:4pxxswmxelihfligwqyz3fqu)
+- [Skyview Bot](https://bsky.app/profile/skyview.social), replies with links to unrolled BlueSky threads on [skyview.social](https://skyview.social) that can be shared outside of BlueSky, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+
 
 ### Disclaimer
 
