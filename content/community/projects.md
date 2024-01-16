@@ -213,6 +213,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [sum-up.xyz](https://sum-up.xyz), service which uses ChatGPT to humourously summarize a BlueSky user's last 50 posts, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [skyview.social](https://skyview.social), a thread reader app to read BlueSky threads in various forms and share them externally without needing an account, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
 - [Skystats](https://skystats.social), view a user's 30 day BlueSky statistics such as people most interacted with, word cloud, posts per day/time of day/week day, etc., by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
+- [Hugfairy](https://bsky-hugfairy.vercel.app/), a tool to send hugs to other BlueSky users, by [@haider.bsky.social](https://bsky.app/profile/did:plc:sjp7tdeiw5wvgdb4h2xts4sq)
 
 ## Bots
 
@@ -234,7 +235,7 @@ You can purchase and manage a custom domain through Bluesky [here](https://accou
 - [Adopt a Pet](https://bsky.app/profile/did:plc:huey5xufsv67u3fmmtatj2ox), posts an adoptable pet every 10 minutes, by [@ryanskinner.com](https://bsky.app/profile/did:plc:ubz4oedvsb7dsuncqi5jb7o2)
 - [AirportStatusBot](https://bsky.app/profile/did:plc:vu37eou7slndxzs3bc3cjkrv) ([GitHub](https://github.com/fishcharlie/AirportStatusBot)), posts delay information about US airports by [@charlie.fish](https://bsky.app/profile/did:plc:4pxxswmxelihfligwqyz3fqu)
 - [Skyview Bot](https://bsky.app/profile/skyview.social), replies with links to unrolled BlueSky threads on [skyview.social](https://skyview.social) that can be shared outside of BlueSky, by [@badlogic.bsky.social](https://bsky.app/profile/did:plc:7syfakzcriq44mwbdbc7jwvn)
-
+- [Year Progress Bot](https://bsky.app/profile/did:plc:ia6umkui2w6j44dbytn2rv7g), posts the progress of current year, by [@haider.bsky.social](https://bsky.app/profile/did:plc:sjp7tdeiw5wvgdb4h2xts4sq)
 
 ### Disclaimer
 
