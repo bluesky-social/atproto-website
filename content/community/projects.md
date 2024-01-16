@@ -141,6 +141,10 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 - [bluesky_cli](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_cli) (Dart) developed by [@shinyakato.dev](https://bsky.app/profile/did:plc:iijrtk7ocored6zuziwmqq3c)
 - [blue-sky-cli](https://github.com/wesbos/blue-sky-cli) (Typescript) developed by [@wesbos](https://bsky.app/profile/did:plc:etdjdgnly5tz5l5xdd4jq76d)
 
+### Windows Phone
+
+- [BlueWP](https://github.com/Gargaj/BlueWP/) (C#) developed by Gargaj
+
 ## Bridges
 
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/did:plc:inze6wrmsm7pjl7yta3oig77)
