@@ -145,6 +145,7 @@ The official Bluesky app is available on the [iOS App](https://apps.apple.com/us
 
 - [SkyBridge](https://github.com/videah/skybridge) to use Mastodon apps with Bluesky by [@videah.net](https://bsky.app/profile/did:plc:inze6wrmsm7pjl7yta3oig77)
 - [Bluestream](https://bluestream.deno.dev/), RSS feed generator for Bluesky by [@kawarimidoll.bsky.social](https://bsky.app/profile/did:plc:okalufxun5rpqzdrwf5bpu3d)
+- [Pebble ATP](https://gitlab.com/omnifi/naamio/pebble/atp), automatically posts content from RSS feeds to Bluesky using Deno, by [@fillip.pro](https://bsky.app/profile/did:plc:roobm3fweoenatcuemwklmd7)
 - [Twitter-to-Bsky](https://github.com/ianklatzco/twitter-to-bsky), to import your Twitter archive to Bluesky by [@klatz.co](https://bsky.app/profile/did:plc:o2hywbrivbyxugiukoexum57)
 - [bluesky-post](https://github.com/myConsciousness/atproto.dart/tree/main/packages/bluesky_post), a tool to post from GitHub Actions to Bluesky, by [@shinyakato.dev](https://bsky.app/profile/did:plc:iijrtk7ocored6zuziwmqq3c)
 - [granary](https://granary.io/), converts `app.bsky` objects to/from ActivityStreams, RSS, Atom, HTML, and more, by [@snarfed.org](https://bsky.app/profile/did:plc:fdme4gb7mu7zrie7peay7tst)
