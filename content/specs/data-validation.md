@@ -7,9 +7,9 @@ summary: Expectations around recommended data limits and validation
 
 Some software does not need to worry much about Bluesky or atproto schema validation. For example, client apps and bots can generally assume that data they receive from the Bluesky API is valid, and when they try to create records the PDS is responsible for double-checking schema validation.
 
-Software which consumes directly from the event stream (firehose) should be more careful. And developers designing new tools or clever hacks should be away of some expectations and hard limits around data validation.
+Software which consumes directly from the event stream (firehose) should be more careful. And developers designing new tools or clever hacks should be aware of some expectations and hard limits around data validation.
 
-If an individual record fails to validate for any reason, the entire record should be ignored, but other records from the same repository should be processed. If there is a problem with the repository commit data or repository structure ("MST"), the repository should be market as invalid, but old content does not need to be de-indexed or purged. As soon as a new valid commit is received, the repository should be marked valid again. This logic mostly relevant to feed generators, AppViews, and moderation services, all of which may be consuming from the firehose.
+If an individual record fails to validate for any reason, the entire record should be ignored, but other records from the same repository should be processed. If there is a problem with the repository commit data or repository structure ("MST"), the repository should be marked as invalid, but old content does not need to be de-indexed or purged. As soon as a new valid commit is received, the repository should be marked valid again. This logic mostly relevant to feed generators, AppViews, and moderation services, all of which may be consuming from the firehose.
 
 
 ## Recommended Data Limits
