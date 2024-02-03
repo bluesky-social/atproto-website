@@ -64,12 +64,12 @@ Clients and apps themselves do not need to do anything special to use app passwo
 
 Some administrative XRPC endpoints require authentication with admin privileges. The current scheme for this is to use HTTP Basic authentication with user "admin" and a fixed token in the password field, instead of HTTP Bearer auth with a JWT. This means that admin requests do not have a link to the account or identity of the client beyond "admin".
 
-As a reminder, HTTP Basic authentication works by encoding the password (in this case, the fixed admin token) with `base64` encoding ("standard" version); joining the username and encoded password with a colon (`:`); and putting that in the `Authorization` header prefixed with `Basic`  (with a space).
+As a reminder, HTTP Basic authentication works by joining the username and password together with a colon (`:`), and encoding the resulting string using `base64` ("standard" version). The encoded string is included in the `Authorization` header, prefixed with `Basic ` (with separating space).
 
 As an example, if the admin token was `secret-token`, the header would look like:
 
 ```
-Authorization: Basic admin:c2VjcmV0LXRva2Vu
+Authorization: Basic YWRtaW46c2VjcmV0LXRva2Vu
 ```
 
 The set of endpoints requiring admin auth is likely to get out of date in this specification, but currently includes:
