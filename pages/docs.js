@@ -55,8 +55,6 @@ export default function Docs({ navigation }) {
         <h2 className="text-3xl mb-2 font-normal">Specs</h2>
         <Links pages={navigation.specs} />
 
-        <h2 className="text-3xl mb-2 font-normal">Lexicons</h2>
-        <Links pages={navigation.lexicons} />
       </div>
       <Footer />
     </div>
