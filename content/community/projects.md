@@ -72,6 +72,8 @@ Read our disclaimer [below](/community/projects#disclaimer).
 #### Swift
 
 - [swift-atproto](https://github.com/nnabeyang/swift-atproto): new, not stable
+- [swift-atproto](https://github.com/andooown/swift-atproto): Swift package that provides a AT Protocol libraries by [@andooown](https://github.com/andooown)
+  - [lexicon-gen](https://github.com/andooown/lexicon-gen): CLI tool written in Swift to generate Swift codes from AT Proto's Lexicon files.
 
 ## Tutorials and Guides
 
