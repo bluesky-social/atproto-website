@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && yarn redirects",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "redirects": "cp ./_redirects ./.next/_redirects"
   },
   "dependencies": {
     "@docsearch/react": "^3.5.2",
