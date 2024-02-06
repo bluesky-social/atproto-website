@@ -7,7 +7,7 @@
     "build": "next build && yarn redirects",
     "start": "next start",
     "lint": "next lint",
-    "redirects": "cp ./_redirects ./out/_redirects"
+    "redirects": "cp ./_redirects ./.next/_redirects"
   },
   "dependencies": {
     "@docsearch/react": "^3.5.2",
