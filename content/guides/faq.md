@@ -5,7 +5,7 @@ summary: Frequently Asked Questions about ATP
 
 # FAQ
 
-Frequently Asked Questions about the Authenticated Transfer Protocol (ATP). For FAQ about Bluesky, visit [here](https://blueskyweb.xyz/faq).
+Frequently Asked Questions about the Authenticated Transfer Protocol (ATP). For FAQ about Bluesky, visit [here](https://bsky.social/about/faq).
 
 ## Is the AT Protocol a blockchain?
 
