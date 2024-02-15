@@ -49,7 +49,7 @@ The top-level data object in a repository is a signed commit. The IPLD schema fi
 - `version` (integer, required): fixed value of `3` for this repo format version
 - `data` (CID link, required): pointer to the top of the repo contents tree structure (MST)
 - `rev` (string, TID format, required): revision of the repo, used as a logical clock. Must increase monotonically. Recommend using current timestamp as TID; `rev` values in the "future" (beyond a fudge factor) should be ignored and not processed.
-- `prev` (CID link, optional, nullable): an *optional* pointer (by hash) to a previous commit object for this repository. Could be used to create a chain of history, but largely unused (included for v2 backwards compatibility).
+- `prev` (CID link, nullable): pointer (by hash) to a previous commit object for this repository. Could be used to create a chain of history, but largely unused (included for v2 backwards compatibility). In version `3` repos, this field must exist in the CBOR object, but is virtually always `null`. NOTE: previously specified as nullable and optional, but this caused interoperability issues.
 - `sig` (byte array, required): cryptographic signature of this commit, as raw bytes
 
 An UnsignedCommit data object has all the same fields except for `sig`. The process for signing a commit is to populate all the data fields, and then serialize the UnsignedCommit with DAG-CBOR. The output bytes are then hashed with SHA-256, and the binary hash output (without hex encoding) is then signed using the current "signing key" for the account. The signature is then stored as raw bytes in a commit object, along with all the other data fields.
