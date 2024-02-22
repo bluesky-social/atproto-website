@@ -75,7 +75,7 @@ If you're noticing the "type" field and wondering how that works, see the [Intro
 
 You'll notice "cids" in some of the schemas. A "cid" is a "Content ID," a sha256 hash of some referenced content. These are used to ensure integrity; for instance, a like includes the cid of the post being liked so that a future edit can be detected and noted in the UI.
 
-### <a href="/lexicons/app-bsky">app.bsky.graph.follow</a>
+### <a href="/guides/applications#appbskygraphfollow">app.bsky.graph.follow</a>
 
 A social follow. Example:
 
@@ -87,7 +87,7 @@ A social follow. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.like</a>
+### <a href="/guides/applications#appbskyfeedlike">app.bsky.feed.like</a>
 
 A like on a piece of content. Example:
 
@@ -102,7 +102,7 @@ A like on a piece of content. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.post</a>
+### <a href="/guides/applications#appbskyfeedpost">app.bsky.feed.post</a>
 
 A microblog post. Example:
 
@@ -114,7 +114,7 @@ A microblog post. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.actor.profile</a>
+### <a href="/guides/applications#appbskyactorprofile">app.bsky.actor.profile</a>
 
 A user profile. Example:
 
@@ -126,7 +126,7 @@ A user profile. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.repost</a>
+### <a href="/guides/applications#appbskyfeedrepost">app.bsky.feed.repost</a>
 
 A repost of an existing microblog post (similar to retweets). Example:
 
