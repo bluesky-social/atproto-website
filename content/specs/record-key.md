@@ -52,7 +52,7 @@ This may be used to encode semantics in the name, for example, a domain name, in
 
 Regardless of the type, Record Keys must fulfill some baseline syntax constraints:
 
-- restricted to a subset of ASCII characters — the allowed characters are alphanumeric (`A-Za-z0-9`), period, dash, underscore, or tilde (`.-_~`)
+- restricted to a subset of ASCII characters — the allowed characters are alphanumeric (`A-Za-z0-9`), period, dash, underscore, colon, or tilde (`.-_:~`)
 - must have at least 1 and at most 512 characters
 - the specific record key values `.` and `..` are not allowed
 - must be a permissible part of repository MST path string (the above constraints satisfy this condition)
@@ -71,12 +71,13 @@ self
 example.com
 ~1.2-3_
 dHJ1ZQ
+pre:fix
+_
 ```
 
 Invalid Record Keys:
 
 ```
-literal:self
 alpha/beta
 .
 ..
@@ -87,7 +88,6 @@ any+space
 number[3]
 number(3)
 "quote"
-pre:fix
 dHJ1ZQ==
 ```
 
@@ -101,7 +101,9 @@ Note that in the context of a repository, the same Record Key value may be used 
 
 As a best practice, keep key paths to under 80 characters in virtually all situations.
 
-Note that the colon character (`:`) is not currently allowed, which means than DIDs can not be included in a Record Key without character transformations.
+The colon character was de-facto allowed in the reference implementation in 2023, and the spec was updated to allow this character in February 2024.
+
+Note that "most" DIDs work as record keys, but that the full DID W3C specification allows DIDs with additional characters. This means that DIDs could be used as record keys at time of writing, and this will work with current "blessed" DID methods (note that `did:web` is restricted in atproto to only full domains, not paths or port specification), but that this could break in the future with different DID methods or DID features (like `did:web` paths) allowed.
 
 While Record Keys are case-sensitive, it is a recommended practice to use all-lower-case Record Keys to avoid confusion and maximize possible re-use in case-insensitive contexts.
 
