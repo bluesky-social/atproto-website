@@ -88,7 +88,8 @@ The node IPLD schema fields are:
 - `e` ("entries", array of objects, required): ordered list of TreeEntry objects
     - `p` ("prefixlen", integer, required): count of bytes shared with previous TreeEntry in this Node (if any)
     - `k` ("keysuffix", byte array, required): remainder of key for this TreeEntry, after "prefixlen" have been removed
-    - `v` ("value", CID Link, required): link to a sub-tree Node at a lower level which has keys sorting after this TreeEntry's key (to the "right"), but before the next TreeEntry's key in this Node (if any)
+    - `v` ("value", CID Link, required): link to the record data (CBOR) for this entry
+    - `t` ("tree", CID Link, optional): link to a sub-tree Node at a lower level which has keys sorting after this TreeEntry's key (to the "right"), but before the next TreeEntry's key in this Node (if any)
 
 When parsing MST data structures, the depth and sort order of keys should be verified. This is particularly true for untrusted inputs, but is simplest to just verify every time. Additional checks on node size and other parameters of the tree structure also need to be limited; see the "Security Considerations" section of this document.
 
