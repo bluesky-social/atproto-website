@@ -36,3 +36,5 @@ specs:
     href: /specs/record-key
   - name: URI Scheme
     href: /specs/at-uri-scheme
+  - name: Data Validation
+    href: /specs/data-validation
