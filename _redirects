@@ -1,0 +1,20 @@
+# Redirects for /community URLs
+/community https://docs.bsky.app/showcase 301
+/community/quick-start https://docs.bsky.app/docs/get-started 301
+/community/projects https://docs.bsky.app/showcase 301
+/community/groups https://docs.bsky.app/showcase 301
+
+# Redirects for /blog URLs
+/blog https://docs.bsky.app/blog 301
+/blog/feature-bridgyfed https://docs.bsky.app/blog/feature-bridgyfed 301
+/blog/repo-export https://docs.bsky.app/blog/repo-export 301
+/blog/2023-protocol-roadmap https://docs.bsky.app/blog/protocol-roadmap 301
+/blog/building-on-atproto https://docs.bsky.app/blog/building-on-atproto 301
+/blog/bgs-and-did-doc https://docs.bsky.app/blog/bgs-and-did-doc 301
+/blog/rate-limits-pds-v3 https://docs.bsky.app/blog/rate-limits-pds-v3 301
+/blog/repo-sync-update https://docs.bsky.app/blog/repo-sync-update 301
+/blog/create-post https://docs.bsky.app/docs/advanced-guides/posts 301
+/blog/feature-skyfeed https://docs.bsky.app/blog/feature-skyfeed 301
+/blog/call-for-developers https://docs.bsky.app/blog/call-for-developers 301
+/blog/federation-developer-sandbox https://docs.bsky.app/blog/federation-sandbox 301
+/blog/block-implementation https://docs.bsky.app/blog/block-implementation 301

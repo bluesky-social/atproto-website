@@ -12,30 +12,6 @@ export function Sidebar({ navigation, current }) {
         <LinksGroup links={navigation.guides} current={current} />
         <h4 className="font-bold text-sm mb-1 mt-4">Specs</h4>
         <LinksGroup links={navigation.specs} current={current} />
-        <h4 className="font-bold text-sm mb-1 mt-4">Lexicons</h4>
-        <LinksGroup links={navigation.lexicons} current={current} />
-      </nav>
-    </div>
-  );
-}
-
-export function CommunitySidebar({ navigation, current }) {
-  return  (
-    <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
-      <nav className="sticky top-[10px] px-2" aria-label="Sidebar">
-        <h4 className="font-bold text-sm mb-1">Community</h4>
-        <LinksGroup links={navigation.community} current={current} />
-      </nav>
-    </div>
-  );
-}
-
-export function BlogSidebar({ navigation, current }) {
-  return  (
-    <div className="hidden relative lg:block bg-white pb-4 w-[208px] rounded-lg">
-      <nav className="sticky top-[10px] px-2" aria-label="Sidebar">
-        <h4 className="font-bold text-sm mb-1">Dev Blog</h4>
-        <LinksGroup links={navigation.blog} current={current} />
       </nav>
     </div>
   );
@@ -74,4 +50,4 @@ function LinksGroup({ links, current }) {
 }
 
 
-export default {Sidebar, CommunitySidebar};
+export default {Sidebar};

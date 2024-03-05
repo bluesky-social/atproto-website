@@ -49,7 +49,7 @@ The top-level data object in a repository is a signed commit. The IPLD schema fi
 - `version` (integer, required): fixed value of `3` for this repo format version
 - `data` (CID link, required): pointer to the top of the repo contents tree structure (MST)
 - `rev` (string, TID format, required): revision of the repo, used as a logical clock. Must increase monotonically. Recommend using current timestamp as TID; `rev` values in the "future" (beyond a fudge factor) should be ignored and not processed.
-- `prev` (CID link, optional, nullable): an *optional* pointer (by hash) to a previous commit object for this repository. Could be used to create a chain of history, but largely unused (included for v2 backwards compatibility).
+- `prev` (CID link, nullable): pointer (by hash) to a previous commit object for this repository. Could be used to create a chain of history, but largely unused (included for v2 backwards compatibility). In version `3` repos, this field must exist in the CBOR object, but is virtually always `null`. NOTE: previously specified as nullable and optional, but this caused interoperability issues.
 - `sig` (byte array, required): cryptographic signature of this commit, as raw bytes
 
 An UnsignedCommit data object has all the same fields except for `sig`. The process for signing a commit is to populate all the data fields, and then serialize the UnsignedCommit with DAG-CBOR. The output bytes are then hashed with SHA-256, and the binary hash output (without hex encoding) is then signed using the current "signing key" for the account. The signature is then stored as raw bytes in a commit object, along with all the other data fields.
@@ -88,7 +88,8 @@ The node IPLD schema fields are:
 - `e` ("entries", array of objects, required): ordered list of TreeEntry objects
     - `p` ("prefixlen", integer, required): count of bytes shared with previous TreeEntry in this Node (if any)
     - `k` ("keysuffix", byte array, required): remainder of key for this TreeEntry, after "prefixlen" have been removed
-    - `v` ("value", CID Link, required): link to a sub-tree Node at a lower level which has keys sorting after this TreeEntry's key (to the "right"), but before the next TreeEntry's key in this Node (if any)
+    - `v` ("value", CID Link, required): link to the record data (CBOR) for this entry
+    - `t` ("tree", CID Link, optional): link to a sub-tree Node at a lower level which has keys sorting after this TreeEntry's key (to the "right"), but before the next TreeEntry's key in this Node (if any)
 
 When parsing MST data structures, the depth and sort order of keys should be verified. This is particularly true for untrusted inputs, but is simplest to just verify every time. Additional checks on node size and other parameters of the tree structure also need to be limited; see the "Security Considerations" section of this document.
 

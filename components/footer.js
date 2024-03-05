@@ -10,7 +10,7 @@ const navigation = {
   social: [
     {
       name: 'Bluesky Website',
-      href: 'https://blueskyweb.xyz',
+      href: 'https://bsky.social',
       icon: BuildingOfficeIcon,
     },
     {
