@@ -78,9 +78,9 @@ The set of endpoints requiring admin auth is likely to get out of date in this s
 - `com.atproto.server.createInviteCode`
 - `com.atproto.server.createInviteCodes`
 
-### Inter-Service Authentication (Temporary Specification)
+### Inter-Service Authentication (JWT)
 
-This section describes a mechanism for authentication between services using signed JWTs. Note that this is not the long-term solution for inter-service authentication, and is likely to be replaced with a more robust mechanism in the near future.
+This section describes a mechanism for authentication between services using signed JWTs.
 
 The current mechanism is to use short-lived JWTs signed by the account's atproto signing key. The receiving service can validate the signature by checking this key against the account's DID document.
 
@@ -89,10 +89,18 @@ The JWT parameters are:
 - `alg` header field: indicates the signing key type (see [Cryptography](/specs/cryptography))
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
-- `iss` body field: account DID that the request is being sent on behalf of
+- `iss` body field: account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
 - `aud` body field: service DID associated with the service that the request is being sent to
 - `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
 - JWT signature: base64url-encoded signature using the account DID's signing key
+
+When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
+
+- service identifier `atproto_labeler` maps to key identifier `atproto_label`
+
+If the service identifier is not included, the scope is general purpose and the `atproto` key identifier should be used.
+
+The receiving service may require or prohibit specific service identifiers for access to specific resources or endpoints.
 
 The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As Typescript pseudo-code, this looks like:
 
