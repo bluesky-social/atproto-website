@@ -29,7 +29,7 @@ The fields on the label object are:
 - `neg` (boolean, optional): if `true`, indicates that this label "negates" an earlier label with the same `src`, `uri`, and `val`.
 - `cts` (string, datetime format, required): the timestamp when the label was created. Note that timestamps in a distributed system are not trustworthy or verified by default.
 - `exp` (string, datetime format, required): a timestamp at which this label expires (is not longer valid)
-- `sig` (bytes, optional): cryptographic signature bytes. Uses the `bytes` type from the Data Model, which encodes in JSON as a `$bytes` object with base64 encoding
+- `sig` (bytes, optional): cryptographic signature bytes. Uses the `bytes` type from the [Data Model](/specs/data-model), which encodes in JSON as a `$bytes` object with base64 encoding
 
 When labels are being transferred as full objects between services, the `ver` and `sig` fields are required.
 
@@ -63,7 +63,7 @@ The behavior, definition, meaning, and policies around labels are generally comm
 The current recommended syntax for label strings is lower-case kebab-syntax (using `-` internally), using only ASCII letters. Specifically:
 
 - lower-case alphabetical ASCII letters (`a` to `z`)
-- dash (``) used for internal separation, but not as a first or last character
+- dash (`-`) used for internal separation, but not as a first or last character
 - no other punctuation or whitespace
 - 128 bytes maximum length. Shorter is better (try to keep labels to a couple dozen characters at most), while still being somewhat descriptive.
 
@@ -81,9 +81,9 @@ Likewise, may continue to persist expired labels (after the expiration timestamp
 
 ## Signatures
 
-Labels are signed using public-key cryptography, similar to repository commit objects. Signatures should be validated when labels are transferred between services. It is assumed that most end-clients will not validate signatures themselves, and signatures may be removed from API responses sent to clients for network efficiency. Clients and other parties should have a mechanism to verify signatures, by querying individual signatures from labeling authorities, and receiving back the full label, including signature.
+Labels are signed using public-key [Cryptography](/specs/cryptography), similar to repository commit objects. Signatures should be validated when labels are transferred between services. It is assumed that most end-clients will not validate signatures themselves, and signatures may be removed from API responses sent to clients for network efficiency. Clients and other parties should have a mechanism to verify signatures, by querying individual signatures from labeling authorities, and receiving back the full label, including signature.
 
-The process to sign or verify a signature is to construct a complete version of the label, using only the specified schema fields, and not including the `sig` field. This means including the `ver` field, but not any `$type` field or other un-specified fields which may have been included in a Lexicon representation of the label. This data object is then encoded in CBOR, following the deterministic IPLD/DAG-CBOR normalization rules. The CBOR bytes are hashed with SHA-256, and then the direct hash bytes (not a hex-encoded string) are signed (or verified) using the appropriate cryptographic key. The signature bytes are stored in the `sig` field as bytes (see Data Mode for details representing bytes).
+The process to sign or verify a signature is to construct a complete version of the label, using only the specified schema fields, and not including the `sig` field. This means including the `ver` field, but not any `$type` field or other un-specified fields which may have been included in a Lexicon representation of the label. This data object is then encoded in CBOR, following the deterministic IPLD/DAG-CBOR normalization rules. The CBOR bytes are hashed with SHA-256, and then the direct hash bytes (not a hex-encoded string) are signed (or verified) using the appropriate cryptographic key. The signature bytes are stored in the `sig` field as bytes (see [Data Model](/specs/data-model) for details representing bytes).
 
 The key used for signing labels is found in the DID document for the issuing identity, and has fragment identifier `#atproto_label`. This key *may* have the same value as the `#atproto` signing key used for repository signatures. At this time, if an `#atproto_label` key is not found, implementation *should not* attempt to use other keys present in the DID document to verify the signature, they should simply consider the signature invalid and ignore the label.
 
