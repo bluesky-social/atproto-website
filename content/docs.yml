@@ -22,6 +22,8 @@ specs:
     href: /specs/cryptography
   - name: Repository
     href: /specs/repository
+  - name: Label
+    href: /specs/label
   - name: HTTP API (XRPC)
     href: /specs/xrpc
   - name: Event Stream
