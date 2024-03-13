@@ -145,7 +145,7 @@ Labels are often “hydrated” in to HTTP API responses by atproto services, su
 
 The syntax of these headers follows IETF RFC-8941 (”Structured Field Values for HTTP”), section 3.1.2 (”Parameters”). Values are separated by comma (ASCII `,` character), and values from repeated declaration of the header should be merged in to a single list. One or more optional parameters may follow the item value (the DID), separated by a semicolon (ASCII `;` character). For boolean parameters, the full RFC syntax (just as `param=?0` for false) is not currently supported. Instead, the presence of the parameter indicates it is “true”, and the absence indicates “false”. No other parameter values types (such as integers or strings) are supported at this time. 
 
-The only currently supported parameter is the boolean parameter `redact`. This special flag indicates that the service hydrating labels should handle the special label values `!takedown` and `!suspend` by entirely redacting the labeled content from the API response, instead of simply labeled. This may result in an application-specific tombstone entry, which may indicate the Labeler responsible for the redaction, or may simply result in the content being removed.
+The only currently supported parameter is the boolean parameter `redact`. This flag indicates that the service hydrating labels should handle the special protocol-level label values `!takedown` and `!suspend` by entirely redacting content from the API response, instead of simply labeling it. This may result in an application-specific tombstone entry, which might indicate the Labeler responsible for the redaction, or could result in the content being removed without a tombstone.
 
 Complete example syntax for these headers:
 
