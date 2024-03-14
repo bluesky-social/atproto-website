@@ -28,7 +28,7 @@ The fields on the label object are:
 - `val` (string, 128 bytes max, required): the value of the label. Semantics and preferred syntax discussed below.
 - `neg` (boolean, optional): if `true`, indicates that this label "negates" an earlier label with the same `src`, `uri`, and `val`.
 - `cts` (string, datetime format, required): the timestamp when the label was created. Note that timestamps in a distributed system are not trustworthy or verified by default.
-- `exp` (string, datetime format, required): a timestamp at which this label expires (is not longer valid)
+- `exp` (string, datetime format, optional): a timestamp at which this label expires (is not longer valid)
 - `sig` (bytes, optional): cryptographic signature bytes. Uses the `bytes` type from the [Data Model](/specs/data-model), which encodes in JSON as a `$bytes` object with base64 encoding
 
 When labels are being transferred as full objects between services, the `ver` and `sig` fields are required.
@@ -145,7 +145,7 @@ Labels are often “hydrated” in to HTTP API responses by atproto services, su
 
 The syntax of these headers follows IETF RFC-8941 (”Structured Field Values for HTTP”), section 3.1.2 (”Parameters”). Values are separated by comma (ASCII `,` character), and values from repeated declaration of the header should be merged in to a single list. One or more optional parameters may follow the item value (the DID), separated by a semicolon (ASCII `;` character). For boolean parameters, the full RFC syntax (just as `param=?0` for false) is not currently supported. Instead, the presence of the parameter indicates it is “true”, and the absence indicates “false”. No other parameter values types (such as integers or strings) are supported at this time. 
 
-The only currently supported parameter is the boolean parameter `redact`. This special flag indicates that the service hydrating labels should treat the special label values `!takedown` and `!suspend` should be entirely redacted from the API response, instead of simply labeled. This may result in an application-specific tombstone entry, which may indicate the Labeler responsible for the redaction, or may simply result in the content being removed.
+The only currently supported parameter is the boolean parameter `redact`. This flag indicates that the service hydrating labels should handle the special protocol-level label values `!takedown` and `!suspend` by entirely redacting content from the API response, instead of simply labeling it. This may result in an application-specific tombstone entry, which might indicate the Labeler responsible for the redaction, or could result in the content being removed without a tombstone.
 
 Complete example syntax for these headers:
 
