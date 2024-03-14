@@ -131,6 +131,8 @@ A few requirements must be met for proxying to happen. These conditions may be e
 - the request must be from an authenticated user with an active account on the PDS
 - rate-limits at the PDS still apply
 
+*Note: during the early roll-out of this protocol feature, endpoints must also be from a Lexicon known to the PDS. This constraint will be relaxed soon, to allow new applications to route requests to their own AppView.*
+
 
 ## Summary of HTTP Headers
 
