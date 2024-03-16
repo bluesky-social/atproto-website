@@ -23,7 +23,7 @@ export default function Hero() {
               <div className="rounded-md shadow">
                 <Link href="/guides/overview">
                   <a className="flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 md:py-4 md:px-10 md:text-lg focus-visible:outline outline-yellow-500 outline-2">
-                    Protocol Overview
+                    Overview
                   </a>
                 </Link>
               </div>
