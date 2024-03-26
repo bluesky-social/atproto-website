@@ -29,7 +29,7 @@ The lower-level primitives that can get stacked together differently are the rep
 
 ## Interoperation
 
-A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core [ATP Lexicon](/lexicons/com-atproto) for syncing user repositories and the [Bsky Lexicon](/lexicons/app-bsky) to provide basic social behaviors.
+A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core `com.atproto.*` lexicons for syncing user repositories and the `app.bsky.*` lexicons to provide basic social behaviors.
 
 ![Interop](/img/interop.jpg)
 
