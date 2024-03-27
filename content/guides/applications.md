@@ -9,13 +9,13 @@ tldr:
 
 # Applications model
 
-Applications on the AT Protocol connect to the user's Personal Data Server (PDS) to access their account. Once a session is established, the app can use the [lexicons](./lexicon) implemented by the PDS to drive behaviors.
+Applications on the AT Protocol connect to the user's Personal Data Server (PDS) to access their account. Once a session is established, the app can use the lexicons implemented by the PDS to drive behaviors.
 
 In this guide, we'll step through a couple of common patterns (with simple code examples) to help you develop an intuition about this. All APIs shown below are generated using Lexicon's code-generator CLI.
 
 ## Signing in
 
-Sign-in and authentication is a simple session-oriented process. The [com.atproto.server lexicon](/lexicons/com-atproto) includes APIs for creating and managing these sessions.
+Sign-in and authentication is a simple session-oriented process. The `com.atproto.server.*` lexicons include APIs for creating and managing these sessions.
 
 ```typescript
 // create an API instance with my PDS
@@ -75,7 +75,7 @@ If you're noticing the "type" field and wondering how that works, see the [Intro
 
 You'll notice "cids" in some of the schemas. A "cid" is a "Content ID," a sha256 hash of some referenced content. These are used to ensure integrity; for instance, a like includes the cid of the post being liked so that a future edit can be detected and noted in the UI.
 
-### <a href="/lexicons/app-bsky">app.bsky.graph.follow</a>
+### `app.bsky.graph.follow`
 
 A social follow. Example:
 
@@ -87,7 +87,7 @@ A social follow. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.like</a>
+### `app.bsky.feed.like`
 
 A like on a piece of content. Example:
 
@@ -102,7 +102,7 @@ A like on a piece of content. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.post</a>
+### `app.bsky.feed.post`
 
 A microblog post. Example:
 
@@ -114,7 +114,7 @@ A microblog post. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.actor.profile</a>
+### `app.bsky.actor.profile`
 
 A user profile. Example:
 
@@ -126,7 +126,7 @@ A user profile. Example:
 }
 ```
 
-### <a href="/lexicons/app-bsky">app.bsky.feed.repost</a>
+### `app.bsky.feed.repost`
 
 A repost of an existing microblog post (similar to retweets). Example:
 
