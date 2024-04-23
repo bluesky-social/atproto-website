@@ -18,7 +18,8 @@ The characteristics of a TID are:
 
 - 64-bit integer
 - big-endian byte ordering
-- encoded as `base32-sortable`. That is, encoded with characters `234567abcdefghijklmnopqrstuvwxyz`, with no padding, yielding 13 ASCII characters.
+- encoded as `base32-sortable`. That is, encoded with characters `234567abcdefghijklmnopqrstuvwxyz`
+- no special padding characters (like `=`) are used, but all digits are always encoded, so length is always 13 ASCII characters. The TID corresponding to integer zero is `2222222222222`.
 - hyphens should not be included in a TID (unlike in previous iterations of the scheme)
 
 The layout of the 64-bit integer is:
@@ -32,6 +33,38 @@ TID generators should generate a random clock identifier number, chosen to avoid
 The primary motivation for the TID scheme is to provide a loose temporal ordering of records, which improves storage efficiency of the repository data structure (MST).
 
  Note: There are similarities to ["snowflake identifiers"](https://en.wikipedia.org/wiki/Snowflake_ID). In the decentralized context of atproto, the global uniqueness of TIDs can not be guaranteed, and an antagonistic repo controller could trivially create records re-using known TIDs.
+
+Syntactically valid TIDs:
+
+```
+3jzfcijpj2z2a
+7777777777777
+3zzzzzzzzzzzz
+2222222222222
+```
+
+Invalid TIDs:
+
+```
+# not base32
+3jzfcijpj2z21
+0000000000000
+
+# case-sensitive
+3JZFCIJPJ2Z2A
+
+# too long/short
+3jzfcijpj2z2aa
+3jzfcijpj2z2
+222
+
+# legacy dash syntax *not* supported (TTTT-TTT-TTTT-CC)
+3jzf-cij-pj2z-2a
+
+# high bit can't be set
+zzzzzzzzzzzzz
+kjzfcijpj2z2a
+```
 
 
 ### Record Key Type: `literal:<value>`
