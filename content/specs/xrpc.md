@@ -112,8 +112,6 @@ const jwt = headerPayload + '.' + bytesToBase64Url(signature)
 
 ## Service Proxying
 
-*Note: This is a new protocol feature, and more details are likely to be specified over time.*
-
 The PDS acts as a generic proxy between clients and other atproto services. Clients can use an HTTP header to specify which service in the network they want the request forwarded to (eg, a specific AppView or Labeler service). The PDS will do some safety checks, then forward the request on with an inter-service authentication token (JWT, described above) issued and signed by the user's identity.
 
 The HTTP header is `atproto-proxy`, and the value is a DID (identifying a service), followed by a service endpoint identifier, joined by a `#` character. The PDS resolves the service DID, extracts a service endpoint URL from the DID document, and proxies the request on to the identified server.
@@ -130,8 +128,6 @@ A few requirements must be met for proxying to happen. These conditions may be e
 - only atproto endpoint paths are supported. This means an `/xrpc/` prefix, followed by a valid NSID and endpoint name. Note that the `/xrpc/` prefix may become configurable in the future
 - the request must be from an authenticated user with an active account on the PDS
 - rate-limits at the PDS still apply
-
-*Note: during the early roll-out of this protocol feature, endpoints must also be from a Lexicon known to the PDS. This constraint will be relaxed soon, to allow new applications to route requests to their own AppView.*
 
 
 ## Summary of HTTP Headers
