@@ -2,7 +2,7 @@
 
 This repository contains the documentation for the AT Protocol, available to read at [atproto.com](https://atproto.com/).
 
-To read documentation for the Bluesky API, go to [docs.bsky.app](https://www.docs.bsky.app/) or this [repo](https://github.com/bluesky-social/bsky-docs).
+To read documentation for the Bluesky API, go to [docs.bsky.app](https://docs.bsky.app/) or this [repo](https://github.com/bluesky-social/bsky-docs).
 ---
 
 ### Making edits to atproto.com
