@@ -23,7 +23,7 @@ const SiteSections = [
   },
   {
     name: 'Bluesky API',
-    href: 'https://www.docs.bsky.app/',
+    href: 'https://docs.bsky.app/',
     icon: DocumentTextIcon,
   }
 ]
