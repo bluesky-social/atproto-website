@@ -97,7 +97,7 @@ The JWT parameters are:
 - `aud` body field: service DID associated with the service that the request is being sent to
 - `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
 - `lxm` body field (optional): lexicon method name. Binds a token to a given XRPC method. If not present, the token may still be used for simple authentication but should not be used for any sensitive behavior or to perform actions on behalf of the user.
-- `nonce` body field (optional): arbitrary string value that may be used by a receiving server to mitigate replay attacks.
+- `jti` body field (optional): arbitrary string value that may be used by a receiving server to mitigate replay attacks.
 - JWT signature: base64url-encoded signature using the account DID's signing key
 
 When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
