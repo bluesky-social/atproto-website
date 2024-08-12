@@ -84,6 +84,10 @@ This section describes a mechanism for authentication between services using sig
 
 The current mechanism is to use short-lived JWTs signed by the account's atproto signing key. The receiving service can validate the signature by checking this key against the account's DID document.
 
+JWTs are intended to be single-use and may be bound to a given audience and XRPC method. 
+
+Inter-service authentication tokens are used when proxying requests through the PDS (see below), but may also be requested ad hoc by a client through `com.atproto.server.getServiceJwt`. 
+
 The JWT parameters are:
 
 - `alg` header field: indicates the signing key type (see [Cryptography](/specs/cryptography))
@@ -92,6 +96,8 @@ The JWT parameters are:
 - `iss` body field: account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
 - `aud` body field: service DID associated with the service that the request is being sent to
 - `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
+- `lxm` body field (optional): lexicon method name. Binds a token to a given XRPC method. If not present, the token may still be used for simple authentication but should not be used for any sensitive behavior or to perform actions on behalf of the user.
+- `jti` body field (optional): arbitrary string value that may be used by a receiving server to mitigate replay attacks.
 - JWT signature: base64url-encoded signature using the account DID's signing key
 
 When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
