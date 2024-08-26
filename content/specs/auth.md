@@ -104,16 +104,16 @@ When working on client software, it may be difficult for developers to publish i
 
 To make development workflows easier, a special exception is made for clients with `client_id` having origin `http://localhost` (with no port number specified). Authorization Servers are encouraged to support this exception - including in production environments - but it is optional.
 
-In a localhost `client_id` scenario, the Authorization Server should verify that the scheme is `http`, and that the hostname is exactly `localhost` with no port specified. IP addresses (`127.0.0.1`, etc) are not supported. The path parameter must be empty (`/`). Some parameters can or must be provided via query parameter in the `client_id` URL (with appropriate urlencoding):
+In a localhost `client_id` scenario, the Authorization Server should verify that the scheme is `http`, and that the hostname is exactly `localhost` with no port specified. IP addresses (`127.0.0.1`, etc) are not supported. The path parameter must be empty (`/`). Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate urlencoding):
 
 - `redirect_uri` (string, multiple allowed, optional): allows declaring a local redirect/callback URL. Otherwise, `http://127.0.0.1/` and `http://[::1]/` will be used.
-- `scope` (string, space-separated, multiple allowed, optional): default is `atproto`
+- `scope` (string, space-separated, multiple allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
 
 The other parameters in the virtual client metadata document will be:
 
 - `client_id` (string): the exact `client_id` (URL) used to generate the virtual document
 - `client_name` (string): a value chosen by the Authorization Server (e.g. "Loopback client")
-- `response_types` (array of strings): includes `code`
+- `response_types` (array of strings): must include `code`
 - `grant_types` (array of strings): `authorization_code` and `refresh_token`
 - `token_endpoint_auth_method`: `none`
 - `application_type`: `native`
@@ -192,7 +192,7 @@ PKCE and PAR are required for all client types and Authorization Servers. Confid
 A summary of fields relevant to authorization requests with the atproto OAuth profile:
 
 - `client_id` (string, required): identifies the client software. See "Clients" section above for details.
-- `response_type` (string, required): must contain be `code`
+- `response_type` (string, required): must be `code`
 - `code_challenge` (string, required): the PKCE challenge value. See "PKCE" section.
 - `code_challenge_method` (string, required): which code challenge method is used, for example `S256`. See "PKCE" section.
 - `state` (string, required): random token used to verify the authorization request against the response. See below.
