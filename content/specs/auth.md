@@ -82,6 +82,7 @@ The following fields are relevant for all client types:
 - `response_types` (array of strings, required): `code` must be included.
 - `redirect_uris` (array of strings, required): at least one redirect URI is required. See Authorization Request Fields section.
 - `token_endpoint_auth_method` (string, optional): confidential clients must set this to  `private_key_jwt`.
+- `token_endpoint_auth_signing_alg` (string, optional): if supplied, must be `ES256` (which is the default)
 - `dpop_bound_access_tokens` (boolean, required): DPoP is mandatory for all clients, so this must be present and `true`
 - `jwks` (object with array of JWKs, optional): confidential clients must supply at least one public key in JWK format for use with JWT client authentication. Either this field or the `jwks_uri` field must be provided for confidential clients, but not both.
 - `jwks_uri` (string, optional): URL pointing to a JWKS JSON object. See `jwks` above for details.
@@ -301,6 +302,7 @@ The Authorization Server URL may be the same as the Resource Server (PDS), or mi
 - `response_types_supported` (array of strings, required): must include `code`
 - `grant_types_supported` (array of strings, required): must include `authorization_code` and `refresh_token` (refresh tokens must be supported)
 - `code_challenge_methods_supported` (array of strings, required): must include `S256` (see "PKCE" section)
+- `token_endpoint_auth_methods_supported` (array of strings, required): must include both `none` (public clients) and `private_key_jwt` (confidential clients)
 - `token_endpoint_auth_signing_alg_values_supported` (array of strings, required); must include `ES256`
 - `scopes_supported` (space-separated string, required): must include `atproto`. See "Scopes" section.
 - `authorization_response_iss_parameter_supported` (boolean): must be `true`
