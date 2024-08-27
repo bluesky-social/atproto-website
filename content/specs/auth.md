@@ -1,6 +1,7 @@
 ---
 title: Auth
 summary: Client and Service Auth, including OAuth
+wip: true
 ---
 
 # Authentication and Authorization
@@ -9,9 +10,13 @@ There are different forms of authentication and authorization used in atproto. C
 
 ## OAuth
 
-DISCLAIMER: The OAuth profile for atproto is new and may be revised based on feedback from the development community and ongoing standards work. Read more about the rollout in the [OAuth Roadmap](https://github.com/bluesky-social/atproto/discussions/2656).
+:::note
+The OAuth profile for atproto is new and may be revised based on feedback from the development community and ongoing standards work. Read more about the rollout in the [OAuth Roadmap](https://github.com/bluesky-social/atproto/discussions/2656).
+:::
 
-DISCLAIMER: This specification is authoritative, but is not an implementation guide and does not provide much background or context around design decisions. The earlier [design proposal](https://github.com/bluesky-social/proposals/tree/main/0004-oauth) is not authoritative but provides more context and examples. SDK documentation and the client implementation guides (forthcoming) are more approachable for developers.
+:::note
+This specification is authoritative, but is not an implementation guide and does not provide much background or context around design decisions. The earlier [design proposal](https://github.com/bluesky-social/proposals/tree/main/0004-oauth) is not authoritative but provides more context and examples. SDK documentation and the client implementation guides (forthcoming) are more approachable for developers.
+:::
 
 OAuth is the primary mechanism in atproto for clients to make authorized requests to PDS instances. Most user-facing software is expected to use OAuth, including “front-end” clients like mobile apps, rich browser apps, or native desktop apps, as well as “back-end” clients like web services.
 
@@ -67,7 +72,9 @@ Clients which are only using atproto OAuth for account authentication (without a
 
 #### Client Metadata
 
-DISCLAIMER: The client metadata standard is still a draft and may evolve over time. Our intention is to evolve and align with subsequent drafts and any final standard, while minimizing disruption and breakage with existing implementations.
+:::note
+The client metadata standard is still a draft and may evolve over time. Our intention is to evolve and align with subsequent drafts and any final standard, while minimizing disruption and breakage with existing implementations.
+:::
 
 Clients must publish a "client metadata" JSON file on the public web. This will be fetched dynamically by Authorization Servers as part of the authorization request (PAR) and at other times during the session lifecycle. The response HTTP status must be 200 (not another 2xx or a redirect), with a JSON object body with the correct `Content-Type` (`application/json`).
 
@@ -141,8 +148,6 @@ In some client environments, it may be difficult to resolve all identity types. 
 
 Because authorization flows are security-critical, any caching of identity resolution should choose cache lifetimes carefully. Cache lifetimes of less than 10 minutes are recommended for auth flows specifically.
 
-TODO: bluesky implementation doesn't actually differentiate cache lifetimes by use-case in our systems/apps yet
-
 The resolved DID should be bound to the overall auth session and should be used as the primary account identifier within client app code. Handles (when verified) are acceptable to display in user interfaces, but may change over time and need to be re-verified periodically. When passing an account identifier through to the Authorization Server as part of the Authorization Request in the `login_field`, it is recommended to use the exact account identifier supplied by the user (handle or DID) to ensure any sign-in flow is consistent (users might not recognize their own account DID).
 
 At the end of the auth flow, when the client does an initial token fetch, the Authorization Server must return the account DID in the `sub` field of the JSON response body. If the entire auth flow started with an account identifier, it is critical for the client to verify that this DID matches the expected DID bound to the session earlier; the linkage from account to Authorization Server will already have been verified in this situation.
@@ -164,8 +169,6 @@ Authorization Servers may support other profiles of OAuth if client does not inc
 Use of the atproto OAuth profile, as indicated by the `atproto` scope, means that the Authorization Server will return the atproto account DID as an account identifier in the `sub` field of token requests. A client may include only the `atproto` scope if they only need account authentication - for example a “Login with atproto” use case. Unlike OpenID, profile metadata in atproto is generally public, so an additional authorization scope for fetching profile metadata is not needed.
 
 In OAuth 2.0, Authorization Servers may always return the granted scopes in auth request responses and token responses, but are only required to do so if the scope is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes.
-
-TODO: bluesky PDS/entryway doesn't always return scopes yet
 
 The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original “session token” auth system:
 
@@ -225,7 +228,9 @@ Authorization Servers must set `require_pushed_authorization_requests` to `true`
 
 Clients make an HTTPS POST request to the `pushed_authorization_request_endpoint` URL, with the request parameters in the form-encoded request body. They receive a `request_uri` (not to be confused with `redirect_uri`) in the JSON response object. When they redirect the user to the authorization endpoint (`authorization_endpoint`), they omit most of the request parameters they already sent and include this `redirect_uri` along with `client_id` as query parameters instead.
 
-DISCLAIMER: PAR is a relatively new and less-supported standard, and the requirement to use PAR may be relaxed if it is found to be too onerous a requirement for client implementations. In that case, Authorization Servers would be required to support both PAR and non-PAR requests with PAR being optional for clients.
+:::note
+PAR is a relatively new and less-supported standard, and the requirement to use PAR may be relaxed if it is found to be too onerous a requirement for client implementations. In that case, Authorization Servers would be required to support both PAR and non-PAR requests with PAR being optional for clients.
+:::
 
 #### Confidential Client Authentication
 
@@ -240,8 +245,6 @@ Additional requirements:
 - confidential clients must include `token_endpoint_auth_method` as `private_key_jwt` in their client metadata document
 - confidential clients are expected to immediately remove client authentication keys from their client metadata if the key has been leaked or compromised
 - Authorization Servers must bind active auth sessions for confidential clients to the client authentication key used at the start of the session. The server should revoke the session and reject further token refreshes if the client authentication key becomes absent from the client metadata. This means the Authorization Server is expected to periodically re-fetch client metadata.
-
-TODO: what if the auth server fails to fetch the client metadata at all? eg a transient TCP connection failure, or server is just down for a couple hours. seems a bit brittle to immediately revoke, maybe a grace period?
 
 ### Tokens and Session Lifetime
 
@@ -268,8 +271,6 @@ The atproto OAuth profile mandates use of DPoP for all client types when making 
 
 Clients must initiate DPoP in the initial authorization request (PAR).
 
-TODO: bluesky PDS implementation and example code doesn’t reflect this new requirement yet
-
 Server-provided DPoP nonces are mandatory. The Resource Server and Authorization Server may share nonces (especially if they are the same server) or they may have separate nonces. Clients should track the DPoP nonce per account session and per server. Servers must rotate nonces periodically, with a maximum lifetime of 5 minutes. Servers may use the same nonce across all client sessions and across multiple requests at any point in time. Servers should accept recently-stale (old) nonces to make rotation smoother for clients with multiple concurrent request in-flight. Clients should be resilient to unexpected nonce updates in the form of HTTP 400 errors and should retry those failed requests.
 
 Clients must generate and sign a unique DPoP token (JWT) for every request. Each DPoP request JWT must have a unique (randomly generated) `jti` nonce. Servers should prevent token replays by tracking `jti` nonces and rejecting re-use. They can restrict their client-generated `jti` nonce history to the server-generated DPoP nonce so that they do not need to track an endlessly growing set of nonces.
@@ -289,8 +290,6 @@ Resource Server (PDS) metadata must comply with the "OAuth 2.0 Protected Resourc
 - the URL path is `/.well-known/oauth-protected-resource`
 - response must be an HTTP 200 (not 2xx or redirect), and must be a valid JSON object with content type `application/json`
 - must contain an `authorization_servers` array of strings, with a single element, which is a fully-qualified URL
-
-TODO: why limit to single element instead of taking the first?
 
 The Authorization Server URL may be the same as the Resource Server (PDS), or might point to a separate server (e.g. entryway). The Authorization Server also publishes metadata, complying with the "OAuth 2.0 Authorization Server Metadata" ([RFC 8414](https://datatracker.ietf.org/doc/html/rfc8414)) standard. A summary of requirements:
 
@@ -329,11 +328,7 @@ See the “Scopes” section for a description of scope options.
 
 If a client is a confidential client and the user has already approved the same scopes for the same client in the past, the Authorization Server may allow “silent sign-in” by auto-approving the request. Authorization Servers can set their own policies for this flow: it may require explicit user configuration, or the client may be required to be “trusted”.
 
-TODO: review the above requirements for silent sign-in
-
 Authorization Servers should separately implement a web interface which allows authenticated users to view active OAuth sessions and delete them.
-
-TODO: the bluesky PDS implementation has not implemented the above yet
 
 ### Summary of Authorization Flow
 
@@ -361,15 +356,11 @@ The Authorization Server uses the `request_uri` to look up the earlier Authoriza
 
 The client uses URL query parameters (`state` and `iss`) to look up and verify session information and stores the authorization `code`. Using the `code`, the client then makes an initial token request to the Authorization Server’s token endpoint. The client completes the PKCE flow by including the earlier value in the `code_verifier` field. Confidential clients need to include a client assertion JWT in the token request; see the "Confidential Client" section. The Authorization Server validates the request and returns a set of tokens, as well as a `sub` field indicating the account identifier (DID) for this session.
 
-At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server `issuer`, either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See “Identity Authentication” section.
-
-TODO: how does the client know what scopes it got approved for? should we require that scope info gets passed back in the token response?
+At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server `issuer`, either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See “Identity Authentication” section. The Authorization always returns the scopes approved for the session in the `scopes` field (even if they are the same as the request, as an atproto OAuth profile requirement), which may reflect partial authorization by the user.
 
 Authentication-only clients can end the flow here.
 
 Using the access token, clients are now able to make authorized requests to the PDS (”Resource Server”). They must use DPoP for all such requests, along with the access token. Tokens (both access and refresh) will need to be periodically “refreshed” by subsequent request to the Authorization Server token endpoint. These also require DPoP. See “Tokens and Session Lifetime” section for details.
-
-TODO: users should be able to revoke session from the PDS web interface
 
 ### OAuth Security Considerations
 
@@ -377,7 +368,13 @@ There are a number of situations where HTTP URLs provided by external parties ar
 
 Any party can create a client and client metadata file with any contents at any time. Even the hostname in the `client_id` cannot be entirely trusted to represent the overall client: an untrusted user may have been able to upload the client metadata file to an arbitrary URL on the host. In particular, the `client_uri`, `client_name`, and `logo_uri` fields are not verified and could be used by a malicious actor to impersonate a legitimate client. It is strongly recommended for Authorization Servers to not display these fields to end users during the auth flow for unknown clients. Service operators may maintain a list of "trusted" `client_id` values and display the extra metadata for those apps only.
 
-TODO: max size for client+server metadata docs? so clients can limit request body size
+## Possible Future OAuth Changes
+
+Client metadata requests (by the authorization server) might fail for any number of reasons: transient network disruptions, the client server being down for regular maintenance, etc. It seems brittle for the Authorization Server to immediately revoke access to active client sessions in this scenario. Maybe there should be an explicit grace period?
+
+The requirement that resource server metadata only have a single URL reference to an authorization server might be relaxed.
+
+The details around session and token lifetimes might change with further security review.
 
 ## Legacy Password and Session Auth
 
