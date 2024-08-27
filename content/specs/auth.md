@@ -303,7 +303,7 @@ The Authorization Server URL may be the same as the Resource Server (PDS), or mi
 - `code_challenge_methods_supported` (array of strings, required): must include `S256` (see "PKCE" section)
 - `token_endpoint_auth_methods_supported` (array of strings, required): must include both `none` (public clients) and `private_key_jwt` (confidential clients)
 - `token_endpoint_auth_signing_alg_values_supported` (array of strings, required); must include `ES256`
-- `scopes_supported` (space-separated string, required): must include `atproto`. See "Scopes" section.
+- `scopes_supported` (space-separated string, required): must include `atproto`. If supporting the transitional grants, they should be included here as well. See "Scopes" section.
 - `authorization_response_iss_parameter_supported` (boolean): must be `true`
 - `require_pushed_authorization_requests` (boolean): must be `true`. See "PAR" section.
 - `pushed_authorization_request_endpoint` (string, required): must be the PAR endpoint URL. See "PAR" section.
