@@ -118,8 +118,8 @@ In the Authorization Request, the `redirect_uri` must match one of those supplie
 
 Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate urlencoding):
 
-- `redirect_uri` (string, multiple allowed, optional): allows declaring a local redirect/callback URL, with path component matched but port numbers ignored. The default values (if none are supplied) are `http://127.0.0.1/` and `http://[::1]/`.
-- `scope` (string, space-separated, multiple allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
+- `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL, with path component matched but port numbers ignored. The default values (if none are supplied) are `http://127.0.0.1/` and `http://[::1]/`.
+- `scope` (string with space-separated values, single query parameter allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
 
 The other parameters in the virtual client metadata document will be:
 
