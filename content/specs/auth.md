@@ -299,11 +299,13 @@ Resource Server (PDS) metadata must comply with the "OAuth 2.0 Protected Resourc
 - response must be an HTTP 200 (not 2xx or redirect), and must be a valid JSON object with content type `application/json`
 - must contain an `authorization_servers` array of strings, with a single element, which is a fully-qualified URL
 
-The Authorization Server URL may be the same as the Resource Server (PDS), or might point to a separate server (e.g. entryway). The Authorization Server also publishes metadata, complying with the "OAuth 2.0 Authorization Server Metadata" ([RFC 8414](https://datatracker.ietf.org/doc/html/rfc8414)) standard. A summary of requirements:
+The Authorization Server URL may be the same origin as the Resource Server (PDS), or might point to a separate server (e.g. entryway). The URL must be a simple origin URL: `https` scheme, no credentials (user:password), no path, no query string or fragment. A port number is allowed, but a default port (443 for HTTPS) must not be included.
+
+The Authorization Server also publishes metadata, complying with the "OAuth 2.0 Authorization Server Metadata" ([RFC 8414](https://datatracker.ietf.org/doc/html/rfc8414)) standard. A summary of requirements:
 
 - the URL path is `/.well-known/oauth-authorization-server`
 - response must be an HTTP 200 (not 2xx or redirect), and must be a valid JSON object with content type `application/json`
-- `issuer` (string, required): the “origin” URL of the Authorization Server. Must be a valid URL, with `https` scheme. A port number is allowed (if that matches the origin), but the default port (443 for HTTPS) must not be specified. There must be no path segments.
+- `issuer` (string, required): the "origin" URL of the Authorization Server. Must be a valid URL, with `https` scheme. A port number is allowed (if that matches the origin), but the default port (443 for HTTPS) must not be specified. There must be no path segments. Must match the origin of the URL used to fetch the metadata document itself.
 - `authorization_endpoint` (string, required): endpoint URL for authorization redirects
 - `token_endpoint` (string, required): endpoint URL for token requests
 - `response_types_supported` (array of strings, required): must include `code`
@@ -319,6 +321,8 @@ The Authorization Server URL may be the same as the Resource Server (PDS), or mi
 - `require_request_uri_registration` (boolean, optional): default is `true`; does not need to be set explicitly, but must not be `false`
 - `client_id_metadata_document_supported` (boolean, required): must be `true`. See "Client ID Metadata" section.
 
+The `issuer` ("origin") is the overall identifier for the Authorization Server.
+
 
 #### Authorization Interface
 
@@ -326,7 +330,7 @@ The Authorization Server (PDS/entryway) must implement a web interface for users
 
 Server implementations can chose their own technology for user authentication and account recovery: secure cookies, email, various two-factor authentication, passkeys, external identity providers (including upstream OpenID/OIDC), etc. Servers may also support multiple concurrent auth sessions with users.
 
-When a client redirects to the Authorization Server’s authorization URL (the declared `authorization_endpoint`), the server first needs to authenticate the user. If there is no active auth session, the user may be prompted to log in. If a `login_hint` was provided in the Authorization Request, that can be used to pre-populate the login form. If there are multiple active auth sessions, the user could be prompted to select one from a list, or the `login_hint` could be used to auto-select. If there is a single active session, the interface can move to the approval view, possibly with the option to login as a different account.
+When a client redirects to the Authorization Server’s authorization URL (the declared `authorization_endpoint`), the server first needs to authenticate the user. If there is no active auth session, the user may be prompted to log in. If a `login_hint` was provided in the Authorization Request, that can be used to pre-populate the login form. If there are multiple active auth sessions, the user could be prompted to select one from a list, or the `login_hint` could be used to auto-select. If there is a single active session, the interface can move to the approval view, possibly with the option to login as a different account. If a `login_hint` was supplied, the Authorization Server should only allow the user to authenticate with that account. Otherwise the overall authorization flow will fail when the client verifies the account identity (`sub` field).
 
 The authorization approval prompt should identify the client app and describe the scope of authorization that has been requested.
 
@@ -358,13 +362,13 @@ The client next makes a Pushed Authorization Request via HTTP POST request. See 
 
 The Authorization Server will receive the PAR request and use the `client_id` URL to resolve the client metadata document. The server validates the request and client metadata, then stores information about the session, including binding a DPoP key to the session. The server returns a `request_uri` token to the client, including a DPoP nonce via HTTP header.
 
-The client receives the `request_uri` token and prepares to redirect the user. The client must first persist information about the session to some form of storage. This might be a database (for a web service backend) or web platform storage like IndexedDB (for a browser app). The client then redirects the user via browser to the Authorization Server’s auth endpoint, including the `request_uri` as a URL parameter.
+The client receives the `request_uri` and prepares to redirect the user. At this point, the client usually needs to persist information about the session to some type of secure storage, so it can be read back after the redirect returns. This might be a database (for a web service backend) or web platform storage like IndexedDB (for a browser app). The client then redirects the user via browser to the Authorization Server’s auth endpoint, including the `request_uri` as a URL parameter.
 
 The Authorization Server uses the `request_uri` to look up the earlier Authorization Request parameters, authenticates the user (which might include sign-in or account selection), and prompts the user with the Authorization Interface. The user might refine any granular requested scopes, then approves or rejects the request. The Authorization Server redirects the user back to the `redirect_uri`, which might be a web callback URL (for web clients), or a native app URI.
 
-The client uses URL query parameters (`state` and `iss`) to look up and verify session information and stores the authorization `code`. Using the `code`, the client then makes an initial token request to the Authorization Server’s token endpoint. The client completes the PKCE flow by including the earlier value in the `code_verifier` field. Confidential clients need to include a client assertion JWT in the token request; see the "Confidential Client" section. The Authorization Server validates the request and returns a set of tokens, as well as a `sub` field indicating the account identifier (DID) for this session.
+The client uses URL query parameters (`state` and `iss`) to look up and verify session information. Using the `code` query parameter, the client then makes an initial token request to the Authorization Server’s token endpoint. The client completes the PKCE flow by including the earlier value in the `code_verifier` field. Confidential clients need to include a client assertion JWT in the token request; see the "Confidential Client" section. The Authorization Server validates the request and returns a set of tokens, as well as a `sub` field indicating the account identifier (DID) for this session, and the `scope` that is covered by the issued access token.
 
-At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server `issuer`, either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See “Identity Authentication” section. The Authorization always returns the scopes approved for the session in the `scopes` field (even if they are the same as the request, as an atproto OAuth profile requirement), which may reflect partial authorization by the user.
+At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server "issuer" (present in the `iss` query string), either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See “Identity Authentication” section. The Authorization always returns the scopes approved for the session in the `scopes` field (even if they are the same as the request, as an atproto OAuth profile requirement), which may reflect partial authorization by the user. Clients must reject the session if the response does not include `atproto` in the returned scopes.
 
 Authentication-only clients can end the flow here.
 
