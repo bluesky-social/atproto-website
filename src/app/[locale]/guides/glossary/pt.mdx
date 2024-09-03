@@ -1,0 +1,118 @@
+export const metadata = {
+  title: 'Glossário de termos',
+  description:
+    'Uma coleção de terminologia usada no Protocolo AT e suas definições.',
+}
+
+# Glossário de termos
+
+O Protocolo AT usa muitos termos que podem não ser imediatamente familiares. Esta página fornece uma referência rápida a esses termos e inclui alguns links para mover informações. {{className: 'lead'}}
+
+## Atmosphere
+
+"Atmosfera" é o termo que usamos para descrever o ecossistema em torno do [Protocolo AT](#at-protocol).
+
+## AT Protocol
+
+O Protocolo AT significa "Authenticated Transfer Protocol". Esse nome é uma referência ao fato de que todos os dados do usuário são assinados pelos usuários autores, o que torna possível transmitir os dados por muitos serviços e provar que são reais sem precisar falar diretamente com o servidor de origem.
+
+O nome também é um trocadilho com o símbolo "@", também conhecido como símbolo "at", já que o atproto é projetado para sistemas sociais.
+
+## PDS (Personal Data Server)
+
+Um PDS, ou Personal Data Server, é um servidor que hospeda um usuário. Um PDS sempre armazenará o [data repo](#data-repo) e as chaves de assinatura do usuário. Ele também pode atribuir ao usuário um [handle](#handle) e um [DID](#did). Muitos PDSes hospedarão vários usuários.
+
+Um PDS se comunica com [AppViews](#appview) para executar aplicativos. Um PDS normalmente não executa nenhum aplicativo, embora tenha interfaces gerais de gerenciamento de conta, como a tela de login do OAuth. Os PDSes sincronizam ativamente seus [data repos](#data-repo) com [Relays](#relay).
+
+## AppView
+
+Um AppView é um aplicativo na [Atmosfera](#atmosphere). É chamado de "AppView" porque é apenas uma visualização da rede. Os dados canônicos residem em [repositórios de dados](#data-repo) que são hospedados por [PDSes](#pds-personal-data-server), e esses dados podem ser visualizados de muitas maneiras diferentes.
+
+Os AppViews funcionam um pouco como mecanismos de busca na Web: eles agregam dados de toda a Atmosfera para produzir suas UIs. A diferença é que os AppViews também se comunicam com os [PDSes](#pds) dos usuários para publicar informações em seus [repositórios](#data-repo), formando o modelo de aplicativo completo. Essa comunicação é estabelecida como parte do fluxo de login do OAuth.
+
+## Relay
+
+Um Relay é um agregador de [data repos](#data-repo) de toda a [Atmosfera](#atmosphere). Eles sincronizam os repos de [PDSes](#pds) e produzem uma mangueira de eventos de mudança. [AppViews](#appview) usam um Relay para buscar dados do usuário.
+
+Os Relays são uma otimização e não são estritamente necessários. Um [AppView](#appview) pode se comunicar diretamente com [PDSes](#pds) (na verdade, isso é encorajado se necessário). O Relay serve para reduzir o número de conexões necessárias na rede.
+
+## Lexicon
+
+Lexicon é uma linguagem de esquema. É usada na [Atmosfera](#atmosphere) para descrever [registros de dados](#registro) e APIs HTTP. Funcionalmente, é muito semelhante ao [JSON-Schema](https://json-schema.org/) e [OpenAPI](https://www.openapis.org/).
+
+O único propósito do Lexicon é ajudar os desenvolvedores a criar software compatível.
+
+- [Uma introdução ao Lexicon](/guides/lexicon)
+- [Especificação do Lexicon](/specs/lexicon)
+
+## Data Repo
+
+O "repositório de dados" ou "repo" é o conjunto de dados público que representa um usuário. Ele é composto de [coleções](#collection) de [registros](#record) JSON e [blobs](#blob) não estruturados. Cada repositório recebe um único [DID](#did) permanente que o identifica. Os repositórios também podem ter qualquer número de [identificadores de domínio](#handle) que atuam como nomes legíveis por humanos.
+
+Os repositórios de dados são árvores merkle assinadas. Suas assinaturas podem ser verificadas em relação ao material-chave publicado sob o [did](#did) do repositório.
+
+- [Uma introdução aos repositórios de dados](/guides/data-repos)
+- [Especificação do repositório](/specs/repository)
+
+## Collection
+
+A "coleção" é um bucket de [registros](#record) JSON em um [repositório de dados](#data-repo). Eles suportam operações de lista ordenada. Cada coleção é identificada por um [NSID](#nsid) que deve ser mapeado para um esquema [Lexicon](#lexicon).
+
+## Record
+
+Um "registro" é um documento JSON dentro de um [repo](#data-repo) [coleção](#collection). O tipo de um registro é identificado pelo campo `$type`, que deve ser mapeado para um esquema [Lexicon](#lexicon). O tipo também deve corresponder à [coleção](#collection) que o contém.
+
+- [Especificação da chave de registro](/specs/record-key)
+
+## Blob
+
+Blobs são dados não estruturados armazenados dentro de um [repo](#data-repo). Eles são mais comumente usados ​​para armazenar mídia, como imagens e vídeos.
+
+## Label
+
+Os rótulos são objetos de metadados que são anexados a [repos](#data-repo) e [records](#record). Eles são normalmente referenciados por seus valores, como "nudity" ou "graphic-media", que identificam o significado do rótulo. Os rótulos são usados ​​principalmente por aplicativos para moderação, mas podem ser usados ​​para outros propósitos.
+
+- [Especificação de rótulos](/specs/label)
+
+## Handle
+
+Handles são nomes de domínio que são usados ​​para identificar [data repos](#data-repo). Mais de um handle pode ser atribuído a um repo. Handles podem ser usados ​​em URIs `at://` no segmento de domínio.
+
+- [Especificação do Handle](/specs/handle)
+- [Especificação do Esquema URI](/specs/at-uri-scheme)
+
+## DID (Decentralized ID)
+
+DIDs, ou Decentralized IDentifiers, são identificadores universalmente exclusivos que representam [data repos](#data-repo). Eles são permanentes e não legíveis por humanos. DIDs são uma [especificação W3C](https://www.w3.org/TR/did-core/). O Protocolo AT atualmente suporta `did:web` e `did:plc`, dois métodos DID diferentes.
+
+DIDs resolvem para documentos que contêm metadados sobre um [repo](#data-repo), incluindo o endereço do [PDS](#pds) do repo, os [handles](#handle) do repo e as chaves de assinatura públicas.
+
+- [DID spec](/specs/did)
+
+## NSID (Namespaced ID)
+
+NSIDs, ou Namespaced IDentifiers, são um formato de identificador usado na [Atmosfera](#atmosphere) para identificar esquemas [Lexicon](#lexicon). Eles seguem um formato DNS reverso, como `app.bsky.feed.post`. Eles foram escolhidos porque fornecem governança de esquema clara por meio da propriedade do domínio. O formato DNS reverso foi escolhido para evitar confusão com domínios em URIs.
+
+- [especificação NSID](/specs/nsid)
+
+## TID (Timestamp ID)
+
+TIDs, ou Timestamp IDentifiers, são um formato de identificador usado para chaves [record](#record). Eles são derivados do tempo atual e projetados para evitar colisões, manter uma classificação lexicográfica e equilibrar eficientemente as estruturas de dados internas do [repositório de dados](#data-repo).
+
+- [Especificação de chaves de registro](/specs/record-key)
+
+## CID (Content ID)
+
+CIDs, ou Content Identifiers, são hashes criptográficos de [registros](#record). Eles são usados ​​para rastrear versões específicas de registros.
+
+## DAG-CBOR
+
+DAG-CBOR é um formato de serialização usado por [atproto](#at-protocol). Ele foi escolhido porque fornece uma forma canônica confiável, que é importante para verificação criptográfica.
+
+- [Data model spec](/specs/data-model)
+
+## XRPC
+
+XRPC é um termo que estamos descontinuando, mas ele foi historicamente usado para descrever o tipo de uso de HTTP [atproto](#at-protocol). Ele significa "Cross-organizational Remote Procedure Calls" e lamentamos tê-lo inventado, porque na verdade estamos apenas usando HTTP.
+
+- [HTTP API spec](/specs/xrpc)
