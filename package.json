@@ -12,8 +12,6 @@
     "deploy": "npm run pages:build && wrangler pages deploy"
   },
   "browserslist": "defaults, not ie <= 11",
-  "resolutions": { "string-width": "4.2.3" },
-  "overrides": { "string-width": "4.2.3" },
   "dependencies": {
     "@algolia/autocomplete-core": "^1.7.3",
     "@cloudflare/next-on-pages": "^1.13.2",
