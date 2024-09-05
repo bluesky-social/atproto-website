@@ -14,7 +14,6 @@
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
     "@algolia/autocomplete-core": "^1.7.3",
-    "@cloudflare/next-on-pages": "^1.13.2",
     "@headlessui/react": "^2.1.0",
     "@headlessui/tailwindcss": "^0.2.0",
     "@mdx-js/loader": "^3.0.0",
