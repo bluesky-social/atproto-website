@@ -1,0 +1,181 @@
+import {DescriptionList, Description} from '@/components/DescriptionList'
+
+export const metadata = {
+  title: 'Identidade',
+  description:
+    'Como o Protocolo AT lida com a identidade do usuário.',
+}
+
+# Identidade
+
+O sistema de identidade atproto tem uma série de requisitos:
+
+* **Provisão de ID.** Os usuários devem ser capazes de criar IDs globais que sejam estáveis ​​em todos os serviços. Esses IDs raramente devem mudar para garantir que os links para seu conteúdo sejam estáveis.
+* **Distribuição de chave pública.** Os sistemas distribuídos dependem de criptografia para provar a autenticidade dos dados e fornecer privacidade de ponta a ponta. O sistema de identidade deve publicar suas chaves públicas com segurança forte.
+* **Rotação de chave.** Os usuários devem ser capazes de rotacionar seu material de chave sem interromper sua identidade.
+* **Descoberta de serviço.** Para interagir com os usuários, os aplicativos devem ser capazes de descobrir os serviços em uso por um determinado usuário.
+* **Usabilidade.** Os usuários devem ter nomes legíveis e memoráveis.
+* **Portabilidade.** As identidades devem ser portáteis em todos os serviços. Alterar um provedor não deve fazer com que um usuário perca sua identidade, gráfico social ou conteúdo.
+
+Adotar este sistema deve dar aos aplicativos as ferramentas para criptografia de ponta a ponta, dados de usuário assinados, login de serviço e interoperação geral.
+
+## Identificadores
+
+Usamos duas formas inter-relacionadas de identificadores: o _handle_ e o _DID_. Handles são nomes DNS enquanto DIDs são um [padrão W3C emergente](https://www.w3.org/TR/did-core/) que atuam como IDs seguros e estáveis.
+
+Os seguintes são todos identificadores de usuário válidos:
+
+```
+alice.host.com
+at://alice.host.com
+at://did:plc:bv6ggog3tya2z3vxsub7hnal
+```
+
+A relação entre eles pode ser visualizada como:
+
+```
+┌──────────────────┐                 ┌───────────────┐
+│ nome DNS         ├─resolve para──→ │ DID           │
+│ (alice.host.com) │                 │ (did:plc:...) │
+└──────────────────┘                 └─────┬─────────┘
+       ↑                                   │
+       │                               resolve para
+       │                                   │
+       │                                   ↓
+       │                            ┌───────────────┐
+       └───────────references───────┤ Documento DID │
+                                    │ {"id":"..."}  │
+                                    └───────────────┘
+```
+
+O identificador DNS é um identificador voltado para o usuário — ele deve ser exibido em UIs e promovido como uma forma de encontrar usuários. Os aplicativos resolvem identificadores para DIDs e então usam o DID como o identificador canônico estável. O DID pode então ser resolvido com segurança para um documento DID que inclui chaves públicas e serviços de usuário.
+
+<DescriptionList>
+  <Description title="Alças">Handles são nomes DNS. Eles são resolvidos usando o método XRPC `com.atproto.identity.resolveHandle` e devem ser confirmados por uma entrada correspondente no documento DID. Detalhes na <a href="/specs/handle">Especificação do Handle</a>.</Description>
+  <Description title="DIDs">DIDs são um <a href="https://www.w3.org/TR/did-core/">padrão W3C</a> emergente para fornecer IDs estáveis ​​e seguros. Eles são usados ​​como IDs estáveis ​​e canônicos de usuários. Detalhes de como eles são usados ​​no Protocolo AT na <a href="/specs/did">especificação DID</a>.</Description>
+  <Description title="DID Documentos">
+    Documentos DID são objetos padronizados que são hospedados por registros DID. Eles incluem as seguintes informações:
+    <ul>
+      <li>O identificador associado ao DID.</li>
+      <li>A chave de assinatura.</li>
+      <li>A URL do PDS do usuário.</li>
+    </ul>
+  </Description>
+</DescriptionList>
+
+
+## Métodos DID
+
+O [padrão DID](https://www.w3.org/TR/did-core/) suporta "métodos" personalizados de publicação e resolução de DIDs para o [Documento DID](https://www.w3.org/TR/did-core/#core-properties). Uma variedade de métodos existentes [foram publicados](https://w3c.github.io/did-spec-registries/#did-methods), então devemos estabelecer critérios para inclusão nesta proposta:
+
+- **Forte consistência.** Para um determinado DID, uma consulta de resolução deve produzir apenas um documento válido a qualquer momento. (Em algumas redes, isso pode estar sujeito à finalidade de transação probabilística.)
+- **Alta disponibilidade**. As consultas de resolução devem ter sucesso de forma confiável.
+- **API online**. Os clientes devem ser capazes de publicar novos documentos DID por meio de uma API padrão.
+- **Seguro**. A rede deve proteger contra ataques de seus operadores, um MITM e outros usuários.
+- **Baixo custo**. Criar e atualizar documentos DID deve ser acessível para serviços e usuários.
+- **Rotação de chaves**. Usuários devem ser capazes de rotacionar pares de chaves sem perder sua identidade.
+- **Governança descentralizada**. A rede não deve ser governada por uma única parte interessada; deve ser uma rede aberta ou um consórcio de provedores.
+
+Atualmente, nenhum dos métodos DID atende totalmente aos nossos padrões. **Portanto, escolhemos dar suporte a [did-web](https://w3c-ccg.github.io/did-method-web/) e um método temporário que criamos chamado [DID Placeholder](https://github.com/bluesky-social/did-method-plc).** Esperamos que essa situação evolua conforme novas soluções surjam.
+
+## Resolução de identificadores
+
+Os identificadores no atproto são nomes de domínio que resolvem para um DID, que por sua vez resolve para um Documento DID contendo a chave pública de assinatura do usuário e o serviço de hospedagem.
+
+A resolução do handle usa o método XRPC `com.atproto.identity.resolveHandle`. A chamada do método deve ser enviada ao servidor identificado pelo handle, e o handle deve ser passado como um parâmetro.
+
+Aqui está o algoritmo em pseudo-TypeScript:
+
+```typescript
+async function resolveHandle(handle: string) {
+  const origin = `https://${handle}`
+  const res = await xrpc(origin, 'com.atproto.identity.resolveHandle', {handle})
+  assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
+  return res.did
+}
+```
+
+### Exemplo: Serviço de hospedagem
+
+Considere um cenário em que um serviço de hospedagem está usando PLC e está fornecendo o identificador para o usuário como um subdomínio:
+
+- O identificador: `alice.pds.com`
+- O DID: `did:plc:12345`
+- O serviço de hospedagem: `https://pds.com`
+
+No início, tudo o que sabemos é `alice.pds.com`, então chamamos `com.atproto.identity.resolveHandle()` em `alice.pds.com`. Isso nos diz o DID.
+
+```typescript
+await xrpc.service('https://alice.pds.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
+```
+
+Em seguida, chamamos o método de resolução PLC no DID retornado para que possamos aprender o ponto de extremidade do serviço de hospedagem e o material da chave do usuário.
+
+```typescript
+await didPlc.resolve('did:plc:12345') /* => {
+  id: 'did:plc:12345',
+  alsoKnownAs: `https://alice.pds.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://pds.com', ...}]
+}*/
+```
+
+Agora podemos nos comunicar com `https://pds.com` para acessar os dados de Alice.
+
+### Exemplo: Serviço de hospedagem com nome de domínio separado
+
+Suponha que temos o mesmo cenário de antes, exceto que o usuário forneceu seu próprio nome de domínio:
+
+- O identificador: `alice.com` (isso difere de antes)
+- O DID: `did:plc:12345`
+- O serviço de hospedagem: `https://pds.com`
+
+Chamamos `com.atproto.identity.resolveHandle()` em `alice.com` para obter o DID.
+
+```typescript
+await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
+```
+
+Então resolvemos o DID como antes:
+
+```typescript
+await didPlc.resolve('did:plc:12345') /* => {
+  id: 'did:plc:12345',
+  alsoKnownAs: `https://alice.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://pds.com', ...}]
+}*/
+```
+
+Agora podemos nos comunicar com `https://pds.com` para acessar os dados de Alice. O endpoint `https://alice.com` serve apenas para manipular a chamada `com.atproto.identity.resolveHandle()`. Os dados reais do usuário residem em `pds.com`.
+
+### Exemplo: Auto-hospedado
+
+Vamos considerar um cenário de auto-hospedagem. Se estiver usando `did:plc`, seria algo como:
+
+- O identificador: `alice.com`
+- O DID: `did:plc:12345`
+- O serviço de hospedagem: `https://alice.com`
+
+No entanto, **se o auto-hospedador estiver confiante de que manterá a propriedade do nome de domínio**, ele pode usar `did:web` em vez de `did:plc`:
+
+- O identificador: `alice.com`
+- O DID: `did:web:alice.com`
+- O serviço de hospedagem: `https://alice.com`
+
+Chamamos `com.atproto.identity.resolveHandle()` em `alice.com` para obter o DID.
+
+```typescript
+await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:web:alice.com'}
+```
+
+Resolvemos então usando `did:web`:
+
+```typescript
+await didWeb.resolve('did:web:alice.com') /* => {
+  id: 'did:web:alice.com',
+  alsoKnownAs: `https://alice.com`,
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://alice.com', ...}]
+}*/
+```

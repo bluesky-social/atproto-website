@@ -1,0 +1,76 @@
+export const metadata = {
+  title: 'Visão geral do protocolo',
+  description:
+    'Uma introdução ao Protocolo AT.',
+}
+
+# Visão geral do protocolo
+
+O **Authenticated Transfer Protocol**, também conhecido como **atproto**, é um protocolo federado para aplicativos sociais distribuídos em larga escala. Este documento apresentará as ideias por trás do Protocolo AT.
+
+## Identidade
+
+Os usuários são identificados por nomes de domínio no Protocolo AT. Esses domínios mapeiam para URLs criptográficas que protegem a conta do usuário e seus dados.
+
+## Repositórios de dados
+
+Os dados do usuário são trocados em [repositórios de dados assinados](/guides/data-repos). Esses repositórios são coleções de registros que incluem postagens, comentários, curtidas, seguidores, blobs de mídia, etc.
+
+## Federação
+
+O Protocolo AT sincroniza os repositórios em um modelo de rede federado. A federação foi escolhida para garantir que a rede seja conveniente de usar e confiável. Os dados do repositório são sincronizados entre servidores por meio de tecnologias da web padrão ([HTTP](/specs/xrpc) e [WebSockets](/specs/event-stream)).
+
+Os três principais serviços em nossa rede são Personal Data Servers (PDS), Relays e App Views. Também estamos trabalhando em geradores de feed e rotuladores.
+
+Os primitivos de nível inferior que podem ser empilhados juntos de forma diferente são os repositórios, léxicos e DIDs. Publicamos uma visão geral de nossas decisões técnicas em torno da arquitetura de federação [em nosso blog](https://bsky.social/about/blog/5-5-2023-federation-architecture).
+
+## Interoperação
+
+Uma rede de esquemas globais chamada [Lexicon](/specs/lexicon) é usada para unificar os nomes e comportamentos das chamadas nos servidores. Os servidores implementam "lexicons" para oferecer suporte a conjuntos de recursos, incluindo os léxicos principais `com.atproto.*` para sincronizar repositórios de usuários e os léxicos `app.bsky.*` para fornecer comportamentos sociais básicos.
+
+Enquanto a Web troca documentos, o Protocolo AT troca informações esquemáticas e semânticas, permitindo que o software de diferentes organizações entenda os dados uns dos outros. Isso dá aos clientes atproto liberdade para produzir interfaces de usuário independentemente dos servidores e elimina a necessidade de trocar código de renderização (HTML/JS/CSS) ao navegar pelo conteúdo.
+
+## Alcançando escala
+
+Os servidores de dados pessoais são sua casa na nuvem. Eles hospedam seus dados, os distribuem, gerenciam sua identidade e orquestram solicitações para outros serviços para fornecer suas visualizações.
+
+Os retransmissores lidam com todos os seus eventos, como recuperar métricas em larga escala (curtidas, republicações, seguidores), descoberta de conteúdo (algoritmos) e pesquisa de usuários.
+
+Essa distinção visa atingir escala, bem como um alto grau de escolha do usuário.
+
+## Escolha algorítmica
+
+Assim como nos mecanismos de pesquisa da Web, os usuários são livres para selecionar seus agregadores. Feeds, App Views e índices de pesquisa podem ser fornecidos por terceiros independentes, com solicitações roteadas pelo PDS com base na configuração do usuário.
+
+## Portabilidade de conta
+
+Presumimos que um Servidor de Dados Pessoais pode falhar a qualquer momento, seja ficando offline por completo ou interrompendo o serviço para usuários específicos. O objetivo do Protocolo AT é garantir que um usuário possa migrar sua conta para um novo PDS sem o envolvimento do servidor.
+
+Os dados do usuário são armazenados em [repositórios de dados assinados](/guides/data-repos) e verificados por [DIDs](/guides/identity). Os repositórios de dados assinados são como repositórios Git, mas para registros de banco de dados, e os DIDs são essencialmente registros de certificados de usuário, semelhantes em alguns aspectos ao sistema de certificado TLS. Espera-se que sejam seguros, confiáveis ​​e independentes do PDS do usuário.
+
+Cada documento DID publica duas chaves públicas: uma chave de assinatura e uma chave de recuperação.
+
+* **Chave de assinatura**: Afirma alterações no Documento DID *e* no repositório de dados do usuário.
+* **Chave de recuperação**: Afirma alterações no Documento DID; pode substituir a chave de assinatura dentro de uma janela de 72 horas.
+
+A chave de assinatura é confiada ao PDS para que ele possa gerenciar os dados do usuário, mas a chave de recuperação é salva pelo usuário, por exemplo, como uma chave de papel. Isso torna possível para o usuário atualizar sua conta para um novo PDS sem a ajuda do host original.
+
+Um backup dos dados do usuário será sincronizado persistentemente com seu cliente como um backup (dependendo do espaço em disco disponível). Caso um PDS desapareça sem aviso, o usuário deve ser capaz de migrar para um novo provedor atualizando seu Documento DID e carregando o backup.
+
+## Fala, alcance e moderação
+
+O modelo da Atproto é que _fala_ e _alcance_ devem ser duas camadas separadas, construídas para trabalhar uma com a outra. A camada de “fala” deve permanecer permissiva, distribuindo autoridade e projetada para garantir que todos tenham voz. A camada de “alcance” fica no topo, construída para flexibilidade e projetada para escalar.
+
+A camada base do atproto (repositórios de dados pessoais e redes federadas) cria um espaço comum para a fala onde todos são livres para participar, análogo à Web onde qualquer um pode criar um site. Os serviços de indexação então permitem o alcance agregando conteúdo da rede, análogo a um mecanismo de busca.
+
+## Especificações
+
+Algumas das especificações primárias que compõem a versão inicial do Protocolo AT são:
+
+- [Protocolo de Transferência Autenticado](/specs/atp)
+- [DIDs](/specs/did) e [Handles](/specs/handle)
+- [Repositório](/specs/repository) e [Modelo de Dados](/specs/data-model)
+- [Léxico](/specs/lexicon)
+- [API HTTP (XRPC)](/specs/xrpc) e [Fluxos de Eventos](/specs/event-stream)
+
+A partir daqui, você pode continuar lendo os [guias e especificações](/).
