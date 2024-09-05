@@ -20,7 +20,7 @@ export const metadata = {
 
 # Guia de início rápido para criar aplicativos no protocolo AT
 
-<Link href="TODO" className="not-prose flex items-center gap-2 bg-blue-100 dark:bg-blue-950 dark:text-white px-4 py-3 text-base rounded-lg hover:underline">
+<Link href="https://github.com/bluesky-social/statusphere-example-app" className="not-prose flex items-center gap-2 bg-blue-100 dark:bg-blue-950 dark:text-white px-4 py-3 text-base rounded-lg hover:underline">
   <svg viewBox="0 0 20 20" aria-hidden="true" className="h-6 dark:text-white">
     <path
       fill="currentColor"
@@ -66,10 +66,12 @@ O Atmosphere funciona da mesma forma, exceto que vamos verificar `at://` em vez 
 Comece clonando o repositório e instalando os pacotes.
 
 ```bash
-git clone TODO
-cd TODO
-npm i
+git clone https://github.com/bluesky-social/statusphere-example-app.git
+cd statusphere-example-app
+cp .env.template .env
+npm install
 npm run dev
+# Navigate to http://localhost:8080
 ```
 
 Nosso repositório é um aplicativo Web regular. Estamos renderizando nosso servidor HTML como se fosse 1999. Também temos um banco de dados SQLite que estamos gerenciando com [Kysley](https://kysely.dev/).
