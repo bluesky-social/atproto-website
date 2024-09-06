@@ -1,0 +1,234 @@
+import Image from 'next/image'
+import {Container} from "@/components/Container"
+import {FooterCTA} from "@/components/FooterCTA"
+import image1 from "./image1.png"
+import image2 from "./image2.png"
+import image3 from "./image3.png"
+import image4 from "./image4.png"
+import image5 from "./image5.png"
+import image6 from "./image6.png"
+import image7 from "./image7.png"
+import image8 from "./image8.png"
+import image9 from "./image9.png"
+import image10 from "./image10.png"
+import image11 from "./image11.png"
+import image12 from "./image12.png"
+import image13 from "./image13.png"
+import image14 from "./image14.png"
+import image15 from "./image15.png"
+import image16 from "./image16.png"
+import image17 from "./image17.png"
+import image18 from "./image18.png"
+import image19 from "./image19.png"
+import image20 from "./image20.png"
+import image21 from "./image21.png"
+import image22 from "./image22.png"
+import image23 from "./image23.png"
+import image24 from './image24.png'
+
+export const metadata = {
+  title: '分散システム エンジニア向け ATProto',
+  description:
+  'AT プロトコルは、Bluesky でオープン ソーシャル ネットワーキング用に開発された技術です。この記事では、分散バックエンド エンジニアリングの観点から AT Proto について説明します。',
+}
+
+# 分散システムエンジニアのためのATProto
+
+*Sep 3, 2024*
+
+AT プロトコルは、オープン ソーシャル ネットワーキング向けに [Bluesky](https://bsky.app) で開発された技術です。この記事では、分散バックエンド エンジニアリングの観点から AT Proto について説明します。{{className: 'lead'}}
+
+[ストリーム処理](https://milinda.pathirage.org/kappa-architecture.com/) を使用してバックエンドを構築したことがある場合は、これから説明するシステムの種類に精通していることになります。そうでない場合は、心配しないでください。手順を追って説明します。{{className: 'lead'}}
+
+## 従来の Web バックエンドのスケーリング
+
+従来の、使いやすい Web アーキテクチャは、アプリ サーバーの背後にある「1 つの大きな SQL データベース」です。アプリはデータベースと通信し、フロントエンドからのリクエストを処理します。
+
+<Container>
+<Image src={image1} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+アプリケーションが大きくなるにつれて、パフォーマンスの限界に達するため、スタックにキャッシュをいくつか投入します。
+
+<Container>
+<Image src={image2} alt="" className="w-full dark:invert max-w-2xl mx-auto" />
+</Container>
+
+次に、シャーディングとレプリカを使用してデータベースを水平方向にスケーリングするとします。
+
+<Container>
+<Image src={image3} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+これはかなり良いですが、何億人ものユーザーを抱えるソーシャル ネットワークを構築しているため、このモデルでも限界に達します。問題は、SQL データベースが「[強い一貫性](https://en.wikipedia.org/wiki/Strong_consistency)」であることです。つまり、状態はシステム全体で均一に同期されています。強い一貫性を維持するとパフォーマンス コストが発生し、それがボトルネックになります。
+
+システムを緩和して「[最終的な一貫性](https://en.wikipedia.org/wiki/Eventual_consistency)」を使用できれば、さらに拡張できます。まず、NoSQL クラスターに切り替えます。
+
+<Container>
+<Image src={image4} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+これは拡張には適していますが、SQL がないとクエリの構築が難しくなります。SQL データベースには、JOIN や集計クエリなど、多くの便利な機能があることがわかりました。実際、NoSQL データベースは単なるキー値ストアです。機能の作成は面倒になってきています。
+
+これを修正するには、データセットの事前計算済みビューを生成するプログラムを作成する必要があります。これらのビューは、本質的にはキャッシュされたクエリのようなものです。これらのビューに標準データを複製して、非常に高速にします。
+
+これらをビュー サーバーと呼びます。
+
+<Container>
+<Image src={image5} alt="" className="w-full dark:invert" />
+</Container>
+
+ここで、ビュー サーバーを NoSQL クラスター内の正規データと同期させ続けるのは難しいことに気が付きました。ビュー サーバーがクラッシュして更新が失われることがあります。ビューが確実に最新の状態に保たれるようにする必要があります。
+
+この問題を解決するために、イベント ログ ([Kafka](https://kafka.apache.org/) など) を導入します。このログは、NoSQL クラスターへのすべての変更を記録してブロードキャストします。ビュー サーバーは、再起動が必要な場合でも更新を見逃さないように、このログをリッスンして再生します。
+
+<Container>
+<Image src={image6} alt="" className="w-full dark:invert" />
+</Container>
+
+これで [ストリーム処理アーキテクチャ](https://milinda.pathirage.org/kappa-architecture.com/) に到達しました。さらに詳しく説明できる点はたくさんありますが、今のところはこれで十分です。
+
+良いニュースは、このアーキテクチャの拡張性が非常に高いことです。 強力な一貫性はあきらめ、読み取りクエリがデータの最新バージョンより遅れることもありますが、サービスが書き込みをドロップしたり、誤った状態になったりすることはありません。
+
+ある意味、私たちが行ったのは [データベースを裏返しにして](https://www.youtube.com/watch?v=fU9hR3kiOK0)、データベースをカスタム構築したことです。 標準ストレージを NoSQL クラスターに簡素化し、ビュー サーバーを使用して独自のクエリ エンジンを構築しました。 構築の利便性は大幅に低下しますが、拡張性があります。
+
+## 大規模バックエンドの分散化
+
+AT プロトコルの目標は、アプリケーションを相互接続して、バックエンドがユーザー アカウントやコンテンツなどの状態を共有することです。
+
+どうすればそれができるでしょうか。図を見ると、システムの大部分が外部から分離されており、App サーバーのみがパブリック インターフェイスを提供していることがわかります。
+
+<Container>
+<Image src={image7} alt="" className="w-full dark:invert" />
+</Container>
+
+私たちの目標は、この分離を解消して、他の人が NoSQL クラスター、イベント ログ、ビュー サーバーなどに参加できるようにすることです。
+
+次のようになります。
+
+<Container>
+<Image src={image8} alt="" className="w-full dark:invert" />
+</Container>
+
+これらの内部サービスはそれぞれ外部サービスになりました。これらには、誰でも使用できるパブリック API があります。さらに、誰でもこれらのサービスの独自のインスタンスを作成できます。
+
+私たちの目標は、誰もがこの分散型バックエンドに貢献できるようにすることです。つまり、1 つの NoSQL クラスターや 1 つの View サーバーだけが必要なわけではありません。多数のサーバーが連携して動作することが必要です。したがって、実際には次のようになります。
+
+<Container>
+<Image src={image9} alt="" className="w-full dark:invert" />
+</Container>
+
+では、これらすべてのサービスを連携させるにはどうすればよいでしょうか?
+
+## データ モデルの統合
+
+[“ユーザー データ リポジトリ”](/guides/data-repos) と呼ばれる共有データ モデルを確立します。
+
+<Container>
+<Image src={image10} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+すべてのデータ リポジトリには、JSON ドキュメント (ここでは “レコード” と呼びます) が含まれます。
+
+<Container>
+<Image src={image11} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+整理のため、これらのレコードを「コレクション」にまとめます。
+
+<Container>
+<Image src={image12} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+次に、NoSQL サービスに意見を表明して、すべてのサービスがこの [データ リポジトリ](/guides/data-repos) モデルを使用するようにします。
+
+<Container>
+<Image src={image13} alt="" className="w-full dark:invert" />
+</Container>
+
+覚えておいてください: データ リポジトリ サービスは基本的に NoSQL ストアのままですが、非常に特殊な方法で整理されるようになりました:
+
+1. 各ユーザーにはデータ リポジトリがあります。
+
+2. 各リポジトリにはコレクションがあります。
+3. 各コレクションは、JSON ドキュメントの順序付けられた K/V ストアです。
+
+データ リポジトリは誰でもホストできるため、[URL](/specs/at-uri-scheme) を指定する必要があります。
+
+<Container>
+<Image src={image14} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+ついでに、レコード用の [URL スキーム全体](/specs/at-uri-scheme) も作成しましょう。
+
+<Container>
+<Image src={image15} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+すばらしい! また、これらのレコードをインターネット上で同期するため、本物であることを確認するために暗号署名することをお勧めします。
+
+<Container>
+  <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+## データの流れを図に表す
+
+大規模な分散型バックエンドをセットアップしたので、ATProto でアプリケーションが実際にどのように動作するかを図にしてみましょう。
+
+新しいアプリを作成するので、2 つのものが必要になります。アプリ サーバー (API とフロントエンドをホスト) とビュー サーバー (ネットワークからデータを収集する) です。アプリ サーバーとビュー サーバーはバンドルされることが多いため、単に「Appview」と呼ぶことができます。まずはそこから始めましょう。
+
+<Container>
+<Image src={image17} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+ユーザーは OAuth を使用してアプリにログインします。その過程で、ユーザーはデータ リポジトリをホストするサーバーを私たちに伝え、_そして_ それを読み書きする権限を私たちに与えます。
+
+<Container>
+<Image src={image18} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+順調なスタートです。ユーザーのリポジトリで JSON ドキュメントを読み書きできます。他のアプリ (プロファイルなど) から既にデータがある場合は、そのデータも読み取ることができます。シングルプレイヤー アプリを作成している場合は、すでに完了しています。
+
+ただし、JSON ドキュメントを書き込むと何が起こるかを図にしてみましょう。
+
+<Container>
+<Image src={image19} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+これにより、ドキュメントがリポジトリにコミットされ、リポジトリをリッスンしているイベント ログへの書き込みが開始されます。
+
+<Container>
+<Image src={image20} alt="" className="w-full dark:invert" />
+</Container>
+
+そこから、イベントはリッスンしているすべてのビュー サービスに送信されます。これには、私たち自身のサービスも含まれます。
+
+<Container>
+<Image src={image21} alt="" className="w-full dark:invert" />
+</Container>
+
+書き込みを行っているのに、なぜイベント ストリームをリッスンしているのでしょうか。書き込みを行っているのは私たちだけではないからです。イベントを生成するユーザー リポジトリは多数あり、それらに書き込むアプリも多数あります。
+
+<Container>
+<Image src={image22} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+このように、分散バックエンド全体で一種の循環データ フローが見られます。書き込みはデータ リポジトリにコミットされ、イベント ログを通じてビュー サーバーに送信され、アプリケーションで読み取ることができます。
+
+<Container>
+<Image src={image23} alt="" className="w-full dark:invert" />
+</Container>
+
+そして、このネットワークが拡張され続けることを願っています。容量を増やすだけでなく、このオープン アプリケーション ネットワークで共有されるアプリケーションの多様性を高めるためです。
+
+<Container>
+<Image src={image24} className="w-full dark:invert max-w-2xl" />
+</Container>
+
+## 実用的なオープン システムの構築
+
+AT プロトコルは、P2P テクノロジと大規模システムの実践を融合します。当社の創設エンジニアは、[IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) および [Dat](https://en.wikipedia.org/wiki/Dat_(software)) のコア エンジニアであり、[Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) の著者である Martin Kleppmann は、アクティブな技術アドバイザーです。
+
+Bluesky を始める前に、私たちは「後退しない」という明確な要件を設定しました。ネットワークが、これまでのすべてのソーシャル アプリと同様に便利でグローバルでありながら、オープン ネットワークとして機能することを望んでいました。そのため、フェデレーションとブロックチェーンを検討したときに、これらのアーキテクチャのスケーリングの限界が際立っていました。私たちの解決策は、大規模なバックエンドの標準的な方法を採用し、ピアツーピア システムで使用した手法を適用してオープン ネットワークを作成することでした。
+
+<FooterCTA href="/" title="詳細を知りたいですか?" description="仕様、ガイド、SDK は、こちらでご覧いただけます。" />

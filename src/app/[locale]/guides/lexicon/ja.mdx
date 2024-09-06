@@ -1,0 +1,219 @@
+export const metadata = {
+title: 'Lexicon',
+description:
+'スキーマ駆動型相互運用性フレームワーク',
+}
+
+# Lexicon の概要
+
+Lexicon は、RPC メソッドとレコード タイプを定義するために使用されるスキーマ システムです。すべての Lexicon スキーマは、制約を定義するための [JSON-Schema](https://json-schema.org/) に似た形式で JSON で記述されます。
+
+スキーマは、逆 DNS 形式である [NSID](/specs/nsid) を使用して識別されます。以下にメソッドの例を示します:
+
+```typescript
+com.atproto.repo.getRecord()
+com.atproto.identity.resolveHandle()
+app.bsky.feed.getPostThread()
+app.bsky.notification.listNotifications()
+```
+
+以下にレコードタイプの例を示します:
+
+```typescript
+app.bsky.feed.post
+app.bsky.feed.like
+app.bsky.actor.profile
+app.bsky.graph.follow
+```
+
+スキーマタイプ、定義言語、検証制約は [Lexicon 仕様](/specs/lexicon) で説明されており、JSON および CBOR での表現は [データモデル仕様](/specs/data-model) で説明されています。
+
+## Lexicon が必要な理由
+
+**相互運用性。** atproto のようなオープンネットワークには、動作とセマンティクスについて合意する方法が必要です。 Lexicon は、開発者が比較的簡単に新しいスキーマを導入できるようにしながら、この問題を解決します。
+
+**Lexicon は RDF ではありません。** RDF はデータの記述には効果的ですが、スキーマの適用には適していません。Lexicon は、RDF が提供する一般性を必要としないため、より使いやすくなっています。実際、Lexicon のスキーマは、型と検証を使用したコード生成を可能にするため、作業がはるかに簡単になります。
+
+## HTTP API メソッド
+
+AT プロトコルの API システム [XRPC](/specs/xrpc) は、基本的に HTTPS の薄いラッパーです。その目的は、Lexicon を HTTPS に適用することです。
+
+たとえば、次の呼び出しは、実際には次の HTTP 要求です。
+
+```typescript
+com.example.getProfile()
+```
+
+スキーマは、有効なクエリ パラメータ、要求本文、および応答本文を確立します。
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "type": "query",
+  "parameters": {
+    "user": {"type": "string", "required": true}
+  },
+  "output": {
+    "encoding": "application/json",
+    "schema": {
+      "type": "object",
+      "required": ["did", "name"],
+      "properties": {
+        "did": {"type": "string"},
+        "name": {"type": "string"},
+        "displayName": {"type": "string", "maxLength": 64},
+        "description": {"type": "string", "maxLength": 256}
+      }
+    }
+  }
+}
+```
+
+コード生成により、これらのスキーマは非常に使いやすくなります:
+
+```typescript
+await client.com.example.getProfile({user: 'bob.com'})
+// => {name: 'bob.com', did: 'did:plc:1234', displayName: '...', ...}
+```
+
+## レコード タイプ
+
+スキーマは、レコードの可能な値を定義します。すべてのレコードには、スキーマにマップされ、レコードの URL を確立する「タイプ」があります。
+
+たとえば、この「フォロー」レコード:
+
+```json
+{
+  "$type": "com.example.follow",
+  "subject": "at://did:plc:12345",
+  "createdAt": "2022-10-09T17:51:55.043Z"
+}
+```
+
+...URL は次のようになります:
+
+```text
+at://bob.com/com.example.follow/12345
+```
+
+...スキーマは次のようになります:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "type": "record",
+  "description": "A social follow",
+  "record": {
+    "type": "object",
+    "required": ["subject", "createdAt"],
+    "properties": {
+      "subject": { "type": "string" },
+      "createdAt": {"type": "string", "format": "datetime"}
+    }
+  }
+}
+```
+
+## トークン
+
+トークンは、データで使用できるグローバル識別子を宣言します。
+
+レコード スキーマで、信号機の 3 つの状態 (「赤」、「黄」、「緑」) を指定するとします。
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": { "type": "string", "enum": ["red", "yellow", "green"] },
+    }
+  }
+}
+```
+
+これは完全に受け入れられますが、拡張可能ではありません。 「点滅する黄色」や「紫色」などの新しい状態を追加することはできません (そんなことが起こる可能性は誰にもわかりません)。
+
+柔軟性を高めるには、列挙型の制約を削除し、可能な値のみを文書化します:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": {
+        "type": "string",
+        "description": "Suggested values: red, yellow, green"
+      },
+    }
+  }
+}
+```
+
+これは悪くありませんが、具体性に欠けています。状態の新しい値を考案する人々は互いに衝突する可能性があり、各状態に関する明確な文書化はありません。
+
+代わりに、使用する値に対して Lexicon トークンを定義できます:
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.green",
+  "type": "token",
+  "description": "Traffic light state representing 'Go!'.",
+}
+{
+  "lexicon": 1,
+  "id": "com.example.yellow",
+  "type": "token",
+  "description": "Traffic light state representing 'Stop Soon!'.",
+}
+{
+  "lexicon": 1,
+  "id": "com.example.red",
+  "type": "token",
+  "description": "Traffic light state representing 'Stop!'.",
+}
+```
+
+これにより、trafficLight 状態で使用する明確な値が得られます。最終的なスキーマでは柔軟な検証が引き続き使用されますが、他のチームでは、値の取得元と独自の値を追加する方法がより明確になります。
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.trafficLight",
+  "type": "record",
+  "record": {
+    "type": "object",
+    "required": ["state"],
+    "properties": {
+      "state": {
+        "type": "string",
+        "knownValues": [
+          "com.example.green",
+          "com.example.yellow",
+          "com.example.red"
+        ]
+      },
+    }
+  }
+}
+```
+
+## バージョン管理
+
+スキーマが公開されると、その制約を変更することはできません。制約を緩めると (可能な値を追加すると)、古いソフトウェアは新しいデータの検証に失敗し、制約を厳しくすると (可能な値を削除すると)、新しいソフトウェアは古いデータの検証に失敗します。その結果、スキーマは、以前に制約がなかったフィールドにオプションの制約のみを追加できます。
+
+スキーマが以前に公開された制約を変更する必要がある場合は、新しい NSID で新しいスキーマとして公開する必要があります。
+
+## スキーマの配布
+
+スキーマは、マシンが読み取り可能でネットワークからアクセス可能になるように設計されています。現在、スキーマがネットワーク上で利用可能であることは必須ではありませんが、メソッドの消費者が単一の標準的で信頼できる表現を利用できるように、スキーマを公開することを強くお勧めします。

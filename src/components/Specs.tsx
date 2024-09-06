@@ -29,10 +29,11 @@ interface Spec {
 const specs: Array<Spec> = [
   {
     href: '/specs/repository',
-    name: { en: 'Repository', pt: 'Repositório' },
+    name: { en: 'Repository', pt: 'Repositório', ja: 'リポジトリ' },
     description: {
       en: 'Self-authenticating storage for public account content.',
       pt: 'Armazenamento autoautenticado para conteúdo de conta pública.',
+      ja: 'パブリック アカウント コンテンツ用の自己認証ストレージ。',
     },
     icon: PackageIcon,
     pattern: {
@@ -42,10 +43,11 @@ const specs: Array<Spec> = [
   },
   {
     href: '/specs/lexicon',
-    name: { en: 'Lexicon', pt: 'Lexicon' },
+    name: { en: 'Lexicon', pt: 'Lexicon', ja: '用語集' },
     description: {
       en: 'A schema definition language for ATProto.',
       pt: 'Uma linguagem de definição de esquema para ATProto.',
+      ja: 'ATProto のスキーマ定義言語。',
     },
     icon: ShapesIcon,
     pattern: {
@@ -58,10 +60,15 @@ const specs: Array<Spec> = [
   },
   {
     href: '/specs/xrpc',
-    name: { en: 'HTTP API (XRPC)', pt: 'HTTP API (XRPC)' },
+    name: {
+      en: 'HTTP API (XRPC)',
+      pt: 'HTTP API (XRPC)',
+      ja: 'HTTP API (XRPC)',
+    },
     description: {
       en: 'Cross-system queries and procedures over HTTP.',
       pt: 'Consultas e procedimentos entre sistemas via HTTP.',
+      ja: 'HTTP 経由のシステム間クエリとプロシージャ。',
     },
     icon: BoltIcon,
     pattern: {
@@ -74,10 +81,11 @@ const specs: Array<Spec> = [
   },
   {
     href: '/specs/at-uri-scheme',
-    name: { en: 'URI Scheme', pt: 'Esquema URI' },
+    name: { en: 'URI Scheme', pt: 'Esquema URI', ja: 'URI スキーム' },
     description: {
       en: 'A URI scheme for addressing ATProto repository data.',
       pt: 'Um esquema URI para endereçar dados do repositório ATProto.',
+      ja: 'ATProto リポジトリ データをアドレス指定するための URI スキーム。',
     },
     icon: LinkIcon,
     pattern: {
