@@ -7,7 +7,11 @@ import { Prose } from '@/components/Prose'
 
 export function Image({ className, ...props }: ImageProps) {
   // eslint-disable-next-line jsx-a11y/alt-text
-  return <NextImage {...props} className={clsx(className, 'max-w-full')} />
+  const cls =
+    className && className?.includes('max-w')
+      ? className
+      : clsx(className, 'max-w-full')
+  return <NextImage {...props} className={cls} />
 }
 
 export const a = Link
