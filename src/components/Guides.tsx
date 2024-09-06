@@ -53,6 +53,28 @@ const lang_guides: Record<string, Guide[]> = {
       description: 'Perguntas frequentes sobre a atmosfera.',
     },
   ],
+  ja: [
+    {
+      href: '/guides/applications',
+      name: 'クイックスタート',
+      description: 'アプリケーションを作成して構築を開始します。',
+    },
+    {
+      href: '/guides/self-host',
+      name: 'セルフホスト',
+      description: '独自のパーソナル データ サーバーを設定する方法を学びます。',
+    },
+    {
+      href: '/guides/glossary',
+      name: '用語集',
+      description: 'AT プロトコルで使用されるすべての用語の定義。',
+    },
+    {
+      href: '/guides/faq',
+      name: 'FAQ',
+      description: 'Atmosphere に関するよくある質問。',
+    },
+  ],
 }
 
 export function Guides({ lang }: { lang: string }) {
