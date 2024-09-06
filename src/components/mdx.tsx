@@ -1,8 +1,18 @@
 import Link from 'next/link'
+import NextImage, { ImageProps } from 'next/image'
 import clsx from 'clsx'
 
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
+
+export function Image({ className, ...props }: ImageProps) {
+  // eslint-disable-next-line jsx-a11y/alt-text
+  const cls =
+    className && className?.includes('max-w')
+      ? className
+      : clsx(className, 'max-w-full')
+  return <NextImage {...props} className={cls} />
+}
 
 export const a = Link
 export { Button } from '@/components/Button'
