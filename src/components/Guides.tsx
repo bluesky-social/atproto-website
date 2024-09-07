@@ -15,7 +15,7 @@ const lang_guides: Record<string, Guide[]> = {
       description: 'Create an application and start building.',
     },
     {
-      href: '/guides/self-host',
+      href: '/guides/self-hosting',
       name: 'Self-host',
       description: 'Learn how to set up your own personal data server.',
     },
@@ -37,7 +37,7 @@ const lang_guides: Record<string, Guide[]> = {
       description: 'Crie um aplicativo e comece a construir.',
     },
     {
-      href: '/guides/self-host',
+      href: '/guides/self-hosting',
       name: 'Auto-hospedagem',
       description:
         'Aprenda a configurar seu próprio servidor de dados pessoais.',
@@ -60,7 +60,7 @@ const lang_guides: Record<string, Guide[]> = {
       description: 'アプリケーションを作成して構築を開始します。',
     },
     {
-      href: '/guides/self-host',
+      href: '/guides/self-hosting',
       name: 'セルフホスト',
       description: '独自のパーソナル データ サーバーを設定する方法を学びます。',
     },
