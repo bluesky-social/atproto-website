@@ -10,6 +10,8 @@ import { filter } from 'unist-util-filter'
 import { SKIP, visit } from 'unist-util-visit'
 import * as url from 'url'
 
+import i18nConfig from '../../i18nConfig.js'
+
 const __filename = url.fileURLToPath(import.meta.url)
 const processor = remark().use(remarkMdx).use(extractSections)
 const slugify = slugifyWithCounter()
@@ -58,7 +60,17 @@ export default function Search(nextConfig = {}) {
 
             let files = glob.sync('**/*.mdx', { cwd: appDir })
             let data = files.map((file) => {
-              let url = '/' + file.replace(/(^|\/)page\.mdx$/, '')
+              let url =
+                '/' +
+                file.replace('[locale]/', '').replace(/(^|\/)page\.mdx$/, '')
+              for (const lang of i18nConfig.locales) {
+                if (url.endsWith(`/${lang}.mdx`)) {
+                  url = url.replace(`/${lang}.mdx`, '')
+                  if (lang !== 'en') {
+                    url = `/${lang}${url}`
+                  }
+                }
+              }
               let mdx = fs.readFileSync(path.join(appDir, file), 'utf8')
 
               let sections = []
@@ -73,7 +85,6 @@ export default function Search(nextConfig = {}) {
 
               return { url, sections }
             })
-
             // When this file is imported within the application
             // the following module is loaded:
             return `
