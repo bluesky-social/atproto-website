@@ -9,8 +9,27 @@ import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Protocol API Reference',
-    default: 'Protocol API Reference',
+    template: '%s - AT Protocol',
+    default: 'AT Protocol',
+  },
+  openGraph: {
+    url: 'https://atproto.com/',
+    siteName: 'AT Protocol',
+    type: 'website',
+    images: [
+      {
+        url: 'https://atproto.com/default-social-card.png',
+        secureUrl: 'https://atproto.com/default-social-card.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: {
+      url: 'https://atproto.com/default-social-card.png',
+    },
   },
 }
 
