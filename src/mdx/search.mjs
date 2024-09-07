@@ -71,6 +71,7 @@ export default function Search(nextConfig = {}) {
                   }
                 }
               }
+              if (!url) url = '/'
               let mdx = fs.readFileSync(path.join(appDir, file), 'utf8')
 
               let sections = []
@@ -85,6 +86,7 @@ export default function Search(nextConfig = {}) {
 
               return { url, sections }
             })
+
             // When this file is imported within the application
             // the following module is loaded:
             return `
