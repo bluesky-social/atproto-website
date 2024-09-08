@@ -26,8 +26,6 @@ specs:
     href: /specs/label
   - name: HTTP API (XRPC)
     href: /specs/xrpc
-  - name: Auth
-    href: /specs/auth
   - name: Event Stream
     href: /specs/event-stream
   - name: DID
