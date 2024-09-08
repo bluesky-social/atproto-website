@@ -18,7 +18,7 @@ The OAuth profile for atproto is new and may be revised based on feedback from t
 This specification is authoritative, but is not an implementation guide and does not provide much background or context around design decisions. The earlier [design proposal](https://github.com/bluesky-social/proposals/tree/main/0004-oauth) is not authoritative but provides more context and examples. SDK documentation and the client implementation guides (forthcoming) are more approachable for developers.
 :::
 
-OAuth is the primary mechanism in atproto for clients to make authorized requests to PDS instances. Most user-facing software is expected to use OAuth, including “front-end” clients like mobile apps, rich browser apps, or native desktop apps, as well as “back-end” clients like web services.
+OAuth is the primary mechanism in atproto for clients to make authorized requests to PDS instances. Most user-facing software is expected to use OAuth, including "front-end" clients like mobile apps, rich browser apps, or native desktop apps, as well as "back-end" clients like web services.
 
 OAuth is a constantly evolving framework of standards and best practices, standardized by the IETF. atproto uses a specific "profile" of OAuth which mandates a particular combination of OAuth standards, as described in this document.
 
@@ -32,11 +32,11 @@ Unlike a centralized app platform, in atproto there are many independent server 
 
 In OAuth terminology, an atproto Personal Data Server (PDS) is a "Resource Server" to which authorized HTTP requests are made using access tokens. Sometimes the PDS is also the "Authorization Server" - which services OAuth authorization flows and token requests - while in other situations a separate "entryway" service acts as the Authorization Server for multiple PDS instances. Clients from a metadata file from the PDS to discover the Authorization Server network location.
 
-DPoP (with mandatory server issued nonces) is required to bind auth tokens to specific client software instances (eg, end devices or browser sessions). Pushed Authentication Requests (PAR) are used to streamline the authorization request flow. “Confidential” clients use JWTs signed with a secret key to authenticate the client software to Authorization Servers when making authorization requests.
+DPoP (with mandatory server issued nonces) is required to bind auth tokens to specific client software instances (eg, end devices or browser sessions). Pushed Authentication Requests (PAR) are used to streamline the authorization request flow. "Confidential" clients use JWTs signed with a secret key to authenticate the client software to Authorization Servers when making authorization requests.
 
-Automated client registration using client metadata is one of the more novel aspects of OAuth in atproto. As of August 2024, client metadata is still an Internet Draft ([`draft-parecki-oauth-client-id-metadata-document`](https://datatracker.ietf.org/doc/draft-parecki-oauth-client-id-metadata-document/)); it should not be confused with the existing “Dynamic Client Registration” standard ([RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)). We are hopeful other open protocols will adopt similar automated registration flows in the future, but there may not be general OAuth ecosystem support for some time.
+Automated client registration using client metadata is one of the more novel aspects of OAuth in atproto. As of August 2024, client metadata is still an Internet Draft ([`draft-parecki-oauth-client-id-metadata-document`](https://datatracker.ietf.org/doc/draft-parecki-oauth-client-id-metadata-document/)); it should not be confused with the existing "Dynamic Client Registration" standard ([RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)). We are hopeful other open protocols will adopt similar automated registration flows in the future, but there may not be general OAuth ecosystem support for some time.
 
-OAuth 2.0 is traditionally an authorization (`authz`) system, not an authentication (`authn`) system, meaning that it is not always a solution for pure account authentication use cases, such as “Signup/Login with XYZ” identity integrations. OpenID Connect (OIDC), which builds on top of OAuth 2.0, is usually the recommended standard for identity authentication. Unfortunately, the current version of OIDC does not enable authentication of atproto identities in a secure and generic way. The atproto profile of OAuth includes a (mandatory) mechanism for account authentication during the authorization flow and can be used for atproto identity authentication use cases.
+OAuth 2.0 is traditionally an authorization (`authz`) system, not an authentication (`authn`) system, meaning that it is not always a solution for pure account authentication use cases, such as "Signup/Login with XYZ" identity integrations. OpenID Connect (OIDC), which builds on top of OAuth 2.0, is usually the recommended standard for identity authentication. Unfortunately, the current version of OIDC does not enable authentication of atproto identities in a secure and generic way. The atproto profile of OAuth includes a (mandatory) mechanism for account authentication during the authorization flow and can be used for atproto identity authentication use cases.
 
 ### Clients
 
@@ -68,7 +68,7 @@ The environment a client runs in also impacts the type of redirect (callback) UR
 
 Authorization Servers may maintain a set of "trusted" clients, identified by `client_id`. Because any client could use unverified client metadata to impersonate a better-known app or brand, Authorization Servers should not display such metadata to end users in the Authorization Interface by default. Trusted clients can have additional metadata shown, such as a readable name (`client_name`), project URI (`client_uri`, which may have a different domain/origin than `client_id`) and logo (`logo_uri`). See the "Security Considerations" section for more details.
 
-Clients which are only using atproto OAuth for account authentication (without authorization to access PDS resources) should request minimal scopes (see “Scopes” section), but still need to implement most of the authorization flow. In particular, it is critical that they check the `sub` field in a token response to verify the account identity (this is an atproto-specific detail).
+Clients which are only using atproto OAuth for account authentication (without authorization to access PDS resources) should request minimal scopes (see "Scopes" section), but still need to implement most of the authorization flow. In particular, it is critical that they check the `sub` field in a token response to verify the account identity (this is an atproto-specific detail).
 
 #### Client ID Metadata Document
 
@@ -85,7 +85,7 @@ The following fields are relevant for all client types:
 - `client_id` (string, required): the `client_id`. Must exactly match the full URL used to fetch the client metadata file itself
 - `application_type` (string, optional): must be one of `web` or `native`, with `web` as the default if not specified. Note that this is field specified by OpenID/OIDC, which we are borrowing.
 - `grant_types` (array of strings, required): `authorization_code` must always be included. `refresh_token` is optional, but must be included if the client will make token refresh requests.
-- `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See “Scopes” section.
+- `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See "Scopes" section.
 - `response_types` (array of strings, required): `code` must be included.
 - `redirect_uris` (array of strings, required): at least one redirect URI is required. See Authorization Request Fields section for rules about redirect URIs, which also apply here.
 - `token_endpoint_auth_method` (string, optional): confidential clients must set this to  `private_key_jwt`.
@@ -156,7 +156,7 @@ The resolved DID should be bound to the overall auth session and should be used 
 
 At the end of the auth flow, when the client does an initial token fetch, the Authorization Server must return the account DID in the `sub` field of the JSON response body. If the entire auth flow started with an account identifier, it is critical for the client to verify that this DID matches the expected DID bound to the session earlier; the linkage from account to Authorization Server will already have been verified in this situation.
 
-If the auth flow instead starts with a server (hostname or URL), the client will first attempt to fetch Resource Server metadata (and resolve to Authorization Server if found) and then attempt to fetch Authorization Server metadata. See “Authorization Server” section for server metadata fetching. If either is successful, the client will end up with an identified Authorization Server. The Authorization Request flow will proceed without a `login_hint` or account identifier being bound to the session, but the Authorization Server `issuer` will be bound to the session.
+If the auth flow instead starts with a server (hostname or URL), the client will first attempt to fetch Resource Server metadata (and resolve to Authorization Server if found) and then attempt to fetch Authorization Server metadata. See "Authorization Server" section for server metadata fetching. If either is successful, the client will end up with an identified Authorization Server. The Authorization Request flow will proceed without a `login_hint` or account identifier being bound to the session, but the Authorization Server `issuer` will be bound to the session.
 
 After the auth flow continues and an initial token request succeeds, the client will parse the account identifier from the `sub` field in the token response. At this point, the client still cannot trust that it has actually authenticated the indicated account. It is critical for the client to resolve the identity (DID document), extract the declared PDS host, confirm that the PDS (Resource Server) resolves to the Authorization Server bound to the session by fetching the Resource Server metadata, and fetch the Authorization Server metadata to confirm that the `issuer` field matches the Authorization Server origin (see [`draft-ietf-oauth-v2-1` section 7.3.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-11#section-7.13.1) regarding this last point).
 
@@ -170,13 +170,13 @@ The special `atproto` scope is required for all atproto OAuth sessions. The sema
 
 Authorization Servers may support other profiles of OAuth if client does not include the `atproto` scope. For example, an Authorization Server might function as both an atproto PDS/entryway, and support other protocols/standards at the same time.
 
-Use of the atproto OAuth profile, as indicated by the `atproto` scope, means that the Authorization Server will return the atproto account DID as an account identifier in the `sub` field of token requests. Authorization Servers must return `atproto` in `scopes_supported` in their metadata document, so that clients know they support the atproto OAuth profile. A client may include only the `atproto` scope if they only need account authentication - for example a “Login with atproto” use case. Unlike OpenID, profile metadata in atproto is generally public, so an additional authorization scope for fetching profile metadata is not needed.
+Use of the atproto OAuth profile, as indicated by the `atproto` scope, means that the Authorization Server will return the atproto account DID as an account identifier in the `sub` field of token requests. Authorization Servers must return `atproto` in `scopes_supported` in their metadata document, so that clients know they support the atproto OAuth profile. A client may include only the `atproto` scope if they only need account authentication - for example a "Login with atproto" use case. Unlike OpenID, profile metadata in atproto is generally public, so an additional authorization scope for fetching profile metadata is not needed.
 
 The OAuth 2.0 specification does not require Authorization Servers to return the granted scopes in the token responses unless the scope that was granted is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes in the token response. Clients should reject token responses if they don't contain a `scope` field, or if the `scope` field does not contain `atproto`.
 
-The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original “session token” auth system:
+The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original "session token" auth system:
 
-- `transition:generic`: broad PDS account permissions, equivalent to the previous “App Password” authorization level.
+- `transition:generic`: broad PDS account permissions, equivalent to the previous "App Password" authorization level.
     - write (create/update/delete) any repository record type
     - upload blobs (media files)
     - read and write any personal preferences
@@ -184,7 +184,7 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
     - ability to generate service auth tokens for the specific API endpoints the client has access to
     - no account management actions: change handle, change email, delete or deactivate account, migrate account
     - no access to DMs (the `chat.bsky.*` Lexicons), specifically
-- `transition:chat.bsky`: equivalent to adding the “DM Access” toggle for “App Passwords”
+- `transition:chat.bsky`: equivalent to adding the "DM Access" toggle for "App Passwords"
     - API endpoints and service proxying for the `chat.bsky` Lexicons specifically
     - ability to generate service auth tokens for the `chat.bsky` Lexicons
     - this scope depends on and does not function without the  `transition:generic` scope
@@ -206,7 +206,7 @@ A summary of fields relevant to authorization requests with the atproto OAuth pr
 - `state` (string, required): random token used to verify the authorization request against the response. See below.
 - `redirect_uri` (string, required): must match against URIs declared in client metadata and have a format consistent with the `application_type` declared in the client metadata. See below.
 - `scope` (string with space-separated values, required): must be a subset of the scopes declared in client metadata. Must include `atproto`. See "Scopes" section.
-- `client_assertion_type` (string, optional): used by confidential clients to describe the client authentication mechanism. See “Confidential Client” section.
+- `client_assertion_type` (string, optional): used by confidential clients to describe the client authentication mechanism. See "Confidential Client" section.
 - `client_assertion` (string, optional): only used for confidential clients, for client authentication. See "Confidential Client" section.
 - `login_hint` (string, optional): account identifier to be used for login. See "Authorization Interface" section.
 
@@ -224,7 +224,7 @@ Clients may include additional optional authorization request parameters - and s
 
 #### Proof Key for Code Exchange (PKCE)
 
-PKCE is mandatory for all Authorization Requests. Clients must generate new, unique, random challenges for every authorization request.
+PKCE is mandatory for all Authorization Requests. Clients must generate new, unique, random challenges for every authorization request. Authorization Servers must prevent reuse of `code_challenge` values across sessions (at least within some reasonable time frame, such as a 24 hour period).
 
 The `S256` challenge method must be supported by all clients and Authorization Servers; see [RFC 7636](https://datatracker.ietf.org/doc/html/rfc7636) for details. The `plain` method is not allowed. Additional methods may in theory be supported if both client and server support them.
 
@@ -248,7 +248,7 @@ The client assertion type to use is `urn:ietf:params:oauth:client-assertion-type
 
 Additional requirements:
 
-- confidential clients publish one or more client authentication keys (public key) in the client metadata. This can be either direct JWK format as JSON in the `jwks` field, or as a separate JWKS JSON object on the web linked by a `jwks_uri` URL. A `jwks_uri` URL must be a valid fully qualified URL with `https://` scheme.
+- confidential clients must publish one or more client authentication keys (public key) in the client metadata. This can be either direct JWK format as JSON in the `jwks` field, or as a separate JWKS JSON object on the web linked by a `jwks_uri` URL. A `jwks_uri` URL must be a valid fully qualified URL with `https://` scheme.
 - confidential clients should periodically rotate client keys, adding new keys to the JWKS set and using then for new sessions, then removing old keys once they are no longer associated with any active auth sessions
 - confidential clients must include `token_endpoint_auth_method` as `private_key_jwt` in their client metadata document
 - confidential clients are expected to immediately remove client authentication keys from their client metadata if the key has been leaked or compromised
@@ -269,7 +269,7 @@ The specific lifetime of sessions, access tokens, and refresh tokens is up to th
 Some guidelines and requirements:
 
 - access token lifetimes should be less than 30 minutes in all situations. If the server cannot revoke individual access tokens then the maximum is 15 minutes, and 5 minutes is recommended.
-- for “untrusted” public clients, overall session lifetime should be limited to 7 days, and the lifetime of individual refresh tokens should be limited to 24 hours
+- for "untrusted" public clients, overall session lifetime should be limited to 7 days, and the lifetime of individual refresh tokens should be limited to 24 hours
 - for confidential clients, the overall session lifetime may be unlimited. Individual refresh tokens should have a lifetime limited to 180 days
 - confidential clients must use the same client authentication key and assertion method for refresh token requests that they did for the initial authentication request
 
@@ -326,7 +326,7 @@ The `issuer` ("origin") is the overall identifier for the Authorization Server.
 
 #### Authorization Interface
 
-The Authorization Server (PDS/entryway) must implement a web interface for users to authenticate with the server, approve (or reject) Authorization Requests from clients, and manage active sessions. This is called the “Authorization Interface”.
+The Authorization Server (PDS/entryway) must implement a web interface for users to authenticate with the server, approve (or reject) Authorization Requests from clients, and manage active sessions. This is called the "Authorization Interface".
 
 Server implementations can chose their own technology for user authentication and account recovery: secure cookies, email, various two-factor authentication, passkeys, external identity providers (including upstream OpenID/OIDC), etc. Servers may also support multiple concurrent auth sessions with users.
 
@@ -334,11 +334,11 @@ When a client redirects to the Authorization Server’s authorization URL (the d
 
 The authorization approval prompt should identify the client app and describe the scope of authorization that has been requested.
 
-The amount of client metadata that should be displayed may depend on whether the client is “trusted” by the Authorization Server; see the “Client” and “Security Concerns” sections. The full `client_id` URL should be displayed by default.
+The amount of client metadata that should be displayed may depend on whether the client is "trusted" by the Authorization Server; see the "Client" and "Security Concerns" sections. The full `client_id` URL should be displayed by default.
 
-See the “Scopes” section for a description of scope options.
+See the "Scopes" section for a description of scope options.
 
-If a client is a confidential client and the user has already approved the same scopes for the same client in the past, the Authorization Server may allow “silent sign-in” by auto-approving the request. Authorization Servers can set their own policies for this flow: it may require explicit user configuration, or the client may be required to be “trusted”.
+If a client is a confidential client and the user has already approved the same scopes for the same client in the past, the Authorization Server may allow "silent sign-in" by auto-approving the request. Authorization Servers can set their own policies for this flow: it may require explicit user configuration, or the client may be required to be "trusted".
 
 Authorization Servers should separately implement a web interface which allows authenticated users to view active OAuth sessions and delete them.
 
@@ -346,11 +346,11 @@ Authorization Servers should separately implement a web interface which allows a
 
 This is a high-level description of what an atproto OAuth authorization flow looks like. It assumes the user already has an atproto account.
 
-The client starts by asking for the user’s account identifier (handle or DID), or for a PDS/entryway hostname. See “Identity Authentication” section for details.
+The client starts by asking for the user’s account identifier (handle or DID), or for a PDS/entryway hostname. See "Identity Authentication" section for details.
 
-For an account identifier, the client resolves the identity to a DID document, extracts the declared PDS URL, then fetches the Resource Server and Authorization Server locations. If starting with a server hostname, the client resolves that hostname to an Authorization Server. In either case, Authorization Server metadata is fetched and verified against requirements for atproto OAuth (see “Authorization Server” section).
+For an account identifier, the client resolves the identity to a DID document, extracts the declared PDS URL, then fetches the Resource Server and Authorization Server locations. If starting with a server hostname, the client resolves that hostname to an Authorization Server. In either case, Authorization Server metadata is fetched and verified against requirements for atproto OAuth (see "Authorization Server" section).
 
-The client next makes a Pushed Authorization Request via HTTP POST request. See “Authorization Request” section; some notable details include:
+The client next makes a Pushed Authorization Request via HTTP POST request. See "Authorization Request" section; some notable details include:
 
 - a randomly generated `state` token is required, and will be used to reference this authorization request with the subsequent response callback
 - PKCE is required, so a secret value is generated and stored, and a derived challenge is included in the request
@@ -368,11 +368,11 @@ The Authorization Server uses the `request_uri` to look up the earlier Authoriza
 
 The client uses URL query parameters (`state` and `iss`) to look up and verify session information. Using the `code` query parameter, the client then makes an initial token request to the Authorization Server’s token endpoint. The client completes the PKCE flow by including the earlier value in the `code_verifier` field. Confidential clients need to include a client assertion JWT in the token request; see the "Confidential Client" section. The Authorization Server validates the request and returns a set of tokens, as well as a `sub` field indicating the account identifier (DID) for this session, and the `scope` that is covered by the issued access token.
 
-At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server "issuer" (present in the `iss` query string), either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See “Identity Authentication” section. The Authorization always returns the scopes approved for the session in the `scopes` field (even if they are the same as the request, as an atproto OAuth profile requirement), which may reflect partial authorization by the user. Clients must reject the session if the response does not include `atproto` in the returned scopes.
+At this point it is critical (mandatory) for all clients to verify that the account identified by the `sub` field is consistent with the Authorization Server "issuer" (present in the `iss` query string), either by validating against the originally-supplied account DID, or by resolving the accounts DID to confirm the PDS is consistent with the Authorization Server. See "Identity Authentication" section. The Authorization always returns the scopes approved for the session in the `scopes` field (even if they are the same as the request, as an atproto OAuth profile requirement), which may reflect partial authorization by the user. Clients must reject the session if the response does not include `atproto` in the returned scopes.
 
 Authentication-only clients can end the flow here.
 
-Using the access token, clients are now able to make authorized requests to the PDS (”Resource Server”). They must use DPoP for all such requests, along with the access token. Tokens (both access and refresh) will need to be periodically “refreshed” by subsequent request to the Authorization Server token endpoint. These also require DPoP. See “Tokens and Session Lifetime” section for details.
+Using the access token, clients are now able to make authorized requests to the PDS ("Resource Server"). They must use DPoP for all such requests, along with the access token. Tokens (both access and refresh) will need to be periodically "refreshed" by subsequent request to the Authorization Server token endpoint. These also require DPoP. See "Tokens and Session Lifetime" section for details.
 
 ### OAuth Security Considerations
 
