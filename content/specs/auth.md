@@ -86,7 +86,7 @@ The following fields are relevant for all client types:
 - `application_type` (string, optional): must be one of `web` or `native`, with `web` as the default if not specified. Note that this is field specified by OpenID/OIDC, which we are borrowing.
 - `grant_types` (array of strings, required): `authorization_code` must always be included. `refresh_token` is optional, but must be included if the client will make token refresh requests.
 - `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See “Scopes” section.
-- `response_types` (array of strings, required): `code` must be included. `implicit` is not allowed.
+- `response_types` (array of strings, required): `code` must be included.
 - `redirect_uris` (array of strings, required): at least one redirect URI is required. See Authorization Request Fields section for rules about redirect URIs, which also apply here.
 - `token_endpoint_auth_method` (string, optional): confidential clients must set this to  `private_key_jwt`.
 - `token_endpoint_auth_signing_alg` (string, optional): `none` is never allowed here. The current recommended and most-supported algorithm is `ES256`, but this may evolve over time. Authorization Servers will compare this against their supported algorithms.
@@ -98,9 +98,9 @@ These fields are optional but recommended:
 
 - `client_name` (string, optional): human-readable name of the client
 - `client_uri` (string, optional): not to be confused with `client_id`, this is a homepage URL for the client. If provided, the `client_uri` must have the same hostname as `client_id`.
-- `logo_uri` (string, optional): URL to client logo. HTTPS is required over HTTP.
-- `tos_uri` (string, optional): URL to human-readable terms of service (ToS) for the client. HTTPS is required over HTTP.
-- `policy_uri` (string, optional): URL to human-readable privacy policy for the client. HTTPS is required over HTTP.
+- `logo_uri` (string, optional): URL to client logo. Only `https:` URIs are allowed.
+- `tos_uri` (string, optional): URL to human-readable terms of service (ToS) for the client. Only `https:` URIs are allowed.
+- `policy_uri` (string, optional): URL to human-readable privacy policy for the client. Only `https:` URIs are allowed.
 
 See "OAuth Security Considerations" below for when `client_name`, `client_uri`, and `logo_uri` will or will not be displayed to end users.
 
@@ -172,7 +172,7 @@ Authorization Servers may support other profiles of OAuth if client does not inc
 
 Use of the atproto OAuth profile, as indicated by the `atproto` scope, means that the Authorization Server will return the atproto account DID as an account identifier in the `sub` field of token requests. Authorization Servers must return `atproto` in `scopes_supported` in their metadata document, so that clients know they support the atproto OAuth profile. A client may include only the `atproto` scope if they only need account authentication - for example a “Login with atproto” use case. Unlike OpenID, profile metadata in atproto is generally public, so an additional authorization scope for fetching profile metadata is not needed.
 
-In OAuth 2.0, Authorization Servers may return the granted scopes in any auth request response and any token responses, but are only required to do so if the scope is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes. Clients should reject token responses if they don't contain a `scope` field, or if the `scope` field does not contain `atproto`.
+The OAuth 2.0 specification does not require Authorization Servers to return the granted scopes in the token responses unless the scope that was granted is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes in the token response. Clients should reject token responses if they don't contain a `scope` field, or if the `scope` field does not contain `atproto`.
 
 The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original “session token” auth system:
 
@@ -256,7 +256,7 @@ Additional requirements:
 
 ### Tokens and Session Lifetime
 
-Access tokens are used to authorize client requests to the account's PDS (”Resource Server”). From the standpoint of the client they are opaque, but they are often signed JWTs including an expiration time. Depending on the PDS implementation, it may or may not be possible to revoke individual access tokens in the event of a compromise, so they must be restricted to a relatively short lifetime.
+Access tokens are used to authorize client requests to the account's PDS ("Resource Server"). From the standpoint of the client they are opaque, but they are often signed JWTs including an expiration time. Depending on the PDS implementation, it may or may not be possible to revoke individual access tokens in the event of a compromise, so they must be restricted to a relatively short lifetime.
 
 Refresh tokens are used to request new tokens (of both types) from the Authorization Server (PDS or entryway). They are also opaque from the standpoint of clients. Auth sessions can be revoked - invalidating the refresh tokens - so they may have a longer lifetime. In the atproto OAuth profile, refresh tokens are generally single-use, with the "new" refresh token replacing that used in the token request. This means client implementations may need locking primitives to prevent concurrent token refresh requests.
 
@@ -356,15 +356,15 @@ The client next makes a Pushed Authorization Request via HTTP POST request. See 
 - PKCE is required, so a secret value is generated and stored, and a derived challenge is included in the request
 - `scope` values are requested here, and must include `atproto`
 - for confidential clients, a `client_assertion` is included, with type `jwt-bearer`, signed using the secret client authentication key
-- the client generates a new DPoP key for the user/session and uses it starting with the PAR request
+- the client generates a new DPoP key for the user/device/session and uses it starting with the PAR request
 - if the auth flow started with an account identifier, the client should pass that starting identifier via the `login_hint` field
 - atproto uses PAR, so the request will be sent as an HTTP POST request to the Authorization Server
 
 The Authorization Server will receive the PAR request and use the `client_id` URL to resolve the client metadata document. The server validates the request and client metadata, then stores information about the session, including binding a DPoP key to the session. The server returns a `request_uri` token to the client, including a DPoP nonce via HTTP header.
 
-The client receives the `request_uri` and prepares to redirect the user. At this point, the client usually needs to persist information about the session to some type of secure storage, so it can be read back after the redirect returns. This might be a database (for a web service backend) or web platform storage like IndexedDB (for a browser app). The client then redirects the user via browser to the Authorization Server’s auth endpoint, including the `request_uri` as a URL parameter.
+The client receives the `request_uri` and prepares to redirect the user. At this point, the client usually needs to persist information about the session to some type of secure storage, so it can be read back after the redirect returns. This might be a database (for a web service backend) or web platform storage like IndexedDB (for a browser app). The client then redirects the user via browser to the Authorization Server’s auth endpoint, including the `request_uri` as a URL parameter. In any case, clients must not store session data directly in the `state` request param.
 
-The Authorization Server uses the `request_uri` to look up the earlier Authorization Request parameters, authenticates the user (which might include sign-in or account selection), and prompts the user with the Authorization Interface. The user might refine any granular requested scopes, then approves or rejects the request. The Authorization Server redirects the user back to the `redirect_uri`, which might be a web callback URL (for web clients), or a native app URI.
+The Authorization Server uses the `request_uri` to look up the earlier Authorization Request parameters, authenticates the user (which might include sign-in or account selection), and prompts the user with the Authorization Interface. The user might refine any granular requested scopes, then approves or rejects the request. The Authorization Server redirects the user back to the `redirect_uri`, which might be a web callback URL, or a native app URI (for native clients).
 
 The client uses URL query parameters (`state` and `iss`) to look up and verify session information. Using the `code` query parameter, the client then makes an initial token request to the Authorization Server’s token endpoint. The client completes the PKCE flow by including the earlier value in the `code_verifier` field. Confidential clients need to include a client assertion JWT in the token request; see the "Confidential Client" section. The Authorization Server validates the request and returns a set of tokens, as well as a `sub` field indicating the account identifier (DID) for this session, and the `scope` that is covered by the issued access token.
 
