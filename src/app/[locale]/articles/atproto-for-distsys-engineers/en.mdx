@@ -1,0 +1,232 @@
+import {Container} from "@/components/Container"
+import {FooterCTA} from "@/components/FooterCTA"
+import image1 from "./image1.png"
+import image2 from "./image2.png"
+import image3 from "./image3.png"
+import image4 from "./image4.png"
+import image5 from "./image5.png"
+import image6 from "./image6.png"
+import image7 from "./image7.png"
+import image8 from "./image8.png"
+import image9 from "./image9.png"
+import image10 from "./image10.png"
+import image11 from "./image11.png"
+import image12 from "./image12.png"
+import image13 from "./image13.png"
+import image14 from "./image14.png"
+import image15 from "./image15.png"
+import image16 from "./image16.png"
+import image17 from "./image17.png"
+import image18 from "./image18.png"
+import image19 from "./image19.png"
+import image20 from "./image20.png"
+import image21 from "./image21.png"
+import image22 from "./image22.png"
+import image23 from "./image23.png"
+import image24 from './image24.png'
+
+export const metadata = {
+  title: 'ATProto for distributed systems engineers',
+  description:
+    'AT Protocol is the tech developed at Bluesky for open social networking. In this article we\'re going to explore AT Proto from the perspective of distributed backend engineering.',
+}
+
+# ATProto for distributed systems engineers
+
+*Sep 3, 2024*
+
+AT Protocol is the tech developed at [Bluesky](https://bsky.app) for open social networking. In this article we're going to explore AT Proto from the perspective of distributed backend engineering. {{className: 'lead'}}
+
+If you've ever built a backend with [stream-processing](https://milinda.pathirage.org/kappa-architecture.com/), then you're familiar with the kind of systems we'll be exploring. If you're not &mdash; no worries! We'll step through it. {{className: 'lead'}}
+
+## Scaling the traditional Web backend
+
+The classic, happy Web architecture is the “one big SQL database” behind our app server. The app talks to the database and handles requests from the frontend.
+
+<Container>
+  <Image src={image1} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+As our application grows, we hit some performance limits so we toss some caches into the stack.
+
+<Container>
+  <Image src={image2} alt="" className="w-full dark:invert max-w-2xl mx-auto" />
+</Container>
+
+Then let's say we scale our database horizontally through sharding and replicas.
+
+<Container>
+  <Image src={image3} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+This is pretty good, but we're building a social network with hundreds of millions of users; even this model hits limits. The problem is that our SQL database is “[strongly consistent](https://en.wikipedia.org/wiki/Strong_consistency)” which means the state is kept uniformly in sync across the system. Maintaining strong consistency incurs a performance cost which becomes our bottleneck. 
+
+If we can relax our system to use “[eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency),” we can scale much further. We start by switching to a NoSQL cluster.
+
+<Container>
+  <Image src={image4} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+This is better for scaling, but without SQL it's becoming harder to build our queries. It turns out that SQL databases have a lot of useful features, like JOIN and aggregation queries. In fact, our NoSQL database is really just a key-value store. Writing features is becoming a pain!
+
+To fix this, we need to write programs which generate precomputed views of our dataset. These views are essentially like cached queries. We even duplicate the canonical data into these views so they're very fast.
+
+We'll call these our View servers.
+
+<Container>
+  <Image src={image5} alt="" className="w-full dark:invert" />
+</Container>
+
+Now we notice that keeping our view servers synced with the canonical data in the NoSQL cluster is tricky. Sometimes our view servers crash and miss updates. We need to make sure that our views stay reliably up-to-date.
+
+To solve this, we introduce an event log (such as [Kafka](https://kafka.apache.org/)). That log records and broadcasts all the changes to the NoSQL cluster. Our view servers listen to &mdash; and replay &mdash; that log to ensure they never miss an update, even when they need to restart.
+
+<Container>
+  <Image src={image6} alt="" className="w-full dark:invert" />
+</Container>
+
+We've now arrived at a [stream processing architecture](https://milinda.pathirage.org/kappa-architecture.com/), and while there are a lot more details we could cover, this is enough for now.
+
+The good news is that this architecture scales pretty well. We've given up strong consistency and sometimes our read queries lag behind the most up to date version of the data, but the service doesn't drop writes or enter an incorrect state.
+
+In a way, what we've done is custom-built a database by [turning it inside-out](https://www.youtube.com/watch?v=fU9hR3kiOK0). We simplified the canonical storage into a NoSQL cluster, and then built our own querying engine with the view servers. It's a lot less convenient to build with, but it scales.
+
+## Decentralizing our high-scale backend
+
+The goal of AT Protocol is to interconnect applications so that their backends share state, including user accounts and content.
+
+How can we do that? If we look at our diagram, we can see that most of the system is isolated from the outside world, with only the App server providing a public interface.
+
+<Container>
+  <Image src={image7} alt="" className="w-full dark:invert" />
+</Container>
+
+Our goal is to break this isolation down so that other people can join our NoSQL cluster, our event log, our view servers, and so on.
+
+Here's how it's going to look:
+
+<Container>
+  <Image src={image8} alt="" className="w-full dark:invert" />
+</Container>
+
+Each of these internal services are now external services. They have public APIs which anybody can consume. On top of that, anybody can create their own instances of these services.
+
+Our goal is to make it so anybody can contribute to this decentralized backend. That means that we don't just want one NoSQL cluster, or one View server. We want lots of these servers working together. So really it's more like this:
+
+<Container>
+  <Image src={image9} alt="" className="w-full dark:invert" />
+</Container>
+
+So how do we make all of these services work together?
+
+## Unifying the data model
+
+We're going to establish a shared data model called the [“user data repository.”](/guides/data-repos)
+
+<Container>
+  <Image src={image10} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+Every data repository contains JSON documents, which we'll call “records”.
+
+<Container>
+  <Image src={image11} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+For organizational purposes, we'll bucket these records into “collections.”
+
+<Container>
+  <Image src={image12} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Now we're going to opinionate our NoSQL services so they all use this [data repository](/guides/data-repos) model.
+
+<Container>
+  <Image src={image13} alt="" className="w-full dark:invert" />
+</Container>
+
+Remember: the data repo services are still basically NoSQL stores, it's just that they're now organized in a very specific way:
+
+1. Each user has a data repository.
+2. Each repository has collections.
+3. Each collection is an ordered K/V store of JSON documents.
+
+Since the data repositories can be hosted by anybody, we need to give them [URLs](/specs/at-uri-scheme).
+
+<Container>
+  <Image src={image14} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+While we're at it, let's create a [whole URL scheme](/specs/at-uri-scheme) for our records too.
+
+<Container>
+  <Image src={image15} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Great! Also, since we're going to be syncing these records around the Internet, it would be a good idea to cryptographically sign them so that we know they're authentic.
+
+<Container>
+  <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+## Charting the flow of data
+
+Now that we've set up our high-scale decentralized backend, let's map out how an application actually works on ATProto.
+
+Since we're making a new app, we're going to want two things: an app server (which hosts our API & frontend) and a view server (which collects data from the network for us). We often bundle the app & view servers, and so we can just call it an “Appview.” Let's start there:
+
+<Container>
+  <Image src={image17} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+A user logs into our app using OAuth. In the process, they tell us which server hosts their data repository, _and_ they give us permission to read and write to it.
+
+<Container>
+  <Image src={image18} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+We're off to a good start &mdash; we can read and write JSON documents in the user's repo. If they already have data from other apps (like a profile) we can read that data too. If we were building a singleplayer app, we'd already be done.
+
+But let's chart what happens when we write a JSON document.
+
+<Container>
+  <Image src={image19} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+This commits the document to the repo, then fires off a write into the event logs which are listening to the repo.
+
+<Container>
+  <Image src={image20} alt="" className="w-full dark:invert" />
+</Container>
+
+From there, the event gets sent to any view services that are listening &mdash; including our own!
+
+<Container>
+  <Image src={image21} alt="" className="w-full dark:invert" />
+</Container>
+
+Why are we listening to the event stream if we're the one making the write? Because we're not the only ones making writes! There are lots of user repos generating events, and lots of apps writing to them!
+
+<Container>
+  <Image src={image22} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+So we can see a kind of circular data flow throughout our decentralized backend, with writes being committed to the data repos, then emitted through the event logs into the view servers, where they can be read by our applications.
+
+<Container>
+  <Image src={image23} alt="" className="w-full dark:invert" />
+</Container>
+
+And (one hopes) that this network continues to scale: not just to add capacity, but to create a wider variety of applications sharing in this open applications network.
+
+<Container>
+  <Image src={image24} className="w-full dark:invert max-w-2xl" />
+</Container>
+
+## Building practical open systems
+
+The AT Protocol merges p2p tech with high-scale systems practices. Our founding engineers were core [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) and [Dat](https://en.wikipedia.org/wiki/Dat_(software)) engineers, and Martin Kleppmann &mdash; the author of [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; is an active technical advisor.
+
+Before Bluesky was started, we established a clear requirement of “no steps backwards.” We wanted the network to feel as convenient and global as every social app before it, while still working as an open network. This is why, when we looked at federation and blockchains, the scaling limits of those architectures stood out to us. Our solution was to take standard practices for high scale backends, and then apply the techniques we used in peer-to-peer systems to create an open network.
+
+<FooterCTA href="/" title="Ready to learn more?" description="Specs, guides, and SDKs can be found here." />

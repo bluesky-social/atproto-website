@@ -1,0 +1,118 @@
+export const metadata = {
+  title: 'Glossary of terms',
+  description:
+    'A collection of terminology used in the AT Protocol and their definitions.',
+}
+
+# Glossary of terms
+
+The AT Protocol uses a lot of terms that may not be immediately familiar. This page gives a quick reference to these terms and includes some links to move information. {{className: 'lead'}}
+
+## Atmosphere
+
+The "Atmosphere" is the term we use to describe the ecosystem around the [AT Protocol](#at-protocol).
+
+## AT Protocol
+
+The AT Protocol stands for "Authenticated Transfer Protocol." This name is in reference to the fact that all user-data is signed by the authoring users, which makes it possible to broadcast the data through many services and prove it's real without having to speak directly to the originating server.
+
+The name is also a play on the "@" symbol, aka the "at" symbol, since atproto is designed for social systems.
+
+## PDS (Personal Data Server)
+
+A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did). Many PDSes will host multiple users.
+
+A PDS communicates with [AppViews](#appview) to run applications. A PDS doesn't typically run any applications itself, though it will have general account management interfaces such as the OAuth login screen. PDSes actively sync their [data repos](#data-repo) with [Relays](#relay).
+
+## AppView
+
+An AppView is an application in the [Atmosphere](#atmosphere). It's called an "AppView" because it's just one view of the network. The canonical data lives in [data repos](#data-repo) which is hosted by [PDSes](#pds-personal-data-server), and that data can be viewed many different ways.
+
+AppViews function a bit like search engines on the Web: they aggregate data from across the Atmosphere to produce their UIs. The difference is that AppViews also communicate with users' [PDSes](#pds) to publish information on their [repos](#data-repo), forming the full application model. This communication is established as a part of the OAuth login flow.
+
+## Relay
+
+A Relay is an aggregator of [data repos](#data-repo) from across the [Atmosphere](#atmosphere). They sync the repos from [PDSes](#pds) and produce a firehose of change events. [AppViews](#appview) use a Relay to fetch user data.
+
+Relays are an optimization and are not strictly necessary. An [AppView](#appview) could communicate directly with [PDSes](#pds) (in fact, this is encouraged if needed). The Relay serves to reduce the number of connections that are needed in the network.
+
+## Lexicon
+
+Lexicon is a schema language. It's used in the [Atmosphere](#atmosphere) to describe [data records](#record) and HTTP APIs. Functionally it's very similar to [JSON-Schema](https://json-schema.org/) and [OpenAPI](https://www.openapis.org/).
+
+Lexicon's sole purpose is to help developers build compatible software.
+
+- [An introduction to Lexicon](/guides/lexicon)
+- [Lexicon spec](/specs/lexicon)
+
+## Data Repo
+
+The "data repository" or "repo" is the public dataset which represents a user. It is comprised of [collections](#collection) of JSON [records](#record) and unstructured [blobs](#blob). Every repo is assigned a single permanent [DID](#did) which identifies it. Repos may also have any number of [domain handles](#handle) which act as human-readable names.
+
+Data repositories are signed merkle trees. Their signatures can be verified against the key material published under the repo's [did](#did). 
+
+- [An introduction to data repos](/guides/data-repos)
+- [Repository spec](/specs/repository)
+
+## Collection
+
+The "collection" is a bucket of JSON [records](#record) in a [data repository](#data-repo). They support ordered list operations. Every collection is identified by an [NSID](#nsid) which is expected to map to a [Lexicon](#lexicon) schema.
+
+## Record
+
+A "record" is a JSON document inside a [repo](#data-repo) [collection](#collection). The type of a record is identified by the `$type` field, which is expected to map to a [Lexicon](#lexicon) schema. The type is also expected to match the [collection](#collection) which contains it.
+
+- [Record key spec](/specs/record-key)
+
+## Blob
+
+Blobs are unstructured data stored inside a [repo](#data-repo). They are most commonly used to store media such as images and video.
+
+## Label
+
+Labels are metadata objects which are attached to [repos](#data-repo) and [records](#record). They are typically referenced by their values, such as "nudity" or "graphic-media," which identify the meaning of the label. Labels are primarily used by applications for moderation, but they can be used for other purposes.
+
+- [Labels spec](/specs/label)
+
+## Handle
+
+Handles are domain names which are used to identify [data repos](#data-repo). More than one handle may be assigned to a repo. Handles may be used in `at://` URIs in the domain segment.
+
+- [Handle spec](/specs/handle)
+- [URI Scheme spec](/specs/at-uri-scheme)
+
+## DID (Decentralized ID)
+
+DIDs, or Decentralized IDentifiers, are universally-unique identifiers which represent [data repos](#data-repo). They are permanent and non-human-readable. DIDs are a [W3C specification](https://www.w3.org/TR/did-core/). The AT Protocol currently supports `did:web` and `did:plc`, two different DID methods.
+
+DIDs resolve to documents which contain metadata about a [repo](#data-repo), including the address of the repo's [PDS](#pds), the repo's [handles](#handle), and the public signing keys.
+
+- [DID spec](/specs/did)
+
+## NSID (Namespaced ID)
+
+NSIDs, or Namespaced IDentifiers, are an identifier format used in the [Atmosphere](#atmosphere) to identify [Lexicon](#lexicon) schemas. They follow a reverse DNS format such as `app.bsky.feed.post`. They were chosen because they give clear schema governance via the domain ownership. The reverse-DNS format was chosen to avoid confusion with domains in URIs.
+
+- [NSID spec](/specs/nsid)
+
+## TID (Timestamp ID)
+
+TIDs, or Timestamp IDentifiers, are an identifier format used for [record](#record) keys. They are derived from the current time and designed to avoid collisions, maintain a lexicographic sort, and efficiently balance the [data repository's](#data-repo) internal data structures.
+
+- [Record keys spec](/specs/record-key)
+
+## CID (Content ID)
+
+CIDs, or Content Identifiers, are cryptographic hashes of [records](#record). They are used to track specific versions of records.
+
+## DAG-CBOR
+
+DAG-CBOR is a serialization format used by [atproto](#at-protocol). It was chosen because it provides a reliable canonical form, which is important for cryptographic verification.
+
+- [Data model spec](/specs/data-model)
+
+## XRPC
+
+XRPC is a term we are deprecating, but it was historically used to describe [atproto's](#at-protocol) flavor of HTTP usage. It stood for "Cross-organizational Remote Procedure Calls" and we regret inventing it, because really we're just using HTTP.
+
+- [HTTP API spec](/specs/xrpc)

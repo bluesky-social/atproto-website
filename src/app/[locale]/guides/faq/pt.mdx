@@ -1,0 +1,56 @@
+export const metadata = {
+  title: 'FAQ',
+  description:
+    'Perguntas frequentes sobre o Protocolo AT.',
+}
+
+# FAQ
+
+Perguntas Frequentes sobre o Authenticated Transfer Protocol (AT Proto). Para FAQ sobre Bluesky, visite [aqui](https://bsky.social/about/faq).
+
+## O Protocolo AT é uma blockchain?
+
+Não. O Protocolo AT é um [protocolo federado](https://en.wikipedia.org/wiki/Federation_(information_technology)). Não é um blockchain nem usa um blockchain.
+
+## Por que não usar o ActivityPub?
+
+[ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) é uma tecnologia de rede social federada popularizada pelo [Mastodon](https://joinmastodon.org/).
+
+A portabilidade da conta é um dos principais motivos pelos quais escolhemos criar um protocolo separado. Consideramos a portabilidade crucial porque ela protege os usuários de banimentos repentinos, desligamentos de servidores e desacordos de políticas. Nossa solução para portabilidade requer [repositórios de dados assinados](/guides/data-repos) e [DIDs](/guides/identity), nenhum dos quais é fácil de adaptar ao ActivityPub. As ferramentas de migração para o ActivityPub são comparativamente limitadas; elas exigem que o servidor original forneça um redirecionamento e não podem migrar os dados anteriores do usuário.
+
+Outro motivo importante é a escalabilidade. O ActivityPub depende muito da entrega de mensagens entre uma ampla rede de nós de pequeno a médio porte, o que pode fazer com que nós individuais sejam inundados com tráfego e geralmente tem dificuldades para fornecer visualizações globais da atividade. O Protocolo AT usa aplicativos de agregação para mesclar atividades dos hosts dos usuários, reduzindo o tráfego geral e reduzindo drasticamente a carga em hosts individuais.
+
+Outras diferenças menores incluem: um ponto de vista diferente sobre como os esquemas devem ser manipulados, uma preferência por nomes de usuários de domínio em vez de nomes de usuários de e-mail com @ duplo do AP e o objetivo de ter feeds de pesquisa e algoritmos em larga escala.
+
+## Por que criar o Lexicon em vez de usar JSON-LD ou RDF?
+
+O Atproto troca dados e comandos RPC entre organizações. Para que os dados e o RPC sejam úteis, o software precisa manipular corretamente os esquemas criados por equipes separadas. Esse é o propósito do [Lexicon](/guides/lexicon).
+
+Queremos que os engenheiros se sintam confortáveis ​​usando e criando novos esquemas, e queremos que os desenvolvedores aproveitem o DX do sistema. O Lexicon nos ajuda a produzir APIs fortemente tipadas que são extremamente familiares aos desenvolvedores e que fornecem uma variedade de verificações de correção em tempo de execução.
+
+O [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) é destinado a casos extremamente gerais nos quais os sistemas compartilham muito pouca infraestrutura. É conceitualmente elegante, mas difícil de usar, frequentemente adicionando muita sintaxe que os desenvolvedores não entendem. O JSON-LD simplifica a tarefa de consumir vocabulários RDF, mas o faz ocultando os conceitos subjacentes, não tornando o RDF mais legível.
+
+Analisamos atentamente o uso do RDF, mas não gostamos da experiência do desenvolvedor (DX) nem das ferramentas que ele oferecia.
+
+## O que é “XRPC” e por que não usar ___?
+
+[XRPC](/specs/xrpc) é HTTP com algumas convenções adicionadas. Nosso objetivo é aposentar o termo "XRPC" e apenas nos referir a ele como o uso ATProto de HTTP.
+
+XRPC usa [Lexicon](/guides/lexicon) para descrever chamadas HTTP e mapeá-las para `/xrpc/{methodId}`. Por exemplo, esta chamada de API:
+
+```typescript
+await api.com.atproto.repo.listRecords({
+  user: 'alice.com',
+  collection: 'app.bsky.feed.post'
+})
+```
+
+...maps para:
+
+```text
+GET /xrpc/com.atproto.repo.listRecords
+  ?user=alice.com
+  &collection=app.bsky.feed.post
+```
+
+O Lexicon estabelece um id de método compartilhado (`com.atproto.repo.listRecords`) e os parâmetros de consulta esperados, corpo de entrada e corpo de saída. Ao usar o Lexicon, obtemos verificações de tempo de execução nas entradas e saídas da chamada e podemos gerar código digitado como o exemplo de chamada de API acima.

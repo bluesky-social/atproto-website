@@ -1,0 +1,132 @@
+import { Guides } from '@/components/Guides'
+import { Specs } from '@/components/Specs'
+import { HeroPattern } from '@/components/HeroPattern'
+import { Firehose } from '@/components/Firehose'
+import { CodeCard } from '@/components/CodeCard'
+import { ImageCard } from '@/components/ImageCard'
+import { ArticleSummary, ArticleSummarySmall } from '@/components/ArticleSummary'
+import { UserIcon } from '@/components/icons/UserIcon'
+import TbdInterviewJpg from '@/images/media/tbd-interview.jpg'
+import WhitepaperPng from '@/images/media/whitepaper.png'
+import HowDoesBlueskyWorkBlogpostPng from '@/images/media/how-does-bsky-work-blogpost.png'
+
+export const metadata = {
+  title: 'AT Protocol',
+  description:
+    'The AT Protocol is an open, decentralized, and high-performance network for building social applications.',
+}
+
+export const sections = []
+
+<HeroPattern />
+
+# Atmosphere へようこそ
+
+AT プロトコルは、ソーシャル アプリケーションを構築するためのオープンな分散型ネットワークです。 {{ className: 'lead' }}
+
+<div className="not-prose mb-16 mt-6 flex gap-3">
+  <Button href="/guides/applications" arrow="right">
+    <>クイックスタート</>
+  </Button>
+  <Button href="/sdks" variant="outline">
+    <>SDKを調べる</>
+  </Button>
+</div>
+
+{/* TODO <Row>
+  <Col>
+      <Firehose />
+  </Col>
+  <Col>
+    <CodeCard description="Single Sign-On in 5 minutes." href="/todo" icon={UserIcon}>
+      ```js {{containerClassName: 'rounded-t-none !my-0 border-t border-zinc-900/7.5 dark:border-white/10 !ring-0'}}
+      import { BrowserOAuthClient } from '@atproto/oauth-client-browser'
+
+      const client = new BrowserOAuthClient()
+      await client.signIn('my.handle.com', {
+        state: 'some value needed later',
+        prompt: 'none', // Attempt to sign in without user interaction (SSO)
+        ui_locales: 'fr-CA fr en', // Only supported by some OAuth servers (requires OpenID Connect support + i18n support)
+        signal: new AbortController().signal, // Optional, allows to cancel the sign in (and destroy the pending authorization, for better security)
+      })
+      ```
+    </CodeCard>
+  </Col>
+</Row> */}
+
+<Guides lang="ja" />
+
+<Specs lang="ja" />
+
+{/* TODO
+---
+
+## A Web of Data {{className: 'text-2xl mt-2 scroll-mt-32'}}
+
+The Atmosphere is a web of interconnected data. It is the porous membrane through which posts, profiles, and comments flow.  It is a network of databases working in conjunction to provide one global database - a tool for people to communicate with each other through data.
+
+The purpose of the Atmosphere is to run social applications at scale. It's designed for real-world applications with hundreds of millions of users. The Bluesky app has 6mm registered users and 500k DAU, and runs at roughly the same cost-efficiency as traditional applications.
+
+The vision and mission of the Atmosphere is to make it easy for people to build. Whether you're a weekend hacker or building a startup, you should have access to a social network to build upon. The joy of social programming should be available to everyone.
+
+<Button href="/quickstart" arrow="right">
+  <>Keep reading</>
+</Button> */}
+
+## Learn more
+
+<div className="xl:grid grid-cols-2 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ArticleSummary tag="Guide" title="用語集" href="/guides/glossary" >
+PDS とは何ですか? AppView とは何ですか? DID とは何ですか? 新しい概念に少し戸惑っている場合は、この用語集をご覧ください。
+</ArticleSummary>
+
+<ArticleSummary tag="Guide" title="ATProto での構築の簡単な入門" href="/guides/applications" >
+このガイドでは、現在の「ステータス」を絵文字として公開するシンプルなマルチユーザー アプリを構築します。
+</ArticleSummary>
+
+{/* TODO <ArticleSummary tag="Article" title="What happens when I like a post?" href="/articles/todo" >
+To get started, create a new application in your [developer settings](#), then read about how to make requests for the resources you need to access using our HTTP APIs or dedicated client SDKs. When your integration is ready to go live, publish it to our [integrations directory](#) to reach the Protocol community.
+</ArticleSummary> */}
+
+<ArticleSummary tag="Article" title="分散システムエンジニア向け ATProto" href="/articles/atproto-for-distsys-engineers" >
+この記事では、分散バックエンド エンジニアリングの観点から AT Proto について説明します。
+</ArticleSummary>
+
+{/* <ArticleSummary tag="Guide" title="How do user identities work?" href="/guides/identity" >
+What are DIDs and handles? How are domain names involved? How do the identities get resolved to user data? This guide will introduce all these concepts and explain how identity works in the Atmosphere.
+</ArticleSummary> */}
+
+<ArticleSummary tag="Guide" title="Lexicon とは何ですか? また、Lexicon を使用してスキーマを作成する方法を教えてください。" href="/guides/identity" >
+このガイドでは、Lexicon を紹介し、独自のスキーマの構築方法を説明します。
+</ArticleSummary>
+
+</div>
+
+<div className="flex flex-col xl:grid grid-cols-3 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ImageCard image={TbdInterviewJpg} href="https://www.youtube.com/live/D5WVK7KfTAk" title="Bluesky の AT プロトコルでソーシャル インターネットを構築する" tag="Interview" description="AT プロトコルの仕組みに関する Dan Abramov 氏と TBD 氏によるインタビュー。このトピックを初めて知る人にとっては素晴らしい入門書です。" />
+
+<ImageCard image={WhitepaperPng} href="https://arxiv.org/abs/2402.03239" title="Bluesky と AT プロトコル: 使いやすい分散型ソーシャル メディア" tag="Whitepaper" description="Martin Kleppmann と AT プロトコル チームが執筆したホワイト ペーパー。" />
+
+<ImageCard image={HowDoesBlueskyWorkBlogpostPng} href="https://steveklabnik.com/writing/how-does-bluesky-work/" title="Bluesky はどのように機能しますか?" tag="Community Blogpost" description="Bluesky と ATProto が高レベルでどのように機能するかを説明する Steve Klabnik のブログ投稿。" />
+
+</div>
+
+{/* ## Community
+
+<div className="xl:grid grid-cols-3 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ArticleSummarySmall href="https://steveklabnik.com/writing/how-does-bluesky-work/" title="How does Bluesky work?">
+by Steve Klabnik
+</ArticleSummarySmall>
+
+<ArticleSummarySmall href="https://bolsonism.blogspot.com/2024/08/local-development-with-at-proto-pds.html" title="Local Development with a PDS">
+Using docker and curl to interact with a local PDS.
+</ArticleSummarySmall>
+
+</div> */}
+
+## Bluesky API ドキュメントをお探しですか?
+
+Bluesky 固有のドキュメントについては、[docs.bsky.app](https://docs.bsky.app) にアクセスしてください。

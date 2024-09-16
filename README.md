@@ -14,7 +14,7 @@ To read documentation for the Bluesky API, go to [docs.bsky.app](https://docs.bs
 
 ---
 
-[pages/index.js](https://github.com/bluesky-social/atproto-website/blob/main/pages/index.js) generates [http://localhost:3000](http://localhost:3000) -- start there if you'd like to make changes.
+[src/app/[locale]/en.mdx](https://github.com/bluesky-social/atproto-website/blob/main/src/app/[locale]/en.mdx) generates [http://localhost:3000](http://localhost:3000) -- start there if you'd like to make changes.
 
 The page auto-updates as you edit the file.
 
