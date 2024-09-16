@@ -1,8 +1,8 @@
----
-title: Auth
-summary: Client and Service Auth, including OAuth
-wip: true
----
+export const metadata = {
+  title: 'Auth',
+  description:
+    'Client and Service Auth, including OAuth',
+}
 
 # Authentication and Authorization
 
@@ -10,13 +10,13 @@ There are different forms of authentication and authorization used in atproto. C
 
 ## OAuth
 
-:::note
+<Note>
 The OAuth profile for atproto is new and may be revised based on feedback from the development community and ongoing standards work. Read more about the rollout in the [OAuth Roadmap](https://github.com/bluesky-social/atproto/discussions/2656).
-:::
+</Note>
 
-:::note
-This specification is authoritative, but is not an implementation guide and does not provide much background or context around design decisions. The earlier [design proposal](https://github.com/bluesky-social/proposals/tree/main/0004-oauth) is not authoritative but provides more context and examples. SDK documentation and the client implementation guides (forthcoming) are more approachable for developers.
-:::
+<Note>
+This specification is authoritative, but is not an implementation guide and does not provide much background or context around design decisions. The earlier [design proposal](https://github.com/bluesky-social/proposals/tree/main/0004-oauth) is not authoritative but provides more context and examples. SDK documentation and the [client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client) are more approachable for developers.
+</Note>
 
 OAuth is the primary mechanism in atproto for clients to make authorized requests to PDS instances. Most user-facing software is expected to use OAuth, including "front-end" clients like mobile apps, rich browser apps, or native desktop apps, as well as "back-end" clients like web services.
 
@@ -72,9 +72,9 @@ Clients which are only using atproto OAuth for account authentication (without a
 
 #### Client ID Metadata Document
 
-:::note
+<Note>
 The Client ID Metadata Document specification ([`draft-parecki-oauth-client-id-metadata-document`](https://datatracker.ietf.org/doc/draft-parecki-oauth-client-id-metadata-document/) is still a draft and may evolve over time. Our intention is to evolve and align with subsequent drafts and any final standard, while minimizing disruption and breakage with existing implementations.
-:::
+</Note>
 
 Clients must publish a "client metadata" JSON file on the public web. This will be fetched dynamically by Authorization Servers as part of the authorization request (PAR) and at other times during the session lifecycle. The response HTTP status must be 200 (not another 2xx or a redirect), with a JSON object body with the correct `Content-Type` (`application/json`).
 
@@ -240,9 +240,9 @@ Authorization Servers must set `require_pushed_authorization_requests` to `true`
 
 Clients make an HTTPS POST request to the `pushed_authorization_request_endpoint` URL, with the request parameters in the form-encoded request body. They receive a `request_uri` (not to be confused with `redirect_uri`) in the JSON response object. When they redirect the user to the authorization endpoint (`authorization_endpoint`), they omit most of the request parameters they already sent and include this `redirect_uri` along with `client_id` as query parameters instead.
 
-:::note
+<Note>
 PAR is a relatively new and less-supported standard, and the requirement to use PAR may be relaxed if it is found to be too onerous a requirement for client implementations. In that case, Authorization Servers would be required to support both PAR and non-PAR requests with PAR being optional for clients.
-:::
+</Note>
 
 #### Confidential Client Authentication
 
@@ -394,12 +394,12 @@ The details around session and token lifetimes might change with further securit
 
 ## Legacy Password and Session Auth
 
-See XRPC specification for now.
+See [HTTP API specification](./xrpc) for now.
 
 ## Inter-Service Auth
 
-See XRPC specification for now.
+See [HTTP API specification](./xrpc) for now.
 
 ## Admin Token Auth
 
-See XRPC specification for now.
+See [HTTP API specification](./xrpc) for now.
