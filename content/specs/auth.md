@@ -83,7 +83,7 @@ Authorization Servers need to fetch client metadata documents from the public we
 The following fields are relevant for all client types:
 
 - `client_id` (string, required): the `client_id`. Must exactly match the full URL used to fetch the client metadata file itself
-- `application_type` (string, optional): must be one of `web` or `native`, with `web` as the default if not specified. Note that this is field specified by OpenID/OIDC, which we are borrowing.
+- `application_type` (string, optional): must be one of `web` or `native`, with `web` as the default if not specified. Note that this is field specified by OpenID/OIDC, which we are borrowing. Used by the Authorization Server to enforce the relevant "best current practices".
 - `grant_types` (array of strings, required): `authorization_code` must always be included. `refresh_token` is optional, but must be included if the client will make token refresh requests.
 - `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See "Scopes" section.
 - `response_types` (array of strings, required): `code` must be included.
@@ -108,7 +108,7 @@ Additional optional client metadata fields are enumerated with [IANA](https://ww
 
 #### Localhost Client Development
 
-When working on client software, it may be difficult for developers to publish in-progress client metadata at a public URL so that authorization servers can access it. This may even be true for development environments using a containerized Authorization Server and local DNS, because of SSRF protections against local IP ranges.
+When working with a developent environment (Authorization Server and Client), it may be difficult for developers to publish in-progress client metadata at a public URL so that authorization servers can access it. This may even be true for development environments using a containerized Authorization Server and local DNS, because of SSRF protections against local IP ranges.
 
 To make development workflows easier, a special exception is made for clients with `client_id` having origin `http://localhost` (with no port number specified). Authorization Servers are encouraged to support this exception - including in production environments - but it is optional.
 
@@ -124,7 +124,7 @@ Some metadata fields can be configured via query parameter in the `client_id` UR
 The other parameters in the virtual client metadata document will be:
 
 - `client_id` (string): the exact `client_id` (URL) used to generate the virtual document
-- `client_name` (string): a value chosen by the Authorization Server (e.g. "Loopback client")
+- `client_name` (string): a value chosen by the Authorization Server (e.g. "Development client")
 - `response_types` (array of strings): must include `code`
 - `grant_types` (array of strings): `authorization_code` and `refresh_token`
 - `token_endpoint_auth_method`: `none`
@@ -212,13 +212,15 @@ A summary of fields relevant to authorization requests with the atproto OAuth pr
 
 The `client_secret` value, used in many other OAuth profiles, should not be included.
 
-The `state` parameter in client authorization requests is mandatory. Clients should use randomly-generated tokens for this parameter and not have collisions or reuse tokens across any combination of device, account, or session. Authorization Servers should reject duplicate state parameters, but are not currently required to track state values across accounts or sessions.
+The `state` parameter in client authorization requests is mandatory. Clients should use randomly-generated tokens for this parameter and not have collisions or reuse tokens across any combination of device, account, or session. Authorization Servers should reject duplicate state parameters, but are not currently required to track state values across accounts or sessions. The `state` parameter is effectively used to verify the `issuer` later, and it is important that the parameter can not be forged or guessed by an untrusted party.
 
-For web clients, the `redirect_uri` is a HTTPS URL which will be redirected in the browser to return users to the application at the end of the Authorization flow. The URL may include a port number, but not if it is the default port number. The `redirect_uri` must match one of the URIs declared in the client metadata and the Authorization Server must verify this condition.
+For web clients, the `redirect_uri` is a HTTPS URL which will be redirected in the browser to return users to the application at the end of the Authorization flow. The URL may include a port number, but not if it is the default port number. The `redirect_uri` must match one of the URIs declared in the client metadata and the Authorization Server must verify this condition. The URL origin must match that of the `client_id`.
 
 There is a special exception for the localhost development workflow to use `http://127.0.0.1` or `http://[::1]` URLs, with matching rules described in the "Localhost Client Development" section. These clients use web URLs, but have `application_type` set to `native` in the generated client metadata.
 
-For native clients, the `redirect_uri` may use a custom URI scheme to have the operating system redirect the user back to the app, instead of a web browser. The custom scheme must match the `client_id` hostname in reverse-domain order. The URI scheme must be followed by a single colon (`:`) then a single forward slash (`/`) and then a URI path component. For example, an app with `client_id`  [`https://app.example.com/client-metadata.json`](https://app.example.com/client-metadata.json) could have a `redirect_uri` of `com.example.app:/callback`.
+For native clients, the `redirect_uri` may use a custom URI scheme to have the operating system redirect the user back to the app, instead of a web browser. Native clients are also allowed to use an HTTPS URL. Any custom scheme must match the `client_id` hostname in reverse-domain order. The URI scheme must be followed by a single colon (`:`) then a single forward slash (`/`) and then a URI path component. For example, an app with `client_id`  [`https://app.example.com/client-metadata.json`](https://app.example.com/client-metadata.json) could have a `redirect_uri` of `com.example.app:/callback`.
+
+Native clients are also allowed to use an HTTPS URL. In this case, the URL origin must be the same as the `client_id`. One example use-case is "Apple Universal Links".
 
 Clients may include additional optional authorization request parameters - and servers may process them - but they are not required to. Refer to other OAuth standards and the [IANA OAuth parameter registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml).
 
@@ -227,6 +229,8 @@ Clients may include additional optional authorization request parameters - and s
 PKCE is mandatory for all Authorization Requests. Clients must generate new, unique, random challenges for every authorization request. Authorization Servers must prevent reuse of `code_challenge` values across sessions (at least within some reasonable time frame, such as a 24 hour period).
 
 The `S256` challenge method must be supported by all clients and Authorization Servers; see [RFC 7636](https://datatracker.ietf.org/doc/html/rfc7636) for details. The `plain` method is not allowed. Additional methods may in theory be supported if both client and server support them.
+
+Authorization Servers should reject reuse of a `code` value, and revoke any outstanding sessions and tokens associated with the earlier use of the `code` value.
 
 #### Pushed Authorization Requests (PAR)
 
@@ -279,7 +283,7 @@ The atproto OAuth profile mandates use of DPoP for all client types when making 
 
 Clients must initiate DPoP in the initial authorization request (PAR).
 
-Server-provided DPoP nonces are mandatory. The Resource Server and Authorization Server may share nonces (especially if they are the same server) or they may have separate nonces. Clients should track the DPoP nonce per account session and per server. Servers must rotate nonces periodically, with a maximum lifetime of 5 minutes. Servers may use the same nonce across all client sessions and across multiple requests at any point in time. Servers should accept recently-stale (old) nonces to make rotation smoother for clients with multiple concurrent request in-flight. Clients should be resilient to unexpected nonce updates in the form of HTTP 400 errors and should retry those failed requests. Clients must reject responses missing a DPoP header, if the request included DPoP.
+Server-provided DPoP nonces are mandatory. The Resource Server and Authorization Server may share nonces (especially if they are the same server) or they may have separate nonces. Clients should track the DPoP nonce per account session and per server. Servers must rotate nonces periodically, with a maximum lifetime of 5 minutes. Servers may use the same nonce across all client sessions and across multiple requests at any point in time. Servers should accept recently-stale (old) nonces to make rotation smoother for clients with multiple concurrent request in-flight. Clients should be resilient to unexpected nonce updates in the form of HTTP 400 errors and should retry those failed requests. Clients must reject responses missing a `DPoP-Nonce` header (case insensitive), if the request included DPoP.
 
 Clients must generate and sign a unique DPoP token (JWT) for every request. Each DPoP request JWT must have a unique (randomly generated) `jti` nonce. Servers should prevent token replays by tracking `jti` nonces and rejecting re-use. They can restrict their client-generated `jti` nonce history to the server-generated DPoP nonce so that they do not need to track an endlessly growing set of nonces.
 
