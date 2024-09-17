@@ -45,11 +45,11 @@ A common pattern in Lexicon design is to include a `cursor` parameter for pagina
 
 ## Authentication
 
-The current authentication scheme for XRPC is HTTP Bearer auth with JWT tokens, including refresh tokens. This scheme is likely to be extended or replaced.
+The primary client/server authentication and authorization scheme for XRPC is OAuth, described in the [Auth Specification](./auth).
 
 Not all endpoints require authentication, but there is not yet a consistent way to enumerate which endpoints do or do not.
 
-Initial login uses the `com.atproto.server.createSession` endpoint, including the password and an account identifier (eg, handle or registered email address). This returns a `refreshJwt` (as well as an initial `accessJwt`).
+There is also a legacy authentication scheme using HTTP Bearer auth with JWT tokens, including refresh tokens, described here. Initial login uses the `com.atproto.server.createSession` endpoint, including the password and an account identifier (eg, handle or registered email address). This returns a `refreshJwt` (as well as an initial `accessJwt`).
 
 Most requests should be authenticated using an access JWT, but the validity lifetime for these tokens is short. Every couple minutes, a new access JWT can be requested by hitting the `com.atproto.server.refreshSession` endpoint, using the refresh JWT instead of an access JWT.
 
