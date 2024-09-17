@@ -50,15 +50,13 @@ These specifications cover most details as implemented in Bluesky's reference im
 
 **Blob Export:** the details of how to export and synchronize blobs (aka, images). Blobs are not stored in repositories, though they are linked from repository records.
 
-**Moderation Primitives:** the "label" architecture for distributed moderation has a reference implementation, and is mostly specified in Lexicons (application-level), but has not been described in detail as a unified system. Likewise, the `com.atproto.admin.*` routes for handling moderation reports and doing infrastructure-level take-downs is specified in Lexicons but should also be described in more detail.
+**Moderation Primitives:** The `com.atproto.admin.*` routes for handling moderation reports and doing infrastructure-level take-downs is specified in Lexicons but should also be described in more detail.
 
 **Lexicon Resolution:** an automated way to look up and fetch Lexicon schema definition files for a given type name (NSID)
 
 ## Future Work
 
 Smaller changes are described in individual specification documents, but a few large changes span the entire protocol.
-
-**3rd Party Authentication and Authorization:** the intention is to provide a more powerful auth system, both for authentication across services (within atproto), and for "log in with atproto" use cases outside of the ecosystem. This will likely incorporate existing auth standards.
 
 **Non-Public Content:** mechanisms for private group and one-to-one communication will be an entire second phase of protocol development. This encompasses primitives like "private accounts", direct messages, encrypted data, and more. We recommend against simply "bolting on" encryption or private content using the existing protocol primitives.
 
