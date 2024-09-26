@@ -17,7 +17,7 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 **Identity:** account control is rooted in stable [DID](/specs/did) identifiers, which can be rapidly resolved to determine the current service provider location and [Cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) provide a more human-recognizable and mutable identifier for accounts.
 
-**Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) ([IPLD](https://ipld.io/docs/data-model/), with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations). [Labels](/specs/label) are a separate lightweight form of metadata, individually signed and distributed outside repositories.
+**Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) (with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations). [Labels](/specs/label) are a separate lightweight form of metadata, individually signed and distributed outside repositories.
 
 **Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A Personal Data Server (PDS) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A relay (previously referred to as a Big Graph Service, or BGS) crawls many repositories and outputs a unified event firehose.
 
@@ -25,7 +25,7 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 The AT Protocol itself does not specify common social media conventions like follows or avatars, leaving these to application-level Lexicons. The `com.atproto.*` Lexicons provide common APIs for things like account signup and login. These could be considered part of AT Protocol itself, though they can also be extended or replaced over time as needed. Bluesky is a microblogging social app built on top of AT Protocol, with lexicons under the `app.bsky.*` namespace.
 
-While atproto borrows several formats and specifications from the IPFS ecosystem (such as IPLD and CID), atproto data does not need to be stored in the IPFS network, and the atproto reference implementation does not use the IPFS network at all, though it would be a reasonable technology for other atproto implementations to adopt.
+While atproto borrows several formats and specifications from the IPFS ecosystem (such as [IPLD](https://ipld.io/) and [CID](https://github.com/multiformats/cid)), atproto data does not need to be stored in the IPFS network, and the atproto reference implementation does not use the IPFS network at all.
 
 
 ## Protocol Extension and Applications

@@ -6,21 +6,27 @@ export const metadata = {
 
 # Data Model
 
-Records and messages in atproto are stored, transmitted, encoded, and authenticated in a consistent way. The core "data model" is based on [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/), a specification for hash-linked data structures from the IPFS ecosystem. {{ className: 'lead' }}
+Records and messages in atproto are stored, transmitted, encoded, and authenticated in a consistent way. The core "data model" supports both binary (CBOR) and textual (JSON) representations. {{ className: 'lead' }}
 
-When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. IPLD specifies a normalized subset of CBOR called **DAG-CBOR,** which is what atproto uses. {{ className: 'lead' }}
+When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. The specific normalized subset of CBOR used in the atproto data model is called **DAG-CBOR**. All DAG-CBOR data is valid CBOR, and can be read with any CBOR library. Writing or strictly verifying DAG-CBOR with the correct normalization rules sometimes requires additional configuration or a special CBOR implementation. {{ className: 'lead' }}
 
-IPLD also specifies an analogous set of conventions of JSON called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data. {{ className: 'lead' }}
+The schema definition language for atproto is [Lexicon](/specs/lexicon). Other lower-level data structures, like [repository](/specs/repository) internals, are not specified with Lexicons, but use the same data model and encodings.
 
-The schema definition language for atproto is [Lexicon](/specs/lexicon). The IPLD Schema language is not used. Other lower-level data structures, like [repository](/specs/repository) internals, are not specified with Lexicons, but use the same data model and encodings.
-
-In IPLD, distinct pieces of data are called **nodes,** and when encoded in binary (DAG-CBOR) result in a **block.** A node may have internal nested structure (maps or lists). Nodes may reference each other by string URLs or URIs, just like with regular JSON on the web. In IPLD, they can also reference each other strongly by hash, referred to in IPLD as a **link.** A set of linked nodes can form higher-level data structures like [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) or [Directed Acyclical Graphs (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Links can also refer to arbitrary binary data (blobs).
+Distinct pieces of data are called **nodes,** and when encoded in binary (DAG-CBOR) result in a **block.** A node may have internal nested structure (maps or lists). Nodes may reference each other by string URLs or URIs, just like with regular JSON on the web. They can also reference each other strongly by hash, referred a **link.** A set of linked nodes can form higher-level data structures like [Merkle Trees](https://en.wikipedia.org/wiki/Merkle_tree) or [Directed Acyclical Graphs (DAG)](https://en.wikipedia.org/wiki/Directed_acyclic_graph). Links can also refer to arbitrary binary data (blobs).
 
 Unlike URLs, hash references (links) do not encode a specific network location where the content can be found. The location and access mechanism must be inferred by protocol-level context. Hash references do have the property of being "self-certifying", meaning that returned data can be verified against the link hash. This makes it possible to redistribute content and trust copies even if coming from an untrusted party.
 
-Links are encoded as [IPFS Content Identifiers](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (CIDs), which have both binary and string representations. CIDs include a metadata code which indicates whether it links to a node (DAG-CBOR) or arbitrary binary data. Some additional constraints on the use of CIDs in atproto are described below.
+Links are encoded as [Content Identifiers](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (CIDs), which have both binary and string representations. CIDs include a metadata code which indicates whether it links to a node (DAG-CBOR) or arbitrary binary data. Some additional constraints on the use of CIDs in atproto are described below.
 
 In atproto, object nodes often include a string field `$type` that specifies their Lexicon schema. Data is mostly self-describing and can be processed in schema-agnostic ways (including decoding and re-encoding), but can not be fully validated without the schema on-hand or known ahead of time.
+
+## Relationship With IPLD
+
+The data model is inspired by [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/), a specification for hash-linked data structures from the IPFS ecosystem.
+
+IPLD specifies a normalized JSON encoding called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data. The atproto JSON encoding is not designed to be byte-determinisitic, and the CBOR representation is used when data needs to be cryptographically signed or hashed.
+
+The IPLD Schema language is not used.
 
 ## Data Types
 
@@ -53,9 +59,9 @@ Null or missing fields are also distinct from "false-y" value like `false` (for 
 
 ### Why No Floats?
 
-IPLD, CBOR, and JSON all natively support floating point numbers, so why does atproto go out of the way to disallow them?
+CBOR and JSON both natively support floating point numbers, so why does atproto go out of the way to disallow them?
 
-The IPLD specification describes some of the complexities and sharp edges when working with floats in a content-addressable world. In short, de-serializing in to machine-native format, then later re-encoding, is not always consistent. This is definitely true for special values and corner-cases, but can even be true with "normal" float values on less-common architectures.
+The IPLD specification describes [some of the complexities and sharp edges](https://ipld.io/docs/data-model/kinds/#float-kind) when working with floats in a content-addressable world. In short, de-serializing in to machine-native format, then later re-encoding, is not always consistent. This is definitely true for special values and corner-cases, but can even be true with "normal" float values on less-common architectures.
 
 It may be possible to come up with rules to ensure reliable round-trip encoding of floats in the future, but for now we disallow floats.
 
@@ -89,7 +95,7 @@ The encoding for most of the core and compound types is straight forward, with o
 
 ### `link`
 
-The JSON encoding for an IPLD Link is an object with the single key `$link` and the string-encoded CID as a value.
+The JSON encoding for link is an object with the single key `$link` and the string-encoded CID as a value.
 
 For example, a node with a single field `"exampleLink"` with type `link` would encode in JSON like:
 

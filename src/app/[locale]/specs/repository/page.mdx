@@ -12,7 +12,7 @@ Public atproto content (**records**) is stored in per-account repositories (freq
 
 The repository data structure is content-addressed (a [Merkle-tree](https://en.wikipedia.org/wiki/Merkle_tree)), and every mutation of repository contents (eg, addition, removal, and updates to records) results in a new commit `data` hash value (CID). Commits are cryptographically signed, with rotatable signing keys, which allows recursive validation of content as a whole or in part. {{ className: 'lead' }}
 
-Repositories and their contents are canonically stored in binary [DAG-CBOR](https://ipld.io/docs/codecs/known/dag-cbor/) format, as a graph of [IPLD](https://ipld.io/docs/data-model/) data objects referencing each other by content hash (CID Links). Large binary blobs are not stored directly in repositories, though they are referenced by hash ([CID](https://github.com/multiformats/cid)). This includes images and other media objects. Repositories can be exported as [CAR](https://ipld.io/specs/transport/car/carv1/) files for offline backup, account migration, or other purposes. {{ className: 'lead' }}
+Repositories and their contents are canonically stored in binary [DAG-CBOR](https://ipld.io/docs/codecs/known/dag-cbor/) format, as a graph of data objects referencing each other by content hash (CID Links). Large binary blobs are not stored directly in repositories, though they are referenced by hash ([CID](https://github.com/multiformats/cid)). This includes images and other media objects. Repositories can be exported as [CAR](https://ipld.io/specs/transport/car/carv1/) files for offline backup, account migration, or other purposes. {{ className: 'lead' }}
 
 In the atproto federation architecture, the authoritative location of an account's repository is the associated Personal Data Server (PDS). An account's current PDS location is authoritatively indicated in the DID Document. {{ className: 'lead' }}
 
@@ -44,7 +44,7 @@ Note that repo paths for all records in the same collection are sorted together 
 
 ### Commit Objects
 
-The top-level data object in a repository is a signed commit. The IPLD schema fields are:
+The top-level data object in a repository is a signed commit. The data fields are:
 
 - `did` (string, required): the account DID associated with the repo, in strictly normalized form (eg, lowercase as appropriate)
 - `version` (integer, required): fixed value of `3` for this repo format version
@@ -83,7 +83,7 @@ Some examples, with the given ASCII strings mapping to byte arrays:
 
 There are many MST nodes in repositories, so it is important that they have a compact binary representation, for storage efficiency. Within every node, keys (byte arrays) are compressed by eliding common prefixes, with each entry indicating how many bytes it shares with the previous key in the array. The first entry in the array for a given node must contain the full key, and a common prefix length of 0. This key compaction is internal to nodes, it does not extend across multiple nodes in the tree. The compaction scheme is mandatory, to ensure that the MST structure is deterministic across implementations.
 
-The node IPLD schema fields are:
+The node data schema fields are:
 
 - `l` ("left", CID link, optional): link to sub-tree Node on a lower level and with all keys sorting before keys at this node
 - `e` ("entries", array of objects, required): ordered list of TreeEntry objects
@@ -112,16 +112,16 @@ More flexibility is allowed in processing the "leaf" links from MST to records, 
 
 ## CAR File Serialization
 
-The standard file format for storing IPLD data is Content Addressable aRchives (CAR). The standard repository export format for atproto repositories is [CAR v1](https://ipld.io/specs/transport/car/carv1/), which have file suffix `.car` and mimetype `application/vnd.ipld.car`.
+The standard file format for storing data objects is Content Addressable aRchives (CAR). The standard repository export format for atproto repositories is [CAR v1](https://ipld.io/specs/transport/car/carv1/), which have file suffix `.car` and mimetype `application/vnd.ipld.car`.
 
-The CARv1 format is very simple. It contains a small metadata header (which can indicate one or more "root" CID links), and then a series of binary "blocks", each of which is an IPLD object. In the context of atproto repositories:
+The CARv1 format is very simple. It contains a small metadata header (which can indicate one or more "root" CID links), and then a series of binary "blocks", each of which is a data object. In the context of atproto repositories:
 
 - The first element of the CAR `roots` metadata array must be the CID of the most relevant Commit object. for a generic export, this is the current (most recent) commit. additional CIDs may also be present in the `roots` array, with (for now) undefined meaning or order
 - For full exports, the full repo structure must be included for the indicated commit, which includes all records and all MST nodes
 - The order of blocks within the CAR file is not currently defined or restricted. implementations may have a "preferred" ordering, but should be tolerant of unexpected ordering
 - Additional blocks, including records, may or may not be included in the CAR file
 
-When importing CAR files, note that there may existing dangling CID references. For example, repositories may contain CID Links to blobs or records in other repositories, and the IPLD blocks corresponding to those blobs or references would likely not be included in the CAR file.
+When importing CAR files, note that there may existing dangling CID references. For example, repositories may contain CID Links to blobs or records in other repositories, and the blocks corresponding to those blobs or references would likely not be included in the CAR file.
 
 The CARv1 specification is agnostic about the same block appearing multiple times in the same file ("Duplicate Blocks)". Implementations should be robust to both duplication and de-duplication of blocks, and should also ignore any unnecessary or unlinked blocks.
 
