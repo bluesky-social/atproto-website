@@ -33,6 +33,11 @@ const nextConfig = {
         destination: '/docs',
         permanent: false,
       },
+      {
+        source: '/specs/auth',
+        destination: '/specs/oauth',
+        permanent: false,
+      },
       // legacy docs
       {
         source: '/faq',
