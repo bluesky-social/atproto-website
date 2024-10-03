@@ -55,7 +55,7 @@ Most requests should be authenticated using an access JWT, but the validity life
 
 Clients should treat the tokens as opaque string tokens: the JWT fields and semantics are not a stable part of the specification.
 
-Servers (eg, PDS implementations) which generate and valiate auth JWTs should implement domain separation between access and refresh tokens, using the `typ` header field: access tokens should use `at+jwt`, and refresh tokens should use `refresh+jwt`.
+Servers (eg, PDS implementations) which generate and valiate auth JWTs should implement domain separation between access and refresh tokens, using the `typ` header field: access tokens should use `at+jwt`, and refresh tokens should use `refresh+jwt`. Note that `at+jwt` (defined in [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html)) is short for "access token", and is not a reference to the "at" in atproto.
 
 ### App Passwords
 
