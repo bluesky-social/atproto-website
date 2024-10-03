@@ -51,6 +51,8 @@ Lexicons can include additional validation constraints on individual fields. For
 
 Lexicon string fields can have additional `format` type information associated with them for validation, but as with other validation constraints this information is not available without the Lexicon itself.
 
+Data field names starting with `$` are reserved for use by the data model or protocol itself, in both JSON and CBOR representations. For example, the `$bytes` key name (used in CBOR and JSON), the `$link` key (used for JSON CID Links), or `$type` (used to indicate record type). Implementations should ignore unknown `$` fields (to allow protocol evolution). Applications, extensions, and integrations should not use or unilaterally define new `$` fields, to prevent conflicts as the protocol evolves.
+
 ### Nullable and False-y
 
 In the atproto data model there is a semantic difference between explicitly setting an map field to `null` and not including the field at all. Both JSON and CBOR have the same distinction.
