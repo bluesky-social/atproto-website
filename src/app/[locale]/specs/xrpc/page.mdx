@@ -92,7 +92,7 @@ The JWT parameters are:
 - `alg` header field (string, required): indicates the signing key type (see [Cryptography](/specs/cryptography))
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
-- `typ` header field (string, required): `JWT`
+- `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value
 - `iss` body field (string, required): account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
 - `aud` body field (string, required): service DID associated with the service that the request is being sent to
 - `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
