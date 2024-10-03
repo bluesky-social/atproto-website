@@ -236,13 +236,19 @@ Unions represent that multiple possible types could be present at this location 
 
 By default unions are "open", meaning that future revisions of the schema could add more types to the list of refs (though can not remove types). This means that implementations should be permissive when validating, in case they do not have the most recent version of the Lexicon. The `closed` flag (boolean) can indicate that the set of types is fixed and can not be extended in the future.
 
-A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). An empty refs list with `closed` set to true is an invalid schema.
+A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). The main difference is that the data would be required to have the `$type` field. An empty refs list with `closed` set to true is an invalid schema.
 
-The schema definitions pointed to by a `union` are generally objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and include a `$type` field indicating the variant type.
+The schema definitions pointed to by a `union` are objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspnod to string data).
 
 ### `unknown`
 
-Indicates than any data could appear at this location, with no specific validation. Note that the data must still be valid under the data model: it can't contain unsupported things like floats.
+Indicates than any data object could appear at this location, with no specific validation. The top-level data must be an object (not a string, boolean, etc). As with all other data types, the value `null` is not allowed unless the field is specifically marked as `nullable`.
+
+The data object may contain a `$type` field indicating the schema of the data, but this is not currently required. The top-level data object must not have the structure of a compound data type, like blob (`$type: blob`) or CID link (`$link`).
+
+The (nested) contents of the data object must still be valid under the atproto data model. For example, it should not contain floats. Nested compound types like blobs and CID links should be validated and transformed as expected.
+
+Lexicon designers are strongly recommended to not use `unknown` fields in `record` objects for now.
 
 No type-specific fields.
 
