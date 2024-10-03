@@ -53,7 +53,9 @@ There is also a legacy authentication scheme using HTTP Bearer auth with JWT tok
 
 Most requests should be authenticated using an access JWT, but the validity lifetime for these tokens is short. Every couple minutes, a new access JWT can be requested by hitting the `com.atproto.server.refreshSession` endpoint, using the refresh JWT instead of an access JWT.
 
-The JWTs themselves should be treated as opaque tokens.
+Clients should treat the tokens as opaque string tokens: the JWT fields and semantics are not a stable part of the specification.
+
+Servers (eg, PDS implementations) which generate and valiate auth JWTs should implement domain separation between access and refresh tokens, using the `typ` header field: access tokens should use `at+jwt`, and refresh tokens should use `refresh+jwt`. Note that `at+jwt` (defined in [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html)) is short for "access token", and is not a reference to the "at" in atproto.
 
 ### App Passwords
 
@@ -87,13 +89,17 @@ The current mechanism is to use short-lived JWTs signed by the account's atproto
 
 The JWT parameters are:
 
-- `alg` header field: indicates the signing key type (see [Cryptography](/specs/cryptography))
+- `alg` header field (string, required): indicates the signing key type (see [Cryptography](/specs/cryptography))
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
-- `iss` body field: account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
-- `aud` body field: service DID associated with the service that the request is being sent to
-- `exp` body field: token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good value.
-- JWT signature: base64url-encoded signature using the account DID's signing key
+- `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value.
+- `iss` body field (string, required): account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
+- `aud` body field (string, required): service DID associated with the service that the request is being sent to
+- `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
+- `iat` body field (number, required): token creation time, as a UNIX timestamp with seconds precision.
+- `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. Servers must always validate this field if included, and should require it for security-sensitive operations. May become required in the future.
+- `jti` body field (string, required): unique random string nonce. May be used by receiving services to prevent reuse of token and replay attacks.
+- JWT signature (string, required): base64url-encoded signature using the account DID's signing key.
 
 When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
 
@@ -194,3 +200,5 @@ An explicit decision about whether HTTP redirects are supported.
 Cursor pagination behavior should be clarified when a cursor is returned but the result list is empty, and when a cursor value is repeated.
 
 To help prevent accidental publishing of sensitive metadata embedded in media blobs, a query parameter may be added to the upload blob endpoint to opt-out of metadata stripping, and default to either blocking upload or auto-striping such metadata for all blobs.
+
+The `lxm` JWT field for inter-service auth may become required.
