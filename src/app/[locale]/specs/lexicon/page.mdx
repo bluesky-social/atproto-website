@@ -242,7 +242,13 @@ The schema definitions pointed to by a `union` are objects or types with a clear
 
 ### `unknown`
 
-Indicates than any data could appear at this location, with no specific validation. Note that the data must still be valid under the data model: it can't contain unsupported things like floats.
+Indicates than any data object could appear at this location, with no specific validation. The top-level data must be an object (not a string, boolean, etc). As with all other data types, the value `null` is not allowed unless the field is specifically marked as `nullable`.
+
+The data object may contain a `$type` field indicating the schema of the data, but this is not currently required. The top-level data object must not have the structure of a compound data type, like blob (`$type: blob`) or CID link (`$link`).
+
+The (nested) contents of the data object must still be valid under the atproto data model. For example, it should not contain floats. Nested compound types like blobs and CID links should be validated and transformed as expected.
+
+Lexicon designers are strongly recommended to not use `unknown` fields in `record` objects for now.
 
 No type-specific fields.
 
