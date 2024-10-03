@@ -92,14 +92,14 @@ The JWT parameters are:
 - `alg` header field (string, required): indicates the signing key type (see [Cryptography](/specs/cryptography))
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
-- `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value
+- `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value.
 - `iss` body field (string, required): account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
 - `aud` body field (string, required): service DID associated with the service that the request is being sent to
 - `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
 - `iat` body field (number, required): token creation time, as a UNIX timestamp with seconds precision.
 - `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. Servers must always validate this field if included, and should require it for security-sensitive operations. May become required in the future.
 - `jti` body field (string, required): unique random string nonce. May be used by receiving services to prevent reuse of token and replay attacks.
-- JWT signature (string, required): base64url-encoded signature using the account DID's signing key
+- JWT signature (string, required): base64url-encoded signature using the account DID's signing key.
 
 When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
 
