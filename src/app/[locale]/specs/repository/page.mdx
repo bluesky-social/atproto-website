@@ -125,6 +125,36 @@ When importing CAR files, note that there may existing dangling CID references. 
 
 The CARv1 specification is agnostic about the same block appearing multiple times in the same file ("Duplicate Blocks)". Implementations should be robust to both duplication and de-duplication of blocks, and should also ignore any unnecessary or unlinked blocks.
 
+## Repository Diffs
+
+A concept which supports efficient synchronization of data between independent services is "diffs" of repository trees between different revisions. The basic principle is that a repository diff contains all the data (commit object, MST nodes, and records) that have changed between an older revision and the current revision of a repo. The diff can be "applied" to the older mirror of the repository, and the result will be the complete MST tree at the current (newer) commit revision.
+
+Repo diffs can be serialized as CAR files, sometimes referred to as "CAR slices". Some details about diff CAR slices:
+
+- same format, version, and atproto-specific constraints as full repo export CAR files
+    - blocks "should" be de-duplicated by CID (only one copy included), though receiving implementations "should" be resilient to duplication
+- the root CID indicated in the CAR header (the first element of `roots`) should point to the commit block (which must be included)
+- any required blocks must be included even if they have appeared in the history of the repository previously. eg, if a record is created in rev C, deleted in rev F, and re-created in rev N, the diff "since F" must include the record block
+- all "created" and "updated" records must be included
+- any records which have been "deleted" and do not exist in the current repo should not be included
+- all MST nodes in the current repo which didn't exist in the previous repo version must be included
+- with the exception of removed record data, the diff may include additional blocks, which receivers should ignore. however, diffs which intentionally contain a large amount of irrelevant block data to consume network or compute resources are considered a form of network abuse.
+
+The diff is a partial Merkle tree, including a signed commit, and can be partially verified. This means that an observer which has successfully resolved the identity of the relevant account (including cryptographic public keys) can verify certain aspects of the data. The diff is a reliable "proof chain" for creation and updates of records: an observer can verify that the new or updated records have the specific record values in the overall repo as of the commit revision. If the observer knows of specific records (by repo path, or by full AT-URI) that have been deleted, they can verify that those records no longer exist in the repo as of the final commit revision.
+
+However, an observer which does not know the full state of the repository at the "older" revision *can not* reliably enumerate all of the records that have been removed from the repository. Such an observer also can not see the previous values of deleted or updated records, either as full values or by CID. Note that the later is an intentional design goal for the diff concept: it is desired that content deletion happen rapidly and not "draw attention" to the content which has been deleted. It is technically possible for "archival" observers to track deletion events and lookup the previous content value, but this requires additional resources and effort.
+
+Sometimes repo diffs are generated automatically. For example, every commit to a repo can result in a diff against the immediately preceding commit. In other contexts, diffs are generated on demand: a diff can be requested "since" an arbitrary previous revision. It is not expected that repo hosts support generating diffs between two arbitrary revisions, only "from" an arbitrary older revision and the current revision. Repo hosts are not required to maintain a complete history of prior commits/revisions, and in some cases (such as account migration) may never have had prior repo history. Some details about how to interpret and service requests for diffs "since" a prior revision:
+
+- it is helpful to track internally the commit revision when a block (record or MST node) was created or re-created. This enables querying blocks "since" a point in time
+- "since" revisions are not expected to be an exact match
+    - for example, if a repo had a sequence of commits "333", "666", "999", and a "since" value of "444" was requested, the changes in "666" and "999" should be included, as if the "since" parameter was "666"..
+- a host is allowed to include additional history, but is encouraged to return the minimal or most granular requested data
+    - for example, a host may have "compacted" repo rev history to a smaller number of commits. If a repo had commit history "288", "300", "320", "340", "400", and got a request "since" 340, it might return all changes since 300. Hosts are encouraged to return the smallest diff when possible (eg, “since” 340), but clients should be resilient.
+- if a host receives a “since” request earlier than the oldest available revision for a repository, it should return the full repository. This may happen if the host does not have the complete history of the repository.
+    - for example, if a repository had revisions "140", "150", and "160", then migrated to a new PDS and revisions continued "161" and "170", if the new PDS is asked for a diff "since" 150, the new PDS would probably need to return the full repository, because the earliest revision it would be aware of was "160" or "161" (depending on how migration was implemented).
+
+In the specific case of chained commit-to-commit diffs which appear on the firehose, diffs should be "minimal": they should not contain additional records or additional history.
 
 ## Security Considerations
 
