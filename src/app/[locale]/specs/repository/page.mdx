@@ -132,13 +132,15 @@ A concept which supports efficient synchronization of data between independent s
 Repo diffs can be serialized as CAR files, sometimes referred to as "CAR slices". Some details about diff CAR slices:
 
 - same format, version, and atproto-specific constraints as full repo export CAR files
-    - blocks "should" be de-duplicated by CID (only one copy included), though receiving implementations "should" be resilient to duplication
+    - blocks "should" be de-duplicated by CID (only one copy included), though receiving implementations must be resilient to duplication
 - the root CID indicated in the CAR header (the first element of `roots`) should point to the commit block (which must be included)
 - any required blocks must be included even if they have appeared in the history of the repository previously. eg, if a record is created in rev C, deleted in rev F, and re-created in rev N, the diff "since F" must include the record block
-- all "created" and "updated" records must be included
+- all "created" records must be included
 - any records which have been "deleted" and do not exist in the current repo should not be included
+- any records which have been "updated" should include the final version, and should not include the previous version
 - all MST nodes in the current repo which didn't exist in the previous repo version must be included
-- with the exception of removed record data, the diff may include additional blocks, which receivers should ignore. however, diffs which intentionally contain a large amount of irrelevant block data to consume network or compute resources are considered a form of network abuse.
+- with the exception of removed record data, the diff may include additional blocks, which receivers should ignore.
+  - however, diffs which intentionally contain a large amount of irrelevant block data to consume network or compute resources are considered a form of network abuse.
 
 The diff is a partial Merkle tree, including a signed commit, and can be partially verified. This means that an observer which has successfully resolved the identity of the relevant account (including cryptographic public keys) can verify certain aspects of the data. The diff is a reliable "proof chain" for creation and updates of records: an observer can verify that the new or updated records have the specific record values in the overall repo as of the commit revision. If the observer knows of specific records (by repo path, or by full AT-URI) that have been deleted, they can verify that those records no longer exist in the repo as of the final commit revision.
 
