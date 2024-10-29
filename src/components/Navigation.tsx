@@ -267,6 +267,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Lexicon', href: '/specs/lexicon' },
       { title: 'Cryptography', href: '/specs/cryptography' },
       { title: 'Repository', href: '/specs/repository' },
+      { title: 'Blobs', href: '/specs/blob' },
       { title: 'Labels', href: '/specs/label' },
       { title: 'HTTP API (XRPC)', href: '/specs/xrpc' },
       { title: 'OAuth', href: '/specs/oauth' },
