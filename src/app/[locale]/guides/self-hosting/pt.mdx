@@ -13,12 +13,16 @@ Auto-hospedar um Bluesky PDS significa executar seu próprio Servidor de Dados P
 * [Preparação para auto-hospedagem de PDS](#preparacao-para-auto-hospedagem-de-pds)
 * [Abra seu firewall de nuvem para HTTP e HTTPS](#abra-seu-firewall-de-nuvem-para-http-e-https)
 * [Configure o DNS para seu domínio](#configure-dns-para-seu-dominio)
-* [Verifique se o DNS está funcionando conforme o esperado](#check-that-dns-is-working-as-expected)
-* [Instalador no Ubuntu 20.04/22.04 e Debian 11/12](#installer-on-ubuntu-20-04-22-04-and-debian-11-12)
+* [Verifique se o DNS está funcionando conforme o esperado](#verifique-se-o-dns-esta-funcionando-conforme-o-esperado)
+* [Instalador no Ubuntu 20.04/22.04 e Debian 11/12](#instalador-no-ubuntu-20-04-22-04-e-debian-11-12)
 * [Verificando se seu PDS está online e acessível](#verificando-se-seu-pds-está-online-e-acessível)
 * [Criando uma conta usando pdsadmin](#criando-uma-conta-usando-pdsadmin)
 * [Criando uma conta usando um código de convite](#criando-uma-conta-usando-um-código-de-convite)
+* [Configurando um servidor SMTP](#configurando-um-servidor-smtp)
 * [Usando o aplicativo Bluesky com seu PDS](#usando-o-aplicativo-bluesky-com-seus-pds)
+* [Adicionando um nome de domínio de nível superior como seu identificador](#adicionando-um-nome-de-dominio-de-nivel-superior-como-seu-identificador)
+* [Usando updateAccountHandle para atualizar seu identificador](#usando-update-account-handle-para-atualizar-seu-identificador)
+* [Depurando aviso de identificador inválido](#depurando-aviso-de-identificador-invalido)
 * [Atualizando seu PDS](#atualizando-seus-pds)
 * [Obtendo ajuda](#obtendo-ajuda)
 
@@ -142,6 +146,39 @@ sudo pdsadmin create-invite-code
 
 Ao criar uma conta usando o aplicativo, insira este código de convite.
 
+## Configurando um servidor SMTP
+
+Depois de configurar seu PDS, configure um servidor SMTP para receber e-mails do aplicativo Bluesky, como o e-mail "verifique seu endereço de e-mail".
+
+No seu servidor PDS, abra o arquivo `/pds/pds.env`
+
+```bash
+sudo nano /pds/pds.env
+```
+
+Adicione estas linhas com sua configuração específica:
+
+```bash
+PDS_EMAIL_FROM_ADDRESS="exemplo@contadegmail.tld"
+PDS_EMAIL_SMTP_URL="smtps://exemplo@contadegmail.tld:<senha-do-app>.gmail.com:465"
+```
+
+Recomendamos usar o [servidor SMTP do Gmail](https://support.google.com/a/answer/176600?hl=en) do Google como uma maneira rápida de configurar um servidor SMTP para usuários com uma conta do Gmail. Você precisará gerar uma [senha de aplicativo](https://support.google.com/accounts/answer/185833?sjid=10418456355978061137-NC).
+
+Reinicie seu servidor PDS após alterar as variáveis de ambiente em `/pds/pds.env`
+
+_Nota: Para contornar a configuração SMTP para verificação de e-mail, você pode consultar a tabela sqlite (tabela email_token) em seu PDS._
+
+```bash
+sudo sqlite3 /pds/account.sqlite "SELECT * FROM email_token;"
+```
+
+_O token estará na terceira coluna_
+
+```bash
+update_email|did:plc:someid|TOKEN-EMAIL|2024-11-06T18:35:18.589Z
+```
+
 ## Usando o aplicativo Bluesky com seu PDS
 
 Você pode usar o aplicativo Bluesky para se conectar ao seu PDS.
@@ -153,6 +190,67 @@ Você pode usar o aplicativo Bluesky para se conectar ao seu PDS.
 1. Insira a URL do seu PDS (por exemplo, `https://example.com/`)
 
 _Observação: como o certificado TLS do subdomínio é criado sob demanda, pode levar de 10 a 30 segundos para que seu identificador fique acessível. Se você não estiver vendo sua primeira postagem/perfil, aguarde 30 segundos e tente fazer outra postagem._
+
+_Nota: Usuários com subdomínios hospedados no Squarespace relataram problemas que foram resolvidos após mudarem para registradores de domínio com suporte a subdomínios curinga._
+
+## Adicionando um nome de domínio de nível superior como seu identificador
+
+* Crie uma conta usando um identificador temporário do Bluesky
+* No aplicativo Bluesky, vá para Configurações > Alterar Identificador
+* Escolha "Eu tenho meu próprio domínio"
+* Digite seu nome de domínio
+* Adicione o registro TXT fornecido aos seus registros DNS
+* Clique em "Verificar registro DNS"
+
+_Dica: Antes de excluir sua conta Bluesky, mude para um identificador temporário se quiser reutilizar o TLD._
+
+## Usando updateAccountHandle para atualizar seu identificador
+
+Execute o seguinte comando curl com suas variáveis específicas. Veja [updateAccountHandle](https://docs.bsky.app/docs/api/com-atproto-admin-update-account-handle) para documentação.
+
+```bash
+curl --fail --silent --show-error \
+     --request POST \
+     --header "Content-Type: application/json" \
+     --user "admin:${PDS_ADMIN_PASSWORD}" \
+     --data "{\"did\": \"${DID}\", \"handle\": \"${HANDLE}\"}" \
+     "https://${PDS_HOSTNAME}/xrpc/com.atproto.admin.updateAccountHandle"
+```
+
+As variáveis necessárias podem ser encontradas em `/pds/pds.env`
+
+```bash
+sudo cat /pds/pds.env
+```
+
+## Depurando aviso de identificador inválido
+
+[Goat](https://github.com/bluesky-social/indigo/blob/d1686e9b80835948407fd7ad2428e92379298dac/cmd/goat/README.md) é uma ferramenta útil para descobrir o que está acontecendo com seu identificador.
+
+```txt
+$ goat resolve wyden.senate.gov
+{
+  "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+  "alsoKnownAs": [
+    "at://wyden.senate.gov"
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc#atproto",
+      "type": "Multikey",
+      "controller": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+      "publicKeyMultibase": "zQ3shuMW7q4KBdsFcdvebGi2EVv8KcqS24tF9Pg7Wh5NLB2NM"
+    }
+  ],
+  "service": [
+    {
+      "id": "#atproto_pds",
+      "type": "AtprotoPersonalDataServer",
+      "serviceEndpoint": "https://shimeji.us-east.host.bsky.network"
+    }
+  ]
+}
+```
 
 ## Atualizando seu PDS
 
