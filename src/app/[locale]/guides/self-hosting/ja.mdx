@@ -18,7 +18,11 @@ Bluesky PDS をセルフホスティングするということは、より広�
 * [PDS がオンラインでアクセス可能であることを確認する](#verifying-that-your-pds-is-online-and-accessible)
 * [pdsadmin を使用してアカウントを作成する](#creating-an-account-using-pdsadmin)
 * [招待コードを使用してアカウントを作成する](#creating-an-account-using-an-invite-code)
+* [SMTP サーバーの設定](#setting-up-an-smtp-server)
 * [PDS で Bluesky アプリを使用する](#using-the-bluesky-app-with-your-pds)
+* [ハンドルとしてトップレベルドメイン名を追加する](#adding-a-top-level-domain-name-as-your-handle)
+* [updateAccountHandle を使用してハンドルを更新する](#using-update-account-handle-to-update-your-handle)
+* [invalid.handle 警告のデバッグ](#debugging-invalid-handle-warning)
 * [PDS を更新する](#updating-your-pds)
 * [ヘルプを取得する](#getting-help)
 
@@ -143,6 +147,39 @@ sudo pdsadmin create-invite-code
 
 アプリを使用してアカウントを作成するときは、この招待コードを入力します。
 
+## SMTP サーバーの設定
+
+PDS のセットアップ後、Bluesky アプリからの「メールアドレスを確認」などのメールを受信するために SMTP サーバーを設定します。
+
+PDS サーバーで `/pds/pds.env` ファイルを開きます
+
+```bash
+sudo nano /pds/pds.env
+```
+
+以下の行を特定の設定で追加します：
+
+```bash
+PDS_EMAIL_FROM_ADDRESS="example@gmailaccount.tld"
+PDS_EMAIL_SMTP_URL="smtps://example@gmailaccount.tld:<app-password>.gmail.com:465"
+```
+
+Gmail アカウントをお持ちの方には、簡単に SMTP サーバーを設定できる方法として、Googleの [Gmail SMTP サーバー](https://support.google.com/a/answer/176600?hl=ja)の使用をお勧めします。[アプリパスワード](https://support.google.com/accounts/answer/185833?sjid=10418456355978061137-NC)の生成が必要です。
+
+`/pds/pds.env` で環境変数を変更した後、PDS サーバーを再起動してください。
+
+_注: メール確認の SMTP 設定をバイパスするには、PDS の SQLite テーブル（email_token テーブル）を照会できます。_
+
+```bash
+sudo sqlite3 /pds/account.sqlite "SELECT * FROM email_token;"
+```
+
+_トークンは3列目にあります_
+
+```bash
+update_email|did:plc:someid|EMAIIL-TOKEN|2024-11-06T18:35:18.589Z
+```
+
 ## PDS で Bluesky アプリを使用する
 
 Bluesky アプリを使用して PDS に接続できます。
@@ -154,6 +191,67 @@ Bluesky アプリを使用して PDS に接続できます。
 1. PDS の URL を入力します (例: `https://example.com/`)
 
 _注: サブドメイン TLS 証明書はオンデマンドで作成されるため、ハンドルにアクセスできるようになるまでに 10 ～ 30 秒かかる場合があります。最初の投稿/プロフィールが表示されない場合は、30 秒待ってから別の投稿を行ってください。_
+
+_注: Squarespace でホストされているサブドメインを使用しているユーザーは、ワイルドカードサブドメインをサポートするドメインレジストラに切り替えた後に解決された問題があると報告しています。_
+
+## ハンドルとしてトップレベルドメイン名を追加する
+
+* 一時的な Bluesky ハンドルでアカウントを作成する
+* Bluesky アプリで設定 > ハンドルの変更に移動
+* 「自分のドメインを持っている」を選択
+* ドメイン名を入力
+* 提供された TXT レコードを DNS レコードに追加
+* 「DNS レコードを確認」をクリック
+
+_ヒント: TLD を再利用したい場合は、Bluesky アカウントを削除する前に一時的なハンドルに変更してください。_
+
+## updateAccountHandle を使用してハンドルを更新する
+
+以下の curl コマンドを特定の変数で実行します。詳細については [updateAccountHandle](https://docs.bsky.app/docs/api/com-atproto-admin-update-account-handle) のドキュメントを参照してください。
+
+```bash
+curl --fail --silent --show-error \
+     --request POST \
+     --header "Content-Type: application/json" \
+     --user "admin:${PDS_ADMIN_PASSWORD}" \
+     --data "{\"did\": \"${DID}\", \"handle\": \"${HANDLE}\"}" \
+     "https://${PDS_HOSTNAME}/xrpc/com.atproto.admin.updateAccountHandle"
+```
+
+必要な変数は `/pds/pds.env` で確認できます
+
+```bash
+sudo cat /pds/pds.env
+```
+
+## invalid.handle 警告のデバッグ
+
+[Goat](https://github.com/bluesky-social/indigo/blob/d1686e9b80835948407fd7ad2428e92379298dac/cmd/goat/README.md) は、ハンドルの問題を解決するのに役立つツールです。
+
+```txt
+$ goat resolve wyden.senate.gov
+{
+  "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+  "alsoKnownAs": [
+    "at://wyden.senate.gov"
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc#atproto",
+      "type": "Multikey",
+      "controller": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+      "publicKeyMultibase": "zQ3shuMW7q4KBdsFcdvebGi2EVv8KcqS24tF9Pg7Wh5NLB2NM"
+    }
+  ],
+  "service": [
+    {
+      "id": "#atproto_pds",
+      "type": "AtprotoPersonalDataServer",
+      "serviceEndpoint": "https://shimeji.us-east.host.bsky.network"
+    }
+  ]
+}
+```
 
 ## PDS の更新
 
