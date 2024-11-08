@@ -37,7 +37,7 @@ After a successful upload, blobs are placed in temporary storage. They are not a
 
 The upload blob can now be referenced from records by including the returned blob metadata in a record. When processing record creation, the server extracts the set of all referenced blobs, and checks that they are either already referenced, or are in temporary storage. Once the record creation succeeds, the server makes the blob publicly accessible.
 
-The same blob can be referenced by multiple records in the same repository. Re-uploaded a blob which has already been stored and referenced results in no change the the existing blobs or records.
+The same blob can be referenced by multiple records in the same repository. Re-uploading a blob which has already been stored and referenced results in no change to the existing blobs or records.
 
 When a record referencing blobs is deleted, the server checks if any other current records from the same repository reference the blob. If not, the blob is deleted along with the record.
 
