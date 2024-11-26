@@ -20,7 +20,7 @@ O nome também é um trocadilho com o símbolo "@", também conhecido como símb
 
 ## PDS (Personal Data Server)
 
-Um PDS, ou Personal Data Server, é um servidor que hospeda um usuário. Um PDS sempre armazenará o [data repo](#data-repo) e as chaves de assinatura do usuário. Ele também pode atribuir ao usuário um [handle](#handle) e um [DID](#did). Muitos PDSes hospedarão vários usuários.
+Um PDS, ou Personal Data Server, é um servidor que hospeda um usuário. Um PDS sempre armazenará o [data repo](#data-repo) e as chaves de assinatura do usuário. Ele também pode atribuir ao usuário um [handle](#handle) e um [DID](#did-decentralized-id). Muitos PDSes hospedarão vários usuários.
 
 Um PDS se comunica com [AppViews](#appview) para executar aplicativos. Um PDS normalmente não executa nenhum aplicativo, embora tenha interfaces gerais de gerenciamento de conta, como a tela de login do OAuth. Os PDSes sincronizam ativamente seus [data repos](#data-repo) com [Relays](#relay).
 
@@ -47,9 +47,9 @@ O único propósito do Lexicon é ajudar os desenvolvedores a criar software com
 
 ## Data Repo
 
-O "repositório de dados" ou "repo" é o conjunto de dados público que representa um usuário. Ele é composto de [coleções](#collection) de [registros](#record) JSON e [blobs](#blob) não estruturados. Cada repositório recebe um único [DID](#did) permanente que o identifica. Os repositórios também podem ter qualquer número de [identificadores de domínio](#handle) que atuam como nomes legíveis por humanos.
+O "repositório de dados" ou "repo" é o conjunto de dados público que representa um usuário. Ele é composto de [coleções](#collection) de [registros](#record) JSON e [blobs](#blob) não estruturados. Cada repositório recebe um único [DID](#did-decentralized-id) permanente que o identifica. Os repositórios também podem ter qualquer número de [identificadores de domínio](#handle) que atuam como nomes legíveis por humanos.
 
-Os repositórios de dados são árvores merkle assinadas. Suas assinaturas podem ser verificadas em relação ao material-chave publicado sob o [did](#did) do repositório.
+Os repositórios de dados são árvores merkle assinadas. Suas assinaturas podem ser verificadas em relação ao material-chave publicado sob o [did](#did-decentralized-id) do repositório.
 
 - [Uma introdução aos repositórios de dados](/guides/data-repos)
 - [Especificação do repositório](/specs/repository)
