@@ -272,6 +272,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'HTTP API (XRPC)', href: '/specs/xrpc' },
       { title: 'OAuth', href: '/specs/oauth' },
       { title: 'Event Stream', href: '/specs/event-stream' },
+      { title: 'Sync', href: '/specs/sync' },
       { title: 'DID', href: '/specs/did' },
       { title: 'Handle', href: '/specs/handle' },
       { title: 'NSID', href: '/specs/nsid' },
