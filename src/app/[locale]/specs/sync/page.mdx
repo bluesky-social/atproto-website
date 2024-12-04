@@ -1,0 +1,171 @@
+export const metadata = {
+  title: 'Sync',
+  description:
+    'Firehose and other data synchronization mechanisms.',
+}
+
+# Data Synchronization
+
+One of the main design goals of atproto (the "Authenticated Transfer Protocol") is to reliably distribute public content between independent network services. This data transfer should be trustworthy (cryptographicly authenticated) and relatively low-latency even at large scale. It is also important that new participants can join the network at any time and “backfill” prior content.
+
+This section describes the major data synchronization features in atproto. The primary real-time data synchronization mechanism is repository event streams, commonly referred to as "firehoses". The primary batch data transfer mechanism is repository exports as CAR files. These two mechanisms can be combined in a "bootstrapping" process which result in a live-synchronized copy of the network.
+
+## Synchronization Primitives
+
+As described in the repository spec, each commit to a repository has a *revision* number, in TID syntax. The revision number for an account must always increase, even if the account is migrated between hosts, or has a period of inactivation in the network. To make this simple, it is recommended to just use the current time as the TID, even when starting with a new account. Services should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Network services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.
+
+## Firehose
+
+The repository event stream (com.atproto.sync.subscribeRepos, also called the "firehose") is an Event Stream which broadcasts updates to repositories (#commit events), handles and DID documents (#identity), and account hosting status ( #account). PDS hosts provide a single stream with updates for all locally-hosted accounts. "Relays" are network services which subscribe to one or more repo streams (eg, multiple PDS instances) and aggregate them in to a single combined repo stream. The combined stream has the same structure and event types. A Relay which aggregates nearly all accounts from nearly all PDS instances in the network (possibly through intermediate relays) outputs a “full-network” firehose.  Relays often mirror and can re-distribute the repository contents, though their core functionality is to verify content and output a unified firehose.
+
+In most cases the repository data synchronized over the firehose is self-certifying (contains verifiable signatures), and consumers can verify content without making additional requests directly to account PDS instances. It is possible for services to redact events from the firehose, such that downstream services would not be aware of new content.
+
+Identity and account information is *not* self-certifying, and services may need need to verify independently. This usually means independent DID and handle resolution. Account hosting status might also be checked at account PDS hosts, to disambiguate hosting status at different pieces of infrastructure.
+
+The event message types are declared in the `com.atproto.sync.subscribeRepos` Lexicon schema, and are summarized below. A few fields are the same for all event types (except for `repo` vs `did` for `#commit` events):
+
+- `seq` (integer, required): used to ensure reliable consumption, as described in Event Streams
+- `did` / `repo`(string with DID syntax, required): the account/identity associated with the event
+- `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediate services may decide pass-through this field as-is, or update to the current time
+
+### `#identity` Events
+
+Indicates that there *may* have been a change to the indicated identity (meaning the DID document or handle), and optionally what the current handle is. Does not indicate what changed, or reliably indicate what the current state of the identity us.
+
+Event fields:
+
+- `seq` (integer, required): same for all event types
+- `did` (string with DID syntax, required): same for all event types
+- `time` (string with datetime syntax, required): same for all event types
+- `handle` (string with handle syntax, optional): the current handle for this identity. May be `handle.invalid` if the handle does not currently resolve correctly.
+
+Presence or absence of the `handle` field does not indicate that it is the handle which has changed.
+
+The semantics and expected behavior are that downstream services should refresh their identity data (resolve the DID and handle) for the indicated DID. 
+
+Identity events are emitted on a "best-effort" basis. Is is possible for the DID document or handle resolution status to change without any atproto service detecting the change, in which case an event would not be emitted. It is also possible for the event to be emitted redundantly, when nothing has actually changed.
+
+Intermediate services (eg, relays) may chose to modify or pass through identity events:
+
+- they may replace the handle with the result of their own resolution; or always remove the handle field; or always pass it through unaltered
+- they may filter out identity events if they observe that identity has not actually changed
+- they may emit identity events based on changes they became aware of independently (eg, via periodic re-validation of handles)
+
+### `#account` Events
+
+Indicates that there may have been a change in account status at the service which emits the event, and what the new status is. For example, it could be the result of creation, deletion, or temporary suspension of an account. The event describes the current status, not what changed.
+
+Event Fields:
+
+- `seq` (integer, required): same for all event types
+- `did` (string with DID syntax, required): same for all event types
+- `time` (string with datetime syntax, required): same for all event types
+- `active` (boolean, required): whether the repository is currently available and can be redistributed
+- `status` (string, optional): string status code which describes the account state in more detail. Known values include:
+    - `takendown`: indefinite removal of the repository by a service provider, due to a terms or policy violation
+    - `suspended`: temporary or time-limited variant of `takedown`
+    - `deleted`: account has been deactivated, possibly permanently.
+    - `deactivated`: temporary or indefinite removal of all public data by the account themselves.
+
+When coming from any service which redistributes account data, the event describes what the new status is *at that service*, and is authoritative in that context. In other words, the event is hop-by-hop for repository hosts and mirrors.
+
+See the Account Hosting specification for more details.
+
+### `#commit` Events
+
+This event indicates that there has been a new repository commit for the indicated account. The event usually contains the "diff" of repository data, in the form of a CAR slice.
+
+See the Repository specification for more details around repo diffs.
+
+Event Fields:
+
+- `seq` (integer, required): same for all event types
+- `repo` (string with DID syntax, required): the same as `did` for all other event types
+- `time` (string with datetime syntax, required): same for all event types
+- `rev` (string with TID syntax, required): the revision of the commit. Must match the `rev` in the commit block itself.
+- `since` (string with TID syntax, nullable): indicates the `rev` of a preceding commit, which the the repo diff contains differences from
+- `commit` (cid-link, required): CID of the commit object (in `blocks`)
+- `tooBig` (boolean, required): if true, indicates that the repo diff was too large, and that `blocks`, `ops`, and complete `blobs` are not all included
+- `blocks` (bytes, required): CAR "slice" for the corresponding repo diff. The commit object must always be included.
+- `ops` (array of objects, required): list of record-level operations in this commit: specific records created, updated, deleted
+- `blobs` (array of cid-link, required): set of new blobs (by CID) referenced by records in this commit
+
+Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since`, `ops`, `blobs`, and `tooBig` flag are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
+
+If `since` is not included, the commit should include the full repo tree, or set the `tooBig` flag.
+
+If the `tooBig` flag is set, then the amount of updated data was too much to be serialized in a single stream event message. Downstream services which want to maintain complete synchronized copies for the repo need to fetch the diff separately, as discussed below.
+
+### Firehose Validation Best Practices
+
+A service which does full validation of upstream events has a number of properties to track and check. For example, Relay instances should fully validation content from PDS instances before re-broadcasting.
+
+Here is a summary of validation rules and behaviors:
+
+- services should independently resolve identity data for each DID. They should ignore `#commit` events for accounts which do not have a functioning atproto identity (eg, lacking a signing key, or lacking a PDS service entry, or for which the DID is tombstoned)
+- services which subscribe directly to PDS instances should keep track of which PDS is authoritative for each DID. They should remember the host each subscription (WebSocket) is connected to, and reject `#commit` events for accounts if they come from a stream which does not correspond to the current account for that DID
+- services should track account hosting status for each DID, and ignore `#commit` events for events which are not `active`
+- services should verify commit signatures for each `#commit` event, using the current identity data. If the signature initially fails to verify, the service should refresh the identity metadata in case it had recently changed. Events with conclusively invalid signatures should be rejected.
+- services should reject any event messages which exceed reasonable limits. A reasonable upper bound for producers is 5 MBytes (for any event stream message type). Commits with too much data must use the `tooBig` mechanism, though such commits should generally be avoided in the first place by breaking them up in to multiple smaller commits.
+- services should verify that repository data structures are valid against the specification. Missing fields, incorrect MST structure, or other protocol-layer violations should result in events being rejected.
+- services may apply rate-limits to identity, account, and commit events, and suspend accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, `tooBig` events, missing or out-of-order commits, etc.
+- services should ignore commit events with a `rev` lower or equal to the most recent processed `rev` for that DID, and should reject commit events with a `rev` corresponding to a future timestamp (beyond a clock drift window of a few minutes)
+- services should check the `since` value in commit events, and if it does not match the previous seen `rev` for that DID, mark the repo as out-of-sync (similar to a `tooBig` commit event)
+- data limits on records specifically should be verified. events containing corrupt or entirely invalid records may be rejected. for example, a record not being CBOR at all, or exceeding normal data size limits.
+- more subtle data validation of records may be enforced, or may be ignored, depending on the service. For example, unsupported CID hash types embedded in records should probably be ignored by Relays (even if they violate the atproto data model), but may result in the record or commit event being rejected by an AppView
+- mirroring services, which retain a full copy of repository data, should verify that commit diffs leave the MST tree in a complete and valid state (eg, no missing records, no invalid MST nodes, commit CID would be reproducible if the MST structure was re-generated from scratch)
+- Relays (specifically) should not validate records against Lexicons
+
+## Reliable Synchronization
+
+This section describes some details on how to reliably subscribe to the firehose and maintain an existing synchronized mirror of the network.
+
+Services should generally maintain a few pieces of state for all accounts they are tracking data from:
+
+- track the most recent commit `rev` they have successfully processed
+- keep cached identity data, and use cache expiration to ensure periodic re-validation of that data
+- track account status
+
+Identity caches should be purged any time an `#identity` event is received. Additionally, identity resolution should be refreshed if a commit signature fails to verify, in case the signing key was updated but the identity cache has not been updated yet.
+
+When `tooBig` events are emitted on the firehose, downstream services will need to fetch the diff out-of-band. This usually means an API request to the `com.atproto.sync.getRepo` endpoint on the current PDS host for the account, with the `since` field included. The `since` value should be the most recently processed `rev` value for the account, which may or may not match the `since` field in the commit event message.
+
+If a `#commit` is received with a `since` that does not match the most recently processed `rev` for the account, and is “later” (higher value) than the most recent commit `rev` the service has processed for that account, the service may need to do the same kind of out-of-band fetch as for a `tooBig` event.
+
+Services should keep track of the `seq` number of their upstream subscriptions. This should be stored separately per-upstream, even if there is only a single Relay connection, in case a different Relay is subscribed to in the future (which will have different `seq` numbers).
+
+Events can be processed concurrently, but they should be processed sequentially in-order for any given account. This can be accomplished by partitioning multiple workers using the repo DID as a partitioning key.
+
+Services can confirm that they are consuming content reliably by fetching a snapshot of repository DIDs and `rev` numbers from other services, including PDS hosts and Relay instances. After a short delay, these can be compared against the current state of the service to identify any accounts which have lower than expected `rev` numbers. These repos can then be updated out-of-band.
+
+## Bootstrapping a Live Mirror
+
+The firehose can be used to follow new data updates, and repo exports can be used for snapshots. Actually combining the two to bootstrap a complete live-updating mirror can be a bit tricky. One approach is described below.
+
+Keep a sync status table for all accounts (DIDs) encountered. The status can be:
+
+- `dirty`: there is either no local repo data for this account, or it has gotten out of sync
+- `in-process`: the repo is "dirty", but there is a background task in process to update it
+- `synchronized`: a complete copy of the repository has been processed
+
+Start by subscribing to the full firehose. If there is no existing repository data for the account, mark the account as "dirty". When new events come in for a repo, the behavior depends on the repo state. If it is "dirty", the event is ignored. If the state is "synchronized", the event is immediately processed as an update to the repo. If the state is "in-process", the event is enqueued locally.
+
+Have a set of background workers start processing "dirty" repos. First they mark the status as `in-process`, so that new events are enqueued locally. Then the full repo export (CAR file) is fetched from the PDS and processed in full. The commit `rev` of the repo export is noted. When the full repo import is complete, the worker can start processing any enqueued events, in order, skipping any with a `rev` lower than the existing repo processed `rev` (as is the usual behavior). When the queue for the account is fully processed, the state can be flipped to `synchronized`, and the worker can move on.
+
+After some time, most of the known accounts will be marked as `synchronized`, though this will only represent the most recently active accounts in the network. Next a more complete set of repositories in the network can be fetched, for example using an API query against an existing large service. Any new identified accounts can be marked as `dirty` in the service, and the background workers can start processing them.
+
+When all of the accounts are `synchronized`, the process is complete. At large scale it may be hard to get perfect synchronization: PDS instances may be down at various times, identities may fail to resolve, or invalid events, data, or signatures may end up in the network.
+
+## Security Concerns
+
+General mitigations for resource exhaustion attacks are recommended: event rate-limits, data quotas per account, limits on data object sizes and deserialized data complexity, etc.
+
+Care should always be taken when making network requests to unknown or untrusted hosts, especially when the network locators for those host from from untrusted input. This includes validating URLs to not connect to local or internal hosts (including via HTTP redirects), avoiding SSRF in browser contexts, etc.
+
+## Future Work
+
+The `subscribeRepos` Lexicon is likely to be tweaked, with deprecated fields removed, even if this breaks Lexicon evolution rules.
+
+The event stream sequence/cursor scheme may be iterated on to support sharding, timestamp-based resumption, and easier failover between independent instances.
+
+Alternatives to the full authenticated firehose may be added to the protocol. For example, simple JSON serialization, filtering by record collection type, omitting MST nodes, and other changes which would simplify development and reduce resource consumption for use-cases where full authentication is not necessary or desired.
