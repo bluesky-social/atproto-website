@@ -275,6 +275,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'DID', href: '/specs/did' },
       { title: 'Handle', href: '/specs/handle' },
       { title: 'NSID', href: '/specs/nsid' },
+      { title: 'TID', href: '/specs/tid' },
       { title: 'Record Key', href: '/specs/record-key' },
       { title: 'URI Scheme', href: '/specs/at-uri-scheme' },
     ],

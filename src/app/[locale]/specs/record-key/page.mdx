@@ -13,60 +13,13 @@ A few different Record Key naming schemes are supported. Every record Lexicon sc
 
 ### Record Key Type: `tid`
 
-This is the most common record naming scheme. `TID` is short for "timestamp identifier," and the name is derived from the creation time of the record.
+This is the most common record naming scheme, using [TID ("timestamp identifier") syntax](/specs/tid), such as `3jzfcijpj2z2a`. TIDs are usually generated from a local clock at the time of record creation, with some additional mechanisms to ensure they always increment and are not reused or duplicated with the same collection in a given repository.
 
-The characteristics of a TID are:
+The original creation timestamp of a record can be inferred if it has a TID record key, but remember that these keys can be specified by the end user and could have any value, so they should not be trusted.
 
-- 64-bit integer
-- big-endian byte ordering
-- encoded as `base32-sortable`. That is, encoded with characters `234567abcdefghijklmnopqrstuvwxyz`
-- no special padding characters (like `=`) are used, but all digits are always encoded, so length is always 13 ASCII characters. The TID corresponding to integer zero is `2222222222222`.
-- hyphens should not be included in a TID (unlike in previous iterations of the scheme)
+The same TID may be used for records in different collections in the same repository. This usually indicates some relationship between the two records (eg, a "sidecar" extension record).
 
-The layout of the 64-bit integer is:
-
-- The top bit is always 0
-- The next 53 bits represent microseconds since the UNIX epoch. 53 bits is chosen as the maximum safe integer precision in a 64-bit floating point number, as used by Javascript.
-- The final 10 bits are a random "clock identifier."
-
-TID generators should generate a random clock identifier number, chosen to avoid collisions as much as possible (for example, between multiple worker instances of a PDS service cluster). A local clock can be used to generate the timestamp itself. Care should be taken to ensure the TID output stream is monotonically increasing and never repeats, even if multiple TIDs are generated in the same microsecond, or during "clock smear" or clock synchronization incidents. If the local clock has only millisecond precision, the timestamp should be padded. (You can do this by multiplying by 1000.)
-
-The primary motivation for the TID scheme is to provide a loose temporal ordering of records, which improves storage efficiency of the repository data structure (MST).
-
- Note: There are similarities to ["snowflake identifiers"](https://en.wikipedia.org/wiki/Snowflake_ID). In the decentralized context of atproto, the global uniqueness of TIDs can not be guaranteed, and an antagonistic repo controller could trivially create records re-using known TIDs.
-
-Syntactically valid TIDs:
-
-```
-3jzfcijpj2z2a
-7777777777777
-3zzzzzzzzzzzz
-2222222222222
-```
-
-Invalid TIDs:
-
-```
-# not base32
-3jzfcijpj2z21
-0000000000000
-
-# case-sensitive
-3JZFCIJPJ2Z2A
-
-# too long/short
-3jzfcijpj2z2aa
-3jzfcijpj2z2
-222
-
-# legacy dash syntax *not* supported (TTTT-TTT-TTTT-CC)
-3jzf-cij-pj2z-2a
-
-# high bit can't be set
-zzzzzzzzzzzzz
-kjzfcijpj2z2a
-```
-
+An early motivation for the TID scheme was to provide a loose temporal ordering of records, which improves storage efficiency of the repository data structure (MST).
 
 ### Record Key Type: `nsid`
 
@@ -86,6 +39,8 @@ This may be used to encode semantics in the name, for example, a domain name, in
 
 
 ### Record Key Syntax
+
+Lexicon string type: `record-key`
 
 Regardless of the type, Record Keys must fulfill some baseline syntax constraints:
 
