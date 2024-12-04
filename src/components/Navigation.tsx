@@ -266,6 +266,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Data Model', href: '/specs/data-model' },
       { title: 'Lexicon', href: '/specs/lexicon' },
       { title: 'Cryptography', href: '/specs/cryptography' },
+      { title: 'Accounts', href: '/specs/account' },
       { title: 'Repository', href: '/specs/repository' },
       { title: 'Blobs', href: '/specs/blob' },
       { title: 'Labels', href: '/specs/label' },
