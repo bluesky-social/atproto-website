@@ -16,11 +16,11 @@ As described in the repository spec, each commit to a repository has a *revision
 
 ## Firehose
 
-The repository event stream (`com.atproto.sync.subscribeRepos`, also called the "firehose") is an Event Stream which broadcasts updates to repositories (`#commit` events), handles and DID documents (`#identity`), and account hosting status (`#account`). PDS hosts provide a single stream with updates for all locally-hosted accounts. "Relays" are network services which subscribe to one or more repo streams (eg, multiple PDS instances) and aggregate them in to a single combined repo stream. The combined stream has the same structure and event types. A Relay which aggregates nearly all accounts from nearly all PDS instances in the network (possibly through intermediate relays) outputs a “full-network” firehose.  Relays often mirror and can re-distribute the repository contents, though their core functionality is to verify content and output a unified firehose.
+The repository event stream (`com.atproto.sync.subscribeRepos`, also called the "firehose") is an [Event Stream](/specs/event-stream) which broadcasts updates to repositories (`#commit` events), handles and DID documents (`#identity`), and account hosting status (`#account`). PDS hosts provide a single stream with updates for all locally-hosted accounts. "Relays" are network services which subscribe to one or more repo streams (eg, multiple PDS instances) and aggregate them in to a single combined repo stream. The combined stream has the same structure and event types. A Relay which aggregates nearly all accounts from nearly all PDS instances in the network (possibly through intermediate relays) outputs a “full-network” firehose.  Relays often mirror and can re-distribute the repository contents, though their core functionality is to verify content and output a unified firehose.
 
 In most cases the repository data synchronized over the firehose is self-certifying (contains verifiable signatures), and consumers can verify content without making additional requests directly to account PDS instances. It is possible for services to redact events from the firehose, such that downstream services would not be aware of new content.
 
-Identity and account information is *not* self-certifying, and services may need need to verify independently. This usually means independent DID and handle resolution. Account hosting status might also be checked at account PDS hosts, to disambiguate hosting status at different pieces of infrastructure.
+Identity and account information is *not* self-certifying, and services may need need to verify independently. This usually means independent DID and [handle resolution](/specs/handle). Account hosting status might also be checked at account PDS hosts, to disambiguate hosting status at different pieces of infrastructure.
 
 The event message types are declared in the `com.atproto.sync.subscribeRepos` Lexicon schema, and are summarized below. A few fields are the same for all event types (except for `repo` vs `did` for `#commit` events):
 
@@ -53,7 +53,7 @@ Intermediate services (eg, relays) may chose to modify or pass through identity 
 
 ### `#account` Events
 
-Indicates that there may have been a change in account hosting status at the service which emits the event, and what the new status is. For example, it could be the result of creation, deletion, or temporary suspension of an account. The event describes the current hosting status, not what changed.
+Indicates that there may have been a change in [Account Hosting status](/specs/account) at the service which emits the event, and what the new status is. For example, it could be the result of creation, deletion, or temporary suspension of an account. The event describes the current hosting status, not what changed.
 
 Event Fields:
 
@@ -73,7 +73,7 @@ See the Account Hosting specification for more details.
 
 ### `#commit` Events
 
-This event indicates that there has been a new repository commit for the indicated account. The event usually contains the "diff" of repository data, in the form of a CAR slice.
+This event indicates that there has been a new repository commit for the indicated account. The event usually contains the "diff" of repository data, in the form of a CAR slice. See the [Repository specification](/specs/repository) for details on "diffs" and the CAR file format.
 
 See the Repository specification for more details around repo diffs.
 
