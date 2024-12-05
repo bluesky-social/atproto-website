@@ -156,6 +156,10 @@ After some time, most of the known accounts will be marked as `synchronized`, th
 
 When all of the accounts are `synchronized`, the process is complete. At large scale it may be hard to get perfect synchronization: PDS instances may be down at various times, identities may fail to resolve, or invalid events, data, or signatures may end up in the network.
 
+## Usage and Implementation Guidelines
+
+Guidelines for specific firehose event sequencing during different account events are described in an [Account Lifecycle Best Practices guide](/guide/account-lifecycle).
+
 ## Security Concerns
 
 General mitigations for resource exhaustion attacks are recommended: event rate-limits, data quotas per account, limits on data object sizes and deserialized data complexity, etc.
