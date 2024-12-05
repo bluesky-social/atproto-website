@@ -43,7 +43,7 @@ Presence or absence of the `handle` field does not indicate that it is the handl
 
 The semantics and expected behavior are that downstream services should refresh their identity data (resolve the DID and handle) for the indicated DID. 
 
-Identity events are emitted on a "best-effort" basis. Is is possible for the DID document or handle resolution status to change without any atproto service detecting the change, in which case an event would not be emitted. It is also possible for the event to be emitted redundantly, when nothing has actually changed.
+Identity events are emitted on a "best-effort" basis. It is possible for the DID document or handle resolution status to change without any atproto service detecting the change, in which case an event would not be emitted. It is also possible for the event to be emitted redundantly, when nothing has actually changed.
 
 Intermediate services (eg, relays) may chose to modify or pass through identity events:
 
