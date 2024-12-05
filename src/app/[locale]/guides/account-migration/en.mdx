@@ -1,0 +1,74 @@
+export const metadata = {
+  title: 'Account Migration',
+  description:
+    'Account Migration Details',
+}
+
+# Account Migration Details
+
+This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time.
+
+## Creating New Account
+
+To create a PDS account with an existing identity, it is necessary to prove control the identity.
+
+For an active account on another PDS, this is done by generating a service auth token (JWT) signed with the current atproto signing key indicated in the identity DID document. This can be requested from the previous PDS instance using the `com.atproto.server.getServiceAuth` endpoint (or an equivalent interface/API).
+
+For an independently-controlled identity (eg, `did:web`, or a `did:plc` with old PDS offline or uncooperative), this may involve updating the identity to include a self-controlled atproto signing key, and generating the service auth token offline.
+
+The service auth token is provided along with the existing DID when creating the account with `com.atproto.server.createAccount` (or an equivalent interface/API) on the new PDS.
+
+The new account will be in a `deactivated` state. It should be possible to directly login and authenticate, but not to participate in the network. From the perspective of other services in the network, the old PDS account is still current, and the new PDS account is not yet active or valid. Functionality like OAuth or proxied requests using service auth will not yet work with the new PDS.
+
+## Migrating Data
+
+Some categories of data that are typically migrated are:
+
+- public repository
+- public blobs (media files)
+- private preferences
+
+At any stage of migration, the authenticated `com.atproto.server.checkAccountStatus` endpoint can be called on either the old or new PDS instance to check statistics about currently indexed data.
+
+A copy of the repository can be fetched as a CAR file from the old PDS using the public `com.atproto.sync.getRepo` endpoint. If the old PDS is inaccessible, a mirror might be available from a public relay, or a local backup might be available. If not, the new account will still function with the same identity, but old content would be missing.
+
+A CAR file can be imported to the new PDS using the authenticated `com.atproto.repo.importRepo` endpoint.
+
+Blobs (media files) are download and re-uploaded one by one. They should not be uploaded to the new PDS until the repository has been imported and fully indexed, so that blobs can be linked to the records that refer to them, and won’t be garbage collected. A full list of relevant blobs (by CID) can be fetched either from the old PDS (`com.atproto.sync.listBlobs`), or the current list of "missing" blobs can be checked on the new PDS (`com.atproto.repo.listMissingBlobs`). If some blobs can not be found, the migration process can continue, and any recovered blobs can be uploaded later (if the blob CIDs match exactly).
+
+Private account preferences can be exported from the old PDS using the authenticated like `app.bsky.actor.getPreferences` endpoint, then imported using `app.bsky.actor.putPreferences`. These are Bluesky app-specific endpoints, and other apps (Lexicons) may define their own preference APIs. Note that this will only include private state stored in the PDS; some preferences and state may exist in external services (eg, centralized chat/DM implementations).
+
+## Updating Identity
+
+Once content has been migrated, the identity (DID and handle) can be updated to indicate that the new PDS is the current host for the account.
+
+"Recommended" DID document parameters can be fetched from the new PDS using the `com.atproto.identity.getRecommendedDidCredentials` endpoint. This will include the DID service hostname, local handle (as requested during account creation), a PDS-managed atproto signing key (public key), and (if relevant) PLC rotation keys (public keys).
+
+For users who are able to securely manage a private cryptographic keypair (eg, store in a password manager or digital wallet), it is recommended to include a self-controlled PLC rotation key (public key) in the PLC operation.
+
+For a self-controlled identity (eg, `did:web`, or `did:plc` with local rotation key), the identity update can be done directly by the user.
+
+For an account with a `did:plc` managed by the old PDS, a PLC "operation" is signed by the old PDS, then submitted via the new PDS. The motivation for having the new PDS submit the PLC operation instead of having the user do so directly is to give the new PDS a chance to validate the operation and do safety check to prevent the account from getting in a broken state.
+
+Because identity operations are sensitive, they require an additional security token as an additional "factor". The token can be requested via `com.atproto.identity.requestPlcOperationSignature` on the old PDS, and will be delivered by email to the verified account email by default.
+
+This token is included as part of a call to `com.atproto.identity.signPlcOperation` on the old PDS, along with the requested DID fields (new signing key, rotation keys, PDS location, etc). The old PDS will validate the request, sign using the PDS-managed PLC rotation key, and return the signed PLC operation. The operation will not have been submitted to any PLC directory at this point in time.
+
+The user is then recommended to submit the operation to the new PDS (using the `com.atproto.identity.submitPlcOperation` endpoint), which will validate that the changes are "safe" (aka, that they enable the the PDS to help manage the identity and atproto account), and then submit it to the PLC directory.
+
+With the identity successfully updated, the new PDS is now the "current" host for the account from the perspective of the entire network. This will be immediately apparent to new services which resolve the identity. Existing services that consume from the firehose will be alerted by the `#identity` event. Other services, which may have now-stale cached identity metadata for the account, will either refresh when the cache expires, or should refresh their cache when they encounter errors (such as invalid service auth signatures).
+
+However, the new account is not yet "active".
+
+## Finalizing Account Status
+
+At this point, the user is still able to authenticate to both PDS instances. The new PDS knows that it is current for the account, but still has the account marked as "deactivated". The old PDS may not realize that it is no longer current.
+
+It may be worth double-checking with `com.atproto.server.checkAccountStatus` on both PDS instances to confirm that all the expected content has been migrated.
+
+The user can activate their account on the new PDS with a call to `com.atproto.server.activateAccount`, and deactivate their account on the old PDS with `com.atproto.server.deactivateAccount`.
+
+At this point the migration is complete. New content can be published by writing to the repo, preferences can be updated, and inter-service auth and proxying should work as expected. It may be necessary to log out of any clients and log back in. In some cases, if services have aggressive identity caching and do not refresh on signature failure, service auth requests could fail for up to 24 hours.
+
+It will still be possible to login and authenticate with the old PDS. The user may wish to fully terminated their old account eventually. This can be automated with the `deleteAfter` parameter to the `com.atproto.server.deactivateAccount` request. Note that the old PDS may be able to assist with PLC identity recovery during a fixed 72hr window, but only if the account was not fully deleted during that window.
+
