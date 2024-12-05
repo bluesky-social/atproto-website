@@ -75,6 +75,12 @@ However, in the common case, when there is an active account on a functional cur
 - updating account status on both PDS instances, such that old is inactive, and new is active
 - emitting a `#commit` event from the new PDS, signed by the new atproto signing key, with a higher commit `rev`.
 
+## Usage and Implementation Guidelines
+
+One possible account migration flow is described in detail in a [separate guide](/guides/account-migration). Note that the specific mechanisms described are not formally part of the protocol, and are not the only way to migrate accounts.
+
+Guidelines for specific firehose event sequencing during different account events are described in an [Account Lifecycle Best Practices guide](/guides/account-lifecycle).
+
 ## Security Considerations
 
 Account hosting status is not authenticated, and is specific to every individual network service. The current active PDS host is a good default for querying overall account state, though it may not represent broad network consensus (eg, intermediary takedowns), and it is technically possible for PDS hosts to misrepresent account activation state.
