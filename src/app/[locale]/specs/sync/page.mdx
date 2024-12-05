@@ -12,7 +12,7 @@ This section describes the major data synchronization features in atproto. The p
 
 ## Synchronization Primitives
 
-As described in the repository spec, each commit to a repository has a *revision* number, in TID syntax. The revision number must always increase between commits for the same account, even if the account is migrated between hosts or has a period of inactivation in the network. Revision numbers can be used as a logical clock to aid synchronization of individual accounts. To keep this simple, it is recommended to use the current time as a TID for each commit, including the initial commit when creating a new account. Services should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Network services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.
+As described in the repository spec, each commit to a repository has a *revision* number, in TID syntax. The revision number must always increase between commits for the same account, even if the account is migrated between hosts or has a period of inactivity in the network. Revision numbers can be used as a logical clock to aid synchronization of individual accounts. To keep this simple, it is recommended to use the current time as a TID for each commit, including the initial commit when creating a new account. Services should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Network services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.
 
 ## Firehose
 
@@ -26,7 +26,7 @@ The event message types are declared in the `com.atproto.sync.subscribeRepos` Le
 
 - `seq` (integer, required): used to ensure reliable consumption, as described in Event Streams
 - `did` / `repo`(string with DID syntax, required): the account/identity associated with the event
-- `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediate services may decide pass-through this field as-is, or update to the current time
+- `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediate services may decide to pass this field through as-is, or update to the current time
 
 ### `#identity` Events
 
@@ -41,7 +41,7 @@ Event fields:
 
 Presence or absence of the `handle` field does not indicate that it is the handle which has changed.
 
-The semantics and expected behavior are that downstream services should refresh their identity data (resolve the DID and handle) for the indicated DID. 
+The semantics and expected behavior are that downstream services should update any cached identity metadata (including DID document and handle) for the indicated DID. They might mark caches as stale, immediately purge cached data, or attempt to re-resolve metadata.
 
 Identity events are emitted on a "best-effort" basis. It is possible for the DID document or handle resolution status to change without any atproto service detecting the change, in which case an event would not be emitted. It is also possible for the event to be emitted redundantly, when nothing has actually changed.
 
@@ -90,7 +90,7 @@ Event Fields:
 - `ops` (array of objects, required): list of record-level operations in this commit: specific records created, updated, deleted
 - `blobs` (array of cid-link, required): set of new blobs (by CID) referenced by records in this commit
 
-Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since`, `ops`, `blobs`, and `tooBig` flag are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
+Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since`, `ops`, `blobs`, and `tooBig` fields are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
 
 If `since` is not included, the commit should include the full repo tree, or set the `tooBig` flag.
 
@@ -102,7 +102,7 @@ A service which does full validation of upstream events has a number of properti
 
 Here is a summary of validation rules and behaviors:
 
-- services should independently resolve identity data for each DID. They should ignore `#commit` events for accounts which do not have a functioning atproto identity (eg, lacking a signing key, or lacking a PDS service entry, or for which the DID is tombstoned)
+- services should independently resolve identity data for each DID. They should ignore `#commit` events for accounts which do not have a functioning atproto identity (eg, lacking a signing key, or lacking a PDS service entry, or for which the DID has been tombstoned)
 - services which subscribe directly to PDS instances should keep track of which PDS is authoritative for each DID. They should remember the host each subscription (WebSocket) is connected to, and reject `#commit` events for accounts if they come from a stream which does not correspond to the current account for that DID
 - services should track account hosting status for each DID, and ignore `#commit` events for events which are not `active`
 - services should verify commit signatures for each `#commit` event, using the current identity data. If the signature initially fails to verify, the service should refresh the identity metadata in case it had recently changed. Events with conclusively invalid signatures should be rejected.
