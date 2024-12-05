@@ -162,6 +162,8 @@ General mitigations for resource exhaustion attacks are recommended: event rate-
 
 Care should always be taken when making network requests to unknown or untrusted hosts, especially when the network locators for those host from from untrusted input. This includes validating URLs to not connect to local or internal hosts (including via HTTP redirects), avoiding SSRF in browser contexts, etc.
 
+To prevent traffic amplification attacks, outbound network requests should be rate-limited by host. For example, identity resolution requests when consuming from the firehose, including DNS TXT traffic volume and DID resolution requests.
+
 ## Future Work
 
 The `subscribeRepos` Lexicon is likely to be tweaked, with deprecated fields removed, even if this breaks Lexicon evolution rules.
