@@ -152,7 +152,7 @@ There are several ways to include a CID hash reference in an atproto object:
 
 When working with the deprecated/legacy "blob" format, it is recommend to store in the same internal representation as regular "blob" references, but to set the `size` to zero or a negative value. This field should be checked when re-serializing to ensure proper round-trip behavior and avoid ever encoding a zero or negative `size` value in the normal object format.
 
-Best practices for validating and limiting the size and structure of generic atproto data are described in a [Data Validation guide](/guide/data-validation), which is not formally part of this specification.
+Best practices for validating and limiting the size and structure of generic atproto data are described in a [Data Validation guide](/guides/data-validation), which is not formally part of this specification.
 
 ## Security and Privacy Considerations
 
