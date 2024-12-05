@@ -19,7 +19,7 @@ The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federa
 
 **Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) (with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations). [Labels](/specs/label) are a separate lightweight form of metadata, individually signed and distributed outside repositories.
 
-**Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A Personal Data Server (PDS) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A relay (previously referred to as a Big Graph Service, or BGS) crawls many repositories and outputs a unified event firehose.
+**Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A [Personal Data Server (PDS)](/specs/account) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A relay crawls many repositories and outputs a unified event [Firehose](/specs/sync).
 
 **Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers](/specs/nsid) (NSIDs). Application-specific aggregations (such as search) are provided by an Application View (App View) service. Clients can include mobile apps, desktop software, or web interfaces.
 
@@ -41,12 +41,6 @@ Governance structures for individual Lexicon namespaces are flexible. They could
 ## What Is Missing?
 
 These specifications cover most details as implemented in Bluesky's reference implementation. A few important pieces have not been finalized, both in that reference implementation and in these specifications.
-
-**Account Migration:** the identity and repository systems were designed to enable easy migration of accounts between PDS service providers, even in the face of a non-cooperative service provider, without impact on the social graph. Some details have not been worked out yet: optional PDS-to-PDS repository transfer; downstream behavior during transfer grace periods; rate-limit norms to prevent network abuse; blob migration; etc.
-
-**Repository Sync:** the repository commit schema has a revision field, and the `com.atproto.sync.*` Lexicons can reference these via a `since` parameter to do partial fetches of repository content. This mechanism is largely settled, but not yet specified here in detail.
-
-**Repository Event Stream:** the `com.atproto.sync.subscribeRepos` subscription Lexicon is a core part of the protocol and the details need to be described in more detail. This includes the semantics of the "commit" message type, which includes both a "CAR slice" of new repository blocks, and an operation list.
 
 **Moderation Primitives:** The `com.atproto.admin.*` routes for handling moderation reports and doing infrastructure-level take-downs is specified in Lexicons but should also be described in more detail.
 
