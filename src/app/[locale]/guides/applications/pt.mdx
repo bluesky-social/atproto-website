@@ -41,24 +41,24 @@ Abordaremos como: {{className: 'lead'}}
 
 - Entrar via OAuth {{className: 'lead'}}
 - Obter informações sobre usuários (perfis) {{className: 'lead'}}
-- Ouça a mangueira de incêndio da rede para novos dados {{className: 'lead'}}
+- Consumir o firehose da rede para capturar novos dados {{className: 'lead'}}
 - Publicar dados na conta do usuário usando um esquema personalizado {{className: 'lead'}}
 
-Vamos manter isso leve para que você possa entender rapidamente o ATProto. Haverá links com mais informações sobre cada etapa. {{className: 'lead'}}
+Vamos manter as coisas simples para que você possa entender rapidamente o ATProto. Haverá links com mais informações sobre cada etapa. {{className: 'lead'}}
 
 ## Introdução
 
 Os dados no Atmosphere são armazenados nos repositórios pessoais dos usuários. É quase como se cada usuário tivesse seu próprio site. Nosso objetivo é agregar dados dos usuários em nosso SQLite DB.
 
-Pense em nosso aplicativo como um Google. Se o trabalho do Google fosse dizer qual emoji cada site tinha em `/status.json`, então ele mostraria algo como:
+Pense em nosso aplicativo como um Google. Se o trabalho do Google fosse dizer qual emoji cada site tem em `/status.json`, então ele mostraria algo como:
 
 - `nytimes.com` está se sentindo 📰 de acordo com `https://nytimes.com/status.json`
 - `bsky.app` está se sentindo 🦋 de acordo com `https://bsky.app/status.json`
 - `reddit.com` está se sentindo 🤓 de acordo com `https://reddit.com/status.json`
 
-O Atmosphere funciona da mesma forma, exceto que vamos verificar `at://` em vez de `https://`. Cada usuário tem um repositório de dados sob uma URL `at://`. Vamos rastrear todos os repositórios de dados do usuário no Atmosphere para todos os registros "status.json" e agregá-los em nosso banco de dados SQLite.
+O Atmosphere funciona da mesma forma, exceto que vamos verificar `at://` em vez de `https://`. Cada usuário tem um repositório de dados sob uma URL `at://`. Vamos percorrer todos os repositórios de dados de usuários no Atmosphere, buscando os registros "status.json" e os agregando no nosso banco de dados SQLite.
 
-> `at://` é o esquema de URL do Protocolo AT. Por baixo dos panos, ele usa tecnologia comum como HTTP e DNS, mas adiciona todos os recursos que usaremos neste tutorial.
+> `at://` é o esquema de URL do Protocolo AT. Por baixo dos panos, ele usa tecnologia comum como HTTP e DNS, com a adição de todos os recursos que usaremos neste tutorial.
 
 ## Etapa 1. Começando com nosso aplicativo ExpressJS
 
@@ -70,33 +70,33 @@ cd statusphere-example-app
 cp .env.template .env
 npm install
 npm run dev
-# Navigate to http://localhost:8080
+# Acesse http://localhost:8080
 ```
 
-Nosso repositório é um aplicativo Web regular. Estamos renderizando nosso servidor HTML como se fosse 1999. Também temos um banco de dados SQLite que estamos gerenciando com [Kysely](https://kysely.dev/).
+Nosso repositório é um aplicativo Web comum. Estamos renderizando nosso HTML no lado do servidor, como se fosse 1999. Também temos um banco de dados SQLite que estamos gerenciando com [Kysely](https://kysely.dev/).
 
-Nossa pilha inicial:
+Nossa stack inicial:
 
 - Typescript
-- NodeJS servidor web ([express](https://expressjs.com/))
-- SQLite banco de dados ([Kysely](https://kysely.dev/))
-- Renderização do lado do servidor ([uhtml](https://www.npmjs.com/package/uhtml))
+- Servidor web NodeJS ([express](https://expressjs.com/))
+- Banco de dados SQLite ([Kysely](https://kysely.dev/))
+- Renderização no lado do servidor ([uhtml](https://www.npmjs.com/package/uhtml))
 
-A cada passo, explicaremos como nosso aplicativo da Web acessa o Atmosphere. Consulte a base de código para obter um código mais detalhado &mdash; novamente, este tutorial o manterá leve e rápido de digerir.
+A cada passo, explicaremos como nosso aplicativo Web acessa o Atmosphere. Consulte o código-fonte um código mais detalhado &mdash; de novo, este tutorial será simples e rápido de digerir.
 
 ## Etapa 2. Entrando com OAuth
 
 Quando alguém faz login em nosso aplicativo, ele nos dará acesso de leitura e gravação ao seu repositório pessoal `at://`. Usaremos isso para gravar o registro json de status.
 
-Faremos isso usando OAuth ([spec](https://github.com/bluesky-social/proposals/tree/main/0004-oauth)). A maioria dos fluxos OAuth será manipulada para nós usando a biblioteca [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node). Este é o arranjo que estamos buscando:
+Faremos isso usando a ([especificação](https://github.com/bluesky-social/proposals/tree/main/0004-oauth)) OAuth. A maioria dos fluxos OAuth serão tratados para nós usando a biblioteca [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node). Este é o modelo que estamos buscando:
 
 <Image alt="Um diagrama dos elementos OAuth" src={DiagramOauth} />
 
-Quando o usuário faz login, o cliente OAuth criará uma nova sessão com seu servidor de repositório e nos dará acesso de leitura/gravação junto com informações básicas do usuário.
+Quando o usuário fizer login, o cliente OAuth criará uma nova sessão com seu servidor de repositório e nos dará acesso de leitura/gravação junto com informações básicas do usuário.
 
 <Image alt="Uma captura de tela da IU de login" src={AppLogin} />
 
-Nossa página de login apenas pede ao usuário seu "handle", que é o nome de domínio associado à sua conta. Para usuários do [Bluesky](https://bsky.app), eles tendem a se parecer com `alice.bsky.social`, mas podem ser qualquer tipo de domínio (por exemplo, `alice.com`).
+Nossa página de login apenas pede ao usuário seu "handle" (identificador), que é o nome de domínio associado à sua conta. Para usuários do [Bluesky](https://bsky.app), eles tendem a se parecer com `alice.bsky.social`, mas podem ser qualquer tipo de domínio (por exemplo, `alice.com`).
 
 ```html
 <!-- src/pages/login.ts -->
@@ -115,11 +115,11 @@ Quando eles enviam o formulário, dizemos ao nosso cliente OAuth para iniciar o 
 
 ```typescript
 /** src/routes.ts **/
-// Login handler
+// Handler de login
 router.post(
   '/login',
   handler(async (req, res) => {
-    // Initiate the OAuth flow
+    // Inicia o fluxo OAuth
     const handle = req.body?.handle
     const url = await oauthClient.authorize(handle, {
       scope: 'atproto transition:generic',
@@ -131,41 +131,41 @@ router.post(
 
 Este é o mesmo tipo de fluxo SSO que o Google ou o GitHub usam. O usuário será solicitado a informar sua senha e, em seguida, a confirmar a sessão com seu aplicativo.
 
-Quando isso terminar, o usuário será enviado de volta para `/oauth/callback` em nosso aplicativo da Web. O cliente OAuth armazenará os tokens de acesso para o servidor do usuário e, em seguida, anexaremos o [DID](https://atproto.com/specs/did) da conta dele à cookie-session.
+Quando isso terminar, o usuário será enviado de volta para `/oauth/callback` em nosso aplicativo Web. O cliente OAuth armazenará os tokens de acesso para o servidor do usuário e, em seguida, anexaremos o [DID](https://atproto.com/specs/did) da conta dele ao cookie de sessão.
 
 ```typescript
 /** src/routes.ts **/
-// OAuth callback to complete session creation
+// Callback OAuth para completar a criação da sessão
 router.get(
   '/oauth/callback',
   handler(async (req, res) => {
-    // Store the credentials
+    // Armazena as credenciais
     const { session } = await oauthClient.callback(params)
 
-    // Attach the account DID to our user via a cookie
+    // Anexa o DID da conta ao nosso usuário via um cookie
     const cookieSession = await getIronSession(req, res)
     cookieSession.did = session.did
     await cookieSession.save()
 
-    // Send them back to the app
+    // Os redireciona ao app
     return res.redirect('/')
   })
 )
 ```
 
-Com isso, estamos no negócio! Agora temos uma sessão com o servidor de repositório do usuário e podemos usá-la para acessar seus dados.
+Com isso, estamos prontos! Temos uma sessão com o servidor de repositório do usuário e podemos usá-la para acessar seus dados.
 
 ## Etapa 3. Obtendo o perfil do usuário
 
-Por que não aprendemos algo sobre nosso usuário? Em [Bluesky](https://bsky.app), os usuários publicam um registro de "perfil" que se parece com isso:
+Por que não aprendemos um pouco sobre nosso usuário? No [Bluesky](https://bsky.app), os usuários publicam um registro de "perfil" que se parece com isso:
 
 ```typescript
 interface ProfileRecord {
-  displayName?: string // a human friendly name
-  description?: string // a short bio
-  avatar?: BlobRef     // small profile picture
-  banner?: BlobRef     // banner image to put on profiles
-  createdAt?: string   // declared time this profile data was added
+  displayName?: string // um nome human-friendly
+  description?: string // uma breve biografia
+  avatar?: BlobRef     // pequena foto de perfil
+  banner?: BlobRef     // imagem de banner para colocar nos perfis
+  createdAt?: string   // data em que os dados do perfil foram adicionados
   // ...
 }
 ```
@@ -176,9 +176,9 @@ Usaremos o [Agent](https://github.com/bluesky-social/atproto/tree/main/packages/
 
 ```typescript
 await agent.com.atproto.repo.getRecord({
-  repo: agent.assertDid,                // The user
-  collection: 'app.bsky.actor.profile', // The collection
-  rkey: 'self',                         // The record key
+  repo: agent.assertDid,                // O usuário
+  collection: 'app.bsky.actor.profile', // A coleção
+  rkey: 'self',                         // A chave do registro
 })
 ```
 
@@ -194,26 +194,26 @@ Vamos atualizar nossa página inicial para buscar este registro de perfil:
 
 ```typescript
 /** src/routes.ts **/
-// Homepage
+// Página inicial
 router.get(
   '/',
   handler(async (req, res) => {
-    // If the user is signed in, get an agent which communicates with their server
+    // Se o usuário estiver logado, obter um agente que se comunique com o servidor dele 
     const agent = await getSessionAgent(req, res, ctx)
 
     if (!agent) {
-      // Serve the logged-out view
+      // Servir a view de usuários não logados
       return res.type('html').send(page(home()))
     }
 
-    // Fetch additional information about the logged-in user
+    // Busca informação adicional sobre o usuário logado
     const { data: profileRecord } = await agent.com.atproto.repo.getRecord({
-      repo: agent.assertDid,                // our user's repo
-      collection: 'app.bsky.actor.profile', // the bluesky profile record type
-      rkey: 'self',                         // the record's key
+      repo: agent.assertDid,                // o repositório do usuário
+      collection: 'app.bsky.actor.profile', // o tipo de registro de perfil do bluesky
+      rkey: 'self',                         // a chave do registro
     })
 
-    // Serve the logged-in view
+    // Servir a view de usuário logado
     return res
       .type('html')
       .send(page(home({ profile: profileRecord.value || {} })))
@@ -257,9 +257,9 @@ Vamos olhar novamente como lemos o registro "profile":
 
 ```typescript
 await agent.com.atproto.repo.getRecord({
-  repo: agent.assertDid,                // The user
-  collection: 'app.bsky.actor.profile', // The collection
-  rkey: 'self',                         // The record key
+  repo: agent.assertDid,                // O usuário
+  collection: 'app.bsky.actor.profile', // A coleção
+  rkey: 'self',                         // A chave do registro
 })
 ```
 
@@ -269,12 +269,12 @@ Escrevemos registros usando uma API similar. Como nosso objetivo é escrever reg
 // Generate a time-based key for our record
 const rkey = TID.nextStr()
 
-// Write the 
+// Escrever o registro
 await agent.com.atproto.repo.putRecord({
-  repo: agent.assertDid,                 // The user
-  collection: 'xyz.statusphere.status',  // The collection
-  rkey,                                  // The record key
-  record: {                              // The record value
+  repo: agent.assertDid,                 // O usuário
+  collection: 'xyz.statusphere.status',  // A coleção
+  rkey,                                  // A chave do registro
+  record: {                              // O valor do registro
     status: "👍",
     createdAt: new Date().toISOString()
   }
@@ -285,17 +285,17 @@ Nossa rota `POST /status` usará esta API para publicar o status do usuário em 
 
 ```typescript
 /** src/routes.ts **/
-// "Set status" handler
+// Handler para definir o status
 router.post(
   '/status',
   handler(async (req, res) => {
-    // If the user is signed in, get an agent which communicates with their server
+    // Se o usuário estiver logado, obter um agente que se comunique com o servidor dele
     const agent = await getSessionAgent(req, res, ctx)
     if (!agent) {
       return res.status(401).type('html').send('<h1>Error: Session required</h1>')
     }
 
-    // Construct their status record
+    // Construir o registro de status dele
     const record = {
       $type: 'xyz.statusphere.status',
       status: req.body?.status,
@@ -303,7 +303,7 @@ router.post(
     }
 
     try {
-      // Write the status record to the user's repository
+      // Escrever o registro de status no repositório do usuário
       await agent.com.atproto.putRecord({
         repo: agent.assertDid, 
         collection: 'xyz.statusphere.status',
@@ -379,13 +379,13 @@ Vamos criar nosso esquema na pasta `/lexicons` da nossa base de código. Você p
 }
 ```
 
-Agora vamos executar alguma geração de código usando nosso esquema:
+Agora vamos executar uma geração de código usando nosso esquema:
 
 ```bash
 ./node_modules/.bin/lex gen-server ./src/lexicon ./lexicons/*
 ```
 
-Isso produzirá interfaces Typescript, bem como funções de validação de tempo de execução que podemos usar em nosso aplicativo. Aqui está a aparência do código gerado:
+Isso produzirá interfaces Typescript, bem como funções de validação em tempo de execução que podemos usar em nosso aplicativo. Aqui está como o código gerado fica:
 
 ```typescript
 /** src/lexicon/types/xyz/statusphere/status.ts **/
@@ -414,13 +414,13 @@ Vamos usar esse código para melhorar a rota `POST /status`:
 /** src/routes.ts **/
 import * as Status from '#/lexicon/types/xyz/statusphere/status'
 // ...
-// "Set status" handler
+// Handler para definir o status
 router.post(
   '/status',
   handler(async (req, res) => {
     // ...
 
-    // Construct & validate their status record
+    // Construir e validar o registro de status deles
     const record = {
       $type: 'xyz.statusphere.status',
       status: req.body?.status,
@@ -435,7 +435,7 @@ router.post(
 )
 ```
 
-## Etapa 6. Ouvindo o firehose
+## Etapa 6. Consumindo o firehose
 
 Até agora, nós:
 
@@ -445,11 +445,11 @@ Até agora, nós:
 
 Agora queremos buscar os registros de status de outros usuários.
 
-Lembra como nos referimos ao nosso aplicativo como sendo como o Google, rastreando os repositórios para obter seus registros? Uma vantagem que temos no Protocolo AT é que cada repositório publica um log de eventos de suas atualizações.
+Lembra como nos referimos ao nosso aplicativo como sendo como o Google, percorrendo os repositórios para obter seus registros? Uma vantagem que temos no Protocolo AT é que cada repositório publica um log de eventos de suas atualizações.
 
 <Image alt="Um diagrama do fluxo de eventos" src={DiagramEventStream} />
 
-Usando um [serviço de retransmissão](https://docs.bsky.app/docs/advanced-guides/federation-architecture#relay) podemos ouvir um firehose agregado desses eventos em todos os usuários na rede. No nosso caso, o que estamos procurando são registros `xyz.statusphere.status` válidos.
+Usando um [serviço de retransmissão](https://docs.bsky.app/docs/advanced-guides/federation-architecture#relay) podemos consumir um firehose agregado desses eventos em todos os usuários na rede. No nosso caso, o que estamos procurando são registros `xyz.statusphere.status` válidos.
 
 ```typescript
 /** src/ingester.ts **/
@@ -460,17 +460,17 @@ import * as Status from '#/lexicon/types/xyz/statusphere/status'
 new Firehose({
   filterCollections: ['xyz.statusphere.status'],
   handleEvent: async (evt) => {
-    // Watch for write events
+    // Filtrar eventos de escrita
     if (evt.event === 'create' || evt.event === 'update') {
       const record = evt.record
 
-      // If the write is a valid status update
+      // Se a escrita é uma atualização de status válida
       if (
         evt.collection === 'xyz.statusphere.status' &&
         Status.isRecord(record) &&
         Status.validateRecord(record).success
       ) {
-        // Store the status
+        // Grava o status
         // TODO
       }
     }
@@ -482,7 +482,7 @@ Vamos criar uma tabela SQLite para armazenar esses status:
 
 ```typescript
 /** src/db.ts **/
-// Create our statuses table
+// Cria nossa tabela de status
 await db.schema
   .createTable('status')
   .addColumn('uri', 'varchar', (col) => col.primaryKey())
@@ -493,17 +493,18 @@ await db.schema
   .execute()
 ```
 
-Agora podemos escrever esses status em nosso banco de dados conforme eles chegam da mangueira de incêndio:
+Agora podemos escrever esses status em nosso banco de dados conforme eles chegam do firehose:
 
 ```typescript
 /** src/ingester.ts **/
 // If the write is a valid status update
+// Se a escrita é uma atualização de status válida
 if (
   evt.collection === 'xyz.statusphere.status' &&
   Status.isRecord(record) &&
   Status.validateRecord(record).success
 ) {
-  // Store the status in our SQLite
+  // Grava o status em nosso SQLite
   await db
     .insertInto('status')
     .values({
@@ -523,27 +524,27 @@ if (
 }
 ```
 
-Você quase consegue pensar em informações fluindo em um loop:
+Você pode pensar em informações fluindo em um loop:
 
 <Image alt="Um diagrama do fluxo de informações" src={DiagramInfoFlow} />
 
 Os aplicativos gravam no repositório. Os eventos de gravação são então emitidos no firehose, onde são capturados pelos aplicativos e ingeridos em seus bancos de dados.
 
-Por que sincronizar do log de eventos dessa forma? Porque há outros aplicativos na rede que gravarão os registros nos quais estamos interessados. Ao assinar o log de eventos, garantimos que capturamos todos os dados nos quais estamos interessados ​​&mdash; incluindo dados publicados por outros aplicativos!
+Por que sincronizar do log de eventos dessa forma? Porque há outros aplicativos na rede que gravarão os registros nos quais estamos interessados. Ao consumir o log de eventos, garantimos que capturamos todos os dados nos quais estamos interessados ​​&mdash; incluindo dados publicados por outros aplicativos!
 
 ## Etapa 7. Listando os status mais recentes
 
-Agora que temos status preenchendo nosso SQLite, podemos produzir uma linha do tempo de atualizações de status por usuários. Também usamos um resolvedor [DID](https://atproto.com/specs/did)-to-handle para que possamos mostrar um bom nome de usuário com os status:
+Agora que temos status preenchendo nosso SQLite, podemos produzir uma linha do tempo de atualizações de status por usuários. Também usamos um resolvedor [DID](https://atproto.com/specs/did) para que possamos exibir um nome de usuário legível junto aos status:
 
 ```typescript
 /** src/routes.ts **/
-// Homepage
+// Página inicial
 router.get(
   '/',
   handler(async (req, res) => {
     // ...
 
-    // Fetch data stored in our SQLite
+    // Busca dados armazenados em nosso SQLite
     const statuses = await db
       .selectFrom('status')
       .selectAll()
@@ -551,7 +552,7 @@ router.get(
       .limit(10)
       .execute()
 
-    // Map user DIDs to their domain-name handles
+    // Mapeia DIDs de usuário aos seus identificadores de nome de domínio
     const didHandleMap = await resolver.resolveDidsToHandles(
       statuses.map((s) => s.authorDid)
     )
@@ -601,7 +602,7 @@ Para fazer isso, apenas atualizamos `POST /status` para incluir uma gravação a
 
 ```typescript
 /** src/routes.ts **/
-// "Set status" handler
+// Handler para definir o status
 router.post(
   '/status',
   handler(async (req, res) => {
@@ -609,7 +610,7 @@ router.post(
 
     let uri
     try {
-      // Write the status record to the user's repository
+      // Escreve o registro de status no repositório do usuário
       const res = await agent.com.atproto.repo.putRecord({
         repo: agent.assertDid, 
         collection: 'xyz.statusphere.status',
@@ -623,7 +624,7 @@ router.post(
     }
 
     try {
-      // Optimistically update our SQLite <-- HERE!
+      // Atualiza de forma otimista nosso SQLite <-- AQUI!
       await db
         .insertInto('status')
         .values({
@@ -657,9 +658,9 @@ Ao construir seu aplicativo, pense nestas quatro etapas principais:
 - Projete os esquemas [Lexicon](#) para os registros que você publicará no Atmosphere.
 - Crie um banco de dados para agregar os registros em visualizações úteis.
 - Crie seu aplicativo para gravar os registros nos repositórios dos seus usuários.
-- Ouça o firehose para agregar dados pela rede.
+- Consuma o firehose para agregar dados pela rede.
 
-Lembre-se deste fluxo de informações por toda parte:
+Lembre-se deste fluxo de informações ao longo de todo o processo:
 
 <Image alt="Um diagrama do fluxo de informações" src={DiagramInfoFlow} />
 
