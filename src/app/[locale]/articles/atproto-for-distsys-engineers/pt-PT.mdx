@@ -1,0 +1,234 @@
+import {Container} from "@/components/Container"
+import {FooterCTA} from "@/components/FooterCTA"
+import image1 from "./image1.png"
+import image2 from "./image2.png"
+import image3 from "./image3.png"
+import image4 from "./image4.png"
+import image5 from "./image5.png"
+import image6 from "./image6.png"
+import image7 from "./image7.png"
+import image8 from "./image8.png"
+import image9 from "./image9.png"
+import image10 from "./image10.png"
+import image11 from "./image11.png"
+import image12 from "./image12.png"
+import image13 from "./image13.png"
+import image14 from "./image14.png"
+import image15 from "./image15.png"
+import image16 from "./image16.png"
+import image17 from "./image17.png"
+import image18 from "./image18.png"
+import image19 from "./image19.png"
+import image20 from "./image20.png"
+import image21 from "./image21.png"
+import image22 from "./image22.png"
+import image23 from "./image23.png"
+import image24 from './image24.png'
+
+export const metadata = {
+  title: 'ATProto para engenheiros de sistemas distribuídos',
+  description:
+    'AT Protocol é a tecnologia desenvolvida na Bluesky para redes sociais abertas. Neste artigo, vamos explorar o AT Proto do ponto de vista da engenharia de back-end distribuído.',
+}
+
+# ATProto para engenheiros de sistemas distribuídos
+
+*3 de setembro de 2024*
+
+AT Protocol é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o AT protocol do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
+
+O protocolo AT é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o protocolo AT do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
+
+Se alguma vez construiu um back-end com [stream-processing](https://milinda.pathirage.org/kappa-architecture.com/), então está familiarizado com o tipo de sistemas que vamos explorar. Se ainda não estiver, não se preocupe, iremos explicar-lhe tudo. {{className: 'lead'}}
+
+## Escalar o back-end tradicional da Web
+
+A clássica e feliz arquitetura da Web é a “grande base de dados SQL” por detrás do nosso servidor de aplicações. A aplicação comunica com a base de dados e lida com os pedidos do front-end.
+
+<Container>
+  <Image src={image1} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+À medida que a nossa aplicação cresce, atingimos alguns limites de desempenho, pelo que aplicamos alguma cache.
+
+<Container>
+  <Image src={image2} alt="" className="w-full dark:invert max-w-2xl mx-auto" />
+</Container>
+
+Depois, digamos que escalamos a nossa base de dados horizontalmente através de "sharding" e réplicas.
+
+<Container>
+  <Image src={image3} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+Isto é bastante bom, mas estamos a construir uma rede social com centenas de milhões de utilizadores; ainda assim este modelo atinge os seus limites. O problema é que a nossa base de dados SQL é “[strongly consistent](https://en.wikipedia.org/wiki/Strong_consistency)”, o que significa que o estado é mantido uniformemente sincronizado em todo o sistema. Manter a consistência forte incorre num custo de desempenho que se torna o nosso gargalo. 
+
+Se pudermos relaxar o nosso sistema para utilizar “[eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency)”, podemos escalar muito mais. Começamos por mudar para um cluster NoSQL.
+
+<Container>
+  <Image src={image4} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Isto é melhor para escalar mas sem SQL torna-se mais difícil construir as nossas consultas. Acontece que as bases de dados SQL têm muitas funcionalidades úteis, como as consultas JOIN e de agregação. De facto, a nossa base de dados NoSQL é apenas um armazenamento de valores chave. Escrever funcionalidades está a tornar-se uma dor de cabeça!
+
+Para resolver isso, precisamos de escrever criar vistas pré-computadas do nosso conjunto de dados. Estas vistas são essencialmente como consultas em cache. Até duplicamos os dados canónicos nestas visualizações para que sejam mais rápidas.
+
+Vamos chamar-lhes os nossos servidores de visualização.
+
+<Container>
+  <Image src={image5} alt="" className="w-full dark:invert" />
+</Container>
+
+Agora percebemos que manter os nossos servidores de visualização sincronizados com os dados canónicos no cluster NoSQL é complicado. Por vezes, os nossos servidores de exibição falham e perdem atualizações. Precisamos de garantir que as nossas exibições permanecem atualizadas de forma confiável.
+
+Para resolver este problema, introduzimos um registo de eventos (como o [Kafka](https://kafka.apache.org/)). Esse registo regista e transmite todas as alterações ao cluster NoSQL. Os nossos servidores de visualização ouvem &mdash; e reproduzem &mdash; esse registo para garantir que nunca perdem uma atualização, mesmo quando estes precisam de reiniciar.
+
+<Container>
+  <Image src={image6} alt="" className="w-full dark:invert" />
+</Container>
+
+Chegámos agora a uma [stream processing architecture] (https://milinda.pathirage.org/kappa-architecture.com/) e, embora existam mais pormenores que poderíamos abordar isto será suficiente por agora.
+
+A boa notícia é que esta arquitetura escala bastante bem. Abdicámos de uma consistência forte e, por vezes, as nossas consultas de leitura ficam aquém da versão mais actualizada dos dados, mas o serviço não deixa de escrever nem entra num estado incorreto.
+
+De certa forma, o que fizemos, foi construir uma base de dados à medida, [turning it inside-out] (https://www.youtube.com/watch?v=fU9hR3kiOK0). Simplificámos o armazenamento canónico num cluster NoSQL e construímos o nosso próprio motor de consulta com os servidores de visualização. É menos conveniente na sua construção, mas é escalável.
+
+## Descentralizar o nosso back-end de alta escala
+
+O objetivo do AT Protocol é interligar aplicações de modo a que os seus back-ends partilhem o estado, incluindo contas de utilizador e conteúdos.
+
+Como podemos fazer isso? Se olharmos para o nosso diagrama, podemos ver que a maior parte do sistema está isolado do mundo exterior, com apenas o servidor de aplicações a fornecer uma interface pública.
+
+<Container>
+  <Image src={image7} alt="" className="w-full dark:invert" />
+</Container>
+
+O nosso objetivo é quebrar este isolamento para que outras pessoas possam juntar-se ao nosso cluster NoSQL, ao nosso registo de eventos, aos nossos servidores de visualização, etc.
+
+Eis como vai ficar:
+
+<Container>
+  <Image src={image8} alt="" className="w-full dark:invert" />
+</Container>
+
+Cada um destes serviços internos é agora um serviço externo. Eles têm APIs públicas que qualquer pessoa pode consumir. Para além disso, qualquer pessoa pode criar as suas próprias instâncias destes serviços.
+
+O nosso objetivo é fazer com que qualquer pessoa possa contribuir para este back-end descentralizado. Isso significa que não queremos apenas um cluster NoSQL, ou um servidor View. Queremos muitos desses servidores a trabalhar em conjunto. Então, na verdade, é mais ou menos assim:
+
+<Container>
+  <Image src={image9} alt="" className="w-full dark:invert" />
+</Container>
+
+Então, como é que fazemos com que todos estes serviços funcionem em conjunto?
+
+## Unificação do modelo de dados
+
+Vamos estabelecer um modelo de dados partilhado chamado [“user data repository.”](/guias/data-repos)
+
+<Container>
+  <Image src={image10} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+Cada repositório de dados contém documentos JSON, a que chamaremos “registos”.
+
+<Container>
+  <Image src={image11} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Para efeitos de organização, dividimos estes registos em “colecções”.
+
+<Container>
+  <Image src={image12} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Agora vamos opinar sobre os nossos serviços NoSQL para que todos eles usem este modelo [data repository](/guias/data-repos).
+
+<Container>
+  <Image src={image13} alt="" className="w-full dark:invert" />
+</Container>
+
+Lembre-se: os serviços de repositório de dados continuam a ser basicamente armazéns NoSQL, só que agora estão organizados de uma forma muito específica:
+
+1. Cada utilizador tem um repositório de dados.
+2. Cada repositório possui colecções.
+3. Cada coleção é um armazenamento K/V ordenado por documentos JSON.
+
+Uma vez que os repositórios de dados podem ser alojados por qualquer pessoa, temos de lhes dar [URLs](/specs/at-uri-scheme).
+
+<Container>
+  <Image src={image14} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+Já agora, vamos também criar um [whole URL scheme](/specs/at-uri-scheme) para os nossos registos.
+
+<Container>
+  <Image src={image15} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Ótimo! Além disso, uma vez que vamos sincronizar estes registos na Internet seria uma boa ideia assiná-los criptograficamente para sabermos que são autênticos.
+
+<Container>
+  <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+## Mapear o fluxo de dados
+
+Agora que configurámos o nosso back-end descentralizado de alta escala, vamos mapear como uma aplicação funciona realmente no ATProto.
+
+Uma vez que estamos a criar uma nova aplicação vamos querer duas coisas: um servidor de aplicações (que aloje a nossa API e front-end) e um servidor de visualização (que recolhe dados da rede para nós). Muitas vezes, juntamos os servidores de aplicação e de visualização, pelo que podemos chamar-lhe apenas “Appview”. Vamos começar por aqui:
+
+<Container>
+  <Image src={image17} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+Um utilizador inicia sessão na nossa aplicação utilizando o OAuth. No processo, diz-nos qual o servidor que aloja o seu repositório de dados e dá-nos permissão para ler e escrever no mesmo.
+
+<Container>
+  <Image src={image18} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+Começámos bem &mdash; podemos ler e escrever documentos JSON no repositório do utilizador. Se o utilizador já tiver dados de outras aplicações (como um perfil) também podemos ler esses dados. Se estivéssemos a construir uma aplicação para um único utilizador já teríamos terminado.
+
+Mas vamos ver o que acontece quando escrevemos um documento JSON.
+
+<Container>
+  <Image src={image19} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+Isto faz o commit do documento para o repositório e cria um registo nos registos de eventos que estão a ouvir o repositório.
+
+<Container>
+  <Image src={image20} alt="" className="w-full dark:invert" />
+</Container>
+
+A partir daí, o evento é enviado para quaisquer serviços de visualização que estejam a ouvir &mdash; incluindo o nosso!
+
+<Container>
+  <Image src={image21} alt="" className="w-full dark:invert" />
+</Container>
+
+Por que é que estamos a ouvir o fluxo de eventos se somos nós que estamos a fazer a escrita? Porque não somos os únicos a fazer registos! Existem muitos repositórios de utilizadores que geram eventos e muitas aplicações que registam para eles!
+
+<Container>
+  <Image src={image22} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+Assim, podemos ver uma espécie de fluxo de dados circular em todo o nosso back-end descentralizado, com registos a serem confirmadas nos repositórios de dados e depois emitidos através dos registos de eventos para os servidores de visualização, onde podem ser lidos pelas nossas aplicações.
+
+<Container>
+  <Image src={image23} alt="" className="w-full dark:invert" />
+</Container>
+
+E (espera-se) que esta rede continue a crescer: não apenas para aumentar a capacidade mas para criar uma maior variedade de aplicações partilhadas nesta rede aberta de aplicações.
+
+<Container>
+  <Image src={image24} className="w-full dark:invert max-w-2xl" />
+</Container>
+
+## Criar sistemas abertos práticos
+
+O AT Protocol funde a tecnologia p2p com práticas de sistemas de alta escala. Os nossos engenheiros fundadores eram engenheiros de base do [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) e do [Dat](https://en.wikipedia.org/wiki/Dat_(software)), e Martin Kleppmann &mdash; o autor de [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; é um consultor técnico ativo.
+
+Antes de iniciarmos a Bluesky estabelecemos um requisito claro de “não dar passos para trás”. Queríamos que a rede fosse tão conveniente e global como todas as aplicações sociais anteriores, sem deixar de funcionar como uma rede aberta. É por isso que, quando olhámos para a federação e para as cadeias de blocos, os limites de escala dessas arquitecturas sobressaíram para nós. A nossa solução foi adotar práticas padrão para back-ends de alta escala e, posteriormente, aplicar as técnicas que utilizámos em sistemas peer-to-peer para criar uma rede aberta.
+
+<FooterCTA href="/" title="Está pronto para saber mais?" description="Especificações, guias e SDKs podem ser encontrados aqui." />
