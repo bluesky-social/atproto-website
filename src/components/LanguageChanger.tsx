@@ -12,7 +12,6 @@ export default function LanguageChanger() {
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newLocale = e.target.value
-    console.log(e.target.value)
 
     // set cookie for next-i18n-router
     const days = 30
