@@ -38,7 +38,7 @@ export default function LanguageChanger() {
     >
       <option value="en">English</option>
       <option value="pt-BR">Português (Brasil)</option>
-      {/* <option value="pt-PT">Português (Portugal)</option> */}
+      <option value="pt-PT">Português (Portugal)</option>
       <option value="ja">日本語</option>
     </select>
   )
