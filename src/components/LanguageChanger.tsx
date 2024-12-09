@@ -1,10 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
 import { useCurrentLocale } from 'next-i18n-router/client'
-import i18nConfig from '../../i18nConfig'
+import { usePathname, useRouter } from 'next/navigation'
 import { ChangeEvent } from 'react'
+import i18nConfig from '../../i18nConfig'
 
 export default function LanguageChanger() {
   const currentLocale = useCurrentLocale(i18nConfig)
@@ -13,6 +12,7 @@ export default function LanguageChanger() {
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newLocale = e.target.value
+    console.log(e.target.value)
 
     // set cookie for next-i18n-router
     const days = 30
@@ -37,7 +37,8 @@ export default function LanguageChanger() {
       className="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-700"
     >
       <option value="en">English</option>
-      <option value="pt">Português</option>
+      <option value="pt-BR">Português (Brasil)</option>
+      {/* <option value="pt-PT">Português (Portugal)</option> */}
       <option value="ja">日本語</option>
     </select>
   )
