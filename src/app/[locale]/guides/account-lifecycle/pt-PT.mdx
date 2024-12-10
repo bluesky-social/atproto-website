@@ -1,0 +1,52 @@
+export const metadata = {
+  title: 'Eventos do ciclo de vida da conta',
+  description:
+    'Melhores práticas do ciclo de vida da conta',
+}
+
+# Melhores práticas do ciclo de vida da conta
+
+Este documento complementa a especificação [Account Hosting](/specs/account), que fornece uma visão geral de alto nível dos ciclos de vida da conta. Resume os comportamentos esperados para algumas transições comuns do ciclo de vida da conta e quais os eventos de firehose esperados e em que ordem. Em geral, espera-se que o software seja resistente à transmissão parcial ou incorrecta de eventos.
+
+**Criação de uma nova conta:** quando uma conta é registada num PDS e é criada uma nova identidade (DID).
+
+- o PDS gerará ou confirmará a existência da identidade da conta (DID e identificador). Quando o DID estiver num estado confirmado que possa ser resolvido por outros serviços na rede e apontar para a instância atual do PDS, o PDS emite um evento `#identity`. É bom, mas não obrigatório, esperar até que o identificador possa ser resolvido por terceiros antes de emitir o evento (especialmente, mas não só, se o PDS estiver a fornecer um identificador para a conta). O estado da conta pode ou não ser “ativo” quando este evento é emitido.
+- uma vez que a criação da conta tenha sido completada o PDS responderá com `active` aos pedidos da API para o estado da conta, um evento `#account` pode ser emitido
+- quando o repositório da conta é inicializado com um `rev` e `commit`, uma mensagem `#commit` pode ser emitida. O repositório inicial pode estar “vazio” (sem registos) ou pode conter registos.
+- a ordem específica dos eventos não é formalmente especificada, mas a ordem recomendada é: `#identity`, `#account`, `#commit`
+- os serviços downstream processam e passam por estes eventos
+
+A **Migração de contas:** é descrita de seguida de forma mais detalhada, mas os eventos e comportamentos relevantes são:
+
+- o novo PDS não emitirá qualquer evento aquando da criação inicial da conta. O estado da conta será `deactivated` no novo PDS (que responderá como tal aos pedidos API)
+- quando a identidade é actualizada e confirmada pelo novo PDS, este deve emitir um evento `#identity`
+- quando a conta é mudada para `active` no novo PDS, este deve emitir um evento `#account` e um evento `#commit`; a ordem não é formalmente necessária, mas recomenda-se que o evento `#account` seja feito primeiro. Idealmente o evento `#commit` estará vazio (sem novos registos) mas assinado com qualquer nova chave de assinatura. E terá um `rev` novo/incrementado.
+- quando a conta é desactivada no PDS antigo, este deve emitir um evento `#account`, indicando que a conta está inativa e tem o estado `deactivated`.
+- Os retransmissores devem ignorar os eventos `#account` e `#commit` que não são provenientes da instância do PDS declarada atualmente para a identidade: estes não devem ser passados para o firehose de saída. Além disso, eles devem ignorar eventos `#commit` quando o status da conta local não for `active`. No geral, isso significa que a migração de contas deve resultar em três eventos vindos do relay: um `#identity` (do novo PDS), um `#account` (do novo PDS), e um `#commit` (do novo PDS). A `#account` do antigo PDS é normalmente ignorada.
+- Serviços downstream (por exemplo, AppView) devem atualizar seu cache de identidade e incrementar o `rev` da conta (quando o `#commit` é recebido), mas de outra forma não será necessário tomar nenhuma ação.
+
+**Eliminação de conta:**
+
+- O PDS emite um evento `#account`, com `active` false e status `deleted`.
+- O Relay atualiza o status da conta local para o repo e passa pelo evento `#account`. Se o Relay é um espelho completo, ele irá parar imediatamente de servir `getRepo`, `getRecord` e requisições API similares para a conta, indicando a razão no erro de resposta. O Relay pode apagar totalmente o conteúdo do repositório localmente de acordo com a política local. A janela de backfill do firehose não precisa ser imediatamente limpa de eventos de commit para o repo desde que a janela de backfill seja limitada por tempo.
+- o PDS não deve emitir eventos `#commit` para uma conta que não esteja “ativa”. Se mais alguma mensagem `#commit` for emitida para o repositório (por exemplo, por acidente ou processamento ou entrega fora de ordem), todos os serviços downstream devem ignorar o evento e não o transmitir
+- os serviços downstream (por exemplo, AppView) devem parar imediatamente de servir/distribuir conteúdo para a conta. Podem adiar a eliminação permanente dos dados de acordo com a política local. A atualização de agregações (por exemplo, contagens de registos) pode também ser adiada ou processada numa fila de espera em segundo plano de acordo com a política e a implementação. As mensagens de estado de erro podem indicar que o conteúdo “desapareceu” (existia, mas já não está disponível) ou que o conteúdo “não foi encontrado” (não revelando que o conteúdo existia anteriormente)
+
+A remoção de contas funciona de forma semelhante à eliminação de contas.
+
+**Desativação de conta:**
+
+- O PDS emite um evento `#account`, com `active` false e status `deactivated`.
+- Semelhante à eliminação, o Relay processa o evento, pára de redistribuir o conteúdo e passa pelo evento. O Relay não deve limpar totalmente o conteúdo localmente, embora possa eventualmente apagar cópias locais se o status de desativação persistir por um longo tempo (de acordo com a política local).
+- semelhante à eliminação, eventos `#commit` não devem ser emitidos pelo PDS e devem ser ignorados e não repassados se recebidos pelos Relays
+- os serviços downstream (por exemplo, AppViews) devem tornar o conteúdo indisponível mas não precisam de apagar os dados localmente. Devem indicar o estado da conta/conteúdo como “indisponível”; a melhor prática é indicar especificamente que tal se deve à desativação da conta.
+
+A suspensão da conta funciona de forma semelhante à desativação.
+
+**Reativação de conta:**
+
+- O PDS emite um evento `#account`, com o estado `active`.
+- O Relay verifica que a reativação da conta é válida, por exemplo, que veio da instância atual do PDS para a identidade. Actualiza o estado da conta local e transmite o evento.
+- quaisquer serviços downstream (por exemplo, AppViews) devem atualizar o estado da conta local para a conta.
+- qualquer serviço que não tenha qualquer conteúdo de repositório atual para a conta (por exemplo, porque foi anteriormente eliminado) pode ir buscar uma exportação CAR de repositório e processá-la como uma tarefa em segundo plano. Um host “upstream” (como um relay) pode ter uma cópia do repo, ou o serviço pode se conectar diretamente ao host PDS da conta. Eles não são obrigados a fazer isso e podem esperar por um evento `#commit`.
+- se a conta foi previamente excluída ou ficou inativa por um longo tempo, é uma boa prática para o PDS emitir um evento `#commit` vazio após a reativação para garantir que os serviços downstream estejam sincronizados
