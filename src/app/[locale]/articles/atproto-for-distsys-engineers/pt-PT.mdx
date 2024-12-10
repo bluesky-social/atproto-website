@@ -1,14 +1,6 @@
-import {Container} from "@/components/Container"
-import {FooterCTA} from "@/components/FooterCTA"
+import { Container } from "@/components/Container"
+import { FooterCTA } from "@/components/FooterCTA"
 import image1 from "./image1.png"
-import image2 from "./image2.png"
-import image3 from "./image3.png"
-import image4 from "./image4.png"
-import image5 from "./image5.png"
-import image6 from "./image6.png"
-import image7 from "./image7.png"
-import image8 from "./image8.png"
-import image9 from "./image9.png"
 import image10 from "./image10.png"
 import image11 from "./image11.png"
 import image12 from "./image12.png"
@@ -19,27 +11,33 @@ import image16 from "./image16.png"
 import image17 from "./image17.png"
 import image18 from "./image18.png"
 import image19 from "./image19.png"
+import image2 from "./image2.png"
 import image20 from "./image20.png"
 import image21 from "./image21.png"
 import image22 from "./image22.png"
 import image23 from "./image23.png"
 import image24 from './image24.png'
+import image3 from "./image3.png"
+import image4 from "./image4.png"
+import image5 from "./image5.png"
+import image6 from "./image6.png"
+import image7 from "./image7.png"
+import image8 from "./image8.png"
+import image9 from "./image9.png"
 
 export const metadata = {
   title: 'ATProto para engenheiros de sistemas distribuídos',
   description:
-    'AT Protocol é a tecnologia desenvolvida na Bluesky para redes sociais abertas. Neste artigo, vamos explorar o AT Proto do ponto de vista da engenharia de back-end distribuído.',
+    'Protocolo AT é a tecnologia desenvolvida na Bluesky para redes sociais abertas. Neste artigo vamos explorar o AT Proto do ponto de vista da engenharia de back-end distribuído.',
 }
 
 # ATProto para engenheiros de sistemas distribuídos
 
 *3 de setembro de 2024*
 
-AT Protocol é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o AT protocol do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
+Protocolo AT é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o protocolo AT do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
 
-O protocolo AT é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o protocolo AT do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
-
-Se alguma vez construiu um back-end com [stream-processing](https://milinda.pathirage.org/kappa-architecture.com/), então está familiarizado com o tipo de sistemas que vamos explorar. Se ainda não estiver, não se preocupe, iremos explicar-lhe tudo. {{className: 'lead'}}
+Se já construiu um back-end com [stream-processing](https://milinda.pathirage.org/kappa-architecture.com/), então já está familiarizado com o tipo de sistemas que vamos explorar. Se ainda não estiver, não se preocupe, iremos explicar-lhe tudo. {{className: 'lead'}}
 
 ## Escalar o back-end tradicional da Web
 
@@ -49,7 +47,7 @@ A clássica e feliz arquitetura da Web é a “grande base de dados SQL” por d
   <Image src={image1} alt="" className="w-full dark:invert max-w-md mx-auto" />
 </Container>
 
-À medida que a nossa aplicação cresce, atingimos alguns limites de desempenho, pelo que aplicamos alguma cache.
+À medida que a nossa aplicação cresce atingimos alguns limites de desempenho, pelo que aplicamos alguma cache.
 
 <Container>
   <Image src={image2} alt="" className="w-full dark:invert max-w-2xl mx-auto" />
@@ -61,17 +59,17 @@ Depois, digamos que escalamos a nossa base de dados horizontalmente através de 
   <Image src={image3} alt="" className="w-full dark:invert max-w-xl mx-auto" />
 </Container>
 
-Isto é bastante bom, mas estamos a construir uma rede social com centenas de milhões de utilizadores; ainda assim este modelo atinge os seus limites. O problema é que a nossa base de dados SQL é “[strongly consistent](https://en.wikipedia.org/wiki/Strong_consistency)”, o que significa que o estado é mantido uniformemente sincronizado em todo o sistema. Manter a consistência forte incorre num custo de desempenho que se torna o nosso gargalo. 
+Isto é muito bom, mas estamos a construir uma rede social com centenas de milhões de utilizadores; ainda assim este modelo tem os seus limites. O problema é que a nossa base de dados SQL é “[strongly consistent](https://en.wikipedia.org/wiki/Strong_consistency)”, o que significa que o estado é mantido uniformemente e sincronizado em todo o sistema. Manter a consistência forte incorre num custo de desempenho que se torna o nosso gargalo. 
 
-Se pudermos relaxar o nosso sistema para utilizar “[eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency)”, podemos escalar muito mais. Começamos por mudar para um cluster NoSQL.
+Se aliviarmos o nosso sistema para utilizar “[eventual consistency](https://en.wikipedia.org/wiki/Eventual_consistency)”, podemos escalar muito mais. Começamos por mudar para um cluster NoSQL.
 
 <Container>
   <Image src={image4} alt="" className="w-full dark:invert max-w-lg mx-auto" />
 </Container>
 
-Isto é melhor para escalar mas sem SQL torna-se mais difícil construir as nossas consultas. Acontece que as bases de dados SQL têm muitas funcionalidades úteis, como as consultas JOIN e de agregação. De facto, a nossa base de dados NoSQL é apenas um armazenamento de valores chave. Escrever funcionalidades está a tornar-se uma dor de cabeça!
+Isto é melhor para escalar mas sem SQL torna-se mais difícil construir as nossas consultas. Acontece que as bases de dados SQL têm muitas funcionalidades úteis, como as consultas JOIN e de agregação. De facto, a nossa base de dados NoSQL é apenas um armazenamento de valores chave. Escrever funcionalidades torna-se uma dor de cabeça!
 
-Para resolver isso, precisamos de escrever criar vistas pré-computadas do nosso conjunto de dados. Estas vistas são essencialmente como consultas em cache. Até duplicamos os dados canónicos nestas visualizações para que sejam mais rápidas.
+Para resolver isso precisamos de criar vistas pré-computadas do nosso conjunto de dados. Estas vistas são essencialmente como consultas em cache. Até duplicamos os dados canónicos nestas visualizações para que sejam mais rápidas.
 
 Vamos chamar-lhes os nossos servidores de visualização.
 
@@ -81,21 +79,21 @@ Vamos chamar-lhes os nossos servidores de visualização.
 
 Agora percebemos que manter os nossos servidores de visualização sincronizados com os dados canónicos no cluster NoSQL é complicado. Por vezes, os nossos servidores de exibição falham e perdem atualizações. Precisamos de garantir que as nossas exibições permanecem atualizadas de forma confiável.
 
-Para resolver este problema, introduzimos um registo de eventos (como o [Kafka](https://kafka.apache.org/)). Esse registo regista e transmite todas as alterações ao cluster NoSQL. Os nossos servidores de visualização ouvem &mdash; e reproduzem &mdash; esse registo para garantir que nunca perdem uma atualização, mesmo quando estes precisam de reiniciar.
+Para resolver este problema, introduzimos um registo de eventos (como o [Kafka](https://kafka.apache.org/)). Esse registo regista e transmite todas as alterações ao cluster NoSQL. Os nossos servidores de visualização escutam &mdash; e reproduzem &mdash; esse registo para garantir que nunca perdem uma atualização, mesmo quando estes precisam de reiniciar.
 
 <Container>
   <Image src={image6} alt="" className="w-full dark:invert" />
 </Container>
 
-Chegámos agora a uma [stream processing architecture] (https://milinda.pathirage.org/kappa-architecture.com/) e, embora existam mais pormenores que poderíamos abordar isto será suficiente por agora.
+Chegámos agora a uma [stream processing architecture] (https://milinda.pathirage.org/kappa-architecture.com/) e, embora existam mais pormenores que se poderiam abordar, isto será suficiente por agora.
 
-A boa notícia é que esta arquitetura escala bastante bem. Abdicámos de uma consistência forte e, por vezes, as nossas consultas de leitura ficam aquém da versão mais actualizada dos dados, mas o serviço não deixa de escrever nem entra num estado incorreto.
+A boa notícia é que esta arquitetura escala muito bem. Abdicámos de uma consistência forte e, por vezes, as nossas consultas de leitura ficam aquém da versão mais actualizada dos dados mas o serviço não deixa de escrever nem entra num estado incorreto.
 
-De certa forma, o que fizemos, foi construir uma base de dados à medida, [turning it inside-out] (https://www.youtube.com/watch?v=fU9hR3kiOK0). Simplificámos o armazenamento canónico num cluster NoSQL e construímos o nosso próprio motor de consulta com os servidores de visualização. É menos conveniente na sua construção, mas é escalável.
+De certa forma, o que fizemos foi construir uma base de dados à medida, [turning it inside-out] (https://www.youtube.com/watch?v=fU9hR3kiOK0). Simplificámos o armazenamento canónico num cluster NoSQL e construímos o nosso próprio motor de consulta com os servidores de visualização. É menos conveniente na sua construção, mas é escalável.
 
 ## Descentralizar o nosso back-end de alta escala
 
-O objetivo do AT Protocol é interligar aplicações de modo a que os seus back-ends partilhem o estado, incluindo contas de utilizador e conteúdos.
+O objetivo do Protocolo AT é interligar aplicações de modo a que os seus back-ends partilhem o estado, incluindo contas de utilizador e conteúdos.
 
 Como podemos fazer isso? Se olharmos para o nosso diagrama, podemos ver que a maior parte do sistema está isolado do mundo exterior, com apenas o servidor de aplicações a fornecer uma interface pública.
 
@@ -129,13 +127,13 @@ Vamos estabelecer um modelo de dados partilhado chamado [“user data repository
   <Image src={image10} alt="" className="w-full dark:invert max-w-72 mx-auto" />
 </Container>
 
-Cada repositório de dados contém documentos JSON, a que chamaremos “registos”.
+Cada repositório de dados contém documentos JSON a que chamaremos “registos”.
 
 <Container>
   <Image src={image11} alt="" className="w-full dark:invert max-w-lg mx-auto" />
 </Container>
 
-Para efeitos de organização, dividimos estes registos em “colecções”.
+Para efeitos de organização dividimos estes registos em “colecções”.
 
 <Container>
   <Image src={image12} alt="" className="w-full dark:invert max-w-lg mx-auto" />
@@ -195,13 +193,13 @@ Mas vamos ver o que acontece quando escrevemos um documento JSON.
   <Image src={image19} alt="" className="w-full dark:invert max-w-xl mx-auto" />
 </Container>
 
-Isto faz o commit do documento para o repositório e cria um registo nos registos de eventos que estão a ouvir o repositório.
+Isto faz o commit do documento para o repositório e cria um registo nos registos de eventos que estão a escutar o repositório.
 
 <Container>
   <Image src={image20} alt="" className="w-full dark:invert" />
 </Container>
 
-A partir daí, o evento é enviado para quaisquer serviços de visualização que estejam a ouvir &mdash; incluindo o nosso!
+A partir daí, o evento é enviado para quaisquer serviços de visualização que estejam a escutar &mdash; incluindo o nosso!
 
 <Container>
   <Image src={image21} alt="" className="w-full dark:invert" />
@@ -227,8 +225,8 @@ E (espera-se) que esta rede continue a crescer: não apenas para aumentar a capa
 
 ## Criar sistemas abertos práticos
 
-O AT Protocol funde a tecnologia p2p com práticas de sistemas de alta escala. Os nossos engenheiros fundadores eram engenheiros de base do [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) e do [Dat](https://en.wikipedia.org/wiki/Dat_(software)), e Martin Kleppmann &mdash; o autor de [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; é um consultor técnico ativo.
+O Protocolo AT funde a tecnologia p2p com práticas de sistemas de alta escala. Os nossos engenheiros fundadores eram engenheiros de base do [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) e do [Dat](https://en.wikipedia.org/wiki/Dat_(software)), e Martin Kleppmann &mdash; o autor de [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; é um consultor técnico ativo.
 
-Antes de iniciarmos a Bluesky estabelecemos um requisito claro de “não dar passos para trás”. Queríamos que a rede fosse tão conveniente e global como todas as aplicações sociais anteriores, sem deixar de funcionar como uma rede aberta. É por isso que, quando olhámos para a federação e para as cadeias de blocos, os limites de escala dessas arquitecturas sobressaíram para nós. A nossa solução foi adotar práticas padrão para back-ends de alta escala e, posteriormente, aplicar as técnicas que utilizámos em sistemas peer-to-peer para criar uma rede aberta.
+Antes de iniciarmos a Bluesky estabelecemos um requisito claro de “não dar passos para trás”. Queríamos que a rede fosse tão conveniente e global como todas as aplicações sociais anteriores, sem deixar de funcionar como uma rede aberta. É por isso que ao olhar para a federação e para as cadeias de blocos, os limites de escala dessas arquitecturas sobressaíram para nós. A nossa solução foi adotar práticas padrão para back-ends de alta escala e, posteriormente, aplicar as técnicas que utilizámos em sistemas peer-to-peer para criar uma rede aberta.
 
 <FooterCTA href="/" title="Está pronto para saber mais?" description="Especificações, guias e SDKs podem ser encontrados aqui." />
