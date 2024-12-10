@@ -28,14 +28,14 @@ import image9 from "./image9.png"
 export const metadata = {
   title: 'ATProto para engenheiros de sistemas distribuídos',
   description:
-    'Protocolo AT é a tecnologia desenvolvida na Bluesky para redes sociais abertas. Neste artigo vamos explorar o AT Proto do ponto de vista da engenharia de back-end distribuído.',
+    'AT Protocol é a tecnologia desenvolvida na Bluesky para redes sociais abertas. Neste artigo vamos explorar o AT Proto do ponto de vista da engenharia de back-end distribuído.',
 }
 
 # ATProto para engenheiros de sistemas distribuídos
 
 *3 de setembro de 2024*
 
-Protocolo AT é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o protocolo AT do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
+AT Protocol é a tecnologia desenvolvida na [Bluesky] (https://bsky.app) para redes sociais abertas. Neste artigo, vamos explorar o AT Protocol do ponto de vista da engenharia de back-end distribuído. {{className: 'lead'}}
 
 Se já construiu um back-end com [stream-processing](https://milinda.pathirage.org/kappa-architecture.com/), então já está familiarizado com o tipo de sistemas que vamos explorar. Se ainda não estiver, não se preocupe, iremos explicar-lhe tudo. {{className: 'lead'}}
 
@@ -93,7 +93,7 @@ De certa forma, o que fizemos foi construir uma base de dados à medida, [turnin
 
 ## Descentralizar o nosso back-end de alta escala
 
-O objetivo do Protocolo AT é interligar aplicações de modo a que os seus back-ends partilhem o estado, incluindo contas de utilizador e conteúdos.
+O objetivo do AT Protocol é interligar aplicações de modo a que os seus back-ends partilhem o estado, incluindo contas de utilizador e conteúdos.
 
 Como podemos fazer isso? Se olharmos para o nosso diagrama, podemos ver que a maior parte do sistema está isolado do mundo exterior, com apenas o servidor de aplicações a fornecer uma interface pública.
 
@@ -225,7 +225,7 @@ E (espera-se) que esta rede continue a crescer: não apenas para aumentar a capa
 
 ## Criar sistemas abertos práticos
 
-O Protocolo AT funde a tecnologia p2p com práticas de sistemas de alta escala. Os nossos engenheiros fundadores eram engenheiros de base do [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) e do [Dat](https://en.wikipedia.org/wiki/Dat_(software)), e Martin Kleppmann &mdash; o autor de [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; é um consultor técnico ativo.
+O AT Protocol funde a tecnologia p2p com práticas de sistemas de alta escala. Os nossos engenheiros fundadores eram engenheiros de base do [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) e do [Dat](https://en.wikipedia.org/wiki/Dat_(software)), e Martin Kleppmann &mdash; o autor de [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) &mdash; é um consultor técnico ativo.
 
 Antes de iniciarmos a Bluesky estabelecemos um requisito claro de “não dar passos para trás”. Queríamos que a rede fosse tão conveniente e global como todas as aplicações sociais anteriores, sem deixar de funcionar como uma rede aberta. É por isso que ao olhar para a federação e para as cadeias de blocos, os limites de escala dessas arquitecturas sobressaíram para nós. A nossa solução foi adotar práticas padrão para back-ends de alta escala e, posteriormente, aplicar as técnicas que utilizámos em sistemas peer-to-peer para criar uma rede aberta.
 
