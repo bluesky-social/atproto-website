@@ -4,6 +4,7 @@ import { toString } from 'mdast-util-to-string'
 import { mdxAnnotations } from 'mdx-annotations'
 import shiki from 'shiki'
 import { visit } from 'unist-util-visit'
+import { rehypeGithubAlerts } from 'rehype-github-alerts';
 
 function rehypeParseCodeBlocks() {
   return (tree) => {
@@ -112,6 +113,7 @@ function getSections(node) {
 
 export const rehypePlugins = [
   mdxAnnotations.rehype,
+  rehypeGithubAlerts,
   rehypeParseCodeBlocks,
   rehypeShiki,
   rehypeSlugify,
