@@ -60,7 +60,7 @@ const official: LibraryProp[] = [
       bsky: 'none',
       crypto: 'full',
       mst: 'full',
-      lexicon: 'none',
+      lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'full',
