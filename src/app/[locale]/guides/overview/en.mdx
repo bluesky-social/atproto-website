@@ -6,21 +6,21 @@ export const metadata = {
 
 # Protocol Overview
 
-The **Authenticated Transfer Protocol**, aka **atproto**, is a federated protocol for large-scale distributed social applications. This document will introduce you to the ideas behind the AT Protocol.
+The **Authenticated Transfer Protocol**, aka **atproto**, is a decentralized protocol for large-scale social web applications. This document will introduce you to the ideas behind the AT Protocol.
 
 ## Identity
 
-Users are identified by domain names on the AT Protocol. These domains map to cryptographic URLs which secure the user's account and its data.
+Users in AT Protocol have permanent decentralized identifiers (DIDs) for their accounts. They also have a configurable domain name, which acts as a human-readable handle. Identities include a reference to the user's current hosting provider and cryptographic keys.
 
-## Data repositories
+## Data Repositories
 
-User data is exchanged in [signed data repositories](/guides/data-repos). These repositories are collections of records which include posts, comments, likes, follows, media blobs, etc.
+User data is exchanged in [signed data repositories](/guides/data-repos). These repositories are collections of records which include posts, comments, likes, follows, etc.
 
-## Federation
+## Network Architecture
 
-The AT Protocol syncs the repositories in a federated networking model. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
+The AT Protocol has a federated network architecture, meaning that account data is stored on host servers, as opposed to a peer-to-peer model between end devices. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
 
-The three core services in our network are Personal Data Servers (PDS), Relays, and App Views. We're also working on feed generators and labelers.
+The three core services in our network are Personal Data Servers (PDS), Relays, and App Views. There are also supporting services such as feed generators and labelers.
 
 The lower-level primitives that can get stacked together differently are the repositories, lexicons, and DIDs. We published an overview of our technical decisions around federation architecture [on our blog](https://bsky.social/about/blog/5-5-2023-federation-architecture).
 
@@ -28,38 +28,40 @@ The lower-level primitives that can get stacked together differently are the rep
 
 A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core `com.atproto.*` lexicons for syncing user repositories and the `app.bsky.*` lexicons to provide basic social behaviors.
 
-While the Web exchanges documents, the AT Protocol exchanges schematic and semantic information, enabling the software from different orgs to understand each others' data. This gives atproto clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
+While the Web exchanges documents, the AT Protocol exchanges schematic and semantic information, enabling the software from different organizations to understand each others' data. This gives atproto clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
-## Achieving scale
+## Achieving Scale
 
-Personal data servers are your home in the cloud. They host your data, distribute it, manage your identity, and orchestrate requests to other services to give you your views.
+Personal Data Servers are your home in the cloud. They host your data, distribute it, manage your identity, and orchestrate requests to other services to give you your views.
 
-Relays handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
+Relays collect data updates from many servers in to a single firehose.
 
-This distinction is intended to achieve scale as well as a high degree of user-choice.
+App Views provide aggregated application data for the entire network. They support large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
+
+This separation of roles is intended to provide users with choice between multiple interoperable providers, while also scaling to large network sizes.
 
 ## Algorithmic choice
 
-As with Web search engines, users are free to select their aggregators. Feeds, App Views, and search indices can be provided by independent third parties, with requests routed by the PDS based on user configuration.
+As with Web search engines, users are free to select their aggregators. Feeds, labelers, and search indices can be provided by independent third parties, with requests routed by the PDS, based on client app configuration. Client apps may be tied to specific services, such as App Views or mandatory labelers.
 
 ## Account portability
 
 We assume that a Personal Data Server may fail at any time, either by going offline in its entirety, or by ceasing service for specific users. The goal of the AT Protocol is to ensure that a user can migrate their account to a new PDS without the server's involvement.
 
-User data is stored in [signed data repositories](/guides/data-repos) and verified by [DIDs](/guides/identity). Signed data repositories are like Git repos but for database records, and DIDs are essentially registries of user certificates, similar in some ways to the TLS certificate system. They are expected to be secure, reliable, and independent of the user's PDS.
+User data is stored in [signed data repositories](/guides/data-repos) and authenticated by [DIDs](/guides/identity). Signed data repositories are like Git repos but for database records, and DIDs provide a directory of cryptographic keys, similar in some ways to the TLS certificate system. Identities are expected to be secure, reliable, and independent of the user's PDS.
 
-Each DID document publishes two public keys: a signing key and a recovery key.
+Most DID documents publish two types public keys: a signing key and rotation keys.
 
-* **Signing key**: Asserts changes to the DID Document *and* to the user's data repository.
-* **Recovery key**: Asserts changes to the DID Document; may override the signing key within a 72-hour window.
+* **Signing key**: Validates the user's data repository. All DIDs include such a key.
+* **Rotation keys**: Asserts changes to the DID Document itself. The PLC DID method includes this, while the DID Web method does not.
 
-The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+The signing key is entrusted to the PDS so that it can manage the user's data, but rotation keys can be controlled by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
 
-A backup of the user’s data will be persistently synced to their client as a backup (contingent on the disk space available). Should a PDS disappear without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading the backup.
+A backup of the user’s data could be persistently synced to a user's own device as a backup (contingent on the disk space available), or mirrored by a third-party service. In the event their PDS disappears without notice, the user should be able to migrate to a new provider by updating their DID Document and uploading their data backup.
 
 ## Speech, reach, and moderation
 
-Atproto's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+AT Protocol's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
 The base layer of atproto (personal data repositories and federated networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The indexing services then enable reach by aggregating content from the network, analogous to a search engine.
 
@@ -72,6 +74,3 @@ Some of the primary specifications comprising the initial version of the AT Prot
 - [Repository](/specs/repository) and [Data Model](/specs/data-model)
 - [Lexicon](/specs/lexicon)
 - [HTTP API (XRPC)](/specs/xrpc) and [Event Streams](/specs/event-stream)
-
-
-From here, you can continue reading the [guides and specs](/).
