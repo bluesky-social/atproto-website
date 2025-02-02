@@ -152,6 +152,8 @@ There are several ways to include a CID hash reference in an atproto object:
 
 When working with the deprecated/legacy "blob" format, it is recommend to store in the same internal representation as regular "blob" references, but to set the `size` to zero or a negative value. This field should be checked when re-serializing to ensure proper round-trip behavior and avoid ever encoding a zero or negative `size` value in the normal object format.
 
+Best practices for validating and limiting the size and structure of generic atproto data are described in a [Data Validation guide](/guides/data-validation), which is not formally part of this specification.
+
 ## Security and Privacy Considerations
 
 There are a number of resource-consumption attacks possible when parsing untrusted CBOR content. It is recommended to use a library that automatically protects against huge allocations, deep nesting, invalid references, etc. This is particularly important for libraries implemented in languages without strong memory safety, such as C and C++. Note that high-level languages frequently wrap parsers written in lower-level languages.
