@@ -18,7 +18,11 @@ Self-hosting a Bluesky PDS means running your own Personal Data Server that is c
 * [Verifying that your PDS is online and accessible](#verifying-that-your-pds-is-online-and-accessible)
 * [Creating an account using pdsadmin](#creating-an-account-using-pdsadmin)
 * [Creating an account using an invite code](#creating-an-account-using-an-invite-code)
+* [Setting up an SMTP server](#setting-up-an-smtp-server )
 * [Using the Bluesky app with your PDS](#using-the-bluesky-app-with-your-pds)
+* [Adding a top level domain name as your handle](#adding-a-top-level-domain-name-as-your-handle)
+* [Using updateAccountHandle to update your handle](#using-update-account-handle-to-update-your-handle)
+* [Debugging invalid.handle warning](#debugging-invalid-handle-warning)
 * [Updating your PDS](#updating-your-pds)
 * [Getting help](#getting-help)
 
@@ -143,6 +147,39 @@ sudo pdsadmin create-invite-code
 
 When creating an account using the app, enter this invite code.
 
+## Setting up an SMTP server
+
+After setting up your PDS configure an SMTP server to recieve emails from Bluesky app, like the "verify your email address" email.
+
+On your PDS server open the file `/pds/pds.env`
+
+```bash
+sudo nano /pds/pds.env
+```
+
+Add these lines with your specific setup:
+
+```bash
+PDS_EMAIL_FROM_ADDRESS="example@gmailaccount.tld"
+PDS_EMAIL_SMTP_URL="smtps://example@gmailaccount.tld:<app-password>.gmail.com:465"
+```
+
+We recommend using Google's [Gmail SMTP server](https://support.google.com/a/answer/176600?hl=en) as a fast way to setup an SMTP server for users with a gmail account. You will need to generate an [app password](https://support.google.com/accounts/answer/185833?sjid=10418456355978061137-NC).
+
+Restart your pds server after changing the environment variables in `/pds/pds.env`
+
+_Note: To bypass SMTP setup for email verification you can query the sqlite table (email_token table) on your PDS._
+
+```bash
+sudo sqlite3 /pds/account.sqlite "SELECT * FROM email_token;"
+```
+
+_The token will be in the third column_
+
+```bash
+update_email|did:plc:someid|EMAIIL-TOKEN|2024-11-06T18:35:18.589Z
+```
+
 ## Using the Bluesky app with your PDS
 
 You can use the Bluesky app to connect to your PDS.
@@ -154,6 +191,69 @@ You can use the Bluesky app to connect to your PDS.
 1. Enter the URL of your PDS (e.g. `https://example.com/`)
 
 _Note: because the subdomain TLS certificate is created on-demand, it may take 10-30s for your handle to be accessible. If you aren't seeing your first post/profile, wait 30s and try to make another post._
+
+_Note: Users with Squarespace hosted subdomains have reported having issues which resolved after switching to domain registrars with support for wildcard subdomains._
+
+## Adding a top level domain name as your handle
+
+* Create an account using a temporary bluesky handle
+* In the Bluesky app go to Settings > Change Handle
+* Choose "I have my own domain"
+* Enter your domain name
+* Add the provided TXT record to your DNS records
+* Click "Verify DNS record"
+
+_Tip: Before deleting your Bluesky account, change to a temporary handle if you want to reuse the TLD._
+
+## Using updateAccountHandle to update your handle
+
+Run the following curl command with your specific variables. See [updateAccountHandle](https://docs.bsky.app/docs/api/com-atproto-admin-update-account-handle) for docs.
+
+```bash
+curl --fail --silent --show-error \
+     --request POST \
+     --header "Content-Type: application/json" \
+     --user "admin:${PDS_ADMIN_PASSWORD}" \
+     --data "{\"did\": \"${DID}\", \"handle\": \"${HANDLE}\"}" \
+     "https://${PDS_HOSTNAME}/xrpc/com.atproto.admin.updateAccountHandle"
+```
+
+The variables you need can be found in `/pds/pds.env`
+
+```bash
+sudo cat /pds/pds.env
+```
+
+
+
+## Debugging invalid.handle warning
+
+[Goat](https://github.com/bluesky-social/indigo/blob/d1686e9b80835948407fd7ad2428e92379298dac/cmd/goat/README.md) is a helpful tool for figuring out what's going on with your handle.
+
+```txt
+$ goat resolve wyden.senate.gov
+{
+  "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+  "alsoKnownAs": [
+    "at://wyden.senate.gov"
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc#atproto",
+      "type": "Multikey",
+      "controller": "did:plc:ydtsvzzsl6nlfkmnuooeqcmc",
+      "publicKeyMultibase": "zQ3shuMW7q4KBdsFcdvebGi2EVv8KcqS24tF9Pg7Wh5NLB2NM"
+    }
+  ],
+  "service": [
+    {
+      "id": "#atproto_pds",
+      "type": "AtprotoPersonalDataServer",
+      "serviceEndpoint": "https://shimeji.us-east.host.bsky.network"
+    }
+  ]
+}
+```
 
 ## Updating your PDS
 
