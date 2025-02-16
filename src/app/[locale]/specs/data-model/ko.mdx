@@ -1,0 +1,160 @@
+export const metadata = {
+  title: '데이터 모델',
+  description: '레코드와 메시지를 위한 일관된 데이터 인코딩 방식입니다.',
+}
+
+# 데이터 모델
+
+atproto에서 레코드와 메시지는 일관된 방식으로 저장, 전송, 인코딩, 인증됩니다. 핵심 "데이터 모델"은 이진(CBOR)과 텍스트(JSON) 표현 방식을 모두 지원합니다. {{ className: 'lead' }}
+
+데이터가 인증(서명)되거나, 참조(내용 해시로 연결)되거나, 효율적으로 저장되어야 할 때, 데이터는 **Concise Binary Object Representation (CBOR)** 으로 인코딩됩니다. CBOR은 JSON을 기반으로 한 IETF 표준입니다. atproto 데이터 모델에서 사용되는 CBOR의 특정 표준화된 하위 집합은 **DAG-CBOR** 라고 합니다. 모든 DAG-CBOR 데이터는 유효한 CBOR이며, 모든 CBOR 라이브러리로 읽을 수 있습니다. 올바른 정규화 규칙을 사용하여 DAG-CBOR를 작성하거나 엄격하게 검증하려면 추가 구성이나 특별한 CBOR 구현이 필요할 수 있습니다. {{ className: 'lead' }}
+
+atproto의 스키마 정의 언어는 [Lexicon](/specs/lexicon)입니다. [데이터 레포지토리](/specs/repository) 내부와 같은 다른 하위 수준의 데이터 구조는 Lexicon으로 지정되지는 않지만, 동일한 데이터 모델과 인코딩 방식을 사용합니다.
+
+서로 구분되는 데이터 조각들은 **노드**라고 하며, 이진(DAG-CBOR)으로 인코딩될 경우 **블록**이 됩니다. 하나의 노드는 내부에 중첩된 구조(맵 또는 리스트)를 포함할 수 있습니다. 노드는 일반적인 JSON과 마찬가지로 문자열 URL이나 URI로 서로를 참조할 수 있습니다. 또한 **링크**라고 하는 해시를 통해 강하게 서로를 참조할 수도 있습니다. 링크된 노드들의 집합은 [머클 트리](https://en.wikipedia.org/wiki/Merkle_tree) 또는 [DAG (Directed Acyclical Graph)](https://en.wikipedia.org/wiki/Directed_acyclic_graph)와 같은 상위 수준의 데이터 구조를 형성할 수 있습니다. 링크는 임의의 이진 데이터(블롭)도 참조할 수 있습니다.
+
+URL과 달리, 해시 참조(링크)는 콘텐츠를 찾을 수 있는 특정 네트워크 위치를 인코딩하지 않습니다. 위치와 접근 메커니즘은 프로토콜 수준의 문맥에 의해 유추되어야 합니다. 해시 참조는 "자기 인증(self-certifying)" 특성을 가지므로, 반환된 데이터를 링크 해시와 대조하여 검증할 수 있습니다. 이를 통해 신뢰할 수 없는 당사자로부터 온 복사본이라도 콘텐츠를 재배포하고 신뢰할 수 있게 됩니다.
+
+링크는 [Content Identifier](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (CID)로 인코딩되며, 이는 이진 및 문자열 표현을 모두 지원합니다. CID는 링크 대상이 노드(DAG-CBOR)인지 임의의 이진 데이터인지를 나타내는 메타데이터 코드를 포함합니다. atproto에서 CID 사용에 대한 몇 가지 추가 제약 조건이 아래에 설명되어 있습니다.
+
+atproto에서는 객체 노드에 종종 Lexicon 스키마를 지정하는 문자열 필드 `$type`이 포함됩니다. 데이터는 대부분 자체 기술(self-describing)되어 스키마에 독립적으로 처리(디코딩 및 재인코딩)할 수 있지만, 스키마가 없으면 완전하게 검증할 수는 없습니다.
+
+## IPLD와의 관계
+
+데이터 모델은 IPFS 생태계의 해시로 연결된 데이터 구조에 대한 명세인 [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/)에서 영감을 받았습니다.
+
+IPLD는 **DAG-JSON**이라는 정규화된 JSON 인코딩 방식을 지정하지만, atproto는 JSON 데이터를 인코딩할 때 다른 규칙들을 사용합니다. atproto JSON 인코딩은 바이트 단위 결정적(byte-reproducible)이지 않으며, 데이터가 암호학적으로 서명되거나 해시되어야 할 때는 CBOR 표현을 사용합니다.
+
+IPLD 스키마 언어는 사용되지 않습니다.
+
+## 데이터 타입
+
+| Lexicon Type  | IPLD Type | JSON                 | CBOR                    | Note                    |
+| ---           | ---       | ---                  | ---                     | ---                     |
+| `null`        | null      | Null                 | Special Value (major 7) |                         |
+| `boolean`     | boolean   | Boolean              | Special Value (major 7) |                         |
+| `integer`     | integer   | Number               | Integer (majors 0,1)    | signed, 64-bit          |
+| `string`      | string    | String               | UTF-8 String (major 3)  | Unicode, UTF-8          |
+| -             | float     | Number               | Special (major 7)       | not allowed in atproto  |
+| `bytes`       | bytes     | `$bytes` Object      | Byte String (major 2)   |                         |
+| `cid-link`    | link      | `$link` Object       | CID (tag 42)            | CID                     |
+| `array`       | list      | Array                | Array (major 4)         |                         |
+| `object`      | map       | Object               | Map (major 5)           | keys are always strings |
+| `blob`        | -         | `$type: blob` Object | `$type: blob` Map       |                         |
+
+`blob`은 이미지와 같은 파일 참조를 위한 타입입니다.
+
+자바스크립트 기본 타입과의 호환성을 보장하기 위한 모범 사례로, `integer`는 53비트 정밀도로 제한하는 것이 좋습니다. JSON 숫자는 임의의 자릿수를 가질 수 있으나, `integer`는 자바스크립트를 무시하더라도 64비트로 제한됩니다.
+
+Lexicon은 개별 필드에 대해 추가적인 검증 제약 조건을 포함할 수 있습니다. 예를 들어, 정수에 대해 최대값과 최소값을 지정할 수 있습니다. 해당 Lexicon 스키마 없이 데이터가 atproto 데이터 모델에 대해 추상적으로 검증될 수는 있지만, 예를 들어 내부에 `$bytes` 객체가 있고 그 값이 base64 인코딩된 문자열 대신 boolean인 JSON 객체는 유효한 JSON일 수 있으나 atproto 데이터 모델에서는 절대 유효하지 않습니다.
+
+Lexicon 문자열 필드는 추가적인 `format` 타입 정보를 가질 수 있으나, 다른 검증 제약 조건과 마찬가지로 Lexicon 없이는 이 정보에 접근할 수 없습니다.
+
+`$`로 시작하는 데이터 필드 이름은 JSON과 CBOR 표현 모두에서 데이터 모델이나 프로토콜 자체에서 사용하는 예약어입니다. 예를 들어, CBOR와 JSON 모두에서 사용되는 `$bytes` 키, JSON CID 링크를 위한 `$link` 키, 또는 레코드 타입을 나타내는 `$type` 등이 이에 해당합니다. 구현체는 프로토콜 발전을 위해 알 수 없는 `$` 필드는 무시해야 합니다. 응용 프로그램, 확장, 통합에서는 프로토콜 발전으로 인한 충돌을 막기 위해 새로운 `$` 필드를 임의로 사용하거나 정의해서는 안 됩니다.
+
+### Nullable과 False-y
+
+atproto 데이터 모델에서는 맵 필드를 명시적으로 `null`로 설정하는 것과 필드를 아예 포함하지 않는 것 사이에 의미상의 차이가 있습니다. JSON과 CBOR 모두 동일한 구분을 유지합니다.
+
+null 또는 누락된 필드는 `false`(불리언), `0`(정수), 빈 리스트 또는 빈 객체와 같은 "false-y" 값과도 구분됩니다.
+
+### 왜 부동소수점은 없는가?
+
+CBOR와 JSON은 원래 부동소수점 숫자를 지원하지만, atproto에서는 왜 이를 일부러 허용하지 않을까요?
+
+IPLD 명세에서는 콘텐츠 주소 지정 환경에서 부동소수점 숫자를 다루면서 발생하는 [복잡성과 문제점들](https://ipld.io/docs/data-model/kinds/#float-kind)에 대해 설명하고 있습니다. 요약하면, 부동소수점을 기계 기본 형식으로 역직렬화한 후 나중에 재인코딩할 때 항상 일관되지 않을 수 있습니다. 이는 특수 값이나 극한의 경우뿐만 아니라 덜 일반적인 아키텍처에서도 "일반" 부동소수점 값에 대해 적용됩니다.
+
+미래에 부동소수점의 안정적인 왕복 인코딩을 보장하는 규칙을 마련할 수도 있겠으나, 현재로서는 부동소수점을 허용하지 않습니다.
+
+만약 부동소수점을 정수로 대체할 수 없는 사용 사례가 있다면, 부동소수점을 문자열이나 바이트로 인코딩하는 것을 권장합니다. 이는 안전한 기본 왕복 표현을 제공합니다.
+
+## `blob` 타입
+
+"블롭"에 대한 참조(임의 파일)는 atproto에서 일관된 형식을 가지며, 특정 Lexicon 없이도 탐지하고 처리할 수 있습니다. 즉, 노드를 파싱하여 블롭 참조를 추출할 수 있습니다.
+
+블롭 노드는 다음 필드를 가진 맵입니다:
+
+- `$type` (문자열, 필수): 고정값 `blob`. 이 값은 유효한 NSID가 아닙니다.
+- `ref` (링크, 필수): 멀티코덱 타입이 `raw`인 블롭에 대한 CID 참조. JSON에서는 일반적인 `$link` 객체로 인코딩됩니다.
+- `mimeType` (문자열, 필수, 빈 문자열 불가): 블롭의 콘텐츠 타입. 알 수 없는 경우 `application/octet-stream`
+- `size` (정수, 필수, 양수, 0이 아님): 블롭의 바이트 단위 크기
+
+또한, 아직 일부 레코드에 남아있는 사용 사례를 위해 사용되는 더 이상 권장되지 않는 구 버전의 블롭 포맷이 있습니다:
+
+- `cid` (문자열, 필수): *문자열* 형식의 CID. *링크* 형식이 아닙니다.
+- `mimeType` (문자열, 필수, 빈 문자열 불가): 위의 `mimeType`과 동일
+
+구 버전 포맷은 `$type`이 없으며, 알려진 Lexicon에 대해서만 파싱될 수 있습니다. 구현체는 구 버전 포맷을 만났을 때 에러를 발생시키지 않아야 하지만, 이를 새로 작성해서는 안 되며, 부분적인 지원만 허용됩니다.
+
+## JSON 표현
+
+atproto는 DAG-JSON을 직접 사용하는 대신 자체적인 JSON 규칙을 사용합니다. 주요 동기는 HTTP API에서 `link`와 `bytes`를 더 관용적이고 사람이 읽기 쉬운 형식으로 표현하기 위함입니다. DAG-JSON 명세 자체도 주로 디버깅과 개발 환경에 초점을 맞추고 있으며, `/`를 필드 키로 사용하는 것이 개발자들에게 혼란을 주는 것으로 판단되었습니다.
+
+JSON 사용 시 키 정렬과 같은 정규화는 요구되거나 강제되지 않으며, 오직 DAG-CBOR만이 바이트 재현성을 보장합니다.
+
+대부분의 기본 및 복합 타입에 대한 인코딩은 간단하지만, `link`와 `bytes`만 특별한 처리가 필요합니다.
+
+### `link`
+
+JSON에서의 링크 인코딩은 단일 키 `$link`와 문자열로 인코딩된 CID 값을 가지는 객체입니다.
+
+예를 들어, 타입이 `link`인 `"exampleLink"` 필드를 가진 노드는 JSON에서 다음과 같이 인코딩됩니다:
+
+```
+{
+  "exampleLink": {
+    "$link": "bafyreidfayvfuwqa7qlnopdjiqrxzs6blmoeu4rujcjtnci5beludirz2a"
+  }
+}
+```
+
+비교를 위해, 이는 DAG-JSON 인코딩과 매우 유사하지만, 외부 키로 단일 문자 `/` 대신 `$link`를 사용합니다.
+
+### `bytes`
+
+JSON에서의 bytes 인코딩은 단일 키 `$bytes`와 base64로 인코딩된 문자열 값을 가지는 객체입니다. 사용되는 base64 방식은 [RFC-4648, section 4](https://datatracker.ietf.org/doc/html/rfc4648#section-4)에 명시된 것으로, 일반적으로 "base64"라고 불립니다. 이 방식은 URL 안전하지 않으며, `=` 패딩은 선택적입니다.
+
+예를 들어, 타입이 `bytes`인 `"exampleBytes"` 필드를 가진 노드는 JSON에서 다음과 같이 표현됩니다:
+
+```
+{
+  "exampleBytes": {
+    "$bytes": "nFERjvLLiw9qm45JrqH9QTzyC2Lu1Xb4ne6+sBrCzI0"
+  }
+}
+```
+
+비교를 위해, DAG-JSON 인코딩은 외부에 단일 문자 `/`, 내부에 `bytes` 키를 중첩하여 사용하는 방식과 동일한 base64 인코딩을 사용합니다.
+
+## 링크와 CID 형식
+
+[IPFS CID 명세](https://github.com/multiformats/cid)는 매우 유연합니다. 다양한 해시 타입, 링크되는 콘텐츠의 "타입"을 나타내는 필드, 그리고 다양한 문자열 인코딩 옵션을 지원합니다. 이러한 기능들은 시간이 지나면서 발전하는데 유용하지만, 구현 간 상호 운용성을 극대화하기 위해서는 "인증된(blessed)" CID 타입 집합만을 허용합니다.
+
+atproto에서 인증된 CID 형식은 다음과 같습니다:
+
+- CIDv1
+- multibase: DAG-CBOR `link` 필드 내의 이진 직렬화와 문자열 인코딩 시 `base32`
+- multicodec: 데이터 객체에 대한 링크는 `dag-cbor` (0x71), 블롭에 대한 링크는 `raw` (0x55)
+- multihash: SHA-256 (256비트, 0x12)을 선호
+
+SHA-256의 사용은 레포지토리 MST 노드와 같이 일부 상황에서 안정적인 요구사항입니다. 미디어 블롭 참조와 같이 다른 상황에서는 시간이 지나며 발전하는 "인증된" 해시 타입 집합이 있을 수 있습니다. 프로토콜 구현체 전반에 걸친 상호 운용성을 보장하기 위해, 프로토콜 유연성과 약한 해시 제거 사이에서 균형을 유지해야 합니다.
+
+atproto 객체에서 CID 해시 참조를 포함시키는 방법은 여러 가지가 있습니다:
+
+- `link` 필드 타입 (Lexicon 타입 `cid-link`): DAG-CBOR에서는 CBOR 태그 42가 있는 바이트 문자열로 이진 CID를 인코딩합니다. JSON에서는 위에 설명한 `$link` 객체로 인코딩됩니다.
+- Lexicon의 string 필드 타입으로 `cid` 형식을 사용하는 경우: DAG-CBOR와 JSON 모두 단순 문자열로 인코딩됩니다.
+- Lexicon의 string 필드 타입으로 `uri` 형식을 사용하며, URI 스킴 `ipld://`를 사용하는 경우
+
+## 사용 및 구현 지침
+
+더 이상 권장되지 않는 구 버전의 "blob" 포맷을 사용할 때는, 일반 "blob" 참조와 동일한 내부 표현을 사용하되 `size` 필드를 0 또는 음수로 설정하는 것이 좋습니다. 이 값은 재인코딩 시 올바른 왕복 동작을 보장하고 일반 객체 형식에서 0 또는 음수 `size` 값이 인코딩되지 않도록 하기 위해 검사되어야 합니다.
+
+## 보안 및 개인정보 보호 고려사항
+
+신뢰할 수 없는 CBOR 콘텐츠를 파싱할 때 다양한 자원 소비 공격이 가능하므로, 거대한 할당, 깊은 중첩, 잘못된 참조 등을 자동으로 방어하는 라이브러리의 사용을 권장합니다. 이는 C나 C++와 같이 강력한 메모리 안전성이 없는 언어로 구현된 라이브러리에서 특히 중요합니다. 고수준 언어의 경우, 내부적으로 하위 수준 언어로 작성된 파서를 감쌀 수 있습니다.
+
+## 향후 변경 가능 사항
+
+- 미래에는 부동소수점이 어떤 형태로든 지원될 수 있습니다.
+- 모든 알려진 레코드와 레포지토리가 재작성될 수 있다면, 구 버전의 "blob" 포맷은 완전히 제거될 수 있습니다.
+- "인증된" CID 구성 집합에 추가적인 해시 타입이 포함될 가능성이 높습니다.
