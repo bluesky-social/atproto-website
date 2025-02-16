@@ -1,0 +1,164 @@
+export const metadata = {
+  title: 'DID',
+  description:
+    'AT Protocol에서 사용되는 영구적인 분산 식별자 (Decentralized Identifiers)',
+}
+
+# AT Protocol DIDs
+
+AT Protocol은 계정을 영구적이고 장기적으로 식별하기 위해 [분산 식별자(Decentralized Identifiers, DID)](https://en.wikipedia.org/wiki/Decentralized_identifier)를 사용합니다. DID는 W3C 표준이며, 여러 DID 메서드가 표준화되었거나 제안되어 있습니다. {{ className: 'lead' }}
+
+## 승인된(Blessed) DID 메서드
+
+현재 atproto에서는 두 가지 DID 메서드를 지원합니다:
+
+- `did:web`: HTTPS(및 DNS)를 기반으로 한 W3C 표준입니다. 식별자 부분은 호스트네임입니다. atproto에서 `did:plc`와 독립적인 대안으로 사용하기 위해 지원됩니다. 이 메서드는 도메인 이름에 밀접하게 연결되어 있으며, 도메인 이름 제어권 상실에 따른 이전 또는 복구 메커니즘을 제공하지 않습니다. atproto의 문맥에서는 오직 호스트네임 수준의 `did:web`만 지원하며, 경로 기반 DID는 지원되지 않습니다. 핸들에 적용되는 최상위 도메인 제한(예: `.arpa` 불허)도 `did:web` 도메인에 동일하게 적용됩니다. 특별히 테스트 및 개발 환경에서는 `localhost` 호스트네임이 허용되며, 포트 번호(콜론으로 구분, 16진수로 인코딩)는 오직 `localhost`에 한해서만 허용됩니다.
+- `did:plc`: Bluesky에서 개발한 새로운 DID 메서드입니다. 자세한 내용은 [did-method-plc GitHub 저장소](https://github.com/did-method-plc/did-method-plc)를 참고하세요.
+
+향후 소수의 추가 메서드가 지원될 수 있으나, 모든 DID 메서드 또는 다수의 메서드를 지원하는 것은 의도하지 않습니다. (보편적 해석기(universal resolver) 소프트웨어가 존재함에도 불구하고)
+
+## AT Protocol DID 식별자 문법
+
+Lexicon 문자열 형식 타입: `did`
+
+DID Core 명세에서 사용되는 DID 식별자 문법의 제약 사항(메서드에 관계없이)은 atproto에서 DID를 검증할 때 사용할 수 있는 요약은 다음과 같습니다:
+
+- 전체 URI는 ASCII의 부분 집합으로 구성되며, 허용되는 문자는 영문자(`A-Z`, `a-z`), 숫자(`0-9`), 점, 밑줄, 콜론, 퍼센트 기호 또는 하이픈(`._:%-`)입니다.
+- URI는 대소문자를 구분합니다.
+- URI는 소문자 `did:`로 시작해야 합니다.
+- 메서드 섹션은 하나 이상의 소문자(`a-z`)로 구성되며, 그 뒤에 콜론(`:`)이 옵니다.
+- URI의 나머지 부분(식별자)은 위에 허용된 ASCII 문자 중 퍼센트 기호(`%`)를 제외한 문자들로 구성될 수 있습니다.
+- URI(따라서 식별자)는 콜론(`:`)으로 끝날 수 없습니다.
+- 퍼센트 기호(`%`)는 식별자 내에서 "퍼센트 인코딩"에 사용되며, 항상 두 개의 16진수 문자가 뒤따라야 합니다.
+- DID URI에는 쿼리(`?`)와 프래그먼트(`#`) 섹션이 허용되지만, DID 식별자에서는 허용되지 않습니다. atproto 문맥에서는 쿼리와 프래그먼트가 허용되지 않습니다.
+
+일반적으로 DID 식별자는 최대 길이 제한이 없으나, atproto에서는 초기에 2KB의 하드 제한을 두고 있습니다.
+
+atproto의 구현체는 퍼센트 인코딩의 유효성을 검사할 필요가 없습니다. 퍼센트 기호는 DID 식별자 내에서 허용되지만, 식별자는 퍼센트 기호로 끝나면 안 됩니다. 잘못된 퍼센트 인코딩을 포함하는 DID는 등록, 해석(resolve) 등 시도 시 실패해야 합니다.
+
+atproto 문맥에서 DID를 위한 시작점으로 사용할 수 있는 정규 표현식 예시는 다음과 같습니다:
+
+```js
+// 전체 길이 제한은 고려하지 않음
+/^did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-]$/
+```
+
+### 예시
+
+atproto에서 사용 가능한 올바른 DID (문법이 올바르고 지원되는 메서드):
+
+```
+did:plc:z72i7hdynmk6r22z27h6tvur
+did:web:blueskyweb.xyz
+```
+
+Lexicon 문법 검증에 통과하지만, 지원되지 않는 DID 메서드의 예:
+
+```
+did:method:val:two
+did:m:v
+did:method::::val
+did:method:-:_:.
+did:key:zQ3shZc2QzApp2oymGvQbzP8eKheVshBHbU4ZYjeXqwSKEn6N
+```
+
+문법상 올바르지 않은 DID 식별자의 예 (메서드에 관계없이):
+
+```
+did:METHOD:val
+did:m123:val
+DID:method:val
+did:method:
+did:method:val/two
+did:method:val?two
+did:method:val#two
+```
+
+## DID 문서
+
+DID 문서가 해석(해결)된 후, atproto 고유의 정보를 추출할 필요가 있습니다. 이 파싱 과정은 사용된 DID 메서드와 무관하게 진행됩니다.
+
+현재 **핸들(handle)** 은 `alsoKnownAs` 배열에서 찾을 수 있습니다. 이 배열의 각 요소는 URI입니다. 핸들은 `at://` 스킴을 가지며, 뒤에 핸들이 오며 경로나 다른 URI 부분이 포함되지 않습니다. 기본 핸들은 유효한 핸들 URI 중 순서상 첫 번째 항목이며, 나머지는 무시해야 합니다.
+
+핸들을 양방향으로 검증하는 것이 중요합니다. 즉, 핸들을 DID로 해석한 후 해당 DID 문서와 일치하는지 확인해야 합니다.
+
+DID는 주요 계정 식별자이며, 유효하고 확인된 핸들을 포함하지 않은 DID 문서를 가진 계정도 이론적으로는 atproto 생태계에 참여할 수 있습니다. 다만, 소프트웨어는 그러한 계정의 핸들을 표시하지 않거나, 해당 핸들이 유효하지 않음을 명확히 나타내야 합니다.
+
+계정의 공개 **서명 키**는 DID 문서 내 `verificationMethod` 배열에 있으며, `id`가 `#atproto`로 끝나고, `controller`가 DID 자체와 일치하는 객체에서 찾을 수 있습니다. 배열에서 첫 번째 유효한 atproto 서명 키를 사용하며, 나머지는 무시합니다. `type` 필드는 암호화 곡선 타입을 나타내며, `publicKeyMultibase` 필드는 multibase 인코딩된 공개 키를 포함합니다. 아래에서 해당 필드의 파싱에 관한 자세한 내용을 확인할 수 있습니다.
+
+유효한 서명 키는 atproto 기능에 필수이며, DID 문서에 유효한 키가 없는 계정은 정상적으로 작동하지 않습니다.
+
+계정의 **PDS (Personal Data Server)** 서비스 위치는 DID 문서 내 `service` 배열에 있으며, `id`가 `#atproto_pds`로 끝나고, `type`이 `AtprotoPersonalDataServer`와 일치하는 항목에서 찾을 수 있습니다. 배열에서 첫 번째 일치 항목을 사용하며, 나머지는 무시합니다. `serviceEndpoint` 필드는 서버의 HTTPS URL을 포함해야 합니다. 이 URL은 스킴(`http` 또는 `https`), 호스트네임, 선택적 포트 번호만 포함해야 하며, 사용자 정보, 경로 접두사 또는 기타 구성 요소를 포함해서는 안 됩니다.
+
+작동하는 PDS는 atproto 계정 기능에 필수이며, DID 문서에 유효한 PDS 위치가 없는 계정은 올바르게 작동하지 않습니다.
+
+유효한 URL이라고 해서 반드시 해당 PDS가 현재 계정의 콘텐츠를 호스팅하거나 정상 작동 중임을 의미하지는 않습니다. 계정 이전이나 서버 다운타임 시 PDS에 접근할 수 없는 기간이 있을 수 있으나, 이것만으로 계정이 즉시 고장났거나 유효하지 않다고 판단해서는 안 됩니다.
+
+## 공개 키의 표현
+
+atproto의 암호화 시스템에 관한 자세한 내용은 [Cryptography](/specs/cryptography)를 참고하세요. 여기에는 공개 키의 바이트 및 문자열 인코딩 방식에 관한 세부 사항이 포함되어 있습니다.
+
+DID 문서의 `verificationMethod`에 포함된 공개 키(특히 atproto 서명 키)는 다음 필드를 가진 객체로 표현됩니다:
+
+- `id` (문자열, 필수): DID 뒤에 식별 프래그먼트를 붙인 값입니다. atproto 서명 키의 경우 프래그먼트로 `#atproto`를 사용합니다.
+- `type` (문자열, 필수): 고정 문자열 `Multikey`
+- `controller` (문자열, 필수): 키를 제어하는 DID로, 현재 atproto 버전에서는 계정 DID와 일치해야 합니다.
+- `publicKeyMultibase` (문자열, 필수): multibase 형식(다중 코드표시기(multicodec) 타입 식별자와 "압축된" 키 바이트 포함)으로 인코딩된 공개 키
+
+`Multikey` 형식의 `publicKeyMultibase`는 `did:key`에서 사용되는 인코딩 방식과 동일하지만, `did:key:` 접두사는 포함하지 않습니다. 자세한 내용은 [Cryptography](/specs/cryptography)를 참조하세요.
+
+참고로, 과거의 DID 문서(특히 `did:web` 문서)에서는 약간 다른 키 인코딩 및 `verificationMethod` 문법이 사용된 바 있습니다. 구현체는 전환 기간 동안 이러한 오래된 DID 문서를 지원할 수 있으나, 앞으로는 DID 명세 준수를 요구할 예정입니다.
+
+과거 atproto 서명 키의 `verificationMethod`는 다음과 같이 구성되었습니다:
+
+- `id` (문자열, 필수): 전체 DID 대신 고정 문자열 `#atproto` 사용
+- `type` (문자열, 필수): 키의 곡선 타입을 식별하는 고정 이름
+  - `p256`: `EcdsaSecp256r1VerificationKey2019` (주의: "r")
+  - `k256`: `EcdsaSecp256k1VerificationKey2019` (주의: "k")
+- `controller` (문자열, 필수): 키를 제어하는 DID로, 현재 atproto 버전에서는 계정 DID와 일치해야 합니다.
+- `publicKeyMultibase` (문자열, 필수): multicodec 없이, 압축되지 않은 키 바이트로 인코딩된 공개 키
+
+`EcdsaSecp256r1VerificationKey2019` 타입은 최종 W3C 표준이 아닙니다.
+
+요약하면, 레거시 방식의 multibase 인코딩은 다음과 같습니다:
+
+- 전체 공개 키 바이트를 사용합니다. (`did:key` 또는 `Multikey` 인코딩과 달리 "압축" 또는 "간결한" 표현을 사용하지 않습니다)
+- multicodec 타입을 나타내는 값을 접두사로 사용하지 않습니다.
+- 키 바이트를 `base58btc`로 인코딩하여 문자열을 생성합니다.
+- multibase를 나타내기 위해 문자열 앞에 `z` 문자를 추가하며, 다른 multicodec 식별자는 포함하지 않습니다.
+
+역순으로 디코딩할 때는 곡선 타입을 참고하여 처리합니다.
+
+다음은 동일한 K-256 공개 키가 레거시 형식과 현재 권장 형식으로 인코딩된 예시입니다:
+
+```json
+// 레거시 multibase 인코딩 (K-256 공개 키)
+{
+    "id": ...,
+    "controller": ...,
+    "type": "EcdsaSecp256k1VerificationKey2019",
+    "publicKeyMultibase": "zQYEBzXeuTM9UR3rfvNag6L3RNAs5pQZyYPsomTsgQhsxLdEgCrPTLgFna8yqCnxPpNT7DBk6Ym3dgPKNu86vt9GR"
+}
+
+// 권장되는 multibase 인코딩 (동일한 K-256 공개 키)
+{
+    "id": ...,
+    "controller": ...,
+    "type": "Multikey",
+    "publicKeyMultibase": "zQ3shXjHeiBuRCKmM36cuYnm7YEMzhGnCmCyW92sRJ9pribSF"
+}
+```
+
+## 사용 및 구현 지침
+
+프로토콜 구현체는 지원되지 않는 DID 메서드를 기반으로 한 DID를 처리할 때에도 유연해야 합니다. 이는 시간이 지나면서 프로토콜 생태계가 점진적으로 발전할 수 있도록 하기 위함입니다. 즉, 구현체는 "잘못된 DID 문법", "지원되지 않는 DID 메서드", "지원되는 DID 메서드이나 특정 DID 해석(resolve) 실패"와 같은 경우를 구분하여 처리해야 합니다.
+
+DID는 프로토콜 상에서 더 긴 문자열도 지원하지만, 가급적 짧은 DID를 사용하고 64자보다 긴 DID는 피하는 것이 좋습니다.
+
+DID는 대소문자를 구분합니다. 현재 지원되는 메서드는 대소문자를 구분하지 않으므로 안전하게 소문자로 변환할 수 있지만, 프로토콜 구현체는 잘못된 대소문자 사용이 있는 DID는 거부해야 합니다. 사용자 입력(예: 공개 URL 경로나 텍스트 입력 필드)을 처리할 때는 대소문자 정규화를 시도하는 것이 허용됩니다.
+
+## 향후 변경 가능 사항
+
+하드 최대 DID 길이 제한은 프로토콜 문법 수준에서 축소될 수 있습니다. 지원할 DID 메서드 중 식별자가 256자를 초과하는 경우는 현재 인지하고 있지 않습니다.
+
+또한, "승인된(Blessed)" DID 메서드의 목록은 시간이 지나면서 점진적으로 확장될 가능성이 높습니다.

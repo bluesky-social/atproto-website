@@ -1,0 +1,56 @@
+export const metadata = {
+  title: 'FAQ',
+  description:
+    'AT Protocol에 대한 자주 묻는 질문들.',
+}
+
+# FAQ
+
+AT Protocol (AT Proto)에 관한 자주 묻는 질문들입니다. Bluesky에 관한 FAQ는 [여기](https://bsky.social/about/faq)에서 확인하실 수 있습니다.
+
+## AT Protocol은 블록체인인가요?
+
+아닙니다. AT Protocol은 [연합 프로토콜](https://ko.wikipedia.org/wiki/연합_(정보_기술))입니다. 블록체인이 아니며 블록체인을 사용하지도 않습니다.
+
+## 왜 ActivityPub을 사용하지 않나요?
+
+[ActivityPub](https://ko.wikipedia.org/wiki/ActivityPub)은 [Mastodon](https://joinmastodon.org/)에서 널리 사용되는 연합형 소셜 네트워크 기술입니다.
+
+우리는 계정 이식성 문제로 별도의 프로토콜을 개발하기로 했습니다. 우리는 이식성이 중요하다고 생각합니다. 이는 사용자들이 갑작스런 차단, 서버 중단, 정책 분쟁으로부터 보호받을 수 있도록 도와줍니다. 우리의 이식성 해결책은 [서명된 데이터 레포지토리](/guides/data-repos)와 [DID](/guides/identity)를 요구하며, 이 두 가지는 ActivityPub에 쉽게 추가할 수 없습니다. ActivityPub의 이식 도구는 상대적으로 제한적이며, 원래 서버가 리디렉션을 제공해야 하고 사용자의 이전 데이터를 이식할 수 없습니다.
+
+또한 주요한 이유는 확장성입니다. ActivityPub은 작은 규모에서 중간 규모의 여러 노드 간에 메시지를 전달하는 데 크게 의존하며, 이로 인해 개별 노드는 트래픽이 과부하될 수 있고 전체 활동에 대한 글로벌 뷰를 제공하는 데 어려움을 겪습니다. 반면, AT Protocol은 사용자들의 호스트에서 활동을 합치는 애플리케이션을 사용하여 전체 트래픽을 줄이고 개별 호스트에 대한 부하를 크게 줄입니다.
+
+그 외에도 작은 차이점들이 있습니다: 스키마 처리 방식에 대한 다른 관점, AP의 이중 @ 이메일 사용자 이름 대신 도메인 사용자 이름을 선호하는 점, 대규모 검색 및 알고리즘 피드를 목표로 하는 점 등이 있습니다.
+
+## 왜 JSON-LD나 RDF 대신 Lexicon을 만들었나요?
+
+Atproto는 여러 조직 간에 데이터와 RPC 명령을 교환합니다. 데이터와 RPC가 유용하려면, 소프트웨어가 별도의 팀에서 생성된 스키마를 제대로 처리할 수 있어야 합니다. 이것이 [Lexicon](/guides/lexicon)의 목적입니다.
+
+우리는 엔지니어들이 새 스키마를 쉽게 사용하고 만들 수 있도록 하고, 개발자들이 시스템의 DX(개발자 경험)를 즐기도록 하고 싶습니다. Lexicon은 우리가 매우 익숙한 강타입 API를 생성할 수 있도록 도와주며, 이를 통해 다양한 런타임 정확성 검사를 제공합니다.
+
+[RDF](https://ko.wikipedia.org/wiki/리소스_설명_프레임워크)는 시스템들이 매우 적은 인프라를 공유하는 일반적인 경우를 위해 설계되었습니다. 개념적으로 우아하지만 사용하기 어렵고 종종 개발자가 이해하지 못하는 구문을 많이 추가합니다. JSON-LD는 RDF 어휘를 소비하는 작업을 단순화하지만, 그 개념을 숨겨놓고 RDF를 더 읽기 쉽도록 만드는 것이 아닙니다.
+
+우리는 RDF 사용을 면밀히 검토했지만, 개발자 경험(DX)이나 제공되는 도구들에 대해 크게 만족하지 못했습니다.
+
+## "XRPC"란 무엇이며, 왜 ___을 사용하지 않나요?
+
+[XRPC](/specs/xrpc)는 일부 추가적인 규칙이 적용된 HTTP입니다. 우리는 "XRPC"라는 용어를 폐지하고 ATProto의 HTTP 사용법이라고 부르기로 했습니다.
+
+XRPC는 [Lexicon](/guides/lexicon)을 사용하여 HTTP 호출을 설명하고 이를 `/xrpc/{methodId}`로 매핑합니다. 예를 들어, 이 API 호출:
+
+```typescript
+await api.com.atproto.repo.listRecords({
+  user: 'alice.com',
+  collection: 'app.bsky.feed.post'
+})
+```
+
+...은 다음과 같이 매핑됩니다:
+
+```text
+GET /xrpc/com.atproto.repo.listRecords
+  ?user=alice.com
+  &collection=app.bsky.feed.post
+```
+
+Lexicon은 공유된 메소드 ID(`com.atproto.repo.listRecords`)와 예상되는 쿼리 파라미터, 입력 본문, 출력 본문을 설정합니다. Lexicon을 사용함으로써 호출의 입력과 출력에 대한 런타임 검사를 수행하고, 위와 같은 API 호출 예제와 같은 형식의 타입이 지정된 코드를 생성할 수 있습니다.

@@ -1,0 +1,232 @@
+import {Container} from "@/components/Container"
+import {FooterCTA} from "@/components/FooterCTA"
+import image1 from "./image1.png"
+import image2 from "./image2.png"
+import image3 from "./image3.png"
+import image4 from "./image4.png"
+import image5 from "./image5.png"
+import image6 from "./image6.png"
+import image7 from "./image7.png"
+import image8 from "./image8.png"
+import image9 from "./image9.png"
+import image10 from "./image10.png"
+import image11 from "./image11.png"
+import image12 from "./image12.png"
+import image13 from "./image13.png"
+import image14 from "./image14.png"
+import image15 from "./image15.png"
+import image16 from "./image16.png"
+import image17 from "./image17.png"
+import image18 from "./image18.png"
+import image19 from "./image19.png"
+import image20 from "./image20.png"
+import image21 from "./image21.png"
+import image22 from "./image22.png"
+import image23 from "./image23.png"
+import image24 from './image24.png'
+
+export const metadata = {
+  title: '분산 시스템 엔지니어를 위한 ATProto',
+  description:
+    'AT Protocol은 Bluesky에서 개발한 오픈 소셜 네트워킹 기술입니다. 이 글에서는 분산 백엔드 엔지니어링 관점에서 AT Proto를 살펴봅니다.',
+}
+
+# 분산 시스템 엔지니어를 위한 ATProto
+
+*2024년 9월 3일*
+
+AT Protocol은 [Bluesky](https://bsky.app)에서 오픈 소셜 네트워킹을 위해 개발된 기술입니다. 이 글에서는 분산 백엔드 엔지니어링 관점에서 AT Proto를 살펴보겠습니다. {{className: 'lead'}}
+
+만약 여러분이 [스트림 프로세싱](https://milinda.pathirage.org/kappa-architecture.com/) 기반의 백엔드를 구축해본 적이 있다면, 우리가 탐구할 시스템 유형에 대해 어느 정도 익숙할 것입니다. 익숙하지 않더라도 걱정하지 마세요! 차근차근 함께 살펴보겠습니다. {{className: 'lead'}}
+
+## 전통적인 웹 백엔드의 확장
+
+전형적이고 단순한 웹 아키텍처는 앱 서버 뒤에 **하나의 거대한 SQL 데이터베이스**를 두는 구조입니다. 앱 서버는 데이터베이스와 통신하며 프론트엔드의 요청을 처리합니다.
+
+<Container>
+  <Image src={image1} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+애플리케이션이 성장함에 따라 성능 한계에 도달하게 되어, 우리는 스택에 캐시를 추가합니다.
+
+<Container>
+  <Image src={image2} alt="" className="w-full dark:invert max-w-2xl mx-auto" />
+</Container>
+
+그 다음, 데이터베이스를 샤딩과 복제를 통해 수평 확장합니다.
+
+<Container>
+  <Image src={image3} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+이 모델도 꽤 좋지만, 우리가 수억 명의 사용자를 가진 소셜 네트워크를 구축하고 있다는 점을 감안하면 한계에 도달합니다. 문제는 우리의 SQL 데이터베이스가 “[강한 일관성](https://en.wikipedia.org/wiki/Strong_consistency)”을 유지한다는 점입니다. 즉, 시스템 전반에 걸쳐 상태가 균일하게 동기화되어야 하는데, 강한 일관성을 유지하는 데 따른 성능 비용이 병목현상이 됩니다.
+
+만약 시스템의 일관성을 “[최종적 일관성](https://en.wikipedia.org/wiki/Eventual_consistency)”으로 완화할 수 있다면, 훨씬 더 확장할 수 있습니다. 그래서 우리는 NoSQL 클러스터로 전환합니다.
+
+<Container>
+  <Image src={image4} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+NoSQL로의 전환은 확장에는 유리하지만, SQL의 JOIN이나 집계 쿼리 같은 유용한 기능들을 잃게 됩니다. 사실상 NoSQL 데이터베이스는 단순한 키-값 저장소에 불과합니다. 이에 따라 기능을 구현하는 것이 점점 더 어려워집니다.
+
+이를 해결하기 위해, 우리는 데이터셋의 미리 계산된 뷰를 생성하는 프로그램을 작성해야 합니다. 이 뷰들은 본질적으로 캐시된 쿼리와 같습니다. 심지어 우리는 기본 데이터를 이러한 뷰에 복제하여 매우 빠른 응답을 얻을 수 있도록 합니다.
+
+이러한 서버들을 우리는 **뷰 서버(View servers)** 라고 부릅니다.
+
+<Container>
+  <Image src={image5} alt="" className="w-full dark:invert" />
+</Container>
+
+이제 우리는 NoSQL 클러스터의 기본 데이터와 뷰 서버 간의 동기화가 까다롭다는 것을 깨닫게 됩니다. 때때로 뷰 서버가 다운되어 업데이트를 놓치는 경우가 발생합니다. 따라서 뷰가 안정적으로 최신 상태를 유지하도록 해야 합니다.
+
+이를 위해, 우리는 모든 변경 사항을 기록하고 전파하는 **이벤트 로그**(예: [Kafka](https://kafka.apache.org/))를 도입합니다. 이 로그는 NoSQL 클러스터의 모든 변경 사항을 기록하고 방송하며, 뷰 서버는 이 로그를 수신하고 재생함으로써 업데이트를 놓치지 않도록 합니다.
+
+<Container>
+  <Image src={image6} alt="" className="w-full dark:invert" />
+</Container>
+
+이제 우리는 [스트림 프로세싱 아키텍처](https://milinda.pathirage.org/kappa-architecture.com/)에 도달했습니다. 물론 다룰 세부 사항은 많지만, 여기까지가 핵심입니다.
+
+좋은 점은, 이 아키텍처가 상당히 잘 확장된다는 것입니다. 강한 일관성을 포기함으로써, 읽기 쿼리가 최신 상태와 다소 차이가 있을 수 있지만, 쓰기 요청이 누락되거나 잘못된 상태로 들어가는 일은 없습니다.
+
+어떤 면에서는, 우리가 기본 저장소를 NoSQL 클러스터로 단순화하고, 뷰 서버를 통해 자체 쿼리 엔진을 구축함으로써 데이터베이스를 **거꾸로 뒤집어(turning it inside-out)** 만든 것과 같습니다. 구축이 다소 불편할 수는 있지만, 확장성은 뛰어납니다.
+
+## 고확장 백엔드의 탈중앙화
+
+AT Protocol의 목표는 사용자 계정과 콘텐츠를 포함한 상태를 여러 애플리케이션 간에 공유하는 것입니다.
+
+어떻게 이를 실현할 수 있을까요? 기존 다이어그램을 보면, 시스템의 대부분은 외부와 격리되어 있으며, 오직 앱 서버만이 공개 인터페이스를 제공합니다.
+
+<Container>
+  <Image src={image7} alt="" className="w-full dark:invert" />
+</Container>
+
+우리의 목표는 이 격리를 허물어, 다른 사람들이 NoSQL 클러스터, 이벤트 로그, 뷰 서버 등 내부 서비스를 함께 사용할 수 있도록 만드는 것입니다.
+
+다음과 같이 될 것입니다:
+
+<Container>
+  <Image src={image8} alt="" className="w-full dark:invert" />
+</Container>
+
+이제 내부 서비스들이 모두 외부 서비스가 됩니다. 이들은 누구나 사용할 수 있는 공개 API를 제공하며, 누구나 이 서비스의 인스턴스를 만들 수 있습니다.
+
+우리의 목표는 누구나 이 탈중앙화된 백엔드에 기여할 수 있도록 만드는 것입니다. 즉, 하나의 NoSQL 클러스터나 뷰 서버에 의존하지 않고, 여러 서버가 함께 작동하도록 하는 것입니다. 실제로는 다음과 같이 구성됩니다:
+
+<Container>
+  <Image src={image9} alt="" className="w-full dark:invert" />
+</Container>
+
+그렇다면 이러한 서비스들이 어떻게 함께 작동하도록 만들 수 있을까요?
+
+## 데이터 모델 통합
+
+우리는 [“사용자 데이터 레포지토리”](/guides/data-repos)라는 공통의 데이터 모델을 확립할 것입니다.
+
+<Container>
+  <Image src={image10} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+모든 데이터 레포지토리는 JSON 문서를 포함하며, 우리는 이를 **레코드(records)** 라고 부릅니다.
+
+<Container>
+  <Image src={image11} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+조직적인 관리를 위해, 이 레코드들을 **컬렉션(collections)** 으로 구분합니다.
+
+<Container>
+  <Image src={image12} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+이제 우리는 NoSQL 서비스들이 모두 이 [데이터 레포지토리](/guides/data-repos) 모델을 사용하도록 의견을 제시합니다.
+
+<Container>
+  <Image src={image13} alt="" className="w-full dark:invert" />
+</Container>
+
+기억하세요: 데이터 레포지토리 서비스는 본질적으로 여전히 NoSQL 저장소입니다. 다만, 이제는 다음과 같이 체계적으로 구성됩니다:
+
+1. 각 사용자는 데이터 레포지토리를 가집니다.
+2. 각 레포지토리는 여러 컬렉션으로 구성됩니다.
+3. 각 컬렉션은 JSON 문서의 순서가 있는 키-값 저장소입니다.
+
+데이터 레포지토리는 누구나 호스팅할 수 있기 때문에, 이들에게 [URL](/specs/at-uri-scheme)을 부여해야 합니다.
+
+<Container>
+  <Image src={image14} alt="" className="w-full dark:invert max-w-72 mx-auto" />
+</Container>
+
+이와 함께, 레코드에도 적용할 [전체 URL 스킴](/specs/at-uri-scheme)을 만들어봅니다.
+
+<Container>
+  <Image src={image15} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+좋습니다! 또한, 인터넷 상에서 이 레코드들을 동기화할 것이므로, 이들이 진짜임을 확인할 수 있도록 암호학적으로 서명하는 것이 좋습니다.
+
+<Container>
+  <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+## 데이터 흐름 도식화
+
+이제 고확장 탈중앙화 백엔드를 구축했으니, ATProto에서 실제 애플리케이션이 어떻게 작동하는지 살펴봅니다.
+
+새로운 앱을 구축한다고 가정할 때, 우리는 두 가지가 필요합니다: API와 프론트엔드를 호스팅하는 앱 서버, 그리고 네트워크의 데이터를 수집하는 뷰 서버입니다. 보통 이 두 서버는 함께 번들되어 **앱뷰(Appview)** 라고 부릅니다. 먼저 앱뷰부터 살펴보겠습니다:
+
+<Container>
+  <Image src={image17} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+사용자는 OAuth를 통해 우리 앱에 로그인합니다. 이 과정에서, 사용자는 자신의 데이터 레포지토리를 호스팅하는 서버와, 해당 레포지토리에 읽기 및 쓰기 권한을 부여합니다.
+
+<Container>
+  <Image src={image18} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+
+이제 우리는 사용자의 레포지토리에서 JSON 문서를 읽고 쓸 수 있게 됩니다. 만약 사용자가 다른 앱에서 생성된 데이터(예: 프로필)를 이미 가지고 있다면, 그 데이터도 읽어올 수 있습니다. 만약 싱글플레이어 앱을 구축하는 중이었다면, 이 시점에서 이미 작업이 완료되었을 것입니다.
+
+하지만, JSON 문서를 작성할 때 실제로 어떤 일이 일어나는지 살펴봅시다.
+
+<Container>
+  <Image src={image19} alt="" className="w-full dark:invert max-w-xl mx-auto" />
+</Container>
+
+이 과정은 문서를 레포지토리에 커밋(commit)하고, 레포지토리를 수신 중인 이벤트 로그에 쓰기를 발생시킵니다.
+
+<Container>
+  <Image src={image20} alt="" className="w-full dark:invert" />
+</Container>
+
+그 후, 해당 이벤트는 이를 수신 중인 모든 뷰 서비스로 전파됩니다 — 물론 우리 서비스도 포함됩니다!
+
+<Container>
+  <Image src={image21} alt="" className="w-full dark:invert" />
+</Container>
+
+우리가 쓰기를 발생시킨 경우에도 이벤트 스트림을 수신하는 이유는 무엇일까요? 바로 우리만이 쓰기를 발생시키는 것이 아니기 때문입니다. 수많은 사용자 레포지토리에서 이벤트가 발생하고, 여러 앱이 이들에 대해 쓰기를 수행합니다!
+
+<Container>
+  <Image src={image22} alt="" className="w-full dark:invert max-w-lg mx-auto" />
+</Container>
+
+이와 같이, 탈중앙화 백엔드 전체에 걸쳐 순환적인 데이터 흐름이 존재하며, 쓰기가 데이터 레포지토리에 커밋되고, 이벤트 로그를 통해 뷰 서버로 전파되며, 최종적으로 애플리케이션에서 읽히게 됩니다.
+
+<Container>
+  <Image src={image23} alt="" className="w-full dark:invert" />
+</Container>
+
+그리고 (희망적으로) 이 네트워크는 단순히 용량 확장을 넘어, 다양한 애플리케이션들이 이 개방형 네트워크에 참여할 수 있도록 확장됩니다.
+
+<Container>
+  <Image src={image24} className="w-full dark:invert max-w-2xl" />
+</Container>
+
+## 실용적인 오픈 시스템 구축
+
+AT Protocol은 P2P 기술과 고확장 시스템의 기법을 결합합니다. 우리 창립 엔지니어들은 [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System)와 [Dat](https://en.wikipedia.org/wiki/Dat_(software)) 분야의 전문가였으며, Martin Kleppmann — [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)의 저자 — 도 적극적인 기술 자문역할을 하고 있습니다.
+
+Bluesky가 시작되기 전, 우리는 “한 걸음도 뒤로 물러서지 않는다(no steps backwards)”는 명확한 요구사항을 설정했습니다. 기존의 모든 소셜 앱처럼 편리하고 전 세계적으로 사용 가능한 네트워크를 원하면서도, 동시에 개방형 네트워크로서 기능하기를 원했습니다. 이것이 바로, 연합(federation)이나 블록체인을 살펴보았을 때 그 한계가 두드러졌던 이유이며, 우리의 해결책은 고확장 백엔드의 표준 기법을 채택한 후, 이를 피어 투 피어 시스템의 기술과 접목시키는 것이었습니다.
+
+<FooterCTA href="/" title="더 알아볼 준비가 되셨나요?" description="사양, 가이드, SDK를 확인해보세요." />
