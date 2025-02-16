@@ -22,7 +22,7 @@ Bluesky PDS をセルフホスティングするということは、より広�
 * [PDS を更新する](#updating-your-pds)
 * [ヘルプを取得する](#getting-help)
 
-## セルフホスティング PDS の準備
+<h2 id="preparation-for-self-hosting-pds">セルフホスティング PDS の準備</h2>
 
 任意のクラウド プロバイダーでサーバーを起動します。[Digital Ocean](https://digitalocean.com/) と [Vultr](https://vultr.com/) は 2 つの一般的な選択肢です。
 
@@ -45,7 +45,7 @@ Bluesky PDS をセルフホスティングするということは、より広�
 
 **注:** セキュリティ対策として、インバウンド SSH アクセス (ポート 22/tcp) を自分のコンピューターのパブリック IP アドレスに制限することをお勧めします。現在のパブリック IP アドレスは、[ifconfig.me](https://ifconfig.me/) を使用して確認できます。
 
-## クラウド ファイアウォールを HTTP および HTTPS 用に開く
+<h2 id="open-your-cloud-firewall-for-http-and-https">クラウド ファイアウォールを HTTP および HTTPS 用に開く</h2>
 
 最も一般的な構成ミスの原因の 1 つは、ファイアウォール ポートを正しく開いていないことです。この手順を必ず再確認してください。
 
@@ -57,7 +57,7 @@ Bluesky PDS をセルフホスティングするということは、より広�
 
 **注:** TLS を設定したり、ポート 80 から 443 にリクエストをリダイレクトしたりする必要はありません。Docker 構成ファイルに含まれている Caddy Web サーバーがこれを処理するためです。
 
-## ドメインの DNS を構成する
+<h2 id="configure-dns-for-your-domain">ドメインの DNS を構成する</h2>
 
 DNS プロバイダーのコントロール パネルから、サーバーを指すレコードを含むドメインを設定します。
 
@@ -73,7 +73,7 @@ DNS プロバイダーのコントロール パネルから、サーバーを指
 * ユーザーが PDS に新しいアカウントを作成できるようにする場合は、ワイルドカード レコードが必要です。
 * TTL は任意の値にできますが、600 (10 分) が妥当です
 
-## DNS が期待どおりに動作していることを確認します
+<h2 id="check-that-dns-is-working-as-expected">DNS が期待どおりに動作していることを確認します</h2>
 
 [DNS Checker](https://dnschecker.org/) などのサービスを使用して、ドメイン名を解決できることを確認します。
 
@@ -84,7 +84,7 @@ DNS プロバイダーのコントロール パネルから、サーバーを指
 
 これらはすべて、サーバーのパブリック IP を返します。
 
-## Ubuntu 20.04/22.04 および Debian 11/12 のインストーラー
+<h2 id="installer-on-ubuntu-20-04-22-04-and-debian-11-12">Ubuntu 20.04/22.04 および Debian 11/12 のインストーラー</h2>
 
 SSH 経由でサーバー上で、wget を使用してインストーラー スクリプトをダウンロードします:
 
@@ -104,7 +104,7 @@ curl https://raw.githubusercontent.com/bluesky-social/pds/main/installer.sh >ins
 sudo bash installer.sh
 ```
 
-## PDS がオンラインでアクセス可能であることを確認する
+<h2 id="verifying-that-your-pds-is-online-and-accessible">PDS がオンラインでアクセス可能であることを確認する</h2>
 
 > [!TIP]
 > ライブ ネットワークで PDS コンテンツを使用する際に最もよく発生する問題は、提供された Caddy 構成を nginx、apache、または同様のリバース プロキシに置き換える場合です。 TLS 証明書、WebSocket、仮想サーバー名をすべて正しく取得するのは難しい場合があります。現在、その他の構成についてはテクニカル サポートを提供していません。
@@ -125,7 +125,7 @@ wsdump "wss://example.com/xrpc/com.atproto.sync.subscribeRepos?cursor=0"
 
 イベントは PDS で作成されるまで WebSocket に出力されないことに注意してください。そのため、設定が正常であれば、上記のコマンドは出力なしで実行され続ける可能性があります。
 
-## pdsadmin を使用してアカウントを作成する
+<h2 id="creating-an-account-using-pdsadmin">pdsadmin を使用してアカウントを作成する</h2>
 
 サーバーで ssh を使用して、`pdsadmin` を使用してアカウントを作成します (まだアカウントを作成していない場合)。
 
@@ -133,7 +133,7 @@ wsdump "wss://example.com/xrpc/com.atproto.sync.subscribeRepos?cursor=0"
 sudo pdsadmin account create
 ```
 
-## 招待コードを使用してアカウントを作成する
+<h2 id="creating-an-account-using-an-invite-code">招待コードを使用してアカウントを作成する</h2>
 
 サーバーで ssh を使用して、`pdsadmin` を使用して招待コードを作成します。
 
@@ -143,7 +143,7 @@ sudo pdsadmin create-invite-code
 
 アプリを使用してアカウントを作成するときは、この招待コードを入力します。
 
-## PDS で Bluesky アプリを使用する
+<h2 id="using-the-bluesky-app-with-your-pds">PDS で Bluesky アプリを使用する</h2>
 
 Bluesky アプリを使用して PDS に接続できます。
 
@@ -155,7 +155,7 @@ Bluesky アプリを使用して PDS に接続できます。
 
 _注: サブドメイン TLS 証明書はオンデマンドで作成されるため、ハンドルにアクセスできるようになるまでに 10 ～ 30 秒かかる場合があります。最初の投稿/プロフィールが表示されない場合は、30 秒待ってから別の投稿を行ってください。_
 
-## PDS の更新
+<h2 id="updating-your-pds">PDS の更新</h2>
 
 PDS を新しいバージョンに更新しておくことをお勧めします。そうしないと、問題が発生する可能性があります。`pdsadmin` ツールを使用して PDS を更新できます。
 
@@ -163,7 +163,7 @@ PDS を新しいバージョンに更新しておくことをお勧めします�
 sudo pdsadmin update
 ```
 
-## ヘルプの取得
+<h2 id="getting-help">ヘルプの取得</h2>
 
 - [GitHub](https://github.com/bluesky-social/pds) にアクセスして、問題やディスカッションを確認してください。
 - [AT Protocol PDS Admins Discord](https://discord.gg/e7hpHxRfBP) に参加して、インスタンスをホストしている他のユーザーとチャットし、PDS ディストリビューションに関する重要な更新情報を入手してください。
