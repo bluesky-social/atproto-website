@@ -10,19 +10,19 @@ Auto-hospedar um Bluesky PDS significa executar seu próprio Servidor de Dados P
 
 ## Índice
 
-* [Preparação para auto-hospedagem de PDS](#preparacao-para-auto-hospedagem-de-pds)
-* [Abra seu firewall de nuvem para HTTP e HTTPS](#abra-seu-firewall-de-nuvem-para-http-e-https)
-* [Configure o DNS para seu domínio](#configure-dns-para-seu-dominio)
+* [Preparação para auto-hospedagem de PDS](#preparation-for-self-hosting-pds)
+* [Abra seu firewall de nuvem para HTTP e HTTPS](#open-your-cloud-firewall-for-http-and-https)
+* [Configure o DNS para seu domínio](#configure-dns-for-your-domain)
 * [Verifique se o DNS está funcionando conforme o esperado](#check-that-dns-is-working-as-expected)
 * [Instalador no Ubuntu 20.04/22.04 e Debian 11/12](#installer-on-ubuntu-20-04-22-04-and-debian-11-12)
-* [Verificando se seu PDS está online e acessível](#verificando-se-seu-pds-está-online-e-acessível)
-* [Criando uma conta usando pdsadmin](#criando-uma-conta-usando-pdsadmin)
-* [Criando uma conta usando um código de convite](#criando-uma-conta-usando-um-código-de-convite)
-* [Usando o aplicativo Bluesky com seu PDS](#usando-o-aplicativo-bluesky-com-seus-pds)
-* [Atualizando seu PDS](#atualizando-seus-pds)
-* [Obtendo ajuda](#obtendo-ajuda)
+* [Verificando se seu PDS está online e acessível](#verifying-that-your-pds-is-online-and-accessible)
+* [Criando uma conta usando pdsadmin](#creating-an-account-using-pdsadmin)
+* [Criando uma conta usando um código de convite](#creating-an-account-using-an-invite-code)
+* [Usando o aplicativo Bluesky com seu PDS](#using-the-bluesky-app-with-your-pds)
+* [Atualizando seu PDS](#updating-your-pds)
+* [Obtendo ajuda](#getting-help)
 
-## Preparação para auto-hospedagem de PDS
+<h2 id="preparation-for-self-hosting-pds">Preparação para auto-hospedagem de PDS</h2>
 
 Inicie um servidor em qualquer provedor de nuvem, [Digital Ocean](https://digitalocean.com/) e [Vultr](https://vultr.com/) são duas escolhas populares.
 
@@ -45,7 +45,7 @@ Certifique-se de que você pode fazer ssh para seu servidor e ter acesso root.
 
 **Observação:** é uma boa prática de segurança restringir o acesso ssh de entrada (porta 22/tcp) ao endereço IP público do seu próprio computador. Você pode verificar seu endereço IP público atual usando [ifconfig.me](https://ifconfig.me/).
 
-## Abra seu firewall de nuvem para HTTP e HTTPS
+<h2 id="open-your-cloud-firewall-for-http-and-https">Abra seu firewall de nuvem para HTTP e HTTPS</h2>
 
 Uma das fontes mais comuns de configuração incorreta é não abrir as portas do firewall corretamente. Certifique-se de verificar novamente esta etapa.
 
@@ -56,7 +56,7 @@ No console do seu provedor de nuvem, as seguintes portas devem estar abertas par
 
 **Observação:** não há necessidade de configurar TLS ou redirecionar solicitações da porta 80 para 443 porque o servidor web Caddy, incluído no arquivo de composição do Docker, cuidará disso para você.
 
-## Configure o DNS para seu domínio
+<h2 id="configure-dns-for-your-domain">Configure o DNS para seu domínio</h2>
 
 No painel de controle do seu provedor de DNS, configure um domínio com registros apontando para seu servidor.
 
@@ -72,7 +72,7 @@ No painel de controle do seu provedor de DNS, configure um domínio com registro
 * O registro curinga é necessário ao permitir que usuários criem novas contas no seu PDS.
 * O TTL pode ser qualquer coisa, mas 600 (10 minutos) é razoável
 
-## Verifique se o DNS está funcionando conforme o esperado
+<h2 id="check-that-dns-is-working-as-expected">Verifique se o DNS está funcionando conforme o esperado</h2>
 
 Use um serviço como [DNS Checker](https://dnschecker.org/) para verificar se você consegue resolver nomes de domínio.
 
@@ -83,7 +83,7 @@ Exemplos para verificar (tipo de registro `A`):
 
 Todos eles devem retornar o IP público do seu servidor.
 
-## Instalador no Ubuntu 20.04/22.04 e Debian 11/12
+<h2 id="installer-on-ubuntu-20-04-22-04-and-debian-11-12">Instalador no Ubuntu 20.04/22.04 e Debian 11/12</h2>
 
 No seu servidor via ssh, baixe o script do instalador usando wget:
 
@@ -103,7 +103,7 @@ E então execute o instalador usando bash:
 sudo bash installer.sh
 ```
 
-## Verificando se seu PDS está online e acessível
+<h2 id="verifying-that-your-pds-is-online-and-accessible">Verificando se seu PDS está online e acessível</h2>
 
 > [!DICA]
 > Os problemas mais comuns para obter o conteúdo do PDS consumido na rede ativa são quando as pessoas substituem a configuração do Caddy fornecida por nginx, apache ou proxies reversos semelhantes. Obter certificados TLS, WebSockets e nomes de servidores virtuais corretos pode ser complicado. Atualmente, não estamos fornecendo suporte técnico para outras configurações.
@@ -124,7 +124,7 @@ wsdump "wss://example.com/xrpc/com.atproto.sync.subscribeRepos?cursor=0"
 
 Observe que não haverá eventos de saída no WebSocket até que eles sejam criados no PDS, então o comando acima pode continuar a ser executado sem saída se as coisas forem configuradas com sucesso.
 
-## Criando uma conta usando pdsadmin
+<h2 id="creating-an-account-using-pdsadmin">Criando uma conta usando pdsadmin</h2>
 
 Usando ssh no seu servidor, use `pdsadmin` para criar uma conta se você ainda não tiver feito isso.
 
@@ -132,7 +132,7 @@ Usando ssh no seu servidor, use `pdsadmin` para criar uma conta se você ainda n
 sudo pdsadmin account create
 ```
 
-## Criando uma conta usando um código de convite
+<h2 id="creating-an-account-using-an-invite-code">Criando uma conta usando um código de convite</h2>
 
 Usando ssh no seu servidor, use `pdsadmin` para criar um código de convite.
 
@@ -142,7 +142,7 @@ sudo pdsadmin create-invite-code
 
 Ao criar uma conta usando o aplicativo, insira este código de convite.
 
-## Usando o aplicativo Bluesky com seu PDS
+<h2 id="using-the-bluesky-app-with-your-pds">Usando o aplicativo Bluesky com seu PDS</h2>
 
 Você pode usar o aplicativo Bluesky para se conectar ao seu PDS.
 
@@ -154,7 +154,7 @@ Você pode usar o aplicativo Bluesky para se conectar ao seu PDS.
 
 _Observação: como o certificado TLS do subdomínio é criado sob demanda, pode levar de 10 a 30 segundos para que seu identificador fique acessível. Se você não estiver vendo sua primeira postagem/perfil, aguarde 30 segundos e tente fazer outra postagem._
 
-## Atualizando seu PDS
+<h2 id="updating-your-pds">Atualizando seu PDS</h2>
 
 É recomendável que você mantenha seu PDS atualizado com novas versões, caso contrário, as coisas podem quebrar. Você pode usar a ferramenta `pdsadmin` para atualizar seu PDS.
 
@@ -162,7 +162,7 @@ _Observação: como o certificado TLS do subdomínio é criado sob demanda, pode
 sudo pdsadmin update
 ```
 
-## Obtendo ajuda
+<h2 id="getting-help">Obtendo ajuda</h2>
 
 - [Visite o GitHub](https://github.com/bluesky-social/pds) para problemas e discussões.
 - [Junte-se ao AT Protocol PDS Admins Discord](https://discord.gg/e7hpHxRfBP) para conversar com outras pessoas que hospedam instâncias e obter atualizações importantes sobre a distribuição do PDS.
