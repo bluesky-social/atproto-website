@@ -50,7 +50,7 @@ We assume that a Personal Data Server may fail at any time, either by going offl
 
 User data is stored in [signed data repositories](/guides/data-repos) and authenticated by [DIDs](/guides/identity). Signed data repositories are like Git repos but for database records, and DIDs provide a directory of cryptographic keys, similar in some ways to the TLS certificate system. Identities are expected to be secure, reliable, and independent of the user's PDS.
 
-Most DID documents publish two types public keys: a signing key and rotation keys.
+Most DID documents publish two types of public keys: a signing key and rotation keys.
 
 * **Signing key**: Validates the user's data repository. All DIDs include such a key.
 * **Rotation keys**: Asserts changes to the DID Document itself. The PLC DID method includes this, while the DID Web method does not.
