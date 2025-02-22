@@ -8,7 +8,7 @@
     --shiki-token-parameter: theme('colors.pink.300');
     --shiki-token-function: theme('colors.violet.300');
     --shiki-token-string-expression: theme('colors.emerald.300');
-    --shiki-token-punctuation: theme('colors.zinc.200');
+    --shiki-token-punctuation: theme('colors.zinc.500');
   }
 
   .light {
@@ -20,7 +20,7 @@
     --shiki-token-parameter: theme('colors.pink.500');
     --shiki-token-function: theme('colors.violet.500');
     --shiki-token-string-expression: theme('colors.green.600');
-    --shiki-token-punctuation: theme('colors.zinc.200');
+    --shiki-token-punctuation: theme('colors.zinc.500');
   }
 
   [inert] ::-webkit-scrollbar {
