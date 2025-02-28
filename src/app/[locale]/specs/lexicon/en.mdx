@@ -43,15 +43,12 @@ A Lexicon JSON file is an object with the following fields:
 
 - `lexicon` (integer, required): indicates Lexicon language version. In this version, a fixed value of `1`
 - `id` (string, required): the NSID of the Lexicon
-- `revision` (integer, optional): indicates the version of this Lexicon, if changes have occurred
 - `description` (string, optional): short overview of the Lexicon, usually one or two sentences
 - `defs` (map of strings-to-objects, required): set of definitions, each with a distinct name (key)
 
 Schema definitions under `defs` all have a `type` field to distinguish their type. A file can have at most one definition with one of the "primary" types. Primary types should always have the name `main`. It is possible for `main` to describe a non-primary type.
 
 References to specific definitions within a Lexicon use fragment syntax, like `com.example.defs#someView`. If a `main` definition exists, it can be referenced without a fragment, just using the NSID. For references in the `$type` fields in data objects themselves (eg, records or contents of a union), this is a "must" (use of a `#main` suffix is invalid). For example, `com.example.record` not `com.example.record#main`.
-
-The semantics of the `revision` field have not been worked out yet, but are intended to help third parties identity the most recent among multiple versions or copies of a Lexicon.
 
 Related Lexicons are often grouped together in the NSID hierarchy. As a convention, any definitions used by multiple Lexicons are defined in a dedicated `*.defs` Lexicon (eg, `com.atproto.server.defs`) within the group. A `*.defs` Lexicon should generally not include a definition named `main`, though it is not strictly invalid to do so.
 
@@ -238,7 +235,7 @@ By default unions are "open", meaning that future revisions of the schema could 
 
 A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). The main difference is that the data would be required to have the `$type` field. An empty refs list with `closed` set to true is an invalid schema.
 
-The schema definitions pointed to by a `union` are objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspnod to string data).
+The schema definitions pointed to by a `union` are objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspond to string data).
 
 ### `unknown`
 
@@ -272,7 +269,7 @@ For the various identifier formats, when doing Lexicon schema validation the mos
 
 ### `at-identifier`
 
-A string type which is either a DID (type: did) or a handle (handle). Mostly used in XRPC query parameters. It is unambiguous whether an at-identifier is a handle or a DID because a DID always starts with did:, and the colon character (:) is not an allowed in handles.
+A string type which is either a DID (type: did) or a handle (handle). Mostly used in XRPC query parameters. It is unambiguous whether an at-identifier is a handle or a DID because a DID always starts with did:, and the colon character (:) is not allowed in handles.
 
 ### `datetime`
 
@@ -288,7 +285,7 @@ Timezone specification is required. It is *strongly* preferred to use the UTC ti
 
 Whole seconds precision is required, and arbitrary fractional precision digits are allowed. Best practice is to use at least millisecond precision, and to pad with zeros to the generated precision (eg, trailing `:12.340Z` instead of `:12.34Z`). Not all datetime formatting libraries support trailing zero formatting. Both millisecond and microsecond precision have reasonable cross-language support; nanosecond precision does not.
 
-Implementations should be aware when round-tripping records containing datetimes of two ambiguities: loss-of-precision, and ambiguity with trailing fractional second zeros. If de-serializing Lexicon records in to native types, and then re-serializing, the string representation may not be the same, which could result in broken hash references, sanity check failures, or repository update churn. A safer thing to do is to deserialize the datetime as a simple string, which ensures round-trip re-serialization.
+Implementations should be aware when round-tripping records containing datetimes of two ambiguities: loss-of-precision, and ambiguity with trailing fractional second zeros. If de-serializing Lexicon records into native types, and then re-serializing, the string representation may not be the same, which could result in broken hash references, sanity check failures, or repository update churn. A safer thing to do is to deserialize the datetime as a simple string, which ensures round-trip re-serialization.
 
 Implementations "should" validate that the semantics of the datetime are valid. For example, a month or day `00` is invalid.
 
@@ -389,13 +386,45 @@ Protocol implementations should generally consider data which fails to validate 
 
 Unexpected fields in data which otherwise conforms to the Lexicon should be ignored. When doing schema validation, they should be treated at worst as warnings. This is necessary to allow evolution of the schema by the controlling authority, and to be robust in the case of out-of-date Lexicons.
 
-Third parties can technically insert any additional fields they want in to data. This is not the recommended way to extend applications, but it is not specifically disallowed. One danger with this is that the Lexicon may be updated to include fields with the same field names but different types, which would make existing data invalid.
+Third parties can technically insert any additional fields they want into data. This is not the recommended way to extend applications, but it is not specifically disallowed. One danger with this is that the Lexicon may be updated to include fields with the same field names but different types, which would make existing data invalid.
+
+## Lexicon Publication and Resolution
+
+Lexicon schemas are published publicly as records in atproto repositories, using the `com.atproto.lexicon.schema` type. The domain name authority for [NSIDs](/specs/nsid) to specific atproto repositories (identified by [DID](/specs/did) is linked by a DNS TXT record (`_lexicon`), similar to but distinct from the [handle resolution](/specs/handle) system.
+
+The `com.atproto.lexicon.schema` Lexicon itself is very minimal: it only requires the `lexicon` integer field, which must be `1` for this version of the Lexicon language. In practice, same fields as [Lexicon Files](#lexicon-files) should be included, along with `$type`. The record key is the NSID of the schema.
+
+A summary of record fields:
+
+- `$type`: must be `com.atproto.lexicon.schema` (as with all atproto records)
+- `lexicon`: integer, indicates the overall version of the Lexicon (currently `1`)
+- `id`: the NSID of this Lexicon. Must be a simple NSID (no fragment), and must match the record key
+- `defs`: the schema definitions themselves, as a map-of-objects. Names should not include a `#` prefix.
+- `description`: optional description of the overall schema; though descriptions are best included on individual defs, not the overall schema.
+
+The `com.atproto.lexicon.schema` meta-schema is somewhat unlike other Lexicons, in that it is defined and governed as part of the protocol. Future versions of the language and protocol might not follow the evolution rules. It is an intentional decision to not express the Lexicon schema language itself recursively, using the schema language.
+
+Authority for NSID namespaces is done at the "group" level, meaning that all NSIDs which differ only by the final "name" part are all published in the same repository. Lexicon resolution of NSIDs is not hierarchical: DNS TXT records must be created for each authority section, and resolvers should not recurse up or down the DNS hierarchy looking for TXT records.
+
+As an example, the NSID `edu.university.dept.lab.blogging.getBlogPost` has a "name" `getBlogPost`. Removing the name and reversing the rest of the NSID gives an "authority domain name" of `blogging.lab.dept.university.edu`. To link the authority to a specific DID (say `did:plc:ewvi7nxzyoun6zhxrhs64oiz`), a DNS TXT record with the name `_lexicon.blogging.lab.dept.university.edu` and value `did=did:plc:ewvi7nxzyoun6zhxrhs64oiz` (note the `did=` prefix)  would be created. Then a record with collection `com.atproto.lexicon.schema` and record-key `edu.university.dept.lab.blogging.getBlogPost` would be created in that account's repository.
+
+A resolving service would start with the NSID (`edu.university.dept.lab.blogging.getBlogPost`) and do a DNS TXT resolution for `_lexicon.blogging.lab.dept.university.edu`. Finding the DID, it would proceed with atproto DID resolution, look for a PDS, and then fetch the relevant record. The overall AT-URI for the record would be `at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/com.atproto.lexicon.schema/edu.university.dept.lab.blogging.getBlogPost`.
+
+If the DNS TXT resolution for `_lexicon.blogging.lab.dept.university.edu` failed, the resolving service would *NOT* try `_lexicon.lab.dept.university.edu` or `_lexicon.getBlogPost.blogging.lab.dept.university.edu` or `_lexicon.university.edu`, or any other domain name. The Lexicon resolution would simply fail.
+
+If another NSID `edu.university.dept.lab.blogging.getBlogComments` was created, it would have the same authority name, and must be published in the same atproto repository (with a different record key). If a Lexicon for `edu.university.dept.lab.gallery.photo` was published, a new DNS TXT record would be required (`_lexicon.gallery.lab.dept.university.edu`; it could point at the same repository (DID), or a different repository.
+
+As a simpler example, an NSID `app.toy.record` would resolve via `_lexicon.toy.app`.
+
+A single repository can host Lexicons for multiple authority domains, possibly across multiple registered domains and TLDs. Resolution DNS records can change over time, moving schema resolution to different repositories, though it may take time for DNS and cache changes to propagate.
+
+Note that Lexicon record operations are broadcast over repository event streams ("firehose"), but that DNS resolution changes do not (unlike handle changes). Resolving services should not cache DNS resolution results for long time periods.
 
 ## Usage and Implementation Guidelines
 
 It should be possible to translate Lexicon schemas to JSON Schema or OpenAPI and use tools and libraries from those ecosystems to work with atproto data in JSON format.
 
-Implementations which serialize and deserialize data from JSON or CBOR in to structures derived from specific Lexicons should be aware of the risk of "clobbering" unexpected fields. For example, if a Lexicon is updated to add a new (optional) field, old implementations would not be aware of that field, and might accidentally strip the data when de-serializing and then re-serializing. Depending on the context, one way to avoid this problem is to retain any "extra" fields, or to pass-through the original data object instead of re-serializing it.
+Implementations which serialize and deserialize data from JSON or CBOR into structures derived from specific Lexicons should be aware of the risk of "clobbering" unexpected fields. For example, if a Lexicon is updated to add a new (optional) field, old implementations would not be aware of that field, and might accidentally strip the data when de-serializing and then re-serializing. Depending on the context, one way to avoid this problem is to retain any "extra" fields, or to pass-through the original data object instead of re-serializing it.
 
 ## Possible Future Changes
 
