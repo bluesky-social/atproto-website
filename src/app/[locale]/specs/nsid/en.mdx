@@ -36,14 +36,15 @@ The comprehensive list of syntax rules is:
     - the domain authority is not case-sensitive, and should be normalized to lowercase (that is, normalize ASCII `A-Z` to `a-z`)
 - Name:
     - must have at least 1 and at most 63 characters
-    - the allowed characters are ASCII letters only (`A-Z`, `a-z`)
-    - digits and hyphens are not allowed
+    - the allowed characters are ASCII letters and digits only (`A-Z`, `a-z`, `0-9`)
+    - hyphens are not allowed
+    - the first character can not be a digit
     - case-sensitive and should not be normalized
 
 A reference regex for NSID is:
 
 ```
-/^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(\.[a-zA-Z]([a-zA-Z]{0,61}[a-zA-Z])?)$/
+/^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(\.[a-zA-Z]([a-zA-Z0-9]{0,62})?)$/
 ```
 
 
@@ -63,6 +64,7 @@ com.example.fooBar
 net.users.bob.ping
 a-0.b-1.c
 a.b.c
+com.example.fooBarV2
 cn.8.lex.stuff
 ```
 
@@ -71,6 +73,7 @@ Invalid NSIDs:
 ```
 com.exa💩ple.thing
 com.example
+com.example.3
 ```
 
 
