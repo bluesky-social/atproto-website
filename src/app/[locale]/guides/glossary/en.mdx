@@ -20,7 +20,7 @@ The name is also a play on the "@" symbol, aka the "at" symbol, since atproto is
 
 ## PDS (Personal Data Server)
 
-A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did). Many PDSes will host multiple users.
+A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did-decentralized-id). Many PDSes will host multiple users.
 
 A PDS communicates with [AppViews](#appview) to run applications. A PDS doesn't typically run any applications itself, though it will have general account management interfaces such as the OAuth login screen. PDSes actively sync their [data repos](#data-repo) with [Relays](#relay).
 
@@ -47,9 +47,9 @@ Lexicon's sole purpose is to help developers build compatible software.
 
 ## Data Repo
 
-The "data repository" or "repo" is the public dataset which represents a user. It is comprised of [collections](#collection) of JSON [records](#record) and unstructured [blobs](#blob). Every repo is assigned a single permanent [DID](#did) which identifies it. Repos may also have any number of [domain handles](#handle) which act as human-readable names.
+The "data repository" or "repo" is the public dataset which represents a user. It is comprised of [collections](#collection) of JSON [records](#record) and unstructured [blobs](#blob). Every repo is assigned a single permanent [DID](#did-decentralized-id) which identifies it. Repos may also have any number of [domain handles](#handle) which act as human-readable names.
 
-Data repositories are signed merkle trees. Their signatures can be verified against the key material published under the repo's [did](#did). 
+Data repositories are signed merkle trees. Their signatures can be verified against the key material published under the repo's [did](#did-decentralized-id).
 
 - [An introduction to data repos](/guides/data-repos)
 - [Repository spec](/specs/repository)
