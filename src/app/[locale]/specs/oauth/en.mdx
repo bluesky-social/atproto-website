@@ -236,7 +236,7 @@ Authorization Servers must support PAR and clients of all types must use PAR for
 
 Authorization Servers must set `require_pushed_authorization_requests` to `true` in their server metadata document and include a valid URL in `pushed_authorization_request_endpoint`. See [RFC 9207](https://datatracker.ietf.org/doc/html/rfc9207) for requirements on this URL.
 
-Clients make an HTTPS POST request to the `pushed_authorization_request_endpoint` URL, with the request parameters in the form-encoded request body. They receive a `request_uri` (not to be confused with `redirect_uri`) in the JSON response object. When they redirect the user to the authorization endpoint (`authorization_endpoint`), they omit most of the request parameters they already sent and include this `redirect_uri` along with `client_id` as query parameters instead.
+Clients make an HTTPS POST request to the `pushed_authorization_request_endpoint` URL, with the request parameters in the form-encoded request body. They receive a `request_uri` (not to be confused with `redirect_uri`) in the JSON response object. When they redirect the user to the authorization endpoint (`authorization_endpoint`), they omit most of the request parameters they already sent and include this `request_uri` along with `client_id` as query parameters instead.
 
 <Note>
 PAR is a relatively new and less-supported standard, and the requirement to use PAR may be relaxed if it is found to be too onerous a requirement for client implementations. In that case, Authorization Servers would be required to support both PAR and non-PAR requests with PAR being optional for clients.
