@@ -212,7 +212,7 @@ The `client_secret` value, used in many other OAuth profiles, should not be incl
 
 The `state` parameter in client authorization requests is mandatory. Clients should use randomly-generated tokens for this parameter and not have collisions or reuse tokens across any combination of device, account, or session. Authorization Servers should reject duplicate state parameters, but are not currently required to track state values across accounts or sessions. The `state` parameter is effectively used to verify the `issuer` later, and it is important that the parameter can not be forged or guessed by an untrusted party.
 
-For web clients, the `redirect_uri` is a HTTPS URL which will be redirected in the browser to return users to the application at the end of the Authorization flow. The URL may include a port number, but not if it is the default port number. The `redirect_uri` must match one of the URIs declared in the client metadata and the Authorization Server must verify this condition. The URL origin must match that of the `client_id`.
+For web clients, the `redirect_uri` is a HTTPS URL which will be redirected in the browser to return users to the application at the end of the Authorization flow. The URL may include a port number, but not if it is the default port number. The `redirect_uri` must match one of the URIs declared in the client metadata and the Authorization Server must verify this condition.
 
 There is a special exception for the localhost development workflow to use `http://127.0.0.1` or `http://[::1]` URLs, with matching rules described in the "Localhost Client Development" section. These clients use web URLs, but have `application_type` set to `native` in the generated client metadata.
 
