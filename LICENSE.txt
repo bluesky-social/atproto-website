@@ -1,6 +1,6 @@
 Creative Commons Attribution (CC-BY)
 
-Copyright (c) 2022-2024 Bluesky PBC, and Contributors
+Copyright (c) 2022-2025 Bluesky Social PBC, and Contributors
 
 Documentation text and blog posts in this repository are licensed under a permissive CC-BY license.
 
