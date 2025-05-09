@@ -10,6 +10,10 @@ One of the main design goals of atproto (the "Authenticated Transfer Protocol") 
 
 This section describes the major data synchronization features in atproto. The primary real-time data synchronization mechanism is repository event streams, commonly referred to as "firehoses". The primary batch data transfer mechanism is repository exports as CAR files. These two mechanisms can be combined in a "bootstrapping" process which result in a live-synchronized copy of the network.
 
+<Note>
+An updated version of the Synchronization protocol is being rolled out to the live network in early 2025. There is a ["Sync v1.1" proposal document](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) and an [update blog post](https://docs.bsky.app/blog/relay-sync-updates) with deployment details. The written specifications will be updated soon.
+</Note>
+
 ## Synchronization Primitives
 
 As described in the repository spec, each commit to a repository has a *revision* number, in TID syntax. The revision number must always increase between commits for the same account, even if the account is migrated between hosts or has a period of inactivity in the network. Revision numbers can be used as a logical clock to aid synchronization of individual accounts. To keep this simple, it is recommended to use the current time as a TID for each commit, including the initial commit when creating a new account. Services should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Network services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.

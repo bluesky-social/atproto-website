@@ -127,6 +127,10 @@ The CARv1 specification is agnostic about the same block appearing multiple time
 
 ## Repository Diffs
 
+<Note>
+An updated version of the Synchronization protocol is being rolled out to the live network in early 2025. There is a ["Sync v1.1" proposal document](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) and an [update blog post](https://docs.bsky.app/blog/relay-sync-updates) with deployment details. The written specifications will be updated soon.
+</Note>
+
 A concept which supports efficient synchronization of data between independent services is "diffs" of repository trees between different revisions. The basic principle is that a repository diff contains all the data (commit object, MST nodes, and records) that have changed between an older revision and the current revision of a repo. The diff can be "applied" to the older mirror of the repository, and the result will be the complete MST tree at the current (newer) commit revision.
 
 Repo diffs can be serialized as CAR files, sometimes referred to as "CAR slices". Some details about diff CAR slices:
