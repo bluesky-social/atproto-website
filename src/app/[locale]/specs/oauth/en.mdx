@@ -183,7 +183,7 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
     - no account management actions: change handle, change email, delete or deactivate account, migrate account
     - no access to DMs (the `chat.bsky.*` Lexicons), specifically
 - `transition:email`: gives access to read your email address
-    - `com.atproto.server.getSession` will expose `email`, `emailAuthFactor` and `emailConfirmed` in it's response
+    - `com.atproto.server.getSession` will expose `email`, `emailAuthFactor` and `emailConfirmed` in its response
 - `transition:chat.bsky`: equivalent to adding the "DM Access" toggle for "App Passwords"
     - API endpoints and service proxying for the `chat.bsky` Lexicons specifically
     - ability to generate service auth tokens for the `chat.bsky` Lexicons
