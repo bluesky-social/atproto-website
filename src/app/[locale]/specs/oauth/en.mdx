@@ -186,6 +186,8 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
     - API endpoints and service proxying for the `chat.bsky` Lexicons specifically
     - ability to generate service auth tokens for the `chat.bsky` Lexicons
     - this scope depends on and does not function without the  `transition:generic` scope
+- `transition:email`: access to the account email address
+    - email address (and confirmation status) gets included in response to `com.atproto.server.getSession` endpoint
 
 ## Authorization Requests
 
