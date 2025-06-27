@@ -157,15 +157,27 @@ When that finishes, the user will be sent back to `/oauth/callback` on our Web a
 router.get(
   '/oauth/callback',
   handler(async (req, res) => {
-    // Store the credentials
-    const { session } = await oauthClient.callback(params)
+    res.setHeader('cache-control', 'no-store')
 
-    // Attach the account DID to our user via a cookie
-    const cookieSession = await getIronSession(req, res)
-    cookieSession.did = session.did
-    await cookieSession.save()
+    const params = new URLSearchParams(req.originalUrl.split('?')[1])
+    try {
+      // Load the session cookie
+      const session = await getIronSession<Session>(req, res, {
+        cookieName: 'sid',
+        password: env.COOKIE_SECRET,
+      })
 
-    // Send them back to the app
+      // Complete the OAuth flow
+      const oauth = await ctx.oauthClient.callback(params)
+
+      // Update the session cookie
+      session.did = oauth.session.did
+
+      await session.save()
+    } catch (err) {
+      ctx.logger.error({ err }, 'oauth callback failed')
+    }
+
     return res.redirect('/')
   })
 )
