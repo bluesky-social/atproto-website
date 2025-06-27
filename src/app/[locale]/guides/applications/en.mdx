@@ -103,7 +103,7 @@ Our login page just asks the user for their "handle," which is the domain name a
 <form action="/login" method="post" class="login-form">
   <input
     type="text"
-    name="handle"
+    name="input"
     placeholder="Enter your handle (eg alice.bsky.social)"
     required
   />
@@ -118,14 +118,32 @@ When they submit the form, we tell our OAuth client to initiate the authorizatio
 // Login handler
 router.post(
   '/login',
+  express.urlencoded(),
   handler(async (req, res) => {
-    // Initiate the OAuth flow
-    const handle = req.body?.handle
-    const url = await oauthClient.authorize(handle, {
-      scope: 'atproto transition:generic',
-    })
-    return res.redirect(url.toString())
-  })
+    // Never store this route
+    res.setHeader('cache-control', 'no-store')
+
+    try {
+      // Validate input: can be a handle, a DID or a service URL (PDS).
+      const input = ifString(req.body.input)
+      if (!input) {
+        throw new Error('Invalid input')
+      }
+
+      // Initiate the OAuth flow
+      const url = await oauthClient.authorize(input, {
+        scope: 'atproto transition:generic',
+      })
+
+      res.redirect(url.toString())
+    } catch (err) {
+      logger.error({ err }, 'oauth authorize failed')
+
+      const error = err instanceof Error ? err.message : 'unexpected error'
+
+      return res.type('html').send(page(login({ error })))
+    }
+  }),
 )
 ```
 
@@ -288,11 +306,15 @@ Our `POST /status` route is going to use this API to publish the user's status t
 // "Set status" handler
 router.post(
   '/status',
+  express.urlencoded(),
   handler(async (req, res) => {
     // If the user is signed in, get an agent which communicates with their server
     const agent = await getSessionAgent(req, res, ctx)
     if (!agent) {
-      return res.status(401).type('html').send('<h1>Error: Session required</h1>')
+        return res
+          .status(401)
+          .type('html')
+          .send('<h1>Error: Session required</h1>')
     }
 
     // Construct their status record
@@ -312,7 +334,10 @@ router.post(
       })
     } catch (err) {
       logger.warn({ err }, 'failed to write record')
-      return res.status(500).type('html').send('<h1>Error: Failed to write record</h1>')
+      return res
+        .status(500)
+        .type('html')
+        .send('<h1>Error: Failed to write record</h1>')
     }
 
     res.status(200).json({})
@@ -417,6 +442,7 @@ import * as Status from '#/lexicon/types/xyz/statusphere/status'
 // "Set status" handler
 router.post(
   '/status',
+  express.urlencoded(),
   handler(async (req, res) => {
     // ...
 
@@ -427,7 +453,10 @@ router.post(
       createdAt: new Date().toISOString(),
     }
     if (!Status.validateRecord(record).success) {
-      return res.status(400).json({ error: 'Invalid status' })
+      return res
+        .status(400)
+        .type('html')
+        .send('<h1>Error: Invalid status</h1>')
     }
 
     // ...
@@ -604,6 +633,7 @@ To do this, we just update `POST /status` to include an additional write to our 
 // "Set status" handler
 router.post(
   '/status',
+  express.urlencoded(),
   handler(async (req, res) => {
     // ...
 
