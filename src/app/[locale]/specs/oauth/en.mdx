@@ -258,7 +258,7 @@ Additional requirements:
 - confidential clients are expected to immediately remove client authentication keys from their client metadata if the key has been leaked or compromised
 - Authorization Servers must bind active auth sessions for confidential clients to the client authentication key used at the start of the session. They do so by ensuring that the key's identifier (`kid`), signature algorithm (`alg`) and thumbprint of the signing key (`jkt`) of the client attestation JWT stay the same for the entire life time of the session. The server must revoke the session and reject further token refreshes if the client authentication key becomes absent from the client metadata. This means the Authorization Server must periodically re-fetch client metadata (and related keyset).
 - The client assertion JWT must include an `iat` claim (issued at) timestamp. Authorization Servers should not reject client assertion JWTs generated less than a minute ago.
-- The client assertion JWT must include an `jti` claim (JWT ID) with a unique value to prevent replays. Authorization Servers must ensure uniqueness of `jti` values.
+- The client assertion JWT must include an `jti` claim (JWT ID) with a unique value to prevent replays. Authorization Servers must ensure uniqueness of `jti` values over the full token validity time period.
 - The `aud` claim (audience) of the client assertion JWT must be the Authorization Server's `issuer`.
 
 ## Tokens and Session Lifetime
