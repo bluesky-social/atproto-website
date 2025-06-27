@@ -54,7 +54,7 @@ All atproto OAuth clients need to meet a core set of standards and requirements,
 
 As described in the OAuth 2.0 specification ([RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)), every client is one of two broad types:
 
-- **confidential clients** are clients which can authenticate themselves to Authorization Servers using a cryptographic signing key. This allows refresh tokens to be bound to the specific client. Note that this form of client authentication is distinct from DPoP: the client authentication key is common to all client sessions (although it can be rotated). This usually means that there is a web service controlled by the client which holds the key. Because they are authenticated and can revoke tokens in a security incident, confidential clients may be trusted with longer session and token lifetimes.
+- **confidential clients** are clients which can authenticate themselves to Authorization Servers using a cryptographic signing key. When a client is authenticated through a public key, refresh tokens are bound to the key that was used when initially issued. Note that this form of client authentication is distinct from DPoP: the client authentication key is common to all client sessions (although it can be rotated). This usually means that there is a web service controlled by the client which holds the key. Because they are authenticated and can revoke tokens in a security incident (by removing keys associated with compromised accounts from their advertised JWKS), confidential clients may be trusted with longer session and token lifetimes.
 - **public clients** do not authenticate using a client signing key, either because they don’t have a server-side component (the client software all runs on end-user devices), or they simply chose not to implement it.
 
 It is acceptable for a web service to act as a public client, and conversely it is possible for mobile apps and browser apps to coordinate with a token-mediating backend service and for the combination to form a confidential client. Mobile apps and browser apps can also adopt a "backend-for-frontend" (BFF) architecture with a web service backend acting as the OAuth client. This document will use the "public" vs "confidential" client terminology for clarity.
@@ -106,7 +106,7 @@ Additional optional client metadata fields are enumerated with [IANA](https://ww
 
 ### Localhost Client Development
 
-When working with a developent environment (Authorization Server and Client), it may be difficult for developers to publish in-progress client metadata at a public URL so that authorization servers can access it. This may even be true for development environments using a containerized Authorization Server and local DNS, because of SSRF protections against local IP ranges.
+When working with a development environment (Authorization Server and Client), it may be difficult for developers to publish in-progress client metadata at a public URL so that authorization servers can access it. This may even be true for development environments using a containerized Authorization Server and local DNS, because of SSRF protections against local IP ranges.
 
 To make development workflows easier, a special exception is made for clients with `client_id` having origin `http://localhost` (with no port number specified). Authorization Servers are encouraged to support this exception - including in production environments - but it is optional.
 
@@ -114,7 +114,7 @@ In a localhost `client_id` scenario, the Authorization Server should verify that
 
 In the Authorization Request, the `redirect_uri` must match one of those supplied (or a default). Path components must match, but port numbers are not matched.
 
-Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate urlencoding):
+Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate URL encoding):
 
 - `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL, with path component matched but port numbers ignored. The default values (if none are supplied) are `http://127.0.0.1/` and `http://[::1]/`.
 - `scope` (string with space-separated values, single query parameter allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
@@ -256,7 +256,10 @@ Additional requirements:
 - confidential clients should periodically rotate client keys, adding new keys to the JWKS set and using then for new sessions, then removing old keys once they are no longer associated with any active auth sessions
 - confidential clients must include `token_endpoint_auth_method` as `private_key_jwt` in their client metadata document
 - confidential clients are expected to immediately remove client authentication keys from their client metadata if the key has been leaked or compromised
-- Authorization Servers must bind active auth sessions for confidential clients to the client authentication key used at the start of the session. The server should revoke the session and reject further token refreshes if the client authentication key becomes absent from the client metadata. This means the Authorization Server is expected to periodically re-fetch client metadata.
+- Authorization Servers must bind active auth sessions for confidential clients to the client authentication key used at the start of the session. They do so by ensuring that the key's identifier (`kid`), signature algorithm (`alg`) and thumbprint of the signing key (`jkt`) of the client attestation JWT stay the same for the entire life time of the session. The server must revoke the session and reject further token refreshes if the client authentication key becomes absent from the client metadata. This means the Authorization Server must periodically re-fetch client metadata (and related keyset).
+- The client assertion JWT must include an `iat` claim (issued at) timestamp. Authorization Servers should not reject client assertion JWTs generated less than a minute ago.
+- The client assertion JWT must include an `jti` claim (JWT ID) with a unique value to prevent replays. Authorization Servers must ensure uniqueness of `jti` values over the full token validity time period.
+- The `aud` claim (audience) of the client assertion JWT must be the Authorization Server's `issuer`.
 
 ## Tokens and Session Lifetime
 
