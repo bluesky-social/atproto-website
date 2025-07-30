@@ -88,8 +88,6 @@ The DID is the primary account identifier, and an account whose DID document doe
 
 The public **signing key** for the account is found under the `verificationMethod` array, in an object with `id` ending `#atproto`, the `controller` matching the DID itself, and `type` matching the fixed string `"Multikey"`. The first valid atproto signing key in the array should be used, and any others ignored. The `publicKeyMultibase` field will be the public key in multibase encoding. A legacy format exists with slightly different requirements. See below for details about parsing fields for both formats.
 
-The `type` field will indicate the cryptographic curve type, and the `publicKeyMultibase` field will be the public key in multibase encoding. See below for details for parsing these fields.
-
 A valid signing key is required for atproto functionality, and an account with no valid key in their DID document is broken.
 
 The **PDS service network location** for the account is found under the `service` array, with `id` ending `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
