@@ -33,7 +33,7 @@ The DID Core specification constraints on DID identifier syntax, regardless of t
 - Percent-sign (`%`) is used for "percent encoding" in the identifier section, and must always be followed by two hex characters
 - Query (`?`) and fragment (`#`) sections are allowed in DID URIs, but not in DID identifiers. In the context of atproto, the query and fragment parts are not allowed.
 
-DID identifiers do not generally have a maximum length restriction, but in the context of atproto, there is an initial hard limit of 2 KB.
+DID identifiers do not generally have a maximum length restriction, but in the context of atproto, there is an initial hard limit of 2048 characters.
 
 In the context of atproto, implementations do not need to validate percent encoding. The percent symbol is allowed in DID identifier segments, but the identifier should not end in a percent symbol. A DID containing invalid percent encoding *should* fail any attempt at registration, resolution, etc.
 
