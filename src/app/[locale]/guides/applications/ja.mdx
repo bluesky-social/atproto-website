@@ -305,7 +305,7 @@ router.post(
 
     try {
       // ステータス レコードをユーザーのリポジトリに書き込みます
-      await agent.com.atproto.putRecord({
+      await agent.com.atproto.repo.putRecord({
       repo: agent.assertDid,
       collection: 'xyz.statusphere.status',
       rkey: TID.nextStr(),
