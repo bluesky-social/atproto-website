@@ -25,7 +25,7 @@ Note that event stream (firehose) "frames" may consist of multiple records, and 
 
 **General string length:** an overall length limit on strings within a record, including both those with and without Lexicon-specified string lengths. Measured as bytes (UTF-8 encoded). Should try to keep these to tens of KBytes at most. For an upper-bound limit (`MAX_RECORD_STRING_LEN`), reasonable to just rely on the overall CBOR record size limit. Notably, some early implementations had a 8 KByte (8192 bytes) limit.
 
-**General `bytes` length:** same as the string limit, but for binary data (`MAX_RECORD_BYTES_LEN`). Recommend relying on the overall CBOR record size limit.
+**General `bytes` length:** same as the string limit, but for binary data (`MAX_RECORD_BYTES_LEN`). Recommend relying on the overall CBOR record size limit. As with record size overall, if more than a few dozen KBytes are needed, recommendation is to use blobs.
 
 **CID binary encoding size:** recommend an overall limit (`MAX_CID_BYTES`) of 100 bytes.
 
