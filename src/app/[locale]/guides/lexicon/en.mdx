@@ -8,18 +8,18 @@ export const metadata = {
 
 Lexicon is a schema system used to define RPC methods and record types. Every Lexicon schema is written in JSON, in a format similar to [JSON-Schema](https://json-schema.org/) for defining constraints.
 
-The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS format. Here are some example methods:
+The schemas are identified using [NSIDs](/specs/nsid) which are a reverse-DNS format. Here are some example API endpoints:
 
-```typescript
-com.atproto.repo.getRecord()
-com.atproto.identity.resolveHandle()
-app.bsky.feed.getPostThread()
-app.bsky.notification.listNotifications()
+```
+com.atproto.repo.getRecord
+com.atproto.identity.resolveHandle
+app.bsky.feed.getPostThread
+app.bsky.notification.listNotifications
 ```
 
 And here are some example record types:
 
-```typescript
+```
 app.bsky.feed.post
 app.bsky.feed.like
 app.bsky.actor.profile
@@ -36,9 +36,7 @@ The schema types, definition language, and validation constraints are described 
 
 ## HTTP API methods
 
-The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. Its purpose is to apply the Lexicon to HTTPS.
-
-For example, a call to:
+The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. For example, a call to:
 
 ```typescript
 com.example.getProfile()
@@ -56,20 +54,28 @@ The schemas establish valid query parameters, request bodies, and response bodie
 {
   "lexicon": 1,
   "id": "com.example.getProfile",
-  "type": "query",
-  "parameters": {
-    "user": {"type": "string", "required": true}
-  },
-  "output": {
-    "encoding": "application/json",
-    "schema": {
-      "type": "object",
-      "required": ["did", "name"],
-      "properties": {
-        "did": {"type": "string"},
-        "name": {"type": "string"},
-        "displayName": {"type": "string", "maxLength": 64},
-        "description": {"type": "string", "maxLength": 256}
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": ["user"],
+        "properties": {
+           "user": { "type": "string" }
+        },
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["did", "name"],
+          "properties": {
+            "did": {"type": "string"},
+            "name": {"type": "string"},
+            "displayName": {"type": "string", "maxLength": 64},
+            "description": {"type": "string", "maxLength": 256}
+          }
+        }
       }
     }
   }
@@ -109,14 +115,18 @@ at://bob.com/com.example.follow/12345
 {
   "lexicon": 1,
   "id": "com.example.follow",
-  "type": "record",
-  "description": "A social follow",
-  "record": {
-    "type": "object",
-    "required": ["subject", "createdAt"],
-    "properties": {
-      "subject": { "type": "string" },
-      "createdAt": {"type": "string", "format": "datetime"}
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A social follow",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { "type": "string" },
+          "createdAt": {"type": "string", "format": "datetime"}
+        }
+      }
     }
   }
 }
@@ -132,12 +142,16 @@ Let's say a record schema wanted to specify three possible states for a traffic 
 {
   "lexicon": 1,
   "id": "com.example.trafficLight",
-  "type": "record",
-  "record": {
-    "type": "object",
-    "required": ["state"],
-    "properties": {
-      "state": { "type": "string", "enum": ["red", "yellow", "green"] },
+  "defs": {
+    "main": {
+      "type": "record",
+      "record": {
+        "type": "object",
+        "required": ["state"],
+        "properties": {
+          "state": { "type": "string", "enum": ["red", "yellow", "green"] },
+        }
+      }
     }
   }
 }
@@ -151,15 +165,19 @@ To add flexibility, you could remove the enum constraint and just document the p
 {
   "lexicon": 1,
   "id": "com.example.trafficLight",
-  "type": "record",
-  "record": {
-    "type": "object",
-    "required": ["state"],
-    "properties": {
-      "state": {
-        "type": "string",
-        "description": "Suggested values: red, yellow, green"
-      },
+  "defs": {
+    "main": {
+      "type": "record",
+      "record": {
+        "type": "object",
+        "required": ["state"],
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Suggested values: red, yellow, green"
+          }
+        }
+      }
     }
   }
 }
@@ -173,20 +191,32 @@ Instead, you can define Lexicon tokens for the values you use:
 {
   "lexicon": 1,
   "id": "com.example.green",
-  "type": "token",
-  "description": "Traffic light state representing 'Go!'.",
+  "defs": {
+    "main": {
+      "type": "token",
+      "description": "Traffic light state representing 'Go!'.",
+    }
+  }
 }
 {
   "lexicon": 1,
   "id": "com.example.yellow",
-  "type": "token",
-  "description": "Traffic light state representing 'Stop Soon!'.",
+  "defs": {
+    "main": {
+      "type": "token",
+      "description": "Traffic light state representing 'Stop Soon!'.",
+    }
+  }
 }
 {
   "lexicon": 1,
   "id": "com.example.red",
-  "type": "token",
-  "description": "Traffic light state representing 'Stop!'.",
+  "defs": {
+    "main": {
+      "type": "token",
+      "description": "Traffic light state representing 'Stop!'.",
+    }
+  }
 }
 ```
 
@@ -196,19 +226,23 @@ This gives us unambiguous values to use in our trafficLight state. The final sch
 {
   "lexicon": 1,
   "id": "com.example.trafficLight",
-  "type": "record",
-  "record": {
-    "type": "object",
-    "required": ["state"],
-    "properties": {
-      "state": {
-        "type": "string",
-        "knownValues": [
-          "com.example.green",
-          "com.example.yellow",
-          "com.example.red"
-        ]
-      },
+  "defs": {
+    "main": {
+      "type": "record",
+      "record": {
+        "type": "object",
+        "required": ["state"],
+        "properties": {
+          "state": {
+            "type": "string",
+            "knownValues": [
+              "com.example.green",
+              "com.example.yellow",
+              "com.example.red"
+            ]
+          }
+        }
+      }
     }
   }
 }

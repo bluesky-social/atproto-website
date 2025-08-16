@@ -33,7 +33,7 @@ const official: LibraryProp[] = [
     href: 'https://github.com/bluesky-social/atproto/tree/main/packages/api',
     name: 'Typescript',
     description:
-      'Created by Bluesky PBC. Works on Web, NodeJS, and React Native.',
+      'Created by Bluesky Social PBC. Works on Web, NodeJS, and React Native.',
     logo: logoTs,
     status: {
       httpClient: 'full',
@@ -52,7 +52,7 @@ const official: LibraryProp[] = [
   {
     href: 'https://github.com/bluesky-social/indigo/tree/main',
     name: 'Go',
-    description: 'Created by Bluesky PBC.',
+    description: 'Created by Bluesky Social PBC.',
     logo: logoGo,
     status: {
       httpClient: 'partial',
@@ -60,7 +60,7 @@ const official: LibraryProp[] = [
       bsky: 'none',
       crypto: 'full',
       mst: 'full',
-      lexicon: 'none',
+      lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'full',

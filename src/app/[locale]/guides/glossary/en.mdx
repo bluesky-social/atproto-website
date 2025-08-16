@@ -6,7 +6,7 @@ export const metadata = {
 
 # Glossary of terms
 
-The AT Protocol uses a lot of terms that may not be immediately familiar. This page gives a quick reference to these terms and includes some links to move information. {{className: 'lead'}}
+The AT Protocol uses a lot of terms that may not be immediately familiar. This page gives a quick reference to these terms and includes some links to more information. {{className: 'lead'}}
 
 ## Atmosphere
 
@@ -14,13 +14,13 @@ The "Atmosphere" is the term we use to describe the ecosystem around the [AT Pro
 
 ## AT Protocol
 
-The AT Protocol stands for "Authenticated Transfer Protocol." This name is in reference to the fact that all user-data is signed by the authoring users, which makes it possible to broadcast the data through many services and prove it's real without having to speak directly to the originating server.
+The AT Protocol stands for "Authenticated Transfer Protocol," and is frequently shortened to "atproto." The name is in reference to the fact that all user-data is signed by the authoring users, which makes it possible to broadcast the data through many services and prove it's real without having to speak directly to the originating server.
 
 The name is also a play on the "@" symbol, aka the "at" symbol, since atproto is designed for social systems.
 
 ## PDS (Personal Data Server)
 
-A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did). Many PDSes will host multiple users.
+A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did-decentralized-id). Many PDSes will host multiple users.
 
 A PDS communicates with [AppViews](#appview) to run applications. A PDS doesn't typically run any applications itself, though it will have general account management interfaces such as the OAuth login screen. PDSes actively sync their [data repos](#data-repo) with [Relays](#relay).
 
@@ -47,16 +47,16 @@ Lexicon's sole purpose is to help developers build compatible software.
 
 ## Data Repo
 
-The "data repository" or "repo" is the public dataset which represents a user. It is comprised of [collections](#collection) of JSON [records](#record) and unstructured [blobs](#blob). Every repo is assigned a single permanent [DID](#did) which identifies it. Repos may also have any number of [domain handles](#handle) which act as human-readable names.
+The "data repository" or "repo" is the public dataset which represents a user. It is comprised of [collections](#collection) of JSON [records](#record) and unstructured [blobs](#blob). Every repo is assigned a single permanent [DID](#did-decentralized-id) which identifies it. Repos may also have any number of [domain handles](#handle) which act as human-readable names.
 
-Data repositories are signed merkle trees. Their signatures can be verified against the key material published under the repo's [did](#did). 
+Data repositories are signed merkle trees. Their signatures can be verified against the key material published under the repo's [did](#did-decentralized-id).
 
 - [An introduction to data repos](/guides/data-repos)
 - [Repository spec](/specs/repository)
 
 ## Collection
 
-The "collection" is a bucket of JSON [records](#record) in a [data repository](#data-repo). They support ordered list operations. Every collection is identified by an [NSID](#nsid) which is expected to map to a [Lexicon](#lexicon) schema.
+The "collection" is a bucket of JSON [records](#record) in a [data repository](#data-repo). They support ordered list operations. Every collection is identified by an [NSID](#nsid-namespaced-id) which is expected to map to a [Lexicon](#lexicon) schema.
 
 ## Record
 
@@ -70,7 +70,7 @@ Blobs are unstructured data stored inside a [repo](#data-repo). They are most co
 
 ## Label
 
-Labels are metadata objects which are attached to [repos](#data-repo) and [records](#record). They are typically referenced by their values, such as "nudity" or "graphic-media," which identify the meaning of the label. Labels are primarily used by applications for moderation, but they can be used for other purposes.
+Labels are metadata objects which are attached to accounts ([DIDs](#did-decentralized-id)) and [records](#record). They are typically referenced by their values, such as "nudity" or "graphic-media," which identify the meaning of the label. Labels are primarily used by applications for moderation, but they can be used for other purposes.
 
 - [Labels spec](/specs/label)
 

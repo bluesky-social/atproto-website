@@ -1,0 +1,135 @@
+import {DescriptionList, Description} from '@/components/DescriptionList'
+
+export const metadata = {
+  title: 'Identity',
+  description: 'AT Protocol이 사용자 Identity을 처리하는 방식입니다.',
+}
+
+# Identity
+
+atproto ID 시스템은 다음과 같은 요구 사항들을 가지고 있습니다:
+
+* **ID 제공.** 사용자는 여러 서비스에서 안정적으로 유지되는 전역 ID를 생성할 수 있어야 합니다. 이 ID는 한 번 할당되면 변경되지 않아, 콘텐츠에 대한 링크가 안정적으로 유지됩니다.
+* **공개 키 배포.** 분산 시스템에서는 암호화를 통해 데이터의 진위를 증명합니다. ID 시스템은 강력한 보안을 갖춘 공개 키를 배포해야 합니다.
+* **키 교환.** 사용자는 자신의 키 정보를 교환할 수 있어야 하며, 이를 통해 Identity가 보존되어야 합니다.
+* **서비스 검색.** 애플리케이션은 주어진 사용자가 사용하는 서비스를 검색할 수 있어야 합니다.
+* **사용성.** 사용자에게는 사람이 읽기 쉽고 기억하기 쉬운 이름(핸들)이 제공되어야 합니다.
+* **이식성.** Identity는 여러 서비스 간에 이식 가능해야 합니다. 공급자를 변경해도 사용자가 ID, 소셜 그래프 또는 콘텐츠를 잃어버려서는 안 됩니다.
+
+atproto ID 시스템을 활용하면, 애플리케이션은 종단 간 암호화, 서명된 사용자 데이터, 서비스 로그인 및 전반적인 상호 운용성을 구현할 수 있습니다.
+
+## 식별자
+
+우리는 _핸들_ 과 _DID_ 라는 두 가지 상호 연관된 식별자 형식을 사용합니다. 핸들은 DNS 이름이며, DID는 여러 구현을 통해 안전하고 안정적인 ID를 제공하는 W3C 표준입니다. AT 프로토콜은 DID PLC와 DID Web 변형을 지원합니다.
+
+다음은 모두 유효한 사용자 식별자의 예입니다:
+
+```
+alice.host.com
+at://alice.host.com
+did:plc:bv6ggog3tya2z3vxsub7hnal
+```
+
+이들의 관계는 다음과 같이 시각화할 수 있습니다:
+
+```
+┌──────────────────┐                 ┌───────────────┐
+│ DNS name         ├──resolves to──→ │ DID           │
+│ (alice.host.com) │                 │ (did:plc:...) │
+└──────────────────┘                 └─────┬─────────┘
+       ↑                                   │
+       │                               resolves to
+       │                                   │
+       │                                   ↓
+       │                            ┌───────────────┐
+       └───────────references───────┤ DID Document  │
+                                    │ {"id":"..."}  │
+                                    └───────────────┘
+```
+
+DNS 핸들은 사용자에게 친숙한 식별자로, 사용자 인터페이스에 표시되고 사용자를 찾는 수단으로 사용됩니다. 애플리케이션은 핸들을 DID로 변환한 후, 해당 DID를 계정의 정식 식별자로 사용합니다. 모든 DID는 신속하게 해당 DID 문서로 해석되며, 이 문서에는 공개 키와 사용자의 서비스 정보가 포함되어 있습니다.
+
+<DescriptionList>
+  <Description title="핸들">
+    핸들은 DNS 이름입니다. DNS TXT 레코드나 HTTP well-known 엔드포인트를 사용하여 해결되며, DID 문서에 포함된 항목과 일치해야 합니다. 자세한 내용은 <a href="/specs/handle">핸들 사양</a>을 참고하세요.
+  </Description>
+  <Description title="DID">
+    DID는 [W3C 표준](https://www.w3.org/TR/did-core/)에 따른, 안전하고 안정적인 정식 식별자입니다. 이는 사용자의 Identity을 나타내며, AT Protocol에서는 <a href="/specs/did">DID 사양</a>에 따라 사용됩니다.
+  </Description>
+  <Description title="DID 문서">
+    DID 문서는 DID 해석 과정을 통해 반환되는 표준화된 JSON 객체입니다. 여기에는 다음 정보가 포함됩니다:
+    <ul>
+      <li>DID와 연결된 핸들</li>
+      <li>서명 키</li>
+      <li>사용자의 PDS URL</li>
+    </ul>
+  </Description>
+</DescriptionList>
+
+## DID 메서드
+
+[DID 표준](https://www.w3.org/TR/did-core/)은 DID를 [DID 문서](https://www.w3.org/TR/did-core/#core-properties)로 발행하고 해석하는 다양한 "메서드"의 프레임워크를 제공합니다. 기존에 등록된 다양한 메서드들이 있으며, 각기 다른 기능과 특성을 가지고 있습니다. atproto에서는 다음 기준을 만족하는 메서드를 사용해야 합니다:
+
+- **강한 일관성:** 특정 DID에 대해, 해석 쿼리는 언제나 하나의 유효한 문서만 반환해야 합니다. (일부 네트워크에서는 확률적 거래 확정성이 적용될 수 있습니다.)
+- **높은 가용성:** 해석 쿼리는 안정적으로 성공해야 합니다.
+- **온라인 API:** 클라이언트는 표준 API를 통해 새로운 DID 문서를 발행할 수 있어야 합니다.
+- **보안:** 네트워크는 운영자, 중간자 공격(Man-in-the-Middle) 및 기타 사용자로부터 보호되어야 합니다.
+- **저비용:** DID 문서를 생성하고 갱신하는 비용이 사용자와 서비스에 과도한 부담을 주어서는 안 됩니다.
+- **키 교체:** 사용자는 키 쌍을 교체해도 Identity을 유지할 수 있어야 합니다.
+- **분산 거버넌스:** 네트워크는 단일 주체에 의해 통제되지 않고, 개방형 네트워크 또는 공급자 연합이어야 합니다.
+
+프로젝트 초기에, 기존의 어떤 DID 메서드도 위의 모든 기준을 만족시키지 못했습니다. 따라서, 우리는 간단한 [did:web](https://w3c-ccg.github.io/did-method-web/) 메서드와 새로운 [DID PLC](https://github.com/bluesky-social/did-method-plc) 메서드를 모두 지원하기로 결정했습니다.
+
+## 핸들 처리
+
+atproto에서 핸들은 DID로 해석되는 도메인 이름입니다. 이후, 해당 DID는 사용자의 서명 키와 호스팅 서비스 정보를 포함한 DID 문서로 해석됩니다.
+
+핸들 처리은 DNS TXT 레코드 또는 HTTPS 웰노운 엔드포인트를 통해 이루어집니다. 자세한 내용은 <a href="/specs/handle">핸들 사양</a>을 참고하세요.
+
+### 예시: 호스팅 서비스
+
+호스팅 서비스가 PLC를 사용하며, 사용자 핸들을 서브도메인으로 제공하는 경우를 생각해봅시다:
+
+- **핸들:** `alice.pds.com`
+- **DID:** `did:plc:12345`
+- **호스팅 서비스:** `https://pds.com`
+
+먼저, `alice.pds.com`만 알고 있는 상태에서 DNS TXT 레코드 `_atproto.alice.pds.com`을 조회하면, DID `did:plc:12345`가 반환됩니다.
+
+그 다음, PLC 디렉토리를 조회하여 해당 DID에 연결된 호스팅 서비스의 엔드포인트와 사용자의 키 정보를 확인합니다.
+
+```typescript
+await didPlc.resolve('did:plc:12345') /* => {
+  id: 'did:plc:12345',
+  alsoKnownAs: 'https://alice.pds.com',
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://pds.com', ...}]
+} */
+```
+
+이제 `https://pds.com`과 통신하여 Alice의 데이터를 접근할 수 있습니다.
+
+### 예시: 자체 호스팅
+
+자체 도메인을 소유하고 있는 경우, 두 가지 방식으로 설정할 수 있습니다. 만약 `did:plc`를 사용한다면:
+
+- **핸들:** `alice.com`
+- **DID:** `did:plc:12345`
+- **호스팅 서비스:** `https://alice.com`
+
+하지만 도메인 소유권이 확실하다면, `did:plc` 대신 `did:web`을 사용할 수 있습니다:
+
+- **핸들:** `alice.com`
+- **DID:** `did:web:alice.com`
+- **호스팅 서비스:** `https://alice.com`
+
+이 경우에도 핸들 해석은 동일하며, `_atproto.alice.com` 레코드를 조회하여 DID `did:web:alice.com`을 얻습니다. 이후 다음과 같이 해석합니다:
+
+```typescript
+await didWeb.resolve('did:web:alice.com') /* => {
+  id: 'did:web:alice.com',
+  alsoKnownAs: 'https://alice.com',
+  verificationMethod: [...],
+  service: [{serviceEndpoint: 'https://alice.com', ...}]
+} */
+```

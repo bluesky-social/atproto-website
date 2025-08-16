@@ -10,25 +10,25 @@ export const metadata = {
 
 The atproto identity system has a number of requirements:
 
-* **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should rarely change to ensure that links to their content are stable.
-* **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data and provide end-to-end privacy. The identity system must publish their public keys with strong security.
+* **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should never change, to ensure that links to their content are stable.
+* **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data. The identity system must publish their public keys with strong security.
 * **Key rotation.** Users must be able to rotate their key material without disrupting their identity.
-* **Service discovery.** To interact with users, applications must be able to discover the services in use by a given user.
+* **Service discovery.** Applications must be able to discover the services in use by a given user.
 * **Usability.** Users should have human-readable and memorable names.
 * **Portability.** Identities should be portable across services. Changing a provider should not cause a user to lose their identity, social graph, or content.
 
-Adopting this system should give applications the tools for end-to-end encryption, signed user data, service sign in, and general interoperation.
+Using the atproto identity system gives applications the tools for end-to-end encryption, signed user data, service sign-in, and general interoperation.
 
 ## Identifiers
 
-We use two interrelated forms of identifiers: the _handle_ and the _DID_. Handles are DNS names while DIDs are an [emerging W3C standard](https://www.w3.org/TR/did-core/) which act as secure & stable IDs.
+We use two interrelated forms of identifiers: _handles_ and _DIDs_. Handles are DNS names while DIDs are a [W3C standard](https://www.w3.org/TR/did-core/) with multiple implementations which provide secure & stable IDs. AT Protocol supports the DID PLC and DID Web variants.
 
 The following are all valid user identifiers:
 
 ```
 alice.host.com
 at://alice.host.com
-at://did:plc:bv6ggog3tya2z3vxsub7hnal
+did:plc:bv6ggog3tya2z3vxsub7hnal
 ```
 
 The relationship between them can be visualized as:
@@ -48,13 +48,13 @@ The relationship between them can be visualized as:
                                     └───────────────┘
 ```
 
-The DNS handle is a user-facing identifier — it should be shown in UIs and promoted as a way to find users. Applications resolve handles to DIDs and then use the DID as the stable canonical identifier. The DID can then be securely resolved to a DID document which includes public keys and user services.
+The DNS handle is a user-facing identifier — it should be displayed in user interfaces and promoted as a way to find users. Applications resolve handles to DIDs and then use the DID as the canonical identifier for accounts. Any DID can be rapidly resolved to a DID document which includes public keys and user services.
 
 <DescriptionList>
-  <Description title="Handles">Handles are DNS names. They are resolved using the `com.atproto.identity.resolveHandle` XRPC method and should be confirmed by a matching entry in the DID document. Details in the <a href="/specs/handle">Handle specification</a>.</Description>
-  <Description title="DIDs">DIDs are an emerging <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users. Details of how they are used in AT Protocol in the <a href="/specs/did">DID specification</a>.</Description>
+  <Description title="Handles">Handles are DNS names. They are resolved using DNS TXT records or an HTTP well-known endpoint, and must be confirmed by a matching entry in the DID document. Details in the <a href="/specs/handle">Handle specification</a>.</Description>
+  <Description title="DIDs">DIDs are a <a href="https://www.w3.org/TR/did-core/">W3C standard</a> for providing stable & secure IDs. They are used as stable, canonical IDs of users. Details of how they are used in AT Protocol in the <a href="/specs/did">DID specification</a>.</Description>
   <Description title="DID Documents">
-    DID Documents are standardized objects which are hosted by DID registries. They include the following information:
+    DID Documents are standardized JSON objects which are returned by the DID resolution process. They include the following information:
     <ul>
       <li>The handle associated with the DID.</li>
       <li>The signing key.</li>
@@ -66,34 +66,24 @@ The DNS handle is a user-facing identifier — it should be shown in UIs and pro
 
 ## DID Methods
 
-The [DID standard](https://www.w3.org/TR/did-core/) supports custom "methods" of publishing and resolving DIDs to the [DID Document](https://www.w3.org/TR/did-core/#core-properties). A variety of existing methods [have been published](https://w3c.github.io/did-spec-registries/#did-methods) so we must establish criteria for inclusion in this proposal:
+The [DID standard](https://www.w3.org/TR/did-core/) describes a framework for different "methods" of publishing and resolving DIDs to the [DID Document](https://www.w3.org/TR/did-core/#core-properties), instead of specifying a single mechanism. A variety of existing methods [have been registered](https://w3c.github.io/did-spec-registries/#did-methods), with different features and properties. We established the following criteria for use with atproto:
 
 - **Strong consistency.** For a given DID, a resolution query should produce only one valid document at any time. (In some networks, this may be subject to probabilistic transaction finality.)
 - **High availability**. Resolution queries must succeed reliably.
 - **Online API**. Clients must be able to publish new DID documents through a standard API.
-- **Secure**. The network must protect against attacks from its operators, a MITM, and other users.
+- **Secure**. The network must protect against attacks from its operators, a Man-in-the-Middle, and other users.
 - **Low cost**. Creating and updating DID documents must be affordable to services and users.
 - **Key rotation**. Users must be able to rotate keypairs without losing their identity.
 - **Decentralized governance**. The network should not be governed by a single stakeholder; it must be an open network or a consortium of providers.
 
-When we started the project, none of the DID methods met our standards fully. **Therefore, we chose to support [did-web](https://w3c-ccg.github.io/did-method-web/), and a novel method we've created called [DID PLC](https://github.com/bluesky-social/did-method-plc).**
+When we started the project, none of the existing DID methods met all of these criteria. Therefore, we chose to support both the existing [did-web](https://w3c-ccg.github.io/did-method-web/) method (which is simple), and a novel method we created called [DID PLC](https://github.com/bluesky-social/did-method-plc).
 
 ## Handle Resolution
 
-Handles in atproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing pubkey and hosting service.
+Handles in atproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing key and hosting service.
 
-Handle resolution uses the `com.atproto.identity.resolveHandle` XRPC method. The method call should be sent to the server identified by the handle, and the handle should be passed as a parameter.
+Handle resolution uses either a DNS TXT record, or an HTTPS well-known endpoint. Details can be found in the [Handle specification](/specs/handle).
 
-Here is the algorithm in pseudo-TypeScript:
-
-```typescript
-async function resolveHandle(handle: string) {
-  const origin = `https://${handle}`
-  const res = await xrpc(origin, 'com.atproto.identity.resolveHandle', {handle})
-  assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
-  return res.did
-}
-```
 
 ### Example: Hosting service
 
@@ -103,13 +93,9 @@ Consider a scenario where a hosting service is using PLC and is providing the ha
 - The DID: `did:plc:12345`
 - The hosting service: `https://pds.com`
 
-At first, all we know is `alice.pds.com`, so we call `com.atproto.identity.resolveHandle()` on `alice.pds.com`. This tells us the DID.
+At first, all we know is `alice.pds.com`, so we look up the DNS TXT record `_atproto.alice.pds.com`. This tells us the DID: `did:plc:12345`.
 
-```typescript
-await xrpc.service('https://alice.pds.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
-```
-
-Next we call the PLC resolution method on the returned DID so that we can learn the hosting service's endpoint and the user's key material.
+Next we query the PLC directory for the DID, so that we can learn the hosting service's endpoint and the user's key material.
 
 ```typescript
 await didPlc.resolve('did:plc:12345') /* => {
@@ -121,33 +107,6 @@ await didPlc.resolve('did:plc:12345') /* => {
 ```
 
 We can now communicate with `https://pds.com` to access Alice's data.
-
-### Example: Hosting service with separate domain name
-
-Suppose we have the same scenario as before, except the user has supplied their own domain name:
-
-- The handle: `alice.com` (this differs from before)
-- The DID: `did:plc:12345`
-- The hosting service: `https://pds.com`
-
-We call `com.atproto.identity.resolveHandle()` on `alice.com` to get the DID.
-
-```typescript
-await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
-```
-
-Then we resolve the DID as before:
-
-```typescript
-await didPlc.resolve('did:plc:12345') /* => {
-  id: 'did:plc:12345',
-  alsoKnownAs: `https://alice.com`,
-  verificationMethod: [...],
-  service: [{serviceEndpoint: 'https://pds.com', ...}]
-}*/
-```
-
-We can now communicate with `https://pds.com` to access Alice's data. The `https://alice.com` endpoint only serves to handle the `com.atproto.identity.resolveHandle()` call. The actual user data lives on `pds.com`.
 
 ### Example: Self-hosted
 
@@ -163,13 +122,9 @@ However, **if the self-hoster is confident they will retain ownership of the dom
 - The DID: `did:web:alice.com`
 - The hosting service: `https://alice.com`
 
-We call `com.atproto.identity.resolveHandle()` on `alice.com` to get the DID.
+We can resolve the handle the same way, resolving `_atproto.alice.com`, which returns the DID: `did:web:alice.com`
 
-```typescript
-await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:web:alice.com'}
-```
-
-We then resolve using `did:web`:
+Which we then resolve:
 
 ```typescript
 await didWeb.resolve('did:web:alice.com') /* => {

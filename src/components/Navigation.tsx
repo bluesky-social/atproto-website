@@ -253,10 +253,10 @@ export const navigation: Array<NavGroup> = [
     title: 'Guides',
     links: [
       { title: 'Overview', href: '/guides/overview' },
-      { title: 'Self-hosting', href: '/guides/self-hosting' },
       { title: 'Identity', href: '/guides/identity' },
-      { title: 'Data repos', href: '/guides/data-repos' },
+      { title: 'Data Repositories', href: '/guides/data-repos' },
       { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
+      { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
     ],
   },
   {

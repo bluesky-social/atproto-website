@@ -304,7 +304,7 @@ router.post(
 
     try {
       // Write the status record to the user's repository
-      await agent.com.atproto.putRecord({
+      await agent.com.atproto.repo.putRecord({
         repo: agent.assertDid, 
         collection: 'xyz.statusphere.status',
         rkey: TID.nextStr(),
@@ -646,7 +646,7 @@ router.post(
 )
 ```
 
-Você notará que este código se parece quase exatamente com o que estamos fazendo em `firehose.ts`.
+Você notará que este código se parece quase exatamente com o que estamos fazendo em `ingester.ts`.
 
 ## Pensando em AT Proto
 

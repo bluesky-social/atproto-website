@@ -1,0 +1,150 @@
+import {FooterCTA} from "@/components/FooterCTA"
+
+export const metadata = {
+  title: 'Atproto Ethos',
+  description:
+    'A deep dive into the philosophical and aesthetic principles underlying the design of AT Protocol.',
+}
+
+# Atproto Ethos
+
+*Apr 4, 2025*
+
+*This post is a blogpost version of a [recent talk](https://www.youtube.com/watch?v=1A-0k58TfPo) that Daniel Holmgren gave at AtmosphereConf (March 2025).*
+
+AT Protocol (or atproto) is a protocol for creating decentralized social applications. {{className: 'lead'}}
+
+It's not the first protocol with that aim to exist. In the history of decentralized social media protocols, atproto takes a unique approach which is still deeply influenced by technologies and movements that came before it. {{className: 'lead'}}
+
+The phrase “atproto ethos” often comes up during our protocol design discussions. It's a fuzzy term, but we use it to refer to the philosophical and aesthetic principles that underlie the design of the network. {{className: 'lead'}}
+
+In this post, we'll distill that ethos. First, we look at the movements in technology that have most directly influenced atproto.Then, we pull out the core innovations that atproto brought to the table. Finally, we highlight some opinionated ways of thinking that influenced the design. {{className: 'lead'}}
+
+## Atproto at the intersection of three movements
+
+### The web
+
+The first and most obvious influence on atproto is the web itself. 
+
+The web is an information system for publishing and accessing documents over the internet. It's permissionless to join and interact with. This guarantee is predicated on similar guarantees in the underlying internet. However, if the internet is functioning properly and you have a computer, an internet connection, and an IP address you can host a document on the web.
+
+The permissionlessness of the web requires distributed authority of content. That is, there isn't a central authority that decides what is included in the web or if some content is “legitimate” or not. Rather, each computer that publishes and hosts a document is the authority for that document. This authority is **location-based**, meaning you can find out what the document hosted at a given site is by talking to that site and receiving the document. This sounds a little obvious when spelled out, but it's actually a radical idea. There's no need for distributors, document certifiers or central registries of documents.
+
+While this openness is the defining governance feature of the web, the defining product feature is the hyperlink. A hyperlink is a link in a document that navigates you to another document. Notably, these hyperlinks can link *across authorities* without permission of the other authority. The result of this is that the web is not just a collection of unrelated documents published in isolation. Rather, documents on the web form a vast integrated network of interconnected data.
+
+The web described here, the document-based web, is commonly referred to as Web 1.0. But Web 2.0, the web that we've been living with for the last 20 years, is quite different in its shape and function. 
+
+The modern web mostly takes place on a few large platforms like Facebook or Youtube where users have accounts and post content or view and interact with content from other accounts. These interactions and content often don't look like “documents” in the traditional sense. The content is all still deeply interconnected, but those connections are generally restricted to the boundaries of the platform that they are created through. 
+
+This new web is significantly easier to participate in — you don't need to know how to run a server or have a static IP address in order to publish  content on the web. You can simply create an account. Perhaps most importantly, the modern web is capable of supporting richer and more dynamic content and interactions: real time conversations, global views of everything happening in a network, and algorithms that direct users' attention through these vast networks of data.
+
+The evolution of the document-based web into the modern web should not be seen as a failure of the web. Rather, it's a testament to its success. The idea, ethos, and primitives that the web was built on were powerful and flexible enough to facilitate the creation of essentially a second layer to the web. However, in this evolution, we also lost something.
+
+### Peer-to-peer
+
+The peer-to-peer (p2p) movement was in many ways a reaction to the emergence of the massive platforms that came to dominate the modern web. Idealistic and radical (sometimes to a fault), the p2p movement asked if we could remove backend applications from the mix entirely.
+
+Instead of sending content and interactions to some coordinating backend service, users of social media platforms would send relevant data directly from their device to another device. If two users follow one another and one of them posts, the other would receive the post through a direct connection with the former's device. Of course, this requires that both parties are online at the same time for any data transfer to happen. P2p systems sought to get around this by allowing data to be replicated across many devices. Therefore a user may receive a post from the posting user or they could receive it from another friend that's currently online and in possession of the post.
+
+With this, p2p moved away from the traditional location-based authority model of the web and towards “self-certifying data”. Data could come from a device that didn't originally create that data, and even if the content is coming from the canonical device, that device probably doesn't have a static IP associated with the account. Therefore p2p protocols moved the authority of data from the location of the data to the data itself. 
+
+P2p data is often addressed by the hash of the data and signed by a private key that the posting user holds. With this, content can be arbitrarily redistributed while maintaining full authority that it came from the user that posted it. Therefore a client can simply reach out to “the network” in the abstract to find some content with a known hash. When functioning well, content-addressed networks have this beautiful quality where the data seems to “just exist”, somewhere out there in this mesh of cooperating devices. Unlike the traditional location-addressed web where the data you receive is contingent on the service that you talk to, data in p2p systems has this essential quality to it - the data, not the location, is in primacy.
+
+Of course the abstraction doesn't always work perfectly, and this new topology brought with it a host of problems - most notably data availability and discovery. As noted earlier, if the poster of some data is not online, you need to find that data from another device in the network. Discovering which device can serve you some data is a hard problem, especially with devices routinely coming on and offline at different addresses. And it may be the case that there is not a single online device that can send you the data that you're looking for! Even if everything is functioning well, these systems have to lean in hard to eventual consistency since network partitions are much more common and there is no service in the network that can purport to have a “global view” of all data.
+
+The other major issue with these systems is that the rich social media sites that users had become accustomed to in the modern web rely on large compute and storage intensive indices. Getting servers out of the mix meant that all of that resource usage moved onto users' devices. Timeline generation, thread construction, aggregating interaction counts, social graph queries, and more all had to be done on relatively underpowered end user devices. 
+
+The end result is that products built on these p2p protocols often feel spotty - posts and interactions are missing, global algorithms are impossible to create, and running these applications takes a noticeable hit on the battery life and resource usage of the devices they run on. In short, it doesn't seem tractable to replicate the seamless dynamic feel of the massive platforms of the modern web.
+
+### Data-intensive distributed systems
+
+While peer-to-peer technology was being explored, the platforms that make up the modern web continued to grow in size. As the barriers to participating in the web lowered, millions and eventually billions of people started participating in and generating content on the web. 
+
+The content on these platforms isn't just documents that can be served statically. Rather these platforms process billions of interactions every day. These interactions in turn are composed into rich and dynamic views to serve to users: profile pages, news feeds, threads, like counts, and more.
+
+Simply processing the data is not enough, as these platforms are very read heavy. For every piece of content that is created, platforms may have to serve hundreds or thousands of requests to other users. As these platforms became more encompassing, user expectations increased as well in regards to their availability and latency. Downtime and degradation of services became less tolerated and could cost companies millions of dollars.
+
+All of these factors required new tools and architectures for building services. An overview of these techniques is maybe best captured in Martin Kleppman's book “Designing Data Intensive Applications”. While no two platforms are built exactly the same and there are many competing tools and methodologies, we can still sum up the general trends.
+
+Because these platforms are so read heavy, generally they split apart read and write load so they can scale separately. A simple version of this is to introduce read replicas of a database. While there is still a single “leader” database, many replicas can help serve the outsized read load.
+
+However, the sheer volume of data and the compute required to support these platforms cannot be handled by a single machine. Therefore even within a given platform's deployment, work must be split up across many machines. A common pattern is to peel off pieces of the application into smaller “micro-services” that can call into one another and then compose these micro-services into the larger platform. By isolating the concerns of each subsystem, teams can scale each according to its particular needs. For example, feed generation looks very different from video transcoding, and these workloads can benefit from being hosted on machines tailored to their workload. 
+
+The introduction of distributed systems also introduces distributed problems. Decomposed micro-services give up on the idea of maintaining a strongly consistent view of all the data on the platform. In some cases this means the use of eventually consistent databases tailored to high throughput, such as Scylla (which we use at Bluesky). Databases like Scylla give up the ACID guarantees and support for rich dynamic queries that more traditional SQL databases offer. Rather they require the indices and access patterns of the data to be known ahead of time.
+
+The introduction of new database technologies and the general trend of micro-services brought even more problems. Micro-services often need access to the same data. If a micro-service goes down for a period of time, it needs a mechanism to catch up with everything that happened. And applications need a way to create new indices even over past data. An approach of stream processing helped to answer many of these issues. In a stream processing architecture - most prominently exemplified by Kafka - you maintain an event log of all events that flow through a system. Many consumers tap into this event log. If a consumer goes offline, when it comes back it can pick back up where it left off. And if a new index needs to be created, the entire event log can simply be replayed. These stream processing tools serve as a “backbone” of canonical data that enable the platform to coalesce around a single source of truth.
+
+### Synthesis
+Atproto is situated as the synthesis of these three movements.
+
+1. **From the web:** an open, permissionless, and universal network of interconnected content.
+
+2. **From peer-to-peer:** location-independent data, self-certifying data, and skepticism of centralized control of any aspect of the user’s experience.
+
+3. **From data-intensive distributed systems:** a splitting of read and write load, application-aware secondary indices to facilitate high-throughput and low latency, streaming canonical data, and the decomposition of monoliths into microservices.
+
+## Innovations
+
+From this basis, atproto adds two core innovations: identity-based authority and the separation of data hosting from the rich applications built on top of it. 
+
+### Identity-based authority
+
+The data model of atproto is very similar to that of p2p networks. The major difference is that rather than being simply content-addressed, a layer of indirection is added to make the data identity-addressed. Therefore an at-uri looks like `at://username/record-type/record-key`. 
+
+This identity-addressing of data is an inversion of the web-based model of location-addressed data. In the traditional web, the location (or the server) is the primary object; in atproto, the user is the primary object.
+
+Identities are long-lived and untethered from any location where they may currently be housed. The primacy that data has in p2p networks is moved up the stack to identity. Identities exist independent of any given host or application and can move between them fluidly. Data in the network then flows from these identities with a well-defined mechanism of how to resolve the identity to some set of data and receive real time updates as new content is created.
+
+Identities themselves resolve to key material that can verify the authenticity of that identity's data as well as a particular host that consumers can reach out to to get the canonical current state of the identity's data. These canonical hosts of user data are known as Personal Data Servers (PDSs).
+
+While there is a canonical host for every identity, the data that comes out of that host is self-certifying and self-describing. This means that it can be arbitrarily rebroadcast out into the network. Consumers of user data do not ever need to reach out to the canonical host of the data. Instead, they can rely on external services that crawl the canonical data hosts and output a stream of updates for some well-defined set of the network.
+
+The data that an identity outputs takes the form of a repository of “records”. Each record is a piece of structured data - a post, a like, a follow, a profile, etc. In the web, the primary object is the document and documents are linked together through hyperlinks. In atproto, the primary object is the record, and records are linked together through at-uri references. 
+
+### Generic hosting, Centralized product development
+
+The data model (the repository) that PDSs adhere to is generic. The PDS as a whole actually has a very simple job: host the users data and manage their account/identity. This simplicity is intentional and important to keeping the data layer resilient and locked open. If a PDS becomes overloaded with application-specific logic or expensive indexing behavior, it runs the risk of warping incentives towards vendor lock-in and centralization.
+
+The other side of moving application-specific details out of the PDS is that it also gives applications the liberty to experiment and rapidly iterate on application semantics. Product development can occur in a centralized way. This centralization is critical to the ability to build new products in the network. We took a mentality of “no steps backwards” when it came to product development. Projects should be able to use modern tooling and product/application development patterns. Products benefit from the ability to rapidly iterate which requires clear ownership of application domains.
+
+This ownership is reflected in the schema language for the atproto network where the notion of ownership is baked into the IDs of schemas. The owner of those schemas is free to iterate and evolve the data model for the application. Similarly, application owners are free to build their backends in whichever way they see fit. There is a boundary to the “weirdness” of the atproto network. Once identities and data cross that threshold, it is the application's decision how to index it and present it to the user.
+
+Even though product development is centralized, the underlying data and identity remain open and universally accessible as a result of building on atproto. Put another way, ownership is clear for the evolution of a given application, but since the data is open, it can be reused, remixed, or extended by anyone else in the network. 
+
+## Opinionated takes
+
+### Structure gives freedom
+
+Atproto is a multi-party, low-coordination network. Services can join permissionlessly and operate under their own policies. While coordination pains are to some degree inevitable, atproto tries to head off the worst of it by being a very structured protocol. You'll see this reflected in many design decisions in the protocol: records encoded as canonical cbor, multiformats everywhere, a unicit (deterministic insertion-order-independent construction) data structure in the repository, a constrained set of allowed dids/hash functions, even things like requiring DPoP in OAuth.
+
+While there's something empowering about the idea of being able to do *anything*, it's also easy for this to fall into the tyranny of structurelessness - a collapse in coordination that prevents anything from actually getting done. Without structure in the network, energy that could go into novel development gets redirected into facilitating interoperation, fixing edgecases between implementations, building up defenses to bad actors or security issues from other parties, and trying to coordinate evolution without a clear leader. 
+
+This structure is probably best exemplified by the schema language of atproto: Lexicon. Unlike other approaches to interoperation which attempt to create a generalized way of expressing properties on data (RDF) or to translate data between different domains to facilitate interoperation (lenses), Lexicon provides a way to determine if two things are speaking the same language, and to give a very structured mechanism for ensuring that the data is formatted properly. 
+
+With this, atproto avoids the gray area of “we're sort of talking about the same thing but not really” and forces applications into the discrete choice that if you're talking about the same thing then you're talking about the *exact* same thing. Instead of trying to posit universality of semantics, atproto facilitates specific semantics and then allows for collaboration and extension of those semantics.
+
+### Lazy trust
+
+The web requires a fair bit of trust with the services you interact with. While the transport layer is secured, the data that you receive from a given server is attested to solely by the fact that you received it from that server. If you load a post from a friend on Facebook for instance, you have to trust Facebook that they're serving you the correct post text. Similarly you have to trust Facebook to be a good custodian of your account and your data.
+
+P2p networks took a different approach that was radically trust-less. You have to trust your client device of course, but that's it. Because the software runs on your client and the trust is imbued into the data, no trust in any other service or actor in the network is required.
+
+Atproto takes a middle approach that we sometimes refer to as “lazy trust”. Like p2p networks, trust is imbued into the data. However most often when browsing the network, users are seeing computed views not the canonical data. When viewing a timeline for instance, clients are likely not checking the signatures on every post that comes down. This is mitigated by the fact that the canonical data is always at hand. Therefore the service that offers these computed views is *staking its reputation* on every view that it serves. If a service starts serving invalid views, this can be verifiably proven. And since the data is locked open, users can migrate to another service that is better behaved.
+
+As well, unlike p2p networks, users maintain a relationship with a persistent backend (the PDS) that hosts their data and information about their identity. Most notably (while not a hard requirement in atproto), we made the decision to move signing keys up to the backend. This prevents the complex key management UX issues that come with client-side keys. However, there is an obvious loss in user-control by doing so. This is mitigated once again by lazy trust. Trust is moved a layer up into the identity system such that a user can hold a recovery key for their identity that allows them to migrate away from a bad PDS.
+
+Operating in a trusted manner is by nature more efficient than operating trustlessly. Generally, this speaks to a philosophy of atproto which is to take advantage of the performance and UX gains that come with operating in a high-trust manner. However, when doing so always maintain the ability for credible exit and a system of checks and balances to hedge against bad actors and shoddy service providers.
+
+## Conclusion
+
+Taking all of this into account, we can see a general shape for a protocol and network emerge. 
+
+AT Protocol builds on the philosophy of the web with the technology of peer-to-peer protocols and the practices of data-intensive distributed systems. 
+
+We hold identity in primacy and center it in the protocol design. Canonical user data exists in a fluid and commoditized hosting network that allows rich applications to be built on it.
+
+And we approach the design of this network erring on the side of structure and hoping to take advantage of high-trust environments where possible, but always allowing for credible exit if that relationship turns sour.
+
+If this sounds exciting to you, you can dive in further by checking out the [protocol specs](https://atproto.com/specs/atp), or getting hands on with the [Statusphere](https://github.com/bluesky-social/statusphere-example-app) example app built on the protocol.
+
+<FooterCTA href="/" title="Ready to learn more?" description="Specs, guides, and SDKs can be found here." />

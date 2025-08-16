@@ -32,6 +32,7 @@ export default function LanguageChanger() {
 
   return (
     <select
+      aria-label="Language"
       onChange={handleChange}
       value={currentLocale}
       className="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-800 dark:text-gray-100 dark:ring-gray-700"
@@ -39,6 +40,7 @@ export default function LanguageChanger() {
       <option value="en">English</option>
       <option value="pt">Português</option>
       <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
     </select>
   )
 }

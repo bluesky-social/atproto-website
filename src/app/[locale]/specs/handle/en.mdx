@@ -137,7 +137,7 @@ did:plc:z72i7hdynmk6r22z27h6tvur
 
 The response `Content-Type` header does not need to be strictly verified.
 
-It is acceptable to strip any prefix and suffix whitespace from the response body before attempting to parse as a DID.
+The web server's response body should not contain any prefix or suffix whitespace, but clients should strip small amounts of prefix or suffix whitespace from the response body before attempting to parse as a DID.
 
 Secure HTTPS on the default port (443) is required for all real-world handle resolutions. HTTP should only be used for local development and testing.
 
