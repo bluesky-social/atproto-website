@@ -17,11 +17,11 @@ If an individual record fails to validate for any reason, the entire record shou
 
 The following are informal guidelines, mostly to communicate order-of-magnitude expectations, and are likely to evolve over time. They are not part of the atproto specification, but if you are pushing the limits here, you may limit interoperability.
 
-**CBOR Record Size:** try to keep individual records to a few dozen KBytes. If you need to store more data, even text data, consider using a blob instead. A reasonable maximum record size limit (`MAX_CBOR_RECORD_SIZE`) is 1 MByte.
+**CBOR Record Size:** try to keep individual records to a few dozen KBytes. If you need to store more data, even text data, consider using a blob instead. A reasonable maximum record size limit (`MAX_CBOR_RECORD_SIZE`) is 1 MiByte (1 mebibyte, or 1,048,576 bytes). Note that as of August 2025, the `subscribeRepos` Lexicon limits `#commit` message block size to 2,000,000 bytes (not mebibytes), so only a single 1 MiByte record can be created or updated per commit.
 
 Note that event stream (firehose) "frames" may consist of multiple records, and larger limits are recommended for CBOR parsing in general, on the order of 4-5 MBytes.
 
-**JSON Record Size:** the CBOR encoding is "canonical" for records, so focusing only on that encoding would make sense. But sometimes it is good to also have a limit on JSON encoding size. A reasonable limit (`MAX_JSON_RECORD_SIZE`) is 2 MByte.
+**JSON Record Size:** the CBOR encoding is "canonical" for records, so focusing only on that encoding would make sense. But sometimes it is good to also have a limit on JSON encoding size. A reasonable limit (`MAX_JSON_RECORD_SIZE`) is 2 MiByte (2,097,152 bytes).
 
 **General string length:** an overall length limit on strings within a record, including both those with and without Lexicon-specified string lengths. Measured as bytes (UTF-8 encoded). Should try to keep these to tens of KBytes at most. For an upper-bound limit (`MAX_RECORD_STRING_LEN`), reasonable to just rely on the overall CBOR record size limit. Notably, some early implementations had a 8 KByte (8192 bytes) limit.
 
