@@ -257,6 +257,8 @@ export const navigation: Array<NavGroup> = [
       { title: 'Data Repositories', href: '/guides/data-repos' },
       { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
       { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
+      { title: 'Account Migration', href: '/guides/account-migration' },
+      { title: 'Account Lifecyle Events', href: '/guides/account-lifecycle' },
     ],
   },
   {
