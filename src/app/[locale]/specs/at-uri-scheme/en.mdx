@@ -14,13 +14,7 @@ Both of these AT URIs reference the same record in the same repository; one uses
 - `at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26`
 
 <Note>
-**Caveats for Handle-based AT URIs**
-
-AT URIs referencing handles are not durable.
-
-If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
-
-AT URIs are not content-addressed, so the _contents_ of the record they refer to may also change over time.
+AT URIs which use handles as the authority are not durable. DID-based URIs are recommended instead. If a user changes their handle, any AT URIs using that handle will become invalid and could potentially point to a record in another repo if the handle is reused.
 </Note>
 
 ### Structure

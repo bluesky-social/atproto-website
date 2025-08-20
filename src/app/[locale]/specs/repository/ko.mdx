@@ -5,8 +5,6 @@ export const metadata = {
 
 # 레포지토리
 
-*상위 수준의 소개는 [데이터 레포지토리 가이드](../guides/data-repos)를 참조하세요.*
-
 AT Protocol의 공개 atproto 콘텐츠(**레코드**)는 계정별 레포지토리(종종 **repo**로 축약됨)에 저장됩니다. 현재 활성화된 모든 레코드는 레포지토리에 저장되며, 현재의 레포지토리 내용은 공개적으로 접근 가능합니다. 다만, 콘텐츠 삭제와 계정 삭제 모두 완벽하게 지원됩니다. {{ className: 'lead' }}
 
 레포지토리 데이터 구조는 콘텐츠 주소 지정 방식(머클 트리, [Merkle-tree](https://ko.wikipedia.org/wiki/Merkle_트리))을 따르며, 레포지토리 내용의 모든 변경(예: 레코드의 추가, 제거, 업데이트)은 새로운 커밋의 `data` 해시 값(CID)을 생성합니다. 커밋은 회전 가능한 서명 키로 암호화 서명되어, 전체 또는 일부 콘텐츠의 재귀적 검증이 가능합니다. {{ className: 'lead' }}
@@ -16,6 +14,36 @@ AT Protocol의 공개 atproto 콘텐츠(**레코드**)는 계정별 레포지토
 atproto 페더레이션 아키텍처에서는 계정 레포지토리의 공식적인 위치가 관련된 개인 데이터 서버(PDS)입니다. 계정의 현재 PDS 위치는 DID 문서에서 공식적으로 명시됩니다. {{ className: 'lead' }}
 
 실제 사용에서는 개별 레포지토리가 수십 개에서 수백만 개의 레코드를 포함할 것으로 예상됩니다. {{ className: 'lead' }}
+
+## 데이터 레이아웃
+
+레포지토리의 내용은 [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document)를 사용하여 단일 루트 해시로 상태를 축소합니다. 이는 다음과 같은 레이아웃으로 시각화할 수 있습니다:
+
+```
+┌────────────────┐
+│     Commit     │  (Signed Root)
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│   Tree Nodes   │
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│     Record     │
+└────────────────┘
+```
+
+모든 노드는 [IPLD](https://ipld.io/) 객체 ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/))로, [CID](https://github.com/multiformats/cid) 해시를 통해 참조됩니다. 위 다이어그램의 화살표는 CID 참조를 나타냅니다.
+
+이 레이아웃은 [AT URI](/specs/at-uri-scheme)에 반영되어 있습니다:
+
+```
+루트       | at://alice.com
+컬렉션     | at://alice.com/app.bsky.feed.post
+레코드     | at://alice.com/app.bsky.feed.post/1234
+```
+
+데이터 레포지토리에 대한 “커밋”은 단순히 루트 노드의 CID에 대해 키페어로 서명한 것입니다. 레포지토리의 각 변경은 새로운 커밋 노드를 생성합니다.
 
 
 ## 레포지토리 데이터 구조 (v3)

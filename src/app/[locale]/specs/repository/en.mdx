@@ -1,3 +1,5 @@
+import {DescriptionList, Description} from '@/components/DescriptionList'
+
 export const metadata = {
   title: 'Repository',
   description:
@@ -5,8 +7,6 @@ export const metadata = {
 }
 
 # Repository
-
-*See the [Data Repositories Guide](../guides/data-repos) for a higher-level introduction.*
 
 Public atproto content (**records**) is stored in per-account repositories (frequently shortened to **repo**). All currently active records are stored in the repository, and current repository contents are publicly available, but both content deletions and account deletions are fully supported. {{ className: 'lead' }}
 
@@ -17,6 +17,36 @@ Repositories and their contents are canonically stored in binary [DAG-CBOR](http
 In the atproto federation architecture, the authoritative location of an account's repository is the associated Personal Data Server (PDS). An account's current PDS location is authoritatively indicated in the DID Document. {{ className: 'lead' }}
 
 In real-world use, it is expected that individual repositories will contain anywhere from dozens to millions of records. {{ className: 'lead' }}
+
+## Data Layout
+
+The content of a repository is laid out in a [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document) which reduces the state to a single root hash. It can be visualized as the following layout:
+
+```
+┌────────────────┐
+│     Commit     │  (Signed Root)
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│   Tree Nodes   │
+└───────┬────────┘
+        ↓
+┌────────────────┐
+│     Record     │
+└────────────────┘
+```
+
+Every node is an [IPLD](https://ipld.io/) object ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) which is referenced by a [CID](https://github.com/multiformats/cid) hash. The arrows in the diagram above represent a CID reference.
+
+This layout is reflected in the [AT URIs](/specs/at-uri-scheme):
+
+```
+Root       | at://alice.com
+Collection | at://alice.com/app.bsky.feed.post
+Record     | at://alice.com/app.bsky.feed.post/1234
+```
+
+A “commit” to a data repository is simply a keypair signature over a Root node’s CID. Each mutation to the repository produces a new Commit node.
 
 
 ## Repo Data Structure (v3)
