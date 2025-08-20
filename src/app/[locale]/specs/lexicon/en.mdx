@@ -158,6 +158,8 @@ Type-specific fields:
 - `minLength` (integer, optional): minimum size of value, as raw bytes with no encoding
 - `maxLength` (integer, optional): maximum size of value, as raw bytes with no encoding
 
+In the JSON format, these fields are encoded as `{"$bytes":<base64-string>}`. In the CBOR format, these fields use the native bytes type.
+
 ### `cid-link`
 
 No type-specific fields.
