@@ -15,7 +15,7 @@ If an individual record fails to validate for any reason, the entire record shou
 
 ## Recommended Data Limits
 
-The following are informal guidelines, mostly to communicate order-of-magnitude expectations, and are likely to evolve over time. They are not part of the atproto specification, but if you are pushing the limits here, you may limit interoperability.
+The following are informal guidelines, mostly to communicate order-of-magnitude expectations, and are likely to evolve over time. They are not part of the atproto specification, but if you are pushing the limits here, you may encounter interoperability issues now or in the future.
 
 **CBOR Record Size:** try to keep individual records to a few dozen KBytes. If you need to store more data, even text data, consider using a blob instead. A reasonable maximum record size limit (`MAX_CBOR_RECORD_SIZE`) is 1 MiByte (1 mebibyte, or 1,048,576 bytes). Note that as of August 2025, the `subscribeRepos` Lexicon limits `#commit` message block size to 2,000,000 bytes (not mebibytes), so only a single 1 MiByte record can be created or updated per commit.
 
@@ -49,6 +49,6 @@ Here are some guidelines, by data type:
 - `bytes`: may be empty (length 0)
 - `cid-link`: as discussed in the protocol specification: must be CIDv1; multibase should be raw in CBOR encoding (type `0x00`); multicodec should be `dag-cbor` (`0x71`) or `raw` (`0x55`); and multihash type SHA-256 is encouraged (but not strictly required)
 - `array`: may have elements of heterogeneous type, because of the flexibility Lexicon unions provide.
-- `object`: key should all be strings, and follow similar data requirements to `string` fields. Empty key strings are not allowed. Key names starting with `$` are reserved for protocol use (for example, `$bytes` and `$type`)
-- `blob`: the `ref` must be a valid `cid-link`, and have `raw` multicodec (not `dag-cbor`). `size` may not be negative. `mimeType` can not be an empty string. The "legacy" blob format should be supported for reading, but new records created must be the regular blob format.
+- `object`: key must all be strings, and follow similar data requirements to `string` fields. Empty key strings are not allowed. Key names starting with `$` are reserved for protocol use (for example, `$bytes` and `$type`)
+- `blob`: the `ref` must be a valid `cid-link`, and have `raw` multicodec (not `dag-cbor`). `size` may not be negative. `mimeType` can not be an empty string. The "legacy" blob format should be supported for reading, but new records created must be the regular blob format. Note that supprting additional reference types (eg, alternative multicodecs or hash types) are a likely evolution and extension point for the protocol in the future, but the current version of the repository and data model is narrowly defined.
 
