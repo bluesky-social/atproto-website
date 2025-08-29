@@ -10,7 +10,7 @@ Two elliptic curves are currently supported throughout the protocol, and impleme
 
 - `p256` elliptic curve: aka "NIST P-256", aka `secp256r1` (note the `r`), aka `prime256v1`
     - This curve *is* included in the WebCrypto API. It is commonly supported by personal device hardware (Trusted Platform Modules (TPMs) and mobile Secure Enclaves), and by cloud Hardware Security Modules (HSMs)
-- `k256` elliptic curve: aka "NIST K-256", aka `secp256k1` (note the `k`)
+- `k256` elliptic curve: aka `secp256k1` (note the `k`)
     - This curve *is not* included in the WebCrypto API. It is used in Bitcoin and other cryptocurrencies, and as a result is broadly supported by personal secret key management technologies. It is also supported by cloud HSMs.
 
 Because of the subtle visual distinction when the full curve names are written out, we often refer to them as `p256` or `k256`.
