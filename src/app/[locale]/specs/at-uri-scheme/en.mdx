@@ -114,6 +114,7 @@ Valid AT URIs (both general and Lexicon syntax):
 
 ```text
 at://foo.com/com.example.foo/123
+at://did%3Aplc%3z72i7hdynmk6r22z27h6tvur/com.example.foo/123
 ```
 
 Valid general AT URI syntax, invalid in current Lexicon:
@@ -129,6 +130,8 @@ Invalid AT URI (in both contexts)
 ```text
 at://foo.com/                // trailing slash
 at://user:pass@foo.com       // userinfo not currently supported
+at://did:plc:z72i7hdynmk6r22z27h6tvur/com.example.foo/123 // authority containing DID is not percent encoded
+at://did%253Aplc%253z72i7hdynmk6r22z27h6tvur/com.example.foo/123 // authority containing DID is double encoded
 ```
 
 
