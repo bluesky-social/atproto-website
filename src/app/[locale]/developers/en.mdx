@@ -17,7 +17,33 @@ export const sections = []
 {/* <HeroPattern /> */}
 
 <div className="pt-12 pb-24 prose">
-<h1 className="text-5xl font-thick">Welcome to the Atmosphere</h1>
+<h1 className="text-5xl font-thick">Build high-scale social apps</h1>
 
 The Atmosphere is a decentralized network for building interoperable social networks. Powers&nbsp;<a href="https://bsky.app">Bluesky</a>, <a href="https://tangled.sh">Tangled.sh</a>, <a href="https://skylight.social/">Skylight</a>, and many more. {{className: 'lead'}}
 </div>
+
+<Row>
+  <Col>
+      <Firehose />
+  </Col>
+  <Col>
+    <CodeCard description="Log on in 5 minutes." href="/todo" icon={UserIcon}>
+      ```js {{containerClassName: 'rounded-t-none !my-0 border-t border-zinc-900/7.5 dark:border-white/10 !ring-0'}}
+      import { BrowserOAuthClient } from '@atproto/sdk'
+
+      const client = new BrowserOAuthClient()
+      await client.signIn('my.handle.com', {
+        state: 'some value needed later',
+        prompt: 'none',
+        ui_locales: 'fr-CA fr en',
+      })
+      ```
+    </CodeCard>
+  </Col>
+</Row>
+
+<Libraries includeStatuses />
+
+## Looking for the Bluesky API docs?
+
+Go to [docs.bsky.app](https://docs.bsky.app) for Bluesky-specific documentation.

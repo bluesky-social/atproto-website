@@ -469,21 +469,21 @@ export function Search() {
   )
 }
 
-export function MobileSearch() {
+export function SmallSearch() {
   let { buttonProps, dialogProps } = useSearchProps()
 
   return (
-    <div className="contents lg:hidden">
+    <div className="contents">
       <button
         type="button"
-        className="flex h-6 w-6 items-center justify-center rounded-md transition hover:bg-zinc-900/5 ui-not-focus-visible:outline-none lg:hidden dark:hover:bg-white/5"
+        className="flex h-6 w-6 items-center justify-center rounded-md transition hover:bg-zinc-900/5 ui-not-focus-visible:outline-none dark:hover:bg-white/5"
         aria-label="Find something..."
         {...buttonProps}
       >
         <SearchIcon className="h-5 w-5 stroke-zinc-900 dark:stroke-white" />
       </button>
       <Suspense fallback={null}>
-        <SearchDialog className="lg:hidden" {...dialogProps} />
+        <SearchDialog className="" {...dialogProps} />
       </Suspense>
     </div>
   )

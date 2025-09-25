@@ -117,7 +117,7 @@ function Pill({ status, label }: { status: Status; label: string }) {
   )
 }
 
-export function Libraries() {
+export function Libraries({ includeStatuses }: { includeStatuses?: boolean }) {
   return (
     <div className="my-16 xl:max-w-none">
       <Heading level={2} id="official-libraries">
@@ -125,7 +125,11 @@ export function Libraries() {
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
         {official.map((library) => (
-          <Library key={library.name} library={library} />
+          <Library
+            key={library.name}
+            library={library}
+            includeStatuses={includeStatuses}
+          />
         ))}
       </div>
       <Heading level={2} id="official-libraries">
@@ -133,14 +137,24 @@ export function Libraries() {
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
         {community.map((library) => (
-          <Library key={library.name} library={library} />
+          <Library
+            key={library.name}
+            library={library}
+            includeStatuses={includeStatuses}
+          />
         ))}
       </div>
     </div>
   )
 }
 
-export function Library({ library }: { library: LibraryProp }) {
+export function Library({
+  library,
+  includeStatuses,
+}: {
+  library: LibraryProp
+  includeStatuses?: boolean
+}) {
   return (
     <div className="mt-8 flex flex-row-reverse gap-6">
       <div className="flex-auto">
@@ -152,19 +166,21 @@ export function Library({ library }: { library: LibraryProp }) {
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           {library.description}
         </p>
-        <p className="mt-2 flex flex-wrap gap-1">
-          <Pill status={library.status.httpClient} label="http client" />
-          <Pill status={library.status.identifiers} label="identifiers" />
-          <Pill status={library.status.bsky} label="bsky" />
-          <Pill status={library.status.crypto} label="crypto" />
-          <Pill status={library.status.mst} label="mst" />
-          <Pill status={library.status.lexicon} label="lexicon" />
-          <Pill status={library.status.identity} label="identity" />
-          <Pill status={library.status.streaming} label="streaming" />
-          <Pill status={library.status.serviceAuth} label="service auth" />
-          <Pill status={library.status.plc} label="plc" />
-          <Pill status={library.status.oauthServer} label="oauth server" />
-        </p>
+        {includeStatuses && (
+          <p className="mt-2 flex flex-wrap gap-1">
+            <Pill status={library.status.httpClient} label="http client" />
+            <Pill status={library.status.identifiers} label="identifiers" />
+            <Pill status={library.status.bsky} label="bsky" />
+            <Pill status={library.status.crypto} label="crypto" />
+            <Pill status={library.status.mst} label="mst" />
+            <Pill status={library.status.lexicon} label="lexicon" />
+            <Pill status={library.status.identity} label="identity" />
+            <Pill status={library.status.streaming} label="streaming" />
+            <Pill status={library.status.serviceAuth} label="service auth" />
+            <Pill status={library.status.plc} label="plc" />
+            <Pill status={library.status.oauthServer} label="oauth server" />
+          </p>
+        )}
       </div>
       <Link href={library.href}>
         <Image src={library.logo} alt="" className="h-12 w-12" unoptimized />

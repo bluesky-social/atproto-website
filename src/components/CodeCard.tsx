@@ -15,11 +15,11 @@ export function CodeCard({
   icon?: React.ComponentType<{ className?: string }>
 }>) {
   return (
-    <div className="not-prose relative rounded-2xl ring-1 ring-zinc-900/7.5 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 hover:ring-zinc-900/10 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/10">
+    <div className="not-prose relative rounded-2xl bg-white ring-1 ring-zinc-900/7.5 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 hover:ring-zinc-900/10 dark:bg-zinc-800 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/10">
       <div className="flex items-center gap-3 px-4 py-3">
         {icon && <IconContainer icon={icon} />}
         <div className="flex-auto">
-          <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-200">
             {description}
           </p>
         </div>

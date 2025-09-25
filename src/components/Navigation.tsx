@@ -232,11 +232,7 @@ function NavigationGroup({
 export const navigation: Array<NavGroup> = [
   {
     title: 'Home',
-    links: [
-      { title: 'Introduction', href: '/' },
-      { title: 'SDKs', href: '/sdks' },
-      { title: 'FAQ', href: '/guides/faq' },
-    ],
+    links: [{ title: 'FAQ', href: '/guides/faq' }],
   },
   {
     title: 'Tutorials',
@@ -247,7 +243,10 @@ export const navigation: Array<NavGroup> = [
   },
   {
     title: 'How-to Guides',
-    links: [{ title: 'PDS Self-Hosting', href: '/guides/self-hosting' }],
+    links: [
+      { title: 'Syncing from the firehose', href: '#todo' },
+      { title: 'Log on with OAuth', href: '#todo' },
+    ],
   },
   {
     title: 'Explanations',

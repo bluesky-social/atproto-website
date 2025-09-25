@@ -29,11 +29,6 @@ const nextConfig = {
         permanent: false,
       },
       {
-        source: '/lexicons',
-        destination: '/docs',
-        permanent: false,
-      },
-      {
         source: '/specs/auth',
         destination: '/specs/oauth',
         permanent: false,

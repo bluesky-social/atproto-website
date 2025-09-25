@@ -96,7 +96,7 @@ export function Firehose() {
   })
 
   return (
-    <div className="not-prose relative rounded-2xl ring-1 ring-zinc-900/7.5 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 hover:ring-zinc-900/10 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/10">
+    <div className="not-prose relative rounded-2xl bg-white ring-1 ring-zinc-900/7.5 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 hover:ring-zinc-900/10 dark:bg-zinc-800 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/10">
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="relative">
           <IconContainer icon={SignalIcon} />
@@ -106,8 +106,8 @@ export function Firehose() {
           </span> */}
         </div>
         <div className="flex-auto">
-          <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
-            Stream data from the Relay.
+          <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-200">
+            Stream from the firehose
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -115,7 +115,7 @@ export function Firehose() {
           <ArrowIcon className="mr-1 h-7 w-7 text-blue-500" />
         </div>
       </div>
-      <div className="h-[248px] overflow-hidden rounded-b-2xl border-t border-zinc-900/7.5 bg-zinc-50 px-4 py-4 dark:border-white/10 dark:bg-zinc-900">
+      <div className="h-[225px] overflow-hidden rounded-b-2xl border-t border-zinc-900/7.5 bg-zinc-50 px-4 py-4 dark:border-white/10 dark:bg-zinc-900">
         <motion.ul layout role="list" className="space-y-6">
           {activity.map((activityItem, activityItemIdx) => (
             <motion.li
@@ -140,7 +140,7 @@ export function Firehose() {
               <div className="relative flex h-6 w-6 flex-none items-center justify-center bg-zinc-50 dark:bg-zinc-900">
                 <div className="h-1.5 w-1.5 rounded-full bg-zinc-300 ring-1 ring-zinc-500 dark:bg-zinc-700" />
               </div>
-              <p className="bg:text-zinc-400 py-0.5 text-xs leading-5 text-zinc-500">
+              <p className="bg:text-zinc-400 py-0.5 text-xs leading-5 text-zinc-500 dark:text-zinc-300">
                 <span className="font-medium text-zinc-800 dark:text-zinc-100">
                   @{activityItem.handle}
                 </span>{' '}
