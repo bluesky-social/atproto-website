@@ -78,14 +78,14 @@ export const Header = forwardRef<
         </Link>
         <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
         <ul role="list" className="flex items-center gap-8">
-          <TopLevelNavItem href="/developers">Developer Docs</TopLevelNavItem>
+          <TopLevelNavItem href="/developers">Learn</TopLevelNavItem>
+          <TopLevelNavItem href="/developers">Build</TopLevelNavItem>
+          <TopLevelNavItem href="/developers">Deploy</TopLevelNavItem>
         </ul>
         <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
         <ul role="list" className="flex items-center gap-8">
-          <TopLevelNavItem href="/explorer">Network Explorer</TopLevelNavItem>
           <TopLevelNavItem href="/lexicons">Lexicons</TopLevelNavItem>
           <TopLevelNavItem href="/sdks">SDKs</TopLevelNavItem>
-          <TopLevelNavItem href="/samples">Samples</TopLevelNavItem>
           <TopLevelNavItem href="/guides/self-hosting">Tools</TopLevelNavItem>
         </ul>
       </div>

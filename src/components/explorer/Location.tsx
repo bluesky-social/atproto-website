@@ -20,8 +20,6 @@ export default function Location({ repo, collection, rkey }: LocationProps) {
         <>
           <div className="flex flex-1 items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600 dark:bg-white/5 dark:outline-white/10 dark:focus-within:outline-indigo-500">
             <input
-              id="company-website"
-              name="company-website"
               type="text"
               placeholder="atproto.com"
               value={url}

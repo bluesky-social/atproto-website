@@ -18,7 +18,6 @@ export default function Explorer({}: {}) {
 }
 
 function Inner() {
-  const username = 'pfrazee.com'
   const [queryClient] = useState(
     () =>
       new QueryClient({
