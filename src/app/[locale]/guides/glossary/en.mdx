@@ -22,7 +22,7 @@ The name is also a play on the "@" symbol, aka the "at" symbol, since atproto is
 
 A PDS, or Personal Data Server, is a server that hosts a user. A PDS will always store the user's [data repo](#data-repo) and signing keys. It may also assign the user a [handle](#handle) and a [DID](#did-decentralized-id). Many PDSes will host multiple users.
 
-A PDS communicates with [AppViews](#appview) to run applications. A PDS doesn't typically run any applications itself, though it will have general account management interfaces such as the OAuth login screen. PDSes actively sync their [data repos](#data-repo) with [Relays](#relay).
+A PDS communicates with [AppViews](#app-view) to run applications. A PDS doesn't typically run any applications itself, though it will have general account management interfaces such as the OAuth login screen. PDSes actively sync their [data repos](#data-repo) with [Relays](#relay).
 
 ## AppView
 
@@ -32,9 +32,9 @@ AppViews function a bit like search engines on the Web: they aggregate data from
 
 ## Relay
 
-A Relay is an aggregator of [data repos](#data-repo) from across the [Atmosphere](#atmosphere). They sync the repos from [PDSes](#pds) and produce a firehose of change events. [AppViews](#appview) use a Relay to fetch user data.
+A Relay is an aggregator of [data repos](#data-repo) from across the [Atmosphere](#atmosphere). They sync the repos from [PDSes](#pds) and produce a firehose of change events. [AppViews](#app-view) use a Relay to fetch user data.
 
-Relays are an optimization and are not strictly necessary. An [AppView](#appview) could communicate directly with [PDSes](#pds) (in fact, this is encouraged if needed). The Relay serves to reduce the number of connections that are needed in the network.
+Relays are an optimization and are not strictly necessary. An [AppView](#app-view) could communicate directly with [PDSes](#pds) (in fact, this is encouraged if needed). The Relay serves to reduce the number of connections that are needed in the network.
 
 ## Lexicon
 
