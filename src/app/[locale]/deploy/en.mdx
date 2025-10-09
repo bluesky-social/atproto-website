@@ -1,0 +1,69 @@
+export const metadata = {
+  title: 'AT Protocol',
+  description:
+    'The AT Protocol is an open, decentralized, and high-performance network for building social applications.',
+}
+
+export const sections = []
+
+<div className="prose pt-12 pb-6">
+  <h1 className="font-thick text-5xl">Deploy</h1>
+  <p className="lead">
+    Run your part of the network by deploying open-source services.
+  </p>
+</div>
+
+
+# Personal Data Server (PDS)
+
+A low cost server that hosts user accounts.
+
+|Package|Description|
+|-|-|
+|[Bluesky Official PDS](/guides/self-host)|Actively maintained. Easy to operate.|
+|[Some other PDS](#todo)||
+|[Yet another other PDS](#todo)||
+
+# Applications
+
+This list only includes apps that you can easily deploy and maintain.
+
+|Package|Description|
+|-|-|
+|[Bluesky](/guides/self-host)|A social microblogging application|
+|[Leaflet](#todo)|Something something something|
+|[Tangled](#todo)|Something something something|
+
+# Other services
+
+Additional tools and services which support specific needs.
+
+|Package|Description|
+|-|-|
+|[Bluesky Official Relay](/guides/self-host)|A utility that crawls the network and produces the "firehose" of events.|
+|[Ozone, by Bluesky](/guides/self-host)|A human-review moderation system that receives user reports.|
+|[Osprey, by ROOST](#todo)|An automated moderation system that operates on programmed rules.|
+
+## What are these services?
+
+The Atmosphere uses two main services: the PDS and the Application.
+
+**The PDS** is a somewhat "dumb" service. It hosts the users' keys and data, but it doesn't run applications. You could almost think of it like a filesystem.
+
+**The Application** connects users. It reads from and writes to the PDS, and turns all that data into a meaningful experience.
+
+## Which should I run?
+
+If you're looking to make sure your identity and data stay in your hands, you should run a PDS.
+
+If you're looking to ensure you can connect to users, or if you want to run moderation differently, then you should run an application.
+
+## What about moderation?
+
+Most moderation occurs in the applications. Typically, this is done by publishing "labels," and some applications support user-operated labelers.
+
+## What about the other services?
+
+The "Relay" is a helper service that aggregates user activity from the network of PDSes. People frequently reuse existing relays, but you can deploy one yourself.
+
+Ozone and Osprey are both moderation tools. They primarily publish labels to be used by applications.
