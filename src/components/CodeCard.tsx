@@ -4,13 +4,11 @@ import { ArrowIcon } from './icons/ArrowIcon'
 
 export function CodeCard({
   href,
-  title,
   description,
   icon,
   children,
 }: React.PropsWithChildren<{
   href: string
-  title: string
   description: string
   icon?: React.ComponentType<{ className?: string }>
 }>) {

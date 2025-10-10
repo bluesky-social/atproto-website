@@ -168,7 +168,7 @@ function NavigationGroup({
     <li className={clsx('relative mt-6', className)}>
       <motion.h2
         layout="position"
-        className="text-xs font-semibold text-zinc-900 dark:text-white"
+        className="text-sm font-semibold text-zinc-900 dark:text-white"
       >
         {group.title}
       </motion.h2>
@@ -231,38 +231,70 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: 'Home',
-    links: [{ title: 'FAQ', href: '/guides/faq' }],
-  },
-  {
     title: 'Tutorials',
     links: [
-      { title: 'Quick start', href: '/guides/applications' },
-      { title: 'Intro to Lexicon', href: '/guides/lexicon' },
+      { title: 'Intro to AT', href: '#todo' },
+      { title: 'Build your first app', href: '/guides/applications' },
+      { title: 'FAQ', href: '/guides/faq' },
     ],
   },
   {
-    title: 'How-to Guides',
+    title: 'Auth',
     links: [
-      { title: 'Syncing from the firehose', href: '#todo' },
-      { title: 'Log on with OAuth', href: '#todo' },
+      { title: 'Login with OAuth', href: '#todo' },
+      { title: 'Get information about the user', href: '#todo' },
+      { title: 'Request permissions', href: '#todo' },
+      { title: 'Resolve usernames to DIDs', href: '#todo' },
     ],
   },
   {
-    title: 'Explanations',
+    title: 'User Data',
     links: [
-      {
-        title: 'ATProto for distsys engineers',
-        href: '/articles/atproto-for-distsys-engineers',
-      },
-      {
-        title: 'ATProto Ethos',
-        href: '/articles/atproto-ethos',
-      },
+      { title: "Read from a user's repo", href: '#todo' },
+      { title: "Write to a user's repo", href: '#todo' },
+      { title: 'Subscribe to a public firehose', href: '#todo' },
+      { title: 'Atomic write transactions', href: '#todo' },
+      { title: 'Read your own writes', href: '#todo' },
     ],
   },
   {
-    title: 'Reference',
+    title: 'Data Schemas',
+    links: [
+      { title: 'Install a schema', href: '#todo' },
+      { title: 'Write your own schemas', href: '#todo' },
+      { title: 'Publish your schema', href: '#todo' },
+      { title: 'Permission sets', href: '#todo' },
+      { title: 'Tips for your schemas', href: '#todo' },
+    ],
+  },
+  {
+    title: 'Blobs & Files',
+    links: [
+      { title: 'Read file blobs', href: '#todo' },
+      { title: 'Write file blobs', href: '#todo' },
+      { title: 'Tips for your CDN', href: '#todo' },
+    ],
+  },
+  {
+    title: 'Moderation',
+    links: [
+      { title: 'Labels and moderation', href: '#todo' },
+      { title: 'Subscribe to a labeler', href: '#todo' },
+      { title: 'Use labels in your application', href: '#todo' },
+      { title: 'Create a labeler', href: '#todo' },
+    ],
+  },
+  {
+    title: 'Advanced Guides',
+    links: [
+      { title: 'Reusable APIs with XRPC', href: '#todo' },
+      { title: 'Scaling your application', href: '#todo' },
+      { title: 'Backfilling the network', href: '#todo' },
+      { title: 'Handling timestamps', href: '#todo' },
+    ],
+  },
+  {
+    title: 'Specs',
     links: [
       { title: 'Overview', href: '/guides/overview' },
       { title: 'URI Scheme', href: '/specs/at-uri-scheme' },
@@ -286,14 +318,20 @@ export const navigation: Array<NavGroup> = [
     ],
   },
 ]
+// {
+//   title: '',
+//   links: [
+//     { title: '', href: '#todo' },
+//   ],
+// },
 
 export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
       <ul role="list">
-        <TopLevelNavItem href="/">API</TopLevelNavItem>
-        <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="#">Support</TopLevelNavItem>
+        <TopLevelNavItem href="/lexicons">Lexicons</TopLevelNavItem>
+        <TopLevelNavItem href="/sdks">SDKs</TopLevelNavItem>
+        <TopLevelNavItem href="/tools">Tools</TopLevelNavItem>
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
             key={group.title}

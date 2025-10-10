@@ -54,10 +54,10 @@ export default async function Page({ params }: any) {
           className="flex flex-col justify-center rounded-lg bg-gray-50 px-12 pb-8"
           href="/build"
         >
-          <span className="block text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+          <span className="block text-pretty text-center text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
             Build new apps
           </span>
-          <span className="mt-4 block text-lg/8 text-gray-600">
+          <span className="mt-4 block text-center text-lg/8 text-gray-600">
             Connect users and create new experiences.
           </span>
         </Link>
