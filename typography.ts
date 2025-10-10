@@ -42,7 +42,7 @@ export default function typographyStyles({ theme }: PluginUtils) {
 
         // Base
         color: 'var(--tw-prose-body)',
-        fontSize: theme('fontSize.sm')[0],
+        fontSize: theme('fontSize.sm')[1],
         lineHeight: theme('lineHeight.6'),
 
         // Text
