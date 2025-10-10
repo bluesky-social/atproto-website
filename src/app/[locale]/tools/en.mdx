@@ -1,0 +1,77 @@
+import * as Projects from '@/components/Projects'
+
+<div className="prose pt-12 pb-12">
+  <h1 className="font-thick text-5xl">Tools</h1>
+  <p className="lead">CLIs, services, and web apps for developers.</p>
+</div>
+
+<div className="not-prose">
+  <Projects.Listing>
+    <Projects.Item type="cli">
+      <Projects.Title org="bsky.app" name="goat" />
+      <Projects.Description>
+        Multi-tool for interacting with AT.
+      </Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">GitHub</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="service">
+      <Projects.Title org="juli.ee" name="PDSLS" />
+      <Projects.Description>Fully-featured repo explorer.</Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">Website</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="service">
+      <Projects.Title org="sri.xyz" name="taproot" />
+      <Projects.Description>All-in-one AT Explorer.</Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">Website</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="service">
+      <Projects.Title org="bad-example.com" name="microcosm" />
+      <Projects.Description>Open-source APIs to kick-start your next app on AT.</Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">Website</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="service">
+      <Projects.Title org="slices" name="slices.network" />
+      <Projects.Description>A complete development platform for AT applications.</Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">Website</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="repo">
+      <Projects.Title org="bsky.app" name="relay" />
+      <Projects.Description>
+        A utility that crawls the network and produces the "firehose" of
+        events.
+      </Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">GitHub</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="repo">
+      <Projects.Title org="bsky.app" name="ozone" />
+      <Projects.Description>
+        A human-review moderation system that receives user reports.
+      </Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">GitHub</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+    <Projects.Item type="repo">
+      <Projects.Title org="roost" name="osprey" />
+      <Projects.Description>
+        An automated moderation system that operates on programmed
+        rules.
+      </Projects.Description>
+      <Projects.Links>
+        <Projects.Link href="#2">GitHub</Projects.Link>
+      </Projects.Links>
+    </Projects.Item>
+  </Projects.Listing>
+</div>

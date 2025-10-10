@@ -1,4 +1,4 @@
-export default async function HomePage({ params }: any) {
+export default async function Page({ params }: any) {
   try {
     const Content = (await import(`./${params.locale}.mdx`)).default
     return <Content />
