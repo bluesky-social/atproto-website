@@ -12,7 +12,7 @@ If you're building your own protocol implementation or OAuth Client SDK, the mor
 
 ## What *is* OAuth?
 
-Without OAuth, if you (as a user) wanted to authorize a 3rd party app to access your account, your only option would be to type your account password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see your password. The app is granted *full* access to your whole account, even if the app only needed partial access. The only way to revoke that access would be to change your password.
+Without OAuth, if you (as a user) wanted to authorize a 3rd party app to access your account, your only option would be to type your account password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see your password. The app is granted *full* access to your whole account, even if the app only needs partial access. The only way to revoke that access would be to change your password.
 
 OAuth is a family of open specifications for doing secure Authorization, i.e. solving the problem of not handing out passwords to 3rd party apps, not giving those apps overly broad account access, and being able to manage and revoke that access later.
 
@@ -65,12 +65,14 @@ The Python example does not use an SDK! It may be useful as reference when build
 
 The *simplest* type of app is one where the OAuth session is established directly between the user's device and the PDS, as demonstrated in the [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) example. It's simple because it doesn't require a dedicated backend service, only hosting static resources.
 
-There's one drawback to this approach: sesson lifetime will be limited because it is a "public client", as opposed to a "confidential client". Becoming a confidential client involves establishing a secret key, bound to the client ID. If the client is publicly available and runs on the user's own device, it cannot protect a client secret. Thus, implementing a confidential client necessitates hosting some backend infrastructure, which the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples demonstrate (both using the "BFF" pattern, see below).
+There's one drawback to this approach: session lifetime will be limited because it is a "public client", as opposed to a "confidential client". Becoming a confidential client involves establishing a secret key, bound to the client ID. If the client is publicly available and runs on the user's own device, it cannot protect a client secret. Thus, implementing a confidential client necessitates hosting some backend infrastructure, which the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples demonstrate (both using the "BFF" pattern, see below).
 
-See [Types of Clients](/specs/oauth#types-of-clients) for more technical details on confidential vs public clients.
+See [Types of Clients](/specs/oauth#types-of-clients) for more technical details on confidential vs. public clients.
 
 There are several design strategies that can be used to "upgrade" a public client into a confidential client:
 
 - [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): The OAuth session is established between the app backend server and the PDS. This server-side session is associated with the user's frontend session via mechanisms such as session cookies. The frontend makes requests to the PDS by proxying them through the backend, which handles the OAuth authorization.
 - [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): Similar to the BFF pattern, except the backend passes OAuth access tokens to the frontend once the session has been established, allowing the frontend to make direct requests to the PDS.
 - [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): A proposed alternative to the TMB pattern with simplified server-side logic.
+
+Of these three, the BFF pattern is the currently recommended approach for building confidential-client applications. This is demonstrated in the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples.
