@@ -362,7 +362,7 @@ Design recommendations to make schemas flexible to future evolution and extensio
     - all core message types include a `seq` field (integer). The `seq` of messages increases monotonically, though may have gaps.
     - if the `cursor` is not provided, the server will start returning new messages from the current point forward
     - if the `cursor` is provided, the server will attempt to return historical messages starting with the matching `seq`, continuing through to the current stream
-    - if the `cursor` is in the future (higher than the current sequence), an error is returned and the connection closed (TODO: is this the convention?)
+    - if the `cursor` is in the future (higher than the current sequence), an error is returned and the connection closed
     - if the `cursor` is older than the earliest available message (or is 0), the server returns an info message of name `OutdatedCursor`, then returns messages starting from the oldest available
 - A common pattern in API responses is to include “hydrated views” of data records. For example, when viewing an account’s profile, the response might include CDN or thumbnail URLs for any media files, moderation labels, global aggregations, and viewer-specific social graph context.
     - For detailed views, a best practice to include the original record verbatim, instead of defining a new schema with a superset of fields. This is easier to maintain (can’t forget to update fields), and ensures any off-schema extension data is included.
