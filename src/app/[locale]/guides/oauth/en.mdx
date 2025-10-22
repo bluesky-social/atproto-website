@@ -1,0 +1,78 @@
+export const metadata = {
+  title: 'OAuth Introduction',
+  description:
+    'OAuth for AT Protocol application developers.',
+}
+
+# OAuth for AT Protocol application developers
+
+This guide is aimed at developers building applications on AT Protocol.
+
+If you're building your own protocol implementation or OAuth Client SDK, the more detailed [specification](/specs/oauth) or advanced [OAuth client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client) may be more appropriate.
+
+## What *is* OAuth?
+
+Without OAuth, if you (as a user) wanted to authorize a 3rd party app to access your account, your only option would be to type your account password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see your password. The app is granted *full* access to your whole account, even if the app only needs partial access. The only way to revoke that access would be to change your password.
+
+OAuth is a family of open specifications for doing secure Authorization, i.e. solving the problem of not handing out passwords to 3rd party apps, not giving those apps overly broad account access, and being able to manage and revoke that access later.
+
+## How is OAuth Different in AT Protocol?
+
+ATProto [specifies](/specs/oauth) a particular "profile" of the OAuth standards, using [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html) as the foundation.
+
+There are a couple of details that might catch you off guard if you're used to using other OAuth systems.
+
+- **Migration**: ATProto users can migrate their accounts between servers ([PDSes](guides/glossary#pds-personal-data-server)) over time. To facilitate this ATProto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
+
+- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so ATProto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
+
+<Note>
+You may see "[App Passwords](/specs/xrpc#app-passwords)" referenced in older guides and apps. These existed as an interim solution before OAuth was implemented, and OAuth is the recommended solution for all apps going forwards.
+</Note>
+
+## OAuth SDKs
+
+The inner workings of OAuth can be fiddly, but the good news is that we’ve done our best to abstract it away via client SDKs, so you can focus on your app.
+
+### TypeScript
+
+- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - Suitable for frontend-only applications (e.g. SPAs).
+- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Suitable for Electron desktop apps or server-side deployments.
+- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - For use in React Native projects (e.g. mobile apps)
+- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (This is the core implementation on which the above three libraries depend)
+
+### Go
+
+- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([Online API Docs](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - Suitable for native apps or server-side deployments
+
+## ATProto OAuth Example Apps
+
+These simple example apps demonstrate usage of their respective SDKs.
+
+| Example App | Language | SDK | Architecture | Confidential Client? | [Localhost development client ID?](https://atproto.com/specs/oauth#localhost-client-development) |
+| --- | --- | --- | --- | --- | --- |
+| [cookbook/react-native-oauth](https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme) | TypeScript | @atproto/oauth-client-expo | Mobile App (no backend) | No | No (requires hosted client metadata) |
+| [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) | JavaScript | @atproto/oauth-client-browser | Web SPA (no backend) | No | Optionally |
+| [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) | Go | indigo | Web BFF | Optionally | Optionally |
+| [cookbook/go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme) | Go | indigo | Native CLI | No | No (requires hosted client metadata) |
+| [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) | Python | None | Web BFF | Optionally | Optionally |
+
+<Note>
+The Python example does not use an SDK! It may be useful as reference when building an OAuth SDK from scratch, alongside the advanced [OAuth client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client)
+</Note>
+
+## Types of App
+
+The *simplest* type of app is one where the OAuth session is established directly between the user's device and the PDS, as demonstrated in the [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) example. It's simple because it doesn't require a dedicated backend service, only hosting static resources.
+
+If your app doesn't need long-lived sessions, then this approach is completely fine. But for other use cases, session lifetime will be limited because the app is a "public client", as opposed to a "confidential client". Becoming a confidential client involves establishing a secret key, bound to the client ID. If the client is publicly available and runs on the user's own device, it cannot protect a client secret. Thus, implementing a confidential client necessitates hosting some backend infrastructure, which the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples demonstrate (both using the "BFF" pattern, see below).
+
+See [Types of Clients](/specs/oauth#types-of-clients) for more technical details on confidential vs. public clients.
+
+There are several design strategies that can be used to "upgrade" a public client into a confidential client:
+
+- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): The OAuth session is established between the app backend server and the PDS. This server-side session is associated with the user's frontend session via mechanisms such as session cookies. The frontend makes requests to the PDS by proxying them through the backend, which handles the OAuth authorization.
+- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): Similar to the BFF pattern, except the backend passes OAuth access tokens to the frontend once the session has been established, allowing the frontend to make direct requests to the PDS.
+- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): A proposed alternative to the TMB pattern with simplified server-side logic.
+
+Of these three, the BFF pattern is the currently recommended approach for building confidential-client applications. This is demonstrated in the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples.

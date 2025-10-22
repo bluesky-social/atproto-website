@@ -257,6 +257,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Data Repositories', href: '/guides/data-repos' },
       { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
       { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
+      { title: 'OAuth Introduction', href: '/guides/oauth' },
     ],
   },
   {
