@@ -1,0 +1,127 @@
+export const metadata = {
+  title: 'Lexinomicon',
+  description:
+    'A style guide for creating new ATProto schemas',
+}
+
+# Lexinomicon
+
+Here are some recommended conventions and best practices for designing Lexicon schemas.
+
+Name casing conventions:
+
+- Schemas & attributes: Use `lowerCamelCase` capitalization for schemas and names (as opposed to `UpperCamelCase`, `snake_case`, `ALL_CAPS`, etc).
+- API error names: `UpperCamelCase`
+- Fixed strings (eg `knownValues`): `kebab-case`
+
+Acceptable characters:
+
+- Field names should stick to the same character set as schema names (NSID name segments): ASCII alphanumeric, first character not a digit, no hyphens, case-sensitive
+    - Exceptions may be justifiable in some situations, such as preservation of names in existing external schemas
+    - Data objects should never contain schema-specified field names starting with `$` at any level of nesting; these are reserved for future protocol-level extensions
+
+Naming conventions:
+
+- Use singular nouns for `record` schemas
+    - eg `post`, `like`, `profile`
+- Use “verb-noun” for `query` and `procedure` endpoints
+    - eg `getPost`, `listLikes`, `putProfile`
+    - Common verbs for `query` endpoints are: `get`, `list`, `search` (for full-text search), `query` (for flexible matching or filtering filtering)
+    - Common verbs for `procedure` endpoints: `create`, `update`, `delete`, `upsert`, `put`
+- Use “subscribe-plural-noun” for `subscription`
+    - eg `subscribeLabels`
+- Conventions for `permission-set` schema naming has not be established yet, but probably has “auth” prefix (eg, `authBasic`)
+- If an endpoint is experimental, unstable, or not intended for interoperability, indicate that in the NSID name
+    - eg, include `.temp.` or `.unspecced.` in the NSID hierarchy
+- Avoid generic names which conflict with popular programming language conventions
+    - eg, avoid using `default` or `length` as schema names
+
+Documentation and Completeness:
+
+- Add a description to every `main` schema definition (records, API endpoints, etc)
+    - for API endpoints, mention in the description if authentication is required, and whether responses will be personalized if authentication is optional
+- Add descriptions to potentially ambiguous fields and properties. This is particularly important for fields with generic names like `uri` or `cid`: CID of what?
+
+NSID namespace grouping:
+
+- Many applications and projects will have multiple distinct functions or features, and schemas of all types can have that grouping represented in the NSID hierarchy
+    - eg `app.bsky.feed.*` , `app.bsky.graph.*`
+- Very simple applications can include all endpoints under a single NSID “group”
+- use a `.defs` schema for definitions which might be reused by multiple schemas in the same namespace, or by third parties
+    - eg `app.bsky.feed.defs`
+    - putting these in a separate schema file means that deprecation or removal of other schema files doesn’t impact reuse
+- Avoid conflicts and confusion between groups, names, and definitions
+    - eg `app.bsky.feed.post#main` vs `app.bsky.feed.post.main`, or `com.example.record#foo` and `com.example.record.foo`
+    - or defining both `app.bsky.feed` (as a record) and `app.bsky.feed.post` (with `app.bsky.feed` as a group)
+
+Other guidelines:
+
+- Specify the format of string fields when appropriate
+- String fields in records should almost always have a maximum length if they don’t have a format type
+    - Don’t redundantly specify both a format and length limits
+    - If limiting the length of a string for semantic or visual reasons, grapheme limits should be used to ensure a degree of consistency across human languages. A data size (bytes) limit should also be added in these cases. A ratio of between 10 to 20 bytes to 1 grapheme is recommended.
+- The string and bytes record data types are intended for constrained data size use-cases. For text or binary data of larger size, blob references should be used. This can include longer-form text and structured data.
+- Enum sets are “closed” and can not be updated or extended without breaking schema evolution rules. For this reason they should almost always be avoided.
+    - For strings, `knownValues` provides more flexible alternative
+- String `knownValues` may include simple string constants, or may include schema references to a `token` (eg, the string `"com.example.defs#tokenOne"`)
+    - Tokens provide an extension mechanism, and work well for values that have subjective definitions or may be expanded over time
+    - See `com.atproto.moderation.defs#reasonType` and `com.atproto.sync.defs#hostStatus` for two contrasting instances, the former extensible and the later more constrained
+- Take advantage of re-usable definitions, such as `com.atproto.repo.strongRef` (for versioned references to records) or `com.atproto.label.defs#label` (in an array, for hydrated labels)
+- API endpoints which take an account identifier as an argument (eg, query parameter) should use `at-identifier` so that clients can avoid calling `resolveHandle` if they only have an account handle
+- Record schemas should always use persistent identifiers (DIDs) for references to other accounts, instead of handles
+- API endpoints should always specify an `output` with `encoding`, even if they have no meaningful response data
+    - a good default is `application/json` with the schema being an object with no defined properties
+- Optional `boolean` fields should be phrased such that `false` is the default and expected value
+    - For example, if an endpoint can return a mix of “foo” and “bar”, and the common behavior is to include “foo” but not “bar”, then controlling parameters should be named `excludeFoo` (default `false`) and `includeBar` (default `false`), as opposed to `excludeBar` (default `true`)
+- Content hashes (CIDs) may be represented as a string format or in binary encoding (`cid-link`)
+    - In most situations, including versioned references between records, the string format is recommended.
+    - Binary encoding is mostly used for protocol-level mechanisms, such as the firehose.
+
+## Schema Evolution and Extension
+
+All schemas should be flexible to extension and evolution over time, without breaking the Lexicon schema evolution rules. This is particularly true for record schemas. Given the distributed storage model of atproto, developers do not have a reliable mechanism to update all data records in the network. Extensions could come from the original designer, or other developers and projects.
+
+Experimental schemas and projects can use variant NSIDs (eg, including `.temp.` in the name hierarchy) to develop in the live network without committing to a stable record data schemas.
+
+Major non-backwards-compatible schema changes are possible by declaring a new schema. The current naming convention is to append “V2” to the original name (or “V3”, etc).
+
+Design recommendations to make schemas flexible to future evolution and extension:
+
+- do not mark data fields or API parameters as `required` unless they are truly required for functionality
+    - `required` fields can not be made optional or deprecated under the evolution rules
+- you can add new `optional` fields to a schema without changing backwards compatibility or requiring a V2 schema, but you can’t add new `required` fields
+- use object types containing a single element/field instead of atomic data types in arrays, to allow additional context to be included in the future
+    - for example, in an API response listing accounts (DIDs), return an array of objects each with an `account` field listing the DID, instead of an array of strings
+- make unions “open” in almost all situations, to allow future addition of types or values
+    - open unions can be an extension mechanism for third parties to include self-defined data types
+
+## Design Patterns
+
+- There is a basic convention for pagination of `query` API endpoints:
+    - query parameters include an optional `limit` (integer) and optional`cursor` (string)
+    - the output body includes optional `cursor` (string) and a required array of response objects (with context-specific pluralized field name)
+    - the initial client request does not define a `cursor`. If the response includes a `cursor`, then more results are available, and the client should query again with the new `cursor` to get more results
+    - the `limit` value is an upper limit, and the response may include fewer (or even zero) results, while further results are still available. It is the lack of `cursor` in responses that indicates pagination is complete. The response set may have items removed if they are tombstoned or have been otherwise filtered from the response set.
+- There is also a convention for subscription endpoints which support “sequencing” and backfill cursors:
+    - the endpoint has an optional `cursor` query parameter (integer)
+    - all core message types include a `seq` field (integer). The `seq` of messages increases monotonically, though may have gaps.
+    - if the `cursor` is not provided, the server will start returning new messages from the current point forward
+    - if the `cursor` is provided, the server will attempt to return historical messages starting with the matching `seq`, continuing through to the current stream
+    - if the `cursor` is in the future (higher than the current sequence), an error is returned and the connection closed
+    - if the `cursor` is older than the earliest available message (or is 0), the server returns an info message of name `OutdatedCursor`, then returns messages starting from the oldest available
+- A common pattern in API responses is to include “hydrated views” of data records. For example, when viewing an account’s profile, the response might include CDN or thumbnail URLs for any media files, moderation labels, global aggregations, and viewer-specific social graph context.
+    - For detailed views, a best practice to include the original record verbatim, instead of defining a new schema with a superset of fields. This is easier to maintain (can’t forget to update fields), and ensures any off-schema extension data is included.
+    - Viewer-specific metadata should be optional and either indicated in descriptions or grouped under a sub-object. This makes schemas reusable between “public” and “logged-in” views, and makes it clearer what information will be available when.
+    - A helpful pattern for application developers is to ensure there is an API endpoint that accepts a reference to a record (eg, a AT URI or equivalent; or multiple references) returns the hydrated data object(s).
+- the `app.bsky.richtext.facet` system can be used to annotate short text strings in a way that is simpler and safer to work with than full-featured markup languages
+    - for more details see ["Why RichText facets in Bluesky"](https://www.pfrazee.com/blog/why-facets)
+    - the feature type system is an open union which can be extended with additional types
+    - more powerful systems like Markdown are more appropriate for long-form text
+- One pattern for extending or supplementing a record is to define “sidecar” records in the same account repository with the same record key and different types (collections).
+    - Sidecar records can be defined and managed by the original Lexicon designer or by independent developers.
+    - The sidecar records can be updated (mutated) without breaking strong references to the original record.
+    - Sidecar context can be included in API responses.
+- Because atproto accounts can be used flexibly with any application in the network, it can be ambiguous which accounts are participating in a particular app modality. This can be clarified if there is a known representative record type for the modality, and that clients create such a record for active accounts. Deletion of this record can be a way to indicate the user is no longer active. This works best if the record has a single known instance (fixed record key).
+    - For example, an-app specific “profile” or “declaration” record can indicate that the account has logged in to an associated app at least once, even if the record is “empty”.
+    - Backfill services can enumerate all accounts in the network with the given signaling record, and also process deletion of that record as deactivation of that modality.
+    - This design pattern is strongly recommended for new app modalities.
