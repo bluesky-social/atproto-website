@@ -236,6 +236,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Introduction', href: '/' },
       // { title: 'Why ATProto?', href: '/articles/why-atproto' }, TODO
       // { title: 'Explore the network', href: '/explorer' }, TODO
+      { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
       { title: 'SDKs', href: '/sdks' },
       { title: 'Glossary', href: '/guides/glossary' },
       { title: 'FAQ', href: '/guides/faq' },
@@ -247,7 +248,11 @@ export const navigation: Array<NavGroup> = [
   // },
   {
     title: 'Building apps',
-    links: [{ title: 'Quick start', href: '/guides/applications' }],
+    links: [
+      { title: 'Quick start', href: '/guides/applications' },
+      { title: 'Cookbook ⧉', href: 'https://github.com/bluesky-social/cookbook/' },
+      { title: 'Distributed Systems', href: '/articles/atproto-for-distsys-engineers' },
+    ],
   },
   {
     title: 'Guides',

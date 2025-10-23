@@ -22,7 +22,7 @@ ATProto [specifies](/specs/oauth) a particular "profile" of the OAuth standards,
 
 There are a couple of details that might catch you off guard if you're used to using other OAuth systems.
 
-- **Migration**: ATProto users can migrate their accounts between servers ([PDSes](guides/glossary#pds-personal-data-server)) over time. To facilitate this ATProto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
+- **Migration**: ATProto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this ATProto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
 
 - **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so ATProto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
