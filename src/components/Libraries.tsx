@@ -128,7 +128,7 @@ export function Libraries() {
           <Library key={library.name} library={library} />
         ))}
       </div>
-      <Heading level={2} id="official-libraries">
+      <Heading level={2} id="community-libraries">
         Community libraries
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
