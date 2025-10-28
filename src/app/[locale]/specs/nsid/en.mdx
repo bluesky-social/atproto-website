@@ -50,9 +50,7 @@ A reference regex for NSID is:
 
 ### NSID Syntax Variations
 
-A **fragment** may be appended to an NSID in some contexts to refer to a specific sub-field within the schema. The fragment is separated from the NSID by an ASCII hash character (`#`). The fragment identifier string (after the `#`) has the same syntax restrictions as the final segment of an NSID: ASCII alphabetic, one or more characters, length restricted, etc.
-
-When referring to a group or pattern of NSIDs, a trailing ASCII star character (`*`) can be used as a "glob" character. For example, `com.atproto.*` would refer to any NSIDs under the `atproto.com` domain authority, including nested sub-domains (sub-authorities). A free-standing `*` would match all NSIDs from all authorities. Currently, there may be only a single start character; it must be the last character; and it must be at a segment boundary (no partial matching of segment names). This means the start character must be proceeded by a period, or be a bare star matching all NSIDs.
+When referring to a group or pattern of NSIDs, a trailing ASCII star character (`*`) can be used as a "glob" character. For example, `com.atproto.*` would refer to any NSIDs under the `atproto.com` domain authority, including nested sub-domains (sub-authorities). A free-standing `*` would match all NSIDs from all authorities. Currently, there may be only a single star character; it must be the last character; and it must be at a segment boundary (no partial matching of segment names). This means the start character must be proceeded by a period, or be a bare star matching all NSIDs.
 
 
 ### Examples
@@ -93,7 +91,5 @@ Lexicon language documentation will provide style guidelines on choosing and org
 It is conceivable that NSID syntax would be relaxed to allow Unicode characters in the final segment.
 
 The "glob" syntax variation may be modified to extended to make the distinction between single-level and nested matching more explicit.
-
-The "fragment" syntax variation may be relaxed in the future to allow nested references.
 
 No automated mechanism for verifying control of a "domain authority" currently exists. Also, not automated mechanism exists for fetching a lexicon schema for a given NSID, or for enumerating all NSIDs for a base domain.
