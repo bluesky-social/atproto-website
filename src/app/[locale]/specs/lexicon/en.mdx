@@ -365,6 +365,20 @@ Note that `blob` objects always include `$type`, which allows generic processing
 
 As a reminder, `main` types must be referenced in `$type` fields as just the NSID, not including a `#main` suffix.
 
+## Validation Options
+
+A PDS has three Lexicon validation options when creating or updating records:
+
+- Explicit validation required: the record must be validated against a Lexicon schema. If the PDS does not know of the Lexicon, and/or can not resolve it on demand, the record creation fails.
+- Explicit **no** validation: the record is not validated against any Lexicon, even if the PDS knows the Lexicon locally. The record still has to pass data validation rules (eg, no malformed blob objects at any nested depth).
+- Optimistic validation (default if no explicit argument): if the PDS knows the record Lexicon, it validates. If the PDS does not know it, and can't resolve it (or does not do live validation), the record is allowed to be created. This is also referred to as "Fail-Open".
+
+In Go, this is implemented by setting `Validate` to `true` or `false` on the `CreateRecord` or `UpdateRecord` options struct, or leaving it unset (`nil`) for optimistic validation.
+
+In Typescript, this is implemented by setting `validate` to `true` or `false` on the `createRecord` or `updateRecord` options object, or leaving it unset (`undefined`) for optimistic validation.
+
+A flag in the success response from the PDS will indicate whether Lexicon validation happened.
+
 ## Lexicon Evolution
 
 Lexicons are allowed to change over time, within some bounds to ensure both forwards and backwards compatibility. The basic principle is that all old data must still be valid under the updated Lexicon, and new data must be valid under the old Lexicon.
