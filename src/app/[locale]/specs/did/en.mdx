@@ -168,6 +168,8 @@ While longer DIDs are supported in the protocol, a good best practice is to use 
 
 DIDs are case-sensitive. While the currently-supported methods are *not* case sensitive, and could be safely lowercased, protocol implementations should reject DIDs with invalid casing. It is permissible to attempt case normalization when receiving user-controlled input, such as when parsing public URL path components, or text input fields.
 
+Interop test vectors are available from the [atproto-interop-tests](https://github.com/bluesky-social/atproto-interop-tests) repository.
+
 ## Possible Future Changes
 
 The hard maximum DID length limit may be reduced, at the protocol syntax level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
