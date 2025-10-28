@@ -280,7 +280,7 @@ The specific lifetime of sessions, access tokens, and refresh tokens is up to th
 Some guidelines and requirements:
 
 - access token lifetimes should be less than 30 minutes in all situations. If the server cannot revoke individual access tokens then the maximum is 15 minutes, and 5 minutes is recommended.
-- for "untrusted" public clients, overall session lifetime should be limited to 2 weeks, and the lifetime of individual refresh tokens should be limited to 2 days
+- for "untrusted" public clients, overall session lifetime and the lifetime of individual refresh tokens should both be limited to 2 weeks.
 - for confidential clients, the overall session lifetime may be unlimited. Individual refresh tokens should have a lifetime limited to 180 days
 - confidential clients must use the same client authentication key and assertion method for refresh token requests that they did for the initial authentication request
 
