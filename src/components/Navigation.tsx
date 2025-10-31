@@ -256,6 +256,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Identity', href: '/guides/identity' },
       { title: 'Data Repositories', href: '/guides/data-repos' },
       { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
+      { title: 'Lexinomicon', href: '/guides/lexinomicon' },
       { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
       { title: 'OAuth Introduction', href: '/guides/oauth' },
     ],
