@@ -113,6 +113,6 @@ DAG-CBOR is a serialization format used by [atproto](#at-protocol). It was chose
 
 ## XRPC
 
-XRPC is a term we are deprecating, but it was historically used to describe [atproto's](#at-protocol) flavor of HTTP usage. It stood for "Cross-organizational Remote Procedure Calls" and we regret inventing it, because really we're just using HTTP.
+XRPC is [atproto's](#at-protocol) HTTP API. It stands for "Cross-organizational Remote Procedure Calls" and is a thin wrapper around standard HTTPS. XRPC uses [Lexicon](#lexicon) schemas to define the valid parameters and responses for each API endpoint.
 
 - [HTTP API spec](/specs/xrpc)
