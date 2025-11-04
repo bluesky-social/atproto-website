@@ -1,4 +1,5 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import {Heading} from '@/components/Heading'
 
 export const metadata = {
 title: 'Identity',
@@ -19,7 +20,7 @@ atproto ID システムには、いくつかの要件があります。
 
 このシステムを採用すると、エンドツーエンドの暗号化、署名されたユーザー データ、サービス サインイン、および一般的な相互運用のためのツールがアプリケーションに提供されるはずです。
 
-## 識別子
+<Heading level={2} id="identifiers">識別子</Heading>
 
 私たちは、_ハンドル_ と _DID_ という 2 つの相互に関連する識別子形式を使用します。ハンドルは DNS 名ですが、DID は安全で安定した ID として機能する [新しい W3C 標準](https://www.w3.org/TR/did-core/) です。
 
@@ -63,7 +64,7 @@ DID ドキュメントは、DID レジストリによってホストされる標
 </Description>
 </DescriptionList>
 
-## DID メソッド
+<Heading level={2} id="did-methods">DID メソッド</Heading>
 
 [DID 標準](https://www.w3.org/TR/did-core/) は、DID を [DID ドキュメント](https://www.w3.org/TR/did-core/#core-properties) に公開および解決するカスタム「メソッド」をサポートしています。さまざまな既存のメソッドが [公開](https://w3c.github.io/did-spec-registries/#did-methods) されているため、この提案に含めるための基準を確立する必要があります:
 
@@ -77,7 +78,7 @@ DID ドキュメントは、DID レジストリによってホストされる標
 
 プロジェクト開始時点で、DID 方式のいずれも当社の基準を完全に満たしていませんでした。 **そのため、私たちは[did-web](https://w3c-ccg.github.io/did-method-web/)と、私たちが作成した[DID PLC](https://github.com/bluesky-social/did-method-plc)という新規の方法をサポートすることを選択しました。**
 
-## ハンドル解決
+<Heading level={2} id="handle-resolution">ハンドル解決</Heading>
 
 atproto のハンドルは、DID に解決されるドメイン名です。DID は、ユーザーの署名公開鍵とホスティング サービスを含む DID ドキュメントに解決されます。
 
@@ -94,7 +95,7 @@ async function resolveHandle(handle: string) {
 }
 ```
 
-### 例: ホスティング サービス
+<Heading level={3} id="example-hosting-service">例: ホスティング サービス</Heading>
 
 ホスティング サービスが PLC を使用していて、ユーザーのハンドルをサブドメインとして提供しているシナリオを考えてみましょう:
 
@@ -121,7 +122,7 @@ await didPlc.resolve('did:plc:12345') /* => {
 
 これで、`https://pds.com` と通信して Alice のデータにアクセスできるようになりました。
 
-### 例: 別のドメイン名を持つホスティング サービス
+<Heading level={3} id="example-hosting-service-with-different-domain-name">例: 別のドメイン名を持つホスティング サービス</Heading>
 
 ユーザーが独自のドメイン名を指定していることを除いて、前と同じシナリオがあるとします:
 
@@ -148,7 +149,7 @@ await didPlc.resolve('did:plc:12345') /* => {
 
 これで、`https://pds.com` と通信して Alice のデータにアクセスできます。`https://alice.com` エンドポイントは、`com.atproto.identity.resolveHandle()` 呼び出しを処理するためだけに機能します。実際のユーザー データは `pds.com` にあります。
 
-### 例: セルフ ホスト
+<Heading level={3} id="example-self-hosting">例: セルフ ホスト</Heading>
 
 セルフ ホスティングのシナリオを考えてみましょう。`did:plc` を使用している場合は、次のようになります。
 

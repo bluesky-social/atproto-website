@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import {Container} from "@/components/Container"
 import {FooterCTA} from "@/components/FooterCTA"
+import {Heading} from '@/components/Heading'
 import image1 from "./image1.png"
 import image2 from "./image2.png"
 import image3 from "./image3.png"
@@ -40,7 +41,7 @@ AT プロトコルは、オープン ソーシャル ネットワーキング向
 
 [ストリーム処理](https://milinda.pathirage.org/kappa-architecture.com/) を使用してバックエンドを構築したことがある場合は、これから説明するシステムの種類に精通していることになります。そうでない場合は、心配しないでください。手順を追って説明します。{{className: 'lead'}}
 
-## 従来の Web バックエンドのスケーリング
+<Heading level={2} id="scaling-the-traditional-web-backend">従来の Web バックエンドのスケーリング</Heading>
 
 従来の、使いやすい Web アーキテクチャは、アプリ サーバーの背後にある「1 つの大きな SQL データベース」です。アプリはデータベースと通信し、フロントエンドからのリクエストを処理します。
 
@@ -92,7 +93,7 @@ AT プロトコルは、オープン ソーシャル ネットワーキング向
 
 ある意味、私たちが行ったのは [データベースを裏返しにして](https://www.youtube.com/watch?v=fU9hR3kiOK0)、データベースをカスタム構築したことです。 標準ストレージを NoSQL クラスターに簡素化し、ビュー サーバーを使用して独自のクエリ エンジンを構築しました。 構築の利便性は大幅に低下しますが、拡張性があります。
 
-## 大規模バックエンドの分散化
+<Heading level={2} id="decentralizing-our-high-scale-backend">大規模バックエンドの分散化</Heading>
 
 AT プロトコルの目標は、アプリケーションを相互接続して、バックエンドがユーザー アカウントやコンテンツなどの状態を共有することです。
 
@@ -120,7 +121,7 @@ AT プロトコルの目標は、アプリケーションを相互接続して�
 
 では、これらすべてのサービスを連携させるにはどうすればよいでしょうか?
 
-## データ モデルの統合
+<Heading level={2} id="unifying-the-data-model">データ モデルの統合</Heading>
 
 [“ユーザー データ リポジトリ”](/guides/data-repos) と呼ばれる共有データ モデルを確立します。
 
@@ -171,7 +172,7 @@ AT プロトコルの目標は、アプリケーションを相互接続して�
   <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
 </Container>
 
-## データの流れを図に表す
+<Heading level={2} id="charting-the-flow-of-data">データの流れを図に表す</Heading>
 
 大規模な分散型バックエンドをセットアップしたので、ATProto でアプリケーションが実際にどのように動作するかを図にしてみましょう。
 
@@ -225,7 +226,7 @@ AT プロトコルの目標は、アプリケーションを相互接続して�
 <Image src={image24} className="w-full dark:invert max-w-2xl" />
 </Container>
 
-## 実用的なオープン システムの構築
+<Heading level={2} id="building-practical-open-systems">実用的なオープン システムの構築</Heading>
 
 AT プロトコルは、P2P テクノロジと大規模システムの実践を融合します。当社の創設エンジニアは、[IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) および [Dat](https://en.wikipedia.org/wiki/Dat_(software)) のコア エンジニアであり、[Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/) の著者である Martin Kleppmann は、アクティブな技術アドバイザーです。
 

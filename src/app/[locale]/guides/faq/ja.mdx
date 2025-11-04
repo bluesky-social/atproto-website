@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
 title: 'FAQ',
 description:
@@ -8,11 +10,11 @@ description:
 
 認証転送プロトコル (AT Proto) に関するよくある質問。Bluesky に関するよくある質問については、[こちら](https://bsky.social/about/faq) をご覧ください。
 
-## AT プロトコルはブロックチェーンですか?
+<Heading level={2} id="is-the-at-protocol-a-blockchain">AT プロトコルはブロックチェーンですか?</Heading>
 
 いいえ。AT プロトコルは [フェデレーション プロトコル](https://en.wikipedia.org/wiki/Federation_(information_technology)) です。ブロックチェーンではありませんし、ブロックチェーンを使用していません。
 
-## ActivityPub を使用しないのはなぜですか?
+<Heading level={2} id="why-not-use-activitypub">ActivityPub を使用しないのはなぜですか?</Heading>
 
 [ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) は、[Mastodon](https://joinmastodon.org/) によって普及したフェデレーション ソーシャル ネットワーキング テクノロジです。
 
@@ -22,7 +24,7 @@ description:
 
 その他の小さな違いとしては、スキーマの扱い方に関する異なる視点、AP のダブル @ メール ユーザー名よりもドメイン ユーザー名を優先すること、大規模な検索とアルゴリズム フィードを実現するという目標などがあります。
 
-## JSON-LD や RDF を使用する代わりに Lexicon を作成する理由
+<Heading level={2} id="why-create-lexicon-instead-of-using-json-ld-or-rdf">JSON-LD や RDF を使用する代わりに Lexicon を作成する理由</Heading>
 
 Atproto は組織間でデータと RPC コマンドを交換します。データと RPC が有用であるためには、ソフトウェアが別のチームによって作成されたスキーマを正しく処理する必要があります。これが [Lexicon](/guides/lexicon) の目的です。
 
@@ -32,7 +34,7 @@ Atproto は組織間でデータと RPC コマンドを交換します。デー�
 
 私たちは RDF の使用を非常に詳しく検討しましたが、開発者エクスペリエンス (DX) やそれが提供するツールが気に入りませんでした。
 
-## 「XRPC」とは何ですか。なぜ ___ を使用しないのですか?
+<Heading level={2} id="what-is-xrpc-and-why-not-use-___">「XRPC」とは何ですか。なぜ ___ を使用しないのですか?</Heading>
 
 [XRPC](/specs/xrpc) は、いくつかの規則が追加された HTTP です。私たちは「XRPC」という用語を廃止し、単に HTTP の ATProto 使用法と呼ぶことを目指しています。
 

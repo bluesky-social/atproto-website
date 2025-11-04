@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {FooterCTA} from "@/components/FooterCTA"
+import {Heading} from '@/components/Heading'
 import AppBanner from './app-banner.png'
 import AppLogin from './app-login.png'
 import AppScreenshot from './app-screenshot.png'
@@ -47,7 +48,7 @@ description:
 
 ATProto をすぐに理解できるように、ここでは簡単な内容に留めます。各ステップについて、詳細情報へのリンクがあります。 {{className: 'lead'}}
 
-## はじめに
+<Heading level={2} id="introduction">はじめに</Heading>
 
 Atmosphere のデータは、ユーザーの個人リポジトリに保存されます。各ユーザーが独自の Web サイトを持っているようなものです。目標は、ユーザーからのデータを SQLite DB に集約することです。
 
@@ -61,7 +62,7 @@ Atmosphere も同様に動作しますが、`https://` ではなく `at://` を�
 
 > `at://` は AT プロトコルの URL スキームです。内部的には HTTP や DNS などの一般的な技術を使用していますが、このチュートリアルで使用するすべての機能が追加されています。
 
-## ステップ 1. ExpressJS アプリから始める
+<Heading level={2} id="step-1-starting-with-our-expressjs-app">ステップ 1. ExpressJS アプリから始める</Heading>
 
 まず、リポジトリをクローンしてパッケージをインストールします。
 
@@ -85,7 +86,7 @@ npm run dev
 
 各ステップで、Web アプリが Atmosphere を活用する方法を説明します。詳細なコードについては、コードベースを参照してください。繰り返しますが、このチュートリアルでは、わかりやすく簡潔に説明します。
 
-## ステップ 2. OAuth でサインイン
+<Heading level={2} id="step-2-signing-in-with-oauth">ステップ 2. OAuth でサインイン</Heading>
 
 誰かがアプリにログインすると、その人の個人用 `at://` リポジトリへの読み取りおよび書き込みアクセス権が付与されます。これを使用して、ステータス json レコードを書き込みます。
 
@@ -156,7 +157,7 @@ router.get(
 
 これで準備完了です!これで、ユーザーのリポジトリ サーバーとのセッションが確立され、それを使用してユーザーのデータにアクセスできます。
 
-## ステップ 3. ユーザーのプロファイルを取得する
+<Heading level={2} id="step-3-fetching-the-users-profile">ステップ 3. ユーザーのプロファイルを取得する</Heading>
 
 ユーザーについて何か調べてみましょう。[Bluesky](https://bsky.app) では、ユーザーは次のような「プロファイル」レコードを公開します。
 
@@ -248,7 +249,7 @@ router.get(
 </div>
 ```
 
-## ステップ 4. レコードの読み取りと書き込み
+<Heading level={2} id="step-4-reading-writing-records">ステップ 4. レコードの読み取りと書き込み</Heading>
 
 ユーザー リポジトリは、JSON レコードのコレクションと考えることができます:
 
@@ -338,13 +339,13 @@ router.post(
 
 <Image alt="アプリのステータス オプションのスクリーンショット" src={AppStatusOptions} />
 
-## ステップ 5. カスタムの「ステータス」スキーマの作成
+<Heading level={2} id="step-5-creating-a-custom-status-schema">ステップ 5. カスタムの「ステータス」スキーマの作成</Heading>
 
 リポジトリ コレクションは型指定されており、スキーマが定義されています。`app.bsky.actor.profile` 型定義は [こちら](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/actor/profile.json) にあります。
 
 [JSON-Schema](http://json-schema.org/) に非常によく似た [Lexicon](https://atproto.com/specs/lexicon) 言語を使用して、誰でも新しいスキーマを作成できます。スキーマは、所有権を示す [逆 DNS ID](https://atproto.com/specs/nsid) を使用します。このデモ アプリでは、このプロジェクト専用に登録した `xyz.statusphere` (別名 statusphere.xyz) を使用します。
 
-> ### スキーマを作成する理由
+> <Heading level={3} id="why-create-a-schema">スキーマを作成する理由</Heading>
 >
 > スキーマは、アプリが作成するデータを他のアプリケーションが理解するのに役立ちます。スキーマを公開することで、他のアプリケーション作成者がアプリが認識して処理できる形式でデータを公開しやすくなります。
 
@@ -436,7 +437,7 @@ router.post(
 )
 ```
 
-## ステップ 6. ファイアホースをリッスン
+<Heading level={2} id="step-6-listening-to-the-firehose">ステップ 6. ファイアホースをリッスン</Heading>
 
 ここまでで、次の操作を実行しました。
 
@@ -532,7 +533,7 @@ if (
 
 このようにイベント ログから同期する理由は、ネットワーク内に、関心のあるレコードを書き込む他のアプリがあるためです。イベント ログをサブスクライブすることで、他のアプリによって公開されたデータを含む、関心のあるすべてのデータをキャッチできます。
 
-## ステップ 7. 最新のステータスを一覧表示する
+<Heading level={2} id="step-7-listing-the-latest-statuses">ステップ 7. 最新のステータスを一覧表示する</Heading>
 
 SQLite にステータスが取り込まれたので、ユーザーによるステータス更新のタイムラインを作成できます。また、[DID](https://atproto.com/specs/did) からハンドルへのリゾルバも使用して、ステータスとともに適切なユーザー名を表示できるようにします:
 
@@ -584,7 +585,7 @@ ${statuses.map((status, i) => {
 
 <Image alt="アプリ ステータス タイムラインのスクリーンショット" src={AppStatusHistory} />
 
-## ステップ 8. 楽観的更新
+<Heading level={2} id="step-8-optimistic-updates">ステップ 8. 楽観的更新</Heading>
 
 最後の最適化として、「楽観的更新」を導入しましょう。
 
@@ -649,7 +650,7 @@ router.post(
 
 このコードは、`ingester.ts` で行っていることとほとんど同じであることがわかります。
 
-## AT Proto で考える
+<Heading level={2} id="thinking-in-at-proto">AT Proto で考える</Heading>
 
 このチュートリアルでは、atproto アプリを構築するための重要な手順について説明しました。データは、ユーザーの `at://` リポジトリに正規の形式で公開され、その後、アプリのデータベースに集約されてネットワークのビューが生成されます。
 
@@ -669,7 +670,7 @@ router.post(
 
 [Bluesky ソーシャル アプリ](https://bsky.app) を含む、Atmosphere のすべてのアプリはこのように動作します。
 
-## 次のステップ
+<Heading level={2} id="next-steps">次のステップ</Heading>
 
 学習した内容を実践したい場合は、次の追加の課題に挑戦してみてください:
 
