@@ -1,4 +1,5 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import {Heading} from '@/components/Heading'
 
 export const metadata = {
   title: 'Identity',
@@ -18,7 +19,7 @@ atproto ID 시스템은 다음과 같은 요구 사항들을 가지고 있습니
 
 atproto ID 시스템을 활용하면, 애플리케이션은 종단 간 암호화, 서명된 사용자 데이터, 서비스 로그인 및 전반적인 상호 운용성을 구현할 수 있습니다.
 
-## 식별자
+<Heading level={2} id="identifiers">식별자</Heading>
 
 우리는 _핸들_ 과 _DID_ 라는 두 가지 상호 연관된 식별자 형식을 사용합니다. 핸들은 DNS 이름이며, DID는 여러 구현을 통해 안전하고 안정적인 ID를 제공하는 W3C 표준입니다. AT 프로토콜은 DID PLC와 DID Web 변형을 지원합니다.
 
@@ -66,7 +67,7 @@ DNS 핸들은 사용자에게 친숙한 식별자로, 사용자 인터페이스�
   </Description>
 </DescriptionList>
 
-## DID 메서드
+<Heading level={2} id="did-methods">DID 메서드</Heading>
 
 [DID 표준](https://www.w3.org/TR/did-core/)은 DID를 [DID 문서](https://www.w3.org/TR/did-core/#core-properties)로 발행하고 해석하는 다양한 "메서드"의 프레임워크를 제공합니다. 기존에 등록된 다양한 메서드들이 있으며, 각기 다른 기능과 특성을 가지고 있습니다. atproto에서는 다음 기준을 만족하는 메서드를 사용해야 합니다:
 
@@ -80,13 +81,13 @@ DNS 핸들은 사용자에게 친숙한 식별자로, 사용자 인터페이스�
 
 프로젝트 초기에, 기존의 어떤 DID 메서드도 위의 모든 기준을 만족시키지 못했습니다. 따라서, 우리는 간단한 [did:web](https://w3c-ccg.github.io/did-method-web/) 메서드와 새로운 [DID PLC](https://github.com/bluesky-social/did-method-plc) 메서드를 모두 지원하기로 결정했습니다.
 
-## 핸들 처리
+<Heading level={2} id="handle-resolution">핸들 처리</Heading>
 
 atproto에서 핸들은 DID로 해석되는 도메인 이름입니다. 이후, 해당 DID는 사용자의 서명 키와 호스팅 서비스 정보를 포함한 DID 문서로 해석됩니다.
 
 핸들 처리은 DNS TXT 레코드 또는 HTTPS 웰노운 엔드포인트를 통해 이루어집니다. 자세한 내용은 <a href="/specs/handle">핸들 사양</a>을 참고하세요.
 
-### 예시: 호스팅 서비스
+<Heading level={3} id="example-hosting-service">예시: 호스팅 서비스</Heading>
 
 호스팅 서비스가 PLC를 사용하며, 사용자 핸들을 서브도메인으로 제공하는 경우를 생각해봅시다:
 
@@ -109,7 +110,7 @@ await didPlc.resolve('did:plc:12345') /* => {
 
 이제 `https://pds.com`과 통신하여 Alice의 데이터를 접근할 수 있습니다.
 
-### 예시: 자체 호스팅
+<Heading level={3} id="example-self-hosting">예시: 자체 호스팅</Heading>
 
 자체 도메인을 소유하고 있는 경우, 두 가지 방식으로 설정할 수 있습니다. 만약 `did:plc`를 사용한다면:
 

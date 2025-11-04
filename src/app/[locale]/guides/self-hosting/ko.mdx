@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
   title: 'PDS 자체 호스팅',
   description:
@@ -8,7 +10,7 @@ export const metadata = {
 
 Bluesky PDS를 자체 호스팅한다는 것은 ATProto 네트워크와 연동할 수 있는 Personal Data Server(PDS)를 직접 운영하는 것을 의미합니다. {{className: 'lead'}}
 
-## 목차
+<Heading level={2} id="table-of-contents">목차</Heading>
 
 * [PDS 자체 호스팅을 위한 준비](#preparation-for-self-hosting-pds)
 * [HTTP 및 HTTPS를 위한 클라우드 방화벽 열기](#open-your-cloud-firewall-for-http-and-https)
@@ -22,7 +24,7 @@ Bluesky PDS를 자체 호스팅한다는 것은 ATProto 네트워크와 연동�
 * [PDS 업데이트하기](#updating-your-pds)
 * [도움 받기](#getting-help)
 
-<h2 id="preparation-for-self-hosting-pds">PDS 자체 호스팅을 위한 준비</h2>
+<Heading level={2} id="preparation-for-self-hosting-pds">PDS 자체 호스팅을 위한 준비</Heading>
 
 Digital Ocean, Vultr 등과 같은 클라우드 제공업체에서 서버를 실행하세요.
 
@@ -45,7 +47,7 @@ Digital Ocean, Vultr 등과 같은 클라우드 제공업체에서 서버를 실
 
 **참고:** 보안상의 이유로 SSH 접근(포트 22/tcp)을 본인의 공인 IP 주소로 제한하는 것이 좋습니다. 현재의 공인 IP 주소는 [ifconfig.me](https://ifconfig.me/)에서 확인할 수 있습니다.
 
-<h2 id="open-your-cloud-firewall-for-http-and-https">HTTP 및 HTTPS를 위한 클라우드 방화벽 열기</h2>
+<Heading level={2} id="open-your-cloud-firewall-for-http-and-https">HTTP 및 HTTPS를 위한 클라우드 방화벽 열기</Heading>
 
 가장 흔한 문제 중 하나는 방화벽 포트가 올바르게 열려있지 않은 경우입니다. 이 단계를 반드시 다시 한 번 확인하세요.
 
@@ -56,7 +58,7 @@ Digital Ocean, Vultr 등과 같은 클라우드 제공업체에서 서버를 실
 
 **참고:** Caddy 웹 서버가 Docker compose 파일에 포함되어 있어 TLS 설정이나 포트 80에서 443으로 리다이렉션할 필요가 없습니다. Caddy가 이를 자동으로 처리합니다.
 
-<h2 id="configure-dns-for-your-domain">도메인에 대한 DNS 구성</h2>
+<Heading level={2} id="configure-dns-for-your-domain">도메인에 대한 DNS 구성</Heading>
 
 DNS 제공업체의 제어판에서 도메인을 설정하고, 서버를 가리키는 레코드를 추가하세요.
 
@@ -72,7 +74,7 @@ DNS 제공업체의 제어판에서 도메인을 설정하고, 서버를 가리�
 * 와일드카드 레코드는 PDS에서 사용자가 새 계정을 생성할 수 있도록 하기 위해 필요합니다.
 * TTL 값은 무엇이든 가능하지만, 600(10분)이 적당합니다.
 
-<h2 id="check-that-dns-is-working-as-expected">DNS가 예상대로 작동하는지 확인하기</h2>
+<Heading level={2} id="check-that-dns-is-working-as-expected">DNS가 예상대로 작동하는지 확인하기</Heading>
 
 [DNS Checker](https://dnschecker.org/) 같은 서비스를 사용하여 도메인이 올바르게 해석되는지 확인하세요.
 
@@ -83,7 +85,7 @@ DNS 제공업체의 제어판에서 도메인을 설정하고, 서버를 가리�
 
 모두 서버의 공인 IP를 반환해야 합니다.
 
-<h2 id="installer-on-ubuntu-20-04-22-04-and-debian-11-12">Ubuntu 20.04/22.04 및 Debian 11/12에서 설치 프로그램 실행</h2>
+<Heading level={2} id="installer-on-ubuntu-20-04-22-04-and-debian-11-12">Ubuntu 20.04/22.04 및 Debian 11/12에서 설치 프로그램 실행</Heading>
 
 SSH를 통해 서버에 접속한 후, 다음 명령어로 설치 스크립트를 다운로드하세요:
 
@@ -103,7 +105,7 @@ curl https://raw.githubusercontent.com/bluesky-social/pds/main/installer.sh >ins
 sudo bash installer.sh
 ```
 
-<h2 id="verifying-that-your-pds-is-online-and-accessible">PDS가 온라인 상태이며 접근 가능한지 확인하기</h2>
+<Heading level={2} id="verifying-that-your-pds-is-online-and-accessible">PDS가 온라인 상태이며 접근 가능한지 확인하기</Heading>
 
 <Note>
 PDS 콘텐츠가 라이브 네트워크에서 소비되지 않는 가장 일반적인 문제는, 제공된 Caddy 설정을 nginx, Apache 또는 유사한 리버스 프록시 설정으로 대체하는 경우입니다. TLS 인증서, WebSocket, 가상 서버 이름을 올바르게 설정하는 것은 까다로울 수 있습니다. 현재 다른 구성에 대한 기술 지원은 제공되지 않습니다.
@@ -125,7 +127,7 @@ wsdump "wss://example.com/xrpc/com.atproto.sync.subscribeRepos?cursor=0"
 
 WebSocket에서는 PDS에서 이벤트가 생성되기 전까지 아무런 출력이 발생하지 않으므로, 설정이 올바르게 구성된 경우에도 위 명령어가 출력 없이 계속 실행될 수 있습니다.
 
-<h2 id="creating-an-account-using-pdsadmin">pdsadmin을 사용하여 계정 생성</h2>
+<Heading level={2} id="creating-an-account-using-pdsadmin">pdsadmin을 사용하여 계정 생성</Heading>
 
 서버에 SSH로 접속한 후, 아직 계정이 없다면 `pdsadmin`을 사용하여 계정을 생성하세요.
 
@@ -133,7 +135,7 @@ WebSocket에서는 PDS에서 이벤트가 생성되기 전까지 아무런 출�
 sudo pdsadmin account create
 ```
 
-<h2 id="creating-an-account-using-an-invite-code">초대 코드를 사용하여 계정 생성</h2>
+<Heading level={2} id="creating-an-account-using-an-invite-code">초대 코드를 사용하여 계정 생성</Heading>
 
 서버에 SSH로 접속한 후, `pdsadmin`을 사용하여 초대 코드를 생성하세요.
 
@@ -143,7 +145,7 @@ sudo pdsadmin create-invite-code
 
 앱을 통해 계정을 생성할 때 이 초대 코드를 입력하세요.
 
-<h2 id="using-the-bluesky-app-with-your-pds">PDS와 함께 Bluesky 앱 사용하기</h2>
+<Heading level={2} id="using-the-bluesky-app-with-your-pds">PDS와 함께 Bluesky 앱 사용하기</Heading>
 
 Bluesky 앱을 사용하여 PDS에 연결할 수 있습니다.
 
@@ -155,7 +157,7 @@ Bluesky 앱을 사용하여 PDS에 연결할 수 있습니다.
 
 _참고: 서브도메인 TLS 인증서는 요청 시 생성되므로, 계정 핸들이 활성화되기까지 10~30초 정도 걸릴 수 있습니다. 첫 게시물이나 프로필이 보이지 않는 경우, 30초 후에 다시 시도해보세요._
 
-<h2 id="updating-your-pds">PDS 업데이트하기</h2>
+<Heading level={2} id="updating-your-pds">PDS 업데이트하기</Heading>
 
 새로운 버전의 업데이트를 적용하지 않으면 서비스에 문제가 발생할 수 있으므로, PDS를 최신 상태로 유지하는 것이 좋습니다. `pdsadmin` 도구를 사용하여 업데이트할 수 있습니다.
 
@@ -163,7 +165,7 @@ _참고: 서브도메인 TLS 인증서는 요청 시 생성되므로, 계정 핸
 sudo pdsadmin update
 ```
 
-<h2 id="getting-help">도움 받기</h2>
+<Heading level={2} id="getting-help">도움 받기</Heading>
 
-- [GitHub 방문하기](https://github.com/bluesky-social/pds) - 이슈 확인 및 토론 참여  
+- [GitHub 방문하기](https://github.com/bluesky-social/pds) - 이슈 확인 및 토론 참여
 - [AT Protocol PDS 관리자 Discord](https://discord.gg/e7hpHxRfBP) - 인스턴스를 운영하는 다른 사람들과 소통하고 PDS 배포에 대한 중요한 업데이트 받기

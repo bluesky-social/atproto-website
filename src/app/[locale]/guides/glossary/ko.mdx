@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
   title: '용어집',
   description:
@@ -8,35 +10,35 @@ export const metadata = {
 
 AT Protocol에서는 즉시 익숙하지 않을 수 있는 많은 용어들이 사용됩니다. 이 페이지에서는 이러한 용어를 빠르게 참조할 수 있도록 제공하며, 추가 정보에 대한 링크도 포함되어 있습니다. {{className: 'lead'}}
 
-## Atmosphere
+<Heading level={2} id="atmosphere">Atmosphere</Heading>
 
 "Atmosphere"는 [AT Protocol](#at-protocol)을 둘러싼 생태계를 설명하는 데 사용되는 용어입니다.
 
-## AT Protocol
+<Heading level={2} id="at-protocol">AT Protocol</Heading>
 
 AT Protocol은 "Authenticated Transfer Protocol"의 약자이며, "atproto"로 자주 축약됩니다. 이 이름은 모든 사용자 데이터가 작성자에 의해 서명된다는 사실을 나타내며, 이를 통해 많은 서비스에서 데이터를 전송하고 원본 서버와 직접 통신하지 않고도 데이터가 진짜임을 증명할 수 있습니다.
 
 이 이름은 또한 "@" 기호, 즉 "at" 기호에서 유래하였으며, atproto는 소셜 시스템을 위해 설계되었기 때문입니다.
 
-## PDS (Personal Data Server)
+<Heading level={2} id="pds-personal-data-server">PDS (Personal Data Server)</Heading>
 
 PDS(Personal Data Server)는 사용자를 호스팅하는 서버입니다. PDS는 항상 사용자의 [데이터 레포지토리](#data-repo)와 서명 키를 저장합니다. 또한 사용자에게 [핸들](#handle)과 [DID](#did)를 할당할 수 있습니다. 많은 PDS는 여러 사용자를 호스팅합니다.
 
 PDS는 [AppViews](#appview)와 통신하여 애플리케이션을 실행합니다. PDS는 일반적으로 애플리케이션을 실행하지 않지만, OAuth 로그인 화면과 같은 일반적인 계정 관리 인터페이스를 제공합니다. PDS는 [데이터 레포지토리](#data-repo)를 [릴레이](#relay)와 적극적으로 동기화합니다.
 
-## AppView
+<Heading level={2} id="app-view">AppView</Heading>
 
 AppView는 [Atmosphere](#atmosphere) 내의 애플리케이션입니다. "AppView"라고 불리는 이유는 네트워크의 하나의 뷰에 불과하기 때문입니다. 공식 데이터는 [PDS](#pds-personal-data-server)에 의해 호스팅되는 [데이터 레포지토리](#data-repo)에 저장되며, 이 데이터는 다양한 방식으로 볼 수 있습니다.
 
 AppView는 웹상의 검색 엔진과 비슷한 방식으로 작동합니다. Atmosphere 전역에서 데이터를 집합하여 UI를 생성합니다. 차이점은, AppView가 사용자들의 [PDS](#pds)와도 통신하여 [레포지토리](#data-repo)에 정보를 게시하고, 이를 통해 전체 애플리케이션 모델을 형성한다는 점입니다. 이 통신은 OAuth 로그인 흐름의 일부로 설정됩니다.
 
-## 릴레이
+<Heading level={2} id="relay">릴레이</Heading>
 
 릴레이는 [Atmosphere](#atmosphere) 전역에서 [데이터 레포지토리](#data-repo)를 집합하는 기능입니다. 릴레이는 [PDS](#pds)로부터 레포지토리를 동기화하고 변경 이벤트의 파이프라인을 생성합니다. [AppView](#appview)는 릴레이를 사용하여 사용자 데이터를 가져옵니다.
 
 릴레이는 최적화 기능으로, 반드시 필요한 것은 아닙니다. [AppView](#appview)는 [PDS](#pds)와 직접 통신할 수 있습니다(실제로 필요시 이를 권장합니다). 릴레이는 네트워크에서 필요한 연결 수를 줄이는 역할을 합니다.
 
-## Lexicon
+<Heading level={2} id="lexicon">Lexicon</Heading>
 
 Lexicon은 스키마 언어입니다. [Atmosphere](#atmosphere)에서 [데이터 레코드](#record)와 HTTP API를 설명하는 데 사용됩니다. 기능적으로는 [JSON-Schema](https://json-schema.org/)와 [OpenAPI](https://www.openapis.org/)와 매우 유사합니다.
 
@@ -45,7 +47,7 @@ Lexicon의 주요 목적은 개발자가 호환되는 소프트웨어를 구축�
 - [Lexicon 소개](/guides/lexicon)
 - [Lexicon 사양](/specs/lexicon)
 
-## 데이터 레포지토리
+<Heading level={2} id="data-repo">데이터 레포지토리</Heading>
 
 "데이터 레포지토리" 또는 "레포지토리"는 사용자를 나타내는 공개 데이터셋입니다. 이는 JSON [레코드](#record)와 비구조화된 [블롭](#blob)의 [컬렉션](#collection)으로 구성됩니다. 모든 레포지토리는 이를 식별하는 하나의 영구적인 [DID](#did)가 할당됩니다. 레포지토리는 여러 개의 인간이 읽을 수 있는 이름으로 기능하는 [도메인 핸들](#handle)을 가질 수 있습니다.
 
@@ -54,34 +56,34 @@ Lexicon의 주요 목적은 개발자가 호환되는 소프트웨어를 구축�
 - [데이터 레포지토리 소개](/guides/data-repos)
 - [레포지토리 사양](/specs/repository)
 
-## 컬렉션
+<Heading level={2} id="collection">컬렉션</Heading>
 
 "컬렉션"은 [데이터 레포지토리](#data-repo) 내의 JSON [레코드](#record) 모음입니다. 순서가 있는 목록 연산을 지원합니다. 모든 컬렉션은 [NSID](#nsid)로 식별되며, 이는 [Lexicon](#lexicon) 스키마에 매핑될 것으로 예상됩니다.
 
-## 레코드
+<Heading level={2} id="record">레코드</Heading>
 
 "레코드"는 [레포지토리](#data-repo) [컬렉션](#collection) 내의 JSON 문서입니다. 레코드의 유형은 `$type` 필드에 의해 식별되며, 이는 [Lexicon](#lexicon) 스키마에 매핑됩니다. 유형은 또한 해당 레코드가 포함된 [컬렉션](#collection)과 일치해야 합니다.
 
 - [레코드 키 사양](/specs/record-key)
 
-## 블롭
+<Heading level={2} id="blob">블롭</Heading>
 
 블롭은 [레포지토리](#data-repo) 내에 저장되는 비구조화된 데이터입니다. 주로 이미지나 비디오와 같은 미디어 파일을 저장하는 데 사용됩니다.
 
-## 라벨
+<Heading level={2} id="label">라벨</Heading>
 
 라벨은 [레포지토리](#data-repo)와 [레코드](#record)에 첨부되는 메타데이터 객체입니다. 일반적으로 "노출", "그래픽 미디어"와 같은 값으로 참조되어 라벨의 의미를 나타냅니다. 라벨은 주로 애플리케이션에서 모더레이션을 위해 사용되지만, 다른 용도로도 사용될 수 있습니다.
 
 - [라벨 사양](/specs/label)
 
-## 핸들
+<Heading level={2} id="handle">핸들</Heading>
 
 핸들은 [데이터 레포지토리](#data-repo)를 식별하는 데 사용되는 도메인 이름입니다. 레포지토리는 여러 개의 핸들을 가질 수 있습니다. 핸들은 `at://` URI에서 도메인 부분으로 사용될 수 있습니다.
 
 - [핸들 사양](/specs/handle)
 - [URI 스킴 사양](/specs/at-uri-scheme)
 
-## DID (Decentralized ID)
+<Heading level={2} id="did-decentralized-id">DID (Decentralized ID)</Heading>
 
 DID(Decentralized ID)는 [데이터 레포지토리](#data-repo)를 나타내는 고유 식별자입니다. 영구적이고 사람이 읽을 수 없습니다. DID는 [W3C 사양](https://www.w3.org/TR/did-core/)입니다. AT 프로토콜은 현재 `did:web`와 `did:plc` 두 가지 DID 메서드를 지원합니다.
 
@@ -89,29 +91,29 @@ DID는 [레포지토리](#data-repo)의 메타데이터가 포함된 문서로 �
 
 - [DID 사양](/specs/did)
 
-## NSID (Namespaced ID)
+<Heading level={2} id="nsid-namespaced-id">NSID (Namespaced ID)</Heading>
 
 NSID(Namespaced ID)는 [Atmosphere](#atmosphere) 내에서 [Lexicon](#lexicon) 스키마를 식별하는 데 사용되는 식별자 형식입니다. 이는 `app.bsky.feed.post`와 같은 역방향 DNS 형식을 따릅니다. 이는 도메인 소유권을 통해 명확한 스키마 관리를 제공하기 위해 선택되었습니다. 역방향 DNS 형식은 URI 내의 도메인과 혼동을 피하기 위해 선택되었습니다.
 
 - [NSID 사양](/specs/nsid)
 
-## TID (Timestamp ID)
+<Heading level={2} id="tid-timestamp-id">TID (Timestamp ID)</Heading>
 
 TID(Timestamp ID)는 [레코드](#record) 키에 사용되는 식별자 형식입니다. 이는 현재 시간을 기준으로 파생되며, 충돌을 피하고, 사전식 정렬을 유지하며, [데이터 레포지토리](#data-repo)의 내부 데이터 구조를 효율적으로 균형 맞추기 위해 설계되었습니다.
 
 - [레코드 키 사양](/specs/record-key)
 
-## CID (Content ID)
+<Heading level={2} id="cid-content-id">CID (Content ID)</Heading>
 
 CID(Content ID)는 [레코드](#record)의 암호화된 해시입니다. 이는 특정 버전의 레코드를 추적하는 데 사용됩니다.
 
-## DAG-CBOR
+<Heading level={2} id="dag-cbor">DAG-CBOR</Heading>
 
 DAG-CBOR는 [atproto](#at-protocol)에서 사용되는 직렬화 형식입니다. 이는 암호학적 검증에 중요한 신뢰할 수 있는 표준 형식을 제공하기 위해 선택되었습니다.
 
 - [데이터 모델 사양](/specs/data-model)
 
-## XRPC
+<Heading level={2} id="xrpc">XRPC</Heading>
 
 XRPC는 더 이상 사용되지 않는 용어지만, 역사적으로 [atproto](#at-protocol)의 HTTP 사용법을 설명하는 데 사용되었습니다. 이는 "Cross-organizational Remote Procedure Calls"의 약자였으며, 실제로는 HTTP를 사용하기 때문에 이 용어를 만들지 말았어야 했습니다.
 

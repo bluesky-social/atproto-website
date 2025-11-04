@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import {FooterCTA} from "@/components/FooterCTA"
+import {Heading} from '@/components/Heading'
 import AppBanner from './app-banner.png'
 import AppLogin from './app-login.png'
 import AppScreenshot from './app-screenshot.png'
@@ -46,7 +47,7 @@ export const metadata = {
 
 ATProto의 개념을 빠르게 익힐 수 있도록 간단하게 구성했습니다. 각 단계에 대해 더 자세한 설명이 링크로 제공됩니다. {{className: 'lead'}}
 
-## 1단계. ExpressJS 앱 시작하기
+<Heading level={2} id="step-1-expressjs-app-setup">1단계. ExpressJS 앱 시작하기</Heading>
 
 먼저, 저장소를 클론하고 패키지를 설치합니다.
 
@@ -70,7 +71,7 @@ npm run dev
 
 각 단계마다 애플리케이션이 Atmosphere와 어떻게 상호작용하는지 설명합니다. 자세한 코드는 저장소에서 확인하세요.
 
-## 2단계. OAuth를 통한 로그인
+<Heading level={2} id="step-2-login-with-oauth">2단계. OAuth를 통한 로그인</Heading>
 
 사용자가 앱에 로그인하면, 개인의 `at://` 레포지토리에 대한 읽기 및 쓰기 권한을 부여하게 됩니다. 이를 통해 상태 JSON 레코드를 작성할 수 있습니다.
 
@@ -139,7 +140,7 @@ router.get(
 
 이제 사용자의 레포지토리 서버와 세션이 생성되었으므로, 데이터를 액세스할 수 있습니다.
 
-## 3단계. 사용자 프로필 가져오기
+<Heading level={2} id="step-3-fetching-the-users-profile">3단계. 사용자 프로필 가져오기</Heading>
 
 사용자에 대해 좀 더 알아볼까요? [Bluesky](https://bsky.app)에서는 사용자가 "프로필" 레코드를 게시하며, 다음과 같은 구조를 가집니다:
 
@@ -221,7 +222,7 @@ router.get(
         <div>
           <button type="submit">로그아웃</button>
         </div>
-      </form>`  
+      </form>`
     : html`<div class="session-form">
         <div><a href="/login">로그인</a>하여 상태를 설정하세요!</div>
         <div>
@@ -231,7 +232,7 @@ router.get(
 </div>
 ```
 
-## 4단계. 레코드 읽기 및 쓰기
+<Heading level={2} id="step-4-reading-writing-records">4단계. 레코드 읽기 및 쓰기</Heading>
 
 사용자의 레포지토리는 JSON 레코드들의 모음입니다:
 
@@ -289,7 +290,7 @@ router.post(
     try {
       // 사용자 레포지토리에 상태 레코드 작성
       await agent.com.atproto.repo.putRecord({
-        repo: agent.assertDid, 
+        repo: agent.assertDid,
         collection: 'xyz.statusphere.status',
         rkey: TID.nextStr(),
         record,
@@ -319,13 +320,13 @@ router.post(
 
 <Image alt="상태 옵션 스크린샷" src={AppStatusOptions} />
 
-## 5단계. 커스텀 "상태" 스키마 생성
+<Heading level={2} id="step-5-creating-a-custom-status-schema">5단계. 커스텀 "상태" 스키마 생성</Heading>
 
 레포지토리의 컬렉션은 타입이 지정되어 있으며, 정해진 스키마를 따릅니다. `app.bsky.actor.profile` 타입 정의는 [여기](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/actor/profile.json)에서 확인할 수 있습니다.
 
 누구나 [Lexicon](https://atproto.com/guides/lexicon) 언어를 사용하여 새로운 스키마를 만들 수 있습니다. 이 예제 앱에서는 `xyz.statusphere`를 사용합니다 (statusphere.xyz를 위한 등록 도메인).
 
-> ### 왜 스키마를 만들까요?
+> <Heading level={3} id="why-create-a-schema">왜 스키마를 만들까요?</Heading>
 >
 > 스키마는 다른 애플리케이션이 앱에서 생성하는 데이터를 이해하도록 도와줍니다. 스키마를 게시하면, 다른 개발자들이 해당 형식에 맞게 데이터를 게시하기가 쉬워집니다.
 
@@ -417,7 +418,7 @@ router.post(
 )
 ```
 
-## 6단계. 이벤트 스트림(firehose) 구독
+<Heading level={2} id="step-6-listening-to-the-firehose">6단계. 이벤트 스트림(firehose) 구독</Heading>
 
 지금까지:
 
@@ -512,7 +513,7 @@ if (
 
 애플리케이션은 레포지토리에 데이터를 기록하고, 이벤트 스트림을 통해 DB에 집계합니다.
 
-## 7단계. 최신 상태 목록 표시
+<Heading level={2} id="step-7-listing-the-latest-statuses">7단계. 최신 상태 목록 표시</Heading>
 
 SQLite에 저장된 상태들을 기반으로 사용자들의 상태 업데이트 타임라인을 생성할 수 있습니다. [DID](https://atproto.com/specs/did)-to-핸들 변환기를 사용해, 사용자 이름을 표시할 수 있습니다:
 
@@ -564,7 +565,7 @@ ${statuses.map((status, i) => {
 
 <Image alt="상태 타임라인 스크린샷" src={AppStatusHistory} />
 
-## 8단계. 낙관적 업데이트 (Optimistic Updates)
+<Heading level={2} id="step-8-optimistic-updates">8단계. 낙관적 업데이트 (Optimistic Updates)</Heading>
 
 마지막 최적화로, "낙관적 업데이트"를 도입해봅니다.
 
@@ -584,7 +585,7 @@ router.post(
     try {
       // 사용자 레포지토리에 상태 레코드 작성
       const res = await agent.com.atproto.repo.putRecord({
-        repo: agent.assertDid, 
+        repo: agent.assertDid,
         collection: 'xyz.statusphere.status',
         rkey: TID.nextStr(),
         record,
@@ -601,7 +602,7 @@ router.post(
         .insertInto('status')
         .values({
           uri,
-          authorDid: agent.assertDid, 
+          authorDid: agent.assertDid,
           status: record.status,
           createdAt: record.createdAt,
           indexedAt: new Date().toISOString(),
@@ -621,7 +622,7 @@ router.post(
 
 이 코드는 `ingester.ts`의 코드와 거의 동일합니다.
 
-## AT Protocol 사고방식
+<Heading level={2} id="thinking-in-at-proto">AT Protocol 사고방식</Heading>
 
 이번 튜토리얼에서는 AT Protocol 앱 구축의 주요 단계를 다뤘습니다. 데이터는 사용자의 `at://` 레포지토리에 원본 형태로 게시되고, 각 애플리케이션의 데이터베이스에 집계되어 네트워크 뷰를 생성합니다.
 
@@ -638,7 +639,7 @@ router.post(
 
 이와 같은 방식으로 Bluesky 소셜 앱을 포함한 모든 Atmosphere 애플리케이션이 동작합니다.
 
-## 다음 단계
+<Heading level={2} id="next-steps">다음 단계</Heading>
 
 배운 내용을 연습해보고 싶다면, 다음 도전 과제들을 시도해보세요:
 

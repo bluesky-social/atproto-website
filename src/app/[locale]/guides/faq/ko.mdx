@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
   title: 'FAQ',
   description:
@@ -8,11 +10,11 @@ export const metadata = {
 
 AT Protocol (AT Proto)에 관한 자주 묻는 질문들입니다. Bluesky에 관한 FAQ는 [여기](https://bsky.social/about/faq)에서 확인하실 수 있습니다.
 
-## AT Protocol은 블록체인인가요?
+<Heading level={2} id="is-the-at-protocol-a-blockchain">AT Protocol은 블록체인인가요?</Heading>
 
 아닙니다. AT Protocol은 [연합 프로토콜](https://ko.wikipedia.org/wiki/연합_(정보_기술))입니다. 블록체인이 아니며 블록체인을 사용하지도 않습니다.
 
-## 왜 ActivityPub을 사용하지 않나요?
+<Heading level={2} id="why-not-use-activitypub">왜 ActivityPub을 사용하지 않나요?</Heading>
 
 [ActivityPub](https://ko.wikipedia.org/wiki/ActivityPub)은 [Mastodon](https://joinmastodon.org/)에서 널리 사용되는 연합형 소셜 네트워크 기술입니다.
 
@@ -22,7 +24,7 @@ AT Protocol (AT Proto)에 관한 자주 묻는 질문들입니다. Bluesky에 �
 
 그 외에도 작은 차이점들이 있습니다: 스키마 처리 방식에 대한 다른 관점, AP의 이중 @ 이메일 사용자 이름 대신 도메인 사용자 이름을 선호하는 점, 대규모 검색 및 알고리즘 피드를 목표로 하는 점 등이 있습니다.
 
-## 왜 JSON-LD나 RDF 대신 Lexicon을 만들었나요?
+<Heading level={2} id="why-create-lexicon-instead-of-using-json-ld-or-rdf">왜 JSON-LD나 RDF 대신 Lexicon을 만들었나요?</Heading>
 
 Atproto는 여러 조직 간에 데이터와 RPC 명령을 교환합니다. 데이터와 RPC가 유용하려면, 소프트웨어가 별도의 팀에서 생성된 스키마를 제대로 처리할 수 있어야 합니다. 이것이 [Lexicon](/guides/lexicon)의 목적입니다.
 
@@ -32,7 +34,7 @@ Atproto는 여러 조직 간에 데이터와 RPC 명령을 교환합니다. 데�
 
 우리는 RDF 사용을 면밀히 검토했지만, 개발자 경험(DX)이나 제공되는 도구들에 대해 크게 만족하지 못했습니다.
 
-## "XRPC"란 무엇이며, 왜 ___을 사용하지 않나요?
+<Heading level={2} id="what-is-xrpc-and-why-not-use-___">"XRPC"란 무엇이며, 왜 ___을 사용하지 않나요?</Heading>
 
 [XRPC](/specs/xrpc)는 일부 추가적인 규칙이 적용된 HTTP입니다. 우리는 "XRPC"라는 용어를 폐지하고 ATProto의 HTTP 사용법이라고 부르기로 했습니다.
 

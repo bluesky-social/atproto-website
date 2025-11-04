@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
   title: '계정 마이그레이션',
   description: '계정 마이그레이션 세부사항',
@@ -7,7 +9,7 @@ export const metadata = {
 
 이 문서는 계정 수명 주기에 대한 개요를 제공하는 [계정 호스팅](/specs/account) 사양을 보완합니다. 여기에서는 "쉬운" 마이그레이션(두 PDS 인스턴스가 모두 참여하는 경우)과 계정 복구 시나리오 모두에 대해 개별 마이그레이션 단계를 상세히 설명합니다. 이 특정 메커니즘들은 프로토콜의 공식 일부가 아니며, 시간이 지남에 따라 변경될 수 있습니다.
 
-## 새로운 계정 생성
+<Heading level={2} id="create-new-account">새로운 계정 생성</Heading>
 
 기존 아이덴티티를 사용하여 PDS 계정을 생성하려면, 해당 아이덴티티에 대한 제어 권한을 증명해야 합니다.
 
@@ -18,7 +20,7 @@ export const metadata = {
 
 새 계정은 `비활성화(deactivated)` 상태로 생성됩니다. 사용자는 직접 로그인하여 인증할 수 있지만, 네트워크에 참여하지는 않습니다. 다른 네트워크 서비스의 관점에서는 이전 PDS 계정이 여전히 현재 상태로 간주되며, 새 PDS 계정은 아직 활성화되거나 유효하지 않습니다. 따라서 OAuth나 서비스 인증을 통한 프록시 요청 등의 기능은 아직 새 PDS에서 동작하지 않습니다.
 
-## 데이터 마이그레이션
+<Heading level={2} id="migrating-data">데이터 마이그레이션</Heading>
 
 일반적으로 마이그레이션되는 데이터 유형은 다음과 같습니다:
 
@@ -35,7 +37,7 @@ export const metadata = {
 
 개인 계정 설정은 이전 PDS에서 인증된 `app.bsky.actor.getPreferences` 엔드포인트를 통해 내보낸 후, `app.bsky.actor.putPreferences`를 사용하여 가져올 수 있습니다. 이는 Bluesky 앱 전용 엔드포인트이며, 다른 앱(Lexicons)에서는 자체 설정 API를 정의할 수 있습니다. 단, 이 방식은 PDS에 저장된 개인 상태만 포함하며, 일부 설정이나 상태는 외부 서비스(예: 중앙집중식 채팅/DM 구현)에 존재할 수 있습니다.
 
-## 아이덴티티 업데이트
+<Heading level={2} id="updating-identity">아이덴티티 업데이트</Heading>
 
 콘텐츠 마이그레이션이 완료되면, 아이덴티티(DID 및 핸들)를 업데이트하여 새 PDS가 해당 계정의 현재 호스트임을 나타낼 수 있습니다.
 
@@ -56,7 +58,7 @@ export const metadata = {
 
 그러나 이 시점에서도 새 계정은 아직 "활성화(active)" 상태가 아닙니다.
 
-## 계정 상태 최종화
+<Heading level={2} id="finalizing-account-status">계정 상태 최종화</Heading>
 
 현재 사용자는 두 PDS 인스턴스 모두에서 인증이 가능합니다. 새 PDS는 해당 계정의 현재 호스트임을 인지하고 있으나, 계정 상태는 여전히 "비활성화"로 표시됩니다. 반면, 이전 PDS는 자신이 더 이상 최신 계정이 아님을 인지하지 못할 수 있습니다.
 
