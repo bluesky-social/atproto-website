@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
 title: 'Lexicon',
 description:
@@ -28,13 +30,13 @@ app.bsky.graph.follow
 
 スキーマ型、定義言語、検証制約は [Lexicon 仕様](/specs/lexicon) で説明されており、JSON および CBOR での表現は [データモデル仕様](/specs/data-model) で説明されています。
 
-## Lexicon が必要な理由
+<Heading level={2} id="why-is-lexicon-needed">Lexicon が必要な理由</Heading>
 
 **相互運用性。** atproto のようなオープンネットワークには、動作とセマンティクスについて合意する方法が必要です。 Lexicon は、開発者が比較的簡単に新しいスキーマを導入できるようにしながら、この問題を解決します。
 
 **Lexicon は RDF ではありません。** RDF はデータの記述には効果的ですが、スキーマの適用には向いていません。Lexicon は、RDF が提供するような一般性を必要としないため、より使いやすくなっています。実際、Lexicon のスキーマは、型と検証を使用したコード生成を可能にし、生活がより楽になります！
 
-## HTTP API メソッド
+<Heading level={2} id="http-api-methods">HTTP API メソッド</Heading>
 
 AT プロトコルの API システム [XRPC](/specs/xrpc) は、基本的に HTTPS の薄いラッパーです。その目的は、Lexicon を HTTPS に適用することです。
 
@@ -92,7 +94,7 @@ await client.com.example.getProfile({user: 'bob.com'})
 // => {name: 'bob.com', did: 'did:plc:1234', displayName: '...', ...}
 ```
 
-## レコード型
+<Heading level={2} id="record-types">レコード型</Heading>
 
 スキーマは、レコードが取りうる値を定義します。すべてのレコードには、スキーマにマップされ、レコードの URL を確立する "type" があります。
 
@@ -135,7 +137,7 @@ at://bob.com/com.example.follow/12345
 }
 ```
 
-## トークン
+<Heading level={2} id="tokens">トークン</Heading>
 
 トークンは、データで使用できるグローバル識別子を宣言します。
 
@@ -251,12 +253,12 @@ at://bob.com/com.example.follow/12345
 }
 ```
 
-## バージョン管理
+<Heading level={2} id="versioning">バージョン管理</Heading>
 
 スキーマが公開されると、その制約を変更することはできません。制約を緩めると（可能な値を追加すると）、古いソフトウェアは新しいデータの検証に失敗し、制約を厳しくすると（可能な値を削除すると）、新しいソフトウェアは古いデータの検証に失敗します。結果として、スキーマは、以前に制約がなかったフィールドにオプションの制約のみを追加することしかできません。
 
 スキーマが以前に公開された制約を変更する必要がある場合は、新しい NSID で新しいスキーマとして公開する必要があります。
 
-## スキーマの配布
+<Heading level={2} id="schema-distribution">スキーマの配布</Heading>
 
 スキーマは、機械可読でネットワークからアクセス可能になるように設計されています。現在、スキーマがネットワーク上で利用可能であることは必須ではありませんが、メソッドの利用者が単一の標準的で信頼できる表現を利用できるように、スキーマを公開することを強くお勧めします。

@@ -1,4 +1,5 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import {Heading} from '@/components/Heading'
 
 export const metadata = {
 title: '個人データ リポジトリ',
@@ -12,7 +13,7 @@ description:
 
 [リポジトリ仕様](/specs/repository) で詳細に説明されています。
 
-## データ レイアウト
+<Heading level={2} id="data-layout">データ レイアウト</Heading>
 
 リポジトリの内容は [Merkle 検索ツリー (MST)](https://hal.inria.fr/hal-02303490/document) にレイアウトされ、状態が単一のルート ハッシュに縮小されます。これは次のレイアウトとして視覚化できます:
 
@@ -42,7 +43,7 @@ description:
 
 データ リポジトリへの「コミット」は、ルート ノードの CID に対するキーペア署名にすぎません。リポジトリが変更されるたびに、新しいコミット ノードが生成されます。
 
-## 識別子の種類
+<Heading level={2} id="identifier-types">識別子の種類</Heading>
 
 個人データ リポジトリ内では、複数の種類の識別子が使用されます。
 

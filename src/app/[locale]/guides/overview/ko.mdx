@@ -1,3 +1,5 @@
+import {Heading} from '@/components/Heading'
+
 export const metadata = {
   title: '프로토콜 개요',
   description: 'AT Protocol에 대한 소개입니다.',
@@ -7,15 +9,15 @@ export const metadata = {
 
 **Authenticated Transfer Protocol**(atproto라고도 함)은 대규모 소셜 웹 애플리케이션을 위한 탈중앙화 프로토콜입니다. 이 문서는 AT Protocol의 기본 개념을 소개합니다.
 
-## 아이덴티티
+<Heading level={2} id="identity">아이덴티티</Heading>
 
 AT Protocol의 사용자들은 자신의 계정에 대해 영구적이고 탈중앙화된 식별자(DID)를 갖습니다. 또한, 사람이 읽기 쉬운 핸들 역할을 하는 구성 가능한 도메인 이름도 소유합니다. 아이덴티티에는 사용자의 현재 호스팅 제공자에 대한 참조와 암호화 키가 포함됩니다.
 
-## 데이터 레포지토리
+<Heading level={2} id="data-repositories">데이터 레포지토리</Heading>
 
 사용자 데이터는 [서명된 데이터 레포지토리](/guides/data-repos)에서 교환됩니다. 이 레포지토리들은 게시물, 댓글, 좋아요, 팔로우 등 다양한 레코드들의 모음입니다.
 
-## 네트워크 아키텍처
+<Heading level={2} id="network-architecture">네트워크 아키텍처</Heading>
 
 AT Protocol은 연합(federated) 네트워크 아키텍처를 채택하고 있습니다. 즉, 계정 데이터는 종단 장치 간의 피어 투 피어 모델 대신 호스트 서버에 저장됩니다. 연합 방식은 네트워크를 사용하기 편리하고 안정적으로 유지하기 위해 선택되었습니다. 레포지토리 데이터는 표준 웹 기술([HTTP](/specs/xrpc)와 [WebSockets](/specs/event-stream))을 통해 서버 간 동기화됩니다.
 
@@ -23,13 +25,13 @@ AT Protocol은 연합(federated) 네트워크 아키텍처를 채택하고 있�
 
 더 낮은 수준의 기본 요소들로는 레포지토리, Lexicon, 그리고 DID가 있으며, 이들이 다양한 방식으로 조합될 수 있습니다. 연합 아키텍처에 관한 기술적 결정의 개요는 [블로그](https://bsky.social/about/blog/5-5-2023-federation-architecture)에서 확인할 수 있습니다.
 
-## 상호운용성
+<Heading level={2} id="interoperation">상호운용성</Heading>
 
 [Lexicon](/specs/lexicon)이라는 글로벌 스키마 네트워크를 통해, 서버 간 호출의 이름과 동작이 통합됩니다. 서버들은 기능 집합을 지원하기 위해 "lexicons"을 구현하며, 여기에는 사용자 레포지토리 동기화를 위한 핵심 `com.atproto.*` lexicons과 기본 소셜 기능을 제공하는 `app.bsky.*` lexicons이 포함됩니다.
 
 웹이 문서를 교환하는 반면, AT Protocol은 도식적 및 의미론적 정보를 교환하여 서로 다른 조직의 소프트웨어가 상대방의 데이터를 이해할 수 있도록 합니다. 이를 통해 atproto 클라이언트는 서버에 의존하지 않고도 독자적인 사용자 인터페이스를 제작할 수 있으며, 콘텐츠 탐색 시 렌더링 코드(HTML/JS/CSS)를 교환할 필요가 없어집니다.
 
-## 확장성 달성
+<Heading level={2} id="achieving-scale">확장성 달성</Heading>
 
 Personal Data Server(PDS)는 클라우드 상에서 사용자의 집과도 같습니다. PDS는 데이터를 호스팅하고 배포하며, 아이덴티티를 관리하고, 다른 서비스에 요청을 조율하여 사용자에게 맞는 뷰를 제공합니다.
 
@@ -39,11 +41,11 @@ Personal Data Server(PDS)는 클라우드 상에서 사용자의 집과도 같�
 
 이러한 역할 분리는 사용자가 여러 상호운용 가능한 제공자 중에서 자유롭게 선택할 수 있도록 하는 동시에, 대규모 네트워크 확장성을 보장하기 위한 것입니다.
 
-## 알고리즘 선택
+<Heading level={2} id="algorithmic-choice">알고리즘 선택</Heading>
 
 웹 검색 엔진과 마찬가지로, 사용자는 자신의 집계기를 자유롭게 선택할 수 있습니다. 피드, 라벨러, 검색 인덱스는 독립적인 제3자에 의해 제공될 수 있으며, 요청은 클라이언트 앱의 설정에 따라 PDS를 통해 라우팅됩니다. 클라이언트 앱은 특정 서비스, 예를 들어 앱 뷰(App Views)나 필수 라벨러에 연결될 수도 있습니다.
 
-## 계정 이동성
+<Heading level={2} id="account-portability">계정 이동성</Heading>
 
 Personal Data Server(PDS)는 전체적으로 오프라인 상태가 되거나 특정 사용자에 대해 서비스를 중단할 수 있다고 가정합니다. AT Protocol의 목표는 사용자가 서버의 도움 없이도 자신의 계정을 새로운 PDS로 이전할 수 있도록 하는 것입니다.
 
@@ -58,13 +60,13 @@ Personal Data Server(PDS)는 전체적으로 오프라인 상태가 되거나 �
 
 사용자 데이터의 백업은 사용자의 기기와 지속적으로 동기화되거나(사용 가능한 디스크 공간에 따라), 또는 제3자 서비스에 의해 미러링될 수 있습니다. 만약 PDS가 예고 없이 사라진다면, 사용자는 자신의 DID 문서를 업데이트하고 데이터 백업을 업로드하여 새로운 제공자로 이전할 수 있어야 합니다.
 
-## 발언, 도달, 그리고 모더레이션
+<Heading level={2} id="speech-reach-and-moderation">발언, 도달, 그리고 모더레이션</Heading>
 
 AT Protocol의 모델은 _발언(speech)_ 과 _도달(reach)_ 이 서로 보완하는 두 개의 별도 레이어로 구성되어야 한다는 것입니다. “발언” 레이어는 모두가 목소리를 낼 수 있도록 허용적이어야 하며, 권한 분산을 보장하기 위해 설계되었습니다. 반면 “도달” 레이어는 유연성과 확장성을 고려하여 구축됩니다.
 
 atproto의 기본 레이어(개인 데이터 레포지토리와 연합 네트워킹)는 모든 이가 자유롭게 참여할 수 있는 발언의 공통 공간을 제공합니다. 이는 누구나 웹에서 웹사이트를 만들 수 있는 것과 유사합니다. 이후 인덱싱 서비스는 네트워크의 콘텐츠를 집계하여 검색 엔진과 같이 도달 범위를 확장합니다.
 
-## 사양
+<Heading level={2} id="specifications">사양</Heading>
 
 AT Protocol 초기 버전을 구성하는 주요 사양은 다음과 같습니다:
 

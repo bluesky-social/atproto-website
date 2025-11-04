@@ -1,5 +1,6 @@
 import {Container} from "@/components/Container"
 import {FooterCTA} from "@/components/FooterCTA"
+import {Heading} from '@/components/Heading'
 import image1 from "./image1.png"
 import image2 from "./image2.png"
 import image3 from "./image3.png"
@@ -39,7 +40,7 @@ AT Protocol은 [Bluesky](https://bsky.app)에서 오픈 소셜 네트워킹을 �
 
 만약 여러분이 [스트림 프로세싱](https://milinda.pathirage.org/kappa-architecture.com/) 기반의 백엔드를 구축해본 적이 있다면, 우리가 탐구할 시스템 유형에 대해 어느 정도 익숙할 것입니다. 익숙하지 않더라도 걱정하지 마세요! 차근차근 함께 살펴보겠습니다. {{className: 'lead'}}
 
-## 전통적인 웹 백엔드의 확장
+<Heading level={2} id="scaling-the-traditional-web-backend">전통적인 웹 백엔드의 확장</Heading>
 
 전형적이고 단순한 웹 아키텍처는 앱 서버 뒤에 **하나의 거대한 SQL 데이터베이스**를 두는 구조입니다. 앱 서버는 데이터베이스와 통신하며 프론트엔드의 요청을 처리합니다.
 
@@ -91,7 +92,7 @@ NoSQL로의 전환은 확장에는 유리하지만, SQL의 JOIN이나 집계 쿼
 
 어떤 면에서는, 우리가 기본 저장소를 NoSQL 클러스터로 단순화하고, 뷰 서버를 통해 자체 쿼리 엔진을 구축함으로써 데이터베이스를 **거꾸로 뒤집어(turning it inside-out)** 만든 것과 같습니다. 구축이 다소 불편할 수는 있지만, 확장성은 뛰어납니다.
 
-## 고확장 백엔드의 탈중앙화
+<Heading level={2} id="decentralizing-our-high-scale-backend">고확장 백엔드의 탈중앙화</Heading>
 
 AT Protocol의 목표는 사용자 계정과 콘텐츠를 포함한 상태를 여러 애플리케이션 간에 공유하는 것입니다.
 
@@ -119,7 +120,7 @@ AT Protocol의 목표는 사용자 계정과 콘텐츠를 포함한 상태를 �
 
 그렇다면 이러한 서비스들이 어떻게 함께 작동하도록 만들 수 있을까요?
 
-## 데이터 모델 통합
+<Heading level={2} id="unifying-the-data-model">데이터 모델 통합</Heading>
 
 우리는 [“사용자 데이터 레포지토리”](/guides/data-repos)라는 공통의 데이터 모델을 확립할 것입니다.
 
@@ -169,7 +170,7 @@ AT Protocol의 목표는 사용자 계정과 콘텐츠를 포함한 상태를 �
   <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
 </Container>
 
-## 데이터 흐름 도식화
+<Heading level={2} id="charting-the-flow-of-data">데이터 흐름 도식화</Heading>
 
 이제 고확장 탈중앙화 백엔드를 구축했으니, ATProto에서 실제 애플리케이션이 어떻게 작동하는지 살펴봅니다.
 
@@ -223,7 +224,7 @@ AT Protocol의 목표는 사용자 계정과 콘텐츠를 포함한 상태를 �
   <Image src={image24} className="w-full dark:invert max-w-2xl" />
 </Container>
 
-## 실용적인 오픈 시스템 구축
+<Heading level={2} id="building-practical-open-systems">실용적인 오픈 시스템 구축</Heading>
 
 AT Protocol은 P2P 기술과 고확장 시스템의 기법을 결합합니다. 우리 창립 엔지니어들은 [IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System)와 [Dat](https://en.wikipedia.org/wiki/Dat_(software)) 분야의 전문가였으며, Martin Kleppmann — [Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)의 저자 — 도 적극적인 기술 자문역할을 하고 있습니다.
 

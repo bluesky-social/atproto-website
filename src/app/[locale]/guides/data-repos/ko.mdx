@@ -1,4 +1,5 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import {Heading} from '@/components/Heading'
 
 export const metadata = {
   title: '개인 데이터 레포지토리',
@@ -11,7 +12,7 @@ export const metadata = {
 
 레포지토리에 대해서는 [레포지토리 사양](/specs/repository)에서 자세히 설명되어 있습니다.
 
-## 데이터 레이아웃
+<Heading level={2} id="data-layout">데이터 레이아웃</Heading>
 
 레포지토리의 내용은 [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document)를 사용하여 단일 루트 해시로 상태를 축소합니다. 이는 다음과 같은 레이아웃으로 시각화할 수 있습니다:
 
@@ -41,7 +42,7 @@ export const metadata = {
 
 데이터 레포지토리에 대한 “커밋”은 단순히 루트 노드의 CID에 대해 키페어로 서명한 것입니다. 레포지토리의 각 변경은 새로운 커밋 노드를 생성합니다.
 
-## 식별자 유형
+<Heading level={2} id="identifier-types">식별자 유형</Heading>
 
 개인 데이터 레포지토리 내에서는 여러 종류의 식별자가 사용됩니다.
 
