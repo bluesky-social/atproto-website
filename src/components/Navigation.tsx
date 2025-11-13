@@ -263,6 +263,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
       { title: 'Lexinomicon', href: '/guides/lexinomicon' },
       { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
+      { title: 'Going to production', href: '/guides/going-to-production' },
       { title: 'OAuth Introduction', href: '/guides/oauth' },
     ],
   },
