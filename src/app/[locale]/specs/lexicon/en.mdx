@@ -206,7 +206,7 @@ Type-specific fields:
 
 Note that unlike `object`, there is no `nullable` field on `params`.
 
-`params` can not be declared as top-level named types in a schema `defs` array. This means that they can not be reference by a `ref` or `union`.
+`params` can not be declared as a top-level named type in a schema `defs` array. This means that they can not be referenced by a `ref` or `union`.
 
 ### `token`
 
@@ -232,7 +232,7 @@ When a `ref` points to an `object` type, the type of the encoded data is unambig
 
 A `ref` can not point to a `token` type.
 
-Refs can not be declared as top-level named types in a schema `defs` array. This means that a `ref` can not point to another `ref`, nor a `union`.
+Refs can not be declared as top-level named types in a schema `defs` array. This means that a `ref` can not point to another `ref`, nor a `union`. They can reference container types that *contain* nested `ref` types, for example an `object`.
 
 ### `union`
 
@@ -251,11 +251,9 @@ A closed union with only a single type referenced is similar to `ref`. The main 
 
 An empty closed union (a union with an empty refs list and the `closed` flag set to true) is an invalid schema.
 
-The schema definitions pointed to by a `union` must have type `object` or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspond to string data).
+The schema definitions pointed to by a `union` must have type `object` or `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. A `union` can not point to types `query`, `procedure`, `subscription`, `unknown`, `blob`, `cid-link`, `array`, `params`, `token`, `ref`, `union`, or any other currently defined types.
 
-To be more complete, `union` references must point to a type `object` or `record`. They can not point to types `query`, `procedure`, `subscription`, `unknown`, `blob`, `cid-link`, `array`, `params`, `ref`, `union`, or any other currently defined types.
-
-Unions can not be declared as top-level named types in a schema `defs` array. This means that a `union` can not reference another `union`, nor a `ref`.
+Unions can not be declared as top-level named types in a schema file `defs` map. This means that a `union` can not reference another `union`, nor a `ref`.
 
 ### `unknown`
 
