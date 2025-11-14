@@ -25,7 +25,7 @@ This specification describes version 1 of the Lexicon definition language. {{ cl
 | `blob` | Blob | concrete |
 | `array` | Array | container |
 | `object` | Object | container |
-| `params` |  | container |
+| `params` |  | sub-type |
 | `token` |  | meta |
 | `ref` |  | meta |
 | `union` |  | meta |
@@ -46,7 +46,7 @@ A Lexicon JSON file is an object with the following fields:
 - `description` (string, optional): short overview of the Lexicon, usually one or two sentences
 - `defs` (map of strings-to-objects, required): set of definitions, each with a distinct name (key)
 
-Schema definitions under `defs` all have a `type` field to distinguish their type. A file can have at most one definition with one of the "primary" types. Primary types should always have the name `main`. It is possible for `main` to describe a non-primary type.
+Schema definitions under `defs` all have a `type` field to distinguish their type. A file can have at most one definition with one of the "primary" types. Primary types should always have the name `main`. It is possible for `main` to describe a non-primary type. Not all types can be directly used as a definition. For example, sub-types, `unknown`, `ref`, and `union` can not be used as named definitions.
 
 References to specific definitions within a Lexicon use fragment syntax, like `com.example.defs#someView`. If a `main` definition exists, it can be referenced without a fragment, just using the NSID. For references in the `$type` fields in data objects themselves (eg, records or contents of a union), this is a "must" (use of a `#main` suffix is invalid). For example, `com.example.record` not `com.example.record#main`.
 
@@ -197,7 +197,7 @@ Type-specific fields:
 
 ### `params`
 
-This is a limited-scope type which is only ever used for the `parameters` field on `query`, `procedure`, and `subscription` primary types. These map to HTTP query parameters.
+This is a limited-scope type which is only ever used for the `parameters` field on `query`, `procedure`, and `subscription` primary types. `params` map to HTTP query parameters. They can not appear in other contexts.
 
 Type-specific fields:
 
@@ -206,15 +206,17 @@ Type-specific fields:
 
 Note that unlike `object`, there is no `nullable` field on `params`.
 
+`params` can not be declared as top-level named types in a schema `defs` array. This means that they can not be reference by a `ref` or `union`.
+
 ### `token`
 
-Tokens are empty data values which exist only to be referenced by name. They are used to define a set of values with specific meanings. The `description` field should clarify the meaning of the token. Tokens encode as string data, with the string being the fully-qualified reference to the token itself (NSID followed by an optional fragment).
+Tokens are empty data values which exist only to be referenced by name. They are used to define a set of values with specific meanings. The `description` field should clarify the meaning of the token. They have no type-specific fields.
 
-Tokens are similar to the concept of a "symbol" in some programming languages, distinct from strings, variables, built-in keywords, or other identifiers.
+Tokens do not themselves have a data representation. They can only be declared as named definitions. For example, they can not be referenced via `ref` or `union`, or included as a field in an `object`.
 
-For example, tokens could be defined to represent the state of an entity (in a state machine), or to enumerate a list of categories.
+One place token references might appear in other Lexicon definitions is as strings in the `knownValues` or `enum` fields of a `string` definition. Tokens should always be fully-qualified references (an NSID followed by an optional fragment), not local references within a schema file..
 
-No type-specific fields.
+Tokens are similar to the concept of a "symbol" in some programming languages, distinct from strings, variables, built-in keywords, or other identifiers. For example, tokens could be defined to represent the state of an entity (in a state machine), or to enumerate a list of categories.
 
 ### `ref`
 
@@ -222,7 +224,15 @@ Type-specific fields:
 
 - `ref` (string, required): reference to another schema definition
 
-Refs are a mechanism for re-using a schema definition in multiple places. The `ref` string can be a global reference to a Lexicon type definition (an NSID, optionally with a `#`-delimited name indicating a definition other than `main`), or can indicate a local definition within the same Lexicon file (a `#` followed by a name).
+Refs are a mechanism for re-using a schema definition in multiple places. The intended use is to reduce duplication of definitions for types like `object` or a `string` with specific restrictions.
+
+The `ref` string can be a global reference to a Lexicon type definition (an NSID, optionally with a `#`-delimited name indicating a definition other than `main`), or can indicate a local definition within the same Lexicon file (a `#` followed by a name).
+
+When a `ref` points to an `object` type, the type of the encoded data is unambiguous. This means that the `$type` field should not be included in encoded data as a discriminator. This does not apply to references to `record` types, which always include the `$type` discriminator.
+
+A `ref` can not point to a `token` type.
+
+Refs can not be declared as top-level named types in a schema `defs` array. This means that a `ref` can not point to another `ref`, nor a `union`.
 
 ### `union`
 
@@ -235,21 +245,31 @@ Unions represent that multiple possible types could be present at this location 
 
 By default unions are "open", meaning that future revisions of the schema could add more types to the list of refs (though can not remove types). This means that implementations should be permissive when validating, in case they do not have the most recent version of the Lexicon. The `closed` flag (boolean) can indicate that the set of types is fixed and can not be extended in the future.
 
-A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). The main difference is that the data would be required to have the `$type` field. An empty refs list with `closed` set to true is an invalid schema.
+A `union` schema definition with no `refs` is allowed and similar to `unknown`, as long as the `closed` flag is false (the default). The main difference is that the data is required to include the `$type` field.
 
-The schema definitions pointed to by a `union` are objects or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspond to string data).
+A closed union with only a single type referenced is similar to `ref`. The main difference is that the data is required to include the `$type` field.
+
+An empty closed union (a union with an empty refs list and the `closed` flag set to true) is an invalid schema.
+
+The schema definitions pointed to by a `union` must have type `object` or types with a clear mapping to an object, like a `record`. All the variants must be represented by a CBOR map (or JSON Object) and must include a `$type` field indicating the variant type. Because the data must be an object, unions can not reference `token` (which would correspond to string data).
+
+To be more complete, `union` references must point to a type `object` or `record`. They can not point to types `query`, `procedure`, `subscription`, `unknown`, `blob`, `cid-link`, `array`, `params`, `ref`, `union`, or any other currently defined types.
+
+Unions can not be declared as top-level named types in a schema `defs` array. This means that a `union` can not reference another `union`, nor a `ref`.
 
 ### `unknown`
 
-Indicates than any data object could appear at this location, with no specific validation. The top-level data must be an object (not a string, boolean, etc). As with all other data types, the value `null` is not allowed unless the field is specifically marked as `nullable`.
+An `unknown` type indicates that any data object could appear at this location, with no specific validation. The top-level data must be an object (not a string, boolean, etc). `unknown` definitions have no type-specific fields.
 
-The data object may contain a `$type` field indicating the schema of the data, but this is not currently required. The top-level data object must not have the structure of a compound data type, like blob (`$type: blob`) or CID link (`$link`).
+As with all other data types, the value `null` is not allowed unless the field is specifically marked as `nullable`.
+
+The data object *may* contain a `$type` field indicating the schema of the data, but it is not required. The top-level data object must not have the structure of a compound data type, like blob (`$type: blob`) or CID link (`$link`).
 
 The (nested) contents of the data object must still be valid under the atproto data model. For example, it should not contain floats. Nested compound types like blobs and CID links should be validated and transformed as expected.
 
 Lexicon designers are strongly recommended to not use `unknown` fields in `record` objects for now.
 
-No type-specific fields.
+`unknown` types can not be declared as top-level named types in a schema `defs` array.
 
 ## String Formats
 
