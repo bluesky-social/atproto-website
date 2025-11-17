@@ -26,6 +26,7 @@ This specification describes version 1 of the Lexicon definition language. {{ cl
 | `array` | Array | container |
 | `object` | Object | container |
 | `params` |  | sub-type |
+| `permission` |  | sub-type |
 | `token` |  | meta |
 | `ref` |  | meta |
 | `union` |  | meta |
@@ -34,6 +35,7 @@ This specification describes version 1 of the Lexicon definition language. {{ cl
 | `query` |  | primary |
 | `procedure` |  | primary |
 | `subscription` |  | primary |
+| `permission-set` |  | primary |
 
 ## Lexicon Files
 
@@ -60,11 +62,12 @@ The primary types are:
 - `procedure`: describes an XRPC Procedure (HTTP POST)
 - `subscription`: Event Stream (WebSocket)
 - `record`: describes an object that can be stored in a repository record
+- `permission-set`: describes a bundle of auth permissions
 
-Each primary definition schema object includes these fields:
+Most of the primary definition schema object includes these fields:
 
 - `type` (string, required): the type value (eg, `record` for records)
-- `description` (string, optional): short, usually only a sentence or two
+- `description` (string, optional): short, usually only a sentence or two. `permission-set` does not include this field (see below)
 
 ### Record
 
@@ -98,6 +101,18 @@ Type-specific fields:
 - `errors` (array of objects, optional): same as Query and Procedure
 
 Subscription schemas (referenced by the `schema` field under `message`) must be a `union` of refs, not an `object` type.
+
+### Permission Set
+
+Type-specific fields:
+
+- `title` (string, optional): short name for the permission set, which will be displayed to users. Should be limited to a handful of words
+- `title:langs` (map of strings to strings, optional): internationalized/localized variations of `title` for display. The map key strings must be valid language codes; see the `language` lexicon string format
+- `detail` (string, optional): human-meaningful description of the scope of this permission set, which will be displayed to users. Should be limited to a paragraph or so.
+- `detail:langs` (map of strings to strings, optional): same as `title:langs`, but for `detail`
+- `permissions` (array of `permission` definitions, required): the permissions included in this set
+
+Note that `permission-set` does not have a `description` field.
 
 ## Field Type Definitions
 
@@ -192,7 +207,7 @@ As described in the data model specification, there is a semantic difference in 
 
 Type-specific fields:
 
-- `accept` (array of strings, optional): list of acceptable MIME types. Each may end in `*` as a glob pattern (eg, `image/*`). Use `*/*` to indicate that any MIME type is accepted.
+- `accept` (array of strings, optional): list of acceptable MIME types. Each may end in `*` as a glob pattern (eg, `image/*`). Use `*/*` to indicate that any MIME type is accepted. Partial globs (`text/ht*`) or stand-alone wildcard (`*`) are not supported.
 - `maxSize` (integer, optional): maximum size in bytes
 
 ### `params`
@@ -207,6 +222,34 @@ Type-specific fields:
 Note that unlike `object`, there is no `nullable` field on `params`.
 
 `params` can not be declared as a top-level named type in a schema `defs` array. This means that they can not be referenced by a `ref` or `union`.
+
+### `permission`
+
+This is a limited-scope type which is only ever used for the `permissions` field of the `permission-set` primary type, and should not appear in other schema contexts. They map to auth permissions.
+
+Type-specific fields:
+
+- `resource` (string, required): indicates what account resource is being accessed
+
+Additional `permission` fields depend on the resource type being declared. The set of resources may expand over time, but currently includes:
+
+- `blob`: media file upload permissions
+    - `accept` (array of strings, required): mimetypes or partial mimetype glob patterns (`*/*` or `text/*` for example). Same syntax as the `blob` lexicon type.
+- `repo`: public repository write permissions
+    - `collection` (array of strings, required): indicates record types. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
+    - `action` (array of strings, optional): limits set of record operations. Values must be one or `create`, `update`, `delete`, case-sensitive.
+- `rpc`: remote API calls via proxying or service token generation
+    - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
+    - `audience` (string, semi-optional): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true.
+    - `inheritAud` (boolean, optional): if true, `audience` does not need to be defined.
+- `account`: hosted account management
+    - `attr` (string, required): an aspect or component of account. Maybe be wildcard (`*`)
+    - `action` (string, optional): degree of control. Currently supports `read` or `manage`
+- `identity`: network identity (DID) management
+    - `attr` (string, required): an aspect or component of account. Maybe be wildcard (`*`)
+    - `action` (string, optional): degree of control. Currently supports `manage` or `submit`
+
+See Permission specification for more details. Note that it might be possible to construct a valid lexicon `permission` type which is invalid or has undefined behavior as an auth permission.
 
 ### `token`
 
