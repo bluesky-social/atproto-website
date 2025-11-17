@@ -243,10 +243,10 @@ Additional `permission` fields depend on the resource type being declared. The s
     - `audience` (string, semi-optional): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true.
     - `inheritAud` (boolean, optional): if true, `audience` does not need to be defined.
 - `account`: hosted account management
-    - `attr` (string, required): an aspect or component of account. Maybe be wildcard (`*`)
+    - `attr` (string, required): an aspect or component of account. Wildcard is not supported.
     - `action` (string, optional): degree of control. Currently supports `read` or `manage`
 - `identity`: network identity (DID) management
-    - `attr` (string, required): an aspect or component of account. Maybe be wildcard (`*`)
+    - `attr` (string, required): an aspect or component of account. May be be wildcard (`*`)
     - `action` (string, optional): degree of control. Currently supports `manage` or `submit`
 
 See Permission specification for more details. Note that it might be possible to construct a valid lexicon `permission` type which is invalid or has undefined behavior as an auth permission.
