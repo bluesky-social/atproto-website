@@ -79,7 +79,7 @@ Of these three, the BFF pattern is the currently recommended approach for buildi
 
 ## Scopes
 
-The OAuth flow requires permission "scopes" which describe the level of access granted with the session. For now, granular permissions have been implemented on the `bsky.social` hosting service, and are rolling out to the self-hosted PDS distribution. Work on permission sets (including lexicon resolution) is in progress. Users may start to implement more granular permissions -- for example apps only asking for permissions to specific record types or API endpoints. We expect most apps to use the higher-level "permission sets" when they become available, which will provide more accessible language about the permissions being granted.
+The OAuth flow requires permission "scopes" which describe the level of access granted with the session. For now, granular permissions have been implemented on the `bsky.social` hosting service, and are rolling out to the [self-hosted PDS distribution](/guides/self-hosting). Work on permission sets (including lexicon resolution) is in progress. Developers may start to implement more granular permissions -- for example, apps only asking for permissions to specific record types or API endpoints. We expect most apps to use the higher-level "permission sets" when they become available, which will provide more accessible language about the permissions being granted.
 
 The minimal set of OAuth permissions that a third-party AT application should request to faciliate login are:
 - `atproto`
