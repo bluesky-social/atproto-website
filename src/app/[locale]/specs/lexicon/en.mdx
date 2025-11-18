@@ -71,12 +71,16 @@ Most of the primary definition schema object includes these fields:
 
 ### Record
 
+Specifies schema of data objects stored in [Repositories](/spec/repository).
+
 Type-specific fields:
 
 - `key` (string, required): specifies the [Record Key type](/specs/record-key)
 - `record` (object, required): a schema definition with type `object`, which specifies this type of record
 
 ### Query and Procedure (HTTP API)
+
+Specifies an [XRPC](/specs/xrpc) HTTP API endpoint.
 
 Type-specific fields:
 
@@ -92,6 +96,8 @@ Type-specific fields:
 
 ### Subscription (Event Stream)
 
+Specifies an [Event Stream](/specs/event-stream) endpoint, eg messages on a WebSocket.
+
 Type-specific fields:
 
 - `parameters` (object, optional): same as Query and Procedure
@@ -103,6 +109,8 @@ Type-specific fields:
 Subscription schemas (referenced by the `schema` field under `message`) must be a `union` of refs, not an `object` type.
 
 ### Permission Set
+
+Specifies a bundle of permissions for use as [OAuth](/specs/oauth) scopes. See [Permissions specification](/specs/permission) for more details.
 
 Type-specific fields:
 
@@ -233,15 +241,15 @@ Type-specific fields:
 
 Additional `permission` fields depend on the resource type being declared. The set of resources may expand over time, but currently includes:
 
-- `blob`: media file upload permissions
-    - `accept` (array of strings, required): mimetypes or partial mimetype glob patterns (`*/*` or `text/*` for example). Same syntax as the `blob` lexicon type.
 - `repo`: public repository write permissions
     - `collection` (array of strings, required): indicates record types. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
     - `action` (array of strings, optional): limits set of record operations. Values must be one or `create`, `update`, `delete`, case-sensitive.
 - `rpc`: remote API calls via proxying or service token generation
     - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
-    - `audience` (string, semi-optional): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true.
-    - `inheritAud` (boolean, optional): if true, `audience` does not need to be defined.
+    - `aud` (string, semi-required): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true.
+    - `inheritAud` (boolean, optional): if true, `aud` does not need to be defined.
+- `blob`: media file upload permissions
+    - `accept` (array of strings, required): mimetypes or partial mimetype glob patterns (`*/*` or `text/*` for example). Same syntax as the `accept` field in the `blob` lexicon type.
 - `account`: hosted account management
     - `attr` (string, required): an aspect or component of account. Wildcard is not supported.
     - `action` (string, optional): degree of control. Currently supports `read` or `manage`

@@ -280,6 +280,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Labels', href: '/specs/label' },
       { title: 'HTTP API (XRPC)', href: '/specs/xrpc' },
       { title: 'OAuth', href: '/specs/oauth' },
+      { title: 'Permissions', href: '/specs/permission' },
       { title: 'Event Stream', href: '/specs/event-stream' },
       { title: 'Sync', href: '/specs/sync' },
       { title: 'DID', href: '/specs/did' },
