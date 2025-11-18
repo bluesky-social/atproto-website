@@ -67,7 +67,7 @@ The primary types are:
 Most of the primary definition schema object includes these fields:
 
 - `type` (string, required): the type value (eg, `record` for records)
-- `description` (string, optional): short, usually only a sentence or two. `permission-set` does not include this field (see below)
+- `description` (string, optional): short, usually only a sentence or two
 
 ### Record
 
@@ -119,8 +119,6 @@ Type-specific fields:
 - `detail` (string, optional): human-meaningful description of the scope of this permission set, which will be displayed to users. Should be limited to a paragraph or so.
 - `detail:langs` (map of strings to strings, optional): same as `title:langs`, but for `detail`
 - `permissions` (array of `permission` definitions, required): the permissions included in this set
-
-Note that `permission-set` does not have a `description` field.
 
 ## Field Type Definitions
 
@@ -233,29 +231,27 @@ Note that unlike `object`, there is no `nullable` field on `params`.
 
 ### `permission`
 
-This is a limited-scope type which is only ever used for the `permissions` field of the `permission-set` primary type, and should not appear in other schema contexts. They map to auth permissions.
+This is a limited-scope type which is only ever used for the `permissions` field of the `permission-set` primary type, and should not appear in other schema contexts. They map to [auth permissions](specs/permission).
 
 Type-specific fields:
 
-- `resource` (string, required): indicates what account resource is being accessed
+- `resource` (string, required): indicates what account resource is being granted access to
 
 Additional `permission` fields depend on the resource type being declared. The set of resources may expand over time, but currently includes:
 
-- `repo`: public repository write permissions
-    - `collection` (array of strings, required): indicates record types. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
-    - `action` (array of strings, optional): limits set of record operations. Values must be one or `create`, `update`, `delete`, case-sensitive.
+- public repository write permissions (`"resource": "repo"`)
+    - `collection` (array of unique strings, required): indicates record types. Must include at least one element (not empty array). Wildcard (`*`) or partial-NSID glob patterns (`com.example.*`) are **NOT** allowed.
+    - `action` (array of unique strings, optional): limits set of record operations. Values must be one of `create`, `update`, `delete`, case-sensitive.
 - `rpc`: remote API calls via proxying or service token generation
-    - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Supports wildcard (`*`), but does not support partial-NSID glob patterns (`com.example.*`)
-    - `aud` (string, semi-required): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true.
+    - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Wildcard (`*`) or partial-NSID glob patterns (`com.example.*`) are **NOT** allowed.
+    - `aud` (string, semi-required): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`). Required unless `inheritAud` is true. Cannot be `*` when `lxm` is `*`.
     - `inheritAud` (boolean, optional): if true, `aud` does not need to be defined.
 - `blob`: media file upload permissions
     - `accept` (array of strings, required): mimetypes or partial mimetype glob patterns (`*/*` or `text/*` for example). Same syntax as the `accept` field in the `blob` lexicon type.
-- `account`: hosted account management
-    - `attr` (string, required): an aspect or component of account. Wildcard is not supported.
-    - `action` (string, optional): degree of control. Currently supports `read` or `manage`
-- `identity`: network identity (DID) management
-    - `attr` (string, required): an aspect or component of account. May be be wildcard (`*`)
-    - `action` (string, optional): degree of control. Currently supports `manage` or `submit`
+
+`account` and `identity` permissions **cannot** be granted through permission sets and **must** be ignored. This is due to the fact that permission sets are used to conceal multiple app specific permission under a single item in the consent screen. Because of this only resources (record types and lexicon methods) under the authority of the Lexicon document author can be listed in permission sets.
+
+Authorization Servers and Resource Servers must silently ignore (i.e. act as if they were not present) any `permission` item that contains unknown or invalid parameter keys or values. This allows for forward compatibility as new permission types and parameters are added to the specification.
 
 See Permission specification for more details. Note that it might be possible to construct a valid lexicon `permission` type which is invalid or has undefined behavior as an auth permission.
 

@@ -6,13 +6,13 @@ export const metadata = {
 
 # Permissions
 
-Authorization to atproto resources is described and granted using "permissions". A group of a permissions related to a specific Lexicon namespace (record types and API endpoints) can be bundled together as a "permission set". Both are used in the context of [OAuth](/specs/oauth) to grant client software access to account resources on a PDS. For example, the ability to write records of specific types to the user's public repository, or make authenticated API requests to remote services. Developers declare the permissions their app requires to function, and end users are shown the permissions when granting access to the app.
+Access to atproto resources is described and granted using "permissions". A group of a permissions related to a specific Lexicon namespace (record types and API endpoints) can be bundled together as a "permission set". Both are used in the context of [OAuth](/specs/oauth) to grant client software access to account resources on a PDS. For example, the ability to write records of specific types to the user's public repository, or make authenticated API requests to remote services. Developers declare the permissions their app requires to function, and end users are shown the permissions when granting access to the app.
 
-Each resource type has a defined set of parameters that can attenuate the permission. A permission can be represented in a string format (for direct use as an OAuth scope), or as a JSON object (for use in permission sets). Permission sets are published as public lexicon schemas, and are limited to lexicon resources under the same NSID hierarchy.
+Each resource type has a defined set of parameters that can attenuate the permission. A permission can be represented in a string format (for direct use as an OAuth scope), or as a JSON object (for use in permission sets). Permission sets are published as public lexicon schemas, and are constrained to describe access to resources under the same NSID hierarchy as the permission set document itself.
 
 ## Resource Types
 
-Permissions relate to account resources on PDS instances:
+Permissions relate to users owned resources on PDS instances:
 
 - `repo`: Public Repository (records and collections)
 - `rpc`: Service Authentication (API calls to external services)
@@ -24,7 +24,7 @@ There is an additional "meta" resource, `include`, which is used to reference a 
 
 This section describes these resources in more depth, including all the parameters that can constrain the permission. For each resource, one parameter may be marked as "positional", which impacts the string representation syntax (described in a later section).
 
-Resources and permissions are described in the abstract, not tied to specific PDS API endpoints. For example, `rpc` permissions describe the ability to make remote service API calls using inter-service authentication. This includes both proxied PDS requests (using HTTP headers) and fetching service auth tokens using `com.atproto.server.getServiceAuth`.
+Resources and permissions are described in the abstract, not tied to specific PDS API endpoints. For example, `rpc` permissions describe the ability to make remote service API calls using inter-service authentication. This includes both proxied PDS requests (using the `atproto-proxy` HTTP header) and fetching service auth tokens using `com.atproto.server.getServiceAuth`.
 
 ### `repo`
 
@@ -32,7 +32,7 @@ Write access to records in the account's public repository. Can be limited to sp
 
 Parameters:
 
-- `collection` (string array, required, positional): NSID of record types. Wildcard (`*`) is allowed and gives access to all records. Partial wildcards are not supported (eg, can not use `com.example.*`)
+- `collection` (string array, required, positional): NSID of record types. Wildcard (`*`) is allowed (when the permission is encoded as an oauth scope parameter i.e. `repo:*`) and gives access to all records. Partial wildcards are not supported (eg, can not use `com.example.*`)
 - `action` (string array, optional): defines the set of record operations allowed. Allowed values are `create`, `update`, `delete`. If not defined, all operations are allowed
 
 Examples:
@@ -68,6 +68,19 @@ repo:*
 
 # delete only permission on all record types
 repo:*?action=delete
+```
+
+Additional example with multiple collections:
+
+```
+# full permission on multiple record types
+repo?collection=app.example.profile&collection=app.example.post
+
+{
+  "type": "permission",
+  "resource": "repo",
+  "collection": ["app.example.profile", "app.example.post"]
+}
 ```
 
 ### `rpc`
@@ -112,6 +125,8 @@ rpc?lxm=*&aud=did:web:api.example.com%23svc_appview
 
 Ability to upload media files (blobs) to PDS.
 
+Note: ideally, the `blob` permission would be limited to adding blobs to record collections listed in the permission set. For example, if permission sets `include:a` and `include:b` are granted, where `a` has `blob` and `b` doesn't, the app should not be able to link `b` collections to blobs. This is not currently implemented in the reference implementation, where `blob` appearing anywhere in the permission scopes will be granted to every collection referenced through the scopes.
+
 Parameters:
 
 - `accept` (array of strings, required): MIME types or partial MIME type glob patterns (`*/*` or `text/*` for example). Same syntax as the `accept` field in the `blob` lexicon type.
@@ -152,7 +167,7 @@ Parameters:
 Attributes:
 
 - `email`: account email address. The `read` action makes the email and verification status visible. The `manage` action includes `read`, and also allows changing the email address.
-- `repo`: ability to update entire public repository using a CAR file. The `manage` action allows importing entire CAR files, for example during account migration. The `read` action does nothing.
+- `repo`: ability to update entire public repository using a CAR file. The `manage` action allows importing entire CAR files, for example during account migration. The `read` action does nothing. This is intended to be performed through the account management interface and never through 3rd party apps/clients.
 - `status`: account status in network. The `manage` action allows deactivating and re-activating the account. The `read` action does nothing. (NOTE: this attribute is not part of PDS reference implementation as of November 2025)
 
 Examples:
@@ -192,7 +207,7 @@ Parameters:
 Attributes:
 
 - `handle`: ability to update handle. This includes the registration of the handle in the DID document, as well as any domain names controlled by the PDS. The `manage` action gives full control, including PLC directory submission (if supported)
-- `*` (wildcard): full control over DID document and handle. The `manage` action allows updates of individual fields. The `submit` action includes that functionality, as well as the ability to sign and submit arbitrary PLC directory operations. (NOTE: not included in reference PDS implementation as of November 2025)
+- `*` (wildcard): full control over DID document and handle. The `manage` action allows updates of individual fields.
 
 
 ## Scope String Syntax
@@ -237,11 +252,11 @@ emoji:☺️
 
 ## Permission Sets
 
-Full-featured client apps require a large number of granular permissions to function: dozens or even hundreds of individual permissions. This presents a user experience challenge, as long lists of permissions are difficult to parse, and a developer experience issue, as defining and maintaining these lists is toilsome.
+Full-featured client apps require a large number of granular permissions to function: dozens or even hundreds of individual permissions. This presents a user experience challenge, as long lists of permissions are difficult to display in the consent screen, and a developer experience issue, as defining and maintaining these lists is toilsome.
 
 To simplify permission management, Lexicon designers can define "sets" of permissions as part of the schemas they publish. These permission sets are themselves Lexicon schemas and are referred to by NSID, such as `com.example.authBasicFeatures`.
 
-Auth Servers resolve, authenticate, and process permission-sets dynamically. Sets include human-meaningful names and descriptions that are displayed to end users as part of the auth approval flow. Permission sets are published publicly and can be used by any client developer. (Caching and fallback behaviors for dynamic resolution are discussed below.)
+Auth Servers resolve, authenticate, and process permission-sets dynamically. Sets include human-meaningful names and descriptions that are displayed to end users as part of the authorization flow. Permission sets are published publicly and can be used by any client developer. (Caching and fallback behaviors for dynamic resolution are discussed below.)
 
 The below is an example permission set Lexicon. The full syntax is described in the [Lexicon specification](/specs/lexicon).
 
@@ -307,6 +322,8 @@ Because some of the `rpc` permissions have the `inheritAud` flag set to true, th
 
 Permission sets are Lexicon schemas and are published and fetched using the Lexicon resolution system, which includes cryptographic authentication. Permission sets can be updated over time as new schemas are added to a namespace (eg, new record types or API endpoints). Auth Servers are expected to maintain a cache of resolved sets, but to re-resolve them periodically. The permissions associated with an Access Token should remain fixed, but when a client refreshes their tokens (obtaining a new access token), the computed permissions for the session may be updated to reflect changes to sets requested by the client.
 
+The OAuth session must be bound to the exact scopes requested during the initial request. This is the only way to add dynamism to permission sets.
+
 This adds an intentional degree of temporal dynamism to auth sessions involving Permission sets. Lexicon designers can define new resources (eg, record types), update published sets to include permissions to those resources. Client software can then be updated to take advantage of those new lexicons, without requiring users to re-authenticate their sessions.
 
 
@@ -321,17 +338,17 @@ Authority is based on the relative structure of NSIDs, without "siblings" or spe
 
 For example, the set `app.example.feed.authOnlyPost` could include permissions to `app.example.feed.post` records and making `app.example.feed.getPostThread` API endpoint requests to remote services. But it could not grant permissions to `app.example.actor.profile`. A permission set `app.example.authFull`, which is a level up in the hierarchy, could include permissions to all these resources, or even further down the hierarchy.
 
+Authorization Servers and Resource Servers must silently ignore (i.e. act as if they were not present) any `permission` item that contains unknown or invalid parameter keys or values. This allows for forward compatibility as new permission types and parameters are added to the specification.
+
 ### Resolution and Caching
 
 Permission set Lexicons need to be resolved by auth servers (eg, PDS instances). The existing [Lexicon publication and resolution system](/specs/lexicon) describes how schemas are published and verified.
 
 To reduce network traffic and increase resiliency to outages, auth servers are expected to cache of permission set resolution. Caches may be shared across all accounts and sessions on an Auth Server.
 
-Permission set schemas should be cached with long "expiration" times but shorter "stale" times. Stale Lexicons should get updated (aka, attempt resolution refresh), but if resolution fails, the previously existing stale values can be used. The recommended "stale" lifetime is 24 hours, and this is intended as a firm upper bound on cache lifetime. The firm lower bound on cache lifetime is that of access token lifetimes, meaning 15-30 minutes. The recommended "expiration" lifetime is 90 days, but this is not a firm bound.
+Permission set schemas should be cached with long "expiration" times but shorter "stale" times. Stale Lexicons should get updated (aka, attempt resolution refresh), but if resolution fails, the previously existing stale values can be used. The recommended "stale" lifetime is 24 hours, and this is intended as a firm upper bound on cache lifetime. The firm lower bound on cache lifetime is that of access token lifetimes, meaning 15-30 minutes. The recommended "expiration" lifetime is 90 days, but this is not a firm bound. Permission sets cannot be marked as "expired" for as long as there are active oauth sessions relying on them. It is acceptable to prevent new sessions from being created if they reference expired permission sets, but existing sessions should not break.
 
 At the start of a session, if a permission set can not be resolved (and is not already in a local cache), the auth request will fail.
-
-As an optional mechanism to trigger a cache purge, client instances can set an updated `software_version` field in their client metadata document. If the auth server sees a client version change, it should ensure that any permission sets referenced by the client would be refreshed. The motivation is to ensure that roll-out of new client software that requires updated sets can rely on auth servers giving the updated permissions within a timeframe shorter than the 24 hour "stale" cache lifetime.
 
 
 ## Usage and Implementation Guidelines
@@ -339,6 +356,8 @@ As an optional mechanism to trigger a cache purge, client instances can set an u
 The currently defined resources and parameters do not make use of all of the syntax flexibility. Implementations might decide to focus on currently used syntax instead of the general syntax.
 
 Auth Servers may chose to use a "Lexicon Aggregator" service to offload lexicon resolution of permission sets. Such services would monitor a full-network firehose to detect updated permission sets. They could contain security logic to protect against NSID domain hijacking or adversarial changes to permission set scope.
+
+Authorization servers are allowed to map an `include:<nsid>` to a different set of permissions than those included in the permission-set. Clients can inspect the `scope` parameter of the token response to verify that they got the right permissions. The OAuth specification requires that the Authorization Server must return the `scope` parameter in the token response if it does not match the requested one.
 
 ## Possible Future Changes
 
