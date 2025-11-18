@@ -12,9 +12,11 @@ If you're building your own protocol implementation or OAuth Client SDK, the mor
 
 ## What *is* OAuth?
 
-Without OAuth, if you (as a user) wanted to authorize a 3rd party app to access your account, your only option would be to type your account password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see your password. The app is granted *full* access to your whole account, even if the app only needs partial access. The only way to revoke that access would be to change your password.
+OAuth is an authorization framework that lets developers request access to an account without requiring users to hand over their password. Without OAuth, if someone wanted to authorize a 3rd party app to access their account, their only option would be to type their username and password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see, and likely save, passwords. And once an app has a username and password, the app would have _full_ access to their account.
 
-OAuth is a family of open specifications for doing secure Authorization, i.e. solving the problem of not handing out passwords to 3rd party apps, not giving those apps overly broad account access, and being able to manage and revoke that access later.
+OAuth aims to solve these problems with a family of open specifications for managing secure authorization without requiring a person's username and password. If you've ever used a "Sign in with..." button or link on the web, you've used OAuth.
+
+As a developer, you can request limited access to a person's account, meaning if you only need to post a message to someone's public timeline, you don't also need to request access to read their private messages. This is great for your app because you don't have to worry about managing data you don't need, and it's great for the person using your app because they don't need to worry about their DMs being compromised.
 
 ## How is OAuth Different in AT Protocol?
 
