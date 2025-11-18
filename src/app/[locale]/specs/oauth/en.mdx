@@ -187,7 +187,7 @@ Use of the atproto OAuth profile, as indicated by the `atproto` scope, means tha
 
 The OAuth 2.0 specification does not require Authorization Servers to return the granted scopes in the token responses unless the scope that was granted is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes in the token response. Clients should reject token responses if they don't contain a `scope` field, or if the `scope` field does not contain `atproto`.
 
-The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original "session token" auth system:
+The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. **Work on permission sets is in progress**. Currently, the `atproto` profile of OAuth defines `transition` scopes which align with the permissions granted under the original "session token" auth system:
 
 - `transition:generic`: broad PDS account permissions, equivalent to the previous "App Password" authorization level.
     - write (create/update/delete) any repository record type
@@ -203,7 +203,9 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
     - this scope depends on and does not function without the  `transition:generic` scope
 - `transition:email`: access to the account email address
     - email address (and confirmation status) gets included in response to `com.atproto.server.getSession` endpoint
-    
+
+Granular permissions have so far only been implemented on the `bsky.social` hosting service. The ergonomics of OAuth scopes in AT Protocol are still evolving. The current implementation is documented in the following section.
+
 ### Scope String Details
 
 Permission scope strings are case-sensitive and use a subset of printable non-whitespace ASCII characters. They include a resource name, followed by an optional "positional" part separated by a colon (:), followed by optional parameters starting with a question mark (?): for example, `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview` is used to return a DID, and is required along with the `atproto` scope for a minimal login flow that supports signing in with Bluesky but grants no additional permissions.
