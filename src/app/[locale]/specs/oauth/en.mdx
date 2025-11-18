@@ -50,12 +50,16 @@ OAuth client software is identified by a globally unique `client_id`. Distinct v
 - the path does not need to include `oauth-client-metadata.json`, but it is helpful convention.
 
 <Note>
-If you have been using `client-metadata.json` rather than `oauth-client-metadata.json`, you can make this change to have your domain display on the authorize page, rather than a URL string:
+If you have been using `client-metadata.json` rather than `oauth-client-metadata.json`, you can make this change to have your domain display on the auth flow page, rather than a URL string.
 </Note>
 
 <Container>
   <Image src={oauthdomain} alt="" className="w-full dark:invert max-w-md mx-auto" />
 </Container>
+
+The auth flow page will display all the relevent permissions being granted. This is true both for apps using granular permissions, and for those using the [transitional](#authorization-scopes) OAuth scopes.
+
+Client Apps should be sure to check which auth scopes were actually approved during the auth flow. In particular, when requesting permission to read an account email address (`account:email`), the user might decline that permission while granting others. In theory, any individual permission might be denied while the overall request is granted.
 
 Authorization Servers which support both the atproto OAuth profile and other forms of OAuth should take care to prevent `client_id` value collisions. For example, `client_id` values for clients which are not auto-registered should never have the prefix `https://` or `http://`.
 
@@ -199,9 +203,77 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
     - this scope depends on and does not function without the  `transition:generic` scope
 - `transition:email`: access to the account email address
     - email address (and confirmation status) gets included in response to `com.atproto.server.getSession` endpoint
+    
+### Scope String Details
+
+Permission scope strings are case-sensitive and use a subset of printable non-whitespace ASCII characters. They include a resource name, followed by an optional "positional" part separated by a colon (:), followed by optional parameters starting with a question mark (?): for example, `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview` is used to return a DID, and is required along with the `atproto` scope for a minimal login flow that supports signing in with Bluesky but grants no additional permissions.
+
+The positional part can contain any characters except for a question mark, including additional colon characters, hash (#), period, etc. and support being percent encoded. Parameters are separated by ampersands (&), have name and value parts separated by equals (=), and support percent-encoding of reserved characters. Array values can be represented by repeated parameters with the same name part.
+
+**Repo Permissions**: the `collection` parameter can be positional or an array, and specifies the NSIDs of record types. Wildcard `collection` is allowed and covers all record types; partial wildcard ("glob patterns") is not allowed. The `action` parameter can be an array of values, and includes `create`, `update`, and `delete`. The default `action` (if not specified) is all three actions.
+
+```
+# Full permission (Create, Update, Delete) on the Bluesky profile record type
+repo:app.bsky.actor.profile
+
+# Same as above, using the named parameter instead of a positional parameter
+repo?collection=app.bsky.actor.profile
+
+# Same as above, with every possible action being explicit
+repo:app.bsky.actor.profile?action=create&action=update&action=delete
+
+# Full permissions on all record types
+repo:*
+
+# Delete only permission on all record types
+repo:*?action=delete
+```
+
+**RPC Permissions**: the `lxm` (lexicon method) parameter is required, may be positional, has NSID syntax, and represents one (or more) API endpoints. The `aud` (audience) parameter is required, has DID-and-fragment syntax, represents the target service, and must be either a single value or wildcard. Either `lxm` or `aud` may be wildcard, but both can not be wildcard at the same time. Any `rpc` scope string containing a wildcard in both `lxm` and `aud` positions must be rejected.
+
+```
+# Submit moderation reports to any service
+rpc:com.atproto.moderation.createReport?aud=*
+
+# Call any RPC method on a specific service
+rpc?lxm=*&aud=did:web:api.bsky.app%23bsky_appview
+```
+
+**Blob Permissions**: the `accept` parameter is required, and may be positional. It is a MIME type pattern, with partial wildcard ("glob pattern") supported (`*/*` and `text/*` blob patterns are allowed, prefix-only like `*/html` is not).
+
+```
+# Upload any type of blob
+blob:*/*
+
+# Upload video or html
+blob?accept=video/*&accept=text/html
+```
+
+**Account Permissions**: the `attr` parameter is required, and may be positional. The `action` parameter is optional, can be `read` or `manage` (which includes read/write permissions), and defaults to `read`. The initial supported account attributes are `email` (account email address) and `repo` (for importing entire data repositories, as part of account migration). `status` (account hosting status) can be declared, but is not currently implemented anywhere.
+
+```
+# read account email
+account:email
+
+# Import repo
+account:repo?action=manage
+
+# Activate or deactivate account
+account:status?action=manage
+```
+
+**Identity Permissions**: the `attr` parameter is required, may be positional, and may be a wildcard (`*`). The `action` parameter is optional, defaults to `manage`, and can also be set to `submit`. The initial `attr` parameters are `handle` (for updating just the account handle), or `*` for full DID document control.
+
+```
+# Manage account handle
+identity:handle
+
+# Full control over DID document, eg for account migration
+identity:*
+```
 
 <Note>
-As of August 2025, a more granular permission system is available for use, announced and described [here](https://github.com/bluesky-social/atproto/discussions/4118). The design is considered stable, although it has not yet been formally documented in this specification.
+Note: An earlier version of these examples showed scope `identity:*?action=submit` (allowing submission of pre-signed updates). This scope does not exist in the current implementation, but some equivalent and/or more granular `identity:` scopes may be introduced in the future.
 </Note>
 
 ## Authorization Requests

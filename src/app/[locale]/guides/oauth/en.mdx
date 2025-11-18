@@ -83,11 +83,11 @@ Of these three, the BFF pattern is the currently recommended approach for buildi
 
 The OAuth flow requires permission "scopes" which describe the level of access granted with the session. For now, granular permissions have been implemented on the `bsky.social` hosting service, and are rolling out to the [self-hosted PDS distribution](/guides/self-hosting). Work on permission sets (including lexicon resolution) is in progress. Developers may start to implement more granular permissions -- for example, apps only asking for permissions to specific record types or API endpoints. We expect most apps to use the higher-level "permission sets" when they become available, which will provide more accessible language about the permissions being granted.
 
-The minimal set of OAuth permissions that a third-party AT application should request to faciliate login are:
+The minimal set of OAuth permissions that a third-party AT application should request to sign in with Bluesky are:
 - `atproto`
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
 If you need to interact with any images or video, you will also need:
 - `blob:*/*`
 
-The ergonomics of OAUth scopes in AT Protocol are still evolving. This minimal set is designed to provide a known-good starting point for app developers that does not grant unnecessary permissions. While we finalize granular permission scopes, we are also supporting a set of temporary coarse-grained scopes called the "transition scopes". There are currently no plans to deprecate either the transition scopes or the use of App Passwords. For an overview of these transition scopes, and more in-depth information on OAuth, see [Authorization Scopes](/specs/oauth#authorization-scopes).
+The ergonomics of OAuth scopes in AT Protocol are still evolving. This minimal set is designed to provide a known-good starting point for app developers that does not grant unnecessary permissions. While we finalize granular permission scopes, we are also supporting a set of temporary coarse-grained scopes called the "transition scopes". There are currently no plans to deprecate either the transition scopes or the use of App Passwords. For an overview of these transition scopes, and more in-depth information on OAuth, see [Authorization Scopes](/specs/oauth#authorization-scopes).
