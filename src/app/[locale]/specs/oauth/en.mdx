@@ -1,3 +1,6 @@
+import {Container} from "@/components/Container"
+import oauthdomain from "./oauth-domain.jpg"
+
 export const metadata = {
   title: 'OAuth',
   description:
@@ -44,7 +47,15 @@ OAuth client software is identified by a globally unique `client_id`. Distinct v
 
 - it must be a well-formed URL, following the W3C URL specification
 - the schema must be `https://`, and there must not be a port number included. Note that there is a special exception for `http://localhost` `client_id` values for development, see details below
-- the path does not need to include `client-metadata.json`, but it is helpful convention
+- the path does not need to include `client-metadata.json`, but it is helpful convention.
+
+<Note>
+You may want to change your metadata filepath from `/client-metdata.json` to `/oauth-client-metadata.json` to have your brand domain display on the authorize page, rather than a URL string:
+
+<Container>
+  <Image src={oauthdomain} alt="" className="w-full dark:invert max-w-md mx-auto" />
+</Container>
+</Note>
 
 Authorization Servers which support both the atproto OAuth profile and other forms of OAuth should take care to prevent `client_id` value collisions. For example, `client_id` values for clients which are not auto-registered should never have the prefix `https://` or `http://`.
 
