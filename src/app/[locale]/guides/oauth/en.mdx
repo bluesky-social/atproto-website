@@ -87,7 +87,11 @@ The minimal set of OAuth permissions that a third-party AT application should re
 - `atproto`
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
-If you need to interact with any images or video, you will also need:
+For CRUD permissions on additional elements of the Bluesky Lexicon, you would want to add these scopes as needed:
+- `repo:app.bsky.feed.*`  — for feed operations (posts, reposts, likes)
+- `repo:app.bsky.graph.*` — for social graph operations (follows, blocks, mutes)
+
+If you need to link any uploaded images or videos to the records (posts) you create, you will also need:
 - `blob:*/*`
 
 The ergonomics of OAuth scopes in AT Protocol are still evolving. This minimal set is designed to provide a known-good starting point for app developers that does not grant unnecessary permissions. While we finalize granular permission scopes, we are also supporting a set of temporary coarse-grained scopes called the "transition scopes". There are currently no plans to deprecate either the transition scopes or the use of App Passwords. For an overview of these transition scopes, and more in-depth information on OAuth, see [Authorization Scopes](/specs/oauth#authorization-scopes).
