@@ -87,10 +87,6 @@ The minimal set of OAuth permissions that a third-party AT application should re
 - `atproto`
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
-For CRUD permissions on additional elements of the Bluesky Lexicon, you would want to add these scopes as needed:
-- `repo:app.bsky.feed.*`  — for feed operations (posts, reposts, likes)
-- `repo:app.bsky.graph.*` — for social graph operations (follows, blocks, mutes)
-
 If you need to link any uploaded images or videos to the records (posts) you create, you will also need:
 - `blob:*/*`
 
