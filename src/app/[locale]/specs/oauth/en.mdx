@@ -208,7 +208,7 @@ Granular permissions have so far only been implemented on the `bsky.social` host
 
 ### Scope String Details
 
-Permission scope strings are case-sensitive and use a subset of printable non-whitespace ASCII characters. They include a resource name, followed by an optional "positional" part separated by a colon (:), followed by optional parameters starting with a question mark (?): for example, `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview` is used to return a DID, and is required along with the `atproto` scope for a minimal login flow that supports signing in with Bluesky but grants no additional permissions.
+Permission scope strings are case-sensitive and use a subset of printable non-whitespace ASCII characters. They include a resource name, followed by an optional "positional" part separated by a colon (:), followed by optional parameters starting with a question mark (?): for example, `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview` is used to fetch the user's own profile. The `atproto` scope is required for a minimal login flow that supports signing in with Bluesky but grants no additional permissions (authentication only, no authorization).
 
 The positional part can contain any characters except for a question mark, including additional colon characters, hash (#), period, etc. and support being percent encoded. Parameters are separated by ampersands (&), have name and value parts separated by equals (=), and support percent-encoding of reserved characters. Array values can be represented by repeated parameters with the same name part.
 
