@@ -7,7 +7,7 @@ export const metadata = {
 
 # Event Stream
 
-In addition to regular [HTTP API](/specs/xrpc) endpoints, atproto supports continuous event streams. Message schemas and endpoint names are transport-agnostic and defined in [Lexicons](/specs/lexicon). The initial encoding and transport scheme uses binary [DAG-CBOR](https://ipld.io/docs/codecs/known/dag-cbor/) encoding over [WebSockets](https://en.wikipedia.org/wiki/WebSocket). {{ className: 'lead' }}
+In addition to regular [HTTP API](/specs/xrpc) endpoints, atproto supports continuous event streams. Message schemas and endpoint names are transport-agnostic and defined in [Lexicons](/specs/lexicon). The initial encoding and transport scheme uses binary [DAG-CBOR](https://dasl.ing/) encoding over [WebSockets](https://en.wikipedia.org/wiki/WebSocket). {{ className: 'lead' }}
 
 The Lexicon type for streams is `subscription`. The schema includes an identifier (`id`) for the endpoint, a `message` schema (usually a union, allowing multiple message types), and a list of error types (`errors`).
 

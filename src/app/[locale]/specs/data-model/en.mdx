@@ -16,21 +16,19 @@ Distinct pieces of data are called **nodes,** and when encoded in binary (DAG-CB
 
 Unlike URLs, hash references (links) do not encode a specific network location where the content can be found. The location and access mechanism must be inferred by protocol-level context. Hash references do have the property of being "self-certifying", meaning that returned data can be verified against the link hash. This makes it possible to redistribute content and trust copies even if coming from an untrusted party.
 
-Links are encoded as [Content Identifiers](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (CIDs), which have both binary and string representations. CIDs include a metadata code which indicates whether it links to a node (DAG-CBOR) or arbitrary binary data. Some additional constraints on the use of CIDs in atproto are described below.
+Links are encoded as [Content Identifiers](https://docs.ipfs.tech/concepts/content-addressing/#identifier-formats) (TODO: DASL link) (CIDs), which have both binary and string representations. CIDs include a metadata code which indicates whether it links to a node (DAG-CBOR) or arbitrary binary data. Some additional constraints on the use of CIDs in atproto are described below.
 
 In atproto, object nodes often include a string field `$type` that specifies their Lexicon schema. Data is mostly self-describing and can be processed in schema-agnostic ways (including decoding and re-encoding), but can not be fully validated without the schema on-hand or known ahead of time.
 
-## Relationship With IPLD
+## Relationship With DASL and IPLD
 
-The data model is inspired by [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/), a specification for hash-linked data structures from the IPFS ecosystem.
+The atproto data model aligns with [DASL](https://dasl.ing/), a specification for hash-linked data structures. DASL libraries and tooling can be used when implementing atproto. DASL itself is a subset of [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/).
 
 IPLD specifies a normalized JSON encoding called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data. The atproto JSON encoding is not designed to be byte-determinisitic, and the CBOR representation is used when data needs to be cryptographically signed or hashed.
 
-The IPLD Schema language is not used.
-
 ## Data Types
 
-| Lexicon Type  | IPLD Type | JSON                 | CBOR                    | Note                    |
+| Lexicon Type  | DASL Type | JSON                 | CBOR                    | Note                    |
 | ---           | ---       | ---                  | ---                     | ---                     |
 | -             | null      | Null                 | Special Value (major 7) |                         |
 | `boolean`     | boolean   | Boolean              | Special Value (major 7) |                         |
@@ -131,7 +129,7 @@ For comparison, the DAG-JSON encoding has two nested objects, with outer key `/`
 
 ## Link and CID Formats
 
-The [IPFS CID specification](https://github.com/multiformats/cid) is very flexible. It supports a wide variety of hash types, a field indicating the "type" of content being linked to, and various string encoding options. These features are valuable to allow evolution over time, but to maximize interoperability among implementations, only a specific "blessed" set of CID types are allowed.
+The [IPFS CID specification](https://github.com/multiformats/cid) is very flexible. It supports a wide variety of hash types, a field indicating the "type" of content being linked to, and various string encoding options. These features are valuable to allow evolution over time, but to maximize interoperability among implementations, only a specific "blessed" set of CID types are allowed. These align with the [DASL](https://dasl.ing) specification.
 
 The blessed formats for CIDs in atproto are:
 
