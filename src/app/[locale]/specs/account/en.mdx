@@ -6,9 +6,9 @@ export const header = {
 
 # Account Hosting
 
-All users in the atproto network have an "identity", based around a unique and immutable DID. Active users also have an "account" on a Personal Data Server (PDS). The PDS provides a number of network services, including repository hosting, authorization and authentication, and blob storage. Accounts have a lifecycle (including deletions and takedowns). Identities may migrate between hosting providers. Downstream services, including relays and AppViews, may redistribute account content.
+All users in the atproto network have an "identity", based around a unique and immutable DID. Active users also have an "account" on a Personal Data Server (PDS). The PDS provides a number of network services, including repository hosting, authorization and authentication, and blob storage. Accounts have a lifecycle (including account deletion and account takedowns). Identities may migrate between hosting providers.
 
-Each service which redistributes content must decide independently what accounts and content to host and redistribute. For example, they might focus on a subset of accounts in the network, define their own content policies, or have regional legal obligations. All services are expected to respect certain protocol-level account actions (described below), such as temporary account deactivation. Combined, each network service has a synthesized “hosting status” for each account they distribute public data for.
+Downstream services, including relays and AppViews, redistribute account content. Each service which redistributes content decides independently what scope of accounts and content to host and redistribute. For example, they might focus on a subset of accounts in the network; define their own content policies; or have regional legal obligations. All services are expected to respect certain protocol-level account actions (described below), such as temporary account deactivation. Combined, each network service has a synthesized "hosting status" for each account they distribute public data for.
 
 This document describes the various hosting states an account and identity can have in the network, what the expectations are for downstream services when states change, and how accounts can be migrated between hosting providers (PDS instances).
 
@@ -20,14 +20,16 @@ Identity metadata (DID documents and handle status), and the account hosting sta
 
 Network services are encouraged to implement API endpoints (such as `com.atproto.sync.getRepoStatus`) which describe current hosting status for individual accounts. If they expose an event stream, they should also emit `#account` events when their local account hosting status updates for an account.
 
-In addition to the `active` boolean, an account might in a more specific state (all of which correspond with `active=false`):
+In addition to the `active` boolean, an account might in a more specific state:
 
-- `deleted`: user or host has deleted the account, and content should be removed from the network. Implied permanent or long-term, though may be reverted (deleted accounts may reactivate on the same or another host).
-- `deactivated`: user has temporarily paused their overall account. Content should not be displayed or redistributed, but does not need to be deleted from infrastructure. Implied time-limited. Also the initial state for an account after migrating to another PDS instance.
-- `takendown`: host or service has takendown the account. Implied permanent or long-term, though may be reverted.
-- `suspended`: host or service has temporarily paused the account. Implied time-limited.
+- `deleted` (active is false): user or host has deleted the account, and content should be removed from the network. Implied permanent or long-term, though may be reverted (deleted accounts may reactivate on the same or another host).
+- `deactivated` (active is false): user has temporarily paused their overall account. Content should not be displayed or redistributed, but does not need to be deleted from infrastructure. Implied time-limited. Also the initial state for an account after migrating to another PDS instance.
+- `takendown` (active is false): host or service has takendown the account. Implied permanent or long-term, though may be reverted.
+- `suspended` (active is false): host or service has temporarily paused the account. Implied time-limited.
+- `desynchronized` (active may be true): host or service has detected a problem synchronizing the account's repository, and may be missing content
+- `throttled` (active may be true): host or service has paused processing of new content because a resource rate-limit has been exceeded
 
-New account states will be added in the future. To prevent broken expectations, relevant API endpoints (such as `com.atproto.sync.getRepoStatus`, and the `#account` event on the `com.atproto.sync.subscribeRepos` event stream) break out `active` as a boolean flag, and then clarify non-active accounts with a separate `status` string. Services should use the `active` flag to control overall account visibility (observable behavior) with the `status` string acting as clarification which might determine more specific infrastructure behaviors (such as data deletion).
+New account states may be added in the future. To prevent broken expectations, relevant API endpoints (such as `com.atproto.sync.getRepoStatus`, and the `#account` event on the `com.atproto.sync.subscribeRepos` event stream) include `active` as a boolean flag, and an additional `status` string indicating the specific status. Services should use the `active` flag to control overall account visibility (observable behavior) with the `status` string acting as clarification which might determine more specific infrastructure behaviors (such as data deletion) or help understand behaviors (such as exceeding rate limits).
 
 The deactivation and suspension states are implied to be temporary, though they might have indefinite time periods. Deletion and takedowns are implied to be more final, but can still technically be reverted (and frequently are, in practice).
 
@@ -47,11 +49,11 @@ To summarize, when an account status is non-`active`, the content that hosts sho
 
 Unlike other aspects of atproto, account status is not self-certifying, and there is not a method for authenticated transfer or redistributing of account status between arbitrary parties.
 
-Most commonly, account status is propagated “hop by hop”, with each “downstream” service accepting and adopting the hosting status for accounts at their upstream. If an intermediate service (such as a relay) overrides the status of their upstream (for example, an infrastructure account takedown), they will broadcast and propagate that action downstream to subscribers.
+Most commonly, account status is propagated "hop by hop", with each "downstream" service accepting and adopting the hosting status for accounts at their upstream. If an intermediate service (such as a relay) overrides the status of their upstream (for example, an infrastructure account takedown), they will broadcast and propagate that action downstream to subscribers.
 
 By default, if an account’s current active PDS is not available, account status should remain unchanged, at least for some time period. This keeps the network resilient and accounts online during temporary infrastructure outages. Services may decide their own policies for accounts whose PDS hosts remain offline for long periods of time.
 
-The general expectation is that downstream services will not list an account as `active` if it is inactive at an upstream service. However, the concept of “upstream” is informal, and services may need to define their own policies for some corner-cases. For example, an AppView might consume from multiple independent relay providers, who report differing statuses for the same account, due to policy differences. If the network connection between a relay and PDS is disrupted, they may report different statuses for the same account. 
+The general expectation is that downstream services will not list an account as `active` if it is inactive at an upstream service. However, the concept of "upstream" is informal, and services may need to define their own policies for some corner-cases. For example, an AppView might consume from multiple independent relay providers, who report differing statuses for the same account, due to policy differences. If the network connection between a relay and PDS is disrupted, they may report different statuses for the same account.
 
 If there is doubt about about an account’s general status in the network, the account’s current active PDS host can be queried using the `com.atproto.sync.getRepoStatus` endpoint. If the account is not `active` there, it is generally expected to not be active elsewhere, especially in the case of user-initiated actions (deactivation or deletion).
 
@@ -59,7 +61,7 @@ If there is doubt about about an account’s general status in the network, the 
 
 Separate from overall account status, individual pieces of content may be removed. When accounts remove records from their public repositories, hosting services should remove public access to that content.
 
-Applications which would benefit from explicit “tombstones” (indications that content previously existed) should explicitly design them in to Lexicon schemas. In the absence of explicit application-level tombstones, services are expected not to differentiate between content which has never existed and content which has been entirely deleted. Note that this is different from acknowledging account-level deletion, which is encouraged.
+Applications which would benefit from explicit "tombstones" (indications that content previously existed) should explicitly design them in to Lexicon schemas. In the absence of explicit application-level tombstones, services are expected not to differentiate between content which has never existed and content which has been entirely deleted. Note that this is different from acknowledging account-level deletion, which is encouraged.
 
 ## PDS Account Migration
 
@@ -71,9 +73,9 @@ However, in the common case, when there is an active account on a functional cur
 
 - creating an account on the new PDS (which may start with `active` false, such as `deactivated`)
 - migrating data from the old PDS to the new PDS
-- updating identity (DID document) to point to the new PDS and using a new atproto signing key. For PLC DIDs, usually involves updating PLC rotation keys as well.
-- updating account status on both PDS instances, such that old is inactive, and new is active
-- emitting a `#commit` event from the new PDS, signed by the new atproto signing key, with a higher commit `rev`.
+- updating identity (DID document) to point to the new PDS and using a new atproto signing key. For PLC DIDs, usually involves updating PLC rotation keys as well. This results in an `#identity` event being emitted from at least one of the PDS hosts.
+- updating account status on both PDS instances, such that old is inactive, and new is active. This results in `#account` event being emitted from each PDS.
+- emitting a `#sync` and/or `#commit` event from the new PDS, signed by the new atproto signing key, with a higher commit `rev`.
 
 ## Usage and Implementation Guidelines
 
