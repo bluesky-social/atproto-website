@@ -87,6 +87,8 @@ Parameters:
 - `aud` (string, semi-required): audience of API requests, as a DID service reference: DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though as noted above `aud` and `lxm` can not both be wildcard. Always required in granular string representation; contingent on `inheritAud` in permission sets.
 - `inheritAud` (boolean, optional): only used inside permission sets. If true, an `aud` value will be inherited from the `include:` invocation, and the `aud` field is not required on the permission.
 
+If `inheritAud` is true and the permission also defines `aud`, then the permission is invalid (and should be ignored). If `inheritAud` is true and no `aud` is defined on the invoking `include:`, then the `rpc` permission is invalid (and should be ignored).
+
 Examples:
 
 ```
@@ -182,12 +184,11 @@ Permissions of this type can not be included in permission sets, and must be req
 Parameters:
 
 - `attr` (string, required, positional): an aspect or component of account. May be be wildcard (`*`), indicating full control of DID document and handle.
-- `action` (string, optional): degree of control, with context dependent on the attribute. Default is `manage`.
 
 Attributes:
 
-- `handle`: ability to update handle. This includes the registration of the handle in the DID document, as well as any domain names controlled by the PDS. The `manage` action gives full control, including PLC directory submission (if supported)
-- `*` (wildcard): full control over DID document and handle. The `manage` action allows updates of individual fields.
+- `handle`: ability to update handle. This includes the registration of the handle in the DID document, as well as any domain names controlled by the PDS.
+- `*` (wildcard): full control over DID document and handle.
 
 
 ## Scope String Syntax
