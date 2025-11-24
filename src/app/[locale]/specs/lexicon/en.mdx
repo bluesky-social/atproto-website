@@ -244,7 +244,7 @@ Additional `permission` fields depend on the resource type being declared. The s
     - `action` (array of unique strings, optional): limits set of record operations. Values must be one or `create`, `update`, `delete`, case-sensitive.
 - `rpc`: remote API calls via proxying or service token generation
     - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Wildcard (`*`) is not supported in Lexicon schema context.
-    - `aud` (string, semi-required): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though `aud` and `lxm` can not both be wildcard. Required unless `inheritAud` is true.
+    - `aud` (string, semi-required): remote service ("audience"). In the context of permission sets, can not have fixed DID service references. Supports wildcard (`*`), though `aud` and `lxm` can not both be wildcard. Required unless `inheritAud` is true. Effectively must be either wildcard, or undefined with `inheritAud` set to true.
     - `inheritAud` (boolean, optional): if true, `aud` does not need to be defined.
 
 Note that the `blob`, `account`, and `identity` resources types are not supported in Lexicon schema context.

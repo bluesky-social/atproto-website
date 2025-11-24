@@ -84,7 +84,7 @@ When included in a permission set, the audience parameter may be inherited from 
 Parameters:
 
 - `lxm` (array of strings, required, positional): NSID of API endpoints. Wildcard (`*`) is allowed in scope string syntax, and gives access to all endpoints. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
-- `aud` (string, semi-required): audience of API requests, as a DID service reference: DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though as noted above `aud` and `lxm` can not both be wildcard. Always required in granular string representation; contingent on `inheritAud` in permission sets.
+- `aud` (string, semi-required): audience of API requests, as a DID service reference: DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though as noted above `aud` and `lxm` can not both be wildcard. DID references are not allowed in permission set context. Always required in granular string representation; contingent on `inheritAud` in permission sets.
 - `inheritAud` (boolean, optional): only used inside permission sets. If true, an `aud` value will be inherited from the `include:` invocation, and the `aud` field is not required on the permission.
 
 If `inheritAud` is true and the permission also defines `aud`, then the permission is invalid (and should be ignored). If `inheritAud` is true and no `aud` is defined on the invoking `include:`, then the `rpc` permission is invalid (and should be ignored).
