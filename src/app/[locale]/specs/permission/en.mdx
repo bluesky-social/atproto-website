@@ -32,8 +32,8 @@ Write access to records in the account's public repository. Can be limited to sp
 
 Parameters:
 
-- `collection` (string array, required, positional): NSID of record types. Wildcard (`*`) is allowed in scope string syntax, and grants access to all records. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
-- `action` (unique string array, optional): defines the set of record operations allowed. Allowed values are `create`, `update`, `delete`. If not defined, all operations are allowed
+- `collection` (array of strings, required, positional): NSID of record types. Wildcard (`*`) is allowed in scope string syntax, and grants access to all records. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
+- `action` (array of unique strings, optional): defines the set of record operations allowed. Allowed values are `create`, `update`, `delete`. If not defined, all operations are allowed
 
 Examples:
 
@@ -83,7 +83,7 @@ When included in a permission set, the audience parameter may be inherited from 
 
 Parameters:
 
-- `lxm` (string array, required, positional): NSID of API endpoints. Wildcard (`*`) is allowed in scope string syntax, and gives access to all endpoints. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
+- `lxm` (array of strings, required, positional): NSID of API endpoints. Wildcard (`*`) is allowed in scope string syntax, and gives access to all endpoints. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
 - `aud` (string, semi-required): audience of API requests, as a DID service reference: DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though as noted above `aud` and `lxm` can not both be wildcard. Always required in granular string representation; contingent on `inheritAud` in permission sets.
 - `inheritAud` (boolean, optional): only used inside permission sets. If true, an `aud` value will be inherited from the `include:` invocation, and the `aud` field is not required on the permission.
 
@@ -158,21 +158,8 @@ Examples:
 # read account email
 account:email
 
-{
-  "type": "permission",
-  "resource": "account",
-  "attr": "email"
-}
-
 # Import repo
 account:repo?action=manage
-
-{
-  "type": "permission",
-  "resource": "account",
-  "attr": "repo"
-  "action": "manage"
-}
 ```
 
 ## `identity`
@@ -189,6 +176,13 @@ Attributes:
 
 - `handle`: ability to update handle. This includes the registration of the handle in the DID document, as well as any domain names controlled by the PDS.
 - `*` (wildcard): full control over DID document and handle.
+
+Examples:
+
+```
+# Update account handle
+identity:handle
+```
 
 
 ## Scope String Syntax
@@ -239,7 +233,7 @@ Full-featured client apps require a large number of granular permissions to func
 
 To simplify permission management, Lexicon designers can define "sets" of permissions as part of the schemas they publish. These permission sets are themselves Lexicon schemas and are referred to by NSID, such as `com.example.authBasicFeatures`.
 
-Auth Servers resolve, authenticate, and process permission-sets dynamically. Sets include user-meaningful titles and summaries that are displayed to end users during the authorization request flow, with support for internationalization. These summaries improve consent comprehension and ultimately account security (the user interface should also make it possible to expand the specific granular permissions being granted). Permission sets are published publicly and can be used by any client developer. (Caching and fallback behaviors for dynamic resolution are discussed below.)
+Authorization Servers resolve, authenticate, and process permission-sets dynamically. Sets include user-meaningful titles and summaries that are displayed to end users during the authorization request flow, with support for internationalization. These summaries improve consent comprehension and ultimately account security (the user interface should also make it possible to expand the specific granular permissions being granted). Permission sets are published publicly and can be used by any client developer. (Caching and fallback behaviors for dynamic resolution are discussed below.)
 
 The below is an example permission set Lexicon. The full syntax is described in the [Lexicon specification](/specs/lexicon).
 
@@ -303,7 +297,7 @@ include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview
 
 Because some of the `rpc` permissions have the `inheritAud` flag set to true, the `aud` parameter on the `include` will be passed down to those specific `rpc` permissions. If the `aud` had not been part of the `include`, the default value (no audience) would have been used instead.
 
-Permission sets are Lexicon schemas and are published and fetched using the Lexicon resolution system, which includes cryptographic authentication. Permission sets can be updated over time as new schemas are added to a namespace (eg, new record types or API endpoints). Auth Servers are expected to maintain a cache of resolved sets, but to re-resolve them periodically. The permissions associated with an Access Token should remain fixed, but when a client refreshes their tokens (obtaining a new access token), the computed permissions for the session may be updated to reflect changes to sets requested by the client.
+Permission sets are Lexicon schemas and are published and fetched using the Lexicon resolution system, which includes cryptographic authentication. Permission sets can be updated over time as new schemas are added to a namespace (eg, new record types or API endpoints). Authorization Servers are expected to maintain a cache of resolved sets, but to re-resolve them periodically. The permissions associated with an Access Token should remain fixed, but when a client refreshes their tokens (obtaining a new access token), the computed permissions for the session may be updated to reflect changes to sets requested by the client.
 
 This adds an intentional degree of temporal dynamism to OAuth sessions involving permission sets. Lexicon designers can define new resources (eg, record types) and update published sets to include permissions to those resources. Client software can then be updated to take advantage of those new lexicons, without requiring users to re-authenticate their sessions. OAuth session are strictly limited to the auth scopes in the initial grant; it is the indirection of permission sets which enables this flexibility.
 
@@ -323,9 +317,9 @@ For example, the set `app.example.feed.authOnlyPost` could include permissions t
 
 ### Resolution and Caching
 
-Permission set Lexicons need to be resolved by auth servers (eg, PDS instances). The existing [Lexicon publication and resolution system](/specs/lexicon) describes how schemas are published and verified.
+Permission set Lexicons need to be resolved by Authorization Servers (eg, PDS instances). The existing [Lexicon publication and resolution system](/specs/lexicon) describes how schemas are published and verified.
 
-To reduce network traffic and increase resiliency to outages, auth servers are expected to cache permission set resolution. Caches may be shared across all accounts and sessions on an Auth Server.
+To reduce network traffic and increase resiliency to outages, Authorization Servers are expected to cache permission set resolution. Caches may be shared across all accounts and sessions on an Authorization Server.
 
 Permission set schemas should be cached with long "expiration" times but shorter "stale" times. Stale Lexicons should get updated (aka, attempt resolution refresh), but if resolution fails, the previously existing stale values can be used. The recommended "stale" lifetime is 24 hours, and this is intended as a firm upper bound on cache lifetime. The firm lower bound on cache lifetime is that of access token lifetimes, meaning 15-30 minutes. The recommended "expiration" lifetime for referencing a permission set for a new auth session is 90 days, but this is not a firm bound. Existing auth sessions should not be impacted by the "expiration" of permission sets from any cache.
 
@@ -336,7 +330,7 @@ At the start of a session, if a permission set can not be resolved (and is not a
 
 The currently defined resources and parameters do not make use of all of the syntax flexibility. Implementations might decide to focus on currently used syntax instead of the general syntax.
 
-Auth Servers may chose to use a "Lexicon Aggregator" service to offload lexicon resolution of permission sets. Such services would monitor a full-network firehose to detect updated permission sets. They could contain security logic to protect against NSID domain hijacking or adversarial changes to permission set scope.
+Authorization Servers may chose to use a "Lexicon Aggregator" service to offload lexicon resolution of permission sets. Such services would monitor a full-network firehose to detect updated permission sets. They could contain security logic to protect against NSID domain hijacking or adversarial changes to permission set scope.
 
 ## Possible Future Changes
 
