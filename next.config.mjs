@@ -38,6 +38,11 @@ const nextConfig = {
         destination: '/specs/oauth',
         permanent: false,
       },
+      {
+        source: '/guides/lexinomicon',
+        destination: '/guides/lexicon-style-guide',
+        permanent: true,
+      },
       // legacy docs
       {
         source: '/faq',

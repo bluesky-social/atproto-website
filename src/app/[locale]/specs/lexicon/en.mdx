@@ -223,7 +223,7 @@ This is a limited-scope type which is only ever used for the `parameters` field 
 Type-specific fields:
 
 - `required` (array of strings, optional): same semantics as field on `object`
-- `properties`: similar to properties under `object`, but can only include the types `boolean`, `integer`, `string`, and `unknown`; or an `array` of one of these types
+- `properties`: similar to properties under `object`, but can only include the types `boolean`, `integer`, `string`; or an `array` of one of these types
 
 Note that unlike `object`, there is no `nullable` field on `params`.
 
@@ -509,6 +509,6 @@ Implementations which serialize and deserialize data from JSON or CBOR into stru
 
 The validation rules for unexpected additional fields may change. For example, a mechanism for Lexicons to indicate that the schema is "closed" and unexpected fields are not allowed, or a convention around field name prefixes (`x-`) to indicate unofficial extension.
 
-## Lexinomicon
+## Lexicon Style Guide
 
-For an in-depth style guide for designing Lexicons, see the [Lexinomicon](/guides/lexinomicon).
+For an in-depth style guide for designing Lexicons, see the [Lexicon Style Guide](/guides/lexicon-style-guide).
