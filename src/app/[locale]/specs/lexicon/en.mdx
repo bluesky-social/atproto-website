@@ -246,10 +246,8 @@ Additional `permission` fields depend on the resource type being declared. The s
     - `lxm` (array of strings, required): allowed XRPC endpoints, as NSIDs. Must include at least one element (not empty array). Wildcard (`*`) is not supported in Lexicon schema context.
     - `aud` (string, semi-required): remote service, identified by DID service reference (DID followed by required service type fragment, eg `did:web:api.example.com#srvtype`). Supports wildcard (`*`), though `aud` and `lxm` can not both be wildcard. Required unless `inheritAud` is true.
     - `inheritAud` (boolean, optional): if true, `aud` does not need to be defined.
-- `blob`: media file upload permissions
-    - `accept` (array of strings, required): mimetypes or partial mimetype glob patterns (`*/*` or `text/*` for example). Same syntax as the `accept` field in the `blob` lexicon type.
 
-Note that the `account` and `identity` resources types are not supported in Lexicon schema context.
+Note that the `blob`, `account`, and `identity` resources types are not supported in Lexicon schema context.
 
 Permission declarations with unknown resource types or unknown parameters (fields) must be ignored by services implementing access control. This is because the set of permissions is expected to evolve over time, and additional fields might attenuate the permission granted. It is unsafe to ignore unknown fields when parsing permissions for access control.
 

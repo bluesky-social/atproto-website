@@ -110,6 +110,8 @@ rpc?lxm=*&aud=did:web:api.example.com%23svc_appview
 
 Ability to upload media files (blobs) to PDS.
 
+Permissions of this type can not be included in permission sets, and must be requested directly by client apps.
+
 Parameters:
 
 - `accept` (array of strings, required, positional): MIME types or partial MIME type glob patterns (`*/*` or `text/*` for example). Same syntax as the `accept` field in the `blob` lexicon type.
@@ -120,20 +122,8 @@ Examples:
 # Upload any type of blob
 blob:*/*
 
-{
-  "type": "permission",
-  "resource": "blob",
-  "accept": ["*/*"]
-}
-
 # Upload video or html
 blob?accept=video/*&accept=text/html
-
-{
-  "type": "permission",
-  "resource": "blob",
-  "accept": ["video/*", "text/html"]
-}
 ```
 
 ## `account`
