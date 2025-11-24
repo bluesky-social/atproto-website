@@ -102,7 +102,7 @@ The ergonomics of OAuth scopes in AT Protocol are still evolving. This minimal s
 OAuth client software is identified by a globally unique `client_id`. Distinct variants of client software may have distinct `client_id` values; for example the browser app and Android (mobile OS) variants of the same software might have different `client_id` values. The `client_id` must be a fully-qualified web URL from which the client-metadata JSON document can be fetched. For example, `https://app.example.com/oauth-client-metadata.json`. Some more about the `client_id`:
 
 - it must be a well-formed URL, following the W3C URL specification
-- the schema must be `https://`, and there must not be a port number included. Note that there is a special exception for `http://localhost` `client_id` values for development, see details below
+- the schema must be `https://`, and there must not be a port number included. Note that there is a [special exception](/specs/oauth#localhost-client-development) for `http://localhost` `client_id` values for development.
 - the path does not need to include `oauth-client-metadata.json`, but it is helpful convention.
 
 <Note>
