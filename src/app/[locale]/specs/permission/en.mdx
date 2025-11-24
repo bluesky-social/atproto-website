@@ -199,6 +199,8 @@ The strings are case-sensitive and use a subset of printable non-whitespace ASCI
 
 For example, the scope string `account:repo?action=manage` has a resource name `account`, a "positional" part with the value `repo`, and a key/value pair `action=manage`. Knowing that the positional parameter for `account` is `attr`, the same permission could be represented as `account?action=manage&attr=repo`.
 
+If a parameter is specified in the positional position, it can not also be described in the key/value parameters. Eg, `repo:com.example.record?collection=com.example.other` is not allowed.
+
 Examples of syntactically and semantically valid scope strings:
 
 ```
@@ -341,3 +343,5 @@ Auth Servers may chose to use a "Lexicon Aggregator" service to offload lexicon 
 The set of resources is expected to expand over time as new functionality is added to the protocol.
 
 Additional attributes are expected to be added to the `account` and `identity` resources.
+
+An earlier proposal described a mechanism for purching permission set resolution caches. This would allow synchronized release of updated lexicon resources and updated client software, without concern that permissions would not be available to the client software due to cached resolution. This mechanism has not yet been implemented and is not included in the current specification.
