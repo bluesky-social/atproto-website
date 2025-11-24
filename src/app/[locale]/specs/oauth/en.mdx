@@ -66,7 +66,7 @@ The environment a client runs in also impacts the type of redirect (callback) UR
 
 Authorization Servers may maintain a set of "trusted" clients, identified by `client_id`. Because any client could use unverified client metadata to impersonate a better-known app or brand, Authorization Servers should not display such metadata to end users in the Authorization Interface by default. Trusted clients can have additional metadata shown, such as a readable name (`client_name`), project URI (`client_uri`, which may have a different domain/origin than `client_id`) and logo (`logo_uri`). See the "Security Considerations" section for more details.
 
-Clients which are only using atproto OAuth for account authentication (without authorization to access PDS resources) should request minimal scopes (see "Scopes" section), but still need to implement most of the authorization flow. In particular, it is critical that they check the `sub` field in a token response to verify the account identity (this is an atproto-specific detail).
+Clients which are only using atproto OAuth for account authentication (without authorization to access PDS resources) should request minimal scopes (see "Authorization Scopes" section), but still need to implement most of the authorization flow. In particular, it is critical that they check the `sub` field in a token response to verify the account identity (this is an atproto-specific detail).
 
 ### Client ID Metadata Document
 
@@ -83,7 +83,7 @@ The following fields are relevant for all client types:
 - `client_id` (string, required): the `client_id`. Must exactly match the full URL used to fetch the client metadata file itself
 - `application_type` (string, optional): must be one of `web` or `native`, with `web` as the default if not specified. Note that this is field specified by OpenID/OIDC, which we are borrowing. Used by the Authorization Server to enforce the relevant "best current practices".
 - `grant_types` (array of strings, required): `authorization_code` must always be included. `refresh_token` is optional, but must be included if the client will make token refresh requests.
-- `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See "Scopes" section.
+- `scope` (string, sub-strings space-separated, required): all scope values which *might* be requested by this client are declared here. The `atproto` scope is required, so must be included here. See "Authorization Scopes" section.
 - `response_types` (array of strings, required): `code` must be included.
 - `redirect_uris` (array of strings, required): at least one redirect URI is required. See Authorization Request Fields section for rules about redirect URIs, which also apply here.
 - `token_endpoint_auth_method` (string, optional): confidential clients must set this to  `private_key_jwt`.
@@ -164,15 +164,19 @@ To reiterate, it is critical for all clients - including those only interested i
 
 OAuth scopes allow more granular control over the resources and actions a client is granted access to.
 
-The special `atproto` scope is required for all atproto OAuth sessions. The semantics are somewhat similar to the `openid` scope: inclusion of it confirms that the client is using the atproto profile of OAuth and will comply with all the requirements laid out in this specification. No access to any atproto-specific PDS resources will be granted without this scope included.
+The special `atproto` scope is required for all atproto OAuth sessions. The semantics are similar to the `openid` scope: inclusion of it confirms that the client is using the atproto profile of OAuth and will comply with all the requirements laid out in this specification. No access to any atproto-specific PDS resources will be granted without this scope included.
 
-Authorization Servers may support other profiles of OAuth if client does not include the `atproto` scope. For example, an Authorization Server might function as both an atproto PDS/entryway, and support other protocols/standards at the same time.
+Authorization Servers may support other profiles of OAuth if the client does not include the `atproto` scope. For example, an Authorization Server might function as both an atproto PDS/entryway, and support other protocols/standards at the same time.
 
 Use of the atproto OAuth profile, as indicated by the `atproto` scope, means that the Authorization Server will return the atproto account DID as an account identifier in the `sub` field of token requests. Authorization Servers must return `atproto` in `scopes_supported` in their metadata document, so that clients know they support the atproto OAuth profile. A client may include only the `atproto` scope if they only need account authentication - for example a "Login with atproto" use case. Unlike OpenID, profile metadata in atproto is generally public, so an additional authorization scope for fetching profile metadata is not needed.
 
 The OAuth 2.0 specification does not require Authorization Servers to return the granted scopes in the token responses unless the scope that was granted is different from what the client requested. In the atproto OAuth profile, servers must always return the granted scopes in the token response. Clients should reject token responses if they don't contain a `scope` field, or if the `scope` field does not contain `atproto`.
 
-The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) so that clients can be given access only to the specific content and API endpoints they need access to. Until the design of that scope system is ready, the atproto profile of OAuth defines two transitional scopes which align with the permissions granted under the original "session token" auth system:
+The [Permissions Specification](/specs/permission) describes the syntax and semantics of atproto-specific resource permissions.
+
+### Transitional Scopes
+
+The atproto OAuth profile and Permissions system were not specified in the early days of atproto. To make migration of that software easier, the atproto profile of OAuth defines a small set of "transitional" scopes which align with the permissions granted under the original password-based auth system:
 
 - `transition:generic`: broad PDS account permissions, equivalent to the previous "App Password" authorization level.
     - write (create/update/delete) any repository record type
@@ -189,9 +193,7 @@ The intention is to support flexible scopes based on Lexicon namespaces (NSIDs) 
 - `transition:email`: access to the account email address
     - email address (and confirmation status) gets included in response to `com.atproto.server.getSession` endpoint
 
-<Note>
-As of August 2025, a more granular permission system is available for use, announced and described [here](https://github.com/bluesky-social/atproto/discussions/4118). The design is considered stable, although it has not yet been formally documented in this specification.
-</Note>
+The goal is to deprecate and eventually remove these transitional scopes.
 
 ## Authorization Requests
 
@@ -209,7 +211,7 @@ A summary of fields relevant to authorization requests with the atproto OAuth pr
 - `code_challenge_method` (string, required): which code challenge method is used, for example `S256`. See "PKCE" section.
 - `state` (string, required): random token used to verify the authorization request against the response. See below.
 - `redirect_uri` (string, required): must match against URIs declared in client metadata and have a format consistent with the `application_type` declared in the client metadata. See below.
-- `scope` (string with space-separated values, required): must be a subset of the scopes declared in client metadata. Must include `atproto`. See "Scopes" section.
+- `scope` (string with space-separated values, required): must be a subset of the scopes declared in client metadata. Must include `atproto`. See "Authorization Scopes" section.
 - `client_assertion_type` (string, optional): used by confidential clients to describe the client authentication mechanism. See "Confidential Client" section.
 - `client_assertion` (string, optional): only used for confidential clients, for client authentication. See "Confidential Client" section.
 - `login_hint` (string, optional): account identifier to be used for login. See "Authorization Interface" section.
@@ -324,7 +326,7 @@ The Authorization Server also publishes metadata, complying with the "OAuth 2.0 
 - `code_challenge_methods_supported` (array of strings, required): must include `S256` (see "PKCE" section)
 - `token_endpoint_auth_methods_supported` (array of strings, required): must include both `none` (public clients) and `private_key_jwt` (confidential clients)
 - `token_endpoint_auth_signing_alg_values_supported` (array of strings, required): must not include `none`. Must include `ES256` for now. Cryptographic algorithm suites are expected to evolve over time.
-- `scopes_supported` (array of strings, required): must include `atproto`. If supporting the transitional grants, they should be included here as well. See "Scopes" section.
+- `scopes_supported` (array of strings, required): must include `atproto`. If supporting the transitional scopes, they should be included here as well. See "Authorization Scopes" section.
 - `authorization_response_iss_parameter_supported` (boolean): must be `true`
 - `require_pushed_authorization_requests` (boolean): must be `true`. See "PAR" section.
 - `pushed_authorization_request_endpoint` (string, required): must be the PAR endpoint URL. See "PAR" section.
@@ -347,7 +349,7 @@ The authorization approval prompt should identify the client app and describe th
 
 The amount of client metadata that should be displayed may depend on whether the client is "trusted" by the Authorization Server; see the "Client" and "Security Concerns" sections. The full `client_id` URL should be displayed by default.
 
-See the "Scopes" section for a description of scope options.
+See the "Authorization Scopes" section for a description of scope options.
 
 If a client is a confidential client and the user has already approved the same scopes for the same client in the past, the Authorization Server may allow "silent sign-in" by auto-approving the request. Authorization Servers can set their own policies for this flow: it may require explicit user configuration, or the client may be required to be "trusted".
 
