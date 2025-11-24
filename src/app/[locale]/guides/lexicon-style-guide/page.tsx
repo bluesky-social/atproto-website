@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Lexinomicon',
+  title: 'Lexicon Style Guide',
   description: 'A style guide for creating new ATProto schemas',
 }
 
