@@ -95,7 +95,7 @@ If you are making use of Bluesky profile information, you may also need:
 If you need to link any uploaded images or videos to the records (posts) you create, you will also need:
 - `blob:*/*`
 
-The ergonomics of OAuth scopes in AT Protocol are still evolving. This minimal set is designed to provide a known-good starting point for app developers that does not grant unnecessary permissions. While we finalize granular permission scopes, we are also supporting a set of temporary coarse-grained scopes called the "transition scopes". There are currently no plans to deprecate either the transition scopes or the use of App Passwords. For an overview of these transition scopes, and more in-depth information on OAuth, see [Authorization Scopes](/specs/oauth#authorization-scopes).
+The ergonomics of OAuth scopes in AT Protocol are still evolving. This minimal set is designed to provide a known-good starting point for app developers that does not grant unnecessary permissions. While we finalize granular permission scopes, we are also supporting a set of temporary coarse-grained scopes called the "transition scopes". There are currently no plans to deprecate either the transition scopes or the use of App Passwords. For an overview of these transition scopes, and more in-depth information on OAuth, see [Authorization Scopes](/specs/oauth#authorization-scopes). For the granular permission scopes, see [Permissions](/specs/permission).
 
 ## Clients
 
@@ -113,6 +113,6 @@ If you have been using `client-metadata.json` rather than `oauth-client-metadata
   <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-The auth flow page will display all the relevent permissions being granted. This is true both for apps using granular permissions, and for those using the [transitional](/specs/oauth#authorization-scopes) OAuth scopes.
+The auth flow page will display all the relevent permissions being granted. This is true both for apps using [granular permissions](/specs/permission), and for those using the [transitional](/specs/oauth#authorization-scopes) OAuth scopes.
 
 Client Apps should be sure to check which auth scopes were actually approved during the auth flow. In particular, when requesting permission to read an account email address (`account:email`), the user might decline that permission while granting others. In theory, any individual permission might be denied while the overall request is granted.
