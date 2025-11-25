@@ -99,7 +99,7 @@ rpc:app.example.moderation.createReport?aud=*
   "type": "permission",
   "resource": "rpc",
   "lxm": ["app.example.moderation.createReport"],
-  "aud": ["*"]
+  "aud": "*"
 }
 
 # Call any RPC method on a specific service (not allowed within permission set)
@@ -206,13 +206,12 @@ service:did:web:com.example#type?key=val
 resource:
 resource:?
 resource:&
+resource?
 ```
 
 Examples which do not match the general syntax:
 
 ```
-resource?
-resource&
 resource:positional?key=québec
 emoji:☺️
 ```
@@ -270,7 +269,7 @@ The below is an example permission set Lexicon. The full syntax is described in 
         {
           "type": "permission",
           "resource": "rpc",
-          "aud": ["*"],
+          "aud": "*",
           "lxm": ["app.example.getFeedSkeleton"]
         }
       ]

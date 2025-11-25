@@ -247,9 +247,9 @@ Additional `permission` fields depend on the resource type being declared. The s
     - `aud` (string, semi-required): remote service ("audience"). In the context of permission sets, can not have fixed DID service references. Supports wildcard (`*`), though `aud` and `lxm` can not both be wildcard. Required unless `inheritAud` is true. Effectively must be either wildcard, or undefined with `inheritAud` set to true.
     - `inheritAud` (boolean, optional): if true, `aud` does not need to be defined.
 
-Note that the `blob`, `account`, and `identity` resources types are not supported in Lexicon schema context.
+Note that the `blob`, `account`, and `identity` resources types are not supported in Lexicon schema context, and should be ignored if included.
 
-Permission declarations with unknown resource types or unknown parameters (fields) must be ignored by services implementing access control. This is because the set of permissions is expected to evolve over time, and additional fields might attenuate the permission granted. It is unsafe to ignore unknown fields when parsing permissions for access control.
+Permission declarations with unsupported resource types or parameters (fields) must be ignored by services implementing access control. This is because the set of permissions is expected to evolve over time, and additional fields might attenuate the permission granted. It is unsafe to ignore unknown fields when parsing permissions for access control.
 
 See [Permission specification](/specs/permission) for more details. Note that it is possible to construct a valid lexicon `permission` type which is invalid or has undefined behavior as an auth permission.
 
