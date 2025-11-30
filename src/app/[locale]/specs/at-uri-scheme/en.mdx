@@ -39,7 +39,9 @@ In current atproto Lexicon use, the **query** and **fragment** parts are not yet
 "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 ```
 
-The **authority** section is required, must be normalized, and if a DID must be one of the "blessed" DID methods. The optional **collection** part of the path must be a normalized [NSID](./nsid). The optional **rkey** part of the path must be a valid [Record Key](./record-key).
+The **authority** section is required, must be normalized, and if a DID must be one of the "blessed" DID methods. If the **authority** section is a DID, it must be [percent-encoded](https://en.wikipedia.org/wiki/Percent-encoding) if it is not already. The **authority** section may be displayed without percent-encoding.
+
+The optional **collection** part of the path must be a normalized [NSID](./nsid). The optional **rkey** part of the path must be a valid [Record Key](./record-key).
 
 An AT URI pointing to a specific record in a repository is not a *strong* reference, in that it is not content-addressed. The record may change or be removed over time, or the DID itself may be deleted or unavailable. For `did:web`, control of the DID (and thus repository) may change over time. For AT URIs with a handle in the authority section, the handle-to-DID mapping can also change.
 
@@ -51,6 +53,8 @@ AT URIs meet the generic syntax for Universal Resource Identifiers, as defined i
 
 - Authority part, preceded by double slash: supported
 - Empty authority part: not supported
+- Handle as authority part: supported
+- DID as authority part: only supported if [percent-encoded](https://en.wikipedia.org/wiki/Percent-encoding), must not be double-encoded
 - Userinfo: not currently supported, but reserved for future use. a lone `@` character preceding a handle is not valid (eg, `at://@handle.example.com` is not valid)
 - Host and port separation: not supported. syntax conflicts with DID in authority part
 - Path part: supported, optional
@@ -98,7 +102,7 @@ Particularly when included in atproto records, strict normalization should be fo
 - Any hex-encoding hex characters must be upper-case
 - URI schema is lowercase
 - Authority as handle: lowercased
-- Authority as DID: in normalized form, and no duplicate hex-encoding. For example, if the DID is already hex-encoded, don't re-encode the percent signs.
+- Authority as DID: in normalized form, and no duplicate percent-encoding. For example, if the DID is already percent-encoded, don't re-encode the percent signs.
 - No trailing slashes in path part
 - No duplicate slashes or "dot" sections in path part (`/./` or `/abc/../` for example)
 - NSID in path: domain authority part lowercased
@@ -114,6 +118,7 @@ Valid AT URIs (both general and Lexicon syntax):
 
 ```text
 at://foo.com/com.example.foo/123
+at://did%3Aplc%3z72i7hdynmk6r22z27h6tvur/com.example.foo/123
 ```
 
 Valid general AT URI syntax, invalid in current Lexicon:
@@ -129,6 +134,8 @@ Invalid AT URI (in both contexts)
 ```text
 at://foo.com/                // trailing slash
 at://user:pass@foo.com       // userinfo not currently supported
+at://did:plc:z72i7hdynmk6r22z27h6tvur/com.example.foo/123 // authority containing DID is not percent encoded
+at://did%253Aplc%253z72i7hdynmk6r22z27h6tvur/com.example.foo/123 // authority containing DID is double encoded
 ```
 
 
