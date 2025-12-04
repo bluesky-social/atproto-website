@@ -8,6 +8,29 @@ export default {
   content: ['./src/**/*.{js,mjs,jsx,ts,tsx,mdx}'],
   darkMode: 'selector',
   theme: {
+    fontFamily: {
+      sans: [
+        '"IBM Plex Sans"',
+        'ui-sans-serif',
+        'system-ui',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+        '"Noto Color Emoji"',
+      ],
+      mono: [
+        '"IBM Plex Mono"',
+        'ui-monospace',
+        'SFMono-Regular',
+        'Menlo',
+        'Monaco',
+        'Consolas',
+        '"Liberation Mono"',
+        '"Courier New"',
+        'monospace',
+      ],
+    },
     fontSize: {
       '2xs': ['0.75rem', { lineHeight: '1.25rem' }],
       xs: ['0.8125rem', { lineHeight: '1.5rem' }],
