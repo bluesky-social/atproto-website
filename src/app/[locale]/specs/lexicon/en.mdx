@@ -100,7 +100,7 @@ Specifies an [Event Stream](/specs/event-stream) endpoint, eg messages on a WebS
 Type-specific fields:
 
 - `parameters` (object, optional): same as Query and Procedure
-- `message` (object, optional): specifies what messages can be
+- `message` (object, required): specifies what messages can be
     - `description` (string, optional): short description
     - `schema` (object, required): schema definition, which must be a `union` of refs
 - `errors` (array of objects, optional): same as Query and Procedure
