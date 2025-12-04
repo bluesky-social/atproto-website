@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'OAuth Introduction',
-  description: 'OAuth for AT Protocol application developers.',
+  title: 'Images and Video - AT Protocol Docs',
+  description: 'Working with image and video blobs in the AT Protocol.',
 }
 
 export default async function HomePage({ params }: any) {

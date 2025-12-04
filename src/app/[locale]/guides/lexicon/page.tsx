@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Lexicon',
+  title: 'Lexicons - AT Protocol Docs',
   description: 'A schema-driven interoperability framework',
 }
 

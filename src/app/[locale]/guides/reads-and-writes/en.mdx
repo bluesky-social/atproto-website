@@ -1,0 +1,135 @@
+export const metadata = {
+  title: 'Reads and Writes - AT Protocol Docs',
+  description: 'Read and Write AT Protocol Records.',
+}
+
+# Reads and Writes
+
+In this guide, you'll read and write from an Atmosphere data repository.
+
+A typical web architecture might use one big SQL database behind an app server. The app talks to the database and handles requests from the frontend. This works — with some eventual scaling concerns — for many applications, but it doesn't provide a way to distribute user data across different nodes of your network. The AT Protocol is a protocol for doing exactly that, using the core building blocks of the web to allow individual users to publish their own [data repositories](/specs/repository) across a network. The AT Protocol interconnects applications so that their backends share state, including user accounts and content. One of the core operations you'll perform when working with AT apps is **reading** these individual data repositories.
+
+For more context, see [ATProto for distributed systems engineers](/articles/atproto-for-distsys-engineers) and [The ATProto Ethos](/articles/atproto-ethos).
+
+// Currently using old SDK methods, the [Lexicons](/guides/lexicon) page uses the new ones. See “Creating records” in https://www.npmjs.com/package/@atproto/lex to update.
+
+## Prerequisites
+
+To follow this guide, install an AT SDK:
+
+```bash
+yarn add @atproto/api
+```
+
+Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
+
+## Creating a Client and Authenticating
+
+The first step when working with AT data is authenticating. You can authenticate using any OAuth provider, using your own account credentials, or with the `AtpAgent()` call from our SDK. Start by importing the SDK library, creating an `agent` object, and providing credentials to `agent.login()`:
+
+```tsx
+import { AtpAgent } from '@atproto/api'const agent = new AtpAgent({
+  service: 'https://bsky.social'})
+await agent.login({
+  identifier: 'youraccount.bsky.social',  password: 'yourpassword'})
+```
+
+In general, production applications should use [OAuth](/specs/oauth) authentication rather than app password sessions. Refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/api#oauth-based-session-management) documentation for an example.
+
+## Reading Data
+
+After authenticating, you'll be able to make other API requests.
+
+In AT, user data is resolved through [DIDs](/specs/did), also known as [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier). Currently, two different DID prefixes are supported:
+- `did:web`, which is based on the W3C DID standard.
+- `did:plc`, which is a DID method developed and implemented by Bluesky. See the [did-method-plc](https://github.com/did-method-plc/did-method-plc) repository for details.
+
+For this guide, we will be using `did:plc` examples.
+
+You can resolve a known username to a DID using the `com.atproto.identity.resolveHandle` endpoint. This means that you can just visit this address in a browser with a `handle=` arugment to look up your DID:
+
+```
+https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=youraccount.bsky.social
+```
+
+```
+{
+did: "did:plc:3vekukmab2djjeengw2o3wln"
+}
+```
+
+You can also retrieve a DID through an SDK call:
+
+```tsx
+const your_did = await agent.resolveHandle({ handle: 'youraccount.bsky.social' }, opts)
+```
+
+The Typescript SDK also provides the DID of the currently-authenticated as `agent.did`, so if you're reading your own database, you can use that value.
+
+In addition to the DID, you'll need to provide a `collection` value, which corresponds to a particular [Lexicon](/guides/lexicon) schema. For example, Bluesky posts are available under the `app.bsky.feed.post` schema. To read a user's data, use `agent.com.atproto.repo.listRecords()`:
+
+```tsx
+const data = await agent.com.atproto.repo.listRecords({
+  repo: your_did,  collection: 'app.bsky.feed.post',})
+```
+
+Refer to the [`app.bsky.feed.post` schema](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html) for this complete data model.
+
+Some of the methods in the HTTP reference are specific to one application Lexicon, and some are not. You can distinguish them by namespace: the `app.bsky`-prefixed methods like `getTimeline` and `getFollows` methods are Bluesky-specific. For more information, refer to [Lexicons](/guides/lexicon).
+
+There are many other API calls available. For a more exhaustive list, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/api#API-calls) or the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference).
+
+You can use the data returned from any AT API call to construct another API call. Next, you might try writing to a user's data repository.
+
+## Writing Data
+
+Writing data — for example, by posting to a Bluesky feed — works similarly to reading data, but with different methods. To create a new record, use `agent.com.atproto.repo.createRecord()`, again specifying the `app.bsky.feed.post` schema, both as the `collection` parameter and as the record's `$type`.
+
+```tsx
+const result = await agent.com.atproto.repo.createRecord({
+  did: alice.did,  collection: 'app.bsky.feed.post',  record: {
+    $type: 'app.bsky.feed.post',    text: 'Hello, world!',    createdAt: new Date().toISOString(),  },})
+```
+
+`text` and `createdAt` are required values under the [`app.bsky.feed.post` schema](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html).
+
+This will post using the currently-authenticated user session. If you want to post as another user, reuse `agent.login()` to get a new user session.
+
+The API will respond with the `at://` URI of the post and a content hash of the post as the `cid`:
+
+```
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+If you are building a client or another interface that both reads and writes data, it is important to ensure that you read your own writes using this response. 
+
+### Read-after-Write
+
+A user may take some action (such as updating their profile), rapidly refresh the view, and find that their recent change is not immediately reflected in the updated response.
+
+This is because services such as the App View do not have transactional writes from a user's PDS. Therefore the views that they calculate are eventually consistent. In other words, a user may have created a record on their PDS that is not yet reflected in the API responses provided by the App View.
+
+Because all requests from the application are sent to the user's PDS, the PDS is in a position to smooth over this behavior. Our PDS distribution provides some basic read-after-write behaviors by looking at response headers from the App View, determining if there are any new records that are not in the response, and modifying the response to reflect those new records.
+
+The App View communicates the current state of its indices by setting the `Atproto-Repo-Rev` response header. This is set by the `rev` of the most recent commit that's been indexed from the requesting user's repository. If the PDS sees this header on a response, it will search for all records that it has locally that are more recent than the provided rev and determine if they affect the App View's response.
+
+This read-after-write behavior *only* applies to records from the user making the request. Records from other users that happen to be on the same PDS will not affect the requesting user's response.
+
+## Interaction Patterns
+
+// I'd like to conceptually abstract out some more of the Bluesky docs here in terms of best practices for Rate Limiting, Timestamping, and Action Intent Links, but need to think that through a bit more.
+
+## Bots
+
+Bots are accounts on the network that post automatically. Popular ones include bots that post the magnitude of recent earthquakes, photos from an archive on a regular schedule, etc.
+
+There is a Bot example in our [Cookbook](https://github.com/bluesky-social/cookbook/tree/main/ts-bot) that can be used as a reference.
+
+## Next Steps and Further Reading
+
+- For more information on application-specific Lexicons, refer to the [Lexicon](/guides/lexicon) docs.
+- For bulk reads and streaming data, refer to the [Sync](/guides/sync) docs.
+- For walkthroughs and Bluesky-specific methods, refer to the [Bluesky docs](https://docs.bsky.app/docs/get-started).

@@ -1,0 +1,97 @@
+export const metadata = {
+  title: 'Images and Video - AT Protocol Docs',
+  description: 'Working with image and video blobs in the AT Protocol.',
+}
+
+# Images and Video
+
+## Working with blobs
+
+"Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID) for the blob.
+
+Blob files are uploaded and distributed separately from records. Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob.
+
+While blobs are universally content addressed (by CID), they are always referenced and managed in the context of an individual account (DID).
+
+The empty blob (zero bytes) is valid in general, though it may be disallowed by individual Lexicons/applications.
+
+Blobs have the permission scope **`blob:*/*` .**
+
+It is generally recommended to use an object storage implementation for working with blobs if you are hosting your own PDS. See [going to production](/going-to-production#images-and-video) for more.
+
+## Blob lifecycle
+
+Blobs must be uploaded to the PDS before a record can be created referencing that blob. Note that the server does not know the intended Lexicon when receiving an upload, so can only apply generic blob limits and restrictions at initial upload time, and then enforce Lexicon-defined limits later when the record is created.
+
+Clients use the **`com.atproto.repo.uploadBlob`** endpoint on their PDS, which will return verified metadata in the form of a Lexicon blob object. Clients should set the HTTP **`Content-Type`** header and should set the **`Content-Length`** headers on the upload request. Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff the blob mimetype to validate against the declared **`Content-Type`** header, and either return a modified mimetype in the response, or reject the upload. See "Security Considerations" below. If the actual blob upload size differs from the **`Content-Length`** header, the server should reject the upload.
+
+After a successful upload, blobs are placed in temporary storage. They are not accessible for download or distribution while in this state. Servers should "garbage collect" (delete) un-referenced temporary blobs after an appropriate time span (see implementation guidelines below). Blobs which are in temporary storage should not be included in the **`listBlobs`** output.
+
+The upload blob can now be referenced from records by including the returned blob metadata in a record. When processing record creation, the server extracts the set of all referenced blobs, and checks that they are either already referenced, or are in temporary storage. Once the record creation succeeds, the server makes the blob publicly accessible.
+
+The same blob can be referenced by multiple records in the same repository. Re-uploading a blob which has already been stored and referenced results in no change to the existing blobs or records.
+
+When a record referencing blobs is deleted, the server checks if any other current records from the same repository reference the blob. If not, the blob is deleted along with the record.
+
+When an account is deleted, all the hosted blobs are deleted, within some reasonable time frame. When an account is deactivated, takendown, or suspended, blobs should not be publicly accessible.
+
+Servers may decide to make individual blobs inaccessible, separately from any account takedown or other account lifecycle events.
+
+Creation of new individual records which reference a blob which does not exist should be rejected at the time of creation (or update). However, it is possible for servers to host repository records which reference blobs which are not available locally. For example, during a bulk repository import or account migration; data loss; or content deletion/removal for policy reasons.
+
+Original blobs can be fetched from the PDS using the **`com.atproto.sync.getBlob`** endpoint. The server should return appropriate **`Content-Type`** and **`Content-Length`** HTTP headers. It is not a recommended or required pattern to serve media directly from the PDS to end-user browsers, and servers do not need to support or facilitate this use case. See "Security Considerations" for more.
+
+Servers may have their own generic limits and policies for blobs, separate from any Lexicon-defined constraints. They might implement account-wide quotas on data storage; maximum blob sizes; content policies; etc. Any of these restrictions might be enforced at the initial upload. Server operators should be aware that limits and other restrictions may impact functionality with existing and future applications. To maximize interoperability, operators are recommended to prefer limits on overall account resource consumption (e.g., "total blob size" quota, not "per blob" size limits).
+
+Some applications may have a long delay between blob upload and reference from a record. To maximize interoperability, server implementations and operators are recommended to allow several hours of grace time before "garbage collecting", with at least one hour a firm lower bound.
+
+## Security considerations
+
+Serving arbitrary user-uploaded files from a web server raises many content security issues. For example, cross-site scripting (XSS) of scripts or SVG content form the same "origin" as other web pages. It is effectively mandatory to enable a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for the **`getBlob`** endpoint; it is effectively not supported to dynamically serve assets directly out of blob storage (the **`getBlob`** endpoint) directly to browsers and web applications. Applications must proxy blobs, files, and assets through an independent CDN, proxy, or other web service before serving to browsers and web agents, and such services are expected to implement security precautions.
+
+An example set of content security headers for this endpoint is:
+
+```jsx
+Content-Security-Policy: default-src 'none'; sandbox
+X-Content-Type-Options: nosniff
+```
+
+Some media types may contain sensitive metadata. For example, EXIF metadata in JPEG image files may contain GPS coordinates. Servers might take steps to prevent accidental leakage of such metadata, for example by stripping out this metadata before persisting a blob.
+
+Parsing of media files is a notorious source of memory safety bugs and security vulnerabilities. Even content type detection (or "sniffing") can be a source of exploits. Servers are strongly recommended against parsing media files (image, video, audio, or any other non-trivial formats) directly, without the use of strong sandboxing mechanisms. In particular, PDS instances themselves should not directly implement media resizing or transcoding — this should be handled in the application layer instead.
+
+Richer media types raise the stakes for abusive and illegal content. Services should implement appropriate mechanisms to takedown such content when it is detected and reported.
+
+Servers may need to take measures to prevent malicious resource consumption. For example, intentional exhaustion of disk space, network congestion, bandwidth utilization, etc. — rate-limits, size limits, and quotas are recommended.
+
+## Considerations for Video
+
+Video uploads differ slightly from image uploads, since they are typically much larger files and have a significantly long processing time. Individual Atmosphere apps or CDNs may impose additional limits on video uploads.
+
+Depending on the requirements of your application, you may need to supply an aspect ratio along with video uploads. This metadata can be tricky to compute. If you're developing in a browser, you can load the video into a `<video>` and observe the dimensions when loaded. If you're in a native app, you'll most likely be able to get it via the media picker APIs. Alternatively, you can use a tool like `ffprobe` :
+
+```jsx
+import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
+
+export async function getAspectRatio(fileName: string) {
+  const { streams } = await ffprobe(fileName, {});
+  const videoSteam = streams.find((stream) => stream.codec_type === "video");
+  return {
+    width: videoSteam.width,
+    height: videoSteam.height,
+  };
+}
+```
+
+Videos will need time to transcode using a tool like `ffmpeg` on the server side before they are available from the firehose. This can lead to UX gaps — if a video blob is accompanying a new post, the video service only knows about the video once the post appears in the firehose. This means that people will be able to see the post before processing is complete, which will show a missing video for several seconds.
+
+It is possible to design an application endpoint to allow submitting videos to a separate microservice for processing before creating a post. This method also allows for better UX, since you can show the processing state to the user and let them know if the processing job fails.
+
+There are client-side code samples for both methods here:
+
+- [Simple Method](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw74be4dr422)
+- [Video Service](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw743ejno722)
+
+## Related resources
+
+- [Streamplace](https://stream.place/docs/) provides an implementation and related Lexicon for implementation video streaming on AT.

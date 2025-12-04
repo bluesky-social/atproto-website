@@ -231,41 +231,35 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: 'Home',
+    title: 'About',
     links: [
       { title: 'Introduction', href: '/' },
-      // { title: 'Why ATProto?', href: '/articles/why-atproto' }, TODO
-      // { title: 'Explore the network', href: '/explorer' }, TODO
       { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
-      { title: 'SDKs', href: '/sdks' },
-      { title: 'Glossary', href: '/guides/glossary' },
       { title: 'FAQ', href: '/guides/faq' },
     ],
   },
-  // { TODO
-  //   title: 'OAuth',
-  //   links: [{ title: 'Tutorial', href: '/guides/oauth-tutorial' }],
-  // },
   {
-    title: 'Building apps',
+    title: 'Docs',
     links: [
-      { title: 'Quick start', href: '/guides/applications' },
+      { title: 'Auth', href: '/guides/auth' },
+      { title: 'Reads and Writes', href: '/guides/reads-and-writes' },
+      { title: 'Sync', href: '/guides/sync' },
+      { title: 'Lexicons', href: '/guides/lexicon' },
+      { title: 'Images and Video', href: '/guides/images-and-video' },
+      { title: 'Moderation', href: '/guides/moderation' },
+      { title: 'SDKs', href: '/sdks' },
       { title: 'Cookbook ⧉', href: 'https://github.com/bluesky-social/cookbook/' },
-      { title: 'Distributed Systems', href: '/articles/atproto-for-distsys-engineers' },
+      { title: 'Tutorial App', href: '/guides/applications' },
     ],
   },
   {
-    title: 'Guides',
+    title: 'Deploy',
     links: [
-      { title: 'Overview', href: '/guides/overview' },
-      { title: 'Identity', href: '/guides/identity' },
-      { title: 'Data Repositories', href: '/guides/data-repos' },
-      { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
-      { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
-      { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
+      { title: 'The AT Stack', href: '/guides/the-at-stack' },
+      { title: 'Self-hosting', href: '/guides/self-hosting' },
       { title: 'Going to production', href: '/guides/going-to-production' },
-      { title: 'OAuth Introduction', href: '/guides/oauth' },
-      { title: 'Account Migration', href: '/guides/account-migration' },
+      { title: 'Account migration', href: '/guides/account-migration' },
+      { title: 'Deploy recipes ⧉', href: 'https://github.com/bluesky-social/deploy-recipes/' },
     ],
   },
   {
@@ -274,6 +268,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'AT Protocol', href: '/specs/atp' },
       { title: 'Data Model', href: '/specs/data-model' },
       { title: 'Lexicon', href: '/specs/lexicon' },
+      { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
       { title: 'Cryptography', href: '/specs/cryptography' },
       { title: 'Accounts', href: '/specs/account' },
       { title: 'Repository', href: '/specs/repository' },
@@ -290,6 +285,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'TID', href: '/specs/tid' },
       { title: 'Record Key', href: '/specs/record-key' },
       { title: 'URI Scheme', href: '/specs/at-uri-scheme' },
+      { title: 'Glossary', href: '/guides/glossary' },
     ],
   },
 ]

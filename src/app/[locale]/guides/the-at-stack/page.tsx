@@ -1,7 +1,7 @@
 export const metadata = {
-  title: 'Self-hosting - AT Protocol Docs',
+  title: 'The AT Stack - AT Protocol Docs',
   description:
-    'Self-hosting components of the AT Protocol Stack.',
+    'Components of the AT Protocol Stack.',
 }
 
 export default async function HomePage({ params }: any) {

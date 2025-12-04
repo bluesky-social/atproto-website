@@ -1,0 +1,207 @@
+import {Container} from "@/components/Container"
+import moderation from "./moderation.png"
+import ozone from "./ozone.png"
+
+export const metadata = {
+  title: 'Moderation - AT Protocol Docs',
+  description: 'Guide to moderation in AT Protocol.',
+}
+
+# Moderation
+
+AT model is that *speech* and *reach* should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+
+<Container>
+  <Image src={moderation} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Our moderation architecture is provided by two services: *Osprey*, an event stream decisions engine and analysis UI designed to investigate and take automatic action; and *Ozone*, a labeling service and web frontend for making moderation decisions. Refer to [Moderation in the AT Stack](/guides/the-at-stack#osprey-and-ozone) for more information.
+
+[Read more](https://docs.bsky.app/blog/blueskys-moderation-architecture) about moderation on our blog.
+
+## Labels
+
+Moderation in AT consists of multiple, stackable systems, including:
+
+1. Network takedowns which filter the content from the APIs
+2. Labels placed on content by moderation services
+3. User controls such as mutes and blocks
+
+Developers building client applications should understand how to apply labels and user controls.
+
+**Labels** are a form of metadata about any account or content in the AT ecosystem. Labels are published by *moderation services*, which are either hardcoded into the application or chosen by the user. They are attached to records in the responses under the `labels` key.
+
+A label is published with the following information:
+
+```markdown
+{
+  /** DID of the actor who created this label. */
+  src: string
+  /** AT URI of the record, repository (account), or other resource that this label applies to. */
+  uri: string
+  /** Optionally, CID specifying the specific version of 'uri' resource this label applies to. */
+  cid?: string
+  /** The short string name of the value or type of this label. */
+  val: string
+  /** If true, this is a negation label, overwriting a previous label. */
+  neg?: boolean
+  /** Timestamp when this label was created. */
+  cts: string
+}
+
+```
+
+### **Label values**
+
+The *value* of a label will determine its behavior. Some example label values are `porn`, `gore`, and `spam`.
+
+Label values are strings. They currently must only be lowercase a-z or a dash character `^[a-z-]+$`. Some of them start with `!`, but that can only be used by global label values.
+
+Label values are interpreted by their definitions. Those definitions include these attributes:
+
+- `blurs` which may be `content` or `media` or `none`
+- `severity` which may be `alert` or `inform` or `none`
+- `defaultSetting` which may be `hide` or `warn` or `ignore`
+- `adultOnly` which is boolean
+
+There are other definition attributes, but they are only used by the global label values.
+
+### **Global label values**
+
+There are a few label values which are defined by the protocol. They are:
+
+- `!hide` which puts a generic warning on content that cannot be clicked through, and filters the content from listings. Not configurable by the user.
+- `!warn` which puts a generic warning on content but can be clicked through. Not configurable by the user.
+- `!no-unauthenticated` which makes the content inaccessible to logged-out users in applications which respect the label.
+- `porn` which puts a warning on images and can only be clicked through if the user is 18+ and has enabled adult content.
+- `sexual` which behaves like `porn` but is meant to handle less intense sexual content.
+- `graphic-media` which behaves like `porn` but is for violence / gore.
+- `nudity` which puts a warning on images but isn't 18+ and defaults to ignore.
+
+There are two reasons global label values exist.
+
+The first is because only label values which are defined globally can be used as self-labels (ie set by a user who is not a Labeler). The porn, sexual, gore, nudity, and !no-unauthenticated labels are global for this reason.
+
+The second is because some special behaviors, like "non-configurable" and "applies only to logged out users," cannot be applied to custom labels. The !hide, !warn, and !no-unauthenticated labels are global for this reason.
+
+### **Custom label values**
+
+Labelers may define their own label values. Every Labeler has its own namespace of label values it defines. Custom definitions can override all global definitions for the defining Labeler except for the ones that start with a `!`, because those are reserved.
+
+Since there are two behavior attributes (`blurs` and `severity`) with three values each, there are 9 possible behaviors for custom label values.
+
+| **Blurs** | **Severity** | **Description** |
+| --- | --- | --- |
+| `content` | `alert` | Hide the content and put a "danger" warning label on the content if viewed |
+| `content` | `inform` | Hide the content and put a "neutral" information label on the content if viewed |
+| `content` | `none` | Hide the content |
+| `media` | `alert` | Hide images in the content and put a "danger" warning label on the content if viewed |
+| `media` | `inform` | Hide images in the content and put a "neutral" information label on the content if viewed |
+| `media` | `none` | Hide images in the content |
+| `none` | `alert` | Put a "danger" warning label on the content |
+| `none` | `inform` | Put a "neutral" information label on the content |
+| `none` | `none` | No visual effect |
+
+Some examples of the definitions you might use for a label
+
+- Harassment: `blurs=content` + `severity=alert`
+- Spider warning: `blurs=media` + `severity=alert`
+- Misinformation: `blurs=none` + `severity=alert`
+- Verified user: `blurs=none` + `severity=inform`
+- Curational down-regulate: `blurs=none` + `severity=none`
+
+The `defaultSetting` establishes how the label will be configured when the user first subscribes to the labeler.
+
+The `adultOnly` establishes whether the label should be configurable if adult content is disabled.
+
+### **Label configuration**
+
+A user may choose to hide, warn, or ignore each label from a labeler. Hiding and warning are basically similar, except that hide will also filter the labeled content from feeds and listings. Ignore just ignores the label. If adult content is not enabled in preferences, the behavior should force to hide with no override.
+
+For more information, see the [Labels](/specs/label) spec.
+
+## Subscribe to a labeler
+
+Labeler services each have a service identity, meaning a DID document. This is the DID that appears in the label source (**`src`**) field.
+
+To include labels from a given labeler, set the `atproto-accept-labelers` header on an XRPC request to a comma-separated list of the DIDs of the labelers you want to include, like so:
+
+```bash
+curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
+```
+
+## Use labels in your app
+
+Labels may be placed on accounts or records. Apps can interprets targets in different ways:
+
+- On an account: has account-wide effects
+- On a profile: affects only the profile record (e.g. user avatar) and never hides any content, including the account in listings.
+- On content: affects the content specifically (a post record, a list, a feed, etc.)
+
+### Reporting
+
+To send a report to a Labeler, use the `com.atproto.moderation.createReport` procedure. Users may send reports to any of their labelers.
+
+To specify which labeler should receive the label, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the official TypeScript SDK, it looks like this:
+
+```typescript
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```
+
+## Creating a labeler
+
+Labelers publish an `/app.bsky.labeler.service/self` record to declare that they are a labeler and publish their policies. That record looks like this:
+
+```json
+{
+  "$type": "app.bsky.labeler.service",
+  "policies": {
+    "labelValues": ["porn", "spider"],
+    "labelValueDefinitions": [
+      {
+        "identifier": "spider",
+        "severity": "alert",
+        "blurs": "media",
+        "defaultSetting": "warn",
+        "locales": [
+          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
+        ]
+      }
+    ]
+  },
+  "subjectTypes": ["record"],
+  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
+  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
+  "createdAt": "2024-03-03T05:31:08.938Z"
+}
+```
+
+The `labelValues` declares what to expect from the Labeler. It may include global and custom label values.
+
+The `labelValueDefinitions` defines the custom labels. It includes the `locales` field for specifying human-readable copy in various languages. If the user's language is not found, it will use the first set of strings in the array.
+
+`subjectTypes`, `subjectCollections`, and `reasonTypes` declare what type of moderation reports are reviewed by the Labeler. `subjectTypes` can include `record` for individual pieces of content, and `account` for overall accounts. `subjectCollections` is a list of NSIDs of record types; if not defined, any record type is allowed. `reasonTypes` is a list of report reason codes (Lexicon references).
+
+[Ozone](https://github.com/bluesky-social/ozone) is our reference labeling service for Atmosphere apps, and includes a web interface for triaging and actioning moderation reports.
+
+<Container>
+  <Image src={ozone} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Self-hosting Ozone enables you to participate as a labeler in the AT stackable moderation architecture. The Ozone service consists of a web UI, a backend, and a Postgres database. 
+
+Before setting up your Ozone service you should create a *new* account on the network, separate from your main account. This is the account that subscribers to your labeler will interact with: accounts for labelers will appear differently in app interfaces than normal accounts. Refer to the [Ozone User Guide](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md) for more.
+
+## Algorithmic moderation
+
+[Osprey](https://github.com/bluesky-social/osprey-atproto) is an event stream decisions engine and analysis UI designed to investigate and take automatic action, to enable sustainable at-scale moderation. It makes use of [Kafka](https://kafka.apache.org/) with its own [rules engine](https://github.com/roostorg/osprey/blob/main/docs/rules.md).
+
+From another perspective, Osprey is a Python library for processing actions through human written rules and outputting labels, webhooks back to an API and other sinks. It evaluates events using structured logic, user-defined functions, and external signals to assign labels, verdicts, and actions. It can make use of fine-tuned LLMs and other classifiers that expose their own web endpoints to Osprey. LLMs can be a useful tool for surfacing moderation reports to Ozone; these reports can be acted on automatically and/or manually depending on your configuration. 
+
+Refer to the [Osprey](https://github.com/bluesky-social/osprey-atproto) Github repository for further guidance.
