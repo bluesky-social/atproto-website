@@ -12,12 +12,15 @@ import { useSectionStore } from '@/components/SectionProvider'
 import { Tag } from '@/components/Tag'
 import { remToPx } from '@/lib/remToPx'
 
+interface NavLink {
+  title: string
+  href: string
+  links?: Array<NavLink> // Added for subpages
+}
+
 interface NavGroup {
   title: string
-  links: Array<{
-    title: string
-    href: string
-  }>
+  links: Array<NavLink>
 }
 
 function useInitialValue<T>(value: T, condition = true) {
@@ -44,32 +47,60 @@ function TopLevelNavItem({
   )
 }
 
+function isExternalLink(href: string) {
+  return href.startsWith('http://') || href.startsWith('https://')
+}
+
 function NavLink({
   href,
   children,
   tag,
   active = false,
   isAnchorLink = false,
+  isSubpage = false,
 }: {
   href: string
   children: React.ReactNode
   tag?: string
   active?: boolean
   isAnchorLink?: boolean
+  isSubpage?: boolean
 }) {
+  const isExternal = isExternalLink(href)
+  const linkProps = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+
   return (
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
       className={clsx(
         'flex justify-between gap-2 py-1 pr-3 text-sm transition',
-        isAnchorLink ? 'pl-7' : 'pl-4',
+        isAnchorLink ? 'pl-7' : isSubpage ? 'pl-6' : 'pl-4',
         active
           ? 'text-zinc-900 dark:text-white'
           : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white',
       )}
+      {...linkProps}
     >
-      <span className="truncate">{children}</span>
+      <span className="truncate flex items-center gap-1">
+        {children}
+        {isExternal && (
+          <svg
+            className="inline-block w-3 h-3 opacity-60"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        )}
+      </span>
       {tag && (
         <Tag variant="small" color="zinc">
           {tag}
@@ -105,8 +136,18 @@ function VisibleSectionHighlight({
   let height = isPresent
     ? Math.max(1, visibleSections.length) * itemHeight
     : itemHeight
+
+  // Count all links including subpages
+  let allLinks: Array<{ href: string }> = []
+  group.links.forEach(link => {
+    allLinks.push(link)
+    if (link.links) {
+      allLinks.push(...link.links)
+    }
+  })
+
   let top =
-    group.links.findIndex((link) => link.href === pathname) * itemHeight +
+    allLinks.findIndex((link) => link.href === pathname) * itemHeight +
     firstVisibleSectionIndex * itemHeight
 
   return (
@@ -130,7 +171,17 @@ function ActivePageMarker({
 }) {
   let itemHeight = remToPx(2)
   let offset = remToPx(0.25)
-  let activePageIndex = group.links.findIndex((link) => link.href === pathname)
+
+  // Count all links including subpages
+  let allLinks: Array<{ href: string }> = []
+  group.links.forEach(link => {
+    allLinks.push(link)
+    if (link.links) {
+      allLinks.push(...link.links)
+    }
+  })
+
+  let activePageIndex = allLinks.findIndex((link) => link.href === pathname)
   let top = offset + activePageIndex * itemHeight
 
   return (
@@ -161,8 +212,14 @@ function NavigationGroup({
     isInsideMobileNavigation,
   )
 
-  let isActiveGroup =
-    group.links.findIndex((link) => link.href === pathname) !== -1
+  // Check if any link or subpage is active
+  let isActiveGroup = group.links.some(link => {
+    if (link.href === pathname) return true
+    if (link.links) {
+      return link.links.some(sublink => sublink.href === pathname)
+    }
+    return false
+  })
 
   return (
     <li className={clsx('relative mt-6', className)}>
@@ -221,6 +278,57 @@ function NavigationGroup({
                   </motion.ul>
                 )}
               </AnimatePresence>
+              {/* Render subpages */}
+              {link.links && link.links.length > 0 && (
+                <motion.ul
+                  role="list"
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    transition: { delay: 0.1 },
+                  }}
+                >
+                  {link.links.map((sublink) => (
+                    <motion.li key={sublink.href} layout="position" className="relative">
+                      <NavLink
+                        href={sublink.href}
+                        active={sublink.href === pathname}
+                        isSubpage
+                      >
+                        {sublink.title}
+                      </NavLink>
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {sublink.href === pathname && sections.length > 0 && (
+                          <motion.ul
+                            role="list"
+                            initial={{ opacity: 0 }}
+                            animate={{
+                              opacity: 1,
+                              transition: { delay: 0.1 },
+                            }}
+                            exit={{
+                              opacity: 0,
+                              transition: { duration: 0.15 },
+                            }}
+                          >
+                            {sections.map((section) => (
+                              <li key={section.id}>
+                                <NavLink
+                                  href={`${sublink.href}#${section.id}`}
+                                  tag={section.tag}
+                                  isAnchorLink
+                                >
+                                  {section.title}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              )}
             </motion.li>
           ))}
         </ul>
@@ -267,8 +375,9 @@ export const navigation: Array<NavGroup> = [
     links: [
       { title: 'AT Protocol', href: '/specs/atp' },
       { title: 'Data Model', href: '/specs/data-model' },
-      { title: 'Lexicon', href: '/specs/lexicon' },
-      { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
+      { title: 'Lexicon', href: '/specs/lexicon', links: [
+        { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
+      ]},
       { title: 'Cryptography', href: '/specs/cryptography' },
       { title: 'Accounts', href: '/specs/account' },
       { title: 'Repository', href: '/specs/repository' },
