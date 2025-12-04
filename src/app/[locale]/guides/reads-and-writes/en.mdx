@@ -61,7 +61,9 @@ did: "did:plc:3vekukmab2djjeengw2o3wln"
 You can also retrieve a DID through an SDK call:
 
 ```tsx
-const your_did = await agent.resolveHandle({ handle: 'youraccount.bsky.social' }, opts)
+const your_did = await agent.resolveHandle({
+    handle: 'youraccount.bsky.social'
+}, opts)
 ```
 
 The Typescript SDK also provides the DID of the currently-authenticated as `agent.did`, so if you're reading your own database, you can use that value.
@@ -70,7 +72,9 @@ In addition to the DID, you'll need to provide a `collection` value, which corre
 
 ```tsx
 const data = await agent.com.atproto.repo.listRecords({
-  repo: your_did,  collection: 'app.bsky.feed.post',})
+    repo: your_did,
+    collection: 'app.bsky.feed.post',
+})
 ```
 
 Refer to the [`app.bsky.feed.post` schema](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html) for this complete data model.
@@ -87,8 +91,14 @@ Writing data — for example, by posting to a Bluesky feed — works similarly t
 
 ```tsx
 const result = await agent.com.atproto.repo.createRecord({
-  did: alice.did,  collection: 'app.bsky.feed.post',  record: {
-    $type: 'app.bsky.feed.post',    text: 'Hello, world!',    createdAt: new Date().toISOString(),  },})
+    did: alice.did,
+    collection: 'app.bsky.feed.post',
+    record: {
+        $type: 'app.bsky.feed.post',
+        text: 'Hello, world!',
+        createdAt: new Date().toISOString(),
+    },
+})
 ```
 
 `text` and `createdAt` are required values under the [`app.bsky.feed.post` schema](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html).
