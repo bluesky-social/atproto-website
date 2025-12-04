@@ -187,6 +187,12 @@ Only HTTPS should be used over the open internet.
 
 Care should be taken with personally identifiable information in blobs, such as EXIF metadata. It is currently the *client's* responsibility to strip any sensitive EXIF metadata from blobs before uploading. It would be reasonable for a PDS to help prevent accidental metadata leakage as well; see future changes section below.
 
+## Redirects
+
+XRPC is built on top of HTTP. As such, everything that is not explicitly allowed or forbidden by the XRPC spec falls under the authority of HTTP.
+
+This means that all *un-authenticated* "Query" (HTTP GET) XRPC endpoints, such as `getBlob`, support redirects.
+
 ## Possible Future Changes
 
 The auth system is likely to be entirely overhauled.
@@ -194,8 +200,6 @@ The auth system is likely to be entirely overhauled.
 Lexicons should be able to indicate whether auth is required.
 
 The role of the PDS as a generic gateway may be formalized and extended. A generic mechanism for proxying specific XRPC endpoints on to other network services may be added. Generic caching of queries and blobs may be specified. Mutation of third-party responses by the PDS might be explicitly allowed.
-
-An explicit decision about whether HTTP redirects are supported.
 
 Cursor pagination behavior should be clarified when a cursor is returned but the result list is empty, and when a cursor value is repeated.
 
