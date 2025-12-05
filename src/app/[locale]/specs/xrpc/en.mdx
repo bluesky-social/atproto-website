@@ -191,7 +191,9 @@ Care should be taken with personally identifiable information in blobs, such as 
 
 XRPC is built on top of HTTP. As such, everything that is not explicitly allowed or forbidden by the XRPC spec falls under the authority of HTTP.
 
-This means that all *un-authenticated* "Query" (HTTP GET) XRPC endpoints, such as `getBlob`, support redirects.
+Unauthenticated "Query" (HTTP GET) XRPC endpoints, such as `getBlob`, support redirects. An explicit decision has not been made around XRPC support for redirects for "Procedure" (HTTP POST) endpoints and therefore should not be relied on.
+
+HTTP clients should take care to strip Authorization headers for cross-origin redirects. Most browsers and HTTP clients handle this behavior.
 
 ## Possible Future Changes
 
