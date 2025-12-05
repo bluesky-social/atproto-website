@@ -357,6 +357,7 @@ Valid examples:
 1985-04-12T23:20:50.123456Z
 1985-04-12T23:20:50.120Z
 1985-04-12T23:20:50.120000Z
+0001-01-01T00:00:00.000Z
 
 # supported
 1985-04-12T23:20:50.12345678912345Z
@@ -395,6 +396,9 @@ Invalid examples:
 # syntax looks ok, but datetime is not valid
 1985-04-12T23:99:50.123Z
 1985-00-12T23:20:50.123Z
+
+# ISO-8601, but normalizes to a negative time
+0000-01-01T00:00:00+01:00
 ```
 
 ### `uri`
