@@ -3,13 +3,14 @@ export const metadata = {
   description:
     'Cryptographic systems, curves, and key types used in AT Protocol',
 }
+import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
+  let Content
   try {
-    const Content = (await import(`./${params.locale}.mdx`)).default
-    return <Content />
+    Content = await import(`./${params.locale}.mdx`)
   } catch (error) {
-    const Content = (await import(`./en.mdx`)).default
-    return <Content />
+    Content = await import(`./en.mdx`)
   }
+  return <Page {...Content} />
 }

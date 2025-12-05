@@ -2,13 +2,14 @@ export const metadata = {
   title: 'Namespaced Identifiers (NSIDs)',
   description: 'A specification for global semantic IDs.',
 }
+import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
+  let Content
   try {
-    const Content = (await import(`./${params.locale}.mdx`)).default
-    return <Content />
+    Content = await import(`./${params.locale}.mdx`)
   } catch (error) {
-    const Content = (await import(`./en.mdx`)).default
-    return <Content />
+    Content = await import(`./en.mdx`)
   }
+  return <Page {...Content} />
 }

@@ -1,26 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Logo } from '@/components/Logo'
 import { Navigation } from '@/components/Navigation'
-import { type Section, SectionProvider } from '@/components/SectionProvider'
+import { SectionProvider } from './SectionProvider'
 
-export function Layout({
-  children,
-  allSections,
-}: {
-  children: React.ReactNode
-  allSections: Record<string, Array<Section>>
-}) {
-  let pathname = usePathname()
-
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SectionProvider sections={allSections[pathname] ?? []}>
+    <SectionProvider sections={[]} /* fallback to be overridden */>
       <div className="h-full lg:ml-72 xl:ml-80">
         <motion.header
           layoutScroll
@@ -36,7 +27,7 @@ export function Layout({
             <Navigation className="hidden lg:mt-10 lg:block" />
           </div>
         </motion.header>
-        <div className="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
+        <div className="relative flex h-full flex-col pt-14">
           <main className="flex-auto">{children}</main>
           <Footer />
         </div>
