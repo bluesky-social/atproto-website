@@ -4,13 +4,13 @@ export default function typographyStyles({ theme }: PluginUtils) {
   return {
     DEFAULT: {
       css: {
-        '--tw-prose-body': theme('colors.slate.600'),
-        '--tw-prose-headings': theme('colors.slate.800'),
-        '--tw-prose-links': theme('colors.slate.700'),
+        '--tw-prose-body': theme('black'),
+        '--tw-prose-headings': theme('black'),
+        '--tw-prose-links': theme('black'),
         '--tw-prose-links-underline': theme('colors.slate.600 / 0.5'),
         '--tw-prose-links-hover': theme('colors.blue.600'),
         '--tw-prose-links-underline-hover': theme('colors.blue.500 / 0.3'),
-        '--tw-prose-bold': theme('colors.slate.700'),
+        '--tw-prose-bold': theme('colors.slate.900'),
         '--tw-prose-counters': theme('colors.slate.500'),
         '--tw-prose-bullets': theme('colors.slate.300'),
         '--tw-prose-hr': theme('colors.slate.900 / 0.05'),

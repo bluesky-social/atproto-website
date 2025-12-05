@@ -89,11 +89,11 @@ function CopyButton({ code }: { code: string }) {
       <span
         aria-hidden={copied}
         className={clsx(
-          'pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300',
+          'pointer-events-none flex items-center gap-0.5 text-slate-400 transition duration-300',
           copied && '-translate-y-1.5 opacity-0',
         )}
       >
-        <ClipboardIcon className="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400" />
+        <ClipboardIcon className="h-5 w-5 fill-slate-500/20 stroke-slate-500 transition-colors group-hover/button:stroke-slate-400" />
         Copy
       </span>
       <span
@@ -115,17 +115,17 @@ function CodePanelHeader({ tag, label }: { tag?: string; label?: string }) {
   }
 
   return (
-    <div className="flex h-9 items-center gap-2 border-y border-b-white/7.5 border-t-transparent bg-white/2.5 bg-zinc-900 px-4 dark:border-b-white/5 dark:bg-white/1">
+    <div className="flex h-9 items-center gap-2 border-y border-b-white/7.5 border-t-transparent bg-slate-900 bg-white/2.5 px-4 dark:border-b-white/5 dark:bg-white/1">
       {tag && (
         <div className="dark flex">
           <Tag variant="small">{tag}</Tag>
         </div>
       )}
       {tag && label && (
-        <span className="h-0.5 w-0.5 rounded-full bg-zinc-500" />
+        <span className="h-0.5 w-0.5 rounded-full bg-slate-500" />
       )}
       {label && (
-        <span className="font-mono text-xs text-zinc-400">{label}</span>
+        <span className="font-mono text-xs text-slate-400">{label}</span>
       )}
     </div>
   )
@@ -160,7 +160,7 @@ function CodePanel({
     <div className="group dark:bg-white/2.5">
       <CodePanelHeader tag={tag} label={label} />
       <div className="relative">
-        <pre className="overflow-x-auto p-4 text-xs text-black dark:text-white">
+        <pre className="overflow-x-auto p-4 text-xs font-medium text-black dark:text-white">
           {children}
         </pre>
         <CopyButton code={code} />
@@ -185,7 +185,7 @@ function CodeGroupHeader({
   }
 
   return (
-    <div className="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+    <div className="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-slate-700 bg-slate-800 px-4 dark:border-slate-800 dark:bg-transparent">
       {title && (
         <h3 className="mr-auto pt-3 text-xs font-semibold text-white">
           {title}
@@ -199,7 +199,7 @@ function CodeGroupHeader({
                 'border-b py-3 transition ui-not-focus-visible:outline-none',
                 childIndex === selectedIndex
                   ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-300',
+                  : 'border-transparent text-slate-400 hover:text-slate-300',
               )}
             >
               {getPanelTitle(isValidElement(child) ? child.props : {})}
@@ -324,7 +324,7 @@ export function CodeGroup({
   let hasTabs = Children.count(children) > 1
 
   let containerClassName =
-    'my-6 overflow-hidden rounded-2xl bg-zinc-50 dark:bg-zinc-900 dark:ring-1 dark:ring-white/10'
+    'my-6 overflow-hidden rounded-2xl bg-slate-50 dark:bg-slate-900 dark:ring-1 dark:ring-white/10'
   let header = (
     <CodeGroupHeader title={title} selectedIndex={tabGroupProps.selectedIndex}>
       {children}
