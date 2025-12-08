@@ -49,64 +49,10 @@ A PDS, or Personal Data Server, is a server that hosts users' individual data re
 
 You can [host your own PDS](/guides/self-hosting), and [migrate individual accounts](/guides/account-migration) from one PDS to another. Refer to [The AT Stack](/guides/the-at-stack#pds) for more information.
 
-## Streaming data
+## Further Reading and Resources
 
-One of the core primitives of the AT Protocol is the *firehose*. It is an authenticated stream of events used to efficiently sync user updates (posts, likes, follows, handle changes, etc).
-
-Many AT applications that need to stream incoming data will utilize the firehose — from feed generators to labelers, to bots and search engines. In the AT ecosystem, there are many different endpoints that seed these firehose APIs. Each PDS serves a stream of all of the activity on the repos it is responsible for. From there, Relays aggregate the streams of each participating PDS into a single unified stream — the firehose.
-
-However the firehose output format is also one of the more complex parts of AT, involving decoding binary CBOR data and CAR files, which can be off-putting to new developers. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users, we provide an alternative streaming solution called **Jetstream.** Jetstream has a few key advantages:
-
-- simple JSON encoding
-- reduced bandwidth, and compression
-- ability to filter by collection (NSID) or repo (DID)
-
-A Jetstream server consumes from the firehose and fans out to many subscribers. It is [open source](https://github.com/bluesky-social/jetstream), implemented in Go, simple to self-host. There is an official client library included (in Go), and [community client libraries](https://skyware.js.org/guides/jetstream/introduction/getting-started/) have been developed.
-
-### Working with Jetstream
-
-You can work with Jetstream like any other websocket. Just provide a Jetstream endpoint like `wss://jetstream2.us-east.bsky.network/subscribe`, and a `wantedCollections` parameter, like `?wantedCollections=app.bsky.feed.post`.
-
-Here is a Python example:
-
-```python
-import asyncio
-import websockets
-
-uri = "wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post"
-
-async def listen_to_websocket():
-  async with websockets.connect(uri) as websocket:
-    while True:
-      try:
-        message = await websocket.recv()
-        print(message)
-      except websockets.ConnectionClosed as e:
-        print(f"Connection closed: {e}")
-        break
-      except Exception as e:
-        print(f"Error: {e}")
-
-asyncio.get_event_loop().run_until_complete(listen_to_websocket())
-```
-
-## Backfilling the network
-
-Backfilling is the process of syncing all the data in the network from scratch. You may want to do this if you're running a service that requires a complete copy of the data in the network. This is not generally necessary for running feed generators, labelers, or bots, as most of the time in those cases you are fine just handling live data off of the firehose. *However*, backfilling may be of interest if you want to perform large-scale analysis of the data on the AT network.
-
-For the entire network to be backfillable by third parties at all is a novel concept for AT. Other, monolithic social networks generally only offer an large-scale event stream (like our firehose) from the current date and time, making it difficult to perform longitudinal data analysis without entering into additional vendor relationships. By contrast, we consider AT to have failed in its decentralization goals if it is ever not possible for any user with adequate resources to backfill the entire network. This, in turn, benefits researchers and other forms of data analysis — if you can provision enough hot storage, you can have your own local copy of the entire Atmosphere.
-
-One thing to note about backfilling is that you generally want to maintain an 'up to date' replica of the data, which requires a cutover to streaming firehose data once the backfill is complete. We are working on a new tool, called **Tap**, to streamline this process.
-
-If you are implementing backfilling on your own, the general process is:
-
-- Given a DID, check your current 'revision' for that DID (Each change to a repo is tagged with a 'revision' or 'rev' string that is a lexicographically sortable timestamp).
-- If you do not have a rev for that repo, download and process the users repo checkpoint from the `com.atproto.sync.getRepo` endpoint.
-- While you are doing that, buffer any events for the repo to go through after the checkpoint has been processed.
-- The checkpoint will contain a rev value that you can use to skip any buffered events that have already been included in said checkpoint.
-- For each buffered event, if the rev is less than the current rev you have, you can safely skip it.
-
-Do the above process for each repo and you will end up with a complete replica of the network. To get a list of all the repos, you can use the `com.atproto.sync.listRepos` endpoint on the relay, or on each PDS.
-
-- This is a fairly large amount of data (hundreds of GBs at the time of writing), and will be somewhat demanding in terms of resources.
-- Be careful not to get rate limited. You will be making one call to `getRepo` per user. It is recommended to implement client side rate limiting to prevent your requests from getting blocked by firewalls on the PDS or relay you are requesting data from.
+- [Streaming data](/guides/streaming-data)
+- [Backfilling](/guides/backfilling)
+- [Repository spec](/specs/repository)
+- [Event Stream spec](/specs/event-stream)
+- [Sync spec](/specs/sync)

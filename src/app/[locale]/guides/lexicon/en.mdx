@@ -31,7 +31,7 @@ The schema types, definition language, and validation constraints are described 
 
 ## HTTP API methods
 
-The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. For example, a call to:
+Atmosphere HTTP API methods each scope and implement a particular set of Lexicons. The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. For example, a call to:
 
 ```tsx
 client.call(app.bsky.actor.getProfile, {})
@@ -74,50 +74,6 @@ The schemas establish valid query parameters, request bodies, and response bodie
   }
 }
 ```
-
-## Installing and Using Lexicons
-
-Lexicon's schemas enable code generation with types and validation. Our SDKs each install a `lex` tool that lets you generate a type-safe client that knows which parameters each AT endpoint expects.
-
-For example, in TypeScript:
-
-```jsx
-npm install -g @atproto/lex
-```
-
-This provides the `lex` command, which you can use to install Lexicons into a local project:
-
-```jsx
-lex install app.bsky.feed.post app.bsky.feed.like
-```
-
-This creates:
-
-- `lexicons.json` - manifest tracking installed Lexicons and their versions (CIDs)
-- `lexicons/` - directory containing the Lexicon JSON files
-
-Finally, generate TypeScript schemas from the installed Lexicons:
-
-```markdown
-lex build
-```
-
-This generates TypeScript files in `./src/lexicons`. Now, you'll have these functions available to use in your code:
-
-```tsx
-import { Client } from '@atproto/lex'
-import * as app from './lexicons/app.js'
-
-// Create a client instance
-const client = new Client('https://public.api.bsky.app')
-
-// Start making requests using generated schemas
-const response = await client.call(app.bsky.actor.getProfile, {
-  actor: 'pfrazee.com',
-})
-```
-
-For more guidance on working with `lex`, refer to the [readme](https://github.com/bluesky-social/atproto-internal/blob/msi/lex/packages/lex/lex/README.md#json-schemas).
 
 ## Record types
 
@@ -162,53 +118,15 @@ at://bob.com/com.example.follow/12345
 }
 ```
 
-## Versioning
+### Versioning
 
 Once a Lexicon is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, lexicons may only add optional constraints to previously unconstrained fields.
 
 If a lexicon must change a previously-published constraint, it should be published as a new lexicon under a new NSID.
 
-## Creating and Publishing Lexicons
-
-Lexicons are designed to be machine-readable and network-accessible. While it is not currently *required* that a lexicon is available on the network, it is strongly advised to publish lexicon so that a single canonical & authoritative representation is available to consumers of the method.
-
-You can use [`goat`](https://github.com/bluesky-social/goat), our command line tool, for creating and publishing Lexicons. The Lexicon-related features are available under [`goat lex`](https://github.com/bluesky-social/goat?tab=readme-ov-file#lexicon-development) :
-
-- publishing schemas to and synchronizing from the AT network
-- diffing, linting, and verifying schema evolution rules
-
-For example: in a project directory, you can download some existing Lexicons, which will get saved as JSON files in `./lexicons/`:
-
-```markdown
-$ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile
- 🟢 com.atproto.repo.strongRef
- 🟢 com.atproto.moderation.defs
- 🟢 com.atproto.moderation.createReport
- 🟢 app.bsky.actor.profile
-```
-
-You can also create a new Lexicon record with `goat lex new record`:
-
-```markdown
-$ goat lex new record dev.project.thing
-
-$ open ./lexicons/dev/project/thing.json
-```
-
-And eventually publish it with `goat lex publish`:
-
-```markdown
-$ goat lex publish
- 🟢 dev.project.thing
-```
-
-Refer to the [Lexicon Style Guide](/guides/lexicon-style-guide) for guidance on creating new Lexicons.
-
-## Lexhub
-
-Lexhub is our resource for discovering and browsing Lexicons!
-
 ## Further Reading and Resources
 
+- [Installing Lexicons](/guides/installing-lexicons)
+- [Publishing Lexicons](/guides/publishing-lexicons)
 - [Lexicon Style Guide](/guides/lexicon-style-guide)
-- [Lexcion Specs]](https://atproto.com/specs/lexicon)
+- [Lexicon Specs](/specs/lexicon)

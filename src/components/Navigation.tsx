@@ -349,12 +349,30 @@ export const navigation: Array<NavGroup> = [
   {
     title: 'Docs',
     links: [
-      { title: 'Auth', href: '/guides/auth' },
+      {title: 'Auth', href: '/guides/auth', links: [
+        { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
+        { title: 'Scopes', href: '/guides/scopes' },
+      ] },
       { title: 'Reads and Writes', href: '/guides/reads-and-writes' },
-      { title: 'Sync', href: '/guides/sync' },
-      { title: 'Lexicons', href: '/guides/lexicon' },
-      { title: 'Images and Video', href: '/guides/images-and-video' },
-      { title: 'Moderation', href: '/guides/moderation' },
+      { title: 'Sync', href: '/guides/sync', links: [
+        { title: 'Streaming data', href: '/guides/streaming-data' },
+        { title: 'Backfilling', href: '/guides/backfilling' },
+      ] },
+      { title: 'Lexicons', href: '/guides/lexicon', links: [
+        { title: 'Installing Lexicons', href: '/guides/installing-lexicons' },
+        { title: 'Publishing Lexicons', href: '/guides/publishing-lexicons' },
+        { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
+      ] },
+      { title: 'Images and Video', href: '/guides/images-and-video', links: [
+        { title: 'Lifecycle', href: '/guides/blob-lifecycle' },
+        { title: 'Security', href: '/guides/blob-security' },
+        { title: 'Video handling', href: '/guides/video-handling' },
+      ] },
+      { title: 'Moderation', href: '/guides/moderation', links: [
+        { title: 'Subscriptions', href: '/guides/subscriptions' },
+        { title: 'Creating a labeler', href: '/guides/creating-a-labeler' },
+        { title: 'Using Ozone', href: '/guides/using-ozone' },
+      ] },
       { title: 'SDKs', href: '/sdks' },
       { title: 'Cookbook ⧉', href: 'https://github.com/bluesky-social/cookbook/' },
       { title: 'Tutorial App', href: '/guides/applications' },
@@ -375,9 +393,7 @@ export const navigation: Array<NavGroup> = [
     links: [
       { title: 'AT Protocol', href: '/specs/atp' },
       { title: 'Data Model', href: '/specs/data-model' },
-      { title: 'Lexicon', href: '/specs/lexicon', links: [
-        { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
-      ]},
+      { title: 'Lexicon', href: '/specs/lexicon' },
       { title: 'Cryptography', href: '/specs/cryptography' },
       { title: 'Accounts', href: '/specs/account' },
       { title: 'Repository', href: '/specs/repository' },

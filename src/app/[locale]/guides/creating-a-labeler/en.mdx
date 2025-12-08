@@ -1,0 +1,60 @@
+import {Container} from "@/components/Container"
+import ozone from "./ozone.png"
+
+export const metadata = {
+  title: 'Creating a Labeler - AT Protocol Docs',
+  description: 'Guide to moderation in AT Protocol.',
+}
+
+# Creating a labeler
+
+Labelers publish an `/app.bsky.labeler.service/self` record to declare that they are a labeler and publish their policies. That record looks like this:
+
+```json
+{
+  "$type": "app.bsky.labeler.service",
+  "policies": {
+    "labelValues": ["porn", "spider"],
+    "labelValueDefinitions": [
+      {
+        "identifier": "spider",
+        "severity": "alert",
+        "blurs": "media",
+        "defaultSetting": "warn",
+        "locales": [
+          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
+        ]
+      }
+    ]
+  },
+  "subjectTypes": ["record"],
+  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
+  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
+  "createdAt": "2024-03-03T05:31:08.938Z"
+}
+```
+
+The `labelValues` declares what to expect from the Labeler. It may include global and custom label values.
+
+The `labelValueDefinitions` defines the custom labels. It includes the `locales` field for specifying human-readable copy in various languages. If the user's language is not found, it will use the first set of strings in the array.
+
+`subjectTypes`, `subjectCollections`, and `reasonTypes` declare what type of moderation reports are reviewed by the Labeler. `subjectTypes` can include `record` for individual pieces of content, and `account` for overall accounts. `subjectCollections` is a list of NSIDs of record types; if not defined, any record type is allowed. `reasonTypes` is a list of report reason codes (Lexicon references).
+
+## Ozone
+
+[Ozone](https://github.com/bluesky-social/ozone) is our reference labeling service for Atmosphere apps, and includes a web interface for triaging and actioning moderation reports.
+
+<Container>
+  <Image src={ozone} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Self-hosting Ozone enables you to participate as a labeler in the AT stackable moderation architecture. The Ozone service consists of a web UI, a backend, and a Postgres database. 
+
+Before setting up your Ozone service you should create a *new* account on the network, separate from your main account. This is the account that subscribers to your labeler will interact with: accounts for labelers will appear differently in app interfaces than normal accounts. Refer to the [Ozone User Guide](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md) for more.
+
+## Further Reading and Resources
+
+- [Moderation](/guides/moderation)
+- [Subscriptions](/guides/subscriptions)
+- [Using Ozone](/guides/using-ozone)
+- [Label Specs](/specs/label)

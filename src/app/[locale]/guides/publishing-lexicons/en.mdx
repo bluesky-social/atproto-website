@@ -1,0 +1,50 @@
+export const metadata = {
+  title: 'Publishing Lexicons - AT Protocol Docs',
+  description: 'A schema-driven interoperability framework',
+}
+
+# Publishing Lexicons
+
+Lexicons are designed to be machine-readable and network-accessible. While it is not currently *required* that a lexicon is available on the network, it is strongly advised to publish lexicon so that a single canonical & authoritative representation is available to consumers of the method.
+
+You can use [`goat`](https://github.com/bluesky-social/goat), our command line tool, for creating and publishing Lexicons. The Lexicon-related features are available under [`goat lex`](https://github.com/bluesky-social/goat?tab=readme-ov-file#lexicon-development) :
+
+- publishing schemas to and synchronizing from the AT network
+- diffing, linting, and verifying schema evolution rules
+
+For example: in a project directory, you can download some existing Lexicons, which will get saved as JSON files in `./lexicons/`:
+
+```markdown
+$ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile
+ 🟢 com.atproto.repo.strongRef
+ 🟢 com.atproto.moderation.defs
+ 🟢 com.atproto.moderation.createReport
+ 🟢 app.bsky.actor.profile
+```
+
+You can also create a new Lexicon record with `goat lex new record`:
+
+```markdown
+$ goat lex new record dev.project.thing
+
+$ open ./lexicons/dev/project/thing.json
+```
+
+And eventually publish it with `goat lex publish`:
+
+```markdown
+$ goat lex publish
+ 🟢 dev.project.thing
+```
+
+Refer to the [Lexicon Style Guide](/guides/lexicon-style-guide) for guidance on creating new Lexicons.
+
+## Lexhub
+
+Lexhub is our resource for discovering and browsing Lexicons!
+
+## Further Reading and Resources
+
+- [Lexicons](/guides/lexicon)
+- [Lexicon Style Guide](/guides/lexicon-style-guide)
+- [Lexicon Specs](/specs/lexicon)
