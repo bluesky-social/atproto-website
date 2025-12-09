@@ -374,7 +374,7 @@ export const navigation: Array<NavGroup> = [
         { title: 'Using Ozone', href: '/guides/using-ozone' },
       ] },
       { title: 'SDKs', href: '/sdks' },
-      { title: 'Cookbook ⧉', href: 'https://github.com/bluesky-social/cookbook/' },
+      { title: 'Cookbook', href: 'https://github.com/bluesky-social/cookbook/' },
       { title: 'Tutorial App', href: '/guides/applications' },
     ],
   },
@@ -385,7 +385,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Self-hosting', href: '/guides/self-hosting' },
       { title: 'Going to production', href: '/guides/going-to-production' },
       { title: 'Account migration', href: '/guides/account-migration' },
-      { title: 'Deploy recipes ⧉', href: 'https://github.com/bluesky-social/deploy-recipes/' },
+      { title: 'Deploy recipes', href: 'https://github.com/bluesky-social/deploy-recipes/' },
     ],
   },
   {
