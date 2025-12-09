@@ -34,7 +34,7 @@ function TopLevelNavItem({
     <li className="md:hidden">
       <Link
         href={href}
-        className="block py-1 text-sm text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+        className="block py-1 text-sm text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
       >
         {children}
       </Link>
@@ -60,11 +60,11 @@ function NavLink({
       href={href}
       aria-current={active ? 'page' : undefined}
       className={clsx(
-        'flex justify-between gap-2 py-1 pr-3 text-sm transition',
+        'flex justify-between gap-2 py-1 pr-3 text-base transition',
         isAnchorLink ? 'pl-7' : 'pl-4',
         active
-          ? 'text-zinc-900 dark:text-white'
-          : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white',
+          ? 'text-black dark:text-white'
+          : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white',
       )}
     >
       <span className="truncate">{children}</span>
@@ -84,15 +84,15 @@ function ActivePageMarker({
   group: NavGroup
   pathname: string
 }) {
-  let itemHeight = remToPx(2)
-  let offset = remToPx(0.25)
+  let itemHeight = remToPx(2.25)
+  let offset = remToPx(0.15)
   let activePageIndex = group.links.findIndex((link) => link.href === pathname)
   let top = offset + activePageIndex * itemHeight
 
   return (
     <motion.div
       layout
-      className="absolute left-2 h-6 w-px bg-blue-500"
+      className="absolute left-2 h-8 w-full bg-slate-100 dark:bg-slate-800"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { delay: 0.2 } }}
       exit={{ opacity: 0 }}
@@ -121,7 +121,7 @@ function NavigationGroup({
     <li className={clsx('relative mt-6', className)}>
       <motion.h2
         layout="position"
-        className="text-xs font-semibold text-zinc-900 dark:text-white"
+        className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-300"
       >
         {group.title}
       </motion.h2>
@@ -170,8 +170,14 @@ export const navigation: Array<NavGroup> = [
     title: 'Building apps',
     links: [
       { title: 'Quick start', href: '/guides/applications' },
-      { title: 'Cookbook ⧉', href: 'https://github.com/bluesky-social/cookbook/' },
-      { title: 'Distributed Systems', href: '/articles/atproto-for-distsys-engineers' },
+      {
+        title: 'Cookbook ⧉',
+        href: 'https://github.com/bluesky-social/cookbook/',
+      },
+      {
+        title: 'Distributed Systems',
+        href: '/articles/atproto-for-distsys-engineers',
+      },
     ],
   },
   {
