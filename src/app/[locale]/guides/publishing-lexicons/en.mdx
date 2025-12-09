@@ -12,7 +12,13 @@ You can use [`goat`](https://github.com/bluesky-social/goat), our command line t
 - publishing schemas to and synchronizing from the AT network
 - diffing, linting, and verifying schema evolution rules
 
-For example: in a project directory, you can download some existing Lexicons, which will get saved as JSON files in `./lexicons/`:
+`goat` can be installed from [Homebrew](https://formulae.brew.sh/formula/goat) on macOS and Linux:
+
+```shell
+brew install goat
+```
+
+In a project directory, you can download some existing Lexicons, which will get saved as JSON files in `./lexicons/`:
 
 ```markdown
 $ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile

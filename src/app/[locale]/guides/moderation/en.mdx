@@ -14,7 +14,7 @@ AT model is that *speech* and *reach* should be two separate layers, built to wo
   <Image src={moderation} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-Our moderation architecture is provided by two services: *Osprey*, an event stream decisions engine and analysis UI designed to investigate and take automatic action; and *Ozone*, a labeling service and web frontend for making moderation decisions. Refer to [Moderation in the AT Stack](/guides/the-at-stack#osprey-and-ozone) for more information.
+Our moderation architecture is provided by two services: [*Osprey*](#algorithmic-moderation), an event stream decisions engine and analysis UI designed to investigate and take automatic action; and [*Ozone*](#using-ozone), a labeling service and web frontend for making moderation decisions.
 
 [Read more](https://docs.bsky.app/blog/blueskys-moderation-architecture) about moderation on our blog.
 
@@ -128,6 +128,8 @@ From another perspective, Osprey is a Python library for processing actions thro
 Refer to the [Osprey](https://github.com/bluesky-social/osprey-atproto) Github repository for further guidance.
 
 ## Further Reading and Resources
+
+You can [subscribe](/guides/subscriptions) to moderation labelers to have their labels applied in your application. You can also [create your own labeler](/guides/creating-a-labeler) to publish labels. If you need to moderate content manually, you can use [Ozone](/guides/using-ozone) as a web interface for labeling content.
 
 - [Subscriptions](/guides/subscriptions)
 - [Creating a labeler](/guides/creating-a-labeler)
