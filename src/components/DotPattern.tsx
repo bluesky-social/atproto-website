@@ -14,7 +14,7 @@ export function DotPattern(props: React.ComponentPropsWithoutRef<'svg'>) {
           x={0}
           y={0}
         >
-          <rect width="2" height="2" fill="#F0EBEB" />
+          <rect width="2" height="2" fill="current" />
         </pattern>
       </defs>
       <rect
@@ -28,5 +28,11 @@ export function DotPattern(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function DotPatternBackground() {
-  return <DotPattern className="absolute inset-0" width="100%" height="100%" />
+  return (
+    <DotPattern
+      className="absolute inset-0 fill-slate-200 dark:fill-slate-800"
+      width="100%"
+      height="100%"
+    />
+  )
 }

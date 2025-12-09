@@ -31,16 +31,16 @@ export function PageSectionsNavigation({
           className={clsx(
             'border-l-2 px-4 py-2',
             section.id === visibleSections[0]
-              ? 'border-slate-900'
-              : 'border-slate-200',
+              ? 'border-slate-900 dark:border-slate-400'
+              : 'border-slate-200 dark:border-slate-700',
           )}
         >
           <a
             className={clsx(
               maxLen > 20 || sections.length > 8 ? 'text-md' : 'text-lg',
               section.id === visibleSections[0]
-                ? 'text-slate-900'
-                : 'text-slate-500',
+                ? 'text-slate-900 dark:text-slate-400'
+                : 'text-slate-500 dark:text-slate-600',
             )}
             href={`#${section.id}`}
           >
