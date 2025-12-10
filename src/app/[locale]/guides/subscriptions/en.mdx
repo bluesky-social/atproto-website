@@ -15,6 +15,31 @@ To include labels from a given labeler, set the `atproto-accept-labelers` header
 curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
 ```
 
+You can also add labelers using the TypeScript SDK:
+
+```tsx
+import { Client } from '@atproto/lex'
+
+// Global app-level labelers
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// Client-specific labelers
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// Add labelers dynamically
+client.addLabelers(['did:plc:labeler4'])
+
+// Replace all labelers
+client.setLabelers(['did:plc:labeler5'])
+
+// Clear labelers
+client.clearLabelers()
+```
+
 ## Use labels in your app
 
 Labels may be placed on accounts or records. Apps can interprets targets in different ways:
@@ -27,9 +52,19 @@ Labels may be placed on accounts or records. Apps can interprets targets in diff
 
 To send a report to a Labeler, use the `com.atproto.moderation.createReport` procedure. Users may send reports to any of their labelers.
 
-To specify which labeler should receive the label, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the official TypeScript SDK, it looks like this:
+To specify which labeler should receive the label, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the TypeScript SDK, it looks like this:
 
 ```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
 agent
   .withProxy('atproto_labeler', 'did:web:my-labeler.com')
   .createModerationReport({

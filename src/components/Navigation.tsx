@@ -353,7 +353,12 @@ export const navigation: Array<NavGroup> = [
         { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
         { title: 'Scopes', href: '/guides/scopes' },
       ] },
-      { title: 'Reads and Writes', href: '/guides/reads-and-writes' },
+      {
+        title: 'Reads and Writes', href: '/guides/reads-and-writes', links: [
+        { title: 'Reading data', href: '/guides/reading-data' },
+        { title: 'Writing data', href: '/guides/writing-data' },
+        { title: 'Interaction patterns', href: '/guides/interaction-patterns' },
+      ] },
       { title: 'Sync', href: '/guides/sync', links: [
         { title: 'Streaming data', href: '/guides/streaming-data' },
         { title: 'Backfilling', href: '/guides/backfilling' },

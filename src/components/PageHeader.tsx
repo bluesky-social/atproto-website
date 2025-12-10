@@ -42,12 +42,12 @@ export function PageHeader({
                 </span>
               )}
               {primaryCTA && (
-                <Button href={primaryCTA.href} variant="primary" size="large">
+                <Button href={primaryCTA.href} variant="primary">
                   {primaryCTA.label}
                 </Button>
               )}
               {secondaryCTA && (
-                <Button href={secondaryCTA.href} variant="outline" size="large">
+                <Button href={secondaryCTA.href} variant="outline">
                   {secondaryCTA.label}
                 </Button>
               )}
