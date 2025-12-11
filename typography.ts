@@ -180,7 +180,7 @@ export default function typographyStyles({ theme }: PluginUtils) {
         h2: {
           color: 'var(--tw-prose-headings)',
           fontWeight: '600',
-          fontSize: theme('fontSize.xl')[0],
+          fontSize: theme('fontSize.2xl')[0],
           ...theme('fontSize.xl')[1],
           marginTop: theme('spacing.16'),
           marginBottom: theme('spacing.2'),
