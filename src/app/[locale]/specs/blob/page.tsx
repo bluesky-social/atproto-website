@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Blobs',
   description: 'Media files referenced by records',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

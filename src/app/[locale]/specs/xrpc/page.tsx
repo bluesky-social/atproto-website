@@ -4,7 +4,6 @@ export const metadata = {
   title: 'HTTP API (XRPC)',
   description: 'Cross-system queries and procedures over HTTP',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

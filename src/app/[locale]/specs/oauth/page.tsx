@@ -4,7 +4,6 @@ export const metadata = {
   title: 'OAuth',
   description: 'OAuth for Client/Server Authentication and Authorization',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

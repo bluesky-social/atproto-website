@@ -6,7 +6,6 @@ export const metadata = {
     'Network wire protocol for subscribing to a stream of Lexicon objects',
   wip: true,
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

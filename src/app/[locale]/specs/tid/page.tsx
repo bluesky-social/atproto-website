@@ -5,7 +5,6 @@ export const metadata = {
   description:
     'A compact timestamp-based identifier for revisions and records.',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

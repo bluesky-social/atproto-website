@@ -4,7 +4,6 @@ export const metadata = {
   title: 'AT URI scheme (at://)',
   description: 'A URI scheme for addressing ATP repository data.',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Repository',
   description: 'Self-authenticating storage for public account content',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

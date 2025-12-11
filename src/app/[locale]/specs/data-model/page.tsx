@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Data Model',
   description: 'Consistent data encoding for records and messages.',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

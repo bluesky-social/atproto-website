@@ -5,7 +5,6 @@ export const metadata = {
   description:
     'Specification for the Authenticated Transfer Protocol (AT Protocol)',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Accounts',
   description: 'Account Hosting and Lifecycle',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

@@ -5,7 +5,6 @@ export const metadata = {
   description:
     'Self-authenticating string annotations on accounts or content for moderation and other purposes.',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content

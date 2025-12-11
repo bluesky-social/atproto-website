@@ -4,7 +4,6 @@ export const metadata = {
   title: 'Handle',
   description: 'A specification for human-friendly account identifiers.',
 }
-import { Page } from '@/components/Page'
 
 export default async function HomePage({ params }: any) {
   let Content
