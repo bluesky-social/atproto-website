@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Record Key',
   description: 'Identifier for individual records in a collection',

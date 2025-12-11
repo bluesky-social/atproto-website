@@ -1,0 +1,56 @@
+export const metadata = {
+  title: 'Installing Lexicons - AT Protocol Docs',
+  description: 'A schema-driven interoperability framework',
+}
+
+# Installing Lexicons
+
+Lexicon schemas enable code generation with types and validation. Our SDKs each install a `lex` tool that lets you generate a type-safe client that knows which parameters each AT endpoint expects.
+
+## TypeScript
+
+First, install the `@atproto/lex` package:
+
+```bash
+npm install -g @atproto/lex
+```
+
+This provides the `lex` command, which you can use to install Lexicons into a local project:
+
+```bash
+lex install app.bsky.feed.post app.bsky.feed.like
+```
+
+This creates:
+
+- `lexicons.json` - manifest tracking installed Lexicons and their versions (CIDs)
+- `lexicons/` - directory containing the Lexicon JSON files
+
+Finally, generate TypeScript schemas from the installed Lexicons:
+
+```bash
+lex build
+```
+
+This generates TypeScript files in `./src/lexicons`. Now, you'll have these functions available to use in your code:
+
+```tsx
+import { Client } from '@atproto/lex'
+import * as app from './lexicons/app.js'
+
+// Create an unauthenticated client instance
+const client = new Client('https://public.api.bsky.app')
+
+// Start making requests using generated schemas
+const response = await client.call(app.bsky.actor.getProfile, {
+  actor: 'pfrazee.com',
+})
+```
+
+For more guidance on working with `lex`, refer to the [readme](https://github.com/bluesky-social/atproto-internal/blob/msi/lex/packages/lex/lex/README.md#json-schemas).
+
+## Further Reading and Resources
+
+- [Publishing Lexicons](/guides/publishing-lexicons)
+- [Lexicon Style Guide](/guides/lexicon-style-guide)
+- [Lexicon Specs](/specs/lexicon)

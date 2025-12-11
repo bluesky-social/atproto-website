@@ -10,12 +10,15 @@ import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
 import { Tag } from '@/components/Tag'
 import { remToPx } from '@/lib/remToPx'
 
+interface NavLink {
+  title: string
+  href: string
+  links?: Array<NavLink> // Added for subpages
+}
+
 interface NavGroup {
   title: string
-  links: Array<{
-    title: string
-    href: string
-  }>
+  links: Array<NavLink>
 }
 
 function useInitialValue<T>(value: T, condition = true) {
@@ -42,32 +45,62 @@ function TopLevelNavItem({
   )
 }
 
+function isExternalLink(href: string) {
+  return href.startsWith('http://') || href.startsWith('https://')
+}
+
 function NavLink({
   href,
   children,
   tag,
   active = false,
   isAnchorLink = false,
+  isSubpage = false,
 }: {
   href: string
   children: React.ReactNode
   tag?: string
   active?: boolean
   isAnchorLink?: boolean
+  isSubpage?: boolean
 }) {
+  const isExternal = isExternalLink(href)
+  const linkProps = isExternal
+    ? { target: '_blank', rel: 'noopener noreferrer' }
+    : {}
+
   return (
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
       className={clsx(
         'flex justify-between gap-2 py-1 pr-3 text-base transition',
-        isAnchorLink ? 'pl-7' : 'pl-4',
+        isAnchorLink ? 'pl-7' : isSubpage ? 'pl-6' : 'pl-4',
         active
           ? 'text-black dark:text-white'
           : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white',
       )}
+      {...linkProps}
     >
-      <span className="truncate">{children}</span>
+      <span className="flex items-center gap-1 truncate">
+        {children}
+        {isExternal && (
+          <svg
+            className="inline-block h-3 w-3 opacity-60"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        )}
+      </span>
       {tag && (
         <Tag variant="small" color="zinc">
           {tag}
@@ -86,7 +119,17 @@ function ActivePageMarker({
 }) {
   let itemHeight = remToPx(2.25)
   let offset = remToPx(0.15)
-  let activePageIndex = group.links.findIndex((link) => link.href === pathname)
+
+  // Count all links including subpages
+  let allLinks: Array<{ href: string }> = []
+  group.links.forEach((link) => {
+    allLinks.push(link)
+    if (link.links) {
+      allLinks.push(...link.links)
+    }
+  })
+
+  let activePageIndex = allLinks.findIndex((link) => link.href === pathname)
   let top = offset + activePageIndex * itemHeight
 
   return (
@@ -114,8 +157,14 @@ function NavigationGroup({
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
   let [pathname] = useInitialValue([usePathname()], isInsideMobileNavigation)
 
-  let isActiveGroup =
-    group.links.findIndex((link) => link.href === pathname) !== -1
+  // Check if any link or subpage is active
+  let isActiveGroup = group.links.some((link) => {
+    if (link.href === pathname) return true
+    if (link.links) {
+      return link.links.some((sublink) => sublink.href === pathname)
+    }
+    return false
+  })
 
   return (
     <li className={clsx('relative mt-6', className)}>
@@ -141,6 +190,33 @@ function NavigationGroup({
               <NavLink href={link.href} active={link.href === pathname}>
                 {link.title}
               </NavLink>
+              {/* Render subpages */}
+              {link.links && link.links.length > 0 && (
+                <motion.ul
+                  role="list"
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    transition: { delay: 0.1 },
+                  }}
+                >
+                  {link.links.map((sublink) => (
+                    <motion.li
+                      key={sublink.href}
+                      layout="position"
+                      className="relative"
+                    >
+                      <NavLink
+                        href={sublink.href}
+                        active={sublink.href === pathname}
+                        isSubpage
+                      >
+                        {sublink.title}
+                      </NavLink>
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              )}
             </motion.li>
           ))}
         </ul>
@@ -151,47 +227,90 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: 'Home',
+    title: 'About',
     links: [
       { title: 'Introduction', href: '/' },
-      // { title: 'Why ATProto?', href: '/articles/why-atproto' }, TODO
-      // { title: 'Explore the network', href: '/explorer' }, TODO
       { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
-      { title: 'SDKs', href: '/sdks' },
-      { title: 'Glossary', href: '/guides/glossary' },
       { title: 'FAQ', href: '/guides/faq' },
     ],
   },
-  // { TODO
-  //   title: 'OAuth',
-  //   links: [{ title: 'Tutorial', href: '/guides/oauth-tutorial' }],
-  // },
   {
-    title: 'Building apps',
+    title: 'Docs',
     links: [
-      { title: 'Quick start', href: '/guides/applications' },
       {
-        title: 'Cookbook ⧉',
+        title: 'Auth',
+        href: '/guides/auth',
+        links: [
+          { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
+          { title: 'Scopes', href: '/guides/scopes' },
+        ],
+      },
+      {
+        title: 'Reads and Writes',
+        href: '/guides/reads-and-writes',
+        links: [
+          { title: 'Reading data', href: '/guides/reading-data' },
+          { title: 'Writing data', href: '/guides/writing-data' },
+          {
+            title: 'Interaction patterns',
+            href: '/guides/interaction-patterns',
+          },
+        ],
+      },
+      {
+        title: 'Sync',
+        href: '/guides/sync',
+        links: [
+          { title: 'Streaming data', href: '/guides/streaming-data' },
+          { title: 'Backfilling', href: '/guides/backfilling' },
+        ],
+      },
+      {
+        title: 'Lexicons',
+        href: '/guides/lexicon',
+        links: [
+          { title: 'Installing Lexicons', href: '/guides/installing-lexicons' },
+          { title: 'Publishing Lexicons', href: '/guides/publishing-lexicons' },
+          { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
+        ],
+      },
+      {
+        title: 'Images and Video',
+        href: '/guides/images-and-video',
+        links: [
+          { title: 'Lifecycle', href: '/guides/blob-lifecycle' },
+          { title: 'Security', href: '/guides/blob-security' },
+          { title: 'Video handling', href: '/guides/video-handling' },
+        ],
+      },
+      {
+        title: 'Moderation',
+        href: '/guides/moderation',
+        links: [
+          { title: 'Subscriptions', href: '/guides/subscriptions' },
+          { title: 'Creating a labeler', href: '/guides/creating-a-labeler' },
+          { title: 'Using Ozone', href: '/guides/using-ozone' },
+        ],
+      },
+      { title: 'SDKs', href: '/sdks' },
+      {
+        title: 'Cookbook',
         href: 'https://github.com/bluesky-social/cookbook/',
       },
-      {
-        title: 'Distributed Systems',
-        href: '/articles/atproto-for-distsys-engineers',
-      },
+      { title: 'Tutorial App', href: '/guides/applications' },
     ],
   },
   {
-    title: 'Guides',
+    title: 'Deploy',
     links: [
-      { title: 'Overview', href: '/guides/overview' },
-      { title: 'Identity', href: '/guides/identity' },
-      { title: 'Data Repositories', href: '/guides/data-repos' },
-      { title: 'Schemas & Lexicon', href: '/guides/lexicon' },
-      { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
-      { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
+      { title: 'The AT Stack', href: '/guides/the-at-stack' },
+      { title: 'Self-hosting', href: '/guides/self-hosting' },
       { title: 'Going to production', href: '/guides/going-to-production' },
-      { title: 'OAuth Introduction', href: '/guides/oauth' },
-      { title: 'Account Migration', href: '/guides/account-migration' },
+      { title: 'Account migration', href: '/guides/account-migration' },
+      {
+        title: 'Deploy recipes',
+        href: 'https://github.com/bluesky-social/deploy-recipes/',
+      },
     ],
   },
   {
@@ -216,6 +335,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'TID', href: '/specs/tid' },
       { title: 'Record Key', href: '/specs/record-key' },
       { title: 'URI Scheme', href: '/specs/at-uri-scheme' },
+      { title: 'Glossary', href: '/guides/glossary' },
     ],
   },
 ]

@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'HTTP API (XRPC)',
   description: 'Cross-system queries and procedures over HTTP',

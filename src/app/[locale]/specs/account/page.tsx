@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Accounts',
   description: 'Account Hosting and Lifecycle',

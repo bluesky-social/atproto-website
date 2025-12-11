@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'AT URI scheme (at://)',
   description: 'A URI scheme for addressing ATP repository data.',

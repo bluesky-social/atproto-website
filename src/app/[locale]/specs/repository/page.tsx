@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Repository',
   description: 'Self-authenticating storage for public account content',

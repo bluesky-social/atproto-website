@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Namespaced Identifiers (NSIDs)',
   description: 'A specification for global semantic IDs.',

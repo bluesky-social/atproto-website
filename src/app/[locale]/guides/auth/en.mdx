@@ -1,0 +1,43 @@
+import {Container} from "@/components/Container"
+
+export const metadata = {
+  title: 'Auth - AT Protocol Docs',
+  description: 'Auth for AT Protocol application developers.',
+}
+
+# Auth
+
+This guide is aimed at developers building applications on AT Protocol.
+
+If you're building your own protocol implementation or OAuth Client SDK, the more detailed [specification](/specs/oauth) or advanced [OAuth client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client) may be more appropriate.
+
+## What *is* OAuth?
+
+OAuth is an authorization framework that lets developers request access to an account without requiring users to hand over their password. Without OAuth, if someone wanted to authorize a 3rd party app to access their account, their only option would be to type their username and password into that app. This is bad for all sorts of reasons, the first being that a 3rd party app gets to see, and likely save, passwords. And once an app has a username and password, the app would have _full_ access to their account.
+
+OAuth aims to solve these problems with a family of open specifications for managing secure authorization without requiring a person's username and password. If you've ever used a "Sign in with..." button or link on the web, you've used OAuth.
+
+As a developer, you can request limited access to a person's account, meaning if you only need to post a message to someone's public timeline, you don't also need to request access to read their private messages. This is great for your app because you don't have to worry about managing data you don't need, and it's great for the person using your app because they don't need to worry about their DMs being compromised.
+
+## How is OAuth Different in AT Protocol?
+
+ATProto [specifies](/specs/oauth) a particular "profile" of the OAuth standards, using [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html) as the foundation.
+
+There are a couple of details that might catch you off guard if you're used to using other OAuth systems.
+
+- **Migration**: ATProto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this ATProto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
+
+- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so ATProto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
+
+<Note>
+We also support the use of "[App Passwords](/specs/xrpc#app-passwords)". Accounts can create and revoke app passwords separate from their primary password, as a way of providing slightly finer-grained permissions for external apps that have not yet adopted OAuth. OAuth will be the recommended solution for nearly all apps going forward.
+</Note>
+
+## Further Reading and Resources
+
+To implement OAuth in your application, refer to [OAuth patterns](/guides/oauth-patterns) for common use cases, and the [Scopes](/guides/scopes) guide for understanding permission models.
+
+- [OAuth patterns](/guides/oauth-patterns)
+- [Scopes](/guides/scopes)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

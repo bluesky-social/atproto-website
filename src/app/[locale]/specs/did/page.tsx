@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'DID',
   description: 'Persistent decentralized identifiers (as used in atproto)',

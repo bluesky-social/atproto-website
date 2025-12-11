@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Sync',
   description: 'Firehose and other data synchronization mechanisms.',

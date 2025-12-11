@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Data Model',
   description: 'Consistent data encoding for records and messages.',

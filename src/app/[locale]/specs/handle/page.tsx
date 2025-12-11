@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Handle',
   description: 'A specification for human-friendly account identifiers.',
