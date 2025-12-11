@@ -4,15 +4,17 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
-import { AnimatePresence, motion } from 'framer-motion'
 
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
 import { Tag } from '@/components/Tag'
-import { remToPx } from '@/lib/remToPx'
+import { ChevronRightIcon } from './icons/ChevronRightIcon'
+import { ChevronDownIcon } from './icons/ChevronDownIcon'
+import { OutlineIconEnum, Icon } from './icons/outline'
 
 interface NavLink {
   title: string
   href: string
+  icon?: OutlineIconEnum
   links?: Array<NavLink> // Added for subpages
 }
 
@@ -52,14 +54,18 @@ function isExternalLink(href: string) {
 function NavLink({
   href,
   children,
+  icon,
   tag,
+  chevron,
   active = false,
   isAnchorLink = false,
   isSubpage = false,
 }: {
   href: string
   children: React.ReactNode
+  icon?: OutlineIconEnum
   tag?: string
+  chevron?: 'right' | 'down'
   active?: boolean
   isAnchorLink?: boolean
   isSubpage?: boolean
@@ -74,19 +80,29 @@ function NavLink({
       href={href}
       aria-current={active ? 'page' : undefined}
       className={clsx(
-        'flex justify-between gap-2 py-1 pr-3 text-base transition',
-        isAnchorLink ? 'pl-7' : isSubpage ? 'pl-6' : 'pl-4',
-        active
+        'my-0.5 flex items-center gap-2 rounded py-1 pl-3 pr-3 transition',
+        isAnchorLink ? 'ml-5' : isSubpage ? 'ml-4' : '',
+        isSubpage ? 'text-sm' : 'text-md',
+        active || !isSubpage
           ? 'text-black dark:text-white'
-          : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white',
+          : 'text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white',
+        active
+          ? 'bg-zinc-100 dark:bg-zinc-800'
+          : 'hover:bg-zinc-50 dark:hover:bg-zinc-800',
       )}
       {...linkProps}
     >
+      {icon && (
+        <Icon
+          icon={icon}
+          className="size-[18px] fill-none stroke-black dark:stroke-white"
+        />
+      )}
       <span className="flex items-center gap-1 truncate">
         {children}
         {isExternal && (
           <svg
-            className="inline-block h-3 w-3 opacity-60"
+            className="opacity-6 ml-0.5 inline-block h-3 w-3"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -95,52 +111,25 @@ function NavLink({
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={2.5}
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
             />
           </svg>
         )}
       </span>
+      <span className="flex-1" />
       {tag && (
         <Tag variant="small" color="zinc">
           {tag}
         </Tag>
       )}
+      {chevron == 'right' && (
+        <ChevronRightIcon className="size-4 fill-black dark:fill-white" />
+      )}
+      {chevron == 'down' && (
+        <ChevronDownIcon className="size-4 fill-black dark:fill-white" />
+      )}
     </Link>
-  )
-}
-
-function ActivePageMarker({
-  group,
-  pathname,
-}: {
-  group: NavGroup
-  pathname: string
-}) {
-  let itemHeight = remToPx(2.25)
-  let offset = remToPx(0.15)
-
-  // Count all links including subpages
-  let allLinks: Array<{ href: string }> = []
-  group.links.forEach((link) => {
-    allLinks.push(link)
-    if (link.links) {
-      allLinks.push(...link.links)
-    }
-  })
-
-  let activePageIndex = allLinks.findIndex((link) => link.href === pathname)
-  let top = offset + activePageIndex * itemHeight
-
-  return (
-    <motion.div
-      layout
-      className="absolute left-2 h-8 w-full bg-slate-100 dark:bg-slate-800"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { delay: 0.2 } }}
-      exit={{ opacity: 0 }}
-      style={{ top }}
-    />
   )
 }
 
@@ -158,7 +147,7 @@ function NavigationGroup({
   let [pathname] = useInitialValue([usePathname()], isInsideMobileNavigation)
 
   // Check if any link or subpage is active
-  let isActiveGroup = group.links.some((link) => {
+  const activePage = group.links.find((link) => {
     if (link.href === pathname) return true
     if (link.links) {
       return link.links.some((sublink) => sublink.href === pathname)
@@ -167,60 +156,52 @@ function NavigationGroup({
   })
 
   return (
-    <li className={clsx('relative mt-6', className)}>
-      <motion.h2
-        layout="position"
-        className="text-xs font-semibold uppercase text-slate-600 dark:text-slate-300"
-      >
+    <li
+      className={clsx(
+        'relative border-b border-zinc-900/10 py-4 dark:border-white/10',
+        className,
+      )}
+    >
+      <h2 className="px-3 text-xs font-medium uppercase text-slate-500 dark:text-slate-300">
         {group.title}
-      </motion.h2>
-      <div className="relative mt-3 pl-2">
-        <motion.div
-          layout
-          className="absolute inset-y-0 left-2 w-px bg-zinc-900/10 dark:bg-white/5"
-        />
-        <AnimatePresence initial={false}>
-          {isActiveGroup && (
-            <ActivePageMarker group={group} pathname={pathname} />
-          )}
-        </AnimatePresence>
-        <ul role="list" className="border-l border-transparent">
-          {group.links.map((link) => (
-            <motion.li key={link.href} layout="position" className="relative">
-              <NavLink href={link.href} active={link.href === pathname}>
+      </h2>
+      <ul role="list" className="border-l border-transparent">
+        {group.links.map((link) => {
+          const hasChildren = link.links && link.links.length > 0
+          const isExpanded = activePage === link
+          return (
+            <li key={link.href} className="relative">
+              <NavLink
+                href={link.href}
+                icon={link.icon}
+                active={link.href === pathname}
+                chevron={
+                  hasChildren ? (isExpanded ? 'down' : 'right') : undefined
+                }
+              >
                 {link.title}
               </NavLink>
               {/* Render subpages */}
-              {link.links && link.links.length > 0 && (
-                <motion.ul
-                  role="list"
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                    transition: { delay: 0.1 },
-                  }}
-                >
-                  {link.links.map((sublink) => (
-                    <motion.li
-                      key={sublink.href}
-                      layout="position"
-                      className="relative"
-                    >
+              {hasChildren && isExpanded && (
+                <ul role="list">
+                  {link.links!.map((sublink) => (
+                    <li key={sublink.href} className="relative">
                       <NavLink
                         href={sublink.href}
+                        icon={sublink.icon}
                         active={sublink.href === pathname}
                         isSubpage
                       >
                         {sublink.title}
                       </NavLink>
-                    </motion.li>
+                    </li>
                   ))}
-                </motion.ul>
+                </ul>
               )}
-            </motion.li>
-          ))}
-        </ul>
-      </div>
+            </li>
+          )
+        })}
+      </ul>
     </li>
   )
 }
@@ -229,9 +210,20 @@ export const navigation: Array<NavGroup> = [
   {
     title: 'About',
     links: [
-      { title: 'Introduction', href: '/' },
+      { title: 'Home', icon: 'home', href: '/' },
+      { title: 'SDKs', icon: 'cube', href: '/sdks' },
+      {
+        title: 'Cookbook',
+        icon: 'book',
+        href: 'https://github.com/bluesky-social/cookbook/',
+      },
+      {
+        title: 'Tutorial App',
+        icon: 'academic-cap',
+        href: '/guides/applications',
+      },
+      { title: 'FAQ', icon: 'question', href: '/guides/faq' },
       { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
-      { title: 'FAQ', href: '/guides/faq' },
     ],
   },
   {
@@ -239,6 +231,7 @@ export const navigation: Array<NavGroup> = [
     links: [
       {
         title: 'Auth',
+        icon: 'key',
         href: '/guides/auth',
         links: [
           { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
@@ -247,6 +240,7 @@ export const navigation: Array<NavGroup> = [
       },
       {
         title: 'Reads and Writes',
+        icon: 'database',
         href: '/guides/reads-and-writes',
         links: [
           { title: 'Reading data', href: '/guides/reading-data' },
@@ -259,6 +253,7 @@ export const navigation: Array<NavGroup> = [
       },
       {
         title: 'Sync',
+        icon: 'stream',
         href: '/guides/sync',
         links: [
           { title: 'Streaming data', href: '/guides/streaming-data' },
@@ -267,6 +262,7 @@ export const navigation: Array<NavGroup> = [
       },
       {
         title: 'Lexicons',
+        icon: 'puzzle-piece',
         href: '/guides/lexicon',
         links: [
           { title: 'Installing Lexicons', href: '/guides/installing-lexicons' },
@@ -276,6 +272,7 @@ export const navigation: Array<NavGroup> = [
       },
       {
         title: 'Images and Video',
+        icon: 'media',
         href: '/guides/images-and-video',
         links: [
           { title: 'Lifecycle', href: '/guides/blob-lifecycle' },
@@ -285,6 +282,7 @@ export const navigation: Array<NavGroup> = [
       },
       {
         title: 'Moderation',
+        icon: 'flag',
         href: '/guides/moderation',
         links: [
           { title: 'Subscriptions', href: '/guides/subscriptions' },
@@ -292,12 +290,6 @@ export const navigation: Array<NavGroup> = [
           { title: 'Using Ozone', href: '/guides/using-ozone' },
         ],
       },
-      { title: 'SDKs', href: '/sdks' },
-      {
-        title: 'Cookbook',
-        href: 'https://github.com/bluesky-social/cookbook/',
-      },
-      { title: 'Tutorial App', href: '/guides/applications' },
     ],
   },
   {
@@ -316,26 +308,42 @@ export const navigation: Array<NavGroup> = [
   {
     title: 'Specs',
     links: [
-      { title: 'AT Protocol', href: '/specs/atp' },
-      { title: 'Data Model', href: '/specs/data-model' },
-      { title: 'Lexicon', href: '/specs/lexicon' },
-      { title: 'Cryptography', href: '/specs/cryptography' },
-      { title: 'Accounts', href: '/specs/account' },
-      { title: 'Repository', href: '/specs/repository' },
-      { title: 'Blobs', href: '/specs/blob' },
-      { title: 'Labels', href: '/specs/label' },
-      { title: 'HTTP API (XRPC)', href: '/specs/xrpc' },
-      { title: 'OAuth', href: '/specs/oauth' },
-      { title: 'Permissions', href: '/specs/permission' },
-      { title: 'Event Stream', href: '/specs/event-stream' },
-      { title: 'Sync', href: '/specs/sync' },
-      { title: 'DID', href: '/specs/did' },
-      { title: 'Handle', href: '/specs/handle' },
-      { title: 'NSID', href: '/specs/nsid' },
-      { title: 'TID', href: '/specs/tid' },
-      { title: 'Record Key', href: '/specs/record-key' },
-      { title: 'URI Scheme', href: '/specs/at-uri-scheme' },
-      { title: 'Glossary', href: '/guides/glossary' },
+      { title: 'AT Protocol', icon: 'document-text', href: '/specs/atp' },
+      { title: 'Data Model', icon: 'document-text', href: '/specs/data-model' },
+      { title: 'Lexicon', icon: 'document-text', href: '/specs/lexicon' },
+      {
+        title: 'Cryptography',
+        icon: 'document-text',
+        href: '/specs/cryptography',
+      },
+      { title: 'Accounts', icon: 'document-text', href: '/specs/account' },
+      { title: 'Repository', icon: 'document-text', href: '/specs/repository' },
+      { title: 'Blobs', icon: 'document-text', href: '/specs/blob' },
+      { title: 'Labels', icon: 'document-text', href: '/specs/label' },
+      { title: 'HTTP API (XRPC)', icon: 'document-text', href: '/specs/xrpc' },
+      { title: 'OAuth', icon: 'document-text', href: '/specs/oauth' },
+      {
+        title: 'Permissions',
+        icon: 'document-text',
+        href: '/specs/permission',
+      },
+      {
+        title: 'Event Stream',
+        icon: 'document-text',
+        href: '/specs/event-stream',
+      },
+      { title: 'Sync', icon: 'document-text', href: '/specs/sync' },
+      { title: 'DID', icon: 'document-text', href: '/specs/did' },
+      { title: 'Handle', icon: 'document-text', href: '/specs/handle' },
+      { title: 'NSID', icon: 'document-text', href: '/specs/nsid' },
+      { title: 'TID', icon: 'document-text', href: '/specs/tid' },
+      { title: 'Record Key', icon: 'document-text', href: '/specs/record-key' },
+      {
+        title: 'URI Scheme',
+        icon: 'document-text',
+        href: '/specs/at-uri-scheme',
+      },
+      { title: 'Glossary', icon: 'document-text', href: '/guides/glossary' },
     ],
   },
 ]
@@ -351,7 +359,7 @@ export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
           <NavigationGroup
             key={group.title}
             group={group}
-            className={groupIndex === 0 ? 'md:mt-0' : ''}
+            className={groupIndex === 0 ? 'md:pt-0' : ''}
           />
         ))}
       </ul>
