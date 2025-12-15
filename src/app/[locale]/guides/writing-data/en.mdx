@@ -1,6 +1,6 @@
 export const header = {
   title: 'Writing Data',
-  description: 'Write AT Protocol Records.',
+  description: 'Write AT Protocol Records',
 }
 
 ## Writing Data
@@ -60,7 +60,7 @@ The App View communicates the current state of its indices by setting the `Atpro
 
 This read-after-write behavior *only* applies to records from the user making the request. Records from other users that happen to be on the same PDS will not affect the requesting user's response.
 
-## Updates
+## Updating Records
 
 To update an existing record, like a user's profile, use `client.put()`:
 
@@ -78,7 +78,7 @@ await client.put(app.bsky.actor.profile, {
 })
 ```
 
-## Deletes
+## Deleting Records
 
 To delete a record, like an individual post, use `client.delete()`:
 

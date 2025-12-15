@@ -1,13 +1,34 @@
 export const header = {
   title: 'Reading Data',
-  description: 'Read AT Protocol Records.',
+  description: 'Read AT Protocol Records',
 }
 
-## Reading Data
+## Listing Records
 
-After [authenticating](/guides/reads-and-writes#creating-a-client), you'll be able to make other API requests.
+You can read posts from a user's data repository with `client.list()`:
 
-In AT, user data is resolved through [DIDs](/guides/sync#data-repositories), also known as [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier). Most AT Protocol applications use `did:plc` DIDs when registering user accounts, and for this guide, we will be using `did:plc` examples.
+```tsx
+const posts = await client.list(app.bsky.feed.post, {
+  limit: 10,
+  repo: 'alex.bsky.team',
+})
+```
+
+Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return. Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get-posts) for this complete Lexicon.
+
+## Getting Records
+
+You can use `client.get()` to read an individual record by its [`rkey`](/specs/record-key):
+
+```tsx
+const post = await client.get(app.bsky.feed.post, {
+  rkey: '3jxf7z2k3q2',
+})
+```
+
+## DID Resolution
+
+In AT, user data is resolved through [DIDs](/guides/sync#data-repositories), also known as [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier). Most AT Protocol applications use [`did:plc` DIDs](/guides/the-at-stack#did-plc) when registering user accounts.
 
 You can resolve a known username to a DID using the `com.atproto.identity.resolveHandle` endpoint. This means that you can just visit this address in a browser with a `handle=` arugment to look up your DID:
 
@@ -25,41 +46,6 @@ The Typescript SDK also provides the DID of the currently-authenticated as `clie
 
 ```tsx
 const your_did = client.did
-```
-
-To make API requests, in addition to a DID, you'll need to specify a particular [Lexicon](/guides/lexicon). For example, Bluesky posts are available under the `app.bsky.feed.post` Lexicon.
-
-Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
-
-```bash
-npm install -g @atproto/lex
-lex install app.bsky.feed.post app.bsky.actor.profile
-lex build
-```
-
-This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
-
-```tsx
-import * as app from './lexicons/app.js'
-```
-
-Then you can read posts from a user's data repository with `client.list()`:
-
-```tsx
-const posts = await client.list(app.bsky.feed.post, {
-  limit: 10,
-  repo: 'alex.bsky.team',
-})
-```
-
-Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (DID or handle) and a `limit` on the number of posts to return. Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get-posts) for this complete Lexicon.
-
-You can also use `client.get()` to read an individual record by its [`rkey`](/specs/record-key):
-
-```tsx
-const post = await client.get(app.bsky.feed.post, {
-  rkey: '3jxf7z2k3q2',
-})
 ```
 
 ## Unauthenticated Reads

@@ -5,9 +5,9 @@ export const header = {
   description: 'Authenticating with the SDKs',
 }
 
-## Password Auth
+## Creating a Client
 
-The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with `AtpAgent()` from our SDK if you are using password auth. This guide will use password auth.
+The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with `AtpAgent()` from our SDK if you are using password auth.
 
 ## Typescript
 
@@ -19,7 +19,7 @@ npm install @atproto/lex @atproto/api
 
 Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
 
-## Creating a Client
+## Password Authentication
 
 If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky as an auth provider, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
 
@@ -37,7 +37,9 @@ await agent.login({
 })
 ```
 
-In general, applications designed for multiple users should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
+Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `agent`.
+
+## Client Sessions
 
 Once you have a logged-in `agent`, you can create a `Client` instance to read and write data:
 
@@ -46,11 +48,22 @@ import { Client } from '@atproto/lex'
 const client = new Client(agent)
 ```
 
-Now you are ready to start [making requests](/guides/reading-data)!
+From here, you can go directly to [making API requests](/guides/reads-and-writes).
+
+## API Tokens
+
+Rate limits for logging in are generally lower than for other API operations. Calling `agent.login()` multiple times in a short period may trigger rate limits. You only need to call `agent.login()` once per session to authenticate your agent.
+
+The `com.atproto.server.createSession` API endpoint called by `agent.login()` returns a session object containing two API tokens:
+* `accessJwt`: an access token which is used to authenticate requests but expires after a few minutes
+* `refreshJwt`: a refresh token which lasts longer and is used only to update the session with a new access token
+
+The SDK stores this session information for you, and will include it in the headers of its requests.
 
 ## Further Reading and Resources
 
 - [Auth](/guides/auth)
+- [OAuth patterns](/guides/oauth-patterns)
 - [Scopes](/guides/scopes)
 - [OAuth spec](/specs/oauth)
 - [Permissions spec](/specs/permission)

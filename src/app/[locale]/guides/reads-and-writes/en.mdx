@@ -11,9 +11,31 @@ For more context, see [ATProto for distributed systems engineers](/articles/atpr
 
 ## Prerequisites
 
-Reading and writing AT data repositories requires an authenticated client. You can authenticate with [password authentication](/guides/sdk-auth) or [OAuth](/guides/oauth-patterns). The other guides in this section assume you have already set up an authenticated client.
+Reading and writing AT data repositories requires an authenticated client. You can authenticate with [password authentication](/guides/sdk-auth) or [OAuth](/guides/oauth-patterns). The guides in this section assume you have already set up an authenticated client.
 
-You may also want to familiarize yourself with [data repositories](/guides/sync#data-repositories) and [Lexicons](/guides/lexicon). 
+## API Methods
+
+After [authenticating](/guides/reads-and-writes#creating-a-client), you'll be able to make other API requests.
+
+To make API requests, you'll need to specify a particular [Lexicon](/guides/lexicon). For example, Bluesky posts are available under the `app.bsky.feed.post` Lexicon.
+
+### TypeScript
+
+Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
+
+```bash
+npm install -g @atproto/lex
+lex install app.bsky.feed.post app.bsky.actor.profile
+lex build
+```
+
+This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
+
+```tsx
+import * as app from './lexicons/app.js'
+```
+
+This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
 
 ## Further Reading and Resources
 
