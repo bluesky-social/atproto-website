@@ -1,14 +1,14 @@
 import {Container} from "@/components/Container"
 import moderation from "./moderation.png"
 
-export const metadata = {
-  title: 'Moderation - AT Protocol Docs',
-  description: 'Guide to moderation in AT Protocol.',
+export const header = {
+  title: 'Moderation',
+  description: 'Moderation in the Atmosphere',
 }
 
-# Moderation
+## About moderation
 
-AT model is that *speech* and *reach* should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+The AT Proto model is that *speech* and *reach* should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale. AT Proto moderation is implemented using [Labels](/guides/labels).
 
 <Container>
   <Image src={moderation} alt="" className="w-full max-w-md mx-auto" />
@@ -17,107 +17,6 @@ AT model is that *speech* and *reach* should be two separate layers, built to wo
 Our moderation architecture is provided by two services: [*Osprey*](#algorithmic-moderation), an event stream decisions engine and analysis UI designed to investigate and take automatic action; and [*Ozone*](#using-ozone), a labeling service and web frontend for making moderation decisions.
 
 [Read more](https://docs.bsky.app/blog/blueskys-moderation-architecture) about moderation on our blog.
-
-## Labels
-
-Moderation in AT consists of multiple, stackable systems, including:
-
-1. Network takedowns which filter the content from the APIs
-2. Labels placed on content by moderation services
-3. User controls such as mutes and blocks
-
-Developers building client applications should understand how to apply labels and user controls.
-
-**Labels** are a form of metadata about any account or content in the AT ecosystem. Labels are published by *moderation services*, which are either hardcoded into the application or chosen by the user. They are attached to records in the responses under the `labels` key.
-
-A label is published with the following information:
-
-```markdown
-{
-  /** DID of the actor who created this label. */
-  src: string
-  /** AT URI of the record, repository (account), or other resource that this label applies to. */
-  uri: string
-  /** Optionally, CID specifying the specific version of 'uri' resource this label applies to. */
-  cid?: string
-  /** The short string name of the value or type of this label. */
-  val: string
-  /** If true, this is a negation label, overwriting a previous label. */
-  neg?: boolean
-  /** Timestamp when this label was created. */
-  cts: string
-}
-
-```
-
-### **Label values**
-
-The *value* of a label will determine its behavior. Some example label values are `porn`, `gore`, and `spam`.
-
-Label values are strings. They currently must only be lowercase a-z or a dash character `^[a-z-]+$`. Some of them start with `!`, but that can only be used by global label values.
-
-Label values are interpreted by their definitions. Those definitions include these attributes:
-
-- `blurs` which may be `content` or `media` or `none`
-- `severity` which may be `alert` or `inform` or `none`
-- `defaultSetting` which may be `hide` or `warn` or `ignore`
-- `adultOnly` which is boolean
-
-There are other definition attributes, but they are only used by the global label values.
-
-### **Global label values**
-
-There are a few label values which are defined by the protocol. They are:
-
-- `!hide` which puts a generic warning on content that cannot be clicked through, and filters the content from listings. Not configurable by the user.
-- `!warn` which puts a generic warning on content but can be clicked through. Not configurable by the user.
-- `!no-unauthenticated` which makes the content inaccessible to logged-out users in applications which respect the label.
-- `porn` which puts a warning on images and can only be clicked through if the user is 18+ and has enabled adult content.
-- `sexual` which behaves like `porn` but is meant to handle less intense sexual content.
-- `graphic-media` which behaves like `porn` but is for violence / gore.
-- `nudity` which puts a warning on images but isn't 18+ and defaults to ignore.
-
-There are two reasons global label values exist.
-
-The first is because only label values which are defined globally can be used as self-labels (ie set by a user who is not a Labeler). The porn, sexual, gore, nudity, and !no-unauthenticated labels are global for this reason.
-
-The second is because some special behaviors, like "non-configurable" and "applies only to logged out users," cannot be applied to custom labels. The !hide, !warn, and !no-unauthenticated labels are global for this reason.
-
-### **Custom label values**
-
-Labelers may define their own label values. Every Labeler has its own namespace of label values it defines. Custom definitions can override all global definitions for the defining Labeler except for the ones that start with a `!`, because those are reserved.
-
-Since there are two behavior attributes (`blurs` and `severity`) with three values each, there are 9 possible behaviors for custom label values.
-
-| **Blurs** | **Severity** | **Description** |
-| --- | --- | --- |
-| `content` | `alert` | Hide the content and put a "danger" warning label on the content if viewed |
-| `content` | `inform` | Hide the content and put a "neutral" information label on the content if viewed |
-| `content` | `none` | Hide the content |
-| `media` | `alert` | Hide images in the content and put a "danger" warning label on the content if viewed |
-| `media` | `inform` | Hide images in the content and put a "neutral" information label on the content if viewed |
-| `media` | `none` | Hide images in the content |
-| `none` | `alert` | Put a "danger" warning label on the content |
-| `none` | `inform` | Put a "neutral" information label on the content |
-| `none` | `none` | No visual effect |
-
-Some examples of the definitions you might use for a label
-
-- Harassment: `blurs=content` + `severity=alert`
-- Spider warning: `blurs=media` + `severity=alert`
-- Misinformation: `blurs=none` + `severity=alert`
-- Verified user: `blurs=none` + `severity=inform`
-- Curational down-regulate: `blurs=none` + `severity=none`
-
-The `defaultSetting` establishes how the label will be configured when the user first subscribes to the labeler.
-
-The `adultOnly` establishes whether the label should be configurable if adult content is disabled.
-
-### **Label configuration**
-
-A user may choose to hide, warn, or ignore each label from a labeler. Hiding and warning are basically similar, except that hide will also filter the labeled content from feeds and listings. Ignore just ignores the label. If adult content is not enabled in preferences, the behavior should force to hide with no override.
-
-For more information, see the [Labels](/specs/label) spec.
 
 ## Algorithmic moderation
 
@@ -129,9 +28,10 @@ Refer to the [Osprey](https://github.com/bluesky-social/osprey-atproto) Github r
 
 ## Further Reading and Resources
 
-You can [subscribe](/guides/subscriptions) to moderation labelers to have their labels applied in your application. You can also [create your own labeler](/guides/creating-a-labeler) to publish labels. If you need to moderate content manually, you can use [Ozone](/guides/using-ozone) as a web interface for labeling content.
+Learn all about the types and format of moderation [labels](/guides/labels). Then, you can [subscribe](/guides/subscriptions) to moderation labelers to have their labels applied in your application. You can also [create your own labeler](/guides/creating-a-labeler) to publish labels. If you need to moderate content manually, you can use [Ozone](/guides/using-ozone) as a web interface for labeling content.
 
-- [Subscriptions](/guides/subscriptions)
+- [Labels](/guides/labels)
 - [Creating a labeler](/guides/creating-a-labeler)
-- [Using Ozone](/guides/using-ozone)
+- [Subscriptions](/guides/subscriptions)
 - [Label Specs](/specs/label)
+- [Using Ozone](/guides/using-ozone)

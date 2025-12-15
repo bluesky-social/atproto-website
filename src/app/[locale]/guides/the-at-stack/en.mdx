@@ -3,13 +3,11 @@ import crawling from "./crawling.png"
 import did from "./did.png"
 import feeds from "./feeds.png"
 
-export const metadata = {
-  title: 'The AT Stack - AT Protocol Docs',
+export const header = {
+  title: 'The AT Stack',
   description:
-    'Components of the AT Protocol Stack.',
+    'Components of the AT Protocol Stack',
 }
-
-# The AT Stack
 
 ## The Authenticated Transfer Protocol
 
@@ -65,6 +63,23 @@ You can migrate an individual account's data repository freely from one PDS to a
 - https://pdsmoover.com/, a collection of tools for PDS migration
 - https://boat.kelinci.net/, a set of interfaces for repository import and export
 - https://github.com/bluesky-social/goat, our Go AT command-line tool.
+
+## Tap
+
+Tap is used for syncing existing records from the AT network and then continuing to receive new records from the firehose.
+
+Tap simplifies AT sync by handling the firehose connection, verification, backfill, and filtering. Your application connects to a Tap and receives simple JSON events for only the repos and collections you care about, no need to worry about binary formats for validating cryptographic signatures. Tap features:
+
+- verifies repo structure, MST integrity, and identity signatures
+- automatic backfill: fetches full repo history from PDS when adding new repos
+- filtered output: by DID list, by collection, or full network mode
+- ordering guarantees: live events wait for historical backfill to complete
+- delivery modes: WebSocket with acks, fire-and-forget, or webhook
+- single Go binary
+- SQLite or Postgres backend
+- designed for moderate scale (millions of repos, 30k+ events/sec)
+
+There is a Typescript library for working with Tap at [@atproto/tap](https://www.npmjs.com/package/@atproto/tap).
 
 ## App Views and Relay
 

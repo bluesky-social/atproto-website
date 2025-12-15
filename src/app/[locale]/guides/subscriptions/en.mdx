@@ -1,11 +1,11 @@
 import {Container} from "@/components/Container"
 
-export const metadata = {
-  title: 'Labeler Subscriptions - AT Protocol Docs',
-  description: 'Guide to moderation in AT Protocol.',
+export const header = {
+  title: 'Subscriptions',
+  description: 'Subscribing to a labeler service',
 }
 
-# Labeler Subscrptions
+## Labeler Subscrptions
 
 Labeler services each have a service identity, meaning a DID document. This is the DID that appears in the label source (**`src`**) field.
 
@@ -48,7 +48,7 @@ Labels may be placed on accounts or records. Apps can interprets targets in diff
 - On a profile: affects only the profile record (e.g. user avatar) and never hides any content, including the account in listings.
 - On content: affects the content specifically (a post record, a list, a feed, etc.)
 
-### Reporting
+## Reporting
 
 To send a report to a Labeler, use the `com.atproto.moderation.createReport` procedure. Users may send reports to any of their labelers.
 
@@ -77,6 +77,7 @@ agent
 ## Further Reading and Resources
 
 - [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
 - [Creating a labeler](/guides/creating-a-labeler)
-- [Using Ozone](/guides/using-ozone)
 - [Label Specs](/specs/label)
+- [Using Ozone](/guides/using-ozone)

@@ -1,10 +1,10 @@
 export const header = {
-  title: 'Self-hosting - AT Protocol Docs',
+  title: 'Self-hosting',
   description:
-    'Self-hosting components of the AT Protocol Stack.',
+    'Resources for self-hosting various components of the Atmosphere stack',
 }
 
-# Self-hosting
+Most parts of the Atmosphere stack have supported deployments. Some components are easier to self-host than others, depending on whether you are providing application-level infrastructure (like an AppView or Relay) or data-level infrastructure (like a PDS).
 
 ## PDS
 
@@ -22,6 +22,12 @@ If you need to change the *domain name* of a self-hosted PDS, you need to:
 For guidance on scaling and hardening a PDS, refer to [Going to Production](/guides/going-to-production).
 
 Bluesky runs many PDSs with an “entryway” in front of them. For information on this implementation, refer to [Entryway](https://docs.bsky.app/docs/advanced-guides/entryway).
+
+## Tap
+
+Tap is used for syncing existing records from the AT network and then continuing to receive new records from the firehose. For a guide to deploying Tap, refer to the [Tap readme](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md#distribution--deployment).
+
+We also provide a quick start guide for [deploying Tap](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/RAILWAY_DEPLOY.md) to [Railway](https://railway.com/).
 
 ## AppViews or Relays
 

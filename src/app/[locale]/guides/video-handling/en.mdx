@@ -1,11 +1,13 @@
-export const metadata = {
-  title: 'Video Handling - AT Protocol Docs',
-  description: 'Working with image and video blobs in the AT Protocol.',
+export const header = {
+  title: 'Video Handling',
+  description: 'Handling video uploads and processing',
 }
 
-# Video handling
+## Video uploads
 
 Video uploads differ slightly from image uploads, since they are typically much larger files and have a significantly long processing time. Individual Atmosphere apps or CDNs may impose additional limits on video uploads.
+
+## Aspect ratios
 
 Depending on the requirements of your application, you may need to supply an aspect ratio along with video uploads. This metadata can be tricky to compute. If you're developing in a browser, you can load the video into a `<video>` and observe the dimensions when loaded. If you're in a native app, you'll most likely be able to get it via the media picker APIs. Alternatively, you can use a tool like `ffprobe` :
 
@@ -21,6 +23,8 @@ export async function getAspectRatio(fileName: string) {
   };
 }
 ```
+
+## Transcoding
 
 Videos will need time to transcode using a tool like `ffmpeg` on the server side before they are available from the firehose. This can lead to UX gaps — if a video blob is accompanying a new post, the video service only knows about the video once the post appears in the firehose. This means that people will be able to see the post before processing is complete, which will show a missing video for several seconds.
 

@@ -1,9 +1,9 @@
-export const metadata = {
-  title: 'Blob Security - AT Protocol Docs',
-  description: 'Working with image and video blobs in the AT Protocol.',
+export const header = {
+  title: 'Blob Security',
+  description: 'Security considerations when serving blobs',
 }
 
-# Blob security
+## HTTP requests
 
 Serving arbitrary user-uploaded files from a web server raises many content security issues. For example, cross-site scripting (XSS) of scripts or SVG content form the same "origin" as other web pages. It is effectively mandatory to enable a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for the **`getBlob`** endpoint; it is effectively not supported to dynamically serve assets directly out of blob storage (the **`getBlob`** endpoint) directly to browsers and web applications. Applications must proxy blobs, files, and assets through an independent CDN, proxy, or other web service before serving to browsers and web agents, and such services are expected to implement security precautions.
 
@@ -14,9 +14,13 @@ Content-Security-Policy: default-src 'none'; sandbox
 X-Content-Type-Options: nosniff
 ```
 
+## Metadata
+
 Some media types may contain sensitive metadata. For example, EXIF metadata in JPEG image files may contain GPS coordinates. Servers might take steps to prevent accidental leakage of such metadata, for example by stripping out this metadata before persisting a blob.
 
 Parsing of media files is a notorious source of memory safety bugs and security vulnerabilities. Even content type detection (or "sniffing") can be a source of exploits. Servers are strongly recommended against parsing media files (image, video, audio, or any other non-trivial formats) directly, without the use of strong sandboxing mechanisms. In particular, PDS instances themselves should not directly implement media resizing or transcoding — this should be handled in the application layer instead.
+
+## Adversarial use
 
 Richer media types raise the stakes for abusive and illegal content. Services should implement appropriate mechanisms to takedown such content when it is detected and reported.
 

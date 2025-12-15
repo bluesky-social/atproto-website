@@ -285,8 +285,9 @@ export const navigation: Array<NavGroup> = [
         icon: 'flag',
         href: '/guides/moderation',
         links: [
-          { title: 'Subscriptions', href: '/guides/subscriptions' },
+          { title: 'Labels', href: '/guides/labels' },
           { title: 'Creating a labeler', href: '/guides/creating-a-labeler' },
+          { title: 'Subscriptions', href: '/guides/subscriptions' },
           { title: 'Using Ozone', href: '/guides/using-ozone' },
         ],
       },

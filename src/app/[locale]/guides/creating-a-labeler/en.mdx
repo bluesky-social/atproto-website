@@ -1,12 +1,12 @@
 import {Container} from "@/components/Container"
 import ozone from "./ozone.png"
 
-export const metadata = {
-  title: 'Creating a Labeler - AT Protocol Docs',
-  description: 'Guide to moderation in AT Protocol.',
+export const header = {
+  title: 'Creating a Labeler',
+  description: 'Run your own modular moderation service',
 }
 
-# Creating a labeler
+## Declaring a labeler
 
 Labelers publish an `/app.bsky.labeler.service/self` record to declare that they are a labeler and publish their policies. That record looks like this:
 
@@ -55,6 +55,7 @@ Before setting up your Ozone service you should create a *new* account on the ne
 ## Further Reading and Resources
 
 - [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
 - [Subscriptions](/guides/subscriptions)
 - [Using Ozone](/guides/using-ozone)
 - [Label Specs](/specs/label)

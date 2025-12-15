@@ -1,9 +1,9 @@
-export const metadata = {
-  title: 'Images and Video - AT Protocol Docs',
-  description: 'Working with image and video blobs in the AT Protocol.',
+export const header = {
+  title: 'Images and Video',
+  description: 'Working with image and video blobs',
 }
 
-# Images and Video
+## Blob objects
 
 "Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID) for the blob.
 
@@ -15,7 +15,7 @@ The empty blob (zero bytes) is valid in general, though it may be disallowed by 
 
 Blobs have the permission scope **`blob:*/*` .**
 
-It is generally recommended to use an object storage implementation for working with blobs if you are hosting your own PDS. See [going to production](/going-to-production#images-and-video) for more.
+It is generally recommended to use an object storage implementation for working with blobs if you are hosting your own PDS. See [going to production](/guides/going-to-production#object-storage) for more.
 
 ## Further Reading and Resources
 
