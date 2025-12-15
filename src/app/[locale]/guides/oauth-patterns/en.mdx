@@ -2,19 +2,17 @@ import {Container} from "@/components/Container"
 
 export const header = {
   title: 'OAuth Patterns',
-  description: 'Auth for AT Protocol application developers.',
+  description: 'OAuth implementation examples',
 }
 
-The inner workings of OAuth can be fiddly, but we've done our best to abstract it away via client SDKs, so you can focus on your app.
-
-### TypeScript
+## TypeScript
 
 - [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - Suitable for frontend-only applications (e.g. SPAs).
 - [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Suitable for Electron desktop apps or server-side deployments.
 - [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - For use in React Native projects (e.g. mobile apps)
 - [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (This is the core implementation on which the above three libraries depend)
 
-### Go
+## Go
 
 - [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([Online API Docs](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - Suitable for native apps or server-side deployments
 

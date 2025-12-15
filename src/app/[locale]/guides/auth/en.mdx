@@ -2,10 +2,14 @@ import {Container} from "@/components/Container"
 
 export const header = {
   title: 'Auth',
-  description: 'Auth for AT Protocol application developers.',
+  description: 'Auth for AT Protocol application developers',
 }
 
-This guide is aimed at developers building applications on AT Protocol.
+## About authentication
+
+This section is aimed at developers building applications on AT Protocol. TK TK TK
+
+We also support the use of "[App Passwords](/specs/xrpc#app-passwords)". Accounts can create and revoke app passwords separate from their primary password, as a way of providing slightly finer-grained permissions for external apps that have not yet adopted OAuth. OAuth will be the recommended solution for nearly all apps going forward.
 
 If you're building your own protocol implementation or OAuth Client SDK, the more detailed [specification](/specs/oauth) or advanced [OAuth client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client) may be more appropriate.
 
@@ -27,13 +31,9 @@ There are a couple of details that might catch you off guard if you're used to u
 
 - **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so ATProto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
-<Note>
-We also support the use of "[App Passwords](/specs/xrpc#app-passwords)". Accounts can create and revoke app passwords separate from their primary password, as a way of providing slightly finer-grained permissions for external apps that have not yet adopted OAuth. OAuth will be the recommended solution for nearly all apps going forward.
-</Note>
-
 ## Further Reading and Resources
 
-To implement OAuth in your application, refer to [OAuth patterns](/guides/oauth-patterns) for common use cases, and the [Scopes](/guides/scopes) guide for understanding permission models.
+To implement OAuth in your application, refer to [OAuth patterns](/guides/oauth-patterns) for common use cases, and the [Scopes](/guides/scopes) guide for understanding permission models. If you are building a smaller app or bot, you may also consider using [SDK authentication](/guides/sdk-auth) with app passwords.
 
 - [OAuth patterns](/guides/oauth-patterns)
 - [Scopes](/guides/scopes)

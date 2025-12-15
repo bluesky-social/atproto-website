@@ -1,9 +1,9 @@
-export const metadata = {
-  title: 'Writing Data - AT Protocol Docs',
-  description: 'Read and Write AT Protocol Records.',
+export const header = {
+  title: 'Writing Data',
+  description: 'Write AT Protocol Records.',
 }
 
-# Writing Data
+## Writing Data
 
 Writing data — for example, by posting to a Bluesky feed — works similarly to [reading data](/guides/reading-data), but with different methods.
 
@@ -48,7 +48,7 @@ console.log(result.cid)
 
 If you are building a client or another interface that both reads and writes data, it is important to ensure that you read your own writes using this response. 
 
-### Read-after-Write
+## Read-after-Write
 
 Depending on how an AT app frontend is designed, a user may take some action (such as updating their profile), rapidly refresh the view, and find that their recent change is not immediately reflected in the updated response.
 

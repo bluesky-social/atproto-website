@@ -234,6 +234,7 @@ export const navigation: Array<NavGroup> = [
         icon: 'key',
         href: '/guides/auth',
         links: [
+          { title: 'SDK authentication', href: '/guides/sdk-auth' },
           { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
           { title: 'Scopes', href: '/guides/scopes' },
         ],

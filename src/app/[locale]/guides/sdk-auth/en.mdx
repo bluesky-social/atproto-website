@@ -1,0 +1,56 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'SDK authentication',
+  description: 'Authenticating with the SDKs',
+}
+
+## Password Auth
+
+The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with `AtpAgent()` from our SDK if you are using password auth. This guide will use password auth.
+
+## Typescript
+
+Begin by installing the ATProto SDK packages:
+
+```bash
+npm install @atproto/lex @atproto/api
+```
+
+Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
+
+## Creating a Client
+
+If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky as an auth provider, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
+
+Start by importing `AtpAgent`, creating an `agent` object, and providing credentials to `agent.login()`:
+
+```tsx
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+```
+
+In general, applications designed for multiple users should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
+
+Once you have a logged-in `agent`, you can create a `Client` instance to read and write data:
+
+```tsx
+import { Client } from '@atproto/lex'
+const client = new Client(agent)
+```
+
+Now you are ready to start [making requests](/guides/reading-data)!
+
+## Further Reading and Resources
+
+- [Auth](/guides/auth)
+- [Scopes](/guides/scopes)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

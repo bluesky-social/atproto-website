@@ -1,11 +1,9 @@
-export const metadata = {
-  title: 'Reads and Writes - AT Protocol Docs',
-  description: 'Read and Write AT Protocol Records.',
+export const header = {
+  title: 'Reads and Writes',
+  description: 'Read and Write AT Protocol Records',
 }
 
-# Reads and Writes
-
-In this guide, you'll read and write from an Atmosphere data repository.
+## AT Records
 
 The AT Protocol distributes user data across different nodes of your network, using the core building blocks of the web. The AT Protocol interconnects applications so that their backends share state, including user accounts and content, in individual data repositories. Many operations you'll perform when working with AT apps involve reading and writing these data repositories.
 
@@ -13,50 +11,9 @@ For more context, see [ATProto for distributed systems engineers](/articles/atpr
 
 ## Prerequisites
 
-To follow this guide, create a new TypeScript project, then install the AT SDK:
+Reading and writing AT data repositories requires an authenticated client. You can authenticate with [password authentication](/guides/sdk-auth) or [OAuth](/guides/oauth-patterns). The other guides in this section assume you have already set up an authenticated client.
 
-### Typescript
-
-```bash
-npm install @atproto/lex @atproto/api
-```
-
-### Go
-
-TK, should use code tab elements
-
-Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
-
-## Creating a Client
-
-The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with `AtpAgent()` from our SDK if you are using password auth. This guide will use password auth.
-
-If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky as an auth provider, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
-
-Start by importing `AtpAgent`, creating an `agent` object, and providing credentials to `agent.login()`:
-
-```tsx
-import { AtpAgent } from '@atproto/api'
-
-const agent = new AtpAgent({
-    service: 'https://bsky.social'
-})
-await agent.login({
-    identifier: 'alex.bsky.team',
-    password: 'your-app-password'
-})
-```
-
-In general, applications designed for multiple users should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
-
-Once you have a logged-in `agent`, you can create a `Client` instance to read and write data:
-
-```tsx
-import { Client } from '@atproto/lex'
-const client = new Client(agent)
-```
-
-Now you are ready to start [making requests](/guides/reading-data)!
+You may also want to familiarize yourself with [data repositories](/guides/sync#data-repositories) and [Lexicons](/guides/lexicon). 
 
 ## Further Reading and Resources
 
