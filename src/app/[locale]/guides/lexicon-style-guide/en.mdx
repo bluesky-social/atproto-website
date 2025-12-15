@@ -1,10 +1,10 @@
-export const metadata = {
+export const header = {
   title: 'Lexicon Style Guide',
   description:
-    'A style guide for creating new ATProto schemas',
+    'A style guide for creating new ATProto Lexicons',
 }
 
-# Lexicon Style Guide
+## Overview
 
 Here are some recommended conventions and best practices for designing Lexicon schemas.
 
@@ -20,7 +20,7 @@ Acceptable characters:
     - Exceptions may be justifiable in some situations, such as preservation of names in existing external schemas
     - Data objects should never contain schema-specified field names starting with `$` at any level of nesting; these are reserved for future protocol-level extensions
 
-Naming conventions:
+## Naming conventions
 
 - Use singular nouns for `record` schemas
     - eg `post`, `like`, `profile`
@@ -36,7 +36,7 @@ Naming conventions:
 - Avoid generic names which conflict with popular programming language conventions
     - eg, avoid using `default` or `length` as schema names
 
-Documentation and Completeness:
+## Documentation
 
 - Add a description to every `main` schema definition (records, API endpoints, etc)
     - for API endpoints, mention in the description if authentication is required, and whether responses will be personalized if authentication is optional
@@ -54,7 +54,7 @@ NSID namespace grouping:
     - eg `app.bsky.feed.post#main` vs `app.bsky.feed.post.main`, or `com.example.record#foo` and `com.example.record.foo`
     - or defining both `app.bsky.feed` (as a record) and `app.bsky.feed.post` (with `app.bsky.feed` as a group)
 
-Other guidelines:
+## Other guidelines
 
 - Specify the format of string fields when appropriate
 - String fields in records should almost always have a maximum length if they don’t have a format type
@@ -77,9 +77,9 @@ Other guidelines:
     - In most situations, including versioned references between records, the string format is recommended.
     - Binary encoding is mostly used for protocol-level mechanisms, such as the firehose.
 
-## Schema Evolution and Extension
+## Lexicon evolution
 
-All schemas should be flexible to extension and evolution over time, without breaking the Lexicon schema evolution rules. This is particularly true for record schemas. Given the distributed storage model of atproto, developers do not have a reliable mechanism to update all data records in the network. Extensions could come from the original designer, or other developers and projects.
+All Lexcions should be flexible to extension and evolution over time, without breaking the Lexicon schema evolution rules. This is particularly true for record schemas. Given the distributed storage model of atproto, developers do not have a reliable mechanism to update all data records in the network. Extensions could come from the original designer, or other developers and projects.
 
 Experimental schemas and projects can use variant NSIDs (eg, including `.temp.` in the name hierarchy) to develop in the live network without committing to a stable record data schemas.
 

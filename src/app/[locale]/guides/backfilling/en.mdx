@@ -1,15 +1,47 @@
-export const metadata = {
-  title: 'Backfilling - AT Protocol Docs',
-  description: 'Synchronizing and streaming data from the AT Protocol.',
+export const header = {
+  title: 'Backfilling',
+  description: 'Replicating the network',
 }
 
-# Backfilling
+## About backfilling
 
 Backfilling is the process of syncing all the data in the network from scratch. You may want to do this if you're running a service that requires a complete copy of the data in the network. This is not generally necessary for running feed generators, labelers, or bots, as most of the time in those cases you are fine just handling live data off of the firehose. *However*, backfilling may be of interest if you want to perform large-scale analysis of the data on the AT network.
 
 For the entire network to be backfillable by third parties at all is a novel concept for AT. Other, monolithic social networks generally only offer an large-scale event stream (like our firehose) from the current date and time, making it difficult to perform longitudinal data analysis without entering into additional vendor relationships. By contrast, we consider AT to have failed in its decentralization goals if it is ever not possible for any user with adequate resources to backfill the entire network. This, in turn, benefits researchers and other forms of data analysis — if you can provision enough hot storage, you can have your own local copy of the entire Atmosphere.
 
-One thing to note about backfilling is that you generally want to maintain an 'up to date' replica of the data, which requires a cutover to streaming firehose data once the backfill is complete. We are working on a new tool, called **Tap**, to streamline this process.
+When backfilling, you generally need to maintain 'up to date' replica of the data, which requires a cutover to streaming firehose data once the backfill is complete. We created `tap` to streamline this process.
+
+## Using tap
+
+`tap` simplifies AT sync by handling the firehose connection, verification, backfill, and filtering. Your application connects to a Tap and receives simple JSON events for only the repos and collections you care about, no need to worry about binary formats for validating cryptographic signatures.
+
+Tap can be run from the command line:
+
+```shell
+# Run tap
+go run ./cmd/tap run --disable-acks=true
+# By default, the service uses SQLite at `./tap.db` and binds to port `:2480`.
+
+# In a separate terminal, connect to receive events:
+websocat ws://localhost:2480/channel
+
+#  Add a repo to track
+curl -X POST http://localhost:2480/repos/add \
+  -H "Content-Type: application/json" \
+  -d '{"dids": ["did:plc:ewvi7nxzyoun6zhxrhs64oiz"]}' # @atproto.com repo
+```
+
+When a repo is added, tap provides:
+
+1. Historical backfill: Tap fetches the full repo from the account's PDS using com.atproto.sync.getRepo
+2. Live event buffering: Any firehose events for this repo during backfill are held in memory
+3. Ordering guarantee: Historical events (marked live: false) are delivered first
+4. Cutover: After historical events complete, buffered live events are drained
+5. Live streaming: New firehose events are delivered immediately (marked live: true)
+
+Tap is also available as a [TypeScript library](https://www.npmjs.com/package/@atproto/tap). For more information, refer to [The AT Stack](/guides/the-at-stack#tap) and the [tap repository](https://github.com/bluesky-social/atproto/blob/main/packages/tap/README.md).
+
+## How backfilling works
 
 If you are implementing backfilling on your own, the general process is:
 
@@ -31,3 +63,4 @@ Do the above process for each repo and you will end up with a complete replica o
 - [Repository spec](/specs/repository)
 - [Event Stream spec](/specs/event-stream)
 - [Sync spec](/specs/sync)
+- The <a href="https://www.microcosm.blue/" target="_blank">Microcosm</a> community project maintains tools for working with AT records at scale without local mirroring.

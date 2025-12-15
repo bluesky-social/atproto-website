@@ -1,9 +1,9 @@
 export const header = {
-  title: 'Lexicons - AT Protocol Docs',
+  title: 'Lexicons',
   description: 'A schema-driven interoperability framework',
 }
 
-# Lexicons
+## About lexicons
 
 Lexicon is a schema system used to define RPC methods and record types. Every Lexicon schema is written in JSON, in a format similar to [JSON-Schema](https://json-schema.org/) for defining constraints.
 
@@ -118,7 +118,7 @@ at://bob.com/com.example.follow/12345
 }
 ```
 
-### Versioning
+## Versioning
 
 Once a Lexicon is published, it can never change its constraints. Loosening a constraint (adding possible values) will cause old software to fail validation for new data, and tightening a constraint (removing possible values) will cause new software to fail validation for old data. As a consequence, lexicons may only add optional constraints to previously unconstrained fields.
 

@@ -1,9 +1,9 @@
-export const metadata = {
-  title: 'Streaming Data - AT Protocol Docs',
-  description: 'Synchronizing and streaming data from the AT Protocol.',
+export const header = {
+  title: 'Streaming Data',
+  description: 'Working with the Firehose and Jetstream',
 }
 
-# Streaming data
+## Streaming data
 
 One of the core primitives of the AT Protocol is the *firehose*. It is an authenticated stream of events used to efficiently sync user updates (posts, likes, follows, handle changes, etc).
 
@@ -17,7 +17,7 @@ However the firehose output format is also one of the more complex parts of AT, 
 
 A Jetstream server consumes from the firehose and fans out to many subscribers. It is [open source](https://github.com/bluesky-social/jetstream), implemented in Go, simple to self-host. There is an official client library included (in Go), and [community client libraries](https://skyware.js.org/guides/jetstream/introduction/getting-started/) have been developed.
 
-### Working with Jetstream
+## Jetstream
 
 You can work with Jetstream like any other websocket. Just provide a Jetstream endpoint like `wss://jetstream2.us-east.bsky.network/subscribe`, and a `wantedCollections` parameter, like `?wantedCollections=app.bsky.feed.post`.
 
@@ -51,3 +51,4 @@ asyncio.get_event_loop().run_until_complete(listen_to_websocket())
 - [Repository spec](/specs/repository)
 - [Event Stream spec](/specs/event-stream)
 - [Sync spec](/specs/sync)
+- The <a href="https://www.microcosm.blue/" target="_blank">Microcosm</a> community project maintains tools for working with AT records at scale without local mirroring.
