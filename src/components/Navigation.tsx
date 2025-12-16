@@ -246,10 +246,6 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Reading data', href: '/guides/reading-data' },
           { title: 'Writing data', href: '/guides/writing-data' },
-          {
-            title: 'Interaction patterns',
-            href: '/guides/interaction-patterns',
-          },
         ],
       },
       {
