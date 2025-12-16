@@ -7,15 +7,7 @@ export const header = {
 
 Writing data — for example, by posting to a Bluesky feed — works similarly to [reading data](/guides/reading-data), but with different methods.
 
-Once you have an [authenticated `client`](/guides/reads-and-writes#creating-a-client), use `lex` to [install the Lexicons](/guides/installing-lexicons) you're working with:
-
-```bash
-npm install -g @atproto/lex
-lex install app.bsky.feed.post app.bsky.actor.profile
-lex build
-```
-
-Then, to create a new record, import the Lexicons and call `client.create()` on a Lexicon, with any required fields:
+To create a new record, call `client.create()` with an imported Lexicon, along with any required fields:
 
 ```tsx
 import * as app from './lexicons/app.js'
@@ -99,6 +91,5 @@ await client.delete(app.bsky.feed.post, {
 
 - [Reads and Writes](/guides/reads-and-writes)
 - [Reading data](/guides/reading-data)
-- [Interaction patterns](/guides/interaction-patterns)
 - [Record Key spec](/specs/record-key)
 - [URI scheme](/specs/at-uri-scheme)
