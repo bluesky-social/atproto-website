@@ -16,6 +16,9 @@ export const metadata = {
 
 Summary/Quickstart:
 mostly use existing permission sets for cleaner UI, but add granular if needed
+
+Refer to the [for users](#for-users) section for how these requests appear in the OAuth flow.
+
 stick requested scope strings in both OAuth client metadata and request
 one clean example (and link to more below)
 cross-link to specs and designer guide
@@ -24,31 +27,32 @@ Permissions system background:
 common permission types: rpc, repo, blobs (maybe just link to specs for identity+account?). what the parameters are; that you can't do wildcard for some of these
 permission sets: where to find them (project git repo or lexhub), that they render cleaner, that they are dynamic, how to request them, that they are namespaced
 
-Requesting mechanics:
-OAuth scope string syntax: space-separated
-include scopes in OAuth client metadata as well
-user might not approve all requests (eg, not grant email access), granted scopes come back during OAuth flow
-dev workflow: request broader permissions for local dev?
-rolling out app changes: coordinating software release and permission-set updates; that you might need to re-auth sessions if scope increased; don't forget client metadata
+### Requesting permissions
 
-Guidance:
-design tradeoffs around what to actually request: enough to do what the app needs, but not too much. trust issues with users; minimize decision making (short list of requests)
-concrete examples: Bluesky App; hypothetical simple tool
+When your app initiates an OAuth flow with an ATProto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This can be supplied as a *space-separated list* in the `oauth-client-metadata.json` file when registering your OAuth client:
+
+```
+{
+scope: "atproto include:uk.skyblur.permissionSet rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create&action=delete repo:app.bsky.feed.generator?action=create&action=update&action=delete rpc:app.bsky.feed.getFeedGenerator?aud=* rpc:app.bsky.feed.searchPosts?aud=* blob:*/*",
+...
+}
+```
+
+Early AT permission scopes would appear to grant permissions to create, update, or delete any of a user's AT records, including posts from other applications. In general, this should not be necessary — you should try to only request enough permissions to cover the features your app needs. This helps build trust with your users, and minimizes friction during the authorization process.
+
+From a user experience perspective, it's best to keep the number of requested permission sets low. Each additional permission set adds more information to the authorization dialog, which can lead to decision fatigue. It is possible to allow users to grant only a subset of requested permissions, but this can lead to edge cases and is rarely worth it from a development perspective.
+
+### Rolling out changes
+
+When you update your app to use new permission sets, it's important to coordinate the software release with the permission-set updates. If you add new permission sets that require user approval, users may need to re-authorize your app to grant these new permissions.
 
 ## For Lexicon designers
 
-Intro:
-general concept
-who does this (lexicon authority)
-that they need to be published as records
-cross-link to specs and app dev guide
+Lexicons are authored in JSON — you can find examples in the [Lexicon Guide](/guides/lexicon). Atmosphere HTTP API methods each scope and implement a particular set of Lexicons, so Lexicons must include valid query parameters, request bodies, and response bodies as appropriate. Each Lexicon, in turn, becomes a permission scope — in other words, `app.bsky.feed.post` is an AT record format, a web endpoint, and a granular permission all at once.
 
-### Quickstart
-example lexicon schema, describe what it covers
-what DNS TXT record is needed
-how to request in an OAuth scope string
+Lexicon schemas are published publicly as records in ATProto Lexicon repositories. Refer to [Lexicon Publication and Resolution](https://atproto.com/specs/lexicon#lexicon-publication-and-resolution) for technical details.
 
-You can use [`goat`](https://github.com/bluesky-social/goat) to create and publish permission sets. Before publishing, `goat` can also be used to lint and validate your Lexicon. For example, pulling and linting `app.bsky.feed.post`:
+You can use [`goat`](https://github.com/bluesky-social/goat) to create and publish Lexicons. Before publishing, `goat` can also be used to lint and validate your Lexicon. For example, pulling and linting `app.bsky.feed.post`:
 
 ```bash
 $ goat lex pull app.bsky.feed.post
@@ -69,7 +73,7 @@ You can also create a new Lexicon record with `goat lex new record`:
 $ goat lex new record dev.project.thing
 ```
 
-Develop your Lexicon following the [style guide](https://atproto.com/guides/lexicon-style-guide), and then and eventually publish it with `goat lex publish`:
+Develop your Lexicon following the [style guide](https://atproto.com/guides/lexicon-style-guide), and then eventually publish it with `goat lex publish`:
 
 ```bash
 $ goat lex publish
@@ -100,22 +104,56 @@ $ goat lex resolve app.bsky.feed.post
 ...
 ```
 
-### What can be granted
+### Permission Set Design
 
-what can be granted in a permission set: repo and rpc only (mention that blobs can't); namespace hierarchy rules
+Full-featured client apps require a large number of granular permissions to function: dozens or even hundreds of individual permissions. To simplify permission management, Lexicon designers can define "sets" of permissions as part of the schemas they publish. These permission sets are themselves Lexicon schemas and are referred to by NSID, such as `com.example.authBasicFeatures`.
 
-### Internationalization
+For example, your application could request a permission set like `include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`. This would resolve to a Lexicon that defines a set of permissions required for the app to function:
 
+```
+{
+  "lexicon": 1,
+  "id": "com.example.authBasicFeatures",
+  "defs": {
+    "main": {
+      "type": "permission-set",
+      "title": "Basic App Functionality",
+      "detail": "Creation of posts and interactions",
+      "permissions": [
+        {
+          "type": "permission",
+          "resource": "repo",
+          "collection": ["app.example.post"]
+        },
+        {
+          "type": "permission",
+          "resource": "rpc",
+          "inheritAud": true,
+          "lxm": [
+            "app.example.getFeed"
+            "app.example.getProfile",
+            ...
+          ]
+        },
+      ]
+    }
+  }
+}
+```
 
+Note the `auth` prefix in the `app.example.feed.authOnlyPost` and `com.example.authBasicFeatures` examples. This is a naming convention to indicate that the Lexicon is designed for use as a permission set.
+
+Permission sets are limited to expressing permissions that reference resources under the same NSID namespace as the set itself. For example, the set `app.example.feed.authOnlyPost` could include permissions to `app.example.feed.post` records and making `app.example.feed.getPostThread` API endpoint requests to remote services. But it could not grant permissions to `app.example.actor.profile`. A permission set `app.example.authFull`, which is a level up in the hierarchy, could include permissions to all these resources.
+
+The `title` and `details` fields are descriptive, and will be displayed as part of the OAuth flow; see the [for users](#for-users) section for an example. Internationalization of these descriptive fields is supported — refer to [the permission sets spec](/specs/permission#permission-sets).
+
+The use of `inheritAud` in the `rpc` permission allows you to [control inheritance behavior](/specs/permission#rpc).
+
+The `blob:*/*` permission for image/video handling cannot be included in permission sets and must always be requested separately.
 
 ### Revision
 
-### Best Practices
-NSID design: "auth" prefix, where to put in hierarchy
-use inheritAud=true for rpc requests
-guidance on "title" and "details"
-design for 1-2 set per app/use-case per namespace
-don't break app devs (don't remove permission sets, or make big/radical changes)
+Permission sets can be revised, but removing them or making destructive changes can break existing applications. In general, permission sets should be closely tied to the applications they are designed for, but not necessarily 1:1. Remember that AT Proto applications can utilize multiple different Lexicons.
 
 ## For users
 
@@ -143,7 +181,7 @@ You can click through on the **?** icons to see the details of each permission s
 
 From the expanded ATProto and Bluesky permissions, you might recognize `atproto` (for OAuth login), `blob:*/*` (for image and video handling), and several other `app.bsky.*` permissions for profile and social graph interactions.
 
-The Skyblur permissions are defined and summarized differently:
+The *Skyblur* Lexicon permissions are defined and summarized differently:
 
 <Container>
   <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
