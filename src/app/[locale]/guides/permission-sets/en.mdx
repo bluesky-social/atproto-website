@@ -10,36 +10,143 @@ export const metadata = {
     'A guide to requesting permissions and permission sets',
 }
 
-# Permission Set Guide
+# Permission Sets
+
+## For app developers
+
+Summary/Quickstart:
+mostly use existing permission sets for cleaner UI, but add granular if needed
+stick requested scope strings in both OAuth client metadata and request
+one clean example (and link to more below)
+cross-link to specs and designer guide
+
+Permissions system background:
+common permission types: rpc, repo, blobs (maybe just link to specs for identity+account?). what the parameters are; that you can't do wildcard for some of these
+permission sets: where to find them (project git repo or lexhub), that they render cleaner, that they are dynamic, how to request them, that they are namespaced
+
+Requesting mechanics:
+OAuth scope string syntax: space-separated
+include scopes in OAuth client metadata as well
+user might not approve all requests (eg, not grant email access), granted scopes come back during OAuth flow
+dev workflow: request broader permissions for local dev?
+rolling out app changes: coordinating software release and permission-set updates; that you might need to re-auth sessions if scope increased; don't forget client metadata
+
+Guidance:
+design tradeoffs around what to actually request: enough to do what the app needs, but not too much. trust issues with users; minimize decision making (short list of requests)
+concrete examples: Bluesky App; hypothetical simple tool
+
+## For Lexicon designers
+
+Intro:
+general concept
+who does this (lexicon authority)
+that they need to be published as records
+cross-link to specs and app dev guide
+
+### Quickstart
+example lexicon schema, describe what it covers
+what DNS TXT record is needed
+how to request in an OAuth scope string
+
+You can use [`goat`](https://github.com/bluesky-social/goat) to create and publish permission sets. Before publishing, `goat` can also be used to lint and validate your Lexicon. For example, pulling and linting `app.bsky.feed.post`:
+
+```bash
+$ goat lex pull app.bsky.feed.post
+ 🟢 app.bsky.feed.post
+
+$ goat lex lint lexicons/app/bsky/feed/post.json
+ 🟡 lexicons/app/bsky/feed/post.json
+    [unlimited-string]: no max length
+    [unlimited-string]: no max length
+error: linting issues detected
+```
+
+Nobody's perfect 😊
+
+You can also create a new Lexicon record with `goat lex new record`:
+
+```bash
+$ goat lex new record dev.project.thing
+```
+
+Develop your Lexicon following the [style guide](https://atproto.com/guides/lexicon-style-guide), and then and eventually publish it with `goat lex publish`:
+
+```bash
+$ goat lex publish
+ 🟢 dev.project.thing
+```
+
+After publishing a new Lexicon, you can verify that it is live with `goat lex resolve`:
+
+```bash
+$ goat lex resolve app.bsky.feed.post
+
+{
+  "$type": "com.atproto.lexicon.schema",
+  "defs": {
+    "entity": {
+      "description": "Deprecated: use facets instead.",
+      "properties": {
+        "index": {
+          "ref": "#textSlice",
+          "type": "ref"
+        },
+        "type": {
+          "description": "Expected values are 'mention' and 'link'.",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+...
+```
+
+### What can be granted
+
+what can be granted in a permission set: repo and rpc only (mention that blobs can't); namespace hierarchy rules
+
+### Internationalization
 
 
 
+### Revision
 
-## Permission Sets for App Developers
+### Best Practices
+NSID design: "auth" prefix, where to put in hierarchy
+use inheritAud=true for rpc requests
+guidance on "title" and "details"
+design for 1-2 set per app/use-case per namespace
+don't break app devs (don't remove permission sets, or make big/radical changes)
 
+## For users
 
-
-
-
-## Permission Sets for Lexicon Designers
-
-
-
-
-## Permission Sets for Users
+Apps that are using ATProto identity providers *solely* for authentication [only need to request the `atproto` permission](/guides/oauth#scopes). This provides the same OAuth flow that you might expect from other identity providers; no features of the Atmosphere social graph are used, and no additional permissions are required:
 
 <Container>
-  <Image src={clearsky} alt="" className="w-full max-w-md mx-auto" />
+  <Image src={clearsky} alt="" className="w-full max-w-md mx-auto"/>
 </Container>
+
+This is a fully usable Atmosphere integration, and many applications will use this as a starting point. Note that it produces a straightforward, readable "Authorize" flow. The URL of the requesting app is clearly visible, and the permissions dialog states that the app "wants to uniquely identify you," but nothing else.
+
+Next, consider a more complex integration, that requests additional permissions. By default, these will be presented in a summarized view:
 
 <Container>
   <Image src={skyblur} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
+In this image, note that there are two different Lexicon groupings: *Bluesky* permissions, and *Skyblur* permissions. Each Lexicon defines its own permission sets, as well as its own grouping and presentation of those permissions.
+
+You can click through on the **?** icons to see the details of each permission set:
+
 <Container>
   <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
+From the expanded ATProto and Bluesky permissions, you might recognize `atproto` (for OAuth login), `blob:*/*` (for image and video handling), and several other `app.bsky.*` permissions for profile and social graph interactions.
+
+The Skyblur permissions are defined and summarized differently:
+
 <Container>
   <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
 </Container>
+
+This is all at the discretion of app developers and Lexicon designers. We provide a model for using different Lexicons side by side, and for each Lexicon to define its own permission sets and presentation. 
