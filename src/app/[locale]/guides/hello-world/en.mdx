@@ -1,0 +1,65 @@
+import {FooterCTA} from "@/components/FooterCTA"
+
+export const header = {
+  title: 'Hello World',
+  description: 'Get started with AT Protocol in under two minutes.',
+}
+
+# Hello World
+
+Get up and running with AT Protocol in just a few lines of code. This example fetches a public profile from the network — no authentication required!
+
+## Install the SDK
+
+```bash
+npm install @atproto/api
+```
+
+## Fetch a Profile
+
+Create a file called `hello.mjs`:
+
+```javascript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({ service: 'https://public.api.bsky.app' })
+
+const profile = await agent.getProfile({ actor: 'bsky.app' })
+
+console.log(`Name: ${profile.data.displayName}`)
+console.log(`Handle: ${profile.data.handle}`)
+console.log(`Bio: ${profile.data.description}`)
+```
+
+Run it:
+
+```bash
+node hello.mjs
+```
+
+You should see output like:
+
+```
+Name: Bluesky
+Handle: bsky.app
+Bio: official Bluesky account (check username👆)
+
+Bugs, feature requests, feedback: support@bsky.app
+```
+
+That's it! You've just made your first AT Protocol API call.
+
+## What's Happening
+
+The `AtpAgent` connects to the public Bluesky API. The `getProfile` method fetches a user's profile by their handle or DID. Since this is a public read, no authentication is needed.
+
+## Next Steps
+
+Now that you've got the basics working:
+
+- **[Read more data](/guides/reading-data)** — Fetch posts, likes, and follows from user repositories
+- **[Authenticate users](/guides/auth)** — Set up OAuth or app password authentication
+- **[Write data](/guides/writing-data)** — Create posts and records in authenticated sessions
+- **[Build an app](/guides/applications)** — Follow the full tutorial to build a complete application
+
+<FooterCTA href="/guides/applications" title="Ready to build something?" description="Follow our step-by-step tutorial to build a complete application." />

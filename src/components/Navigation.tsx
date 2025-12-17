@@ -218,6 +218,11 @@ export const navigation: Array<NavGroup> = [
         href: 'https://github.com/bluesky-social/cookbook/',
       },
       {
+        title: 'Hello World',
+        icon: 'cube',
+        href: '/guides/hello-world',
+      },
+      {
         title: 'Tutorial App',
         icon: 'academic-cap',
         href: '/guides/applications',
