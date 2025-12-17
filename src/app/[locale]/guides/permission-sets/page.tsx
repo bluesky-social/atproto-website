@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Permission Set Guide',
-  description: 'A guide to requesting permissions and permission sets',
+  title: 'Permission Requests',
+  description: 'A permissions guide for app developers and Lexicon designers',
 }
 
 export default async function HomePage({ params }: any) {
