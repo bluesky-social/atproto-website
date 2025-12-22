@@ -28,7 +28,7 @@ The fields on the label object are:
 - `cid` (string, CID format, optional): if provided, the label applies to a specific version of the subject `uri`
 - `val` (string, 128 bytes max, required): the value of the label. Semantics and preferred syntax discussed below.
 - `neg` (boolean, optional): if `true`, indicates that this label "negates" an earlier label with the same `src`, `uri`, and `val`.
-- `cts` (string, datetime format, required): the timestamp when the label was created. Note that timestamps in a distributed system are not trustworthy or verified by default.
+- `cts` (string, datetime format, required): the `created-at` timestamp for the label. Note that timestamps in a distributed system are not trustworthy or verified by default.
 - `exp` (string, datetime format, optional): a timestamp at which this label expires (is not longer valid)
 - `sig` (bytes, optional): cryptographic signature bytes. Uses the `bytes` type from the [Data Model](/specs/data-model), which encodes in JSON as a `$bytes` object with base64 encoding
 
