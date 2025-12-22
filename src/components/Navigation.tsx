@@ -265,6 +265,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'PDS Self-Hosting', href: '/guides/self-hosting' },
       { title: 'Going to production', href: '/guides/going-to-production' },
       { title: 'OAuth Introduction', href: '/guides/oauth' },
+      { title: 'Permission Requests', href: '/guides/permission-sets' },
       { title: 'Account Migration', href: '/guides/account-migration' },
     ],
   },
