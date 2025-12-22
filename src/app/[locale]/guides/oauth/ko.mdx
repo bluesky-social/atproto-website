@@ -1,0 +1,118 @@
+import {Heading} from '@/components/Heading'
+import {Container} from "@/components/Container"
+import oauthdomain from "./oauth-domain.jpg"
+
+export const metadata = {
+  title: 'OAuth 소개',
+  description:
+    'AT Protocol 애플리케이션 개발자를 위한 OAuth 개요',
+}
+
+# AT Protocol 애플리케이션 개발자를 위한 OAuth
+
+이 가이드는 AT Protocol 기반의 애플리케이션을 구축하는 개발자를 대상으로 합니다.
+
+직접 프로토콜 구현체나 OAuth 클라이언트 SDK를 만들고 있다면, 더 자세한 [사양(specification)](/specs/oauth) 이나 심화된 [OAuth 클라이언트 구현 가이드](https://docs.bsky.app/docs/advanced-guides/oauth-client) 가 더 적합할 수 있습니다.
+
+<Heading level={2} id="what-is-o-auth">OAuth*란* 무엇인가?</Heading>
+
+OAuth 는 사용자가 자신의 비밀번호를 넘겨주지 않고도 개발자가 계정에 대한 접근을 요청할 수 있도록 해주는 권한 부여 프레임워크입니다. OAuth 가 없다면, 누군가 제3자 앱이 자신의 계정에 접근하도록 허용하고 싶을 때 해당 앱에 자신의 사용자 이름과 비밀번호를 직접 입력하는 방법밖에 없습니다. 이는 여러 가지 이유로 좋지 않은데, 첫째로 제3자 앱이 비밀번호를 볼 수 있고 저장할 가능성이 있기 때문입니다. 또한 앱이 사용자 이름과 비밀번호를 갖게 되면 해당 계정에 대한 _전체(full)_ 권한을 갖게 됩니다.
+
+OAuth는 사용자의 이름과 비밀번호 없이도 안전한 권한 부여를 관리하기 위한 일련의 개방형 사양을 통해 이러한 문제들을 해결하고자 합니다. 웹에서 "다음으로 로그인..." 버튼이나 링크를 사용해 본 적이 있다면, 이미 OAuth 를 사용해 본 것입니다.
+
+개발자로서 당신은 사용자의 계정에 대해 제한된 접근 권한을 요청할 수 있습니다. 즉, 누군가의 공개 타임라인에 메시지를 게시하는 기능만 필요하다면, 그 사람의 개인 메시지(DM)를 읽을 수 있는 권한까지 요청할 필요는 없습니다. 이는 앱이 필요하지 않은 데이터를 관리하는 걱정을 덜어주기 때문에 좋고, 앱 사용자 입장에서도 자신의 DM이 노출될 걱정을 하지 않아도 되기 때문에 좋습니다.
+
+<Heading level={2} id="how-is-o-auth-different-in-at-protocol">OAuth는 AT Protocol에서 어떻게 다른가?</Heading>
+
+ATProto는 [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html) 을 기반으로 하는 특정 OAuth 표준의 "프로필"을 [규정](/specs/oauth) 합니다.
+
+다른 OAuth 시스템을 사용하는 데 익숙하다면 당황스러울 수 있는 몇 가지 세부 사항이 있습니다.
+
+- **마이그레이션** : ATProto 사용자는 시간이 지나면서 서버([PDS](/guides/glossary#pds-personal-data-server)) 간에 계정을 옮길 수 있습니다. 이를 원활하게 하기 위해 ATProto는 유연한 [아이덴티티(Identity)](/guides/identity) 레이어를 가지고 있습니다. 이를 통해 사용자 이름([핸들](/specs/handle))을 정적인 사용자 ID([DID](/specs/did))로 해석(resolve)할 수 있으며, 이 DID 는 다시 사용자의 PDS 위치를 찾는 데 사용됩니다. 사용자가 앱에 로그인할 때, OAuth 클라이언트는 이러한 관계들을 동적으로 해석합니다.
+
+- **클라이언트 ID** : 다른 OAuth 생태계에서는 클라이언트 앱이 리소스 서버에 미리 자신을 등록해야 하는 경우가 많습니다. 이는 수많은 클라이언트와 리소스 서버가 존재하는 탈중앙화 시스템에서는 실행 불가능하므로, ATProto는 [클라이언트 ID 메타데이터 문서(Client ID Metadata Documents)](/specs/oauth#client-id-metadata-document) 를 사용하여 이 문제를 해결합니다.
+
+<Note>
+우리는 "[앱 비밀번호(App Passwords)](/specs/xrpc#app-passwords)" 사용도 지원합니다. 계정은 기본 비밀번호와 별개로 앱 비밀번호를 생성하고 취소할 수 있으며, 이는 아직 OAuth 를 도입하지 않은 외부 앱에 대해 약간 더 세분화된 권한을 제공하는 방법입니다. 향후 거의 모든 앱에서 OAuth 가 권장 솔루션이 될 것입니다.
+</Note>
+
+<Heading level={2} id="o-auth-sdks">OAuth SDKs</Heading>
+
+OAuth 의 내부 작동 방식은 까다로울 수 있지만, 다행히 클라이언트 SDK 를 통해 이를 추상화하여 여러분이 앱 개발에 집중할 수 있도록 최선을 다했습니다.
+
+<Heading level={3} id="type-script">TypeScript</Heading>
+
+- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - 프론트엔드 전용 애플리케이션(예: SPA)에 적합합니다.
+- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Electron 데스크톱 앱이나 서버 사이드 배포에 적합합니다.
+- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - React Native 프로젝트(예: 모바일 앱)에서 사용하기 적합합니다.
+- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (위의 세 라이브러리가 의존하는 핵심 구현체입니다)
+
+<Heading level={3} id="go">Go</Heading>
+
+- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([온라인 API 문서](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - 네이티브 앱이나 서버 사이드 배포에 적합합니다.
+
+<Heading level={2} id="atproto-o-auth-example-apps">ATProto OAuth 예시 앱</Heading>
+
+이 단순한 예시 앱들은 각 **SDK** 의 사용법을 보여줍니다.
+
+| 예시 앱 | 언어 | SDK | 아키텍처 | 기밀 클라이언트(Confidential Client)? | [로컬호스트 개발 클라이언트 ID?](https://atproto.com/specs/oauth#localhost-client-development) |
+| --- | --- | --- | --- | --- | --- |
+| [cookbook/react-native-oauth](https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme) | TypeScript | @atproto/oauth-client-expo | 모바일 앱 (백엔드 없음) | 아니요 | 아니요 (호스팅된 클라이언트 메타데이터 필요) |
+| [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) | JavaScript | @atproto/oauth-client-browser | 웹 SPA (백엔드 없음) | 아니요 | 선택 사항 |
+| [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) | Go | indigo | 웹 BFF | 선택 사항 | 선택 사항 |
+| [cookbook/go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme) | Go | indigo | 네이티브 CLI | 아니요 | 아니요 (호스팅된 클라이언트 메타데이터 필요) |
+| [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) | Python | 없음 | 웹 BFF | 선택 사항 | 선택 사항 |
+
+<Note>
+Python 예제는 SDK 를 사용하지 않습니다! 심화 [OAuth 클라이언트 구현 가이드](https://docs.bsky.app/docs/advanced-guides/oauth-client) 와 함께 처음부터 OAuth SDK 를 구축할 때 참고용으로 유용할 수 있습니다.
+</Note>
+
+<Heading level={2} id="types-of-app">앱 유형</Heading>
+
+가장 *단순한(simplest)* 앱 유형은 [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) 예제에서 볼 수 있듯이 OAuth 세션이 사용자의 장치와 PDS 사이에서 직접 수립되는 앱입니다. 정적 리소스 호스팅만 필요하고 전용 백엔드 서비스가 필요하지 않기 때문에 단순합니다.
+
+앱에 수명이 긴 세션이 필요하지 않다면 이 방식도 완전히 괜찮습니다. 하지만 다른 사용 사례의 경우, 앱이 "기밀 클라이언트(confidential client)" 가 아닌 "공개 클라이언트(public client)" 이기 때문에 세션 수명이 제한됩니다. 기밀 클라이언트가 되려면 클라이언트 ID에 묶인 비밀 키(secret key)를 생성해야 합니다. 클라이언트가 공개적으로 사용 가능하고 사용자의 장치에서 실행되는 경우 클라이언트 비밀 키를 보호할 수 없습니다. 따라서 기밀 클라이언트를 구현하려면 백엔드 인프라를 호스팅해야 하며, [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) 및 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예제에서 이를 보여줍니다(둘 다 아래에 설명된 "BFF" 패턴을 사용합니다).
+
+기밀 클라이언트 대 공개 클라이언트에 대한 더 기술적인 세부 사항은 [클라이언트 유형(Types of Clients)](/specs/oauth#types-of-clients) 을 참조하세요.
+
+공개 클라이언트를 기밀 클라이언트로 "업그레이드" 하는 데 사용할 수 있는 몇 가지 설계 전략이 있습니다:
+
+- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff) : OAuth 세션이 앱 백엔드 서버와 PDS 사이에서 수립됩니다. 이 서버 사이드 세션은 세션 쿠키와 같은 메커니즘을 통해 사용자의 프론트엔드 세션과 연결됩니다. 프론트엔드는 OAuth 권한 부여를 처리하는 백엔드를 프록시로 삼아 PDS 에 요청을 보냅니다.
+- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend) : BFF 패턴과 유사하지만, 세션이 수립되면 백엔드가 OAuth 액세스 토큰을 프론트엔드로 전달하여 프론트엔드가 PDS 에 직접 요청을 보낼 수 있게 한다는 점이 다릅니다.
+- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend) : 서버 사이드 로직을 단순화한 TMB 패턴의 제안된 대안입니다.
+
+이 세 가지 중 BFF 패턴이 현재 기밀 클라이언트 애플리케이션을 구축하는 데 권장되는 방식입니다. 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) 및 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예제에 잘 나타나 있습니다.
+
+<Heading level={2} id="scopes">범위(Scopes)</Heading>
+
+OAuth 흐름에는 세션을 통해 부여된 접근 수준을 설명하는 권한 "범위(scopes)" 가 필요합니다. 현재 `bsky.social` 호스팅 서비스와 [셀프 호스팅 PDS 배포판](/guides/self-hosting) 에는 세분화된 권한이 구현되어 있습니다. (Lexicon 해석을 포함한) 권한 세트 작업이 진행 중입니다. 개발자는 특정 레코드 유형이나 API 엔드포인트에 대한 권한만 요청하는 앱과 같이 더 세분화된 권한을 구현하기 시작할 수 있습니다. 향후 더 높은 수준의 "권한 세트" 가 제공되면 대부분의 앱이 이를 사용할 것으로 예상되며, 이는 부여되는 권한에 대해 더 이해하기 쉬운 언어를 제공할 것입니다.
+
+제3자 AT 애플리케이션이 Bluesky로 로그인하기 위해 요청해야 하는 최소한의 OAuth 권한 세트는 다음과 같습니다:
+- `atproto`
+
+Bluesky 프로필 정보를 사용하고 있다면 다음 권한도 필요할 수 있습니다:
+- `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
+
+생성한 레코드(포스트)에 업로드된 이미지나 비디오를 연결해야 한다면 다음 권한도 필요합니다:
+- `blob:*/*`
+
+AT Protocol의 OAuth 범위 사용 편의성은 계속 진화하고 있습니다. 이 최소 세트는 앱 개발자에게 불필요한 권한을 부여하지 않으면서도 검증된 시작점을 제공하기 위해 설계되었습니다. 세분화된 권한 범위를 확정하는 동안, 우리는 "전환기 범위(transition scopes)" 라고 불리는 일시적인 조립된 범위 세트도 지원하고 있습니다. 현재 전환기 범위나 앱 비밀번호 사용을 중단(deprecate)할 계획은 없습니다. 이러한 전환기 범위에 대한 개요와 OAuth 에 대한 더 심층적인 정보는 [권한 부여 범위(Authorization Scopes)](/specs/oauth#authorization-scopes) 를 참조하세요. 세분화된 권한 범위에 대해서는 [권한(Permissions)](/specs/permission) 을 참조하세요.
+
+<Heading level={2} id="clients">클라이언트(Clients)</Heading>
+
+OAuth 클라이언트 소프트웨어는 전역적으로 고유한 `client_id` 로 식별됩니다. 클라이언트 소프트웨어의 고유한 변형은 서로 다른 `client_id` 값을 가질 수 있습니다. 예를 들어 동일한 소프트웨어의 브라우저 앱과 Android(모바일 OS) 버전은 서로 다른 `client_id` 값을 가질 수 있습니다. `client_id` 는 클라이언트 메타데이터 JSON 문서를 가져올 수 있는 정규화된 웹 URL이어야 합니다. 예를 들어, `https://app.example.com/oauth-client-metadata.json` 과 같습니다. `client_id` 에 대한 몇 가지 추가 사항은 다음과 같습니다:
+- W3C URL 사양을 따르는 잘 형성된(well-formed) URL이어야 합니다.
+- 스키마는 `https://` 여야 하며, 포트 번호가 포함되어서는 안 됩니다. 개발용 `http://localhost` `client_id` 값에 대해서는 [특별한 예외](/specs/oauth#localhost-client-development) 가 있음에 유의하세요.
+- 경로에 `oauth-client-metadata.json` 을 반드시 포함할 필요는 없지만, 이는 도움이 되는 관례입니다.
+
+<Note>
+만약 `oauth-client-metadata.json` 대신 `client-metadata.json` 을 사용해 왔다면, 이를 변경하여 인증 흐름 페이지에 URL 문자열 대신 도메인이 표시되도록 할 수 있습니다.
+</Note>
+
+<Container>
+  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+인증 흐름 페이지에는 부여되는 모든 관련 권한이 표시됩니다. 이는 [세분화된 권한](/specs/permission) 을 사용하는 앱과 [전환기](/specs/oauth#authorization-scopes) OAuth 범위를 사용하는 앱 모두에 해당됩니다.
+
+클라이언트 앱은 인증 흐름 중에 실제로 어떤 권한 범위가 승인되었는지 반드시 확인해야 합니다. 특히 계정 이메일 주소 읽기 권한( `account:email` )을 요청할 때, 사용자는 다른 권한은 부여하면서 해당 권한은 거부할 수 있습니다. 이론적으로 개별 권한은 거부되더라도 전체 요청은 승인될 수 있습니다.
