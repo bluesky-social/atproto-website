@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Accounts and deletions',
-  description: 'How account lifecycles and deletions work in AT Protocol',
+  title: 'Social Graph - AT Protocol Docs',
+  description: 'Working with AT Protocol Social Graphs',
 }
 
 export default async function HomePage({ params }: any) {

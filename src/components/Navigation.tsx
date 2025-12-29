@@ -246,6 +246,8 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Reading data', href: '/guides/reading-data' },
           { title: 'Writing data', href: '/guides/writing-data' },
+          { title: 'Accounts and deletions', href: '/guides/account-lifecycle' },
+          { title: 'Social graph', href: '/guides/social-graph' },
         ],
       },
       {

@@ -7,7 +7,18 @@ export const header = {
 
 Blobs must be uploaded to the PDS before a record can be created referencing that blob. Note that the server does not know the intended Lexicon when receiving an upload, so can only apply generic blob limits and restrictions at initial upload time, and then enforce Lexicon-defined limits later when the record is created.
 
-Clients use the **`com.atproto.repo.uploadBlob`** endpoint on their PDS, which will return verified metadata in the form of a Lexicon blob object. Clients should set the HTTP **`Content-Type`** header and should set the **`Content-Length`** headers on the upload request. Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff the blob mimetype to validate against the declared **`Content-Type`** header, and either return a modified mimetype in the response, or reject the upload. See "Security Considerations" below. If the actual blob upload size differs from the **`Content-Length`** header, the server should reject the upload.
+Clients use the **`com.atproto.repo.uploadBlob`** endpoint on their PDS, which will return verified metadata in the form of a Lexicon blob object. Clients should set the HTTP **`Content-Type`** header and should set the **`Content-Length`** headers on the upload request. SDKs can handle this automatically:
+
+```typescript
+const image = 'data:image/png;base64,...'
+const { data } = await agent.uploadBlob(convertDataURIToUint8Array(image), {
+  encoding,
+})
+```
+
+This `data` object could then be referenced in another record, e.g. as an `embed`.
+
+Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff the blob mimetype to validate against the declared **`Content-Type`** header, and either return a modified mimetype in the response, or reject the upload. See "Security Considerations" below. If the actual blob upload size differs from the **`Content-Length`** header, the server should reject the upload.
 
 ## Garbage collecting
 

@@ -1,22 +1,28 @@
 export const header = {
-  title: 'Account Lifecyle Events',
+  title: 'Accounts and deletions',
   description:
-    'Account Lifecycle Best Practices',
+    'How account lifecycles and deletions work in AT Protocol',
 }
 
-# Account Lifecycle Best Practices
+## Account lifecycles
 
 This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It summarizes the expected behaviors for a few common account lifecycle transitions, and what firehose events are expected in what order. Software is generally expected to be resilient to partial or incorrect event transmission.
 
-**New Account Creation:** when an account is registered on a PDS and a new identity (DID) is created.
+Understanding account lifecycles also helps understand record deletions in AT Protocol.
+
+## New Account Creation
+
+When an account is registered on a PDS and a new identity (DID) is created:
 
 - the PDS will generate or confirm the existence of the account's identity (DID and handle). Once the DID is in a confirmed state that can be resolved by other services in the network, and points to the current PDS instance, the PDS emits an `#identity` event. It is good, but not required, to wait until the handle is resolvable by third parties before emitting the event (especially, but not only, if the PDS is providing a handle for the account). The account status may or may not be `active` when this event is emitted.
 - once the account creation has completed, and the PDS will respond with `active` to API requests for account status, an `#account` event can be emitted
 - when the account's repository is initialized with a `rev` and `commit`, a `#commit` message can be emitted. The initial repo may be "empty" (no records), or may contain records.
 - the specific order of events is not formally specified, but the recommended order is: `#identity`, `#account`, `#commit`
-- downstream services process and pass through these events
+- downstream services process and pass through these events.
 
-**Account Migration:** is described in more detail below, but the relevant events and behaviors are:
+## Account Migration
+
+The relevant events and behaviors when migrating an account to a new PDS:
 
 - the new PDS will not emit any events on initial account creation. The account state will be `deactivated` on the new PDS (which will reply as such to API requests)
 - when the identity is updated and confirmed by the new PDS, it should emit an `#identity` event
@@ -25,16 +31,20 @@ This document complements the [Account Hosting](/specs/account) specification, w
 - Relays should ignore `#account` and `#commit` events which are not coming from the currently declared PDS instance for the identity: these should not be passed through to the output firehose. Further, they should ignore `#commit` events when the local account status is not `active`. Overall, this means that account migration should result in three events coming from the relay: an `#identity` (from new PDS), an `#account` (from new PDS), and a `#commit` (from new PDS). The `#account` from the old PDS is usually ignored.
 - downstream services (eg, AppView) should update their identity cache, and increment the account's `rev` (when the `#commit` is received), but otherwise don't need to take any action.
 
-**Account Deletion:**
+## Account Deletion
 
 - PDS emits an `#account` event, with `active` false and status `deleted`.
-- Relay updates local account status for the repo, and passes through the `#account` event. If the Relay is a full mirror, it immediately stop serving `getRepo`, `getRecord`, and similar API requests for the account, indicating the reason in the response error. The Relay may fully delete repo content locally according to local policy. The firehose backfill window does not need to be immediately purged of commit events for the repo, as long as the backfill window is time-limited.
+- Relay updates local account status for the repo, and passes through the `#account` event. If the Relay is a full mirror, it immediately stops serving `getRepo`, `getRecord`, and similar API requests for the account, indicating the reason in the response error. The Relay may fully delete repo content locally according to local policy. The firehose backfill window does not need to be immediately purged of commit events for the repo, as long as the backfill window is time-limited.
 - the PDS should not emit `#commit` events for an account which is not "active'. If any further `#commit` messages are emitted for the repo (eg, by accident or out-of-order processing or delivery), all downstream services should ignore the event and not pass it through
-- downstream services (eg, AppView) should immediately stop serving/distributing content for the account. They may defer permanent data deletion according to local policy. Updating aggregations (eg, record counts) may also be deferred or processed in a background queue according to policy and implementation. Error status messages may indicate either that the content is "gone" (existed, but no longer available), or that content is "not found" (not revealing that content existed previously)
+- downstream services (eg, AppView) **should** immediately stop serving/distributing content for the account. They *may* defer permanent data deletion according to local policy. Updating aggregations (eg, record counts) may also be deferred or processed in a background queue according to policy and implementation. Error status messages may indicate either that the content is "gone" (existed, but no longer available), or that content is "not found" (not revealing that content existed previously)
+
+<Note>
+The behavior of downstream services is a recurring theme throughout this guide. Due to the nature of the AT Protocol, downstream services may go out of sync with [firehose events](/guides/streaming-data), and may fail to process requests such as deletion requests. Records that have been requested to be deleted, or have been removed from a self-hosted PDS, may still exist elsewhere if they were processed by a Relay and ingested into another application or data model that does not follow the AT Proto spec — i.e., doesn't resolve record requests back to the origin PDS. Full records are <a href="https://github.com/bluesky-social/indigo/issues/927" target="_blank">deliberately not included</a> with delete events on the firehose to further mitigate this. As a rule, the PDS *should* be considered the source of truth for hosted accounts.
+</Note>
 
 Account takedowns work similarly to account deletion.
 
-**Account Deactivation:**
+## Account Deactivation
 
 - PDS emits an `#account` event, with `active` false and status `deactivated`.
 - similar to deletion, Relay processes the event, stops redistributing content, and passes through the event. The Relay should not fully purge content locally, though it may eventually delete local copies if the deactivation status persists for a long time (according to local policy).
@@ -43,10 +53,19 @@ Account takedowns work similarly to account deletion.
 
 Account suspension works similarly to deactivation.
 
-**Account Reactivation:**
+## Account Reactivation
 
 - PDS emits an `#account` event, with `active` status.
 - Relay verifies that the account reactivation is valid, eg that it came from the current PDS instance for the identity. It updates local account status, and passes through the event.
 - any downstream services (eg, AppViews) should update local account status for the account.
-- any service which does not have any current repo content for the account (eg, because it was previously deleted) may fetch a repo CAR export and process it as a background tasks. An “upstream” host (like a relay) may have a repo copy, or the service might connect directly to the account’s PDS host. They are not required to do so, and might instead wait for a `#commit` event.
-- if the account was previously deleted or inactive for a long time, it is a best practice for the PDS to emit an empty `#commit` event after reactivation to ensure downstream services are synchronized
+- any service which does not have any current repo content for the account (eg, because it was previously deleted) may fetch a repo [CAR](/specs/repository#car-file-serialization) export and process it as a background tasks. An “upstream” host (like a relay) may have a repo copy, or the service might connect directly to the account's PDS host. They are not required to do so, and might instead wait for a `#commit` event.
+- if the account was previously deleted or inactive for a long time, it is a best practice for the PDS to emit an empty `#commit` event after reactivation to ensure downstream services are synchronized.
+
+## Further Reading and Resources
+
+- [Reads and Writes](/guides/reads-and-writes)
+- [Reading data](/guides/reading-data)
+- [Writing data](/guides/writing-data)
+- [Social graph](/guides/social-graph)
+- [Record Key spec](/specs/record-key)
+- [URI scheme](/specs/at-uri-scheme)
