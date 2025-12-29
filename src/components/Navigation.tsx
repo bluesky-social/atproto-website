@@ -255,6 +255,7 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Streaming data', href: '/guides/streaming-data' },
           { title: 'Backfilling', href: '/guides/backfilling' },
+          { title: 'Feeds', href: '/guides/feeds' },
         ],
       },
       {

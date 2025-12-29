@@ -9,15 +9,27 @@ One of the core primitives of the AT Protocol is the *firehose*. It is an authen
 
 Many AT applications that need to stream incoming data will utilize the firehose — from feed generators to labelers, to bots and search engines. In the AT ecosystem, there are many different endpoints that seed these firehose APIs. Each PDS serves a stream of all of the activity on the repos it is responsible for. From there, Relays aggregate the streams of each participating PDS into a single unified stream — the firehose.
 
-However the firehose output format is also one of the more complex parts of AT, involving decoding binary CBOR data and CAR files, which can be off-putting to new developers. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users, we provide an alternative streaming solution called **Jetstream.** Jetstream has a few key advantages:
+## Firehose
+
+Anyone can connect to the firehose without authentication — this is a core feature of the protocol. To get started, open a WebSocket connection to any provider of the `com.atproto.sync.subscribeRepos` endpoint:
+
+```shell 
+$ websocat wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos
+```
+
+From here, you would need to read each message as it comes in, and decode the associated data. Our [Go](https://github.com/bluesky-social/indigo) SDK is currently the most feature-complete for interacting with the firehose directly.
+
+Bear in mind that firehose output format is one of the more complex parts of AT, involving decoding binary [CBOR](/specs/data-model) data and [CAR](/specs/repository#car-file-serialization) files. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users such as [feed developers](/guides/feeds), we provide an alternative streaming solution called **Jetstream.**
+
+## Jetstream
+
+Jetstream has a few key advantages:
 
 - simple JSON encoding
 - reduced bandwidth, and compression
 - ability to filter by collection (NSID) or repo (DID)
 
 A Jetstream server consumes from the firehose and fans out to many subscribers. It is [open source](https://github.com/bluesky-social/jetstream), implemented in Go, simple to self-host. There is an official client library included (in Go), and [community client libraries](https://skyware.js.org/guides/jetstream/introduction/getting-started/) have been developed.
-
-## Jetstream
 
 You can work with Jetstream like any other websocket. Just provide a Jetstream endpoint like `wss://jetstream2.us-east.bsky.network/subscribe`, and a `wantedCollections` parameter, like `?wantedCollections=app.bsky.feed.post`.
 
@@ -48,6 +60,7 @@ asyncio.get_event_loop().run_until_complete(listen_to_websocket())
 
 - [Sync](/guides/sync)
 - [Backfilling](/guides/backfilling)
+- [Feeds](/guides/feeds)
 - [Repository spec](/specs/repository)
 - [Event Stream spec](/specs/event-stream)
 - [Sync spec](/specs/sync)

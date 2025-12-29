@@ -1,0 +1,59 @@
+export const header = {
+  title: 'Feeds',
+  description: 'Creating and consuming custom feed generators',
+}
+
+## Custom Feeds
+
+Custom feeds, or feed generators, are services that provide custom algorithms to users through the AT Protocol. This allows users to choose their own timelines, and for feed builders to [create and embed dedicated views](https://graze.leaflet.pub/3m4yjmbnyec2c) of AT records.
+
+The way custom feeds work is straightforward: the server receives a request from a user's server and returns a list of post URIs with some optional metadata attached. Those posts are then hydrated into full views by the requesting server and sent back to the client.
+
+A Feed Generator service can host one or more algorithms. The service itself is identified by DID, while each algorithm that it hosts is declared by a record in the repo of the account that created it. For instance, feeds offered by Bluesky will likely be declared in `@bsky.app`'s repo. Therefore, a given algorithm is identified by the at-uri of the declaration record. This declaration record includes a pointer to the service's DID along with some profile information for the feed.
+
+The general flow of providing a custom algorithm to a user is as follows:
+
+- A user requests a feed from the AppView using the at-uri of the declared feed
+- The AppView resolves the at-uri and finds the DID doc of the Feed Generator
+- The AppView sends a getFeedSkeleton request to the service endpoint declared in the Feed Generator's DID doc
+  - This request is authenticated by a JWT signed by the user's repo signing key
+- The Feed Generator returns a skeleton of the feed to the AppView
+- The AppView hydrates the feed (user info, post contents, aggregates, etc.)
+- The AppView returns the hydrated feed to the user
+
+For users, this should feel like visiting a page in the app. Once they subscribe to a custom algorithm, it will appear in their home interface as one of their available feeds.
+
+## Feed Generator Templates
+
+We maintain a Feed Generator example in [TypeScript](https://github.com/bluesky-social/feed-generator). Refer to the GitHub readme to get started. 
+
+There are also community-maintained implementations in [Python](https://github.com/MarshalX/bluesky-feed-generator) and [Ruby](https://github.com/mackuba/bluesky-feeds-rb)
+
+## Implementing Feeds
+
+How a feed generator fulfills the `getFeedSkeleton` request is completely at their discretion. At the simplest end, a Feed Generator could supply a "feed" that only contains some hardcoded posts.
+
+For most use cases, we recommend [subscribing to the firehose](/guides/streaming-data) at `com.atproto.sync.subscribeRepos`. This websocket will send you every record that is published on the network. Since Feed Generators do not need to provide hydrated posts, you can index as much or as little of the firehose as necessary. This is an important point — needing to sync with the firehose to provide a feed *can* be resource-intensive, but does not have to be. Refer to the examples linked from this guide for more details.
+
+Depending on your feed's algorithm, you likely do not need to keep posts around for long. Unless your feed is intended to provide "posts you missed" or something similar, you can likely garbage collect any data that is older than 48 hours from your feed.
+
+## Language Handling
+
+When making requests to `getFeedSkeleton`, clients are encouraged to populate the `Accept-Language` HTTP header with comma-separated BCP-47 language codes e.g. `en`,`pr-BR`. Feed generators can use this language context to filter or rank posts. If language filtering is applied, the feed generator should use the the `Content-Language` response header indicating the parsed language codes.
+
+## Example Feeds
+
+- A community feed: Compile a list of DIDs within that community and filter the firehose for all posts from users within that list.
+- A topical feed: Filter the algorithm for posts and pass the post text through some filtering mechanism (an LLM, a keyword matcher, etc.) that filters for the topic of your choice.
+- [graze.social](https://www.graze.social/) provides an application model for AT Proto feeds.
+- You can find other examples of community-created feeds at <a href="bsky.app/feeds" target="_blank">https://bsky.app/feeds</a>.
+
+## Further Reading and Resources
+
+- [Sync](/guides/sync)
+- [Backfilling](/guides/backfilling)
+- [Streaming data](/guides/streaming-data)
+- [Repository spec](/specs/repository)
+- [Event Stream spec](/specs/event-stream)
+- [Sync spec](/specs/sync)
+- The <a href="https://www.microcosm.blue/" target="_blank">Microcosm</a> community project maintains tools for working with AT records at scale without local mirroring.
