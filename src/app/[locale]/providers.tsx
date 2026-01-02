@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import { ThemeProvider, useTheme } from 'next-themes'
-import { usePathname } from 'next/navigation'
 
 function ThemeWatcher() {
   let { resolvedTheme, setTheme } = useTheme()
@@ -29,15 +28,8 @@ function ThemeWatcher() {
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isHome = pathname === '/'
-
   return (
-    <ThemeProvider
-      attribute="class"
-      disableTransitionOnChange
-      forcedTheme={isHome ? 'dark' : undefined}
-    >
+    <ThemeProvider attribute="class" disableTransitionOnChange>
       <ThemeWatcher />
       {children}
     </ThemeProvider>

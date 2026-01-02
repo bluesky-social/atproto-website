@@ -5,11 +5,10 @@ import { useRef, useEffect, useState } from 'react'
 // ============ CONFIGURABLE CONSTANTS ============
 const DEFAULT_LINES = 25
 const TILE_SIZE = 2 // 2x2 pixel tiles, each producing 2 characters
-const RENDER_SCALE = 8 // Render at higher resolution for box filtering (1 = no filtering)
-const LAND_COLOR = '#FFD34F'
+const RENDER_SCALE = 4 // Render at higher resolution for box filtering (1 = no filtering)
 const TEXTURE_PATH = '/globe/solidmap.webp'
 const TEXTURE_COLOR_PATH = '/globe/globe-texture.png'
-const ROTATION_SPEED = 0.001 // 0.002
+const ROTATION_SPEED = 0.001
 const DRAG_SENSITIVITY = 0.01
 const SHOW_WEBGL_CANVAS = false
 const AXIAL_TILT_X = -8 * (Math.PI / 180) // Earth's axial tilt in radians (towards camera)
@@ -18,6 +17,7 @@ const CAMERA_FOV = 0.1
 const SPHERE_SCALE = 0.14 // Scale factor for the sphere (1 = default size)
 const OUTLINE_SCALE = 1.025 // Scale multiplier for the outline sphere (relative to SPHERE_SCALE)
 const TEXTURE_OPACITY = 0.2
+const ASCII_VISIBLE_THRESHOLD = 64 // how "bright" does a pixel need to be to register on the ascii map
 
 // ASCII characters for 1×2 vertical binary patterns
 // Index = bit pattern: top(2) + bottom(1)
@@ -25,7 +25,7 @@ const ASCII_MAP = [
   '\u00a0', // 00 - empty
   '.', // 01 - bottom only
   "'", // 10 - top only
-  'M', // 11 - full
+  '@', // 11 - full
 ]
 
 // ============ SHADER SOURCES ============
@@ -348,17 +348,28 @@ function convertToAscii(
       const baseX = tx * TILE_SIZE
 
       // Get averaged alpha for each of the 4 pixels in the tile
-      const tl = getAveragedAlpha(baseX, baseY) > 128
-      const tr = getAveragedAlpha(baseX + 1, baseY) > 128
-      const bl = getAveragedAlpha(baseX, baseY + 1) > 128
-      const br = getAveragedAlpha(baseX + 1, baseY + 1) > 128
+      const tl = getAveragedAlpha(baseX, baseY) > ASCII_VISIBLE_THRESHOLD
+      const tr = getAveragedAlpha(baseX + 1, baseY) > ASCII_VISIBLE_THRESHOLD
+      const bl = getAveragedAlpha(baseX, baseY + 1) > ASCII_VISIBLE_THRESHOLD
+      const br =
+        getAveragedAlpha(baseX + 1, baseY + 1) > ASCII_VISIBLE_THRESHOLD
 
       // Left character: top=TL, bottom=BL
       const leftPattern = (tl ? 2 : 0) | (bl ? 1 : 0)
       // Right character: top=TR, bottom=BR
       const rightPattern = (tr ? 2 : 0) | (br ? 1 : 0)
 
-      line += ASCII_MAP[leftPattern] + ASCII_MAP[rightPattern]
+      let charL = ASCII_MAP[leftPattern]
+      let charR = ASCII_MAP[rightPattern]
+
+      // add "glitch"
+      // if (charR === 'M') {
+      //   if (tx % 3 === 0 && ty % 8 === 0 && charL === 'M') {
+      //     charR = 'M '
+      //   }
+      // }
+
+      line += charL + charR
     }
     lines.push(line)
   }
@@ -580,6 +591,7 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
 
       // Pixel buffer for reading
       const pixels = new Uint8Array(canvasSize * canvasSize * 4)
+      const oldPixels = new Uint8Array(canvasSize * canvasSize * 4)
 
       const render = () => {
         // Auto-spin when not dragging
@@ -637,7 +649,7 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
           0,
         )
 
-        // Read pixels and convert to ASCII
+        // Read pixels
         gl.readPixels(
           0,
           0,
@@ -647,6 +659,14 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
           gl.UNSIGNED_BYTE,
           pixels,
         )
+
+        // Average the new values into the old ones
+        for (let i = 0; i < pixels.length; i++) {
+          pixels[i] = oldPixels[i] * 0.99 + pixels[i] * 0.01
+        }
+        oldPixels.set(pixels)
+
+        // Convert to ascii
         const ascii = convertToAscii(pixels, canvasSize, canvasSize, lines)
         setAsciiText(ascii)
 
@@ -815,11 +835,11 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
       />
       <pre
         ref={preRef}
+        className="text-blue-600 dark:text-yellow-500"
         style={{
           position: 'relative',
           margin: 0,
           padding: 0,
-          color: LAND_COLOR,
           userSelect: 'none',
 
           // NOTE(@elijaharita): font and font weight affect what line height

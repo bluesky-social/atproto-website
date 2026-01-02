@@ -13,7 +13,13 @@ export default async function HomePage({ params }: any) {
           applications.
         </div>
         <div className="pb-12 pt-12">
-          <Button variant="secondary" arrow="right" font="mono" size="xxlarge">
+          <Button
+            variant="primary"
+            arrow="right"
+            font="mono"
+            size="xxlarge"
+            href="/docs"
+          >
             GET STARTED
           </Button>
         </div>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/Button'
 import { navigation } from '@/components/Navigation'
+import clsx from 'clsx'
 
 function PageLink({
   label,
@@ -114,9 +115,14 @@ function SocialLink({
   )
 }
 
-function SmallPrint() {
+function SmallPrint({ minimal }: { minimal?: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-between gap-5 border-t border-zinc-900/5 pt-8 sm:flex-row dark:border-white/5">
+    <div
+      className={clsx(
+        'flex flex-col items-center justify-between gap-5 border-zinc-900/5 pt-8 sm:flex-row dark:border-white/5',
+        !minimal && 'border-t',
+      )}
+    >
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
         &copy; Copyright {new Date().getFullYear()}. All rights reserved.
       </p>
@@ -140,9 +146,14 @@ function SmallPrint() {
 
 export function Footer({ minimal }: { minimal?: boolean }) {
   return (
-    <footer className="mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl">
+    <footer
+      className={clsx(
+        'mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl',
+        minimal ? 'max-w-6xl lg:max-w-7xl' : 'max-w-2xl lg:max-w-5xl',
+      )}
+    >
       {!minimal && <PageNavigation />}
-      <SmallPrint />
+      <SmallPrint minimal={minimal} />
     </footer>
   )
 }

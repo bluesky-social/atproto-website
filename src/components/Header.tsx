@@ -66,13 +66,15 @@ export const Header = forwardRef<
         } as React.CSSProperties
       }
     >
-      <div
-        className={clsx(
-          'absolute inset-x-0 top-full h-px transition',
-          (isInsideMobileNavigation || !mobileNavIsOpen) &&
-            'bg-zinc-900/7.5 dark:bg-white/7.5',
-        )}
-      />
+      {!minimal && (
+        <div
+          className={clsx(
+            'absolute inset-x-0 top-full h-px transition',
+            (isInsideMobileNavigation || !mobileNavIsOpen) &&
+              'bg-zinc-900/7.5 dark:bg-white/7.5',
+          )}
+        />
+      )}
       <div className="flex items-center gap-4">
         <div className="lg:hidden">
           <MobileNavigation />
