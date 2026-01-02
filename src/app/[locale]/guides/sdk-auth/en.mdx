@@ -7,14 +7,14 @@ export const header = {
 
 ## Creating a Client
 
-The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with `AtpAgent()` from our SDK if you are using password auth.
+The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with <a href="https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-agent" target="_blank">PasswordAgent</a> from our SDK if you are using password auth.
 
 ## Typescript
 
-Begin by installing the ATProto SDK packages:
+Begin by installing the ATProto SDK package:
 
 ```bash
-npm install @atproto/lex @atproto/api
+npm install @atproto/lex
 ```
 
 Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
@@ -23,18 +23,20 @@ Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this 
 
 If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky as an auth provider, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
 
-Start by importing `AtpAgent`, creating an `agent` object, and providing credentials to `agent.login()`:
+Start by importing `PasswordAgent`, providing credentials to `PasswordAgent.login()`, and creating an `agent`:
 
 ```tsx
-import { AtpAgent } from '@atproto/api'
+import { PasswordAgent } from '@atproto/lex-password-agent'
 
-const agent = new AtpAgent({
-    service: 'https://bsky.social'
+const result = await PasswordAgent.login({
+  service: 'https://bsky.social',
+  identifier: 'your-handle.bsky.social',
+  password: 'your-app-password',
 })
-await agent.login({
-    identifier: 'alex.bsky.team',
-    password: 'your-app-password'
-})
+
+if (result.success) {
+    const agent = result.value
+}
 ```
 
 Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `agent`.
@@ -46,6 +48,9 @@ Once you have a logged-in `agent`, you can create a `Client` instance to read an
 ```tsx
 import { Client } from '@atproto/lex'
 const client = new Client(agent)
+
+// Make authenticated API calls
+console.log('Logged in as:', agent.did)
 ```
 
 From here, you can go directly to [making API requests](/guides/reads-and-writes).
