@@ -835,7 +835,7 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
       />
       <pre
         ref={preRef}
-        className="text-blue-600 dark:text-yellow-500"
+        className="text-[8px] text-blue-600 md:text-sm xl:text-base dark:text-yellow-500"
         style={{
           position: 'relative',
           margin: 0,

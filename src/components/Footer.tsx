@@ -149,7 +149,7 @@ export function Footer({ minimal }: { minimal?: boolean }) {
     <footer
       className={clsx(
         'mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl',
-        minimal ? 'max-w-6xl lg:max-w-7xl' : 'max-w-2xl lg:max-w-5xl',
+        minimal ? 'max-w-6xl px-8 lg:max-w-7xl' : 'max-w-2xl lg:max-w-5xl',
       )}
     >
       {!minimal && <PageNavigation />}
