@@ -1,0 +1,174 @@
+import { Guides } from '@/components/Guides'
+import { Specs } from '@/components/Specs'
+import { HeroPattern } from '@/components/HeroPattern'
+import { Firehose } from '@/components/Firehose'
+import { CodeCard } from '@/components/CodeCard'
+import { ImageCard } from '@/components/ImageCard'
+import { ArticleSummary, ArticleSummarySmall } from '@/components/ArticleSummary'
+import { UserIcon } from '@/components/icons/UserIcon'
+import WebWithoutWallsPng from '@/images/media/web-without-walls.png'
+import DotMediaInterviewPng from '@/images/media/dotmedia-interview.png'
+import WhitepaperPng from '@/images/media/whitepaper.png'
+import HowDoesBlueskyWorkBlogpostPng from '@/images/media/how-does-bsky-work-blogpost.png'
+
+export const header = {
+  title: 'AT Protocol',
+  description:
+    'AT Protocol은 소셜 애플리케이션을 구축하기 위한 오픈, 분산형, 고성능 네트워크입니다.',
+}
+
+export const sections = []
+
+<HeroPattern />
+
+# Atmosphere에 오신 것을 환영합니다
+
+AT Protocol은 소셜 애플리케이션을 구축하기 위한 오픈 분산형 네트워크입니다. {{ className: 'lead' }}
+
+<div className="not-prose mb-16 mt-6 flex gap-3">
+  <Button href="/guides/applications" arrow="right">
+    <>퀵스타트</>
+  </Button>
+  <Button href="/sdks" variant="outline">
+    <>SDK 살펴보기</>
+  </Button>
+</div>
+
+{/* TODO <Row>
+  <Col>
+      <Firehose />
+  </Col>
+  <Col>
+    <CodeCard description="Single Sign-On in 5 minutes." href="/todo" icon={UserIcon}>
+      ```js {{containerClassName: 'rounded-t-none !my-0 border-t border-zinc-900/7.5 dark:border-white/10 !ring-0'}}
+      import { BrowserOAuthClient } from '@atproto/oauth-client-browser'
+
+      const client = new BrowserOAuthClient()
+      await client.signIn('my.handle.com', {
+        state: 'some value needed later',
+        prompt: 'none', // Attempt to sign in without user interaction (SSO)
+        ui_locales: 'fr-CA fr en', // Only supported by some OAuth servers (requires OpenID Connect support + i18n support)
+        signal: new AbortController().signal, // Optional, allows to cancel the sign in (and destroy the pending authorization, for better security)
+      })
+      ```
+    </CodeCard>
+  </Col>
+</Row> */}
+
+<Guides lang="ko" />
+
+<Specs lang="ko" />
+
+{/* TODO
+---
+
+## A Web of Data {{className: 'text-2xl mt-2 scroll-mt-32'}}
+
+The Atmosphere is a web of interconnected data. It is the porous membrane through which posts, profiles, and comments flow.  It is a network of databases working in conjunction to provide one global database - a tool for people to communicate with each other through data.
+
+The purpose of the Atmosphere is to run social applications at scale. It's designed for real-world applications with hundreds of millions of users. The Bluesky app has 6mm registered users and 500k DAU, and runs at roughly the same cost-efficiency as traditional applications.
+
+The vision and mission of the Atmosphere is to make it easy for people to build. Whether you're a weekend hacker or building a startup, you should have access to a social network to build upon. The joy of social programming should be available to everyone.
+
+<Button href="/quickstart" arrow="right">
+  <>Keep reading</>
+</Button> */}
+
+## 더 알아보기
+
+<div className="xl:grid grid-cols-2 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ArticleSummary tag="Guide" title="용어집" href="/guides/glossary">
+  PDS, AppView, DID가 무엇인지 잘 모른다면, 이 용어집을 참고해 보세요.
+</ArticleSummary>
+
+<ArticleSummary
+  tag="Guide"
+  title="ATProto로 시작하는 빠른 입문"
+  href="/guides/applications"
+>
+  이 가이드는 자신의 "상태"를 이모지로 게시하는 간단한 다중 사용자
+  애플리케이션을 구축하는 방법을 안내합니다.
+</ArticleSummary>
+
+{/* TODO <ArticleSummary tag="Article" title="What happens when I like a post?" href="/articles/todo" >
+To get started, create a new application in your [developer settings](#), then read about how to make requests for the resources you need to access using our HTTP APIs or dedicated client SDKs. When your integration is ready to go live, publish it to our [integrations directory](#) to reach the Protocol community.
+</ArticleSummary> */}
+
+<ArticleSummary
+  tag="Article"
+  title="분산 시스템 엔지니어를 위한 ATProto"
+  href="/articles/atproto-for-distsys-engineers"
+>
+  이 기사에서는 분산 백엔드 엔지니어링 관점에서 AT Proto를 탐구합니다.
+</ArticleSummary>
+
+{/* <ArticleSummary tag="Guide" title="How do user identities work?" href="/guides/identity" >
+What are DIDs and handles? How are domain names involved? How do the identities get resolved to user data? This guide will introduce all these concepts and explain how identity works in the Atmosphere.
+</ArticleSummary> */}
+
+<ArticleSummary
+  tag="Guide"
+  title="Lexicon이란 무엇이며, 이를 사용하여 스키마를 만드는 방법은?"
+  href="/guides/lexicon"
+>
+  이 가이드는 Lexicon을 소개하고, 자체 스키마 구축 방법을 안내합니다.
+</ArticleSummary>
+
+</div>
+
+<div className="flex flex-col xl:grid grid-cols-3 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ImageCard
+  image={WebWithoutWallsPng}
+  href="https://www.youtube.com/watch?v=F1sJW6nTP6E"
+  title="벽 없는 웹 - React Universe 2024 강연"
+  tag="Talk"
+  description="React Universe Conf 2024에서 Dan Abramov가 AT Protocol을 소개한 강연"
+/>
+
+<ImageCard
+  image={DotMediaInterviewPng}
+  href="https://flipboard.video/w/ophhJTECuL7fcBNbUitV3q"
+  title="Bluesky의 Jay Graber와 함께 아이덴티티의 재중심화"
+  tag="Interview"
+  description="Jay Graber와 Flipboard CEO Mike McCue가 소셜을 웹에 더 가깝게 만드는 방법에 대해 인터뷰한 내용"
+/>
+
+<ImageCard
+  image={WhitepaperPng}
+  href="https://arxiv.org/abs/2402.03239"
+  title="Bluesky와 AT Protocol: 사용하기 쉬운 분산 소셜 미디어"
+  tag="Whitepaper"
+  description="Martin Kleppmann과 AT Protocol 팀이 작성한 백서"
+/>
+
+{/* <ImageCard image={TbdInterviewJpg} href="https://www.youtube.com/live/D5WVK7KfTAk" title="Bluesky の AT プロトコルでソーシャル インターネットを構築する" tag="Interview" description="AT プロトコルの仕組みに関する Dan Abramov 氏と TBD 氏によるインタビュー。このトピックを初めて知る人にとっては素晴らしい入門書です。" /> */}
+
+{/* <ImageCard image={HowDoesBlueskyWorkBlogpostPng} href="https://steveklabnik.com/writing/how-does-bluesky-work/" title="Bluesky はどのように機能しますか?" tag="Community Blogpost" description="Bluesky と ATProto が高レベルでどのように機能するかを説明する Steve Klabnik のブログ投稿。" /> */}
+
+</div>
+
+{/* ## Community
+
+<div className="xl:grid grid-cols-3 gap-12 xl:max-w-none border-t border-zinc-900/5 dark:border-zinc-700 pt-10 mt-4">
+
+<ArticleSummarySmall
+  href="https://steveklabnik.com/writing/how-does-bluesky-work/"
+  title="How does Bluesky work?"
+>
+  by Steve Klabnik
+</ArticleSummarySmall>
+
+<ArticleSummarySmall
+  href="https://bolsonism.blogspot.com/2024/08/local-development-with-at-proto-pds.html"
+  title="Local Development with a PDS"
+>
+  Using docker and curl to interact with a local PDS.
+</ArticleSummarySmall>
+
+</div> */}
+
+## Bluesky API 문서를 찾고 계신가요?
+
+Bluesky 관련 문서는 [docs.bsky.app](https://docs.bsky.app)에서 확인하세요.

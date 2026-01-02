@@ -38,8 +38,8 @@ function TopLevelNavItem({
 
 export const Header = forwardRef<
   React.ElementRef<'div'>,
-  React.ComponentPropsWithoutRef<typeof motion.div>
->(function Header({ className, ...props }, ref) {
+  React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
+>(function Header({ className, minimal, ...props }, ref) {
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
 

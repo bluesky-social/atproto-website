@@ -34,6 +34,7 @@ const fontStyles = {
 const sizeStyles = {
   base: 'text-sm',
   large: 'text-lg px-5 py-1.5',
+  xxlarge: 'text-2xl px-5 py-1.5',
 }
 
 type ButtonProps = {
@@ -66,8 +67,12 @@ export function Button({
   let arrowIcon = (
     <ArrowIcon
       className={clsx(
-        'mt-0.5 h-5 w-5',
         variant === 'text' && 'relative top-px',
+        size === 'xxlarge'
+          ? 'mt-0.25 h-8 w-8'
+          : size == 'large'
+            ? 'mt-0.5 h-6 w-6'
+            : 'mt-0.5 h-5 w-5',
         arrow === 'left' && '-ml-1 rotate-180',
         arrow === 'right' && '-mr-1',
       )}

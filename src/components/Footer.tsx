@@ -138,10 +138,10 @@ function SmallPrint() {
   )
 }
 
-export function Footer() {
+export function Footer({ minimal }: { minimal?: boolean }) {
   return (
     <footer className="mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl">
-      <PageNavigation />
+      {!minimal && <PageNavigation />}
       <SmallPrint />
     </footer>
   )
