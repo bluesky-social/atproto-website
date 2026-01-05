@@ -13,7 +13,7 @@ While blobs are universally content addressed (by CID), they are always referenc
 
 The empty blob (zero bytes) is valid in general, though it may be disallowed by individual Lexicons/applications.
 
-Blobs have the permission scope **`blob:*/*` .**
+Creating blobs requires the permission scope **`blob:*/*` .**
 
 It is generally recommended to use an object storage implementation for working with blobs if you are hosting your own PDS. See [going to production](/guides/going-to-production#object-storage) for more.
 
