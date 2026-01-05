@@ -123,7 +123,7 @@ Moderation is handled by two parts of our stack: [*Osprey*](https://github.com/b
 
 Osprey is written in Python, and was designed and open sourced in collaboration with Discord. Osprey is a library for processing actions through human written rules and outputting labels, webhooks back to an API and other sinks. It evaluates events using structured logic, user-defined functions, and external signals to assign labels, verdicts, and actions. Some of these, such as our Toxrank model for toxicity detection, make use of fine-tuned LLMs and other classifiers that expose their own web endpoints to Osprey. We also utilize image OCR and hashing to create actionable moderation metadata, which can be automatically actioned, surfaced to moderators via Ozone, and in turn helps shape our Discover feed algorithms.
 
-Although some of our internal heuristics are private, Osprey and Ozone are designed to be deployed and run by other app hosts with their own custom rules and moderation practices, whether they are reimplementing the Bluesky Lexicon and feature set or running a different kind of Atmosphere app with a different set of content
+Although some of our internal heuristics are private, Osprey and Ozone are designed to be deployed and run by other app hosts with their own custom rules and moderation practices, whether they are reimplementing the Bluesky Lexicon and feature set or running a different kind of Atmosphere app with a different set of content.
 
 ## Tools and SDKs
 
