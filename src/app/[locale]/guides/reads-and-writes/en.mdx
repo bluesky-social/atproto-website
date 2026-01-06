@@ -15,7 +15,7 @@ Reading and writing AT data repositories requires an authenticated client. You c
 
 ## API Methods
 
-After [authenticating](/guides/reads-and-writes#creating-a-client), you'll be able to make other API requests.
+After [authenticating](/guides/sdk-auth#creating-a-client), you'll be able to make other API requests.
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -43,7 +43,19 @@ After [authenticating](/guides/reads-and-writes#creating-a-client), you'll be ab
     This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
     </TabPanel>
     <TabPanel value="go">
-    Go directly to [making requests](/guides/reading-data)!
+  ```go
+  import (
+    "context"
+    appbsky "github.com/bluesky-social/indigo/api/bsky"
+    comatproto "github.com/bluesky-social/indigo/api/atproto"
+    lexutil "github.com/bluesky-social/indigo/lex/util"
+    "github.com/bluesky-social/indigo/xrpc"
+  )
+
+  ctx := context.Background()
+  ```
+
+    Import the SDK libraries and go directly to [making requests](/guides/reading-data)!
     </TabPanel>
   </TabPanels>
 </TabGroup>

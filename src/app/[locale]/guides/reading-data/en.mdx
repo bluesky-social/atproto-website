@@ -24,7 +24,7 @@ export const header = {
     Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return. 
     </TabPanel>
     <TabPanel value="go">
-    You can read posts from a user's data repository with `comatproto.RepoListRecords()`:
+    You can read posts from a user's data repository with `RepoListRecords()`:
 
     ```go
     resp, _ := comatproto.RepoListRecords(ctx, client,
@@ -47,13 +47,39 @@ Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get
 
 ## Getting Records
 
-You can use `client.get()` to read an individual record by its [`rkey`](/specs/record-key):
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    You can use `client.get()` to read an individual record by its [`rkey`](/specs/record-key):
 
-```tsx
-const post = await client.get(app.bsky.feed.post, {
-  rkey: '3jxf7z2k3q2',
-})
-```
+    ```tsx
+    const post = await client.get(app.bsky.feed.post, {
+      rkey: '3jxf7z2k3q2',
+    })
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    You can use `RepoGetRecord()` to read an individual record by its [`rkey`](/specs/record-key):
+    
+  ```go
+  resp, _ := comatproto.RepoGetRecord(ctx, client, 
+      "",                    // cid (empty for latest)
+      "app.bsky.feed.post",  // lexicon
+      "alex.bsky.team",      // handle or DID
+      "3mbl5xdw4yk2r",       // rkey
+  )
+
+  fmt.Printf("URI: %s\n", resp.Uri)
+  // resp.Value contains the record data
+  ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
 
 ## DID Resolution
 
@@ -79,22 +105,59 @@ const your_did = client.did
 
 ## Unauthenticated Reads
 
-Some API endpoints can be accessed without authentication. You can create an unauthenticated client by passing a public API URL to a new `Client()`:
+Some API endpoints can be accessed without authentication. You can create an unauthenticated client by passing a public API URL to a new `Client`:
 
-```tsx
-import { Client } from '@atproto/lex'
-import * as app from './lexicons/app.js'
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```tsx
+    import { Client } from '@atproto/lex'
+    import * as app from './lexicons/app.js'
 
-const client = new Client('https://public.api.bsky.app')
+    const client = new Client('https://public.api.bsky.app')
+    ```
+
+    As with an authenticated client, you can `.get()` any public records, like a user's profile:
+
+    ```tsx
+    const profile = await client.get(app.bsky.actor.profile)
+    ```
+
+    You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
+    </TabPanel>
+    <TabPanel value="go">
+```go
+import (
+	"context"
+	appbsky "github.com/bluesky-social/indigo/api/bsky"
+	"github.com/bluesky-social/indigo/xrpc"
+)
+
+ctx := context.Background()
+
+client := &xrpc.Client{
+  Host: "https://public.api.bsky.app", // public API endpoint
+}
 ```
 
-As with an authenticated client, you can `.get()` any public records, like a user's profile:
+    As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
-```tsx
-const profile = await client.get(app.bsky.actor.profile)
-```
+    ```go
+profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
 
-You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
+fmt.Printf("Handle: %s\n", profile.Handle)
+fmt.Printf("Display Name: %s\n", *profile.DisplayName)
+fmt.Printf("Followers: %d\n", *profile.FollowersCount)
+    ```
+
+    You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the Go SDK libraries](https://pkg.go.dev/github.com/bluesky-social/indigo).
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 Next, you might try [writing](/guides/writing-data) to a user's data repository.
 
