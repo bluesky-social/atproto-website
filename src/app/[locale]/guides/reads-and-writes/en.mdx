@@ -17,25 +17,36 @@ Reading and writing AT data repositories requires an authenticated client. You c
 
 After [authenticating](/guides/reads-and-writes#creating-a-client), you'll be able to make other API requests.
 
-To make API requests, you'll need to specify a particular [Lexicon](/guides/lexicon). For example, Bluesky posts are available under the `app.bsky.feed.post` Lexicon.
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    To make API requests, you'll need to specify a particular [Lexicon](/guides/lexicon). For example, Bluesky posts are available under the `app.bsky.feed.post` Lexicon.
 
-### TypeScript
+    Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
 
-Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
+    ```bash
+    npm install -g @atproto/lex
+    lex install app.bsky.feed.post app.bsky.actor.profile
+    lex build
+    ```
 
-```bash
-npm install -g @atproto/lex
-lex install app.bsky.feed.post app.bsky.actor.profile
-lex build
-```
+    This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
 
-This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
+    ```tsx
+    import * as app from './lexicons/app.js'
+    ```
 
-```tsx
-import * as app from './lexicons/app.js'
-```
-
-This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
+    This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
+    </TabPanel>
+    <TabPanel value="go">
+    Go directly to [making requests](/guides/reading-data)!
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 ## Further Reading and Resources
 

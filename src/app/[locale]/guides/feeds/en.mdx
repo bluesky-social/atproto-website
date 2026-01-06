@@ -41,7 +41,23 @@ Because Feeds will provide their own XRPC endpoints, they should use the server 
       ```
     </TabPanel>
     <TabPanel value="go">
-      TK 
+      In Go, you can implement HTTP endpoints manually:
+
+      ```go
+      type Feed interface {
+          GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
+              feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
+          Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
+      }
+
+      ...
+
+      router.GET("/.well-known/did.json", GetWellKnownDID)
+      router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
+      router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
+      ```
+
+      Refer to [https://github.com/jazware/go-bsky-feed-generator](https://github.com/jazware/go-bsky-feed-generator) for a community example.
     </TabPanel>
   </TabPanels>
 </TabGroup>

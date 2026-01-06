@@ -5,16 +5,45 @@ export const header = {
 
 ## Listing Records
 
-You can read posts from a user's data repository with `client.list()`:
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    You can read records from a user's data repository with `client.list()`:
 
-```tsx
-const posts = await client.list(app.bsky.feed.post, {
-  limit: 10,
-  repo: 'alex.bsky.team',
-})
-```
+    ```tsx
+    const posts = await client.list(app.bsky.feed.post, {
+      limit: 10,
+      repo: 'alex.bsky.team',
+    })
+    ```
 
-Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return. Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get-posts) for this complete Lexicon.
+    Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return. 
+    </TabPanel>
+    <TabPanel value="go">
+    You can read posts from a user's data repository with `comatproto.RepoListRecords()`:
+
+    ```go
+    resp, _ := comatproto.RepoListRecords(ctx, client,
+        "app.bsky.feed.post",  // lexicon
+        "",                    // cursor
+        10,                    // limit
+        "alex.bsky.team",      // handle or DID
+        false,                 // reverse
+    )
+
+    for _, record := range resp.Records {
+        fmt.Printf("Record: %s\n", record.Uri)
+    }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get-posts) for this complete Lexicon.
 
 ## Getting Records
 
