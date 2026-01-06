@@ -1,3 +1,4 @@
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@/components/mdx'
 export const header = {
   title: 'Feeds',
   description: 'Creating and consuming custom feed generators',
@@ -5,9 +6,43 @@ export const header = {
 
 ## Custom Feeds
 
-Custom feeds, or feed generators, are services that provide custom algorithms to users through the AT Protocol. This allows users to choose their own timelines, and for feed builders to [create and embed dedicated views](https://graze.leaflet.pub/3m4yjmbnyec2c) of AT records.
+Custom feeds, or feed generators, are services that provide custom algorithms to users through the AT Protocol. This allows users to choose their own timelines, and for feed builders to <a href="https://graze.leaflet.pub/3m4yjmbnyec2c" target="_blank">create and embed dedicated views</a> of AT records.
 
 The way custom feeds work is straightforward: the server receives a request from a user's server and returns a list of post URIs with some optional metadata attached. Those posts are then hydrated into full views by the requesting server and sent back to the client.
+
+Because Feeds will provide their own XRPC endpoints to requesters, they should make use of the <a href="https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server" target="_blank">Server</a> SDKs:
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+      Use the <a href="https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server" target="_blank">lex-server</a> package:
+
+      ```bash
+      npm install @atproto/lex-server
+      ```
+
+      ```ts
+      import { LexRouter, LexError } from '@atproto/lex-server'
+      import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
+      import * as app from './lexicons/app.js'
+
+      const router = new LexRouter({ upgradeWebSocket })
+
+      // Add handlers here
+
+      const server = await serve(router, { port: 3000 })
+      console.log('Server listening on port 3000')
+      ```
+    </TabPanel>
+    <TabPanel value="go">
+      TK 
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 A Feed Generator service can host one or more algorithms. The service itself is identified by DID, while each algorithm that it hosts is declared by a record in the repo of the account that created it. For instance, feeds offered by Bluesky will likely be declared in `@bsky.app`'s repo. Therefore, a given algorithm is identified by the at-uri of the declaration record. This declaration record includes a pointer to the service's DID along with some profile information for the feed.
 
