@@ -152,11 +152,6 @@ export function Property({
 }
 
 type SyncedTabsContextType = {
-  values: Record<string, string>
-  setValue: (value: string) => void
-}
-
-type SyncedTabsContextType = {
   selectedValue: string | null
   setSelectedValue: (value: string) => void
 }
