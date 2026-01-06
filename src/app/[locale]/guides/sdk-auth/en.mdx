@@ -7,15 +7,32 @@ export const header = {
 
 ## Creating a Client
 
-The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with [PasswordAgent](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-agent) from our SDK if you are using password auth.
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with [PasswordAgent](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-agent) from our SDK if you are using password auth.
 
-## Typescript
+    Begin by installing the ATProto SDK packages:
 
-Begin by installing the ATProto SDK packages:
+    ```bash
+    npm install @atproto/lex @atproto/lex-password-agent
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    The first step when working with AT data is authenticating. You can authenticate using any [OAuth](/guides/auth) provider, or with password authentication from our SDK.
 
-```bash
-npm install @atproto/lex @atproto/lex-password-agent
-```
+    Begin by installing the ATProto SDK packages:
+
+    ```bash
+    go get github.com/bluesky-social/indigo
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this guide by using a CLI tool like cURL to make HTTP requests following the [HTTP Reference](https://docs.bsky.app/docs/category/http-reference) endpoints. Most users will want to use an SDK.
 
@@ -23,43 +40,104 @@ Because AT uses regular HTTP verbs and HTTP endpoints, you can also follow this 
 
 If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky as an auth provider, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
 
-Start by importing `PasswordAgent`, providing credentials to `PasswordAgent.login()`, and creating an `agent`:
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    Start by importing `PasswordAgent`, providing credentials to `PasswordAgent.login()`, and creating an `agent`:
 
-```tsx
-import { PasswordAgent } from '@atproto/lex-password-agent'
+    ```tsx
+    import { PasswordAgent } from '@atproto/lex-password-agent'
 
-const result = await PasswordAgent.login({
-  service: 'https://bsky.social',
-  identifier: 'your-handle.bsky.social',
-  password: 'your-app-password',
-})
+    const result = await PasswordAgent.login({
+      service: 'https://bsky.social', // or your PDS host
+      identifier: 'your-handle.bsky.social',
+      password: 'your-app-password',
+    })
 
-if (result.success) {
-    const agent = result.value
-}
-```
+    if (result.success) {
+        const agent = result.value
+    }
+    ```
 
-Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `agent`.
+    Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `agent`.
+    </TabPanel>
+    <TabPanel value="go">
+    Start by importing the `atproto` and `xrpc` libraries, creating an `&xrpc.Client{}`, and providing credentials to call `ServerCreateSession()`:
+
+    ```go
+    package main
+
+    import (
+      "context"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
+
+    func main() {
+      ctx := context.Background()
+
+      client := &xrpc.Client{
+        Host: "https://bsky.social", // or your PDS host
+      }
+
+      session, _ := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
+        Identifier: "your-handle.bsky.social",
+        Password:   "your-app-password",
+      })
+    }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 ## Client Sessions
 
-Once you have a logged-in `agent`, you can create a `Client` instance to read and write data:
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    Once you have a logged-in `agent`, you can create a `Client` instance to read and write data:
 
-```tsx
-import { Client } from '@atproto/lex'
-const client = new Client(agent)
+    ```tsx
+    import { Client } from '@atproto/lex'
+    const client = new Client(agent)
 
-// Make authenticated API calls
-console.log('Logged in as:', agent.did)
-```
+    // Make authenticated API calls
+    console.log('Logged in as:', agent.did)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    Once you have an authed `client`, you can store auth info and make API calls:
+
+    ```go
+    // Store auth info on the client for subsequent requests
+    client.Auth = &xrpc.AuthInfo{
+      AccessJwt:  session.AccessJwt,
+      RefreshJwt: session.RefreshJwt,
+      Handle:     session.Handle,
+      Did:        session.Did,
+    }
+
+    fmt.Printf("Logged in as: %s (%s)\n", session.Handle, session.Did)
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 From here, you can go directly to [making API requests](/guides/reads-and-writes).
 
 ## API Tokens
 
-Rate limits for logging in are generally lower than for other API operations. Calling `agent.login()` multiple times in a short period may trigger rate limits. You only need to call `agent.login()` once per session to authenticate your agent.
+Rate limits for logging in are generally lower than for other API operations. Calling the login method multiple times in a short period may trigger rate limits. You only need to call the login method once per session to authenticate your agent.
 
-The `com.atproto.server.createSession` API endpoint called by `agent.login()` returns a session object containing two API tokens:
+The `com.atproto.server.createSession` API endpoint called by login methods returns a session object containing two API tokens:
 * `accessJwt`: an access token which is used to authenticate requests but expires after a few minutes
 * `refreshJwt`: a refresh token which lasts longer and is used only to update the session with a new access token
 

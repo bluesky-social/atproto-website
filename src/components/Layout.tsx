@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Navigation } from '@/components/Navigation'
 import { SectionProvider } from './SectionProvider'
+import { SyncedTabs } from '@/components/mdx'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -24,7 +25,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             className={clsx(
               'contents lg:pointer-events-auto lg:block',
               !isHome &&
-                'lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-5 lg:pb-8 lg:pt-4 xl:w-72 lg:dark:border-white/10',
+              'lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-5 lg:pb-8 lg:pt-4 xl:w-72 lg:dark:border-white/10',
             )}
           >
             <Header minimal={isHome} />
@@ -32,7 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </motion.header>
         <div className="relative flex h-full flex-col pt-14">
-          <main className="flex-auto">{children}</main>
+          <main className="flex-auto">
+            <SyncedTabs>{children}</SyncedTabs>
+          </main>
           <Footer minimal={isHome} />
         </div>
       </div>

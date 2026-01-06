@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import NextImage, { ImageProps } from 'next/image'
 import clsx from 'clsx'
-import { createContext, useContext, useState, useId } from 'react'
+import { createContext, useContext, useState, useId, useCallback } from 'react'
 
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
@@ -151,6 +151,29 @@ export function Property({
   )
 }
 
+type SyncedTabsContextType = {
+  values: Record<string, string>
+  setValue: (value: string) => void
+}
+
+type SyncedTabsContextType = {
+  selectedValue: string | null
+  setSelectedValue: (value: string) => void
+}
+
+const SyncedTabsContext = createContext<SyncedTabsContextType | null>(null)
+
+export function SyncedTabs({ children }: { children: React.ReactNode }) {
+  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+
+  return (
+    <SyncedTabsContext.Provider value={{ selectedValue, setSelectedValue }}>
+      {children}
+    </SyncedTabsContext.Provider>
+  )
+}
+
+// Individual TabGroup context
 type TabGroupContextType = {
   selectedValue: string
   setSelectedValue: (value: string) => void
@@ -174,8 +197,17 @@ export function TabGroup({
   children: React.ReactNode
   defaultValue?: string
 }) {
-  const [selectedValue, setSelectedValue] = useState(defaultValue ?? '')
   const groupId = useId()
+  const syncedContext = useContext(SyncedTabsContext)
+  const [localValue, setLocalValue] = useState(defaultValue ?? '')
+
+  // Use synced value if this TabGroup has a tab matching it, otherwise use local
+  const selectedValue = syncedContext?.selectedValue ?? localValue
+
+  const setSelectedValue = (value: string) => {
+    setLocalValue(value)
+    syncedContext?.setSelectedValue(value)
+  }
 
   return (
     <TabGroupContext.Provider value={{ selectedValue, setSelectedValue, groupId }}>
