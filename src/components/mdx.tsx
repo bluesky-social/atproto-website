@@ -12,7 +12,19 @@ export function Image({ ...props }: ImageProps) {
   return <NextImage {...props} />
 }
 
-export const a = Link
+export const a = function ExternalAwareLink({
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<'a'>) {
+  const isExternal = href?.startsWith('http://') || href?.startsWith('https://')
+
+  if (isExternal) {
+    return <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+  }
+
+  return <Link href={href ?? ''} {...props} />
+}
+
 export { Button } from '@/components/Button'
 export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
