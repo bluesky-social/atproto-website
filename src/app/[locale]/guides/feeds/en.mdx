@@ -94,6 +94,12 @@ Depending on your feed's algorithm, you likely do not need to keep posts around 
 
 When making requests to `getFeedSkeleton`, clients are encouraged to populate the `Accept-Language` HTTP header with comma-separated BCP-47 language codes e.g. `en`,`pr-BR`. Feed generators can use this language context to filter or rank posts. If language filtering is applied, the feed generator should use the the `Content-Language` response header indicating the parsed language codes.
 
+## Feed Feedback
+
+Feed generators can also implement the `app.bsky.feed.sendInteractions` endpoint to receive input from users. These include likes, reposts, shares, and other interactions. See the [the app.bsky.feed Lexicon](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/defs.json#L247) for a complete list.
+
+Implementing Feed Feedback is optional, but can help improve user experience.
+
 ## Example Feeds
 
 - A community feed: Compile a list of DIDs within that community and filter the firehose for all posts from users within that list.
