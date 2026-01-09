@@ -18,7 +18,7 @@ We provide a [PDS install script](https://github.com/bluesky-social/pds) that is
 
 If you are running a non-Bluesky app in addition to a PDS deployment, **you will need separate domain names** for your PDS hosting and your app. This is because image and video blobs would otherwise be served from the same domain name as the OAuth and session management pages. This could lead to security issues such as credential theft, and means that using subdomains isn't a practical solution.
 
-In other words, if you have an app at [https://greensky.app](https://greensky.app/), you should not use [https://pds.greensky.app](https://pds.greensky.app/) as a PDS hostname, you should use something like [https://greensky-pds.net](https://greensky-pds.net/). If you used [https://pds.greensky.social](https://pds.eurosky.social/) (which would make sense), it might rule out an OAuth client app at [https://chat.greensky.social](https://chat.eurosky.social/) in the future. But you could do something like [https://chat.greensky.app](https://chat.eurosky.app/).
+In other words, if you have an app at [https://greensky.app](https://greensky.app/), you should not use [https://pds.greensky.app](https://pds.greensky.app/) as a PDS hostname, you should use something like [https://greensky-pds.net](https://greensky-pds.net/). If you used [https://pds.greensky.social](https://pds.greensky.social/) (which would make sense), it might rule out an OAuth client app at [https://chat.greensky.social](https://chat.greensky.social/) in the future. But you could do something like [https://chat.greensky.app](https://chat.greensky.app/).
 
 The PDS has restrictive CORS headers by default. 
 
