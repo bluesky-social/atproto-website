@@ -119,7 +119,7 @@ A Feed Generator service can host one or more algorithms. The service itself is 
 
 ## Osprey and Ozone
 
-Moderation is handled by two parts of our stack: [*Osprey*](https://github.com/bluesky-social/osprey-atproto), an event stream decisions engine and analysis UI designed to investigate and take automatic action; and [*Ozone*](https://github.com/bluesky-social/ozone), a labeling service and web frontend for making moderation decisions.
+Moderation is handled by two parts of our stack: [*Osprey*](https://github.com/roostorg/osprey), an event stream decisions engine and analysis UI designed to investigate and take automatic action; and [*Ozone*](/guides/using-ozone), a labeling service and web frontend for making moderation decisions.
 
 Osprey is written in Python, and was designed and open sourced in collaboration with Discord. Osprey is a library for processing actions through human written rules and outputting labels, webhooks back to an API and other sinks. It evaluates events using structured logic, user-defined functions, and external signals to assign labels, verdicts, and actions. Some of these, such as our Toxrank model for toxicity detection, make use of fine-tuned LLMs and other classifiers that expose their own web endpoints to Osprey. We also utilize image OCR and hashing to create actionable moderation metadata, which can be automatically actioned, surfaced to moderators via Ozone, and in turn helps shape our Discover feed algorithms.
 
