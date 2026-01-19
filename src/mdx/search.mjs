@@ -27,14 +27,63 @@ function excludeObjectExpressions(tree) {
   return filter(tree, (node) => !isObjectExpression(node))
 }
 
+function extractHeaderExport(tree) {
+  let headerTitle = null
+  let headerDescription = null
+
+  visit(tree, 'mdxjsEsm', (node) => {
+    // Look for: export const header = { title: '...', description: '...' }
+    const body = node.data?.estree?.body
+    if (!body) return
+
+    for (const declaration of body) {
+      if (
+        declaration.type === 'ExportNamedDeclaration' &&
+        declaration.declaration?.type === 'VariableDeclaration'
+      ) {
+        for (const decl of declaration.declaration.declarations) {
+          if (
+            decl.id?.name === 'header' &&
+            decl.init?.type === 'ObjectExpression'
+          ) {
+            for (const prop of decl.init.properties) {
+              if (prop.key?.name === 'title' && prop.value?.type === 'Literal') {
+                headerTitle = prop.value.value
+              }
+              if (prop.key?.name === 'description' && prop.value?.type === 'Literal') {
+                headerDescription = prop.value.value
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+
+  return { headerTitle, headerDescription }
+}
+
 function extractSections() {
-  return (tree, { sections }) => {
+  return (tree, vfile) => {
     slugify.reset()
+
+    const { sections } = vfile
+    const { headerTitle, headerDescription } = extractHeaderExport(tree)
+
+    // If we found a header export, use it as the first section
+    if (headerTitle) {
+      const content = headerDescription ? [headerDescription] : []
+      sections.push([headerTitle, null, content])
+    }
 
     visit(tree, (node) => {
       if (node.type === 'heading' || node.type === 'paragraph') {
         let content = toString(excludeObjectExpressions(node))
         if (node.type === 'heading' && node.depth <= 2) {
+          // Skip H1s if we already have a header title (avoid duplication)
+          if (node.depth === 1 && headerTitle) {
+            return SKIP
+          }
           let hash = node.depth === 1 ? null : slugify(content)
           sections.push([content, hash, []])
         } else {
@@ -93,10 +142,20 @@ export default function Search(nextConfig = {}) {
               import FlexSearch from 'flexsearch'
 
               let sectionIndex = new FlexSearch.Document({
-                tokenize: 'full',
                 document: {
                   id: 'url',
-                  index: 'content',
+                  index: [
+                    {
+                      field: 'title',
+                      tokenize: 'forward',
+                      resolution: 9,
+                    },
+                    {
+                      field: 'content',
+                      tokenize: 'full',
+                      resolution: 3,
+                    }
+                  ],
                   store: ['title', 'pageTitle'],
                 },
                 context: {
@@ -113,25 +172,38 @@ export default function Search(nextConfig = {}) {
                   sectionIndex.add({
                     url: url + (hash ? ('#' + hash) : ''),
                     title,
-                    content: [title, ...content].join('\\n'),
+                    content: content.join('\\n'),
                     pageTitle: hash ? sections[0][0] : undefined,
                   })
                 }
               }
 
               export function search(query, options = {}) {
-                let result = sectionIndex.search(query, {
+                let results = sectionIndex.search(query, {
                   ...options,
                   enrich: true,
                 })
-                if (result.length === 0) {
-                  return []
+
+                const seen = new Map()
+
+                for (const fieldResult of results) {
+                  const boost = fieldResult.field === 'title' ? 0 : 1000
+                  fieldResult.result.forEach((item, idx) => {
+                    const id = item.id
+                    if (!seen.has(id) || seen.get(id).score > boost + idx) {
+                      seen.set(id, {
+                        url: id,
+                        title: item.doc.title,
+                        pageTitle: item.doc.pageTitle,
+                        score: boost + idx
+                      })
+                    }
+                  })
                 }
-                return result[0].result.map((item) => ({
-                  url: item.id,
-                  title: item.doc.title,
-                  pageTitle: item.doc.pageTitle,
-                }))
+
+                return [...seen.values()]
+                  .sort((a, b) => a.score - b.score)
+                  .map(({ url, title, pageTitle }) => ({ url, title, pageTitle }))
               }
             `
           }),
