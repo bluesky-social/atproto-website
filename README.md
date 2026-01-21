@@ -38,6 +38,51 @@ The script creates the necessary files and updates the blog index automatically.
 
 ---
 
+### Publishing blog posts to AT Protocol
+
+Blog posts can be published to the AT Protocol using the [site.standard](https://standard.site/) lexicon. This enables decentralized discovery and verification of content.
+
+#### Setup (one-time)
+
+1. **Configure credentials:**
+   ```bash
+   cp .env.example .env
+   ```
+   Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+
+2. **Create the publication record:**
+   ```bash
+   npm run create-publication
+   ```
+   Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
+
+#### Publishing a post
+
+```bash
+npm run publish-post <slug>
+```
+
+For example:
+```bash
+npm run publish-post welcome-to-the-blog
+```
+
+This will:
+- Create a `site.standard.document` record on your PDS
+- Save the AT-URI back to the post's MDX file for verification
+- Update the record if it already exists
+
+#### Verification
+
+The site implements [site.standard verification](https://standard.site/):
+
+- **Publication:** `/.well-known/site.standard.publication` returns the publication AT-URI
+- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag
+
+For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
+
+---
+
 ### Are you a developer interested in building on atproto?
 
 Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
