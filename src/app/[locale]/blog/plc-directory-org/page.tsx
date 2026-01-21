@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'This is a test post',
-  description: 'A test post',
+  title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
+  description: 'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
 }
 
 export default async function BlogPost({ params }: any) {
