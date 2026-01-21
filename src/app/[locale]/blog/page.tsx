@@ -35,6 +35,13 @@ import Link from 'next/link'
 
 const posts = [
   {
+    slug: 'oauth-improvements',
+    title: 'OAuth Improvements',
+    description: 'We\'ve been making improvements to the end-user and developer experiences with atproto OAuth.',
+    date: 'Jan 21, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'welcome-to-the-blog',
     title: 'Welcome to the AT Protocol Blog',
     description: 'Introducing the official AT Protocol blog where we share updates, tutorials, and insights about building on the decentralized social web.',
