@@ -35,31 +35,24 @@ import Link from 'next/link'
 
 const posts = [
   {
-    slug: 'plc-directory-org',
-    title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
-    description: 'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
-    date: 'Jan 20, 2026',
-    author: 'AT Protocol Team',
-  },
-  {
     slug: 'welcome-to-the-blog',
     title: 'Welcome to the AT Protocol Blog',
     description: 'Introducing the official AT Protocol blog where we share updates, tutorials, and insights about building on the decentralized social web.',
-    date: 'Jan 20, 2026',
+    date: 'January 20, 2026',
     author: 'AT Protocol Team',
   },
     {
     slug: 'introducing-tap',
     title: 'Introducing Tap: Repository Synchronization Made Simple',
     description: 'We recently released Tap, a tool designed to handle the hard parts of repo synchronization, so you can focus on building your application.',
-    date: 'Dec 12, 2025',
+    date: 'December 12, 2025',
     author: 'Jim Ray',
   },
   {
     slug: 'protocol-check-in-fall-2025',
     title: 'Protocol Check-in (Fall 2025)',
     description: 'The Atmosphere is thriving, here\'s a closer look',
-    date: 'Oct 20, 2025 ',
+    date: 'October 20, 2025 ',
     author: 'AT Protocol Team',
   },
   {
@@ -67,6 +60,13 @@ const posts = [
     title: 'Taking AT to the IETF',
     description: 'We recently posted two drafts to the IETF Data Tracker. This is the first major step towards standardizing parts of AT in an effort to establish long-term governance for the protocol.',
     date: 'September 23, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'plc-directory-org',
+    title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
+    description: 'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
+    date: 'September 19, 2025',
     author: 'AT Protocol Team',
   },
 ]
