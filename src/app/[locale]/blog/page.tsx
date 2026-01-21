@@ -35,13 +35,6 @@ import Link from 'next/link'
 
 const posts = [
   {
-    slug: 'oauth-improvements',
-    title: 'OAuth Improvements',
-    description: 'We\'ve been making improvements to the end-user and developer experiences with atproto OAuth.',
-    date: 'Jan 21, 2026',
-    author: 'AT Protocol Team',
-  },
-  {
     slug: 'welcome-to-the-blog',
     title: 'Welcome to the AT Protocol Blog',
     description: 'Introducing the official AT Protocol blog where we share updates, tutorials, and insights about building on the decentralized social web.',
@@ -74,6 +67,13 @@ const posts = [
     title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
     description: 'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
     date: 'September 19, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'oauth-improvements',
+    title: 'OAuth Improvements',
+    description: 'We\'ve been making improvements to the end-user and developer experiences with atproto OAuth.',
+    date: 'June 12, 2025',
     author: 'AT Protocol Team',
   },
 ]
