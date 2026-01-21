@@ -211,6 +211,7 @@ export const navigation: Array<NavGroup> = [
     title: 'About',
     links: [
       { title: 'Home', icon: 'home', href: '/' },
+      { title: 'Blog', icon: 'newspaper', href: '/blog' },
       { title: 'SDKs', icon: 'cube', href: '/sdks' },
       {
         title: 'Cookbook',

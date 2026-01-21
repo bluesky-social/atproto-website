@@ -18,6 +18,26 @@ To read documentation for the Bluesky API, go to [docs.bsky.app](https://docs.bs
 
 The page auto-updates as you edit the file.
 
+---
+
+### Creating a new blog post
+
+Run the blog post generator:
+
+```bash
+npm run blog
+```
+
+This will prompt you for:
+- **Title** - The post title
+- **Slug** - URL-friendly identifier (auto-suggested from title)
+- **Description** - Short summary for the blog index
+- **Author** - Defaults to "AT Protocol Team"
+
+The script creates the necessary files and updates the blog index automatically.
+
+---
+
 ### Are you a developer interested in building on atproto?
 
 Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.

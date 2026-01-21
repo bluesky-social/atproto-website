@@ -98,9 +98,7 @@ export const Header = forwardRef<
         <nav className="hidden pr-4 xl:block">
           <ul role="list" className="flex items-center gap-8">
             <TopLevelNavItem href="/sdks">Showcase</TopLevelNavItem>
-            <TopLevelNavItem href="https://docs.bsky.app/blog">
-              Blog
-            </TopLevelNavItem>
+            <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
           </ul>
         </nav>
         <nav className="hidden md:block">

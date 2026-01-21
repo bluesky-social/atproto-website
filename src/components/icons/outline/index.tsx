@@ -7,6 +7,7 @@ import { FlagIcon } from './FlagIcon'
 import { HomeIcon } from './HomeIcon'
 import { KeyIcon } from './KeyIcon'
 import { MediaIcon } from './MediaIcon'
+import { NewspaperIcon } from './NewspaperIcon'
 import { PuzzlePieceIcon } from './PuzzlePieceIcon'
 import { QuestionIcon } from './QuestionIcon'
 import { StreamIcon } from './StreamIcon'
@@ -21,6 +22,7 @@ export type OutlineIconEnum =
   | 'home'
   | 'key'
   | 'media'
+  | 'newspaper'
   | 'puzzle-piece'
   | 'question'
   | 'stream'
@@ -54,6 +56,9 @@ export function Icon(
   }
   if (props.icon === 'media') {
     return <MediaIcon {...props} />
+  }
+  if (props.icon === 'newspaper') {
+    return <NewspaperIcon {...props} />
   }
   if (props.icon === 'puzzle-piece') {
     return <PuzzlePieceIcon {...props} />
