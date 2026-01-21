@@ -17,6 +17,9 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
+import { Client } from '@atproto/lex'
+import { PasswordSession } from '@atproto/lex-password-session'
+import * as site from '../src/lexicons/site.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -99,7 +102,7 @@ async function main() {
     process.exit(1)
   }
 
-  const pdsUrl = ATPROTO_PDS_URL || 'https://bsky.social'
+  const service = ATPROTO_PDS_URL || 'https://bsky.social'
 
   // Read the post
   const postDir = path.join(BLOG_DIR, slug)
@@ -120,24 +123,17 @@ async function main() {
   console.log(`  Date: ${header.date}`)
   console.log(`  Description: ${header.description?.slice(0, 50)}...`)
 
-  // Authenticate
+  // Authenticate using PasswordSession
   console.log('\n🔐 Authenticating...')
-  const sessionResponse = await fetch(`${pdsUrl}/xrpc/com.atproto.server.createSession`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      identifier: ATPROTO_HANDLE,
-      password: ATPROTO_APP_PASSWORD,
-    }),
+
+  const session = await PasswordSession.create({
+    service,
+    identifier: ATPROTO_HANDLE,
+    password: ATPROTO_APP_PASSWORD,
   })
 
-  if (!sessionResponse.ok) {
-    const error = await sessionResponse.text()
-    console.error('Authentication failed:', error)
-    process.exit(1)
-  }
+  const client = new Client(session)
 
-  const session = await sessionResponse.json()
   console.log(`✓ Authenticated as ${session.handle}`)
 
   // Determine the site reference
@@ -150,31 +146,11 @@ async function main() {
   const postPath = `/blog/${slug}`
   console.log('\n🔍 Checking for existing document...')
 
-  const listResponse = await fetch(
-    `${pdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${session.did}&collection=site.standard.document&limit=100`,
-    {
-      headers: { Authorization: `Bearer ${session.accessJwt}` },
-    }
-  )
+  const existingRecords = await client.list(site.standard.document, { limit: 100 })
 
-  let existingRecord = null
-  if (listResponse.ok) {
-    const { records } = await listResponse.json()
-    existingRecord = records.find((r) => r.value.path === postPath)
-    if (existingRecord) {
-      console.log(`  Found existing record: ${existingRecord.uri}`)
-    }
-  }
-
-  // Build the document record
-  const record = {
-    $type: 'site.standard.document',
-    site: siteRef,
-    title: header.title,
-    description: header.description,
-    path: postPath,
-    textContent: textContent,
-    publishedAt: parseDate(header.date),
+  const existingRecord = existingRecords.records.find((r) => r.value.path === postPath)
+  if (existingRecord) {
+    console.log(`  Found existing record: ${existingRecord.uri}`)
   }
 
   let documentUri
@@ -183,29 +159,22 @@ async function main() {
     // Update existing record
     console.log('\n📤 Updating existing document...')
 
-    record.updatedAt = new Date().toISOString()
+    const rkey = existingRecord.uri.split('/').pop()
 
-    const updateResponse = await fetch(`${pdsUrl}/xrpc/com.atproto.repo.putRecord`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.accessJwt}`,
+    const result = await client.put(
+      site.standard.document,
+      {
+        site: siteRef,
+        title: header.title,
+        description: header.description,
+        path: postPath,
+        textContent: textContent,
+        publishedAt: parseDate(header.date),
+        updatedAt: new Date().toISOString(),
       },
-      body: JSON.stringify({
-        repo: session.did,
-        collection: 'site.standard.document',
-        rkey: existingRecord.uri.split('/').pop(),
-        record,
-      }),
-    })
+      { rkey }
+    )
 
-    if (!updateResponse.ok) {
-      const error = await updateResponse.text()
-      console.error('Failed to update record:', error)
-      process.exit(1)
-    }
-
-    const result = await updateResponse.json()
     documentUri = result.uri
     console.log('\n✅ Document updated successfully!')
     console.log(`   AT-URI: ${result.uri}`)
@@ -214,26 +183,15 @@ async function main() {
     // Create new record
     console.log('\n📤 Creating document record...')
 
-    const createResponse = await fetch(`${pdsUrl}/xrpc/com.atproto.repo.createRecord`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.accessJwt}`,
-      },
-      body: JSON.stringify({
-        repo: session.did,
-        collection: 'site.standard.document',
-        record,
-      }),
+    const result = await client.create(site.standard.document, {
+      site: siteRef,
+      title: header.title,
+      description: header.description,
+      path: postPath,
+      textContent: textContent,
+      publishedAt: parseDate(header.date),
     })
 
-    if (!createResponse.ok) {
-      const error = await createResponse.text()
-      console.error('Failed to create record:', error)
-      process.exit(1)
-    }
-
-    const result = await createResponse.json()
     documentUri = result.uri
     console.log('\n✅ Document published successfully!')
     console.log(`   AT-URI: ${result.uri}`)
