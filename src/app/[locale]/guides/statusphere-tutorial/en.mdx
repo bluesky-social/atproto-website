@@ -1,4 +1,6 @@
 import {Container} from "@/components/Container"
+import setstatus from "./set-status.png"
+import pdsls from "./pdsls-status.png"
 
 export const header = {
   title: 'Statusphere Example App Tutorial',
@@ -17,19 +19,13 @@ Like the OAuth with NextJS tutorial, you should have installed:
 - Node.js 20+
 - The pnpm package manager
 
-On platforms supported by [homebrew](https://brew.sh/), you can install these with:
-
-```bash
-brew install node pnpm
-```
-
-You should also add these ATProto libraries to your project:
+Begin by adding these ATProto libraries to your existing project:
 
 ```bash
 pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
 ```
 
-Finally, you should also have our `lex` CLI tool installed globally:
+You should also have our `lex` CLI tool installed globally:
 
 ```bash
 npm install -g @atproto/lex
@@ -48,7 +44,7 @@ lex install xyz.statusphere.status
 If you want, you can view the downloaded Lexicon file at `lib/lexicons/xyz.statusphere.status.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
 
 ```bash
-lex build
+lex build --importExt=\"\"
 ```
 
 <Note>
@@ -137,17 +133,179 @@ You can run `pnpm migrate` to apply these new migrations to your database. Now, 
 
 ## Part 3: Status Submission
 
-TK
+First you'll build the feature that allows users to write their status to their [PDS](/guides/the-at-stack#pds). Create a new API route at `app/api/status/route.ts`:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client } from "@atproto/lex";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as xyz from "@/src/lexicons/xyz";
+
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { status } = await request.json();
+
+  if (!status || typeof status !== "string") {
+    return NextResponse.json({ error: "Status is required" }, { status: 400 });
+  }
+
+  const client = await getOAuthClient();
+  const oauthSession = await client.restore(session.did);
+  const lexClient = new Client(oauthSession);
+
+  const createdAt = new Date().toISOString();
+  const res = await lexClient.create(xyz.statusphere.status, {
+    status,
+    createdAt,
+  });
+
+  return NextResponse.json({
+    success: true,
+    uri: res.uri,
+  });
+}
+```
+
+This verifies that a user is logged in, creates a lex `Client` with their OAuth session, and then creates a new `xyz.statusphere.status` record with the submitted status text.
+
+Next, create a Status picker component at `components/StatusPicker.tsx`:
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const EMOJIS = ["👍", "👎", "💙", "🔥", "😆", "😢", "🤔", "😴", "🎉", "🤩", "😭", "🥳", "😤", "💀", "✨", "👀", "🙏", "📚", "💻", "🍕", "🌴"];
+
+interface StatusPickerProps {
+  currentStatus?: string | null;
+}
+
+export function StatusPicker({ currentStatus }: StatusPickerProps) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(currentStatus ?? null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSelect(emoji: string) {
+    setLoading(true);
+    setSelected(emoji);
+
+    try {
+      const res = await fetch("/api/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: emoji }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update status");
+      }
+
+      router.refresh();
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      setSelected(currentStatus ?? null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+        Set your status
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {EMOJIS.map((emoji) => (
+          <button
+            key={emoji}
+            onClick={() => handleSelect(emoji)}
+            disabled={loading}
+            className={`text-2xl p-2 rounded-lg transition-all
+              ${selected === emoji
+                ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500"
+                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+Finally, update `app/page.tsx` to include the status picker:
+
+```tsx
+import { getSession } from "@/lib/auth/session";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+
+export default async function Home() {
+  const session = await getSession();
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            Statusphere
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Set your status on the Atmosphere
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          {session ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Signed in
+                </p>
+                <LogoutButton />
+              </div>
+              <StatusPicker />
+            </div>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+Run the app with `pnpm dev` — you'll be able to log in, and select an emoji to set your status!
+
+<Container>
+  <Image src={setstatus} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+You won't yet have a way to see your status in this app, but you can look up your account on [pdsls](https://pdsls.dev) and check the `xyz.statusphere.status` Lexicon to see this record.
+
+<Container>
+  <Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Next, you'll add sync features to actually receive status updates.
 
 ## Part 4: Realtime Sync with Tap
 
 TK
 
-## Part 5: Displaying a Handle
-
-TK
-
-## Part 6: Displaying the Status Feed
+## Part 5: Displaying Handles and Feeds
 
 TK 
 
