@@ -14,6 +14,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import LanguageChanger from './LanguageChanger'
 import { BlueskyIcon } from './icons/BlueskyIcon'
 import { GithubIcon } from './icons/GithubIcon'
+import { usePathname } from 'next/navigation'
 
 function TopLevelNavItem({
   className,
@@ -40,6 +41,9 @@ export const Header = forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
 >(function Header({ className, minimal, ...props }, ref) {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
 
@@ -114,10 +118,12 @@ export const Header = forwardRef<
             <LanguageChanger />
           </ul>
         </nav>
-        <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
+        {!isHome && (
+          <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
+        )}
         <div className="flex gap-4">
           <MobileSearch />
-          <ThemeToggle />
+          {!isHome && <ThemeToggle />}
         </div>
       </div>
     </motion.div>
