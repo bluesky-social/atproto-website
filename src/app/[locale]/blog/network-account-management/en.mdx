@@ -1,3 +1,8 @@
+import pdsAccountLanding from "./pds-account-landing.png"
+import pdsCreateAccount from "./pds-create-account.png"
+import pdsMgmtSignin from "./pds-mgmt-signin.png"
+import pdsMgmtSessions from "./pds-mgmt-sessions.png"
+
 export const header = {
   title: 'Network Account Management',
   description: 'We recently shipped new functionality to the PDS reference implementation (and Bluesky\'s hosting service) which provides a web interface to create and manage accounts directly on the PDS itself.',
@@ -16,11 +21,11 @@ The PDS reference implementation has included a web interface for authorization 
 
 The PDS now allows users to create new accounts during the OAuth flow where client apps can initiate an auth request to a specific PDS instance without having an account identifier for the user. When they are redirected to the PDS (the OAuth "Auth Server"), they are given the option to create a new account. This includes the full account creation flow: selecting a handle, agreeing to any terms of service, and passing any anti-abuse checks. The user is then prompted to complete the client app authorization flow and will be redirected back to the app once they have signed up.
 
-![Web interface for "pds.example.com", with buttons "Create a new account", "Sign in", and "Cancel". There is a language-selection drop-down menu in the lower right corner.](pds-account-landing.png)
+<Image src={pdsAccountLanding} alt="Web interface for pds.example.com, with buttons Create a new account, Sign in, and Cancel. There is a language-selection drop-down menu in the lower right corner." />
 
 *Web interface for "pds.example.com", with buttons "Create a new account", "Sign in", and "Cancel". There is a language-selection drop-down menu in the lower right corner.*
 
-!["Create Account" web interface, prompting user to "Choose a username" as "Step 1 of 2"](pds-create-account.png)
+<Image src={pdsCreateAccount} alt="Create Account web interface, prompting user to Choose a username as Step 1 of 2" />
 
 *"Create Account" web interface, prompting user to "Choose a username" as "Step 1 of 2"*
 
@@ -32,13 +37,13 @@ You can experiment with this flow by entering a PDS hostname (or `https://bsky.s
 
 The reference implementation's account management interface is at the path `/account`. This specific path does not need to be a protocol norm or requirement, and we intend to make any account management URL machine-discoverable in the future. For an independent PDS at `pds.example.com`, the full URL would be `https://pds.example.com/account`. For an account hosted on Bluesky's hosting service, the URL is [https://bsky.social/account](https://bsky.social/account).
 
-![Web Sign-In interface, asking for "Identifier" and "Password". There is a "Forgot Password?" link, and a language selector drop-down.](pds-mgmt-signin.png)
+<Image src={pdsMgmtSignin} alt="Web Sign-In interface, asking for Identifier and Password. There is a Forgot Password link, and a language selector drop-down." />
 
 *Web Sign-In interface, asking for "Identifier" and "Password". There is a "Forgot Password?" link, and a language selector drop-down.*
 
 Users will already be signed in if they have done an OAuth approval flow for an app. If not, they should sign in using their full account password (not an app password). Multiple accounts on the same PDS can be signed in at the same time, with an account selector dialog.
 
-![Web interface for "Your Account". Shows a list of "Connected apps" (Statusphere React App and OAuth Flask Backend Demo), with "Revoke access" buttons for each. Also has a list of "My Devices", showing "Linux \- Firefox" and "Linux \- Chrome", the latter indicated as "This device", both with "Sign Out" buttons.](pds-mgmt-sessions.png)
+<Image src={pdsMgmtSessions} alt="Web interface for Your Account. Shows a list of Connected apps (Statusphere React App and OAuth Flask Backend Demo), with Revoke access buttons for each. Also has a list of My Devices, showing Linux \- Firefox and Linux \- Chrome, the latter indicated as This device, both with Sign Out buttons." />
 
 *Web interface for "Your Account". Shows a list of "Connected apps" (Statusphere React App and OAuth Flask Backend Demo), with "Revoke access" buttons for each. Also has a list of "My Devices", showing "Linux \- Firefox" and "Linux \- Chrome", the latter indicated as "This device", both with "Sign Out" buttons.*
 
