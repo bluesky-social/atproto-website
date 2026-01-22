@@ -1,0 +1,155 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'Statusphere Example App Tutorial',
+  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+}
+
+In this tutorial, you'll build a status-setting app using custom Lexicons and real-time sync.
+
+You can find the source code for this tutorial, along with other example projects, in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository, under `statusphere`.
+
+## Prerequisites
+
+This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
+
+Like the OAuth with NextJS tutorial, you should have installed:
+- Node.js 20+
+- The pnpm package manager
+
+On platforms supported by [homebrew](https://brew.sh/), you can install these with:
+
+```bash
+brew install node pnpm
+```
+
+You should also add these ATProto libraries to your project:
+
+```bash
+pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
+```
+
+Finally, you should also have our `lex` CLI tool installed globally:
+
+```bash
+npm install -g @atproto/lex
+```
+
+You'll begin by adding Lexicons to your project.
+
+## Part 1: Lexicons 
+
+Lexicons define the schema for records in AT Protocol. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
+
+```bash
+lex install xyz.statusphere.status
+```
+
+If you want, you can view the downloaded Lexicon file at `lib/lexicons/xyz.statusphere.status.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
+
+```bash
+lex build
+```
+
+<Note>
+You could add this command to `package.json` if you needed, but we won't be using it again in this tutorial now that our Lexicons have been built. If you ever add another Lexicon to a project with `lex install`, you'll need to re-run `lex build` with the `--override` flag to regenerate the types.
+</Note>
+
+One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. ATProto permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
+
+```typescript
+export const SCOPE = "atproto repo:xyz.statusphere.status";
+```
+
+Now you can move on to creating the database schema.
+
+## Part 2: Database Schema
+
+Update `lib/db/index.ts` to add new tables:
+
+```typescript
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+  account: AccountTable;   // New
+  status: StatusTable;     // New
+}
+
+// ... existing auth tables ...
+
+export interface AccountTable {
+  did: string;
+  handle: string;
+  active: 0 | 1;
+}
+
+export interface StatusTable {
+  uri: string;
+  authorDid: string;
+  status: string;
+  createdAt: string;
+  indexedAt: string;
+  current: 0 | 1;
+}
+```
+
+Next, add the migrations script that creates these tables. If you're building on top of the OAuth tutorial and have already deployed/migrated your database, you'll want to put these in a new migration, e.g. called "002", in `lib/db/migrations.ts`:
+
+```typescript
+const migrations: Record<string, Migration> = {
+  "001": {} // existing migrations for auth tables
+  "002": {
+    async up(db: Kysely<unknown>) {
+      await db.schema
+        .createTable("account")
+        .addColumn("did", "text", (col) => col.primaryKey())
+        .addColumn("handle", "text", (col) => col.notNull())
+        .addColumn("active", "integer", (col) => col.notNull().defaultTo(1))
+        .execute();
+
+      await db.schema
+        .createTable("status")
+        .addColumn("uri", "text", (col) => col.primaryKey())
+        .addColumn("authorDid", "text", (col) => col.notNull())
+        .addColumn("status", "text", (col) => col.notNull())
+        .addColumn("createdAt", "text", (col) => col.notNull())
+        .addColumn("indexedAt", "text", (col) => col.notNull())
+        .addColumn("current", "integer", (col) => col.notNull().defaultTo(0))
+        .execute();
+
+      await db.schema
+        .createIndex("status_current_idx")
+        .on("status")
+        .columns(["current", "indexedAt"])
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("status").execute();
+      await db.schema.dropTable("account").execute();
+      await db.schema.dropTable("auth_session").execute();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+```
+
+You can run `pnpm migrate` to apply these new migrations to your database. Now, to actually build the app logic!
+
+## Part 3: Status Submission
+
+TK
+
+## Part 4: Realtime Sync with Tap
+
+TK
+
+## Part 5: Displaying a Handle
+
+TK
+
+## Part 6: Displaying the Status Feed
+
+TK 
+
+## Conclusion
+
