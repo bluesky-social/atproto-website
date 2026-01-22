@@ -655,8 +655,143 @@ For production, you need a "confidential client" instead of the loopback client 
 - a private key for signing
 - public endpoints for client metadata and JWKS
 
-You don't need your own domain name to test the app at a public URL. You can host it on [Railway](https://railway.app/) by following our [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). First, follow this section.
+You don't need your own domain name to test the app at a public URL. You can host it on [Railway](https://railway.app/) by following our [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). First, follow these steps.
 
-## Part 5: Requesting Scopes
+Create a `well-known` JWKS endpoint that advertises your client's public key at `app/.well-known/jwks.json/route.ts`:
 
-TK
+```typescript
+import { NextResponse } from "next/server";
+import { JoseKey } from "@atproto/oauth-client-node";
+
+// Serves the public keys for the OAuth client
+// Required for confidential clients using private_key_jwt authentication
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+export async function GET() {
+  if (!PRIVATE_KEY) {
+    return NextResponse.json({ keys: [] });
+  }
+
+  const key = await JoseKey.fromJWK(JSON.parse(PRIVATE_KEY));
+  return NextResponse.json({
+    keys: [key.publicJwk],
+  });
+}
+```
+
+Next, update `lib/auth/client.ts` once more to use the confidential client configuration when in production:
+
+```typescript
+import {
+  JoseKey,
+  Keyset,
+  NodeOAuthClient,
+  buildAtprotoLoopbackClientMetadata,
+} from "@atproto/oauth-client-node";
+import type {
+  NodeSavedSession,
+  NodeSavedState,
+  OAuthClientMetadataInput,
+} from "@atproto/oauth-client-node";
+import { getDb } from "../db";
+
+export const SCOPE = "atproto";
+
+let client: NodeOAuthClient | null = null;
+
+const PUBLIC_URL = process.env.PUBLIC_URL;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+function getClientMetadata(): OAuthClientMetadataInput {
+  if (PUBLIC_URL) {
+    return {
+      client_id: `${PUBLIC_URL}/oauth-client-metadata.json`,
+      client_name: "OAuth Tutorial",
+      client_uri: PUBLIC_URL,
+      redirect_uris: [`${PUBLIC_URL}/oauth/callback`],
+      grant_types: ["authorization_code", "refresh_token"],
+      response_types: ["code"],
+      scope: SCOPE,
+      token_endpoint_auth_method: "private_key_jwt" as const,
+      token_endpoint_auth_signing_alg: "ES256" as const, // must match the alg in scripts/gen-key.ts
+      jwks_uri: `${PUBLIC_URL}/.well-known/jwks.json`,
+      dpop_bound_access_tokens: true,
+    };
+  } else {
+    return buildAtprotoLoopbackClientMetadata({
+      scope: SCOPE,
+      redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
+    });
+  }
+}
+
+async function getKeyset(): Promise<Keyset | undefined> {
+  if (PUBLIC_URL && PRIVATE_KEY) {
+    return new Keyset([await JoseKey.fromJWK(JSON.parse(PRIVATE_KEY))]);
+  } else {
+    return undefined;
+  }
+}
+
+export async function getOAuthClient():
+...
+```
+
+This will serve a [client metadata document](/specs/oauth#client-id-metadata-document).
+
+Finally, you'll need to generate a private key for signing. Create a script for that in `scripts/gen-key.ts`:
+
+```typescript
+import { JoseKey } from "@atproto/oauth-client-node";
+
+async function main() {
+  const kid = Date.now().toString();
+  const key = await JoseKey.generate(["ES256"], kid);
+  console.log(JSON.stringify(key.privateJwk));
+};
+
+main();
+```
+
+Add this script to `package.json`:
+
+```json
+{
+  "scripts": {
+    // Add this line:
+    "gen-key": "tsx scripts/gen-key.ts",
+  }
+}
+```
+
+Run the script as `pnpm gen-key` and save the output. This will be `PRIVATE_KEY`, one of two environment variables needed for your deployment:
+
+```bash
+PRIVATE_KEY={"kty":"EC","kid":"...","alg":"ES256",...}
+PUBLIC_URL=https://your-app.example.com
+```
+
+You can provide these as part of our Railway [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). Follow those steps, and this app should then work from a public URL just like our [demo instance](https://nextjs-oauth-tutorial.up.railway.app/).
+
+## Conclusion
+
+You now have a complete, production-deployed app with persistent storage. However, it doesn't actually do anything with the AT Protocol yet! As you add features from here, you'll need to request additional permission scopes during the OAuth flow.
+
+By default, the app requests only the `atproto` scope. The `atproto` scope is required and offers basic authentication for an `atproto` identity, but it does not authorize the client to access any privileged information or perform any actions on behalf of the user. Refer to the [Scopes guide](/guides/scopes) for more information.
+
+To change the requested scope, update the SCOPE constant in `lib/auth/client.ts`. It should be a space-delimited string:
+
+```typescript
+export const SCOPE = "atproto account:email repo:com.example.record";
+```
+
+This constant is used in three places:
+
+- The loopback client metadata (for local development)
+- The production client metadata
+- The login route's authorize call
+
+By centralizing it in one constant, you only need to change it in one place. Now, when you log in to your app again, you'll be prompted to approve the additional scopes.
+
+Congratulations on completing this tutorial! You now have a solid Next.js foundation for building ATProto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).

@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Tutorials - AT Protocol Docs',
-  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+  title: 'Statusphere Example App Tutorial',
+  description: 'Build a Next.js app supporting OAuth with ATProto identity.',
 }
 
 export default async function HomePage({ params }: any) {
