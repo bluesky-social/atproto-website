@@ -47,58 +47,61 @@ export function Firehose() {
   }, [active, setActive, setHasRun, jetstream])
 
   return (
-    <div className="rounded-sm ring-1 ring-zinc-900/20 dark:ring-zinc-100/15">
-      <div className="flex gap-8 py-8">
-        <div className="relative flex-1">
-          <DotPatternBackground />
-        </div>
-        <div className="w-[420px]">
-          <h3 className="pb-1 text-center text-4xl font-medium">
-            Public Firehose
-          </h3>
-          <p className="text-center text-lg text-zinc-400">
-            Tap into the event stream for all public activity. Build feeds,
-            bots, search engines, and applications using live activity. No API
-            key required.
-          </p>
-        </div>
-        <div className="relative flex-1">
-          <DotPatternBackground />
-        </div>
-      </div>
-      <div
-        className={clsx(
-          'transition-height overflow-hidden border-t border-zinc-900/20 duration-700 dark:border-zinc-100/15',
-          hasRun ? 'h-[400px]' : 'h-[56px]',
-        )}
-      >
-        <div className="flex justify-between gap-4 px-4 py-4 font-mono">
-          <div
-            className={clsx(
-              active
-                ? 'animate-text bg-gradient-to-r from-yellow-800 to-yellow-400 bg-clip-text text-transparent'
-                : '',
-            )}
-          >
-            $ websocat wss://jetstream1.us-east.bsky.network/subscribe
+    <div className="relative py-12">
+      <DotPatternBackground />
+      <div className="relative z-10 mx-auto w-[800px] rounded-sm bg-zinc-900 ring-1 ring-zinc-900/20 dark:ring-zinc-100/15">
+        <div className="flex gap-8 py-8">
+          <div className="relative flex-1">
+            {/* <DotPatternBackground /> */}
           </div>
-          <div
-            onClick={toggle}
-            className={clsx(
-              'flex cursor-pointer items-center gap-1 rounded-sm border px-2',
-              active
-                ? 'border-yellow-600 bg-yellow-950 text-yellow-400'
-                : 'border-green-600 bg-green-950 text-green-400',
-            )}
-          >
-            {active ? <StopIcon /> : <PlayIcon />}
-            <span>{active ? 'Stop stream' : 'Start stream'}</span>
+          <div className="w-[420px]">
+            <h3 className="pb-1 text-center text-4xl font-medium">
+              Public Firehose
+            </h3>
+            <p className="text-center text-lg text-zinc-400">
+              Tap into the event stream for all public activity. Build feeds,
+              bots, search engines, and applications using live activity. No API
+              key required.
+            </p>
+          </div>
+          <div className="relative flex-1">
+            {/* <DotPatternBackground /> */}
           </div>
         </div>
-        <div className="overflow-x-scroll">
-          {records.reverse().map((r) => (
-            <FirehoseEvent key={r} record={r} />
-          ))}
+        <div
+          className={clsx(
+            'transition-height overflow-hidden border-t border-zinc-900/20 duration-700 dark:border-zinc-100/15',
+            hasRun ? 'h-[400px]' : 'h-[56px]',
+          )}
+        >
+          <div className="flex justify-between gap-4 px-4 py-4 font-mono">
+            <div
+              className={clsx(
+                active
+                  ? 'animate-text bg-gradient-to-r from-yellow-800 to-yellow-400 bg-clip-text text-transparent'
+                  : '',
+              )}
+            >
+              $ websocat wss://jetstream1.us-east.bsky.network/subscribe
+            </div>
+            <div
+              onClick={toggle}
+              className={clsx(
+                'flex cursor-pointer items-center gap-1 rounded-sm border px-2',
+                active
+                  ? 'border-yellow-600 bg-yellow-950 text-yellow-400'
+                  : 'border-green-600 bg-green-950 text-green-400',
+              )}
+            >
+              {active ? <StopIcon /> : <PlayIcon />}
+              <span>{active ? 'Stop stream' : 'Start stream'}</span>
+            </div>
+          </div>
+          <div className="overflow-x-scroll">
+            {records.reverse().map((r) => (
+              <FirehoseEvent key={r} record={r} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
