@@ -76,6 +76,34 @@ const posts = [
     date: 'June 12, 2025',
     author: 'AT Protocol Team',
   },
+  {
+    slug: 'network-account-management',
+    title: 'Network Account Management',
+    description: 'We recently shipped new functionality to the PDS reference implementation (and Bluesky\'s hosting service) which provides a web interface to create and manage accounts directly on the PDS itself.',
+    date: 'May 9, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'relay-updates-sync-v1-1',
+    title: 'Relay Updates for Sync v1.1',
+    description: 'Updates to our reference implementation of the relay support sync version 1.1',
+    date: 'May 2, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: '2025-protocol-roadmap-spring',
+    title: '2025 Protocol Roadmap (Spring and Summer)',
+    description: 'Updates to the AT Protocol roadmap, including Sync v1.1, auth scopes, PDS account management, and more.',
+    date: 'March 7, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'looking-back-2024',
+    title: 'Looking Back At 2024 AT Protocol Development',
+    description: 'A lot of progress was made on the protocol in 2024, here\'s a look at the big milestones',
+    date: 'January 10, 2025',
+    author: 'AT Protocol Team',
+  },
 ]
 
 export const metadata = {
