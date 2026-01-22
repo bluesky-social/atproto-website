@@ -2,12 +2,10 @@ import { GlobeAnimation } from '@/components/home/GlobeAnimation'
 import { Button, ButtonArrowIcon } from '@/components/Button'
 import clsx from 'clsx'
 
-import { CodeCard } from '@/components/CodeCard'
-import { UserIcon } from '@/components/icons/UserIcon'
-import { Code } from '@/components/Code'
 import { Card, CardCTA, CardParagraph, CardTitle } from '@/components/Card'
 import { DotPatternContainer } from '@/components/DotPattern'
 import { ExplainerUnit } from '@/components/home/ExplainerUnit'
+import { Firehose } from '@/components/home/Firehose'
 
 export default async function HomePage({ params }: any) {
   return (
@@ -44,42 +42,34 @@ export default async function HomePage({ params }: any) {
       <div className="flex gap-4">
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <h3 className="text-2xl font-medium leading-normal">Something</h3>
-            <div className="text-zinc-700 dark:text-zinc-400">
+            <CardTitle>Something</CardTitle>
+            <CardParagraph>
               Something something Something something Something something
-            </div>
-            <div className="mt-8 flex items-center font-medium">
-              <span>LEARN MORE</span>
-              <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
-            </div>
+            </CardParagraph>
+            <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
         </Card>
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <h3 className="text-2xl font-medium leading-normal">Something</h3>
-            <div className="text-zinc-700 dark:text-zinc-400">
+            <CardTitle>Something</CardTitle>
+            <CardParagraph>
               Something something Something something Something something
-            </div>
-            <div className="mt-8 flex items-center font-medium">
-              <span>LEARN MORE</span>
-              <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
-            </div>
+            </CardParagraph>
+            <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
         </Card>
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <h3 className="text-2xl font-medium leading-normal">Something</h3>
-            <div className="text-zinc-700 dark:text-zinc-400">
+            <CardTitle>Something</CardTitle>
+            <CardParagraph>
               Something something Something something Something something
-            </div>
-            <div className="mt-8 flex items-center font-medium">
-              <span>LEARN MORE</span>
-              <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
-            </div>
+            </CardParagraph>
+            <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
         </Card>
       </div>
       <ExplainerUnit />
+      <Firehose />
     </div>
   )
 }
