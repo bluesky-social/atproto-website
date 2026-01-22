@@ -447,11 +447,215 @@ Congratulations — you've now implemented working OAuth as a baseline, and can 
 
 ## Part 3: Adding Database Persistence
 
-TK
+The in-memory approach used so far works for local development, but for production you'll want a proper database. Let's add SQLite and some other dependencies to manage this:
+
+<Note>
+If you're using `pnpm` as a package manager as suggeseted here, you should create a file called `pnpm-workspace.yaml` in the root of your project with the following content to ensure `better-sqlite3` is built correctly in the next step:
+
+```
+onlyBuiltDependencies:
+  - better-sqlite3
+```
+</Note>
+
+```bash
+pnpm add better-sqlite3 kysely
+pnpm add -D @types/better-sqlite3 tsx
+```
+
+Next, replace the contents of `next.config.ts` to use `better-sqlite3` server-side:
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  serverExternalPackages: ["better-sqlite3"],
+};
+
+export default nextConfig;
+```
+
+Then, add the actual database connection in `lib/db/index.ts`:
+
+```typescript
+import Database from "better-sqlite3";
+import { Kysely, SqliteDialect } from "kysely";
+
+const DATABASE_PATH = process.env.DATABASE_PATH || "app.db";
+
+let _db: Kysely<DatabaseSchema> | null = null;
+
+export const getDb = (): Kysely<DatabaseSchema> => {
+  if (!_db) {
+    const sqlite = new Database(DATABASE_PATH);
+    sqlite.pragma("journal_mode = WAL");
+
+    _db = new Kysely<DatabaseSchema>({
+      dialect: new SqliteDialect({ database: sqlite }),
+    });
+  }
+  return _db;
+};
+
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+}
+
+interface AuthStateTable {
+  key: string;
+  value: string;
+}
+
+interface AuthSessionTable {
+  key: string;
+  value: string;
+}
+```
+
+Next, create the "migrations" that you'll run to populate the database schema. Create `lib/db/migrations.ts`:
+
+```typescript
+import { Kysely, Migration, Migrator } from "kysely";
+import { getDb } from ".";
+
+const migrations: Record<string, Migration> = {
+  "001": {
+    async up(db: Kysely<unknown>) {
+      await db.schema
+        .createTable("auth_state")
+        .addColumn("key", "text", (col) => col.primaryKey())
+        .addColumn("value", "text", (col) => col.notNull())
+        .execute();
+
+      await db.schema
+        .createTable("auth_session")
+        .addColumn("key", "text", (col) => col.primaryKey())
+        .addColumn("value", "text", (col) => col.notNull())
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("auth_session").execute();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+
+export function getMigrator() {
+  const db = getDb();
+  return new Migrator({
+    db,
+    provider: {
+      getMigrations: async () => migrations,
+    },
+  });
+}
+```
+
+Next, create `scripts/migrate.ts` so the migrations can be run from the command line:
+
+```typescript
+import { getMigrator } from "@/lib/db/migrations";
+
+async function main() {
+  const migrator = getMigrator();
+  const { error } = await migrator.migrateToLatest();
+  if (error) throw error;
+  console.log("Migrations complete.");
+}
+
+main();
+```
+
+Add those command line scrips to `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "pnpm migrate && next dev",
+    "build": "next build",
+    "start": "pnpm migrate && next start",
+    "lint": "eslint",
+    // Add this line:
+    "migrate": "tsx scripts/migrate.ts",
+  }
+}
+```
+
+And finally, update the `stateStore:` and `sessionStore` code blocks in `lib/auth/client.ts` to use the database. You'll need to import `getDb` at the top too:
+
+```typescript
+import { getDb } from "../db";
+
+...
+
+stateStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_state")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedState) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_state")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_state").where("key", "=", key).execute();
+  },
+},
+
+sessionStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_session")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedSession) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_session")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_session").where("key", "=", key).execute();
+  },
+}
+```
+
+All set! You can Ctrl+C the dev server if it's running, then start it again with:
+
+```bash
+pnpm dev
+```
+
+You should see "Migrations complete." and an `app.db` file created. Now this app will persist state and sessions across restarts.
 
 ## Part 4: Deploying to Production
 
-TK
+For production, you need a "confidential client" instead of the loopback client you used. This requires:
+- a public URL
+- a private key for signing
+- public endpoints for client metadata and JWKS
+
+You don't need your own domain name to test the app at a public URL. You can host it on [Railway](https://railway.app/) by following our [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). First, follow this section.
 
 ## Part 5: Requesting Scopes
 
