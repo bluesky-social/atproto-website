@@ -39,7 +39,7 @@ export function BentoBox({
     <Link
       href={href || '#'}
       className={clsx(
-        'relative block flex items-center justify-center gap-4 rounded-sm px-4 py-12 ring-1 ring-zinc-900/20 transition-all duration-150 hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:hover:text-yellow-300 dark:hover:shadow-black/5 dark:hover:ring-yellow-300 dark:hover:ring-zinc-100/10',
+        'relative block flex items-center justify-center gap-4 rounded-sm px-4 py-12 ring-1 ring-zinc-900/20 transition-all duration-150 hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/25',
         wide && 'lg:col-span-2',
         tall && 'lg:row-span-2',
         horz ? 'flex-row' : 'flex-col',

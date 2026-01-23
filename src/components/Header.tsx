@@ -89,8 +89,8 @@ export const Header = forwardRef<
       </div>
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
       <ul role="list" className="flex items-center gap-8">
-        <TopLevelNavItem href="/sdks">About</TopLevelNavItem>
-        <TopLevelNavItem href="/sdks">Docs</TopLevelNavItem>
+        <TopLevelNavItem href="/TODO">About</TopLevelNavItem>
+        <TopLevelNavItem href="/docs">Docs</TopLevelNavItem>
         <TopLevelNavItem href="/sdks" className="hidden sm:block">
           Deploy
         </TopLevelNavItem>
@@ -101,7 +101,7 @@ export const Header = forwardRef<
       <div className="flex items-center gap-5">
         <nav className="hidden pr-4 xl:block">
           <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="/sdks">Showcase</TopLevelNavItem>
+            <TopLevelNavItem href="/TODO">Showcase</TopLevelNavItem>
             <TopLevelNavItem href="https://docs.bsky.app/blog">
               Blog
             </TopLevelNavItem>

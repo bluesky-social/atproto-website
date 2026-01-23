@@ -1,21 +1,11 @@
 import { GlobeAnimation } from '@/components/home/GlobeAnimation'
-import { Button, ButtonArrowIcon } from '@/components/Button'
+import { Button } from '@/components/Button'
 import clsx from 'clsx'
 
-import { Card, CardCTA, CardParagraph, CardTitle } from '@/components/Card'
-import { DotPatternContainer } from '@/components/DotPattern'
 import { ExplainerUnit } from '@/components/home/ExplainerUnit'
 import { Firehose } from '@/components/home/Firehose'
-import {
-  BentoBox,
-  BentoBoxIcon,
-  BentoBoxTitle,
-  BentoGrid,
-} from '@/components/Bento'
-import { SparklesIcon } from '@/components/icons/outline/SparklesIcon'
-import { WindowIcon } from '@/components/icons/outline/WindowIcon'
-import { UserIcon } from '@/components/icons/outline/UserIcon'
-import Link from 'next/link'
+import { BentoNav } from '@/components/home/BentoNav'
+import { Usecases } from '@/components/home/Usecases'
 
 export default async function HomePage({ params }: any) {
   return (
@@ -49,93 +39,10 @@ export default async function HomePage({ params }: any) {
           <GlobeAnimation lines={30} />
         </div>
       </div>
-      <div className="flex gap-4">
-        <Card className="flex-1" href="/TODO">
-          <DotPatternContainer className="px-6 py-4" fade>
-            <WindowIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
-            <CardTitle>Create an App</CardTitle>
-            <CardParagraph>
-              Write social applications on the shared Atmosphere network.
-            </CardParagraph>
-            <CardCTA>LEARN MORE</CardCTA>
-          </DotPatternContainer>
-        </Card>
-        <Card className="flex-1" href="/TODO">
-          <DotPatternContainer className="px-6 py-4" fade>
-            <UserIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
-            <CardTitle>Build a Bot</CardTitle>
-            <CardParagraph>
-              Listen to the firehose for mentions and reply to users
-              automatically.
-            </CardParagraph>
-            <CardCTA>LEARN MORE</CardCTA>
-          </DotPatternContainer>
-        </Card>
-        <Card className="flex-1" href="/TODO">
-          <DotPatternContainer className="px-6 py-4" fade>
-            <SparklesIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
-            <CardTitle>Write an Algorithm</CardTitle>
-            <CardParagraph>
-              Use simple rules or advanced ML to create custom feeds.
-            </CardParagraph>
-            <CardCTA>LEARN MORE</CardCTA>
-          </DotPatternContainer>
-        </Card>
-      </div>
+      <Usecases />
       <ExplainerUnit />
       <Firehose />
-      <BentoGrid>
-        <BentoBox href="/TODO" wide tall>
-          <BentoBoxIcon icon="academic-cap" big />
-          <BentoBoxTitle big>Tutorials</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="key" small />
-          <BentoBoxTitle small>Auth</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="database" small />
-          <BentoBoxTitle small>Read / Write</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="stream" small />
-          <BentoBoxTitle small>Sync</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="puzzle-piece" small />
-          <BentoBoxTitle small>Lexicon</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="media" small />
-          <BentoBoxTitle small>Media</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO">
-          <BentoBoxIcon icon="flag" small />
-          <BentoBoxTitle small>Moderation</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" wide horz>
-          <BentoBoxIcon icon="cube" />
-          <BentoBoxTitle>SDKs</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>Cookbook</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>Specs</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>FAQ</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>Self-hosting</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>Showcase</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-4">
-          <BentoBoxTitle small>Blog</BentoBoxTitle>
-        </BentoBox>
-      </BentoGrid>
+      <BentoNav />
     </div>
   )
 }
