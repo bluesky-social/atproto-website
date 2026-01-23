@@ -114,9 +114,9 @@ Specifies a bundle of permissions for use as [OAuth](/specs/oauth) scopes. See [
 Type-specific fields:
 
 - `title` (string, optional): short name for the permission set, which will be displayed to users. Should be limited to a handful of words
-- `title:lang` (map of strings to strings, optional): internationalized/localized variations of `title` for display. The map key strings must be valid language codes; see the `language` lexicon string format
+- `title:langs` (map of strings to strings, optional): internationalized/localized variations of `title` for display. The map key strings must be valid language codes; see the `language` lexicon string format
 - `detail` (string, optional): human-meaningful description of the scope of this permission set, which will be displayed to users. Should be limited to a paragraph or so.
-- `detail:lang` (map of strings to strings, optional): same as `title:lang`, but for `detail`
+- `detail:langs` (map of strings to strings, optional): same as `title:langs`, but for `detail`
 - `permissions` (array of `permission` definitions, required): the permissions included in this set
 
 ## Field Type Definitions
