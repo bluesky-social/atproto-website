@@ -1,6 +1,7 @@
 import {Container} from "@/components/Container"
 import setstatus from "./set-status.png"
 import pdsls from "./pdsls-status.png"
+import tap from "./tap-status.png"
 
 export const header = {
   title: 'Statusphere Example App Tutorial',
@@ -303,7 +304,226 @@ Next, you'll add sync features to actually receive status updates.
 
 ## Part 4: Realtime Sync with Tap
 
-TK
+[Tap](/guides/backfilling#using-tap) is the best way to synchronize and stream AT Protocol records. You'll use the Tap [TypeScript library](https://www.npmjs.com/package/@atproto/tap) to sync new records in your database. Create `lib/tap/index.ts`:
+
+```typescript
+import { Tap } from "@atproto/tap";
+
+const TAP_URL = process.env.TAP_URL || "http://localhost:2480";
+
+let _tap: Tap | null = null;
+
+export const getTap = (): Tap => {
+  if (!_tap) {
+    _tap = new Tap(TAP_URL);
+  }
+  return _tap;
+};
+```
+
+Next, create `lib/db/queries.ts` with some database queries for handling Tap events:
+
+```typescript
+import { getDb, AccountTable, StatusTable, DatabaseSchema } from ".";
+import { AtUri } from "@atproto/syntax";
+import { Transaction } from "kysely";
+
+export async function getAccountStatus(did: string) {
+  const db = getDb();
+  const status = await db
+    .selectFrom("status")
+    .selectAll()
+    .where("authorDid", "=", did)
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .executeTakeFirst();
+  return status ?? null;
+}
+
+export async function insertStatus(data: StatusTable) {
+  getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx
+        .insertInto("status")
+        .values(data)
+        .onConflict((oc) =>
+          oc.column("uri").doUpdateSet({
+            status: data.status,
+            createdAt: data.createdAt,
+            indexedAt: data.indexedAt,
+          }),
+        )
+        .execute();
+      setCurrStatus(tx, data.authorDid);
+    });
+}
+
+export async function deleteStatus(uri: AtUri) {
+  await getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx.deleteFrom("status").where("uri", "=", uri.toString()).execute();
+      await setCurrStatus(tx, uri.hostname);
+    });
+}
+
+export async function upsertAccount(data: AccountTable) {
+  await getDb()
+    .insertInto("account")
+    .values(data)
+    .onConflict((oc) =>
+      oc.column("did").doUpdateSet({
+        handle: data.handle,
+        active: data.active,
+      }),
+    )
+    .execute();
+}
+
+export async function deleteAccount(did: string) {
+  await getDb().deleteFrom("account").where("did", "=", did).execute();
+  await getDb().deleteFrom("status").where("authorDid", "=", did).execute();
+}
+
+// Helper to update which status is "current" for a user (inside a transaction)
+async function setCurrStatus(tx: Transaction<DatabaseSchema>, did: string) {
+  // Clear current flag for all user's statuses
+  await tx
+    .updateTable("status")
+    .set({ current: 0 })
+    .where("authorDid", "=", did)
+    .where("current", "=", 1)
+    .execute();
+  // Set the most recent status as current
+  await tx
+    .updateTable("status")
+    .set({ current: 1 })
+    .where("uri", "=", (qb) =>
+      qb
+        .selectFrom("status")
+        .select("uri")
+        .where("authorDid", "=", did)
+        .orderBy("createdAt", "desc")
+        .limit(1),
+    )
+    .execute();
+}
+```
+
+The `setCurrStatus` helper ensures only the most recent status per user has `current = 1`. This will be used later on.
+
+Tap will deliver events through a webhook endpoint at `app/api/webhook/route.ts`:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { parseTapEvent, assureAdminAuth } from "@atproto/tap";
+import { AtUri } from "@atproto/syntax";
+import {
+  upsertAccount,
+  insertStatus,
+  deleteStatus,
+  deleteAccount,
+} from "@/lib/db/queries";
+import * as xyz from "@/src/lexicons/xyz";
+
+const TAP_ADMIN_PASSWORD = process.env.TAP_ADMIN_PASSWORD;
+
+export async function POST(request: NextRequest) {
+  // Verify request is from our TAP server
+  if (TAP_ADMIN_PASSWORD) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    try {
+      assureAdminAuth(TAP_ADMIN_PASSWORD, authHeader);
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
+  const body = await request.json();
+  const evt = parseTapEvent(body);
+
+  // Handle account/identity changes
+  if (evt.type === "identity") {
+    if (evt.status === "deleted") {
+      await deleteAccount(evt.did);
+    } else {
+      await upsertAccount({
+        did: evt.did,
+        handle: evt.handle,
+        active: evt.isActive ? 1 : 0,
+      });
+    }
+  }
+
+  // Handle status record changes
+  if (evt.type === "record") {
+    const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
+
+    if (evt.action === "create" || evt.action === "update") {
+      let record: xyz.statusphere.status.Main;
+      try {
+        record = xyz.statusphere.status.$parse(evt.record);
+      } catch {
+        return NextResponse.json({ success: false });
+      }
+
+      await insertStatus({
+        uri: uri.toString(),
+        authorDid: evt.did,
+        status: record.status,
+        createdAt: record.createdAt,
+        indexedAt: new Date().toISOString(),
+        current: 1,
+      });
+    } else if (evt.action === "delete") {
+      await deleteStatus(uri);
+    }
+  }
+
+  return NextResponse.json({ success: true });
+}
+```
+
+Tap sends webhook events when records change anywhere on the network. Requests are validated using a shared secret; for `identity` events, you update the account cache, and for `record` events, you check if the record matches your Lexicon and insert/update/delete it in your database.
+
+Update `app/page.tsx` again to fetch and pass the current user's status:
+
+```tsx
+import { getAccountStatus } from "@/lib/db/queries";
+
+// In Home function:
+const accountStatus = session ? await getAccountStatus(session.did) : null;
+
+// Add to the StatusPicker element:
+<StatusPicker currentStatus={accountStatus?.status} />
+```
+
+This way, the `StatusPicker` will highlight the user's current status when the page loads.
+
+Now, in another terminal, clone the [indigo](https://github.com/bluesky-social/indigo) repo to run a Tap server locally:
+
+```bash
+git clone https://github.com/bluesky-social/indigo.git
+cd indigo
+go run ./cmd/tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+```
+
+Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
+
+```bash
+# Replace with your own DID below
+curl -H 'Content-Type: application/json' -d '{"dids":["DID"]}' http://localhost:2480/repos/add
+```
+
+Restart your app with `pnpm dev`, complete the login flow, and you should find your saved status highlighted:
+
+<Container>
+  <Image src={tap} alt="" className="w-full max-w-md mx-auto" />
+</Container>
 
 ## Part 5: Displaying Handles and Feeds
 
@@ -311,3 +531,4 @@ TK
 
 ## Conclusion
 
+TK
