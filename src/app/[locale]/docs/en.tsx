@@ -18,9 +18,9 @@ export const header = {
 
 export default function () {
   return (
-    <div className="flex max-w-6xl flex-col gap-16 px-16 pb-16 pt-16">
+    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-16 xl:max-w-6xl xl:px-16">
       <Usecases />
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <NavItem
           icon="key"
           title="Auth"

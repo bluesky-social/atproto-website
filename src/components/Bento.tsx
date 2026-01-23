@@ -17,8 +17,17 @@ import { OutlineIconEnum, Icon } from './icons/outline'
   </Card>
 */
 
-export function BentoGrid({ children }: React.PropsWithChildren<{}>) {
-  return <div className="grid gap-4 lg:grid-cols-6">{children}</div>
+export function BentoGrid({
+  children,
+  wide,
+}: React.PropsWithChildren<{ wide?: boolean }>) {
+  return (
+    <div
+      className={clsx('grid gap-4', wide ? 'md:grid-cols-6' : 'md:grid-cols-6')}
+    >
+      {children}
+    </div>
+  )
 }
 
 export function BentoBox({
@@ -39,10 +48,11 @@ export function BentoBox({
     <Link
       href={href || '#'}
       className={clsx(
-        'relative block flex items-center justify-center gap-4 rounded-sm px-4 py-12 ring-1 ring-zinc-900/15 transition-all duration-150 hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/25',
-        wide && 'lg:col-span-2',
-        tall && 'lg:row-span-2',
-        horz ? 'flex-row' : 'flex-col',
+        'relative block flex items-center gap-4 rounded-sm px-4 py-6 ring-1 ring-zinc-900/15 md:justify-center md:py-12',
+        'transition-all duration-150 hover:ring-zinc-900/30 dark:ring-zinc-100/15 dark:hover:shadow-black/5 dark:hover:ring-zinc-100/25',
+        wide && 'md:col-span-2',
+        tall && 'md:row-span-2',
+        horz ? 'flex-row' : 'flex-row md:flex-col',
         className,
       )}
     >
@@ -65,9 +75,9 @@ export function BentoBoxIcon({
   return (
     <div
       className={clsx(
-        'fill-none stroke-current',
+        'size-8 fill-none stroke-current',
         className,
-        small ? 'size-8' : big ? 'size-24' : 'size-12',
+        small ? 'size-8' : big ? 'md:size-24' : 'md:size-12',
       )}
     >
       <Icon icon={icon} strokeWidth={big ? '0.5' : '0.9'} />
@@ -88,8 +98,8 @@ export function BentoBoxTitle({
   return (
     <div
       className={clsx(
-        'text-center',
-        small ? 'text-xl' : big ? 'text-4xl' : 'text-3xl',
+        'text-center text-xl',
+        small ? 'text-xl' : big ? 'md:text-4xl' : 'md:text-3xl',
         className,
       )}
     >

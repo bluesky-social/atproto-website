@@ -2,7 +2,7 @@ import { BentoBox, BentoBoxIcon, BentoBoxTitle, BentoGrid } from '../Bento'
 
 export function BentoNav() {
   return (
-    <BentoGrid>
+    <BentoGrid wide>
       <BentoBox href="/TODO" wide tall>
         <BentoBoxIcon icon="academic-cap" big />
         <BentoBoxTitle big>Tutorials</BentoBoxTitle>
