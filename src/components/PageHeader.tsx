@@ -1,5 +1,6 @@
 import { DotPatternBackground } from './DotPattern'
 import { Button } from './Button'
+import clsx from 'clsx'
 
 export interface PageHeaderProps {
   title: string
@@ -7,6 +8,7 @@ export interface PageHeaderProps {
   date?: string
   primaryCTA?: CtaProps
   secondaryCTA?: CtaProps
+  fullwidth?: boolean
 }
 
 interface CtaProps {
@@ -20,11 +22,17 @@ export function PageHeader({
   date,
   primaryCTA,
   secondaryCTA,
+  fullwidth,
 }: PageHeaderProps) {
   return (
     <div className="relative">
       <DotPatternBackground />
-      <div className="relative z-10 max-w-6xl px-16 pb-16 pt-24">
+      <div
+        className={clsx(
+          'relative z-10 px-16 pb-16 pt-24',
+          !fullwidth && 'max-w-6xl',
+        )}
+      >
         <h1 className="m-0 font-mono text-5xl font-medium">{title}</h1>
         <div className="mt-4 flex flex-row items-center justify-between">
           <div>

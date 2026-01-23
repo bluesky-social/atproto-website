@@ -28,7 +28,7 @@ export function Card({
     <Link
       href={href || '#'}
       className={clsx(
-        'not-prose relative block rounded-sm ring-1 ring-zinc-900/20 transition-shadow hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:hover:ring-zinc-100/25',
+        'not-prose relative block rounded-sm ring-1 ring-zinc-900/15 transition-shadow hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:hover:ring-zinc-100/25',
         className,
       )}
     >

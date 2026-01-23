@@ -1,10 +1,6 @@
 import { Usecases } from '@/components/home/Usecases'
-import {
-  BentoBox,
-  BentoBoxIcon,
-  BentoBoxTitle,
-  BentoGrid,
-} from '@/components/Bento'
+import Link from 'next/link'
+import { OutlineIconEnum, Icon } from '@/components/icons/outline'
 
 export const header = {
   title: 'We can just build things',
@@ -22,34 +18,76 @@ export const header = {
 
 export default function () {
   return (
-    <div className="flex max-w-6xl flex-col gap-4 px-16 pb-16 pt-16">
+    <div className="flex max-w-6xl flex-col gap-16 px-16 pb-16 pt-16">
       <Usecases />
-      <BentoGrid>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="key" small />
-          <BentoBoxTitle small>Auth</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="database" small />
-          <BentoBoxTitle small>Read / Write</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="stream" small />
-          <BentoBoxTitle small>Sync</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="puzzle-piece" small />
-          <BentoBoxTitle small>Lexicon</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="media" small />
-          <BentoBoxTitle small>Media</BentoBoxTitle>
-        </BentoBox>
-        <BentoBox href="/TODO" className="py-8">
-          <BentoBoxIcon icon="flag" small />
-          <BentoBoxTitle small>Moderation</BentoBoxTitle>
-        </BentoBox>
-      </BentoGrid>
+      <div className="grid grid-cols-2 gap-6">
+        <NavItem
+          icon="key"
+          title="Auth"
+          description="Login and permissions"
+          href="/TODO"
+        />
+        <NavItem
+          icon="database"
+          title="Reads / Writes"
+          description="User data repos"
+          href="/TODO"
+        />
+        <NavItem
+          icon="stream"
+          title="Sync"
+          description="Stream user activity"
+          href="/TODO"
+        />
+        <NavItem
+          icon="puzzle-piece"
+          title="Lexicon"
+          description="Record and API schemas"
+          href="/TODO"
+        />
+        <NavItem
+          icon="media"
+          title="Images & Videos"
+          description="Solve your CDN"
+          href="/TODO"
+        />
+        <NavItem
+          icon="flag"
+          title="Moderation"
+          description="Keep things chill"
+          href="/TODO"
+        />
+      </div>
     </div>
+  )
+}
+
+function NavItem({
+  title,
+  description,
+  href,
+  icon,
+}: {
+  title: string
+  description: string
+  href: string
+  icon: OutlineIconEnum
+}) {
+  return (
+    <Link className="group flex flex-row items-center gap-6" href={href}>
+      <div>
+        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:group-hover:ring-zinc-100/25">
+          <Icon
+            icon={icon}
+            className="size-8 fill-none stroke-current"
+            strokeWidth="1.0"
+          />
+        </div>
+      </div>
+      <div className="flex-1">
+        <div className="text-2xl font-medium leading-normal">{title}</div>
+        <div className="text-zinc-700 dark:text-zinc-400">{description}</div>
+      </div>
+    </Link>
   )
 }
