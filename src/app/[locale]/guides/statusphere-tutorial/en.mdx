@@ -2,6 +2,7 @@ import {Container} from "@/components/Container"
 import setstatus from "./set-status.png"
 import pdsls from "./pdsls-status.png"
 import tap from "./tap-status.png"
+import feed from "./feed-status.png"
 
 export const header = {
   title: 'Statusphere Example App Tutorial',
@@ -700,6 +701,8 @@ function timeAgo(dateString: string): string {
 
 Now logged-in users will see "Signed in as @theirhandle" instead of just "Signed in", along with a feed of recent statuses from all users, and a "Top Statuses" section showing the most popular current statuses.
 
+You can stop and restart your app with `pnpm dev` again.
+
 One last thing — remember, you only added a single data source to `tap` earlier. To see statuses from across the entire network, stop and re-run `tap` with the `--signal-collection` flag:
 
 ```bash
@@ -709,7 +712,11 @@ go run ./cmd/tap run \
   --signal-collection=xyz.statusphere.status
 ```
 
-Stop and restart your app with `pnpm dev` again, and you'll start seeing statuses from other users on the network!
+... and you'll start seeing statuses from other users on the network!
+
+<Container>
+  <Image src={feed} alt="" className="w-full max-w-md mx-auto" />
+</Container>
 
 ## Conclusion
 
