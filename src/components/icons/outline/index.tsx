@@ -1,3 +1,4 @@
+import { UserIcon } from '../UserIcon'
 import { AcademicCapIcon } from './AcademicCapIcon'
 import { BookIcon } from './BookIcon'
 import { CubeIcon } from './CubeIcon'
@@ -10,7 +11,9 @@ import { MediaIcon } from './MediaIcon'
 import { NewspaperIcon } from './NewspaperIcon'
 import { PuzzlePieceIcon } from './PuzzlePieceIcon'
 import { QuestionIcon } from './QuestionIcon'
+import { SparklesIcon } from './SparklesIcon'
 import { StreamIcon } from './StreamIcon'
+import { WindowIcon } from './WindowIcon'
 
 export type OutlineIconEnum =
   | 'academic-cap'
@@ -25,7 +28,10 @@ export type OutlineIconEnum =
   | 'newspaper'
   | 'puzzle-piece'
   | 'question'
+  | 'sparkles'
   | 'stream'
+  | 'user'
+  | 'window'
 
 export function Icon(
   props: React.ComponentPropsWithoutRef<'svg'> & { icon: OutlineIconEnum },
@@ -66,8 +72,17 @@ export function Icon(
   if (props.icon === 'question') {
     return <QuestionIcon {...props} />
   }
+  if (props.icon === 'sparkles') {
+    return <SparklesIcon {...props} />
+  }
   if (props.icon === 'stream') {
     return <StreamIcon {...props} />
+  }
+  if (props.icon === 'user') {
+    return <UserIcon {...props} />
+  }
+  if (props.icon === 'window') {
+    return <WindowIcon {...props} />
   }
   return <></>
 }

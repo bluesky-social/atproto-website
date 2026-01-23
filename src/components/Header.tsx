@@ -14,6 +14,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import LanguageChanger from './LanguageChanger'
 import { BlueskyIcon } from './icons/BlueskyIcon'
 import { GithubIcon } from './icons/GithubIcon'
+import { usePathname } from 'next/navigation'
 
 function TopLevelNavItem({
   className,
@@ -40,6 +41,9 @@ export const Header = forwardRef<
   React.ElementRef<'div'>,
   React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
 >(function Header({ className, minimal, ...props }, ref) {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
 
@@ -85,8 +89,8 @@ export const Header = forwardRef<
       </div>
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
       <ul role="list" className="flex items-center gap-8">
-        <TopLevelNavItem href="/sdks">About</TopLevelNavItem>
-        <TopLevelNavItem href="/sdks">Docs</TopLevelNavItem>
+        <TopLevelNavItem href="/TODO">About</TopLevelNavItem>
+        <TopLevelNavItem href="/docs">Docs</TopLevelNavItem>
         <TopLevelNavItem href="/sdks" className="hidden sm:block">
           Deploy
         </TopLevelNavItem>
@@ -97,7 +101,7 @@ export const Header = forwardRef<
       <div className="flex items-center gap-5">
         <nav className="hidden pr-4 xl:block">
           <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="/sdks">Showcase</TopLevelNavItem>
+            <TopLevelNavItem href="/TODO">Showcase</TopLevelNavItem>
             <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
           </ul>
         </nav>
@@ -112,10 +116,12 @@ export const Header = forwardRef<
             <LanguageChanger />
           </ul>
         </nav>
-        <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
+        {!isHome && (
+          <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
+        )}
         <div className="flex gap-4">
           <MobileSearch />
-          <ThemeToggle />
+          {!isHome && <ThemeToggle />}
         </div>
       </div>
     </motion.div>

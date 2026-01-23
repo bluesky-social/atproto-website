@@ -25,6 +25,7 @@
     "@mdx-js/react": "^3.0.0",
     "@next/mdx": "^14.0.4",
     "@sindresorhus/slugify": "^2.1.1",
+    "@skyware/jetstream": "^0.2.5",
     "@tailwindcss/typography": "^0.5.10",
     "@types/mdx": "^2.0.8",
     "@types/node": "^20.10.8",

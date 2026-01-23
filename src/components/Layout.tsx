@@ -16,7 +16,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <SectionProvider sections={[]} /* fallback to be overridden */>
-      <div className={clsx('h-full', !isHome && 'lg:ml-72 xl:ml-80')}>
+      <div className={clsx('h-full', !isHome && 'lg:ml-72 xl:ml-72')}>
         <motion.header
           layoutScroll
           className="contents lg:pointer-events-none lg:fixed lg:inset-0 lg:top-14 lg:z-40 lg:flex"
@@ -25,7 +25,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             className={clsx(
               'contents lg:pointer-events-auto lg:block',
               !isHome &&
-              'lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-5 lg:pb-8 lg:pt-4 xl:w-72 lg:dark:border-white/10',
+                'lg:w-72 lg:overflow-y-auto lg:border-r lg:border-zinc-900/10 lg:px-5 lg:pb-8 lg:pt-4 xl:w-72 lg:dark:border-white/10',
             )}
           >
             <Header minimal={isHome} />

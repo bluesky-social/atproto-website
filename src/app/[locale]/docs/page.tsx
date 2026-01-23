@@ -1,9 +1,17 @@
+import { Page } from '@/components/Page'
+
+export const metadata = {
+  title: 'AT Protocol',
+  description:
+    'The AT Protocol is an open, decentralized, and high-performance network for building social applications.',
+}
+
 export default async function HomePage({ params }: any) {
+  let Content
   try {
-    const Content = (await import(`./${params.locale}.mdx`)).default
-    return <Content />
+    Content = await import(`./${params.locale}.tsx`)
   } catch (error) {
-    const Content = (await import(`./en.mdx`)).default
-    return <Content />
+    Content = await import(`./en`)
   }
+  return <Page {...Content} />
 }

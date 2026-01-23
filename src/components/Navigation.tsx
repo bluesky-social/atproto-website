@@ -218,11 +218,6 @@ export const navigation: Array<NavGroup> = [
         icon: 'book',
         href: 'https://github.com/bluesky-social/cookbook/',
       },
-      {
-        title: 'Tutorial App',
-        icon: 'academic-cap',
-        href: '/guides/applications',
-      },
       { title: 'FAQ', icon: 'question', href: '/guides/faq' },
       { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
     ],
@@ -238,7 +233,7 @@ export const navigation: Array<NavGroup> = [
           { title: 'SDK authentication', href: '/guides/sdk-auth' },
           { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
           { title: 'Scopes', href: '/guides/scopes' },
-          { title: 'Permission Requests', href: '/guides/permission-sets'},
+          { title: 'Permission Requests', href: '/guides/permission-sets' },
         ],
       },
       {
@@ -248,7 +243,10 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Reading data', href: '/guides/reading-data' },
           { title: 'Writing data', href: '/guides/writing-data' },
-          { title: 'Accounts and deletions', href: '/guides/account-lifecycle' },
+          {
+            title: 'Accounts and deletions',
+            href: '/guides/account-lifecycle',
+          },
           { title: 'Social graph', href: '/guides/social-graph' },
         ],
       },
@@ -291,6 +289,18 @@ export const navigation: Array<NavGroup> = [
           { title: 'Creating a labeler', href: '/guides/creating-a-labeler' },
           { title: 'Subscriptions', href: '/guides/subscriptions' },
           { title: 'Using Ozone', href: '/guides/using-ozone' },
+        ],
+      },
+      {
+        title: 'Tutorials',
+        icon: 'academic-cap',
+        href: '/guides/tutorials',
+        links: [
+          { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
+          {
+            title: 'Statusphere Example App',
+            href: '/guides/statusphere-tutorial',
+          },
         ],
       },
     ],
@@ -355,9 +365,9 @@ export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
       <ul role="list">
-        <TopLevelNavItem href="/">API</TopLevelNavItem>
-        <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="#">Support</TopLevelNavItem>
+        <TopLevelNavItem href="/TODO">API</TopLevelNavItem>
+        <TopLevelNavItem href="/TODO">Documentation</TopLevelNavItem>
+        <TopLevelNavItem href="/TODO">Support</TopLevelNavItem>
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
             key={group.title}

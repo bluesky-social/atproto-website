@@ -1,0 +1,534 @@
+import {Container} from "@/components/Container"
+import setstatus from "./set-status.png"
+import pdsls from "./pdsls-status.png"
+import tap from "./tap-status.png"
+
+export const header = {
+  title: 'Statusphere Example App Tutorial',
+  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+}
+
+In this tutorial, you'll build a status-setting app using custom Lexicons and real-time sync.
+
+You can find the source code for this tutorial, along with other example projects, in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository, under `statusphere`.
+
+## Prerequisites
+
+This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
+
+Like the OAuth with NextJS tutorial, you should have installed:
+- Node.js 20+
+- The pnpm package manager
+
+Begin by adding these ATProto libraries to your existing project:
+
+```bash
+pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
+```
+
+You should also have our `lex` CLI tool installed globally:
+
+```bash
+npm install -g @atproto/lex
+```
+
+You'll begin by adding Lexicons to your project.
+
+## Part 1: Lexicons 
+
+Lexicons define the schema for records in AT Protocol. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
+
+```bash
+lex install xyz.statusphere.status
+```
+
+If you want, you can view the downloaded Lexicon file at `lib/lexicons/xyz.statusphere.status.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
+
+```bash
+lex build --importExt=\"\"
+```
+
+<Note>
+You could add this command to `package.json` if you needed, but we won't be using it again in this tutorial now that our Lexicons have been built. If you ever add another Lexicon to a project with `lex install`, you'll need to re-run `lex build` with the `--override` flag to regenerate the types.
+</Note>
+
+One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. ATProto permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
+
+```typescript
+export const SCOPE = "atproto repo:xyz.statusphere.status";
+```
+
+Now you can move on to creating the database schema.
+
+## Part 2: Database Schema
+
+Update `lib/db/index.ts` to add new tables:
+
+```typescript
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+  account: AccountTable;   // New
+  status: StatusTable;     // New
+}
+
+// ... existing auth tables ...
+
+export interface AccountTable {
+  did: string;
+  handle: string;
+  active: 0 | 1;
+}
+
+export interface StatusTable {
+  uri: string;
+  authorDid: string;
+  status: string;
+  createdAt: string;
+  indexedAt: string;
+  current: 0 | 1;
+}
+```
+
+Next, add the migrations script that creates these tables. If you're building on top of the OAuth tutorial and have already deployed/migrated your database, you'll want to put these in a new migration, e.g. called "002", in `lib/db/migrations.ts`:
+
+```typescript
+const migrations: Record<string, Migration> = {
+  "001": {} // existing migrations for auth tables
+  "002": {
+    async up(db: Kysely<unknown>) {
+      await db.schema
+        .createTable("account")
+        .addColumn("did", "text", (col) => col.primaryKey())
+        .addColumn("handle", "text", (col) => col.notNull())
+        .addColumn("active", "integer", (col) => col.notNull().defaultTo(1))
+        .execute();
+
+      await db.schema
+        .createTable("status")
+        .addColumn("uri", "text", (col) => col.primaryKey())
+        .addColumn("authorDid", "text", (col) => col.notNull())
+        .addColumn("status", "text", (col) => col.notNull())
+        .addColumn("createdAt", "text", (col) => col.notNull())
+        .addColumn("indexedAt", "text", (col) => col.notNull())
+        .addColumn("current", "integer", (col) => col.notNull().defaultTo(0))
+        .execute();
+
+      await db.schema
+        .createIndex("status_current_idx")
+        .on("status")
+        .columns(["current", "indexedAt"])
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("status").execute();
+      await db.schema.dropTable("account").execute();
+      await db.schema.dropTable("auth_session").execute();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+```
+
+You can run `pnpm migrate` to apply these new migrations to your database. Now, to actually build the app logic!
+
+## Part 3: Status Submission
+
+First you'll build the feature that allows users to write their status to their [PDS](/guides/the-at-stack#pds). Create a new API route at `app/api/status/route.ts`:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client } from "@atproto/lex";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as xyz from "@/src/lexicons/xyz";
+
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { status } = await request.json();
+
+  if (!status || typeof status !== "string") {
+    return NextResponse.json({ error: "Status is required" }, { status: 400 });
+  }
+
+  const client = await getOAuthClient();
+  const oauthSession = await client.restore(session.did);
+  const lexClient = new Client(oauthSession);
+
+  const createdAt = new Date().toISOString();
+  const res = await lexClient.create(xyz.statusphere.status, {
+    status,
+    createdAt,
+  });
+
+  return NextResponse.json({
+    success: true,
+    uri: res.uri,
+  });
+}
+```
+
+This verifies that a user is logged in, creates a lex `Client` with their OAuth session, and then creates a new `xyz.statusphere.status` record with the submitted status text.
+
+Next, create a Status picker component at `components/StatusPicker.tsx`:
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const EMOJIS = ["👍", "👎", "💙", "🔥", "😆", "😢", "🤔", "😴", "🎉", "🤩", "😭", "🥳", "😤", "💀", "✨", "👀", "🙏", "📚", "💻", "🍕", "🌴"];
+
+interface StatusPickerProps {
+  currentStatus?: string | null;
+}
+
+export function StatusPicker({ currentStatus }: StatusPickerProps) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(currentStatus ?? null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSelect(emoji: string) {
+    setLoading(true);
+    setSelected(emoji);
+
+    try {
+      const res = await fetch("/api/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: emoji }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update status");
+      }
+
+      router.refresh();
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      setSelected(currentStatus ?? null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+        Set your status
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {EMOJIS.map((emoji) => (
+          <button
+            key={emoji}
+            onClick={() => handleSelect(emoji)}
+            disabled={loading}
+            className={`text-2xl p-2 rounded-lg transition-all
+              ${selected === emoji
+                ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500"
+                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+Finally, update `app/page.tsx` to include the status picker:
+
+```tsx
+import { getSession } from "@/lib/auth/session";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+
+export default async function Home() {
+  const session = await getSession();
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            Statusphere
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Set your status on the Atmosphere
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          {session ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Signed in
+                </p>
+                <LogoutButton />
+              </div>
+              <StatusPicker />
+            </div>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+Run the app with `pnpm dev` — you'll be able to log in, and select an emoji to set your status!
+
+<Container>
+  <Image src={setstatus} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+You won't yet have a way to see your status in this app, but you can look up your account on [pdsls](https://pdsls.dev) and check the `xyz.statusphere.status` Lexicon to see this record.
+
+<Container>
+  <Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Next, you'll add sync features to actually receive status updates.
+
+## Part 4: Realtime Sync with Tap
+
+[Tap](/guides/backfilling#using-tap) is the best way to synchronize and stream AT Protocol records. You'll use the Tap [TypeScript library](https://www.npmjs.com/package/@atproto/tap) to sync new records in your database. Create `lib/tap/index.ts`:
+
+```typescript
+import { Tap } from "@atproto/tap";
+
+const TAP_URL = process.env.TAP_URL || "http://localhost:2480";
+
+let _tap: Tap | null = null;
+
+export const getTap = (): Tap => {
+  if (!_tap) {
+    _tap = new Tap(TAP_URL);
+  }
+  return _tap;
+};
+```
+
+Next, create `lib/db/queries.ts` with some database queries for handling Tap events:
+
+```typescript
+import { getDb, AccountTable, StatusTable, DatabaseSchema } from ".";
+import { AtUri } from "@atproto/syntax";
+import { Transaction } from "kysely";
+
+export async function getAccountStatus(did: string) {
+  const db = getDb();
+  const status = await db
+    .selectFrom("status")
+    .selectAll()
+    .where("authorDid", "=", did)
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .executeTakeFirst();
+  return status ?? null;
+}
+
+export async function insertStatus(data: StatusTable) {
+  getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx
+        .insertInto("status")
+        .values(data)
+        .onConflict((oc) =>
+          oc.column("uri").doUpdateSet({
+            status: data.status,
+            createdAt: data.createdAt,
+            indexedAt: data.indexedAt,
+          }),
+        )
+        .execute();
+      setCurrStatus(tx, data.authorDid);
+    });
+}
+
+export async function deleteStatus(uri: AtUri) {
+  await getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx.deleteFrom("status").where("uri", "=", uri.toString()).execute();
+      await setCurrStatus(tx, uri.hostname);
+    });
+}
+
+export async function upsertAccount(data: AccountTable) {
+  await getDb()
+    .insertInto("account")
+    .values(data)
+    .onConflict((oc) =>
+      oc.column("did").doUpdateSet({
+        handle: data.handle,
+        active: data.active,
+      }),
+    )
+    .execute();
+}
+
+export async function deleteAccount(did: string) {
+  await getDb().deleteFrom("account").where("did", "=", did).execute();
+  await getDb().deleteFrom("status").where("authorDid", "=", did).execute();
+}
+
+// Helper to update which status is "current" for a user (inside a transaction)
+async function setCurrStatus(tx: Transaction<DatabaseSchema>, did: string) {
+  // Clear current flag for all user's statuses
+  await tx
+    .updateTable("status")
+    .set({ current: 0 })
+    .where("authorDid", "=", did)
+    .where("current", "=", 1)
+    .execute();
+  // Set the most recent status as current
+  await tx
+    .updateTable("status")
+    .set({ current: 1 })
+    .where("uri", "=", (qb) =>
+      qb
+        .selectFrom("status")
+        .select("uri")
+        .where("authorDid", "=", did)
+        .orderBy("createdAt", "desc")
+        .limit(1),
+    )
+    .execute();
+}
+```
+
+The `setCurrStatus` helper ensures only the most recent status per user has `current = 1`. This will be used later on.
+
+Tap will deliver events through a webhook endpoint at `app/api/webhook/route.ts`:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { parseTapEvent, assureAdminAuth } from "@atproto/tap";
+import { AtUri } from "@atproto/syntax";
+import {
+  upsertAccount,
+  insertStatus,
+  deleteStatus,
+  deleteAccount,
+} from "@/lib/db/queries";
+import * as xyz from "@/src/lexicons/xyz";
+
+const TAP_ADMIN_PASSWORD = process.env.TAP_ADMIN_PASSWORD;
+
+export async function POST(request: NextRequest) {
+  // Verify request is from our TAP server
+  if (TAP_ADMIN_PASSWORD) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    try {
+      assureAdminAuth(TAP_ADMIN_PASSWORD, authHeader);
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
+  const body = await request.json();
+  const evt = parseTapEvent(body);
+
+  // Handle account/identity changes
+  if (evt.type === "identity") {
+    if (evt.status === "deleted") {
+      await deleteAccount(evt.did);
+    } else {
+      await upsertAccount({
+        did: evt.did,
+        handle: evt.handle,
+        active: evt.isActive ? 1 : 0,
+      });
+    }
+  }
+
+  // Handle status record changes
+  if (evt.type === "record") {
+    const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
+
+    if (evt.action === "create" || evt.action === "update") {
+      let record: xyz.statusphere.status.Main;
+      try {
+        record = xyz.statusphere.status.$parse(evt.record);
+      } catch {
+        return NextResponse.json({ success: false });
+      }
+
+      await insertStatus({
+        uri: uri.toString(),
+        authorDid: evt.did,
+        status: record.status,
+        createdAt: record.createdAt,
+        indexedAt: new Date().toISOString(),
+        current: 1,
+      });
+    } else if (evt.action === "delete") {
+      await deleteStatus(uri);
+    }
+  }
+
+  return NextResponse.json({ success: true });
+}
+```
+
+Tap sends webhook events when records change anywhere on the network. Requests are validated using a shared secret; for `identity` events, you update the account cache, and for `record` events, you check if the record matches your Lexicon and insert/update/delete it in your database.
+
+Update `app/page.tsx` again to fetch and pass the current user's status:
+
+```tsx
+import { getAccountStatus } from "@/lib/db/queries";
+
+// In Home function:
+const accountStatus = session ? await getAccountStatus(session.did) : null;
+
+// Add to the StatusPicker element:
+<StatusPicker currentStatus={accountStatus?.status} />
+```
+
+This way, the `StatusPicker` will highlight the user's current status when the page loads.
+
+Now, in another terminal, clone the [indigo](https://github.com/bluesky-social/indigo) repo to run a Tap server locally:
+
+```bash
+git clone https://github.com/bluesky-social/indigo.git
+cd indigo
+go run ./cmd/tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+```
+
+Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
+
+```bash
+# Replace with your own DID below
+curl -H 'Content-Type: application/json' -d '{"dids":["DID"]}' http://localhost:2480/repos/add
+```
+
+Restart your app with `pnpm dev`, complete the login flow, and you should find your saved status highlighted:
+
+<Container>
+  <Image src={tap} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+## Part 5: Displaying Handles and Feeds
+
+TK 
+
+## Conclusion
+
+TK

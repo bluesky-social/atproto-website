@@ -64,6 +64,21 @@ export default {
         7.5: '0.075',
         15: '0.15',
       },
+      animation: {
+        text: 'text 1s ease infinite',
+      },
+      keyframes: {
+        text: {
+          '0%': {
+            'background-size': '200% 200%',
+            'background-position-x': '0%',
+          },
+          '100%': {
+            'background-size': '200% 200%',
+            'background-position-x': '-200%',
+          },
+        },
+      },
     },
   },
   plugins: [typographyPlugin, headlessuiPlugin],

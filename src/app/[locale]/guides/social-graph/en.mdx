@@ -5,7 +5,9 @@ export const header = {
 
 ## Querying social graphs
 
-AT Protocol records are public...
+ATProto HTTP API methods each scope and implement a particular set of [Lexicons](/guides/lexicon). For example, an app using the `app.bsky.feed.post` record type would be expected to also implement an application endpoint like `curl -X POST example.com/xrpc/app.bsky.feed.post -d {post-contents}`.
+
+This also means that all the POST requests you make to an ATProto app are retained and can be streamed back in that same format. This saves developers from having to make many backend implementation decisions. It also means that new applications that build on the AT Protocol can leverage existing social graph data — for example, from the `app.bsky.graph.getFollows` Lexicon RPC endpoint — to build new use cases, and bootstrap with an existing user base. This, in turn, gets you to native ATProtocol concepts like [A Social Filesystem](https://overreacted.io/a-social-filesystem/).
 
 See [Exploring AT Protocol with Python](https://davidgasquez.com/exploring-atproto-python/) for another example of this approach.
 
@@ -13,7 +15,7 @@ See [Exploring AT Protocol with Python](https://davidgasquez.com/exploring-atpro
 
 One of the most powerful ways to get social graph data from AT Protocol is through the use of **backlinks**. Querying backlinks lets you resolve all of the records linking *to* any given record, *or* identity.
 
-Because all AT Protocol records are openly available and addressible via an `at://` URI, this makes it possible to encode nested API queries into individual URLs. The community project [pds.ls](https://pdsls.dev/at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3mbaxebcd6s2f) does this, for example.
+Because all AT Protocol records are openly available and addressible via an `at://` URI, this makes it possible to encode nested API queries into individual URLs. The community project [pdsls](https://pdsls.dev/at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3mbaxebcd6s2f) does this, for example.
 
 [Microcosm](https://constellation.microcosm.blue) provides a set of resources for working with backlinks.
 

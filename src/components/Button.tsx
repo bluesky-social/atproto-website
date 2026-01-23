@@ -101,3 +101,5 @@ export function Button({
     </Link>
   )
 }
+
+export const ButtonArrowIcon = ArrowIcon
