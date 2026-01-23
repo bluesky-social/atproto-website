@@ -12,6 +12,10 @@ import {
   BentoBoxTitle,
   BentoGrid,
 } from '@/components/Bento'
+import { SparklesIcon } from '@/components/icons/outline/SparklesIcon'
+import { WindowIcon } from '@/components/icons/outline/WindowIcon'
+import { UserIcon } from '@/components/icons/outline/UserIcon'
+import Link from 'next/link'
 
 export default async function HomePage({ params }: any) {
   return (
@@ -48,27 +52,31 @@ export default async function HomePage({ params }: any) {
       <div className="flex gap-4">
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <CardTitle>Something</CardTitle>
+            <WindowIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
+            <CardTitle>Create an App</CardTitle>
             <CardParagraph>
-              Something something Something something Something something
+              Write social applications on the shared Atmosphere network.
             </CardParagraph>
             <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
         </Card>
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <CardTitle>Something</CardTitle>
+            <UserIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
+            <CardTitle>Build a Bot</CardTitle>
             <CardParagraph>
-              Something something Something something Something something
+              Listen to the firehose for mentions and reply to users
+              automatically.
             </CardParagraph>
             <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
         </Card>
         <Card className="flex-1" href="/TODO">
           <DotPatternContainer className="px-6 py-4" fade>
-            <CardTitle>Something</CardTitle>
+            <SparklesIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
+            <CardTitle>Write an Algorithm</CardTitle>
             <CardParagraph>
-              Something something Something something Something something
+              Use simple rules or advanced ML to create custom feeds.
             </CardParagraph>
             <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>
