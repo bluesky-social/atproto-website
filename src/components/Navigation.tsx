@@ -208,17 +208,39 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: 'About',
+    title: 'Get Started',
     links: [
-      { title: 'Home', icon: 'home', href: '/' },
+      {
+        title: 'Tutorials',
+        icon: 'academic-cap',
+        href: '/guides/tutorials',
+        links: [
+          {
+            title: 'Statusphere Example App',
+            href: '/guides/statusphere-tutorial',
+          },
+          { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
+        ],
+      },
+      {
+        title: 'Understand ATProto',
+        icon: 'question',
+        href: '/guides/understanding-atproto',
+        links: [
+          {
+            title: 'As a distributed system',
+            href: '/articles/atproto-for-distsys-engineers',
+          },
+          { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
+          { title: 'FAQ', href: '/guides/faq' },
+        ],
+      },
       { title: 'SDKs', icon: 'cube', href: '/sdks' },
       {
         title: 'Cookbook',
         icon: 'book',
         href: 'https://github.com/bluesky-social/cookbook/',
       },
-      { title: 'FAQ', icon: 'question', href: '/guides/faq' },
-      { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
     ],
   },
   {
@@ -290,30 +312,31 @@ export const navigation: Array<NavGroup> = [
           { title: 'Using Ozone', href: '/guides/using-ozone' },
         ],
       },
-      {
-        title: 'Tutorials',
-        icon: 'academic-cap',
-        href: '/guides/tutorials',
-        links: [
-          { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
-          {
-            title: 'Statusphere Example App',
-            href: '/guides/statusphere-tutorial',
-          },
-        ],
-      },
     ],
   },
   {
     title: 'Deploy',
     links: [
-      { title: 'The AT Stack', href: '/guides/the-at-stack' },
-      { title: 'Self-hosting', href: '/guides/self-hosting' },
-      { title: 'Going to production', href: '/guides/going-to-production' },
-      { title: 'Account migration', href: '/guides/account-migration' },
+      {
+        title: 'The AT Stack',
+        href: '/guides/the-at-stack',
+        icon: 'rectangle-group',
+      },
+      { title: 'Self-hosting', href: '/guides/self-hosting', icon: 'cloud' },
+      {
+        title: 'Going to production',
+        href: '/guides/going-to-production',
+        icon: 'briefcase',
+      },
+      {
+        title: 'Account migration',
+        href: '/guides/account-migration',
+        icon: 'paper-airplane',
+      },
       {
         title: 'Deploy recipes',
         href: 'https://github.com/bluesky-social/deploy-recipes/',
+        icon: 'book',
       },
     ],
   },

@@ -8,7 +8,7 @@ export const header = {
     'Create high-scale social applications that are interoperable by default.',
   primaryCTA: {
     label: 'Intro',
-    href: '/TODO',
+    href: '/guides/understanding-atproto',
   },
   secondaryCTA: {
     label: 'SDKs',
