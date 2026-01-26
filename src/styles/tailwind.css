@@ -1,3 +1,7 @@
+body {
+  --code-container-width: calc(100vw - 4em);
+}
+
 @layer base {
   .dark {
     --shiki-color-text: theme('colors.white');
