@@ -19,7 +19,9 @@ export const a = function ExternalAwareLink({
   const isExternal = href?.startsWith('http://') || href?.startsWith('https://')
 
   if (isExternal) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    )
   }
 
   return <Link href={href ?? ''} {...props} />
@@ -205,7 +207,9 @@ export function TabGroup({
   }
 
   return (
-    <TabGroupContext.Provider value={{ selectedValue, setSelectedValue, groupId }}>
+    <TabGroupContext.Provider
+      value={{ selectedValue, setSelectedValue, groupId }}
+    >
       <div className="my-6">{children}</div>
     </TabGroupContext.Provider>
   )
@@ -245,7 +249,7 @@ export function Tab({
         '-mb-px border-b-2',
         isSelected
           ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
-          : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+          : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
       )}
     >
       {children}
@@ -274,7 +278,7 @@ export function TabPanel({
       role="tabpanel"
       id={`tabpanel-${groupId}-${value}`}
       aria-labelledby={`tab-${groupId}-${value}`}
-      className="[&>:first-child]:mt-0 [&>:last-child]:mb-0"
+      className="prose [&>:first-child]:mt-0 [&>:last-child]:mb-0"
     >
       {children}
     </div>
