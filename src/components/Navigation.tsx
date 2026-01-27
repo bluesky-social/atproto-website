@@ -223,7 +223,7 @@ export const navigation: Array<NavGroup> = [
         ],
       },
       {
-        title: 'Understand ATProto',
+        title: 'Understand Atproto',
         icon: 'question',
         href: '/guides/understanding-atproto',
         links: [
@@ -231,7 +231,7 @@ export const navigation: Array<NavGroup> = [
             title: 'As a distributed system',
             href: '/articles/atproto-for-distsys-engineers',
           },
-          { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
+          { title: 'Atproto Ethos', href: '/articles/atproto-ethos' },
           { title: 'FAQ', href: '/guides/faq' },
         ],
       },
