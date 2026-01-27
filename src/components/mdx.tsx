@@ -278,7 +278,7 @@ export function TabPanel({
       role="tabpanel"
       id={`tabpanel-${groupId}-${value}`}
       aria-labelledby={`tab-${groupId}-${value}`}
-      className="prose [&>:first-child]:mt-0 [&>:last-child]:mb-0"
+      className="[&>:first-child]:mt-0 [&>:last-child]:mb-0"
     >
       {children}
     </div>

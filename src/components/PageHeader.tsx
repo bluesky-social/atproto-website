@@ -41,7 +41,7 @@ export function PageHeader({
           <div className="mt-4 flex flex-col justify-between gap-12 max-md:gap-4 md:flex-row md:items-center">
             <div>
               {description && (
-                <div className="text-lg text-slate-600 dark:text-slate-400">
+                <div className="text-lg text-zinc-600 dark:text-zinc-400">
                   {description}
                 </div>
               )}
@@ -49,7 +49,7 @@ export function PageHeader({
             {date || primaryCTA || secondaryCTA ? (
               <div className="flex gap-2 max-md:w-full">
                 {date && (
-                  <span className="text-nowrap font-mono text-lg text-slate-600 dark:text-slate-400">
+                  <span className="text-nowrap font-mono text-lg text-zinc-600 dark:text-zinc-400">
                     {date}
                   </span>
                 )}

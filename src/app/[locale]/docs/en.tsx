@@ -76,7 +76,7 @@ function NavItem({
   return (
     <Link className="group flex flex-row items-center gap-6" href={href}>
       <div>
-        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:group-hover:ring-zinc-100/25">
+        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/15 dark:group-hover:ring-zinc-100/25">
           <Icon
             icon={icon}
             className="size-8 fill-none stroke-current"
