@@ -301,6 +301,7 @@ export default function typographyStyles({ theme }: PluginUtils) {
           paddingBottom: theme('padding.1'),
           paddingLeft: theme('padding[1.5]'),
           boxShadow: 'inset 0 0 0 1px var(--tw-prose-code-ring)',
+          wordBreak: 'break-all',
           // fontWeight: '600',
         },
         ':is(a, h1, h2, h3, blockquote, thead th) code': {

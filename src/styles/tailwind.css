@@ -1,5 +1,5 @@
 body {
-  --code-container-width: calc(100vw - 4em);
+  --code-container-width: calc(100vw - 2em);
 }
 
 @layer base {
