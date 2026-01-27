@@ -10,48 +10,40 @@ import { Usecases } from '@/components/home/Usecases'
 export default async function HomePage({ params }: any) {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 px-2 md:gap-12 md:px-8 lg:max-w-7xl">
-      <div className="flex flex-col-reverse items-center pt-12 md:py-12 xl:flex-row">
-        <div className="flex flex-col gap-4 px-6 pb-8 sm:text-center md:px-0 xl:flex-1 xl:pb-0 xl:text-left">
-          <h1 className="sm:text-5px font-mono text-4xl uppercase leading-[1.1] md:text-7xl md:tracking-[-4px]">
+      <div className="flex flex-col-reverse items-center md:py-12 xl:flex-row">
+        <div className="flex flex-col gap-4 px-6 pb-8 md:px-0 xl:flex-1 xl:pb-0">
+          <h1 className="text-center font-mono text-5xl uppercase leading-[1.1] md:text-7xl md:tracking-[-4px] xl:text-left">
             AT PROTOCOL
           </h1>
-          <div className="hyphens-none font-mono text-xl text-zinc-700 xl:pr-40 dark:text-zinc-400">
+          <div className="hyphens-none text-center font-mono text-xl text-zinc-700 xl:pr-40 xl:text-left dark:text-zinc-400">
             The open social network for high&#8209;scale interoperation.
           </div>
-          <div className="py-4 sm:py-12">
+          <div className="py-4 text-center sm:py-12 xl:text-left">
             <Button
               variant="primary"
               arrow="right"
               font="mono"
               size="xxlarge"
               href="/docs"
+              className="max-sm:flex max-sm:py-3"
             >
               GET STARTED
             </Button>
           </div>
-          <div className="flex flex-col gap-4 sm:flex-row sm:gap-0">
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 sm:text-center xl:text-left">
             <Stat value="40M+" desc="Users online" first />
             <Stat value="1.961B+" desc="Totally normal posts" />
             <Stat value="100%" desc="Open source" />
           </div>
         </div>
-        <div className="py-16 sm:py-8 xl:flex-1 xl:py-0">
+        <div className="pb-12 pt-4 sm:py-8 xl:flex-1 xl:py-0">
           <GlobeAnimation lines={30} />
         </div>
       </div>
 
       <Usecases wide />
-
-      <div className="px-6 pt-12 font-mono font-medium text-zinc-400 md:hidden">
-        So, how does it work?
-      </div>
-
       <ExplainerUnit />
       <Firehose />
-
-      <div className="px-6 pt-6 font-mono font-medium text-zinc-400 md:hidden">
-        Would you like to know more?
-      </div>
       <BentoNav />
     </div>
   )

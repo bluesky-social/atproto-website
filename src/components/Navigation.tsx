@@ -387,9 +387,6 @@ export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
       <ul role="list">
-        <TopLevelNavItem href="/TODO">API</TopLevelNavItem>
-        <TopLevelNavItem href="/TODO">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="/TODO">Support</TopLevelNavItem>
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
             key={group.title}
