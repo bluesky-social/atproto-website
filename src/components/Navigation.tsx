@@ -383,6 +383,8 @@ export const navigation: Array<NavGroup> = [
   },
 ]
 
+export const allPages = flattenNavigation()
+
 export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
@@ -397,4 +399,26 @@ export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
       </ul>
     </nav>
   )
+}
+
+function flattenNavigation(): NavLink[] {
+  const pages: NavLink[] = []
+  for (const group of navigation) {
+    for (const link of eachLink(group)) {
+      pages.push(link)
+    }
+  }
+  return pages
+}
+
+function* eachLink(node: NavGroup | NavLink): Generator<NavLink> {
+  if ('href' in node && node.href.startsWith('/')) {
+    yield node
+  }
+  if (!node.links) {
+    return
+  }
+  for (const child of node.links) {
+    yield* eachLink(child)
+  }
 }
