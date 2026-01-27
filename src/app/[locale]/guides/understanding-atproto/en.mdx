@@ -1,28 +1,55 @@
-import {Container} from "@/components/Container"
+import { Card, CardParagraph, CardDetails, CardTitle } from '@/components/Card'
 
 export const header = {
-  title: 'Understanding ATProto',
-  description: 'A deeper dive into how it all works',
+  title: 'Understanding Atproto',
+  description: 'A closer look into how it all works',
 }
 
-These tutorials will guide you through building applications using the AT Protocol. Each tutorial focuses on a specific use case or feature, providing step-by-step instructions and code examples.
+## TL;DR
 
-Our tutorials are organized to be completed in order, but each tutorial is self-contained and can be followed independently.
+Atproto is like a souped-up RSS. Users publish JSON records into repositories. The changestreams of those records then sync across the network to drive applications.
 
-TODO
+Here are the core concepts:
 
-## Statusphere Example App
+- **User repos.** The public per-user databases.
+- **User handles.** Aka usernames, which are DNS records. Our account is `@atproto.com`.
+- **User DIDs.** The permanent IDs of users.
 
-Build an app that lets you broadcast a "status" message using custom Lexicons, and see a live feed of other statuses.
+Data gets published in a couple of forms:
 
-This is a revision of our original Statusphere tutorial.
+- **Records**. JSON, categorized into collections.
+- **Blobs**. The images and videos.
 
-[**Statusphere Example App Tutorial**](/guides/statusphere-tutorial)
+Everything is described using schemas:
 
-## OAuth with NextJS
+- **Lexicon**. The schema language.
+- **LexRPC (XRPC).** It's HTTP but with the routes defined by Lexicons.
 
-Build a Next.js app where users can log in with their AT Protocol identity using OAuth.
+There are different kinds of services which you can [self-host](/guides/self-hosting):
 
-See a demo version running at: [https://nextjs-oauth-tutorial.up.railway.app/](https://nextjs-oauth-tutorial.up.railway.app/).
+- **Personal Data Servers (PDS).** They host user accounts.
+- **Relays**. They collect and rebroadcast user write events.
+- **Applications**. They aggregate user data to produce app experiences.
+- **Labelers**. Publish moderation decisions as label metadata.
 
-[**OAuth with NextJS Tutorial**](/guides/oauth-tutorial)
+Let's assume you're building an application. Your users will sign in with [OAuth](/guides/auth), which hands your application the address of their PDS. Your application then [reads & writes](/guides/reads-and-writes) records by contacting their PDS.
+
+To listen for activity across the network, you [sync from relays](/guides/sync). You could sync directly from the users' PDSes, but it's more convenient to use the relays. Since all data is signed, you can confirm the relay's stream is accurate.
+
+The [Lexicons](/guides/lexicon) help identify the data being published on the network. You use them to validate data as you read it, just like you validate incoming HTTP requests.
+
+Finally, you handle [moderation](/guides/moderation) by subscribing to (or running) labelers which receive user reports and publish labels on user content.
+
+## Deeper reads
+
+We recommend these fantastic articles by community-member [Dan Abramov](https://bsky.app/profile/danabra.mov):
+
+- [**Open Social**](https://overreacted.io/open-social/) - The protocol is the API.
+- [**Where it's at://**](https://overreacted.io/where-its-at/) - From handles to hosting.
+- [**A Social Filesystem**](https://overreacted.io/a-social-filesystem/) - Formats over apps.
+
+We also recommend these deep-dive articles by the team:
+
+- [**Atproto for distributed systems engineers**](/articles/atproto-for-distsys-engineers). An explainer for backend thinkers.
+- [**The Atproto Ethos**](/articles/atproto-ethos). The principles that underpin the design of atproto.
+
