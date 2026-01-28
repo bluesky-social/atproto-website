@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Publishes a blog post to AT Protocol as a site.standard.document record
+ * Publishes a blog post to AT Protocol as a standard.document.main record
  *
  * Usage:
  *   npm run publish-post <slug>
@@ -19,7 +19,8 @@ import * as path from 'path'
 import { fileURLToPath } from 'url'
 import { Client } from '@atproto/lex'
 import { PasswordSession } from '@atproto/lex-password-session'
-import * as site from '../src/lexicons/site.ts'
+import * as siteModule from '../src/lexicons/site.ts'
+const { standard } = siteModule.default ?? siteModule
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -130,6 +131,8 @@ async function main() {
     service,
     identifier: ATPROTO_HANDLE,
     password: ATPROTO_APP_PASSWORD,
+    onUpdated: () => {},
+    onDeleted: () => {},
   })
 
   const client = new Client(session)
@@ -146,7 +149,7 @@ async function main() {
   const postPath = `/blog/${slug}`
   console.log('\n🔍 Checking for existing document...')
 
-  const existingRecords = await client.list(site.standard.document, { limit: 100 })
+  const existingRecords = await client.list(standard.document.main, { limit: 100 })
 
   const existingRecord = existingRecords.records.find((r) => r.value.path === postPath)
   if (existingRecord) {
@@ -162,7 +165,7 @@ async function main() {
     const rkey = existingRecord.uri.split('/').pop()
 
     const result = await client.put(
-      site.standard.document,
+      standard.document.main,
       {
         site: siteRef,
         title: header.title,
@@ -183,7 +186,7 @@ async function main() {
     // Create new record
     console.log('\n📤 Creating document record...')
 
-    const result = await client.create(site.standard.document, {
+    const result = await client.create(standard.document.main, {
       site: siteRef,
       title: header.title,
       description: header.description,

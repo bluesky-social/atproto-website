@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Creates a site.standard.publication record for atproto.com
+ * Creates a standard.publication record for atproto.com
  *
  * Usage:
  *   1. Copy .env.example to .env and fill in your credentials
@@ -13,7 +13,8 @@
 
 import { Client } from '@atproto/lex'
 import { PasswordSession } from '@atproto/lex-password-session'
-import * as site from '../src/lexicons/site.ts'
+import * as siteModule from '../src/lexicons/site.ts'
+const { standard } = siteModule.default ?? siteModule
 
 const PUBLICATION_URL = 'https://atproto.com'
 const PUBLICATION_NAME = 'AT Protocol'
@@ -43,6 +44,8 @@ async function main() {
     service,
     identifier: ATPROTO_HANDLE,
     password: ATPROTO_APP_PASSWORD,
+    onUpdated: () => {},
+    onDeleted: () => {},
   })
 
   const client = new Client(session)
@@ -53,7 +56,7 @@ async function main() {
   // Check if publication already exists
   console.log('\n🔍 Checking for existing publication...')
 
-  const existingRecords = await client.list(site.standard.publication, { limit: 10 })
+  const existingRecords = await client.list(standard.publication.main, { limit: 10 })
 
   const existing = existingRecords.records.find((r) => r.value.url === PUBLICATION_URL)
   if (existing) {
@@ -68,7 +71,7 @@ async function main() {
   // Create the publication record
   console.log('\n📤 Creating publication record...')
 
-  const result = await client.create(site.standard.publication, {
+  const result = await client.create(standard.publication.main, {
     url: PUBLICATION_URL,
     name: PUBLICATION_NAME,
     description: PUBLICATION_DESCRIPTION,
