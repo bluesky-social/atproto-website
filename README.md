@@ -72,6 +72,9 @@ This will:
 - Save the AT-URI back to the post's MDX file for verification
 - Update the record if it already exists
 
+TODO:
+- Integrate this into the publishing pipeline so all of this happens automatically
+
 #### Verification
 
 The site implements [site.standard verification](https://standard.site/):
