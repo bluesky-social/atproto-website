@@ -28,7 +28,7 @@ function slugify(text) {
 
 function formatDate(date) {
   return date.toLocaleDateString('en-US', {
-    month: 'short',
+    month: 'long',
     day: 'numeric',
     year: 'numeric',
   })
@@ -56,7 +56,9 @@ async function main() {
   const author = await question('Author (AT Protocol Team): ')
   const authorName = author.trim() || 'AT Protocol Team'
 
-  const date = formatDate(new Date())
+  const defaultDate = formatDate(new Date())
+  const dateInput = await question(`Publish date (${defaultDate}): `)
+  const date = dateInput.trim() || defaultDate
 
   rl.close()
 
