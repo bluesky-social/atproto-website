@@ -24,23 +24,23 @@ export function PageSectionsNavigation({
   }
 
   return (
-    <div className="sticky top-4 pt-16">
+    <div className="sticky top-4 hidden pt-16 md:block">
       {sections.map((section) => (
         <div
           key={section.id}
           className={clsx(
             'border-l-2 px-4 py-2',
             section.id === visibleSections[0]
-              ? 'border-slate-900 dark:border-slate-400'
-              : 'border-slate-200 dark:border-slate-700',
+              ? 'border-zinc-900 dark:border-zinc-400'
+              : 'border-zinc-200 dark:border-zinc-700',
           )}
         >
           <a
             className={clsx(
               maxLen > 20 || sections.length > 8 ? 'text-md' : 'text-lg',
               section.id === visibleSections[0]
-                ? 'text-slate-900 dark:text-slate-400'
-                : 'text-slate-500 dark:text-slate-600',
+                ? 'text-zinc-900 dark:text-zinc-300'
+                : 'text-zinc-500 dark:text-zinc-400',
             )}
             href={`#${section.id}`}
           >

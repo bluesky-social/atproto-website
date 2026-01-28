@@ -49,13 +49,10 @@ export function Firehose() {
   return (
     <div className="relative py-12">
       <DotPatternBackground />
-      <div className="relative z-10 mx-auto w-[800px] rounded-sm bg-zinc-900 ring-1 ring-zinc-900/20 dark:ring-zinc-100/15">
-        <div className="flex gap-8 py-8">
-          <div className="relative flex-1">
-            {/* <DotPatternBackground /> */}
-          </div>
-          <div className="w-[420px]">
-            <h3 className="pb-1 text-center text-4xl font-medium">
+      <div className="relative z-10 mx-auto rounded-sm bg-zinc-900 ring-1 ring-zinc-900/20 md:w-full lg:w-[800px] dark:ring-zinc-100/15">
+        <div className="flex justify-center py-8">
+          <div className="max-md:px-6 md:w-[420px]">
+            <h3 className="pb-1 text-center text-2xl font-medium md:text-4xl">
               Public Firehose
             </h3>
             <p className="text-center text-lg text-zinc-400">
@@ -64,19 +61,17 @@ export function Firehose() {
               key required.
             </p>
           </div>
-          <div className="relative flex-1">
-            {/* <DotPatternBackground /> */}
-          </div>
         </div>
         <div
           className={clsx(
             'transition-height overflow-hidden border-t border-zinc-900/20 duration-700 dark:border-zinc-100/15',
-            hasRun ? 'h-[400px]' : 'h-[56px]',
+            hasRun ? 'h-[400px]' : 'h-[72px] md:h-[56px]',
           )}
         >
           <div className="flex justify-between gap-4 px-4 py-4 font-mono">
             <div
               className={clsx(
+                'hidden md:block',
                 active
                   ? 'animate-text bg-gradient-to-r from-yellow-800 to-yellow-400 bg-clip-text text-transparent'
                   : '',
@@ -88,6 +83,7 @@ export function Firehose() {
               onClick={toggle}
               className={clsx(
                 'flex cursor-pointer items-center gap-1 rounded-sm border px-2',
+                'max-md:flex-1 max-md:px-4 max-md:py-2',
                 active
                   ? 'border-yellow-600 bg-yellow-950 text-yellow-400'
                   : 'border-green-600 bg-green-950 text-green-400',

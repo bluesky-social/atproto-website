@@ -2,6 +2,7 @@ import {Container} from "@/components/Container"
 import setstatus from "./set-status.png"
 import pdsls from "./pdsls-status.png"
 import tap from "./tap-status.png"
+import feed from "./feed-status.png"
 
 export const header = {
   title: 'Statusphere Example App Tutorial',
@@ -527,8 +528,198 @@ Restart your app with `pnpm dev`, complete the login flow, and you should find y
 
 ## Part 5: Displaying Handles and Feeds
 
-TK 
+Finally, you'll add functionality to display user handles and a feed of statuses from all users.
+
+First, add some additional imports to `lib/db/queries.ts`:
+
+```typescript
+import { getHandle } from "@atproto/common-web";
+import { getTap } from "@/lib/tap";
+```
+
+Then, add additional functions to fetch account handles and statuses:
+
+```typescript
+export async function getAccountHandle(did: string): Promise<string | null> {
+  const db = getDb();
+  // if we've tracked to the account through Tap and gotten their account info, we'll load from there
+  const account = await db
+    .selectFrom("account")
+    .select("handle")
+    .where("did", "=", did)
+    .executeTakeFirst();
+  if (account) return account.handle;
+  // otherwise we'll resolve the accounts DID through Tap which provides identity caching
+  try {
+    const didDoc = await getTap().resolveDid(did);
+    if (!didDoc) return null;
+    return getHandle(didDoc) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getRecentStatuses(limit = 5) {
+  const db = getDb();
+  return db
+    .selectFrom("status")
+    .innerJoin("account", "status.authorDid", "account.did")
+    .selectAll()
+    .orderBy("createdAt", "desc")
+    .limit(limit)
+    .execute();
+}
+
+export async function getTopStatuses(limit = 10) {
+  const db = getDb();
+  return db
+    .selectFrom("status")
+    .select(["status", db.fn.count("uri").as("count")])
+    .where("current", "=", 1)
+    .groupBy("status")
+    .orderBy("count", "desc")
+    .limit(limit)
+    .execute();
+}
+```
+
+Next, update `app/page.tsx` to display the full feed with top statuses, handles, and timestamps:
+
+```tsx
+import { getSession } from "@/lib/auth/session";
+import {
+  getAccountStatus,
+  getRecentStatuses,
+  getTopStatuses,
+  getAccountHandle,
+} from "@/lib/db/queries";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+
+export default async function Home() {
+  const session = await getSession();
+  const [statuses, topStatuses, accountStatus, accountHandle] =
+    await Promise.all([
+      getRecentStatuses(),
+      getTopStatuses(),
+      session ? getAccountStatus(session.did) : null,
+      session ? getAccountHandle(session.did) : null,
+    ]);
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            Statusphere
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Set your status on the Atmosphere
+          </p>
+        </div>
+
+        {session ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Signed in as @{accountHandle ?? session.did}
+              </p>
+              <LogoutButton />
+            </div>
+            <StatusPicker currentStatus={accountStatus?.status} />
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <LoginForm />
+          </div>
+        )}
+
+        {topStatuses.length > 0 && (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+              Top Statuses
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {topStatuses.map((s) => (
+                <span
+                  key={s.status}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm"
+                >
+                  <span className="text-lg">{s.status}</span>
+                  <span className="text-zinc-500 dark:text-zinc-400">
+                    {String(s.count)}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+            Recent
+          </h3>
+          {statuses.length === 0 ? (
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+              No statuses yet. Be the first!
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {statuses.map((s) => (
+                <li key={s.uri} className="flex items-center gap-3">
+                  <span className="text-2xl">{s.status}</span>
+                  <span className="text-zinc-600 dark:text-zinc-400 text-sm">
+                    @{s.handle}
+                  </span>
+                  <span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
+                    {timeAgo(s.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function timeAgo(dateString: string): string {
+  const now = Date.now();
+  const then = new Date(dateString).getTime();
+  const seconds = Math.floor((now - then) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `${days}d`;
+}
+```
+
+Now logged-in users will see "Signed in as @theirhandle" instead of just "Signed in", along with a feed of recent statuses from all users, and a "Top Statuses" section showing the most popular current statuses.
+
+You can stop and restart your app with `pnpm dev` again.
+
+One last thing — remember, you only added a single data source to `tap` earlier. To see statuses from across the entire network, stop and re-run `tap` with the `--signal-collection` flag:
+
+```bash
+go run ./cmd/tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  --collection-filters=xyz.statusphere.status \
+  --signal-collection=xyz.statusphere.status
+```
+
+... and you'll start seeing statuses from other users on the network!
+
+<Container>
+  <Image src={feed} alt="" className="w-full max-w-md mx-auto" />
+</Container>
 
 ## Conclusion
 
-TK
+You've now built a complete ATProto app that uses OAuth to sign in, a custom Lexicon to define status records, and Tap to synchronize records in real-time.
+
+This gives you all the tools you need to continue building on AT Protocol. You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!

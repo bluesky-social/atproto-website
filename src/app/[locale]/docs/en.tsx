@@ -8,7 +8,7 @@ export const header = {
     'Create high-scale social applications that are interoperable by default.',
   primaryCTA: {
     label: 'Intro',
-    href: '/TODO',
+    href: '/guides/understanding-atproto',
   },
   secondaryCTA: {
     label: 'SDKs',
@@ -18,44 +18,44 @@ export const header = {
 
 export default function () {
   return (
-    <div className="flex max-w-6xl flex-col gap-16 px-16 pb-16 pt-16">
+    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-16 xl:max-w-6xl xl:px-16">
       <Usecases />
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <NavItem
           icon="key"
           title="Auth"
           description="Login and permissions"
-          href="/TODO"
+          href="/guides/auth"
         />
         <NavItem
           icon="database"
           title="Reads / Writes"
           description="User data repos"
-          href="/TODO"
+          href="/guides/reads-and-writes"
         />
         <NavItem
           icon="stream"
           title="Sync"
           description="Stream user activity"
-          href="/TODO"
+          href="/guides/sync"
         />
         <NavItem
           icon="puzzle-piece"
           title="Lexicon"
           description="Record and API schemas"
-          href="/TODO"
+          href="/guides/lexicon"
         />
         <NavItem
           icon="media"
           title="Images & Videos"
           description="Solve your CDN"
-          href="/TODO"
+          href="/guides/images-and-video"
         />
         <NavItem
           icon="flag"
           title="Moderation"
           description="Keep things chill"
-          href="/TODO"
+          href="/guides/moderation"
         />
       </div>
     </div>
@@ -76,7 +76,7 @@ function NavItem({
   return (
     <Link className="group flex flex-row items-center gap-6" href={href}>
       <div>
-        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/7.5 dark:group-hover:ring-zinc-100/25">
+        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/15 dark:group-hover:ring-zinc-100/25">
           <Icon
             icon={icon}
             className="size-8 fill-none stroke-current"

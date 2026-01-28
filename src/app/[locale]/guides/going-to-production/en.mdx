@@ -60,6 +60,8 @@ By default, our PDS install script will set up a single Node application process
 
 This allows your rate limiting to scale gracefully.
 
+If you are running multiple processes in parallel, you may also want to leverage [sidecar containers](https://litestream.io/guides/docker/#why-sidecar-containers-work) for your SQLite databases.
+
 ## Moderation
 
 Moderation is almost always performed at the PDS level. However, if you are also running a Relay, you should be aware that the Relay admin web interface has forms for performing account-level and PDS-level actions if needed. There are also some moderation-related PDS endpoints not exposed via XRPC, which our [goat](https://github.com/bluesky-social/goat) CLI tool can interact with. Refer to [goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go) for examples.

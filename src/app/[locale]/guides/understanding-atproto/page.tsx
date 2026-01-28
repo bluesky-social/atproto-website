@@ -1,9 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Tutorials - AT Protocol Docs',
-  description:
-    'These tutorials will guide you through building applications using the AT Protocol.',
+  title: 'Understanding ATProto - AT Protocol Docs',
+  description: 'Dive deeper into the concepts behind the AT Protocol.',
 }
 
 export default async function HomePage({ params }: any) {

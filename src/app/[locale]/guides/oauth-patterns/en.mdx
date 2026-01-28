@@ -1,4 +1,5 @@
 import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
 
 export const header = {
   title: 'OAuth Patterns',
@@ -20,13 +21,16 @@ export const header = {
 
 These simple example apps demonstrate usage of their respective SDKs.
 
-| Example App | Language | SDK | Architecture | Confidential Client? | [Localhost development client ID?](https://atproto.com/specs/oauth#localhost-client-development) |
-| --- | --- | --- | --- | --- | --- |
-| [cookbook/react-native-oauth](https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme) | TypeScript | @atproto/oauth-client-expo | Mobile App (no backend) | No | No (requires hosted client metadata) |
-| [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) | JavaScript | @atproto/oauth-client-browser | Web SPA (no backend) | No | Optionally |
-| [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) | Go | indigo | Web BFF | Optionally | Optionally |
-| [cookbook/go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme) | Go | indigo | Native CLI | No | No (requires hosted client metadata) |
-| [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) | Python | None | Web BFF | Optionally | Optionally |
+<ResponsiveTable
+  columns={[{label: 'Example App'}, {label: 'Language'}, {label: 'SDK'}, {label: 'Architecture'}, {label: 'Confidential Client?'}, {label: 'Localhost development client ID?', href: '/specs/oauth#localhost-client-development'}]}
+  rows={[
+    [{label: 'cookbook/react-native-oauth', href:' https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-expo'}, {label: 'Mobile App (no backend)'}, {label: 'No'}, {label: 'No (requires hosted client metadata)'},],
+    [{label: 'cookbook/vanillajs-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme' }, {label: 'JavaScript'}, {label: '@atproto/oauth-client-browser'}, {label: 'Web SPA (no backend)'}, {label: 'No'}, {label: 'Optionally'},],
+    [{label: 'cookbook/go-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: 'Web BFF'}, {label: 'Optionally'}, {label: 'Optionally'},],
+    [{label: 'cookbook/go-oauth-cli-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: 'Native CLI'}, {label: 'No'}, {label: 'No (requires hosted client metadata)'},],
+    [{label: 'cookbook/python-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme' }, {label: 'Python'}, {label: 'None'}, {label: 'Web BFF'}, {label: 'Optionally'}, {label: 'Optionally'},]
+  ]}
+/>
 
 <Note>
 The Python example does not use an SDK! It may be useful as reference when building an OAuth SDK from scratch, alongside the advanced [OAuth client implementation guide](https://docs.bsky.app/docs/advanced-guides/oauth-client)

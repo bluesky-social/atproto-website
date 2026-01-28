@@ -22,7 +22,7 @@ const variantStyles = {
   filled:
     'rounded-md bg-zinc-900 py-1 px-3 text-white hover:bg-zinc-700 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-400',
   outline:
-    'rounded-md bg-white py-1 px-3 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white',
+    'rounded-md bg-white dark:bg-zinc-900 py-1 px-3 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-300 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white',
   text: 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-500',
 }
 

@@ -208,18 +208,39 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: 'About',
+    title: 'Get Started',
     links: [
-      { title: 'Home', icon: 'home', href: '/' },
-      { title: 'Blog', icon: 'newspaper', href: '/blog' },
+      {
+        title: 'Tutorials',
+        icon: 'academic-cap',
+        href: '/guides/tutorials',
+        links: [
+          {
+            title: 'Statusphere Example App',
+            href: '/guides/statusphere-tutorial',
+          },
+          { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
+        ],
+      },
+      {
+        title: 'Understand Atproto',
+        icon: 'question',
+        href: '/guides/understanding-atproto',
+        links: [
+          {
+            title: 'As a distributed system',
+            href: '/articles/atproto-for-distsys-engineers',
+          },
+          { title: 'Atproto Ethos', href: '/articles/atproto-ethos' },
+          { title: 'FAQ', href: '/guides/faq' },
+        ],
+      },
       { title: 'SDKs', icon: 'cube', href: '/sdks' },
       {
         title: 'Cookbook',
         icon: 'book',
         href: 'https://github.com/bluesky-social/cookbook/',
       },
-      { title: 'FAQ', icon: 'question', href: '/guides/faq' },
-      { title: 'ATProto Ethos', href: '/articles/atproto-ethos' },
     ],
   },
   {
@@ -291,30 +312,31 @@ export const navigation: Array<NavGroup> = [
           { title: 'Using Ozone', href: '/guides/using-ozone' },
         ],
       },
-      {
-        title: 'Tutorials',
-        icon: 'academic-cap',
-        href: '/guides/tutorials',
-        links: [
-          { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
-          {
-            title: 'Statusphere Example App',
-            href: '/guides/statusphere-tutorial',
-          },
-        ],
-      },
     ],
   },
   {
     title: 'Deploy',
     links: [
-      { title: 'The AT Stack', href: '/guides/the-at-stack' },
-      { title: 'Self-hosting', href: '/guides/self-hosting' },
-      { title: 'Going to production', href: '/guides/going-to-production' },
-      { title: 'Account migration', href: '/guides/account-migration' },
+      {
+        title: 'The AT Stack',
+        href: '/guides/the-at-stack',
+        icon: 'rectangle-group',
+      },
+      { title: 'Self-hosting', href: '/guides/self-hosting', icon: 'cloud' },
+      {
+        title: 'Going to production',
+        href: '/guides/going-to-production',
+        icon: 'briefcase',
+      },
+      {
+        title: 'Account migration',
+        href: '/guides/account-migration',
+        icon: 'paper-airplane',
+      },
       {
         title: 'Deploy recipes',
         href: 'https://github.com/bluesky-social/deploy-recipes/',
+        icon: 'book',
       },
     ],
   },
@@ -361,13 +383,12 @@ export const navigation: Array<NavGroup> = [
   },
 ]
 
+export const allPages = flattenNavigation()
+
 export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (
     <nav {...props}>
       <ul role="list">
-        <TopLevelNavItem href="/TODO">API</TopLevelNavItem>
-        <TopLevelNavItem href="/TODO">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="/TODO">Support</TopLevelNavItem>
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
             key={group.title}
@@ -378,4 +399,26 @@ export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
       </ul>
     </nav>
   )
+}
+
+function flattenNavigation(): NavLink[] {
+  const pages: NavLink[] = []
+  for (const group of navigation) {
+    for (const link of eachLink(group)) {
+      pages.push(link)
+    }
+  }
+  return pages
+}
+
+function* eachLink(node: NavGroup | NavLink): Generator<NavLink> {
+  if ('href' in node && node.href.startsWith('/')) {
+    yield node
+  }
+  if (!node.links) {
+    return
+  }
+  for (const child of node.links) {
+    yield* eachLink(child)
+  }
 }

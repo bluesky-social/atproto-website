@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/Button'
-import { navigation } from '@/components/Navigation'
+import { allPages } from '@/components/Navigation'
 import clsx from 'clsx'
 
 function PageLink({
@@ -40,7 +40,6 @@ function PageLink({
 
 function PageNavigation() {
   let pathname = usePathname()
-  let allPages = navigation.flatMap((group) => group.links)
   let currentPageIndex = allPages.findIndex((page) => page.href === pathname)
 
   if (currentPageIndex === -1) {
@@ -148,8 +147,10 @@ export function Footer({ minimal }: { minimal?: boolean }) {
   return (
     <footer
       className={clsx(
-        'mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl',
-        minimal ? 'max-w-6xl px-8 lg:max-w-7xl' : 'max-w-2xl lg:max-w-5xl',
+        'w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl',
+        minimal
+          ? 'mx-auto max-w-6xl px-8 lg:max-w-7xl'
+          : 'max-w-2xl px-4 md:px-16 lg:max-w-5xl',
       )}
     >
       {!minimal && <PageNavigation />}

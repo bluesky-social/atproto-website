@@ -19,7 +19,9 @@ export const a = function ExternalAwareLink({
   const isExternal = href?.startsWith('http://') || href?.startsWith('https://')
 
   if (isExternal) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    )
   }
 
   return <Link href={href ?? ''} {...props} />
@@ -30,7 +32,7 @@ export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <article className="flex h-full flex-col pb-24 pt-16">
+    <article className="flex h-full flex-col pb-24 pt-8 md:pt-16">
       <Prose className="flex-auto">{children}</Prose>
       {/* <footer className="mx-auto mt-16 w-full max-w-2xl lg:max-w-5xl">
         <Feedback /> TODO
@@ -205,7 +207,9 @@ export function TabGroup({
   }
 
   return (
-    <TabGroupContext.Provider value={{ selectedValue, setSelectedValue, groupId }}>
+    <TabGroupContext.Provider
+      value={{ selectedValue, setSelectedValue, groupId }}
+    >
       <div className="my-6">{children}</div>
     </TabGroupContext.Provider>
   )
@@ -245,7 +249,7 @@ export function Tab({
         '-mb-px border-b-2',
         isSelected
           ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
-          : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+          : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
       )}
     >
       {children}
