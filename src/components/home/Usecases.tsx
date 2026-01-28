@@ -9,7 +9,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
     <div
       className={`flex flex-col gap-4 ${wide ? 'md:flex-row' : 'xl:flex-row'}`}
     >
-      <Card className="flex-1" href="/TODO">
+      <Card className="flex-1" href="/guides/statusphere-tutorial">
         <DotPatternContainer className="px-6 py-4" fade>
           <WindowIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
           <CardTitle>Create an App</CardTitle>

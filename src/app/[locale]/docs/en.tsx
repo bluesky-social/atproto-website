@@ -25,37 +25,37 @@ export default function () {
           icon="key"
           title="Auth"
           description="Login and permissions"
-          href="/TODO"
+          href="/guides/auth"
         />
         <NavItem
           icon="database"
           title="Reads / Writes"
           description="User data repos"
-          href="/TODO"
+          href="/guides/reads-and-writes"
         />
         <NavItem
           icon="stream"
           title="Sync"
           description="Stream user activity"
-          href="/TODO"
+          href="/guides/sync"
         />
         <NavItem
           icon="puzzle-piece"
           title="Lexicon"
           description="Record and API schemas"
-          href="/TODO"
+          href="/guides/lexicon"
         />
         <NavItem
           icon="media"
           title="Images & Videos"
           description="Solve your CDN"
-          href="/TODO"
+          href="/guides/images-and-video"
         />
         <NavItem
           icon="flag"
           title="Moderation"
           description="Keep things chill"
-          href="/TODO"
+          href="/guides/moderation"
         />
       </div>
     </div>
