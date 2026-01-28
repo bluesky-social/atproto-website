@@ -20,7 +20,7 @@ import Link from 'next/link'
  *    export const header = {
  *      title: 'Your Post Title',
  *      description: 'Your post description',
- *      date: 'Jan 20, 2026',
+ *      date: 'January 20, 2026',
  *    }
  *
  *    # Your Post Title

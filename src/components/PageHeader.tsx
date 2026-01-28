@@ -37,49 +37,39 @@ export function PageHeader({
         <h1 className="m-0 font-mono text-4xl font-medium md:text-5xl">
           {title}
         </h1>
-        {description || date || primaryCTA || secondaryCTA ? (
-          <div className="mt-4 flex flex-col justify-between gap-12 max-md:gap-4 md:flex-row md:items-center">
-            <div>
-              {description && (
-                <div className="text-lg text-zinc-600 dark:text-zinc-400">
-                  {description}
-                </div>
-              )}
-            </div>
-            {date || primaryCTA || secondaryCTA ? (
-              <div className="flex gap-2 max-md:w-full">
-                {date && (
-                  <span className="text-nowrap font-mono text-lg text-zinc-600 dark:text-zinc-400">
-                    {date}
-                  </span>
-                )}
-                {primaryCTA && (
-                  <Button
-                    href={primaryCTA.href}
-                    variant="primary"
-                    size="large"
-                    className="max-md:flex-1"
-                  >
-                    {primaryCTA.label}
-                  </Button>
-                )}
-                {secondaryCTA && (
-                  <Button
-                    href={secondaryCTA.href}
-                    variant="outline"
-                    size="large"
-                    className="max-md:flex-1"
-                  >
-                    {secondaryCTA.label}
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <></>
+        {description && (
+          <div className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+            {description}
+          </div>
+        )}
+        {date && (
+          <div className="mt-4 font-mono text-lg text-zinc-600 dark:text-zinc-400">
+            {date}
+          </div>
+        )}
+        {(primaryCTA || secondaryCTA) && (
+          <div className="mt-4 flex gap-2 max-md:w-full">
+            {primaryCTA && (
+              <Button
+                href={primaryCTA.href}
+                variant="primary"
+                size="large"
+                className="max-md:flex-1"
+              >
+                {primaryCTA.label}
+              </Button>
+            )}
+            {secondaryCTA && (
+              <Button
+                href={secondaryCTA.href}
+                variant="outline"
+                size="large"
+                className="max-md:flex-1"
+              >
+                {secondaryCTA.label}
+              </Button>
             )}
           </div>
-        ) : (
-          <></>
         )}
       </div>
     </div>
