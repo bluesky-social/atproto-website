@@ -216,8 +216,16 @@ export const navigation: Array<NavGroup> = [
         href: '/guides/tutorials',
         links: [
           {
-            title: 'Statusphere Example App',
+            title: 'Create an Application',
             href: '/guides/statusphere-tutorial',
+          },
+          {
+            title: 'Build a Social Bot',
+            href: '/guides/bot-tutorial',
+          },
+          {
+            title: 'Write a Custom Feed',
+            href: '/guides/custom-feed-tutorial',
           },
           { title: 'OAuth with NextJS', href: '/guides/oauth-tutorial' },
         ],

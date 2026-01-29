@@ -19,7 +19,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
           <CardCTA>LEARN MORE</CardCTA>
         </DotPatternContainer>
       </Card>
-      <Card className="flex-1" href="/TODO">
+      <Card className="flex-1" href="/guides/bot-tutorial">
         <DotPatternContainer className="px-6 py-4" fade>
           <UserIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
           <CardTitle>Build a Bot</CardTitle>
@@ -30,7 +30,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
           <CardCTA>LEARN MORE</CardCTA>
         </DotPatternContainer>
       </Card>
-      <Card className="flex-1" href="/TODO">
+      <Card className="flex-1" href="/guides/custom-feed-tutorial">
         <DotPatternContainer className="px-6 py-4" fade>
           <SparklesIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
           <CardTitle>Write an Algorithm</CardTitle>
