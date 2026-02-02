@@ -19,7 +19,7 @@ The empty blob (zero bytes) is valid in general, though it may be disallowed by 
 Currently, the only "blessed" CID type for blobs is similar to that for repository records, but with the `raw` multicodec:
 
 - CIDv1
-- Multibase: binary serialization within DAG-CBOR (or `base32` for JSON mappings)
+- Multibase: binary serialization within CBOR (or `base32` for JSON mappings)
 - Multicodec: `raw` (0x55)
 - Multihash: `sha-256` with 256 bits (0x12)
 
