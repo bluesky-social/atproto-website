@@ -19,6 +19,9 @@ import * as path from 'path'
 import { fileURLToPath } from 'url'
 import { Client } from '@atproto/lex'
 import { PasswordSession } from '@atproto/lex-password-session'
+import * as acorn from 'acorn'
+import { remark } from 'remark'
+import strip from 'strip-markdown'
 import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
 
@@ -27,45 +30,116 @@ const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
 const SITE_URL = 'https://atproto.com'
 
 /**
- * Parse the MDX file to extract header metadata and content
+ * Extract value from an AST Literal node
  */
-function parseMdxFile(content) {
-  // Match the header export: export const header = { ... }
-  const headerMatch = content.match(
-    /export\s+const\s+header\s*=\s*\{([^}]+)\}/s
-  )
+function extractLiteralValue(node) {
+  if (!node) return undefined
+  if (node.type === 'Literal') {
+    return node.value
+  }
+  if (node.type === 'TemplateLiteral' && node.quasis.length === 1) {
+    return node.quasis[0].value.cooked
+  }
+  return undefined
+}
 
-  if (!headerMatch) {
+/**
+ * Parse the header export using acorn AST parser
+ */
+function parseHeaderExport(content) {
+  // Find the export statement boundaries
+  const exportMatch = content.match(/export\s+const\s+header\s*=\s*\{/)
+  if (!exportMatch) {
     throw new Error('Could not find header export in MDX file')
   }
 
-  // Parse the header object (simple key-value extraction)
-  const headerStr = headerMatch[1]
+  const startIndex = exportMatch.index
+
+  // Find the closing brace by tracking brace depth
+  let braceDepth = 0
+  let inString = false
+  let stringChar = null
+  let endIndex = startIndex
+
+  for (let i = startIndex; i < content.length; i++) {
+    const char = content[i]
+    const prevChar = i > 0 ? content[i - 1] : ''
+
+    // Handle string boundaries
+    if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+      if (!inString) {
+        inString = true
+        stringChar = char
+      } else if (char === stringChar) {
+        inString = false
+        stringChar = null
+      }
+      continue
+    }
+
+    if (inString) continue
+
+    if (char === '{') {
+      braceDepth++
+    } else if (char === '}') {
+      braceDepth--
+      if (braceDepth === 0) {
+        endIndex = i + 1
+        break
+      }
+    }
+  }
+
+  // Extract just the object literal part for parsing
+  const objectStart = content.indexOf('{', startIndex)
+  const objectStr = content.slice(objectStart, endIndex)
+
+  // Parse as a JavaScript expression
+  let ast
+  try {
+    ast = acorn.parse(`(${objectStr})`, { ecmaVersion: 2020 })
+  } catch (err) {
+    throw new Error(`Failed to parse header object: ${err.message}`)
+  }
+
+  // Navigate to the object expression
+  const objectExpr = ast.body[0]?.expression
+  if (!objectExpr || objectExpr.type !== 'ObjectExpression') {
+    throw new Error('Header export is not a valid object')
+  }
+
+  // Extract properties into a plain object
   const header = {}
+  for (const prop of objectExpr.properties) {
+    if (prop.type !== 'Property') continue
 
-  // Extract title
-  const titleMatch = headerStr.match(/title:\s*['"](.+?)['"]/s)
-  if (titleMatch) header.title = titleMatch[1]
+    const key = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value
+    const value = extractLiteralValue(prop.value)
 
-  // Extract description
-  const descMatch = headerStr.match(/description:\s*['"](.+?)['"]/s)
-  if (descMatch) header.description = descMatch[1]
+    if (value !== undefined) {
+      header[key] = value
+    }
+  }
 
-  // Extract date
-  const dateMatch = headerStr.match(/date:\s*['"](.+?)['"]/s)
-  if (dateMatch) header.date = dateMatch[1]
+  return { header, headerEndIndex: endIndex }
+}
+
+/**
+ * Parse the MDX file to extract header metadata and content
+ */
+async function parseMdxFile(content) {
+  // Parse the header using AST
+  const { header, headerEndIndex } = parseHeaderExport(content)
 
   // Extract markdown content (everything after the header export)
-  const contentStart = content.indexOf(headerMatch[0]) + headerMatch[0].length
-  const markdownContent = content.slice(contentStart).trim()
+  const markdownContent = content.slice(headerEndIndex).trim()
 
-  // Create plain text version (strip markdown syntax)
-  const textContent = markdownContent
-    .replace(/^#+\s+/gm, '') // Remove headers
-    .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
-    .replace(/\*(.+?)\*/g, '$1') // Remove italic
-    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links, keep text
-    .replace(/^-\s+/gm, '• ') // Convert list markers
+  // Strip markdown to plain text using remark
+  const textResult = await remark()
+    .use(strip)
+    .process(markdownContent)
+
+  const textContent = String(textResult)
     .replace(/\n{3,}/g, '\n\n') // Collapse multiple newlines
     .trim()
 
@@ -118,7 +192,7 @@ async function main() {
   console.log(`\n📝 Publishing post: ${slug}\n`)
 
   const mdxContent = fs.readFileSync(mdxPath, 'utf-8')
-  const { header, markdownContent, textContent } = parseMdxFile(mdxContent)
+  const { header, markdownContent, textContent } = await parseMdxFile(mdxContent)
 
   console.log(`  Title: ${header.title}`)
   console.log(`  Date: ${header.date}`)
