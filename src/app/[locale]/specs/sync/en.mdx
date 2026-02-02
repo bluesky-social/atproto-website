@@ -89,16 +89,36 @@ Event Fields:
 - `rev` (string with TID syntax, required): the revision of the commit. Must match the `rev` in the commit block itself.
 - `since` (string with TID syntax, nullable): indicates the `rev` of a preceding commit, which the the repo diff contains differences from
 - `commit` (cid-link, required): CID of the commit object (in `blocks`)
-- `tooBig` (boolean, required): if true, indicates that the repo diff was too large, and that `blocks`, `ops`, and complete `blobs` are not all included
-- `blocks` (bytes, required): CAR "slice" for the corresponding repo diff. The commit object must always be included.
+- `tooBig` (boolean, required): this field is deprecated, but still technically required. Producers should always set it to `false`, and consumers should ignore it.
+- `blocks` (bytes, required): CAR "slice" for the corresponding repo diff. The commit object must always be included, and the CAR header must indicate the commit block as the first "root".
 - `ops` (array of objects, required): list of record-level operations in this commit: specific records created, updated, deleted
-- `blobs` (array of cid-link, required): set of new blobs (by CID) referenced by records in this commit
+- `blobs` (array of cid-link, required): this field is deprecated, but still technically required. Producers should set it to an empty array, and consumers should ignore it.
+- `prevData` (cid-link, semi-optional): the root CID of the MST tree for the last commit of this repository. Similar to the "since" field, which indicates the previous "rev". Effectively required for MST inversion, despite being marked "optional".
 
-Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since`, `ops`, `blobs`, and `tooBig` fields are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
+`ops` object fields:
 
-If `since` is not included, the commit should include the full repo tree, or set the `tooBig` flag.
+- `action` (string, required): indicates the operation type. One of: 'create', 'update', or 'delete'.
+- `path` (string, required): record path within the repository (collection and record key)
+- `cid` (cid-link, required, nullable): indicates new version of record, or `null` if record has been deleted
+- `prev` (cid-link, optional): indicates previous version of record (for 'update' and 'delete'), or not defined (for 'create')
 
-If the `tooBig` flag is set, then the amount of updated data was too much to be serialized in a single stream event message. Downstream services which want to maintain complete synchronized copies for the repo need to fetch the diff separately, as discussed below.
+Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since` and `ops` fields are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
+
+### `#sync` Events
+
+This event asserts the current status of an account's repository. This may be a confirmation or clarification of the state (if nothing changed), or may reset the repository to a new state.
+
+Event Fields:
+
+- `seq` (integer, required): same for all event types
+- `did` (string with DID syntax, required): same for all event types
+- `time` (string with datetime syntax, required): same for all event types
+- `rev` (string with TID syntax, required): the revision of the commit. Must match the `rev` in the commit block itself.
+- `blocks` (bytes, required): CAR slice containing the current commit block. The CAR header must indicate the commit block as the first "root".
+
+Sync events are broadcast when the account repository state has been reset to a new state, or in situations where there might be ambiguity about the current state of the repository. For example, a `#sync` event could be emitted for an account reactivating after data corruption.
+
+Note that the repository *contents* are not included in the sync event: the `blocks` field generally contains only the repo commit object. Downstream services would need to fetch the full repo CAR file to re-synchronize.
 
 ### Firehose Validation Best Practices
 
@@ -110,14 +130,13 @@ Here is a summary of validation rules and behaviors:
 - services which subscribe directly to PDS instances should keep track of which PDS is authoritative for each DID. They should remember the host each subscription (WebSocket) is connected to, and reject `#commit` events for accounts if they come from a stream which does not correspond to the current account for that DID
 - services should track account hosting status for each DID, and ignore `#commit` events for events which are not `active`
 - services should verify commit signatures for each `#commit` event, using the current identity data. If the signature initially fails to verify, the service should refresh the identity metadata in case it had recently changed. Events with conclusively invalid signatures should be rejected.
-- services should reject any event messages which exceed reasonable limits. A reasonable upper bound for producers is 5 MBytes (for any event stream message type). The `subscribeRepos` Lexicon also limits `blocks` to one million bytes, and `ops` to 200 entries. Commits with too much data must use the `tooBig` mechanism, though such commits should generally be avoided in the first place by breaking them up in to multiple smaller commits.
+- services should reject any event messages which exceed reasonable limits. A reasonable upper bound for producers is 5 MBytes (for any event stream message type). The `subscribeRepos` Lexicon also limits `blocks` to one million bytes, and `ops` to 200 entries.
 - services should verify that repository data structures are valid against the specification. Missing fields, incorrect MST structure, or other protocol-layer violations should result in events being rejected.
-- services may apply rate-limits to identity, account, and commit events, and suspend accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, `tooBig` events, missing or out-of-order commits, etc.
+- services may apply rate-limits to identity, account, commit, and sync events, and suspend accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, missing or out-of-order commits, etc.
 - services should ignore commit events with a `rev` lower or equal to the most recent processed `rev` for that DID, and should reject commit events with a `rev` corresponding to a future timestamp (beyond a clock drift window of a few minutes)
-- services should check the `since` value in commit events, and if it is not consistent with the previous seen `rev` for that DID (see discussion in "Reliable Synchronization"), mark the repo as out-of-sync (similar to a `tooBig` commit event)
+- services should check the `since` value in commit events, and if it is not consistent with the previous seen `rev` for that DID (see discussion in "Reliable Synchronization"), mark the repo as out-of-sync
 - data limits on records specifically should be verified. Events containing corrupt or entirely invalid records may be rejected. for example, a record not being CBOR at all, or exceeding normal data size limits.
 - more subtle data validation of records may be enforced, or may be ignored, depending on the service. For example, unsupported CID hash types embedded in records should probably be ignored by Relays (even if they violate the atproto data model), but may result in the record or commit event being rejected by an AppView
-- mirroring services, which retain a full copy of repository data, should verify that commit diffs leave the MST tree in a complete and valid state (eg, no missing records, no invalid MST nodes, commit CID would be reproducible if the MST structure was re-generated from scratch)
 - Relays (specifically) should not validate records against Lexicons
 
 ## Reliable Synchronization
@@ -132,9 +151,9 @@ Services should generally maintain a few pieces of state for all accounts they a
 
 Identity caches should be purged any time an `#identity` event is received. Additionally, identity resolution should be refreshed if a commit signature fails to verify, in case the signing key was updated but the identity cache has not been updated yet.
 
-When `tooBig` events are emitted on the firehose, downstream services will need to fetch the diff out-of-band. This usually means an API request to the `com.atproto.sync.getRepo` endpoint on the current PDS host for the account, with the `since` field included. The `since` value should be the most recently processed `rev` value for the account, which may or may not match the `since` field in the commit event message.
+When `#sync` events are emitted on the firehose, downstream services may need to make a separate HTTP request to fetch the repo CAR file. This usually means an API request to the `com.atproto.sync.getRepo` endpoint on the current PDS host for the account, with the `since` field included. The `since` value should be the most recently processed `rev` value for the account, which may or may not match the `since` field in the commit event message.
 
-If a `#commit` is received with a `since` that does not match the most recently processed `rev` for the account, and is “later” (higher value) than the most recent commit `rev` the service has processed for that account, the service may need to do the same kind of out-of-band fetch as for a `tooBig` event.
+If a `#commit` is received with a `since` that does not match the most recently processed `rev` for the account, and is “later” (higher value) than the most recent commit `rev` the service has processed for that account, the service may need to do the same kind of out-of-band fetch as for a `#sync` event.
 
 Services should keep track of the `seq` number of their upstream subscriptions. This should be stored separately per-upstream, even if there is only a single Relay connection, in case a different Relay is subscribed to in the future (which will have different `seq` numbers).
 

@@ -14,7 +14,7 @@ The repository data structure is content-addressed (a [Merkle-tree](https://en.w
 
 Repositories and their contents are canonically stored in [DRISL](https://dasl.ing/drisl.html) CBOR, as a graph of data objects referencing each other by content hash (CID Links). Large binary blobs are not stored directly in repositories, though they are referenced by hash ([CID](https://github.com/multiformats/cid)). This includes images and other media objects. Repositories can be exported as [CAR](https://dasl.ing) files for offline backup, account migration, or other purposes. {{ className: 'lead' }}
 
-In the atproto federation architecture, the authoritative location of an account's repository is the associated Personal Data Server (PDS). An account's current PDS location is authoritatively indicated in the DID Document. {{ className: 'lead' }}
+In the atproto federation architecture, the authoritative location of an account's repository is the associated Personal Data Server (PDS). An account's current PDS location is declared in the DID Document. {{ className: 'lead' }}
 
 In real-world use, it is expected that individual repositories will contain anywhere from dozens to millions of records. {{ className: 'lead' }}
 
