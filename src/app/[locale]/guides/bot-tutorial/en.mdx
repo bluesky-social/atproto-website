@@ -1,0 +1,119 @@
+export const header = {
+  title: 'Build a Social bot',
+  description: 'Let\'s post a smiley face once every three hours.',
+}
+
+Bots are accounts on the network that post automatically. Popular ones include bots that post the magnitude of recent earthquakes, photos from an archive on a regular schedule, etc.
+
+Let's create a bot that posts a smiley emoji once every three hours.
+
+## Getting started
+
+Create your project's work directory.
+
+```bash
+mkdir my-bot
+cd my-bot
+npm init -y
+```
+
+Install some dependencies.
+
+```bash
+npm i -g typescript
+npm i -g tsx
+npm i dotenv cron @atproto/lex @atproto/lex-password-session
+```
+
+## Install the lexicons
+
+Well be creating a "Bluesky post" which has the [app.bsky.feed.post](https://pdsls.dev/at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juc4thkx452i#schema) schema. Let's install the schema and all of its dependencies.
+
+```bash
+npx lex install app.bsky.feed.post
+```
+
+You can see the lexicon definition in the `lexicons/` folder.
+
+```bash
+less lexicons/app/bsky/feed/post.json
+```
+
+Now let's build our installed lexicons into usable code.
+
+```
+npx lex build
+```
+
+The generated code will live in `src/lexicons`.
+
+<Note>
+  [Learn more about Lexicon here.](/guides/lexicon)
+</Note>
+
+## Create the Script
+
+The below script will post 🙂 every three hours.
+
+```ts
+import { Client } from '@atproto/lex'
+import { PasswordSession } from '@atproto/lex-password-session'
+import * as dotenv from 'dotenv'
+import { CronJob } from 'cron'
+import * as process from 'process'
+import * as app from './src/lexicons/app'
+
+dotenv.config()
+
+// Create a session
+const service = process.env.BOT_PDS!
+const identifier = process.env.BOT_HANDLE!
+const password = process.env.BOT_PASSWORD!
+const session = await PasswordSession.create({
+  service, // eg 'https://bsky.social'
+  identifier, // eg 'alice.bsky.social'
+  password,
+  onUpdated() {},
+  onDeleted() {},
+})
+
+// Posting logic
+async function makePost() {
+  const client = new Client(session)
+  await client.create(app.bsky.feed.post, {
+    text: '🙂',
+    createdAt: new Date().toISOString(),
+  })
+  console.log('Just posted!')
+}
+
+// Run this on a cron job
+const scheduleExpression = '0 */3 * * *' // Run once every three hours in prod
+const job = new CronJob(scheduleExpression, makePost)
+job.start()
+
+// Fire one off as a start
+makePost()
+```
+
+## Test your Bot
+
+Save your bot's host (PDS), username, and password to a `.env` file.
+
+```bash
+BOT_PDS= # eg 'https://bsky.social'
+BOT_HANDLE= # eg 'alice.bsky.social'
+BOT_PASSWORD=
+```
+
+Now you can test the bot using `tsx`.
+
+```bash
+tsx index.ts
+```
+
+You can deploy a simple bot for no or low cost on a variety of platforms, such as [Heroku](https://www.heroku.com/) or [Fly.io](http://fly.io/).
+
+## Rate Limits & Respecting Other Users
+
+Keep in mind that bots should respect the network's rate limits. For instance, [Bluesky has its own set of rate limits for data it ingests.](https://docs.bsky.app/docs/advanced-guides/rate-limits). Automated bots that post to an account on an regular interval are welcome. If your bot interacts with other users, please only interact (like, repost, reply, etc.) if the user has tagged the bot account. It must be an opt-in interaction, or else your bot may be taken for spam.
