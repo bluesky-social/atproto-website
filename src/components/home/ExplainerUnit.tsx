@@ -194,7 +194,7 @@ function O({
 function K({ children }: React.PropsWithChildren<{}>) {
   return (
     <span>
-      <span className={clsx('font-medium')}>"{children}"</span>:
+      <span className={clsx('font-medium')}>&quot;{children}&quot;</span>:
     </span>
   )
 }
@@ -227,7 +227,7 @@ export function ExplainerUnitCanvas({
       className={clsx(
         'not-prose relative block overflow-scroll rounded-sm shadow-md shadow-zinc-900/5 ring-1 ring-zinc-900/20 md:w-2/3 dark:ring-zinc-100/15',
         dark &&
-          'bg-zinc-900 text-white shadow-zinc-900/30 dark:bg-zinc-800 dark:shadow-zinc-900/90',
+        'bg-zinc-900 text-white shadow-zinc-900/30 dark:bg-zinc-800 dark:shadow-zinc-900/90',
       )}
     >
       {children}

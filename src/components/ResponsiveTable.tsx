@@ -16,18 +16,18 @@ export function ResponsiveTable(props: ResponsiveTableProps) {
       <table className="hidden md:table">
         <thead>
           <tr>
-            {props.columns.map((col) => (
-              <th>
+            {props.columns.map((col, index) => (
+              <th key={index}>
                 <ResponsiveTableItem {...col} />
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {props.rows.map((row) => (
-            <tr>
-              {row.map((item) => (
-                <td>
+          {props.rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((item, colIndex) => (
+                <td key={colIndex}>
                   <ResponsiveTableItem {...item} />
                 </td>
               ))}
@@ -35,18 +35,18 @@ export function ResponsiveTable(props: ResponsiveTableProps) {
           ))}
         </tbody>
       </table>
-      {props.rows.map((row) => (
-        <table className="rounded-md ring-1 ring-zinc-200 md:hidden dark:ring-zinc-700">
+      {props.rows.map((row, rowIndex) => (
+        <table key={rowIndex} className="rounded-md ring-1 ring-zinc-200 md:hidden dark:ring-zinc-700">
           <tbody>
             {row.map((item, i) =>
               i === 0 ? (
-                <tr>
+                <tr key={i}>
                   <td colSpan={2} className="pl-3 text-xl font-medium">
                     <ResponsiveTableItem className="font-medium" {...item} />
                   </td>
                 </tr>
               ) : (
-                <tr>
+                <tr key={i}>
                   <th className="w-1/2 pl-3">
                     <ResponsiveTableItem {...props.columns[i]} />
                   </th>

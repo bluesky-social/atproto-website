@@ -16,7 +16,7 @@ export const header = {
   },
 }
 
-export default function () {
+export default function DocsHome() {
   return (
     <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-16 xl:max-w-6xl xl:px-16">
       <Usecases />
