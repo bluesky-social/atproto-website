@@ -9,7 +9,7 @@ In this tutorial, you'll create a bot that authenticates with an [app password](
 
 ## Prerequisites
 
-This tutorial involves building a TypeScript application from scratch. You should have a fundamental understanding of TypeScript and Node.js.
+This tutorial involves building a TypeScript application from scratch. You should have a working understanding of TypeScript and Node.js.
 
 You should have installed:
 - Node.js 18+
@@ -36,7 +36,7 @@ npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-pa
 npx tsc --init --verbatimModuleSyntax false
 ```
 
-If you aren't using your own account, you should [create an account](https://bsky.app/) for your bot. You should also generate an [app password](/guides/sdk-auth) for the bot.
+If you aren't using an existing account to post from, you should [create a new account](https://bsky.app/) for your bot. You should also generate an [app password](/guides/sdk-auth) for that account.
 
 ## Part 1: Lexicons 
 
@@ -208,7 +208,7 @@ job.start()
 console.log('Agent is running...')
 ```
 
-There are a few new concepts here. You'll recognize the `app.bsky.post.logic`, and now you'll also implement `app.bsky.notification.listNotifications` and `app.bsky.feed.getPostThread`. The first Lexicon is used to get a list of notifications for, and the second fetches the full thread for a given post URI.
+There are a few new concepts here. You'll recognize the `app.bsky.feed.post` logic, and now you'll also implement `app.bsky.notification.listNotifications` and `app.bsky.feed.getPostThread`. The first Lexicon is used to get a list of notifications for, and the second fetches the full thread for a given post URI.
 
 ...and feel free to change our silly example prompt.
 

@@ -3,9 +3,47 @@ export const header = {
   description: 'Host an algorithm that\'s accessible from apps like Bluesky.',
 }
 
-Custom feeds, or feed generators, are services that provide algorithms to users. This allows users to choose their own timelines, whether it's an algorithmic For You page or a feed of entirely cat photos.
+Custom feeds, or feed generators, are services that provide algorithms to users. This gives you lots of freedom: to choose your own timeline view, or to [create a embeddable feed for other users](https://graze.leaflet.pub/3m4yjmbnyec2c).
 
-Custom feeds work very simply: the server receives a request for the feed and returns a list of post URIs with some optional metadata attached. Those posts are then hydrated into full views by the requesting server and sent back to the client.
+In this tutorial, you'll create a custom feed server by consuming posts from the [firehose](http://localhost:3000/guides/streaming-data), algorithmically sorting them, and [rebroadcasting them as an XRPC feed](/guides/feeds).
+
+## Prerequisites
+
+This tutorial involves building a TypeScript application from scratch. You should have a working understanding of TypeScript and Node.js.
+
+You should have installed:
+- Node.js 18+
+
+On platforms supported by [homebrew](https://brew.sh/), you can install it with:
+
+```bash
+brew install node
+```
+
+You should also have our `lex` CLI tool installed globally:
+
+```bash
+npm install -g @atproto/lex
+```
+
+Now, create a new Typescript project directory and initialize your project:
+
+```bash
+mkdir my-agent
+cd my-agent
+npm init -y
+npm i -D typescript ts-node @types/node dotenv @atproto/lex @atproto/lex-server
+npx tsc --init --verbatimModuleSyntax false
+```
+
+You'll begin by adding Lexicons to your project.
+
+## Part 1: Lexicons and Tap
+
+// this requires that you have an instance of `tap` running 
+// bootstrap with `lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton && lex build`
+
+## Part 2: Feed Structure
 
 The general flow of providing a custom algorithm to a user is as follows:
 
@@ -15,17 +53,6 @@ The general flow of providing a custom algorithm to a user is as follows:
 - The feed's hosting server returns a list of post URLs
 - The application hydrates the feed (user info, post contents, aggregates, etc.)
 - The application returns the hydrated feed to the user
-
-For users, this should feel like visiting a page in the app. Once they subscribe to a custom algorithm, it will appear in their home interface as one of their available feeds.
-
-## Getting started
-
-TODO
-
-// this requires that you have an instance of `tap` running 
-// bootstrap with `lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton && lex build`
-
-## Setup
 
 We'll start by capturing some configuration from environment variables. Much of this is configuration for the published feed (`FEED_PUBLISHER_DID`, `FEED_NAME`) but some details configure how the feed will behave (`FEED_MAX_POSTS`, `SEARCH_TERMS`).
 
@@ -67,7 +94,7 @@ const config: FeedConfig = {
 const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
 ```
 
-## Posts to serve
+## Part 3: Consuming the Firehose
 
 We'll store the posts we want to serve in an array.
 
@@ -83,8 +110,6 @@ interface IndexedPost {
 
 const postIndex: IndexedPost[] = []
 ```
-
-## Firehose listener
 
 We'll use [Tap](/guides/the-at-stack#tap) to listen to the firehose of user activity, and to find existing posts from users. Tap is a golang process you'll install and run separately.
 
@@ -145,7 +170,7 @@ indexer.error((err) => console.error('Indexer error:', err))
 const channel = tap.channel(indexer)
 ```
 
-## XRPC server
+## Part 4: Serving the Feed
 
 We host [XRPC](/guides/lexicon#http-api-methods) routes to serve our feed. This is just HTTP under the hood. Our server will be handling two kinds of requests:
 
@@ -217,7 +242,7 @@ router.add(app.bsky.feed.getFeedSkeleton, {
 })
 ```
 
-## Main runner
+## Part 5: Running the Server
 
 We connect to tap (`channel.start()`) then initiate our server, and we're online.
 
@@ -268,8 +293,6 @@ Listening for posts matching: ${config.searchTerms.join(', ')}
 })
 ```
 
-## Deploying your feed
-
 ### Create a server environment
 
 You will need to deploy your feed on a server that's accessible over HTTPS. Set up the machine/VM.
@@ -297,8 +320,6 @@ npx @atproto/feedgen-publisher
 Fill in the variables at the top. Examples are included, and some are optional. To update your feed's display data (name, avatar, description, etc.), just re-run the script and update the relevant variables.
 
 After successfully running the script, you should be able to see your feed from within the app, as well as share it by embedding a link in a post (similar to a quote post).
-
-## Some Details
 
 ### Pagination
 
