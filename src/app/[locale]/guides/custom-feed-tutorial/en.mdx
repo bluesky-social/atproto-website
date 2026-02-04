@@ -5,7 +5,7 @@ export const header = {
 
 Custom feeds, or feed generators, are services that provide algorithms to users. This gives you lots of freedom: to choose your own timeline view, or to [create a embeddable feed for other users](https://graze.leaflet.pub/3m4yjmbnyec2c).
 
-In this tutorial, you'll create a custom feed server by consuming posts from the [firehose](http://localhost:3000/guides/streaming-data), algorithmically sorting them, and [rebroadcasting them as an XRPC feed](/guides/feeds).
+In this tutorial, you'll create a custom feed server by consuming posts from the [firehose](http://localhost:3000/guides/streaming-data), algorithmically sorting them, and [broadcasting them as an XRPC feed](/guides/feeds).
 
 ## Prerequisites
 
@@ -13,11 +13,12 @@ This tutorial involves building a TypeScript application from scratch. You shoul
 
 You should have installed:
 - Node.js 18+
+- Go 1.25+
 
-On platforms supported by [homebrew](https://brew.sh/), you can install it with:
+On platforms supported by [homebrew](https://brew.sh/), you can install them with:
 
 ```bash
-brew install node
+brew install node go
 ```
 
 You should also have our `lex` CLI tool installed globally:
@@ -26,13 +27,19 @@ You should also have our `lex` CLI tool installed globally:
 npm install -g @atproto/lex
 ```
 
+You'll also need to install and run [Tap](/guides/the-at-stack#tap) to consume the firehose of posts from the network. 
+
+```bash
+go install github.com/bluesky-social/indigo/cmd/tap
+```
+
 Now, create a new Typescript project directory and initialize your project:
 
 ```bash
 mkdir my-agent
 cd my-agent
 npm init -y
-npm i -D typescript ts-node @types/node dotenv @atproto/lex @atproto/lex-server
+npm i -D typescript ts-node @types/node dotenv @atproto/lex @atproto/lex-server @atproto/tap
 npx tsc --init --verbatimModuleSyntax false
 ```
 
@@ -40,8 +47,27 @@ You'll begin by adding Lexicons to your project.
 
 ## Part 1: Lexicons and Tap
 
-// this requires that you have an instance of `tap` running 
-// bootstrap with `lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton && lex build`
+[Lexicons](/guides/lexicon) define ATProto records. A baseline feed generator requires the `app.bsky.feed.describeFeedGenerator` and `app.bsky.feed.getFeedSkeleton` Lexicons. You can use `lex` to download and build these Lexicons into your project:
+
+```bash
+lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton
+```
+
+From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
+
+```bash
+lex build
+```
+
+The generated code will live in `src/lexicons`.
+
+You'll also need to run `tap` in a separate terminal to index posts from the network. Start `tap` with:
+
+```bash
+tap run --disable-acks=true
+```
+
+Now you can start building your feed generator.
 
 ## Part 2: Feed Structure
 
@@ -55,6 +81,8 @@ The general flow of providing a custom algorithm to a user is as follows:
 - The application returns the hydrated feed to the user
 
 We'll start by capturing some configuration from environment variables. Much of this is configuration for the published feed (`FEED_PUBLISHER_DID`, `FEED_NAME`) but some details configure how the feed will behave (`FEED_MAX_POSTS`, `SEARCH_TERMS`).
+
+For this example, we'll be creating our entire app in a single file at `src/index.ts`. Create that file now, and add these imports and config lines:
 
 ```ts
 import { AtUriString, DidString, asDidString } from '@atproto/lex'
@@ -94,9 +122,19 @@ const config: FeedConfig = {
 const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
 ```
 
+There are a few things to note here. We've supplied a `DEFAULT_REPO` to fetch with `tap`. In this case, we're following a single user, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com). This will keep the tutorial example manageable.
+
+<Note>
+If you wanted to fetch the entire network, you could ...
+</Note>
+
+We're sorting this feed by searching for posts that contain certain terms. You can configure these terms with the `FEED_SEARCH_TERMS` environment variable. In this case, we're searching for posts that mention "alf".
+
 ## Part 3: Consuming the Firehose
 
 We'll store the posts we want to serve in an array.
+
+As `tap` discovers posts from the network, this feed server will search their text for our configured search terms. If it finds a match, it'll add the post to our array. Add the following contents to `src/index.ts`:
 
 ```ts
 // =============================================================================
@@ -109,13 +147,7 @@ interface IndexedPost {
 }
 
 const postIndex: IndexedPost[] = []
-```
 
-We'll use [Tap](/guides/the-at-stack#tap) to listen to the firehose of user activity, and to find existing posts from users. Tap is a golang process you'll install and run separately.
-
-As Tap discovers posts from the network, it will search their text for our configured search terms. If it finds a match, it'll add the post to our array.
-
-```ts
 // =============================================================================
 // Tap Indexer
 // =============================================================================
@@ -172,14 +204,14 @@ const channel = tap.channel(indexer)
 
 ## Part 4: Serving the Feed
 
-We host [XRPC](/guides/lexicon#http-api-methods) routes to serve our feed. This is just HTTP under the hood. Our server will be handling two kinds of requests:
+We host [XRPC](/guides/lexicon#http-api-methods) routes to serve our feed. Our server will be handling two kinds of requests:
 
 ```
 GET /xrpc/app.bsky.feed.describeFeedGenerator
 GET /xrpc/app.bsky.feed.getFeedSkeleton
 ```
 
-By using XRPC (which stands for "Lexicon RPC") we get clearly defined API contracts.
+Add the Feed Generator server logic to `src/index.ts`:
 
 ```ts
 // =============================================================================
@@ -242,9 +274,18 @@ router.add(app.bsky.feed.getFeedSkeleton, {
 })
 ```
 
+You'll notice that the `getFeedSkeleton` method returns a `cursor` in its response and takes a `cursor` param as input.
+
+This cursor is treated as an opaque value and fully at the Feed Generator's discretion. It is passed through the AppView directly to and from the client.
+
+We strongly encourage that the cursor be _unique per feed item_ to prevent unexpected behavior in pagination.
+
+We recommend, for instance, a compound cursor with a timestamp + a CID:
+`1683654690921::bafyreia3tbsfxe3cc75xrxyyn6qc42oupi73fxiox76prlyi5bpx7hr72u`
+
 ## Part 5: Running the Server
 
-We connect to tap (`channel.start()`) then initiate our server, and we're online.
+We connect to tap (`channel.start()`) then initiate our server, and we're online. Add the runtime logic:
 
 ```ts
 // =============================================================================
@@ -293,23 +334,11 @@ Listening for posts matching: ${config.searchTerms.join(', ')}
 })
 ```
 
-### Create a server environment
+Run it with `ts-node src/index.ts`.
 
-You will need to deploy your feed on a server that's accessible over HTTPS. Set up the machine/VM.
+## Conclusion
 
-### Install and start Tap
-
-TODO
-
-### Set environment variables
-
-TODO
-
-### Start your server
-
-TODO tsx index.ts
-
-### Publish your feed
+You will need to deploy your feed on a server that's accessible over HTTPS.
 
 To publish your feed, run the following command.
 
@@ -320,30 +349,3 @@ npx @atproto/feedgen-publisher
 Fill in the variables at the top. Examples are included, and some are optional. To update your feed's display data (name, avatar, description, etc.), just re-run the script and update the relevant variables.
 
 After successfully running the script, you should be able to see your feed from within the app, as well as share it by embedding a link in a post (similar to a quote post).
-
-### Pagination
-
-You'll notice that the `getFeedSkeleton` method returns a `cursor` in its response and takes a `cursor` param as input.
-
-This cursor is treated as an opaque value and fully at the Feed Generator's discretion. It is simply passed through the AppView directly to and from the client.
-
-We strongly encourage that the cursor be _unique per feed item_ to prevent unexpected behavior in pagination.
-
-We recommend, for instance, a compound cursor with a timestamp + a CID:
-`1683654690921::bafyreia3tbsfxe3cc75xrxyyn6qc42oupi73fxiox76prlyi5bpx7hr72u`
-
-### Language handling
-
-When making requests to `getFeedSkeleton`, clients are encouraged to populate the `Accept-Language` HTTP header with comma-separated BCP-47 language codes e.g. `en,pr-BR`. Feed generators can use this language context to filter or rank posts. If language filtering is applied, the feed generator should use the the `Content-Language` response header indicating the parsed language codes.
-
-### Suggestions and Examples
-
-How a feed generator fulfills the `getFeedSkeleton` request is completely at their discretion. At the simplest end, a Feed Generator could supply a "feed" that only contains some hardcoded posts.
-
-For most use cases, we recommend subscribing to the firehose at `com.atproto.sync.subscribeRepos`. This websocket will send you every record that is published on the network. Since Feed Generators do not need to provide hydrated posts, you can index as much or as little of the firehose as necessary.
-
-Depending on your algorithm, you likely do not need to keep posts around for long. Unless your algorithm is intended to provide "posts you missed" or something similar, you can likely garbage collect any data that is older than 48 hours.
-
-Some examples:
-- A community feed: Compile a list of DIDs within that community and filtering the firehose for all posts from users within that list.
-- A topical feed: Filter the algorithm for posts and pass the post text through some filtering mechanism (an LLM, a keyword matcher, etc.) that filters for the topic of your choice.

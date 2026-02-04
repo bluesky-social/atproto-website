@@ -17,9 +17,16 @@ You can find the source code for this tutorial, along with other example project
 
 This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
 
-Like the OAuth with NextJS tutorial, you should have installed:
-- Node.js 20+
+You should have installed:
+- Node.js 18+
+- Go 1.25+
 - The pnpm package manager
+
+On platforms supported by [homebrew](https://brew.sh/), you can install them with:
+
+```bash
+brew install node pnpm go
+```
 
 Begin by adding these ATProto libraries to your existing project:
 
@@ -505,12 +512,11 @@ const accountStatus = session ? await getAccountStatus(session.did) : null;
 
 This way, the `StatusPicker` will highlight the user's current status when the page loads.
 
-Now, in another terminal, clone the [indigo](https://github.com/bluesky-social/indigo) repo to run a Tap server locally:
+Now, in another terminal, install and run `tap` from its source repository:
 
 ```bash
-git clone https://github.com/bluesky-social/indigo.git
-cd indigo
-go run ./cmd/tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+go install github.com/bluesky-social/indigo/cmd/tap
+tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
 ```
 
 Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
@@ -706,7 +712,7 @@ You can stop and restart your app with `pnpm dev` again.
 One last thing — remember, you only added a single data source to `tap` earlier. To see statuses from across the entire network, stop and re-run `tap` with the `--signal-collection` flag:
 
 ```bash
-go run ./cmd/tap run \
+tap run \
   --webhook-url=http://localhost:3000/api/webhook \
   --collection-filters=xyz.statusphere.status \
   --signal-collection=xyz.statusphere.status
