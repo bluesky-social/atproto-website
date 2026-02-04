@@ -14,7 +14,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
           <WindowIcon className="mb-6 mt-2 size-12" strokeWidth="0.6" />
           <CardTitle>Create an App</CardTitle>
           <CardParagraph>
-            Tap into the shared Atmosphere network.
+            Tap into the shared Atmosphere network to create your next app.
           </CardParagraph>
           <CardCTA>LEARN MORE</CardCTA>
         </DotPatternContainer>
