@@ -485,15 +485,15 @@ The `com.atproto.lexicon.schema` meta-schema is somewhat unlike other Lexicons, 
 
 Authority for NSID namespaces is done at the "group" level, meaning that all NSIDs which differ only by the final "name" part are all published in the same repository. Lexicon resolution of NSIDs is not hierarchical: DNS TXT records must be created for each authority section, and resolvers should not recurse up or down the DNS hierarchy looking for TXT records.
 
-As an example, the NSID `edu.university.dept.lab.blogging.getBlogPost` has a "name" `getBlogPost`. Removing the name and reversing the rest of the NSID gives an "authority domain name" of `blogging.lab.dept.university.edu`. To link the authority to a specific DID (say `did:plc:ewvi7nxzyoun6zhxrhs64oiz`), a DNS TXT record with the name `_lexicon.blogging.lab.dept.university.edu` and value `did=did:plc:ewvi7nxzyoun6zhxrhs64oiz` (note the `did=` prefix)  would be created. Then a record with collection `com.atproto.lexicon.schema` and record-key `edu.university.dept.lab.blogging.getBlogPost` would be created in that account's repository.
+For example, an NSID `app.toy.record` would resolve via `_lexicon.toy.app`.
+
+As a more complex example, the NSID `edu.university.dept.lab.blogging.getBlogPost` has a "name" `getBlogPost`. Removing the name and reversing the rest of the NSID gives an "authority domain name" of `blogging.lab.dept.university.edu`. To link the authority to a specific DID (say `did:plc:ewvi7nxzyoun6zhxrhs64oiz`), a DNS TXT record with the name `_lexicon.blogging.lab.dept.university.edu` and value `did=did:plc:ewvi7nxzyoun6zhxrhs64oiz` (note the `did=` prefix)  would be created. Then a record with collection `com.atproto.lexicon.schema` and record-key `edu.university.dept.lab.blogging.getBlogPost` would be created in that account's repository.
 
 A resolving service would start with the NSID (`edu.university.dept.lab.blogging.getBlogPost`) and do a DNS TXT resolution for `_lexicon.blogging.lab.dept.university.edu`. Finding the DID, it would proceed with atproto DID resolution, look for a PDS, and then fetch the relevant record. The overall AT-URI for the record would be `at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/com.atproto.lexicon.schema/edu.university.dept.lab.blogging.getBlogPost`.
 
 If the DNS TXT resolution for `_lexicon.blogging.lab.dept.university.edu` failed, the resolving service would *NOT* try `_lexicon.lab.dept.university.edu` or `_lexicon.getBlogPost.blogging.lab.dept.university.edu` or `_lexicon.university.edu`, or any other domain name. The Lexicon resolution would simply fail.
 
 If another NSID `edu.university.dept.lab.blogging.getBlogComments` was created, it would have the same authority name, and must be published in the same atproto repository (with a different record key). If a Lexicon for `edu.university.dept.lab.gallery.photo` was published, a new DNS TXT record would be required (`_lexicon.gallery.lab.dept.university.edu`; it could point at the same repository (DID), or a different repository.
-
-As a simpler example, an NSID `app.toy.record` would resolve via `_lexicon.toy.app`.
 
 A single repository can host Lexicons for multiple authority domains, possibly across multiple registered domains and TLDs. Resolution DNS records can change over time, moving schema resolution to different repositories, though it may take time for DNS and cache changes to propagate.
 
