@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     id: 'types',
     title: 'Strongly typed',
-    description: 'Compose records with type definitions based on JSON Schema.',
+    description: 'Compose and extend records with shared schemas.',
   },
   {
     id: 'links',
@@ -34,7 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     id: 'checksums',
-    title: 'With checksums',
+    title: 'With strong links',
     description: "Use content-IDs to create strong links to other users' data.",
   },
 ]
