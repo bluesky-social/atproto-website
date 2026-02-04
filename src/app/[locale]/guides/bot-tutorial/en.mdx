@@ -66,44 +66,57 @@ import { PasswordSession } from '@atproto/lex-password-session'
 import * as dotenv from 'dotenv'
 import { CronJob } from 'cron'
 import * as process from 'process'
-import * as app from './src/lexicons/app'
+import * as app from './lexicons/app.js'
 
 dotenv.config()
 
 // Create a session
-const service = process.env.BOT_PDS!
-const identifier = process.env.BOT_HANDLE!
-const password = process.env.BOT_PASSWORD!
-const session = await PasswordSession.create({
-  service, // eg 'https://bsky.social'
-  identifier, // eg 'alice.bsky.social'
-  password,
-})
+async function login() {
+    const service = process.env.BOT_PDS!
+    const identifier = process.env.BOT_HANDLE!
+    const password = process.env.BOT_PASSWORD!
+    const session = await PasswordSession.login({
+        service, // eg 'https://bsky.social'
+        identifier, // eg 'alice.bsky.social'
+        password,
+    })
+
+    return session
+}
 ```
 
 Next, add a function that posts. This will instantiate a new `Client` using the authenticated session, and use it to create a post. The `app.bsky.feed.post` Lexicon requires two parameters: the text of a post — you'll use "🙂" — and a timestamp.
 
 ```ts
 // Posting logic
-async function makePost() {
-  const client = new Client(session)
-  await client.create(app.bsky.feed.post, {
-    text: '🙂',
-    createdAt: new Date().toISOString(),
-  })
-  console.log('Just posted!')
+async function makePost(session: PasswordSession) {
+    const client = new Client(session)
+    await client.create(app.bsky.feed.post, {
+        text: '🙂',
+        createdAt: new Date().toISOString(),
+    })
+    console.log('Just posted!')
 }
 
-makePost()
+async function main() {
+    const session = await login()
+    await makePost(session)
+}
+
+main().catch(console.error)
 ```
 
-Finally, add another code block using the `cron` package to schedule your bot to post every three hours:
+Finally, add another code block inside of `main()` using the `cron` package to schedule your bot to post every three hours:
 
 ```ts
-// Run this on a cron job
-const scheduleExpression = '0 */3 * * *' // Run once every three hours in prod
-const job = new CronJob(scheduleExpression, makePost)
-job.start()
+async function main() {
+    const session = await login()
+    await makePost(session)
+    // Run this on a cron job
+    const scheduleExpression = '0 */3 * * *'
+    const job = new CronJob(scheduleExpression, () => makePost(session))
+    job.start()
+}
 ```
 
 That's all the code you need for your bot! Next, you'll test it out.
@@ -156,10 +169,15 @@ lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
 lex build --override
 ```
 
-Now you can replace the `makePost` function in your bot with new logic that uses the AI SDK to generate replies:
+Almost there. Add the `ai` import to your `src/index.ts` file:
 
 ```ts
-// Generate an AI response to a mention
+import { generateText } from 'ai'
+```
+
+Now you can replace everything after the `login` function in your script with new logic that uses the AI SDK to generate replies:
+
+```ts
 async function generateReply(mentionText: string): Promise<string> {
   const { text } = await generateText({
     model: 'anthropic/claude-sonnet-4-5',
@@ -170,8 +188,9 @@ async function generateReply(mentionText: string): Promise<string> {
 }
 
 // Check for new mentions and reply
-async function checkMentions() {
-  const notifications = await client.list(app.bsky.notification.listNotifications, {
+async function checkMentions(session: PasswordSession) {
+  const client = new Client(session)
+  const notifications = await client.call(app.bsky.notification.listNotifications, {
     limit: 20,
   })
 
@@ -180,7 +199,7 @@ async function checkMentions() {
     if (notif.reason !== 'mention' || notif.isRead) continue
 
     // Get the post that mentioned us
-    const post = await client.get(app.bsky.feed.getPostThread, {
+    const post = await client.call(app.bsky.feed.getPostThread, {
       uri: notif.uri,
     })
 
@@ -201,11 +220,15 @@ async function checkMentions() {
   }
 }
 
-// Check for mentions every 5 minutes
-const job = new CronJob('*/5 * * * *', checkMentions)
-job.start()
+async function main() {
+    const session = await login()
+    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
+    job.start()
 
-console.log('Agent is running...')
+    console.log('Agent is running...')
+}
+
+main().catch(console.error)
 ```
 
 There are a few new concepts here. You'll recognize the `app.bsky.feed.post` logic, and now you'll also implement `app.bsky.notification.listNotifications` and `app.bsky.feed.getPostThread`. The first Lexicon is used to get a list of notifications for, and the second fetches the full thread for a given post URI.
