@@ -9,7 +9,7 @@ export const header = {
 
 **Authorization is the first part of our docs for a reason!** You don't always need to be authenticated to [read data](/reading-data#unauthenticated-reads) from AT Protocol records or even to [stream data from the firehose](/guides/streaming-data). But if you're looking to build an application that integrates with the Atmosphere of Atproto apps in some way, you'll begin with authentication. You might start out by just using AT Protocol identities as an OAuth source — though you'll find that there's lots more you can do by building on top of the Atproto [social graph](/guides/social-graph).
 
-This section is aimed at developers building applications on AT Protocol. Applications with their own end-user login flow should implement [OAuth](#what-is-oauth) for authentication. Single-purpose applications such as bots or command line tools may use [password authentication](/guides/sdk-auth) instead.
+This section is aimed at developers building applications on Atproto. Applications with their own end-user login flow should implement [OAuth](#what-is-oauth) for authentication. Single-purpose applications such as bots or command line tools may use [password authentication](/guides/sdk-auth) instead.
 
 <Note>
 We also support the use of [App Passwords](/specs/xrpc#app-passwords). Accounts can create and revoke app passwords separate from their primary password. This way, you do not need to supply your primary password to applications that use password auth.
@@ -33,9 +33,9 @@ There are a few details that might catch you off guard if you're used to using o
 
 - **Atproto is distributed**: Usually, when an app has a "sign in with..." button, it provides a choice of which authorities it allows to authenticate users (usually one of a few big corporations). With ATProto OAuth, the app has no prior relationship with the authentication provider: a user's [PDS](/guides/the-at-stack#pds). This is also the reason why Atproto OAuth is not compatible with OIDC, which requires a pre-established relationship.
 
-- **Migration**: ATProto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this Atproto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
+- **Migration**: Atproto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this Atproto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
 
-- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so ATProto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
+- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so Atproto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
 ## Further Reading and Resources
 

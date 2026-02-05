@@ -8,7 +8,7 @@ export const header = {
   description: 'Build a Next.js app supporting OAuth with ATProto identity.',
 }
 
-In this tutorial, you'll build a Next.js app where users can log in with their AT Protocol identity using OAuth.
+In this tutorial, you'll build a Next.js app where users can log in with their AT Protocol identity using OAuth. If you [host your own PDS](/guides/self-hosting), that means you can provide your own auth source for any apps in the Atmosphere.
 
 You can find the source code for this tutorial, along with other example projects, in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository, under `nextjs-oauth`.
 
@@ -16,7 +16,7 @@ See a demo version running at: [https://nextjs-oauth-tutorial.up.railway.app/](h
 
 ## Prerequisites
 
-This OAuth tutorial does not use many ATProto concepts or dependencies. You should have a working understanding of Next.js and TypeScript.
+This OAuth tutorial does not use many Atproto concepts or dependencies. You should have a working understanding of Next.js and TypeScript.
 
 You should have installed:
 - Node.js 20+
@@ -37,7 +37,7 @@ npx create-next-app@latest my-app --yes
 cd my-app
 ```
 
-Next, add the `oauth-client-node` package from the ATProto ecosystem, which provides OAuth client functionality.
+Next, add the `oauth-client-node` package from the Atproto ecosystem, which provides OAuth client functionality.
 
 ```bash
 pnpm add @atproto/oauth-client-node
@@ -799,4 +799,4 @@ This constant is used in three places:
 
 By centralizing it in one constant, you only need to change it in one place. Now, when you log in to your app again, you'll be prompted to approve the additional scopes.
 
-Congratulations on completing this tutorial! You now have a solid Next.js foundation for building ATProto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).
+Congratulations on completing this tutorial! You now have a solid Next.js foundation for building Atproto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).

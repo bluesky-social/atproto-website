@@ -47,7 +47,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
         <DotPatternContainer className="px-6 py-4" fade>
           <div className="flex items-center gap-4">
             <KeyIcon className="size-8 shrink-0 stroke-white" strokeWidth="0.6" />
-            <CardTitle>Auth with Shared Identity</CardTitle>
+            <CardTitle>Bring your own identity</CardTitle>
             <CardCTA className="ml-auto mt-0">LEARN MORE</CardCTA>
           </div>
         </DotPatternContainer>
