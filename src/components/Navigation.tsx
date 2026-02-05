@@ -223,7 +223,7 @@ export const navigation: Array<NavGroup> = [
             title: 'Write a Custom Feed',
             href: '/guides/custom-feed-tutorial',
           },
-          { title: 'Implement OAuth', href: '/guides/oauth-tutorial' },
+          { title: 'Log in with OAuth', href: '/guides/oauth-tutorial' },
           {
             title: 'Create a Social App',
             href: '/guides/statusphere-tutorial',
@@ -351,7 +351,7 @@ export const navigation: Array<NavGroup> = [
   {
     title: 'Specs',
     links: [
-      { title: 'AT Protocol', icon: 'document-text', href: '/specs/atp' },
+      { title: 'Overview', icon: 'document-text', href: '/specs/atp' },
       { title: 'Data Model', icon: 'document-text', href: '/specs/data-model' },
       { title: 'Lexicon', icon: 'document-text', href: '/specs/lexicon' },
       {
@@ -361,7 +361,7 @@ export const navigation: Array<NavGroup> = [
       },
       { title: 'Accounts', icon: 'document-text', href: '/specs/account' },
       { title: 'Repository', icon: 'document-text', href: '/specs/repository' },
-      { title: 'Blobs', icon: 'document-text', href: '/specs/blob' },
+      { title: 'Media Blobs', icon: 'document-text', href: '/specs/blob' },
       { title: 'Labels', icon: 'document-text', href: '/specs/label' },
       { title: 'HTTP API (XRPC)', icon: 'document-text', href: '/specs/xrpc' },
       { title: 'OAuth', icon: 'document-text', href: '/specs/oauth' },

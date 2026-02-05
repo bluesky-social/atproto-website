@@ -54,7 +54,7 @@ export default function DocsHome() {
         <NavItem
           icon="flag"
           title="Moderation"
-          description="Keep things chill"
+          description="Composable trust and safety"
           href="/guides/moderation"
         />
       </div>
