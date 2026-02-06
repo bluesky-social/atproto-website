@@ -96,18 +96,11 @@ When parsing MST data structures, the depth and sort order of keys should be ver
 
 ### CID Formats
 
-The IPFS CID specification is very flexible, and supports a wide variety of hash types, a field indicating the type of content being linked to, and various string encoding options. These features are valuable to allow evolution of the repo format over time, but to maximize interoperability among implementations, only a specific "blessed" set of CID types are allowed. This "blessed" format aligns with the [DASL CID](https://dasl.ing/cid.html) specification.
+The blessed CID format described in [Data Model](/specs/data-model) is used for references to commit objects, MST node objects, and records (eg, MST leaf nodes to records).
 
-The blessed format for commit objects and MST node objects, when linking to commit objects, MST nodes (aka, `data`, or MST internal links), or records (aka, MST leaf nodes to records), is:
+In the context of repositories, it is desirable for the overall data structure to be reproducible given the contents, so the CID types should be strictly constrained and enforced. Commit objects with non-compliant `prev` or `data` links are considered invalid. MST Node objects with non-compliant links to other MST Node objects are considered invalid, and the entire MST data structure invalid.
 
-- CIDv1
-- Multibase: binary serialization within DRISL CBOR (or `base32` for JSON mappings)
-- Multicodec: `dag-cbor` (0x71) for DRISL CBOR data
-- Multihash: `sha-256` with 256 bits (0x12)
-
-In the context of repositories, it is also desirable for the overall data structure to be reproducible given the contents, so the allowed CID types are strictly constrained and enforced. Commit objects with non-compliant `prev` or `data` links are considered invalid. MST Node objects with non-compliant links to other MST Node objects are considered invalid, and the entire MST data structure invalid.
-
-More flexibility is allowed in processing the "leaf" links from MST to records, and implementations should retain the exact CID links used for these mappings, instead of normalizing. Implementations should strictly follow the CID blessed format when generating new CID Links to records.
+More flexibility is allowed in processing the "leaf" links from MST to records, and implementations should retain the exact CID links used for these mappings. Implementations should strictly follow the CID blessed format when generating new CID Links to records.
 
 
 ## CAR File Serialization

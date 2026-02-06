@@ -8,7 +8,7 @@ export const metadata = {
 
 Records and messages in atproto are stored, transmitted, encoded, and authenticated in a consistent way. The core "data model" supports both binary (CBOR) and textual (JSON) representations. {{ className: 'lead' }}
 
-When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. The specific normalized subset of CBOR used in the atproto data model is called [DRISL](https://dasl.ing/drisl.html) (which is very similar to "DAG-CBOR"). All DRISL CBOR data is valid CBOR, and can be read with any CBOR library. Writing or strictly verifying CBOR with the correct normalization rules sometimes requires additional configuration or a special CBOR implementation. {{ className: 'lead' }}
+When data needs to be authenticated (signed), referenced (linked by content hash), or stored efficiently, it is encoded in Concise Binary Object Representation (CBOR). CBOR is an IETF standard roughly based on JSON. The specific normalized subset of CBOR used in the atproto data model is called [DRISL](https://dasl.ing/drisl.html) (which is successor to [DAG-CBOR](https://ipld.io/specs/codecs/dag-cbor/spec/)). All DRISL-CBOR data is valid CBOR, and can be read with any CBOR library. Writing or strictly verifying CBOR with the correct normalization rules sometimes requires additional configuration or a special CBOR implementation. {{ className: 'lead' }}
 
 The schema definition language for atproto is [Lexicon](/specs/lexicon). Other lower-level data structures, like [repository](/specs/repository) internals, are not specified with Lexicons, but use the same data model and encodings.
 
@@ -133,16 +133,16 @@ The [original IPFS CID specification](https://github.com/multiformats/cid) is ve
 
 The blessed formats for CIDs in atproto are:
 
-- CIDv1
-- multibase: binary serialization within DRISL CBOR `link` fields, and `base32` for string encoding
-- multicodec: `dag-cbor` (0x71) for links to DRISL CBOR data objects, and `raw` (0x55) for links to blobs
-- multihash: `sha-256` with 256 bits (0x12) is preferred
+- CID version: 1 (0x01)
+- Codec: DRISL (0x71; also known as `dag-cbor`) for links to DRISL-CBOR data objects, and `raw` (0x55) for links to blobs
+- Hash type: `sha-256` (0x12) with size of 256 bits (0x20 bytes)
+- Encoding: binary serialization within DRISL-CBOR `cid-link` fields, and `base32` (with `b` prefix) for string encoding elsewhere
 
 The use of SHA-256 is a stable requirement in some contexts, such as the repository MST nodes. In other contexts, like referencing media blobs, there will likely be a set of "blessed" hash types which evolve over time. A balance needs to be struck between protocol flexibility on the one hand (to adopt improved hashes and remove weak ones), and ensuring broad and consistent interoperability throughout an ecosystem of protocol implementations.
 
 There are several ways to include a CID hash reference in an atproto object:
 
-- `link` field type (Lexicon type `cid-link`). In DRISL CBOR encodes as a binary CID (multibase type 0x00) in a bytestring with CBOR tag 42. In JSON, encodes as `$link` object (see above)
+- `link` field type (Lexicon type `cid-link`). In DRISL-CBOR, CIDs are encoded by prefixing their binary representation with `0x00`. The CBOR tag used to represent CIDs is 42. In JSON, encodes as `$link` objects (see above).
 - `string` field type, with Lexicon string format `cid`. In CBOR and JSON, encodes as a simple string
 - `string` field type, with Lexicon string format `uri`, with URI scheme `ipld://`
 

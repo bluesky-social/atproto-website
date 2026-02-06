@@ -22,7 +22,7 @@ The initial subscription endpoints are also public and do not require authentica
 
 ## Streaming Wire Protocol (v0)
 
-To summarize, messages are encoded as normalized CBOR ([DRISL](https://dasl.ing/drisl.html))and sent over a binary WebSocket. Clients connect to to a specific HTTP endpoint, with query parameters, then upgrade to WebSocket. Every WebSocket frame contains two CBOR objects, with bytes concatenated together: a header (indicating message type), and the actual message.
+To summarize, messages are encoded as [DRISL-CBOR](https://dasl.ing/drisl.html) and sent over a binary WebSocket. Clients connect to to a specific HTTP endpoint, with query parameters, then upgrade to WebSocket. Every WebSocket frame contains two CBOR objects, with bytes concatenated together: a header (indicating message type), and the actual message.
 
 The WebSockets "living standard" is currently maintained by [WHATWG](https://en.wikipedia.org/wiki/WHATWG), and can be found in full at [https://websockets.spec.whatwg.org/](https://websockets.spec.whatwg.org/).
 
