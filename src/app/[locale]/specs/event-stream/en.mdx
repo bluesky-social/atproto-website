@@ -7,7 +7,7 @@ export const metadata = {
 
 # Event Stream
 
-In addition to regular [HTTP API](/specs/xrpc) endpoints, atproto supports continuous event streams. Message schemas and endpoint names are transport-agnostic and defined in [Lexicons](/specs/lexicon). The initial encoding and transport scheme uses binary [DAG-CBOR](https://ipld.io/docs/codecs/known/dag-cbor/) encoding over [WebSockets](https://en.wikipedia.org/wiki/WebSocket). {{ className: 'lead' }}
+In addition to regular [HTTP API](/specs/xrpc) endpoints, atproto supports continuous event streams. Message schemas and endpoint names are transport-agnostic and defined in [Lexicons](/specs/lexicon). The initial encoding and transport scheme uses binary [DRISL-CBOR encoding](/lexicons/data-model) over [WebSockets](https://en.wikipedia.org/wiki/WebSocket). {{ className: 'lead' }}
 
 The Lexicon type for streams is `subscription`. The schema includes an identifier (`id`) for the endpoint, a `message` schema (usually a union, allowing multiple message types), and a list of error types (`errors`).
 
@@ -22,7 +22,7 @@ The initial subscription endpoints are also public and do not require authentica
 
 ## Streaming Wire Protocol (v0)
 
-To summarize, messages are encoded as DAG-CBOR and sent over a binary WebSocket. Clients connect to to a specific HTTP endpoint, with query parameters, then upgrade to WebSocket. Every WebSocket frame contains two DAG-CBOR objects, with bytes concatenated together: a header (indicating message type), and the actual message.
+To summarize, messages are encoded as [DRISL-CBOR](https://dasl.ing/drisl.html) and sent over a binary WebSocket. Clients connect to to a specific HTTP endpoint, with query parameters, then upgrade to WebSocket. Every WebSocket frame contains two CBOR objects, with bytes concatenated together: a header (indicating message type), and the actual message.
 
 The WebSockets "living standard" is currently maintained by [WHATWG](https://en.wikipedia.org/wiki/WHATWG), and can be found in full at [https://websockets.spec.whatwg.org/](https://websockets.spec.whatwg.org/).
 
@@ -47,16 +47,16 @@ Either the server or the client may decided to drop an open stream connection if
 
 ### Framing
 
-Each binary WebSocket frame contains two DAG-CBOR objects, concatenated. The first is a **header** and the second is the **payload.**
+Each binary WebSocket frame contains two DRISL-CBOR objects, concatenated. The first is a **header** and the second is the **payload.**
 
-The header DAG-CBOR object has the following fields:
+The header CBOR object has the following fields:
 
 - `op` ("operation", integer, required): fixed values, indicating what this frame contains
     - `1`: a regular message, with type indicated by `t`
     - `-1`: an error message
 - `t` ("type", string, optional): required if `op` is `1`, indicating the Lexicon sub-type for this message, in short form. Does not include the full Lexicon identifier, just a fragment. Eg: `#commit`. Should not be included in header if `op` is `-1`.
 
-Clients should ignore frames with headers that have unknown `op` or `t` values. Unknown fields in both headers and payloads should be ignored. Invalid framing or invalid DAG-CBOR encoding are hard errors, and the client should drop the entire connection instead of skipping the frame. Servers should ignore any frames received from the client, not treat them as errors.
+Clients should ignore frames with headers that have unknown `op` or `t` values. Unknown fields in both headers and payloads should be ignored. Invalid framing or DRISL-CBOR encoding are hard errors, and the client should drop the entire connection instead of skipping the frame. Servers should ignore any frames received from the client, not treat them as errors.
 
 Error payloads all have the following fields:
 
@@ -95,7 +95,7 @@ In some catastrophic failure modes (or large changes to infrastructure), it is p
 
 ## Usage and Implementation Guidelines
 
-The current stream transport is primarily designed for server-to-server data synchronization. It is also possible for web applications to connect directly from end-user browsers, but note that decoding binary frames and DAG-CBOR is non-trivial.
+The current stream transport is primarily designed for server-to-server data synchronization. It is also possible for web applications to connect directly from end-user browsers, but note that decoding binary frames and DRISL-CBOR is non-trivial.
 
 The combination of HTTP redirects and WebSocket upgrades is not consistently supported by WebSocket client libraries. Support is not specifically required or forbidden in atproto.
 
@@ -111,7 +111,7 @@ URLs referencing a stream endpoint at a particular host should generally use `ws
 
 As mentioned in the "Connection" section, only `wss://` (SSL) should be used for stream connections over the internet. Public services should reject non-SSL connections.
 
-Most HTTP XRPC endpoints work with content in JSON form, while stream endpoints work directly with DAG-CBOR objects as untrusted input. Precautions must be taken against hostile data encoding and data structure manipulation. Specific issues are discussed in the [Data Model](/specs/data-model) and [Repository](/specs/repository) specifications.
+Most HTTP XRPC endpoints work with content in JSON form, while stream endpoints work directly with CBOR objects as untrusted input. Precautions must be taken against hostile data encoding and data structure manipulation. Specific issues are discussed in the [Data Model](/specs/data-model) and [Repository](/specs/repository) specifications.
 
 ## Possible Future Changes
 
@@ -119,7 +119,7 @@ Event Streams are one of the newest components of the AT Protocol, and the detai
 
 The sequence number scheme may be tweaked to better support sharded streams. The motivation would be handle higher data throughputs over the public internet by splitting across multiple connections.
 
-Additional transports (other than WebSocket) and encodings (other than DAG-CBOR) may be specified. For example, JSON payloads in text WebSocket frames would be simpler to decode in browsers.
+Additional transports (other than WebSocket) and encodings (other than CBOR) may be specified. For example, JSON payloads in text WebSocket frames would be simpler to decode in browsers.
 
 Additional WebSocket features may be adopted:
 

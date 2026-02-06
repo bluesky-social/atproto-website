@@ -16,12 +16,14 @@ The empty blob (zero bytes) is valid in general, though it may be disallowed by 
 
 ## Blob Metadata
 
-Currently, the only "blessed" CID type for blobs is similar to that for repository records, but with the `raw` multicodec:
+Currently, the only "blessed" CID type for blobs is similar to that for repository records, but with the `raw` codec:
 
-- CIDv1
-- Multibase: binary serialization within DAG-CBOR (or `base32` for JSON mappings)
-- Multicodec: `raw` (0x55)
-- Multihash: `sha-256` with 256 bits (0x12)
+- CID version: 1 (0x01)
+- Codec: `raw` (0x55)
+- Hash type: `sha-256` (0x12) with size of 256 bits (0x20 bytes)
+- Encoding: binary serialization within DRISL-CBOR `link` fields, and `base32` (with `b` prefix) for string encoding elsewhere
+
+This aligns with the [DASL-CID](https://dasl.ing/cid.html) specification.
 
 An example blob CID, in base32 string encoding: `bafkreibjfgx2gprinfvicegelk5kosd6y2frmqpqzwqkg7usac74l3t2v4`
 
