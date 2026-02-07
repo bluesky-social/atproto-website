@@ -22,11 +22,11 @@ In other words, if you have an app at [https://greensky.app](https://greensky.ap
 
 The PDS has restrictive CORS headers by default. 
 
-It is difficult to change a PDS hostname once it has active accounts — every account needs to be migrated individually. This is absolutely possible using [PLC rotation keys], but migrating is not turnkey. Also note that the PDS is the domain that users will enter their passwords on (and therefore remembered in password managers).
+It is difficult to change a PDS hostname once it has active accounts — every account needs to be migrated individually. This is absolutely possible using [PLC rotation keys](https://web.plc.directory/spec/v0.1/did-plc), but migrating is not turnkey. Also note that the PDS is the domain that users will enter their passwords on (and therefore remembered in password managers).
 
 ### Backups and Recovery
 
-Our [official PDS install script](https://github.com/bluesky-social/pds) configures SQLite as a database backend. Specifically, it uses one SQLite DB for each user's [data repository], and a few others for PDS-wide data. This may be surprising, since SQLite doesn't have any mechanism for handling backups or replications out of the box, but SQLite has increasingly been found to [scale very well](https://fly.io/blog/sqlite-internals-rollback-journal/) with some additional tooling.
+Our [official PDS install script](https://github.com/bluesky-social/pds) configures SQLite as a database backend. Specifically, it uses one SQLite DB for each user's [data repository](https://atproto.com/guides/data-repos), and a few others for PDS-wide data. This may be surprising, since SQLite doesn't have any mechanism for handling backups or replications out of the box, but SQLite has increasingly been found to [scale very well](https://fly.io/blog/sqlite-internals-rollback-journal/) with some additional tooling.
 
 The secret sauce here is [Litestream](https://fly.io/blog/litestream-v050-is-here/), which does exactly that — [Backups and Recovery for SQLite](https://github.com/benbjohnson/litestream). To get a recoverable, scalable PDS SQLite deployment with Litestream, we recommend:
 
