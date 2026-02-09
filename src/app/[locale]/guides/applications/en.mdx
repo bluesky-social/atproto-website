@@ -41,7 +41,7 @@ We will cover how to: {{className: 'lead'}}
 
 - Signin via OAuth {{className: 'lead'}}
 - Fetch information about users (profiles) {{className: 'lead'}}
-- Listen to the network firehose for new data {{className: 'lead'}}
+- Listen to the network firehose or jetstream for new data {{className: 'lead'}}
 - Publish data on the user's account using a custom schema {{className: 'lead'}}
 
 We're going to keep this light so you can quickly wrap your head around ATProto. There will be links with more information about each step. {{className: 'lead'}}
@@ -435,8 +435,8 @@ router.post(
 )
 ```
 
-## Step 6. Listening to the firehose
-
+## Step 6. Listening to the firehose/jetstream
+### Firehose
 So far, we have:
 
 - Logged in via OAuth
@@ -530,6 +530,70 @@ You can almost think of information flowing in a loop:
 Applications write to the repo. The write events are then emitted on the firehose where they're caught by the apps and ingested into their databases.
 
 Why sync from the event log like this? Because there are other apps in the network that will write the records we're interested in. By subscribing to the event log, we ensure that we catch all the data we're interested in &mdash; including data published by other apps!
+
+### Jetstream
+A [Jetstream](https://docs.bsky.app/blog/jetstream) instance is downstream of the Firehose, and let's us listen to events on the network through websockets, in JSON, without the cryptographic benefits the Firehose has. We will still filter to `xyz.statusphere.status` records, but since our application is small and we are listening to a trusted jetstream operator, it is a good use case for our app.
+
+```typescript
+/** src/jetstream-ingester.ts **/
+import * as Status from '#/lexicon/types/xyz/statusphere/status'
+// ...
+
+new Jetstream({
+  db,
+  handleEvent: async (evt) => {
+    const now = new Date();
+    const record = evt.commit?.record;
+
+    if (
+      (evt.commit?.operation === 'create' || evt.commit?.operation === 'update') &&
+      evt.commit?.collection === 'xyz.statusphere.status' &&
+      Status.isRecord(record) &&
+      Status.validateRecord(record).success
+    ) {
+      // Store the status
+      // TODO
+    }
+  }
+})
+```
+Now we can write these statuses into our database as they arrive from the jetstream:
+
+```typescript
+/** src/jetstream-ingester.ts **/
+// If the write is a valid status update
+if (
+  evt.collection === 'xyz.statusphere.status' &&
+  Status.isRecord(record) &&
+  Status.validateRecord(record).success
+) {
+// Store the status in our SQLite
+await db
+  .insertInto('status')
+  .values({
+    uri: evt.commit.rkey,
+    authorDid: evt.did,
+    status: record.status,
+    createdAt: record.createdAt,
+    indexedAt: now.toISOString(),
+  })
+  .onConflict((oc) =>
+    oc.column('uri').doUpdateSet({
+      status: record.status,
+      indexedAt: now.toISOString(),
+    })
+  )
+  .execute();
+}
+```
+
+Now in our startup file, just swap ingesters to start listening to the Jetstream
+```ts
+/** src/index.ts **/
+// Uncomment whichever ingester you want to use
+// const ingester = createFirehoseIngester(db, baseIdResolver)
+const ingester = createJetstreamIngester(db)
+```
 
 ## Step 7. Listing the latest statuses
 
