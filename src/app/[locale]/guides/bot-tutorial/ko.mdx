@@ -1,0 +1,189 @@
+export const header = {
+  title: 'Build an Agent',
+  description: 'Create a bot that automatically posts on Bluesky',
+}
+
+봇은 네트워크에서 자동으로 게시물을 올리는 계정입니다. 최근 지진 규모를 게시하거나 정기적으로 아카이브 사진을 올리는 봇 등이 대표적입니다.
+이 튜토리얼에서는 [앱 비밀번호](/guides/sdk-auth)로 인증하여 네트워크와 상호작용하는 봇을 만들 것입니다.
+## 필수 조건
+이 튜토리얼은 TypeScript 애플리케이션을 처음부터 구축하는 과정입니다. TypeScript와 Node.js에 대한 실무 지식이 있어야 합니다.
+다음이 설치되어 있어야 합니다:
+- Node.js 18 이상
+[homebrew](https://brew.sh/)가 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
+```bash
+brew install node
+```
+또한 `lex` CLI 도구가 전역으로 설치되어 있어야 합니다:
+```bash
+npm install -g @atproto/lex
+```
+이제 새로운 TypeScript 프로젝트 디렉터리를 생성하고 프로젝트를 초기화하세요:
+```bash
+mkdir my-agent
+cd my-agent
+npm init -y
+npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-password-session
+npx tsc --init --verbatimModuleSyntax false
+```
+기존 계정을 사용하지 않고 게시할 경우, 봇용 [새 계정 생성](https://bsky.app/)이 필요합니다. 또한 해당 계정에 대한 [앱 비밀번호 생성](/guides/sdk-auth)도 수행해야 합니다.
+## 파트 1: 어휘집
+[어휘집](/guides/lexicon)은 Atproto 레코드를 정의합니다. 봇은 [app.bsky.feed.post](https://pdsls.dev/at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juc4thkx452i#schema) 어휘를 사용하여 Bluesky 게시물을 생성합니다. `lex`를 사용하여 이 어휘집을 다운로드하고 프로젝트에 빌드할 수 있습니다:
+```bash
+lex install app.bsky.feed.post
+```
+원한다면 다운로드된 어휘집 파일을 `lib/lexicons/app.bsky.post.json`에서 확인할 수 있습니다. 여기서 `lex build`를 실행하여 설치된 모든 어휘집에 대한 TypeScript 타입을 생성할 수 있습니다:
+```bash
+lex build
+```
+생성된 코드는 `src/lexicons`에 저장됩니다. 이제 봇 스크립트를 작성할 수 있습니다.
+## 2부: 봇 생성
+`src/index.ts`에 새 파일을 생성합니다. 이 파일에 봇 코드를 작성합니다.
+먼저 필요한 임포트와 앱 비밀번호를 사용한 봇 인증을 위한 `PasswordSession.create()` 호출을 추가하세요:
+```ts
+import { Client } from '@atproto/lex'
+import { PasswordSession } from '@atproto/lex-password-session'
+import * as dotenv from 'dotenv'
+import { CronJob } from 'cron'
+import * as process from 'process'
+import * as app from './lexicons/app.js'
+dotenv.config()
+// 세션 생성
+async function login() {
+    const service = process.env.BOT_PDS!
+    const identifier = process.env.BOT_HANDLE!
+    const password = process.env.BOT_PASSWORD!
+    
+const session = await PasswordSession.login({
+        service, // 예: 'https://bsky.social'
+        identifier, // 예: 'alice.bsky.social'
+        password,
+    })
+    return session
+}
+```
+다음으로 게시 기능을 추가합니다. 인증된 세션을 사용하여 새 `Client`를 생성하고, 이를 통해 게시물을 작성합니다. `app.bsky.feed.post` 렉시콘에는 두 가지 매개변수가 필요합니다: 게시글의 텍스트 — “🙂”를 사용합니다 — 그리고 타임스탬프입니다.
+```ts
+// 게시 로직
+async function makePost(session: PasswordSession) {
+    const client = new Client(session)
+    
+await client.create(app.bsky.feed.post, {
+        text: '🙂',
+        createdAt: new Date().toISOString(),
+    })
+    console.log('방금 게시했습니다!')
+}
+async function main() {
+    const session = await login()
+    await makePost(session)
+}
+main().catch(console.error)
+```
+마지막으로 `main()` 내부에서 `cron` 패키지를 사용해 봇이 3시간마다 게시하도록 스케줄링하는 코드 블록을 추가하세요:
+```ts
+async function main() {
+    const session = await login()
+    await makePost(session)
+    // cron 작업으로 실행
+    const scheduleExpression = '0 */3 * * *'
+    
+const job = new CronJob(scheduleExpression, () => makePost(session))
+    job.start()
+}
+```
+봇에 필요한 코드는 여기까지입니다! 다음으로 테스트해 보세요.
+## 3부: 봇 실행하기
+봇의 호스트(PDS), 사용자 이름, 비밀번호를 `.env` 파일에 저장하세요.
+```bash
+BOT_PDS= # 예: 'https://bsky.social' (PDS를 자체 호스팅하지 않는 경우)
+BOT_HANDLE= # 예: 'alice.bsky.social'
+BOT_PASSWORD=
+```
+이제 `ts-node`로 봇을 테스트할 수 있습니다.
+```bash
+ts-node src/index.ts
+```
+이 봇은 개인 컴퓨터에서 실행하거나 [Fly.io](http://fly.io/) 같은 플랫폼에 배포할 수 있습니다.
+봇은 네트워크의 속도 제한을 준수해야 합니다. 예를 들어, [Bluesky에는 자체 속도 제한이 적용됩니다](https://docs.bsky.app/docs/advanced-guides/rate-limits).
+ 
+## 파트 4: 봇에서 에이전트로
+지금까지 정기적으로 게시물을 작성하는 봇을 만들었습니다. 이제 다른 사용자와 상호작용하는 더 복잡한 에이전트로 봇을 확장해 보세요!
+이 섹션에서는 [Vercel AI SDK](https://www.npmjs.com/package/ai)를 사용합니다. 이 라이브러리는 Vercel AI Gateway를 통해 Anthropic과 같은 모델 제공자와 상호작용할 수 있는 통합 API를 제공합니다. API 키를 받으려면 무료 [Hobby 프로젝트](https://vercel.com/)에 가입해야 합니다.
+API 키를 획득한 후, 프로젝트에 AI SDK를 추가하세요:
+```bash
+npm i ai
+```
+그런 다음 `.env` 파일에 환경 변수를 추가하세요:
+```bash
+BOT_PDS=
+BOT_HANDLE=
+BOT_PASSWORD=
+AI_GATEWAY_API_KEY=xxxxxxxxx
+```
+마지막으로 멘션을 받으려면 추가 어휘집(Lexicon)을 설치해야 합니다. 다음 명령어로 필요한 어휘집을 설치하고 빌드하세요:
+```bash
+lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
+lex build --override
+```
+이제 거의 다 왔습니다. `src/index.ts` 파일에 `ai` 임포트를 추가하세요:
+```ts
+import { generateText } from 'ai'
+```
+이제 스크립트 내 `login` 함수 이후 부분을 AI SDK를 사용해 응답을 생성하는 새 로직으로 대체할 수 있습니다:
+```ts
+async function generateReply(mentionText: string): Promise<string> {
+  const { text } = await generateText({
+    model: 'anthropic/claude-sonnet-4-5',
+    system: '당신은 Bluesky의 신비로운 점술 봇 “오라클”입니다. 신비롭고 극적인 어조로 말하며 가끔 이모티콘(🔮 ✨ 🌙 ⭐)을 사용하세요. 예/아니오 질문에는 암시적이지만 암시적인 답변을, 일반적인 조언 요청에는 간략한 운세 스타일의 예측을 제공하세요. 응답은 280자 이내로 유지하고, 절대 캐릭터를 벗어나지 마세요.',
+    prompt: mentionText,
+  })
+  return text
+}
+// 새 멘션 확인 및 응답
+async function checkMentions(session: PasswordSession) {
+  const client = new Client(session)
+  const notifications = await client.call(app.bsky.notification.listNotifications, {
+    limit: 20,
+  })
+  for (const notif of notifications.notifications) {
+    // 읽지 않은 멘션만 처리
+    
+if (notif.reason !== 'mention' || notif.isRead) continue
+    // 우리를 멘션한 게시물 가져오기
+    const post = await client.call(app.bsky.feed.getPostThread, {
+      uri: notif.uri,
+    })
+    const mentionText = post.thread.post.record.text
+    
+const reply = await generateReply(mentionText)
+    // 게시물에 답글 달기
+    await client.create(app.bsky.feed.post, {
+      text: reply,
+      createdAt: new Date().toISOString(),
+      reply: {
+        root: { uri: notif.uri, cid: post.thread.post.cid },
+        
+parent: { uri: notif.uri, cid: post.thread.post.cid },
+      },
+    })
+    console.log(`멘션에 답변: ${mentionText}`)
+  
+}
+}
+async function main() {
+    const session = await login()
+    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
+    job.start()
+    console.log('Agent is running...')
+}
+main().catch(console.error)
+```
+여기에는 몇 가지 새로운 개념이 있습니다. `app.bsky.feed.post` 로직은 이미 알고 계실 테고, 이제 `app.bsky.notification.listNotifications`와 `app.bsky.feed.getPostThread`도 구현하게 됩니다. 첫 번째 어휘는 특정 게시물에 대한 알림 목록을 가져오는 데 사용되며, 두 번째는 주어진 게시물 URI에 대한 전체 스레드를 가져옵니다.
+...그리고 우리의 우스꽝스러운 예시 프롬프트는 마음껏 변경해도 좋습니다.
+봇을 재배포하면 이제 멘션에 응답합니다!
+<Note>
+정기적으로 계정에 게시하는 자동화 봇은 네트워크에서 환영합니다. 봇이 다른 사용자와 상호작용할 경우, 해당 사용자가 봇 계정을 태그한 경우에만 상호작용(좋아요, 재게시, 답글 등)하십시오. 이는 선택적 상호작용이어야 하며, 그렇지 않으면 봇이 스팸으로 신고될 수 있습니다.
+</Note>
+## 결론
+이제 네트워크에 레코드를 생성하는 자동화된 Atproto 앱을 구축하셨습니다!
+더 많은 가이드와 튜토리얼은 [가이드](/guides) 섹션에서, 추가 예제 앱은 [쿡북](https://github.com/bluesky-social/cookbook/) 저장소에서 확인하실 수 있습니다. 즐거운 개발 되세요!

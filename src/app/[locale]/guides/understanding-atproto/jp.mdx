@@ -1,0 +1,55 @@
+import { Card, CardParagraph, CardTitle } from '@/components/Card'
+
+export const header = {
+  title: 'Understanding Atproto',
+  description: 'A closer look into how it all works',
+}
+
+## TL;DR
+
+Atprotoはビッグワールドなオープンソーシャルです。ユーザーはJSONレコードをリポジトリに公開します。それらのレコードの変更ストリームはネットワーク全体で同期され、アプリケーションを駆動します。
+
+コミュニティメンバー[Dan Abramov](https://bsky.app/profile/danabra.mov)による素晴らしい記事をおすすめします：
+
+- [**オープンソーシャル**](https://overreacted.io/open-social/) - プロトコルこそがAPIである。
+- [**Where it's at://**](https://overreacted.io/where-its-at/) - ハンドルからホスティングまで
+- [**A Social Filesystem**](https://overreacted.io/a-social-filesystem/) - アプリよりフォーマットを重視
+
+## 基本要素
+
+- **ユーザーリポジトリ**。ユーザーごとの公開データベース。
+- **ユーザーハンドル**。DNSレコードであるユーザー名。当アカウントは[@atproto.com](https://bsky.app/profile/atproto.com)。
+- **ユーザーDID**。ユーザーの永続的なID。
+
+## データモデル
+
+- **レコード**。JSON形式で、コレクションに分類されます。
+- **ブロブ**。[画像と動画](/guides/images-and-video)を格納します。
+- **レキシコン**。スキーマ言語です。
+- **レキシコンRPC (XRPC)**。HTTPSですが、ルートはレキシコンで定義されます。
+
+## スタック
+
+[セルフホスティング](/guides/self-hosting)可能な各種サービス：
+
+- **パーソナルデータサーバー (PDS)**。ユーザーアカウントをホストします。
+- **リレー**。ユーザーの書き込みイベントを収集・再配信します。
+- **アプリケーション**。ユーザーデータを集約しアプリ体験を生成します。
+- **ラベラー**。モデレーション決定をラベルメタデータとして公開します。
+
+## 実現方法
+
+アプリケーションを構築すると仮定しましょう。ユーザーは[OAuth](/guides/auth)でサインインし、アプリケーションに自身のPDSアドレスを伝えます。アプリケーションはその後、PDSに接続してレコードを[読み書き](/guides/reads-and-writes)します。
+
+ネットワーク全体のアクティビティを監視するには、[中継サーバーから同期する](/guides/sync)。ユーザーのPDSから直接同期することも可能ですが、中継サーバーを利用するのが便利です。すべてのデータは署名されているため、中継サーバーのストリームが正確であることを確認できます。
+
+[レキシコン](/guides/lexicon)はネットワーク上で公開されるデータの識別を支援します。これらはデータを読み取る際の検証に使用され、着信HTTPリクエストの検証と同様の役割を果たします。
+
+最後に、[モデレーション](/guides/moderation)はラベル付けツールの購読（または実行）によって処理します。これらのツールはユーザー報告を受け取り、ユーザーコンテンツにラベルを付与します。
+
+## 詳細解説
+
+チームによる以下の詳細解説記事も推奨します：
+
+- [**分散システムエンジニアのためのAtproto**](/articles/atproto-for-distsys-engineers)。バックエンド思考者向け解説。
+- [**Atprotoの理念**](/articles/atproto-ethos)。atproto設計の基盤となる原則。

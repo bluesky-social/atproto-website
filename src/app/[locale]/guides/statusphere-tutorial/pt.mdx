@@ -1,0 +1,648 @@
+import {Container} from "@/components/Container"
+import setstatus from "./set-status.png"
+import pdsls from "./pdsls-status.png"
+import tap from "./tap-status.png"
+import feed from "./feed-status.png"
+
+export const header = {
+  title: 'Create a Social App',
+  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+}
+
+Neste tutorial, você criará um aplicativo de configuração de status usando léxicos personalizados e sincronização em tempo real.
+Você pode encontrar o código-fonte deste tutorial, juntamente com outros projetos de exemplo, no repositório [Cookbook](https://github.com/bluesky-social/cookbook/), em `statusphere`.
+## Pré-requisitos
+Este tutorial se baseia no aplicativo criado em nosso [Tutorial OAuth com NextJS](/guides/oauth-tutorial). Você deve ter um aplicativo NextJS OAuth concluído antes de iniciar este tutorial. Se quiser pular essa etapa, você pode clonar o aplicativo OAuth concluído do [Cookbook] (https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
+Você deve ter instalado:
+- Node.js 18+
+- Go 1.25+
+- O gerenciador de pacotes pnpm
+Em plataformas compatíveis com [homebrew](https://brew.sh/), você pode instalá-los com:
+```bash
+brew install node pnpm go
+```
+Comece adicionando estas bibliotecas Atproto ao seu projeto existente:
+```bash
+pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
+```
+Você também deve ter nossa ferramenta CLI `lex` instalada globalmente:
+```bash
+npm install -g @atproto/lex
+```
+Você começará adicionando léxicos ao seu projeto.
+## Parte 1: Léxicos
+[Léxicos](/guides/lexicon) definem o esquema para registros no Atproto. Para criar este tutorial, já publicamos um novo Lexicon "Statusphere" em nosso repositório, disponível em `xyz.statusphere.status`. Você pode usar o `lex` para baixar e construir esse Lexicon em seu projeto:
+```bash
+lex install xyz.statusphere.status
+```
+Se desejar, você pode visualizar o arquivo Lexicon baixado em `lib/lexicons/ xyz.statusphere.status.json`. A partir daqui, você pode executar `lex build` para gerar tipos TypeScript para todos os seus léxicos instalados:
+```bash
+lex build --importExt=\"\"
+```
+<Note>
+Você pode adicionar este comando ao `package.json`, se necessário, mas não o usaremos novamente neste tutorial, agora que nossos léxicos foram criados. Se você adicionar outro léxico a um projeto com `lex install`, precisará executar novamente `lex build` com o sinalizador ` --override` para regenerar os tipos.
+</Note>
+Outra coisa que você deve fazer agora é atualizar a constante `SCOPE` em `lib/auth/client.ts` para solicitar acesso a essa coleção. Os escopos de permissão do Atproto são Lexicons, então você pode adicionar `xyz.statusphere.status` à lista de escopos que seu aplicativo solicita:
+```typescript
+export const SCOPE = "atproto repo:xyz.statusphere.status";
+```
+Agora você pode prosseguir com a criação do esquema do banco de dados.
+## Parte 2: Esquema do banco de dados
+Atualize `lib/db/index.ts` para adicionar novas tabelas:
+```typescript
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+  account: AccountTable;   // Novo
+  status: StatusTable;     // Novo
+}
+// ... tabelas de autenticação existentes ...
+export interface AccountTable {
+  did: string;
+  handle: string;
+  active: 0 | 1;
+}
+export interface StatusTable {
+  uri: string;
+  authorDid: string;
+  status: string;
+  createdAt: string;
+  indexedAt: string;
+  current: 0 | 1;
+}
+```
+Em seguida, adicione o script de migrações que cria essas tabelas. Se você estiver desenvolvendo com base no tutorial OAuth e já tiver implantado/migrado seu banco de dados, convém colocá-las em uma nova migração, por exemplo, chamada "002", em `lib/db/migrations.ts`:
+```typescript
+const migrations: Record<string, Migration> = {
+  "001": {} // migrações existentes para tabelas de autenticação
+  "002": {
+    async up(db: Kysely<unknown>) {
+      
+await db.schema
+        .createTable("account")
+        .addColumn("did", "text", (col) => col.primaryKey())
+        .addColumn("handle", "text", (col) => col.notNull())
+        .addColumn('active', "integer", (col) => col.notNull().defaultTo(1))
+        .execute();
+      
+await db.schema
+.createTable("status")
+.addColumn("uri", "text", (col) => col.primaryKey())
+.addColumn('authorDid', "text", (col) => col.notNull())
+        
+.addColumn("status", "text", (col) => col.notNull())
+        .addColumn("createdAt", "text", (col) => col.notNull())
+        .addColumn("indexedAt", "text", (col) => col.notNull())
+        .addColumn('current', "integer", (col) => col.notNull().defaultTo(0))
+        
+.execute();
+      await db.schema
+        .createIndex("status_current_idx")
+        .on("status")
+        .columns(['current', "indexedAt"])
+        .execute ();
+    },
+async down(db: Kysely<unknown>) {
+await db.schema.dropTable("status").execute();
+await db.schema.dropTable('account').execute();
+await db.schema.dropTable("auth_session").execute ();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+```
+Você pode executar `pnpm migrate` para aplicar essas novas migrações ao seu banco de dados. Agora, vamos construir a lógica do aplicativo!
+## Parte 3: Envio de status
+Primeiro, você criará o recurso que permite aos usuários escreverem seu status no [PDS](/guides/the-at-stack#pds). Crie uma nova rota de API em `app/api/status/route.ts`:
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client } from "@atproto/lex";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as xyz from "@/src/lexicons/xyz";
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  
+if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { status } = await request.json();
+  if (!status || typeof status !== 'string') {
+    return NextResponse.json({ error: "Status is required" }, { status: 400 });
+  
+}
+  const client = await getOAuthClient();
+const oauthSession = await client.restore(session.did);
+const lexClient = new Client(oauthSession);
+const createdAt = new Date().toISOString();
+const res = await lexClient.create(xyz.statusphere.status, {
+status,
+    
+criadoEm,
+  });
+  retorne NextResponse.json({
+    sucesso: verdadeiro,
+    uri: res.uri,
+  });
+}
+```
+Isso verifica se um usuário está conectado, cria um lex `Client` com sua sessão OAuth e, em seguida, cria um novo registro `xyz.statusphere.status` com o texto de status enviado.
+Em seguida, crie um componente Status picker em `components/StatusPicker.tsx`:
+```tsx
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+const EMOJIS = ["👍", "👎", "💙", "🔥", "😆", "😢", "🤔", "😴", "🎉", "🤩", "😭", "🥳", "😤", "💀", "✨", "👀", "🙏", "📚", "💻", "🍕", "🌴"];
+interface StatusPickerProps {
+  currentStatus?: string | null;
+}
+export function StatusPicker({ currentStatus }: StatusPickerProps) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(currentStatus ?? null);
+  const [loading, setLoading] = useState(false);
+  
+função assíncrona handleSelect(emoji: string) {
+    setLoading(true);
+    
+setSelected(emoji);
+    try {
+      const res = await fetch("/api/status", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: emoji }),
+      });
+      
+if (!res.ok) {
+        throw new Error("Falha ao atualizar o status");
+      }
+      router.refresh();
+    } catch (err) {
+      console.error("Falha ao atualizar o status:", err);
+      
+setSelected(currentStatus ?? null);
+    } finally {
+      setLoading(false);
+    }
+  }
+  return (
+    <div>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+Defina seu status
+      
+</p>
+      <div className="flex flex-wrap gap-2">
+        {EMOJIS.map((emoji) => (
+          <button
+            key={emoji}
+            onClick={() => handleSelect(emoji)}
+            disabled={loading}
+            className={`text-2xl p-2 rounded-lg transition-all
+              
+${selected === emoji
+                ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500"
+                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            
+{emoji}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+Por fim, atualize `app/page.tsx` para incluir o seletor de status:
+```tsx
+import { getSession } from "@/lib/auth/session";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+export default async function Home() {
+  
+const session = await getSession();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          
+<h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+Statusphere
+</h1>
+<p className="text-zinc-600 dark:text-zinc-400">
+Defina seu status na Atmosfera
+          
+</p>
+        </div>
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          {session ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                
+<p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Conectado
+                </p>
+                <LogoutButton />
+              </div>
+              <StatusPicker />
+            </div>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+Execute o aplicativo com `pnpm dev` — você poderá fazer login e selecionar um emoji para definir seu status!
+<Container>
+  <Image src={setstatus} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+Você ainda não terá como ver seu status neste aplicativo, mas pode procurar sua conta no [pdsls](https:// pdsls.dev) e verificar o `xyz.statusphere.status` Lexicon para ver esse registro.
+<Container>
+<Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+Em seguida, você adicionará recursos de sincronização para realmente receber atualizações de status.
+## Parte 4: Sincronização em tempo real com o Tap
+O [Tap](/guides/backfilling#using-tap) é a melhor maneira de sincronizar e transmitir registros do AT Protocol. Você usará a biblioteca [TypeScript do Tap](https://www.npmjs.com/package/@atproto/tap) para sincronizar novos registros em seu banco de dados. Crie `lib/tap/index.ts`:
+```typescript
+import { Tap } from "@atproto/tap";
+const TAP_URL = process.env.TAP_URL || "http://localhost:2480";
+let _tap: Tap | null = null;
+export const getTap = (): Tap => {
+  if (!_tap) {
+    _tap = new Tap(TAP_URL);
+  
+}
+  return _tap;
+};
+```
+Em seguida, crie `lib/db/queries.ts` com algumas consultas ao banco de dados para lidar com eventos Tap:
+```typescript
+import { getDb, AccountTable, StatusTable, DatabaseSchema } from ".";
+import { AtUri } from "@atproto/syntax";
+import { Transaction } from "kysely";
+exportar função assíncrona getAccountStatus(did: string) {
+const db = getDb();
+const status = aguardar db
+.selectFrom("status")
+.selectAll()
+.where("authorDid", "=", did)
+.orderBy('createdAt', "desc")
+    
+.limit(1)
+    .executeTakeFirst();
+  return status ?? null;
+}
+exportar função assíncrona insertStatus(data: StatusTable) {
+  getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx
+        .insertInto("status")
+        .values(data)
+        
+.onConflict((oc) =>
+          oc.column("uri").doUpdateSet({
+            status: data.status,
+            createdAt: data.createdAt,
+            indexedAt: data.indexedAt,
+          }),
+        )
+        .execute();
+      setCurrStatus(tx, data.authorDid);
+    
+});
+}
+exportar função assíncrona deleteStatus(uri: AtUri) {
+  aguardar getDb()
+.transaction()
+.execute(async (tx) => {
+aguardar tx.deleteFrom("status").where('uri', "=", uri.toString()).execute();
+aguardar setCurrStatus(tx, uri.hostname);
+    
+});
+}
+exportar função assíncrona upsertAccount(data: AccountTable) {
+  aguardar getDb()
+    .insertInto("account")
+    .values(data)
+    .onConflict((oc) =>
+oc.column("did").doUpdateSet({
+handle: data.handle,
+active: data.active,
+}),
+)
+    
+.execute();
+}
+exportar função assíncrona deleteAccount(did: string) {
+aguardar getDb().deleteFrom("account").where("did", "=", did).execute();
+aguardar getDb().deleteFrom("status").where('authorDid', "=", did).execute();
+}
+// Auxiliar para atualizar qual status é "atual" para um usuário (dentro de uma transação)
+função assíncrona setCurrStatus(tx: Transaction<DatabaseSchema>, did: string) {
+  // Limpar o sinalizador atual para todos os status do usuário
+  await tx
+    .updateTable("status")
+    .set({ current: 0 })
+    .where("authorDid", "=", did)
+    .where('current', "=", 1)
+    .execute ();
+  // Definir o status mais recente como atual
+await tx
+    .updateTable("status")
+    .set({ current: 1 })
+    .where("uri", "=", (qb) =>
+      qb
+        .selectFrom("status")
+        .select("uri")
+        .where('authorDid', "=", did)
+        
+.orderBy("createdAt", "desc")
+        .limit(1),
+    )
+    .execute();
+}
+```
+O auxiliar `setCurrStatus` garante que apenas o status mais recente por usuário tenha `current = 1`. Isso será usado posteriormente.
+O Tap entregará eventos por meio de um endpoint webhook em `app/api/webhook/route.ts`:
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { parseTapEvent, assureAdminAuth } from "@atproto/tap";
+import { AtUri } from "@atproto/syntax";
+import {
+  
+upsertAccount,
+  insertStatus,
+  deleteStatus,
+  deleteAccount,
+} de "@/lib/db/queries";
+import * como xyz de "@/src/lexicons/xyz";
+const TAP_ADMIN_PASSWORD = process.env.TAP_ADMIN_PASSWORD;
+exportar função assíncrona POST(solicitação: NextRequest) {
+  // Verificar se a solicitação é do nosso servidor TAP
+  if (TAP_ADMIN_PASSWORD) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      
+retorne NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+tente {
+assureAdminAuth(TAP_ADMIN_PASSWORD, authHeader);
+} catch {
+retorne NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+}
+  
+}
+  const body = await request.json();
+const evt = parseTapEvent(body);
+// Tratar alterações de conta/identidade
+if (evt.type === "identity") {
+if (evt.status === "deleted") {
+      
+await deleteAccount(evt.did);
+    } else {
+      await upsertAccount({
+        did: evt.did,
+        handle: evt.handle,
+        active: evt.isActive ? 1 : 0,
+      });
+    }
+}
+// Tratar alterações no registro de status
+if (evt.type === "record") {
+    
+const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
+    if (evt.action === "create" || evt.action === "update") {
+      let record: xyz.statusphere.status.Main;
+      try {
+        record = xyz.statusphere.status.$parse(evt.record);
+      
+} catch {
+        return NextResponse.json({ success: false });
+      }
+      await insertStatus({
+        uri: uri.toString(),
+        authorDid: evt.did,
+        status: record.status,
+        
+criadoEm: registro.criadoEm,
+        indexadoEm: new Date().toISOString(),
+        atual: 1,
+      });
+    } else if (evt.action === "delete") {
+      await deleteStatus(uri);
+    }
+  }
+  retornar NextResponse.json( { sucesso: verdadeiro });
+}
+```
+O Tap envia eventos webhook quando os registros são alterados em qualquer lugar da rede. As solicitações são validadas usando um segredo compartilhado; para eventos de `identidade`, você atualiza o cache da conta e, para eventos de `registro`, verifica se o registro corresponde ao seu Lexicon e o insere/atualiza/exclui do seu banco de dados.
+Atualize `app/page.tsx` novamente para buscar e passar o status do usuário atual:
+```tsx
+import { getAccountStatus } from "@/lib/db/queries";
+// Na função Home:
+const accountStatus = session ? await getAccountStatus(session.did) : null;
+// Adicione ao elemento StatusPicker:
+<StatusPicker currentStatus={accountStatus?.status} />
+```
+Dessa forma, o `StatusPicker` destacará o status atual do usuário quando a página for carregada.
+Agora, em outro terminal, instale e execute o `tap` a partir do repositório de origem:
+```bash
+go install github.com/bluesky-social/indigo/cmd/tap
+tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+```
+Ctrl+C seu aplicativo em execução. Em seguida, adicione seu repositório de dados ao Tap para rastreamento (você adicionará outras fontes de dados posteriormente):
+```bash
+# Substitua pelo seu próprio DID abaixo
+curl -H 'Content-Type: application/json' -d '{"dids":["DID"]}' http://localhost:2480/repos/add
+```
+Reinicie seu aplicativo com `pnpm dev`, conclua o fluxo de login e você deverá encontrar seu status salvo destacado:
+<Container>
+  
+<Image src={tap} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+## Parte 5: Exibindo identificadores e feeds
+Por fim, você adicionará a funcionalidade para exibir os identificadores dos usuários e um feed dos status de todos os usuários.
+Primeiro, adicione algumas importações adicionais ao `lib/db/queries.ts`:
+```typescript
+import { getHandle } from "@atproto/common-web";
+import { getTap } from "@/lib/tap";
+```
+Em seguida, adicione funções adicionais para buscar identificadores e status de contas:
+```typescript
+export async function getAccountHandle(did: string): Promise<string | null> {
+  const db = getDb();
+  // se rastreamos a conta através do Tap e obtivemos as informações da conta, carregaremos a partir daí
+  const account = await db
+    .selectFrom("account")
+    .select("handle")
+    
+.where("did", "=", did)
+    .executeTakeFirst();
+if (account) return account.handle;
+// caso contrário, resolveremos o DID das contas através do Tap, que fornece cache de identidade
+try {
+const didDoc = await getTap().resolveDid(did);
+if (!didDoc) return null;
+return getHandle(didDoc) ?? null;
+  
+} catch {
+    retornar null;
+  }
+}
+exportar função assíncrona getRecentStatuses(limite = 5) {
+  const db = getDb ();
+  retorne db
+.selectFrom("status")
+.innerJoin("account", "status.authorDid", "account.did")
+.selectAll()
+.orderBy('createdAt', "desc")
+.limit(limite)
+.execute();
+}
+exportar função assíncrona getTopStatuses(limite = 10) {
+const db = getDb ();
+  return db
+    .selectFrom("status")
+    .select(["status", db.fn.count("uri").as("count")])
+    .where("current", "=", 1)
+    .groupBy('status')
+    .orderBy("count", "desc")
+    .limit(limite)
+    .execute();
+}
+```
+Em seguida, atualize `app/page.tsx` para exibir o feed completo com os principais status, identificadores e carimbos de data/hora:
+```tsx
+import { getSession } from "@/lib/auth/session";
+import {
+  getAccountStatus,
+  getRecentStatuses,
+  getTopStatuses,
+  
+getAccountHandle,
+} from "@/lib/db/queries";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+export default async function Home() {
+  
+const sessão = aguardar getSession();
+  const [estatutos, topStatuses, accountStatus, accountHandle] =
+    aguardar Promise.all([
+      getRecentStatuses(),
+      getTopStatuses(),
+      sessão ? getAccountStatus(session.did) : nulo,
+      sessão ? getAccountHandle(session.did) : null,
+    ]);
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          
+<h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+Statusphere
+</h1>
+<p className="text-zinc-600 dark:text-zinc-400">
+Defina seu status no Atmosphere
+</ p>
+        </div>
+        {session ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            
+<div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Conectado como @{accountHandle ?? session.did}
+</p>
+<LogoutButton />
+            
+</div>
+            <StatusPicker status atual={status da conta?.status} />
+</div>)
+ : (
+<div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+<LoginForm />
+          
+</div>
+        )}
+        {topStatuses.length > 0 && (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <h3 className="text-sm font-medium text-zinc-500 dark: text-zinc-400 mb-3">
+Status principais
+</h3>
+            
+<div className="flex flex-wrap gap-2">
+              {topStatuses.map((s) => (
+                <span
+                  key={s.status}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm"
+                
+>
+                  <span className="text-lg">{s.status}</span>
+                  <span className="text-zinc-500 dark:text-zinc-400">
+                    {String(s.count)}
+                  </span>
+                
+</span>
+              ))}
+</div>
+</div>
+)}
+<div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          
+<h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+Recentes
+</h3>
+{statuses.length === 0 ? (
+<p className="text-zinc-500 dark:text-zinc-400 text-sm">
+Ainda não há status. Seja o primeiro!
+            
+</p>
+          ) : (
+<ul className="space-y-3">
+{statuses.map((s) => (
+<li key={s.uri} className="flex items-center gap-3">
+<span className="text-2xl">{s.status}</span>
+                  
+<span className="text-zinc-600 dark:text-zinc-400 text-sm">
+                    @{s.handle}
+                  </span>
+                  
+<span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
+                    {timeAgo(s.createdAt)}
+                  </span>
+                </li>
+              ))}
+</ul>
+)}
+</div>
+</main>
+</div>
+);
+}
+função timeAgo(dateString: string): string {
+const agora = Date.now();
+const então = new Date(dateString).getTime();
+const segundos = Math.floor((agora - então) / 1000);
+if (segundos < 60) return "agora mesmo";
+  
+const minutos = Math.floor(segundos / 60);
+  if (minutos < 60) return `${minutos}m`;
+const horas = Math.floor(minutos / 60);
+if (horas < 24) return `${horas}h`;
+const dias = Math.floor (hours / 24);
+  return `${days}d`;
+}
+```
+Agora, os usuários conectados verão "Conectado como @seu_nome_de_usuário" em vez de apenas "Conectado", juntamente com um feed dos status recentes de todos os usuários e uma seção "Status mais populares" mostrando os status atuais mais populares.
+Você pode parar e reiniciar seu aplicativo com `pnpm dev` novamente.
+Uma última coisa — lembre-se de que você adicionou apenas uma única fonte de dados ao `tap` anteriormente. Para ver os status de toda a rede, pare e execute novamente o `tap` com o sinalizador `--signal-collection`:
+```bash
+tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  
+--collection-filters=xyz.statusphere.status \  --signal-collection=xyz.statusphere.status```... e você começará a ver os status de outros usuários na rede!<Container>  <Image src={feed} alt="" className="w-full max-w-md mx-auto" /></Container>## ConclusãoVocê criou um aplicativo Atproto completo que usa OAuth para fazer login, um Lexicon personalizado para definir registros de status e Tap para sincronizar registros em tempo real.Isso lhe dá todas as ferramentas necessárias para continuar criando no AT Protocol. Você pode encontrar mais guias e tutoriais em nossa seção [Guias](/guides) e mais exemplos de aplicativos no repositório [Cookbook](https://github.com/bluesky-social/cookbook/). Boa construção!

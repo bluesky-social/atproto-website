@@ -1,0 +1,30 @@
+export const header = {
+  title: 'Self-hosting',
+  description:
+    'Resources for self-hosting various components of the Atmosphere stack',
+}
+
+대기권 스택의 대부분 구성 요소는 배포를 지원합니다. 일부 구성 요소는 자체 호스팅하기가 다른 구성 요소보다 용이한데, 이는 애플리케이션 수준 인프라(AppView 또는 Relay 등)를 제공하는지, 아니면 데이터 수준 인프라(PDS 등)를 제공하는지에 따라 달라집니다.
+## PDS
+PDS 자체 호스팅을 위한 리소스(설치 단계, Docker 이미지, 자주 묻는 질문 포함)는 [PDS](https://github.com/bluesky-social/pds) GitHub 저장소에서 확인할 수 있습니다. 자체 PDS를 호스팅하려면 여기서 시작하세요!
+PDS Docker 이미지에는 관리 기능을 수행하는 명령줄 도구인 [goat](https://github.com/bluesky-social/goat)가 포함되어 있습니다.
+계정을 한 PDS(예: Bluesky 호스팅 PDS)에서 다른 PDS로 이전하는 경우 [계정 이전](/guides/account-migration)을 참조하세요.
+자체 호스팅 PDS의 *도메인 이름*을 변경해야 하는 경우 다음을 수행해야 합니다:
+- 호스팅 중인 *각* 계정의 PLC 항목을 변경하세요. 이를 위해 [boat](https://boat.kelinci.net/plc-applicator) 같은 커뮤니티 유지 관리 인터페이스를 사용할 수 있습니다.
+- 다른 서버와 마찬가지로 DNS 구성을 업데이트한 후 `pds.env` 파일에서 도메인 이름을 변경하세요.
+PDS 확장 및 강화에 대한 안내는 [프로덕션 환경 구축](/guides/going-to-production)을 참조하세요.
+Bluesky는 다수의 PDS 앞에 “엔트리웨이(entryway)”를 배치하여 운영합니다. 이 구현 방식에 대한 정보는 [엔트리웨이](https://docs.bsky.app/docs/advanced-guides/entryway)를 참조하세요.
+커뮤니티에서 개발한 PDS 구현체도 여러 가지가 있습니다! 예를 들면:
+- [Tranquil PDS](https://tangled.org/lewis.moe/bspds-sandbox), Rust로 작성됨.
+- [Cocoon](https://tangled.org/hailey.at/cocoon), Go로 작성됨.
+## Tap
+Tap은 AT 네트워크의 기존 레코드를 동기화하고, 이후 파이어호스에서 새로운 레코드를 계속 수신하는 데 사용됩니다. Tap 배포 가이드에 대해서는 [Tap readme](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md#distribution--deployment)를 참조하세요.
+또한 [Railway](https://railway.com/)에 [Tap 배포](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/RAILWAY_DEPLOY.md)를 위한 빠른 시작 가이드를 제공합니다.
+## AppView 또는 Relay
+자체 AppView 또는 Relay 호스팅은 가능하지만 리소스 집약적입니다. 개인 데이터 저장소 접근을 직접 제어하는 PDS 호스팅과 달리, AppView 또는 Relay 호스팅은 애플리케이션 수준 인프라 제공을 위한 선택지입니다. 일반적으로 먼저 애플리케이션이 처리하는 사전(Lexicons)의 네트워크 내 모든 데이터를 복제해야 합니다. 시작점으로 [Sync](/guides/sync) 문서를 참조하세요.
+자체 Atmosphere 앱을 설계하고 운영하려면 고려해야 할 사항이 많습니다! 이 글은 권장 사항의 포괄적인 목록이 아닙니다.
+- 앱 가입 절차에서는 사용자가 로그인하거나 계정을 생성해야 합니다. 일반적으로 앱과 함께 자체 PDS를 호스팅하여 Atmosphere를 처음 사용하는 사용자(아직 PDS 개념을 알지 못할 수 있음)가 애플리케이션 내에서 직접 가입할 수 있도록 하는 것을 권장합니다. PDS와 AppView는 [서로 다른 도메인 이름](/going-to-production#domain-names)을 사용해야 합니다.
+## Ozone
+자체 호스팅 가이드라인은 [Ozone 사용](/guides/using-ozone)을 참조하세요.
+## 배포 레시피
+공식 도구를 사용하지 않고 다양한 환경을 지원할 수 있는 커뮤니티 기여 배포 솔루션은 [deploy-recipes](https://github.com/bluesky-social/deploy-recipes) GitHub 저장소를 참조하세요. 기여를 환영합니다!

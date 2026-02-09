@@ -6,6 +6,20 @@ import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
+
+// Strip locale prefix from pathname for comparison with nav hrefs
+const LOCALES = ['en', 'pt', 'ja', 'ko']
+function stripLocalePrefix(pathname: string): string {
+  for (const locale of LOCALES) {
+    if (pathname.startsWith(`/${locale}/`)) {
+      return pathname.slice(locale.length + 1)
+    }
+    if (pathname === `/${locale}`) {
+      return '/'
+    }
+  }
+  return pathname
+}
 import { Tag } from '@/components/Tag'
 import { ChevronRightIcon } from './icons/ChevronRightIcon'
 import { ChevronDownIcon } from './icons/ChevronDownIcon'
@@ -144,7 +158,9 @@ function NavigationGroup({
   // state, so that the state does not change during the close animation.
   // The state will still update when we re-open (re-render) the navigation.
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
-  let [pathname] = useInitialValue([usePathname()], isInsideMobileNavigation)
+  let [rawPathname] = useInitialValue([usePathname()], isInsideMobileNavigation)
+  // Normalize pathname by stripping locale prefix for comparison with nav hrefs
+  const pathname = stripLocalePrefix(rawPathname)
 
   // Check if any link or subpage is active
   const activePage = group.links.find((link) => {
