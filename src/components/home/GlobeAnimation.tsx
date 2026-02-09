@@ -25,7 +25,7 @@ const ASCII_MAP = [
   '\u00a0', // 00 - empty
   '.', // 01 - bottom only
   "'", // 10 - top only
-  '❖', // 11 - full
+  '♦', // 11 - full
 ]
 
 // ============ SHADER SOURCES ============

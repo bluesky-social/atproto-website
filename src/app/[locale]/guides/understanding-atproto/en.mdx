@@ -1,4 +1,4 @@
-import { Card, CardParagraph, CardDetails, CardTitle } from '@/components/Card'
+import { Card, CardParagraph, CardTitle } from '@/components/Card'
 
 export const header = {
   title: 'Understanding Atproto',
@@ -7,23 +7,28 @@ export const header = {
 
 ## TL;DR
 
-Atproto is like a souped-up RSS. Users publish JSON records into repositories. The changestreams of those records then sync across the network to drive applications.
+Atproto is big-world, open social. Users publish JSON records into repositories. The changestreams of those records then sync across the network to drive applications.
 
-Here are the core concepts:
+We recommend these fantastic articles by community member [Dan Abramov](https://bsky.app/profile/danabra.mov):
+
+- [**Open Social**](https://overreacted.io/open-social/) - The protocol is the API.
+- [**Where it's at://**](https://overreacted.io/where-its-at/) - From handles to hosting.
+- [**A Social Filesystem**](https://overreacted.io/a-social-filesystem/) - Formats over apps.
+
+## Core primitives
 
 - **User repos.** The public per-user databases.
-- **User handles.** Aka usernames, which are DNS records. Our account is `@atproto.com`.
+- **User handles.** Usernames, which are DNS records. Our account is [@atproto.com](https://bsky.app/profile/atproto.com).
 - **User DIDs.** The permanent IDs of users.
 
-Data gets published in a couple of forms:
+## Data models
 
 - **Records**. JSON, categorized into collections.
-- **Blobs**. The images and videos.
-
-Everything is described using schemas:
-
+- **Blobs**. The [images and videos](/guides/images-and-video).
 - **Lexicon**. The schema language.
-- **LexRPC (XRPC).** It's HTTP but with the routes defined by Lexicons.
+- **Lexicon RPC (XRPC).** It's HTTPS but with the routes defined by Lexicons.
+
+## The stack
 
 There are different kinds of services which you can [self-host](/guides/self-hosting):
 
@@ -31,6 +36,8 @@ There are different kinds of services which you can [self-host](/guides/self-hos
 - **Relays**. They collect and rebroadcast user write events.
 - **Applications**. They aggregate user data to produce app experiences.
 - **Labelers**. Publish moderation decisions as label metadata.
+
+## Making it happen
 
 Let's assume you're building an application. Your users will sign in with [OAuth](/guides/auth), which hands your application the address of their PDS. Your application then [reads & writes](/guides/reads-and-writes) records by contacting their PDS.
 
@@ -41,12 +48,6 @@ The [Lexicons](/guides/lexicon) help identify the data being published on the ne
 Finally, you handle [moderation](/guides/moderation) by subscribing to (or running) labelers which receive user reports and publish labels on user content.
 
 ## Deeper reads
-
-We recommend these fantastic articles by community-member [Dan Abramov](https://bsky.app/profile/danabra.mov):
-
-- [**Open Social**](https://overreacted.io/open-social/) - The protocol is the API.
-- [**Where it's at://**](https://overreacted.io/where-its-at/) - From handles to hosting.
-- [**A Social Filesystem**](https://overreacted.io/a-social-filesystem/) - Formats over apps.
 
 We also recommend these deep-dive articles by the team:
 

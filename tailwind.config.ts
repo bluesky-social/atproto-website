@@ -66,6 +66,7 @@ export default {
       },
       animation: {
         text: 'text 1s ease infinite',
+        'progress-fill': 'progress-fill linear forwards',
       },
       keyframes: {
         text: {
@@ -77,6 +78,10 @@ export default {
             'background-size': '200% 200%',
             'background-position-x': '-200%',
           },
+        },
+        'progress-fill': {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
         },
       },
     },

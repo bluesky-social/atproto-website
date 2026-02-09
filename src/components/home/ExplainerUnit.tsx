@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { ButtonArrowIcon } from '../Button'
 import Link from 'next/link'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 const NavContext = createContext('json')
 const SyntaxHighlightContext = createContext(true)
@@ -24,7 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     id: 'types',
     title: 'Strongly typed',
-    description: 'Compose records with type definitions based on JSON Schema.',
+    description: 'Compose and extend records with shared schemas.',
   },
   {
     id: 'links',
@@ -34,13 +34,31 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     id: 'checksums',
-    title: 'With checksums',
+    title: 'With strong links',
     description: "Use content-IDs to create strong links to other users' data.",
   },
 ]
 
+const AUTO_ROTATE_INTERVAL = 4000
+
 export function ExplainerUnit() {
   const [current, setCurrent] = useState('json')
+  const [hasInteracted, setHasInteracted] = useState(false)
+
+  useEffect(() => {
+    if (hasInteracted) return
+
+    const timer = setInterval(() => {
+      setCurrent((prev) => getNextNavItem(prev))
+    }, AUTO_ROTATE_INTERVAL)
+
+    return () => clearInterval(timer)
+  }, [hasInteracted])
+
+  const handleSetCurrent = useCallback((id: string) => {
+    setHasInteracted(true)
+    setCurrent(id)
+  }, [])
 
   return (
     <div className="relative">
@@ -52,7 +70,8 @@ export function ExplainerUnit() {
             title={title}
             description={description}
             current={current}
-            setCurrent={setCurrent}
+            setCurrent={handleSetCurrent}
+            isAutoRotating={!hasInteracted}
           />
         ))}
       </ExplainerMobileNav>
@@ -134,7 +153,8 @@ export function ExplainerUnit() {
               title={title}
               description={description}
               current={current}
-              setCurrent={setCurrent}
+              setCurrent={handleSetCurrent}
+              isAutoRotating={!hasInteracted}
             />
           ))}
           <ExplainerUnitCTA>LEARN MORE</ExplainerUnitCTA>
@@ -194,7 +214,7 @@ function O({
 function K({ children }: React.PropsWithChildren<{}>) {
   return (
     <span>
-      <span className={clsx('font-medium')}>"{children}"</span>:
+      <span className={clsx('font-medium')}>&quot;{children}&quot;</span>:
     </span>
   )
 }
@@ -227,7 +247,7 @@ export function ExplainerUnitCanvas({
       className={clsx(
         'not-prose relative block overflow-scroll rounded-sm shadow-md shadow-zinc-900/5 ring-1 ring-zinc-900/20 md:w-2/3 dark:ring-zinc-100/15',
         dark &&
-          'bg-zinc-900 text-white shadow-zinc-900/30 dark:bg-zinc-800 dark:shadow-zinc-900/90',
+        'bg-zinc-900 text-white shadow-zinc-900/30 dark:bg-zinc-800 dark:shadow-zinc-900/90',
       )}
     >
       {children}
@@ -256,19 +276,22 @@ export function ExplainerDesktopNavItem({
   description,
   current,
   setCurrent,
+  isAutoRotating,
 }: {
   id: string
   title: string
   description: string
   current: string
   setCurrent: React.Dispatch<string>
+  isAutoRotating: boolean
 }) {
+  const isActive = id === current
   return (
     <div
       className={clsx(
-        'ml-1 cursor-pointer border-l-4 py-8 pl-6 transition-colors duration-300 hover:bg-zinc-100/2.5',
+        'relative ml-1 cursor-pointer border-l-4 py-8 pl-6 transition-colors duration-300 hover:bg-zinc-100/2.5',
         'max-md:hidden',
-        id === current
+        isActive
           ? 'border-zinc-200 bg-zinc-100/2.5'
           : 'border-transparent',
       )}
@@ -277,7 +300,7 @@ export function ExplainerDesktopNavItem({
       <div
         className={clsx(
           'pb-1 text-2xl font-medium transition-colors duration-300',
-          id === current ? 'text-white' : 'text-white/70',
+          isActive ? 'text-white' : 'text-white/70',
         )}
       >
         {title}
@@ -285,6 +308,17 @@ export function ExplainerDesktopNavItem({
       <div className={clsx('text-zinc-700 dark:text-zinc-400')}>
         {description}
       </div>
+      {isActive && isAutoRotating && (
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-700">
+          <div
+            key={current}
+            className="h-full bg-zinc-200 animate-progress-fill"
+            style={{
+              animationDuration: `${AUTO_ROTATE_INTERVAL}ms`,
+            }}
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -307,20 +341,23 @@ export function ExplainerMobileNavItem({
   description,
   current,
   setCurrent,
+  isAutoRotating,
 }: {
   id: string
   title: string
   description: string
   current: string
   setCurrent: React.Dispatch<string>
+  isAutoRotating: boolean
 }) {
   const i = NAV_ITEMS.findIndex((item) => item.id === id)
+  const isActive = id === current
   return (
     <div
-      className={clsx('px-8 md:hidden', id === current ? 'block' : 'hidden')}
+      className={clsx('px-8 md:hidden', isActive ? 'block' : 'hidden')}
       onClick={() => setCurrent(getNextNavItem(id))}
     >
-      <div className="rounded-sm px-6 py-6 ring-1 ring-zinc-100/15">
+      <div className="relative overflow-hidden rounded-sm px-6 py-6 ring-1 ring-zinc-100/15">
         <div className={clsx('flex-1 pb-1 text-2xl font-medium text-white')}>
           {title}
         </div>
@@ -328,6 +365,17 @@ export function ExplainerMobileNavItem({
           {description}
         </div>
         <Progress total={4} current={i} />
+        {isActive && isAutoRotating && (
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-700">
+            <div
+              key={current}
+              className="h-full bg-zinc-200 animate-progress-fill"
+              style={{
+                animationDuration: `${AUTO_ROTATE_INTERVAL}ms`,
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

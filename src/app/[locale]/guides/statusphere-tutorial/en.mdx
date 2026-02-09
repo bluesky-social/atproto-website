@@ -5,7 +5,7 @@ import tap from "./tap-status.png"
 import feed from "./feed-status.png"
 
 export const header = {
-  title: 'Create an Application',
+  title: 'Create a Social App',
   description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
 }
 
@@ -17,11 +17,18 @@ You can find the source code for this tutorial, along with other example project
 
 This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
 
-Like the OAuth with NextJS tutorial, you should have installed:
-- Node.js 20+
+You should have installed:
+- Node.js 18+
+- Go 1.25+
 - The pnpm package manager
 
-Begin by adding these ATProto libraries to your existing project:
+On platforms supported by [homebrew](https://brew.sh/), you can install them with:
+
+```bash
+brew install node pnpm go
+```
+
+Begin by adding these Atproto libraries to your existing project:
 
 ```bash
 pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
@@ -37,7 +44,7 @@ You'll begin by adding Lexicons to your project.
 
 ## Part 1: Lexicons 
 
-Lexicons define the schema for records in AT Protocol. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
+[Lexicons](/guides/lexicon) define the schema for records in Atproto. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
 
 ```bash
 lex install xyz.statusphere.status
@@ -53,7 +60,7 @@ lex build --importExt=\"\"
 You could add this command to `package.json` if you needed, but we won't be using it again in this tutorial now that our Lexicons have been built. If you ever add another Lexicon to a project with `lex install`, you'll need to re-run `lex build` with the `--override` flag to regenerate the types.
 </Note>
 
-One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. ATProto permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
+One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. Atproto permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
 
 ```typescript
 export const SCOPE = "atproto repo:xyz.statusphere.status";
@@ -505,12 +512,11 @@ const accountStatus = session ? await getAccountStatus(session.did) : null;
 
 This way, the `StatusPicker` will highlight the user's current status when the page loads.
 
-Now, in another terminal, clone the [indigo](https://github.com/bluesky-social/indigo) repo to run a Tap server locally:
+Now, in another terminal, install and run `tap` from its source repository:
 
 ```bash
-git clone https://github.com/bluesky-social/indigo.git
-cd indigo
-go run ./cmd/tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+go install github.com/bluesky-social/indigo/cmd/tap
+tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
 ```
 
 Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
@@ -706,7 +712,7 @@ You can stop and restart your app with `pnpm dev` again.
 One last thing — remember, you only added a single data source to `tap` earlier. To see statuses from across the entire network, stop and re-run `tap` with the `--signal-collection` flag:
 
 ```bash
-go run ./cmd/tap run \
+tap run \
   --webhook-url=http://localhost:3000/api/webhook \
   --collection-filters=xyz.statusphere.status \
   --signal-collection=xyz.statusphere.status
@@ -720,6 +726,6 @@ go run ./cmd/tap run \
 
 ## Conclusion
 
-You've now built a complete ATProto app that uses OAuth to sign in, a custom Lexicon to define status records, and Tap to synchronize records in real-time.
+You've now built a complete Atproto app that uses OAuth to sign in, a custom Lexicon to define status records, and Tap to synchronize records in real-time.
 
 This gives you all the tools you need to continue building on AT Protocol. You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!

@@ -16,7 +16,7 @@ export default async function HomePage({ params }: any) {
             AT PROTOCOL
           </h1>
           <div className="hyphens-none text-center font-mono text-xl text-zinc-700 xl:pr-40 xl:text-left dark:text-zinc-400">
-            The open social network for high&#8209;scale interoperation.
+            Building the Social Internet.
           </div>
           <div className="py-4 text-center sm:py-12 xl:text-left">
             <Button
@@ -31,9 +31,9 @@ export default async function HomePage({ params }: any) {
             </Button>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 sm:text-center xl:text-left">
-            <Stat value="40M+" desc="Users online" first />
+            <Stat value="40M+" desc="Users" first />
             <Stat value="1.961B+" desc="Totally normal posts" />
-            <Stat value="100%" desc="Open source" />
+            <Stat value="100%" desc="Open data" />
           </div>
         </div>
         <div className="pb-12 pt-4 sm:py-8 xl:flex-1 xl:py-0">

@@ -9,6 +9,8 @@ import {
   Collection,
 } from '@skyware/jetstream'
 import { DotPatternBackground } from '../DotPattern'
+import { ButtonArrowIcon } from '../Button'
+import Link from 'next/link'
 
 export function Firehose() {
   const [jetstream] = useState(() => new Jetstream())
@@ -65,13 +67,13 @@ export function Firehose() {
         <div
           className={clsx(
             'transition-height overflow-hidden border-t border-zinc-900/20 duration-700 dark:border-zinc-100/15',
-            hasRun ? 'h-[400px]' : 'h-[72px] md:h-[56px]',
+            hasRun ? 'h-[400px]' : 'h-[140px] md:h-[56px]',
           )}
         >
-          <div className="flex justify-between gap-4 px-4 py-4 font-mono">
+          <div className="flex flex-col md:flex-row justify-between gap-4 px-4 py-4 font-mono">
             <div
               className={clsx(
-                'hidden md:block',
+                // 'hidden md:block',
                 active
                   ? 'animate-text bg-gradient-to-r from-yellow-800 to-yellow-400 bg-clip-text text-transparent'
                   : '',
@@ -99,6 +101,10 @@ export function Firehose() {
             ))}
           </div>
         </div>
+        <Link className="border-t border-zinc-900/20 dark:border-zinc-100/15 flex flex-row items-center justify-center font-medium py-4" href="/guides/sync">
+          <div>LEARN MORE</div>
+          <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
+        </Link>
       </div>
     </div>
   )
