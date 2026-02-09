@@ -3,6 +3,9 @@
 /**
  * Publishes a blog post to AT Protocol as a standard.document.main record
  *
+ * Publishes metadata (title, description, date) with a link back to the
+ * website — not the full post content.
+ *
  * Usage:
  *   npm run publish-post <slug>
  *
@@ -20,8 +23,6 @@ import { fileURLToPath } from 'url'
 import { Client } from '@atproto/lex'
 import { PasswordSession } from '@atproto/lex-password-session'
 import * as acorn from 'acorn'
-import { remark } from 'remark'
-import strip from 'strip-markdown'
 import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
 
@@ -121,29 +122,7 @@ function parseHeaderExport(content) {
     }
   }
 
-  return { header, headerEndIndex: endIndex }
-}
-
-/**
- * Parse the MDX file to extract header metadata and content
- */
-async function parseMdxFile(content) {
-  // Parse the header using AST
-  const { header, headerEndIndex } = parseHeaderExport(content)
-
-  // Extract markdown content (everything after the header export)
-  const markdownContent = content.slice(headerEndIndex).trim()
-
-  // Strip markdown to plain text using remark
-  const textResult = await remark()
-    .use(strip)
-    .process(markdownContent)
-
-  const textContent = String(textResult)
-    .replace(/\n{3,}/g, '\n\n') // Collapse multiple newlines
-    .trim()
-
-  return { header, markdownContent, textContent }
+  return { header }
 }
 
 /**
@@ -192,7 +171,7 @@ async function main() {
   console.log(`\n📝 Publishing post: ${slug}\n`)
 
   const mdxContent = fs.readFileSync(mdxPath, 'utf-8')
-  const { header, markdownContent, textContent } = await parseMdxFile(mdxContent)
+  const { header } = parseHeaderExport(mdxContent)
 
   console.log(`  Title: ${header.title}`)
   console.log(`  Date: ${header.date}`)
@@ -245,7 +224,6 @@ async function main() {
         title: header.title,
         description: header.description,
         path: postPath,
-        textContent: textContent,
         publishedAt: parseDate(header.date),
         updatedAt: new Date().toISOString(),
       },
@@ -265,7 +243,6 @@ async function main() {
       title: header.title,
       description: header.description,
       path: postPath,
-      textContent: textContent,
       publishedAt: parseDate(header.date),
     })
 
