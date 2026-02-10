@@ -52,7 +52,7 @@ Labels may be placed on accounts or records. Apps can interprets targets in diff
 
 To send a report to a Labeler, use the `com.atproto.moderation.createReport` procedure. Users may send reports to any of their labelers.
 
-To specify which labeler should receive the label, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the TypeScript SDK, it looks like this:
+To specify which labeler should receive the report, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the TypeScript SDK, it looks like this:
 
 ```typescript
 import { AtpAgent } from '@atproto/api'
