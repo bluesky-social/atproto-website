@@ -1,0 +1,115 @@
+export const header = {
+  title: 'Lexicons',
+  description: 'A schema-driven interoperability framework',
+}
+
+## 렉시콘에 관하여
+렉시콘은 RPC 메서드와 레코드 타입을 정의하는 데 사용되는 스키마 시스템입니다. 모든 렉시콘 스키마는 제약 조건을 정의하기 위한 [JSON - Schema](https://json-schema.org/) 와 유사한 형식의 JSON으로 작성됩니다.
+
+**사전집은 상호운용성을 제공합니다.** AT 애플리케이션은 자체 동작과 의미를 선언할 방법이 필요합니다. 사전집은 이 문제를 해결하면서 개발자가 새로운 스키마를 쉽게 도입할 수 있도록 합니다.
+
+스키마는 역 DNS 형식인 [NSID](/specs/nsid) 로 식별됩니다. 다음은 몇 가지 API 엔드포인트 예시입니다:
+```
+com.atproto.repo.getRecord
+com.atproto.identity.resolveHandle
+app.bsky.feed.getPostThread
+app.bsky.notification.listNotifications
+```
+다음은 레코드 유형 예시입니다:
+```
+app.bsky.feed.post
+app.bsky.feed.like
+app.bsky.actor.profile
+app.bsky.graph.follow
+```
+스키마 유형, 정의 언어 및 유효성 제약 조건은 [Lexicon 사양](/specs/lexicon) 에 설명되어 있으며, JSON 및 CBOR 표현은[데이터 모델 사양](/specs/data - model)에 설명되어 있습니다.
+## HTTP API 메서드
+Atproto HTTP API 메서드는 각각 특정 범위의 어휘 집합을 구현합니다. AT 프로토콜의 API 시스템인 [XRPC](/specs/xrpc) 는 본질적으로 HTTPS를 감싸는 얇은 래퍼입니다. 예를 들어, 다음 호출은:
+  ```tsx
+client.call(app.bsky.actor.getProfile, {})
+```
+실제로는 단순한 HTTP 요청입니다:
+  ```
+GET /xrpc/com.example.getProfile
+```
+스키마는 유효한 쿼리 매개변수, 요청 본문 및 응답 본문을 정의합니다.
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "defs": {
+    
+"main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": ["user"],
+        "properties": { "user": { "type": "string" } }
+      
+},
+      "output": {
+        "encoding": "application/json",
+        
+"schema": {
+          "type": "object",
+          "required": ["did", "name"],
+          "properties": {
+            "did": { "type": "string" },
+            "name": { "type": "string" },
+            
+"displayName": { "type": "string", "maxLength": 64 },
+            "description": { "type": "string", "maxLength": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+```
+## 레코드 유형
+스키마는 레코드의 가능한 값을 정의합니다. 모든 레코드는 스키마에 매핑되는 "유형"을 가지며, 이는 레코드의 URL도 설정합니다.
+예를 들어, 이 "팔로우" 레코드는:
+```json
+{
+  "$type": "com.example.follow",
+  "subject": "at://did:plc:12345",
+  
+"createdAt": "2022-10-09T17:51:55.043Z"
+}
+```
+…와 같은 레코드는 다음과 같은 URL을 가집니다:
+```
+at://bob.com/com.example.follow/12345
+```
+…그리고 다음과 같은 스키마를 가집니다:
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "소셜 팔로우",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { "type": "string" },
+          
+"createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
+```
+## 버전 관리
+한번 공개된 어휘집은 제약 조건을 변경할 수 없습니다.제약 조건을 완화(가능한 값 추가)하면 기존 소프트웨어가 새 데이터에 대한 유효성 검사에 실패하게 되며, 제약 조건을 강화(가능한 값 제거)하면 새 소프트웨어가 기존 데이터에 대한 유효성 검사에 실패하게 됩니다.따라서 어휘집은 이전에 제약이 없던 필드에 선택적 제약 조건만 추가할 수 있습니다.
+
+어휘집이 이전에 게시된 제약 조건을 변경해야 하는 경우, 새로운 NSID로 새 어휘집을 게시해야 합니다.
+## 추가 자료 및 리소스
+사전 레지스트리에서 각 SDK용 사전을 [로컬에 설치](/guides/installing-lexicons) 할 수 있습니다. 또한 [스타일 가이드](/guides/lexicon-style-guide) 에 따라 [자신만의 사전 게시](/guides/publishing-lexicons) 도 가능합니다.
+- [사전 설치](/guides/installing-lexicons)
+- [사전 게시](/guides/publishing-lexicons)
+- [사전 스타일 가이드](/guides/lexicon-style-guide)
+- [사전 사양](/specs/lexicon)

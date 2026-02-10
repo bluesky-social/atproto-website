@@ -1,0 +1,116 @@
+export const header = {
+  title: 'Lexicons',
+  description: 'A schema-driven interoperability framework',
+}
+
+## Sobre os lexicons
+O Lexicon é um sistema de esquema usado para definir métodos RPC e tipos de registros. Cada esquema Lexicon é escrito em JSON, em um formato semelhante ao [JSON-Schema](https://json-schema.org/) para definir restrições.
+
+**Os lexicons fornecem interoperabilidade.** Os aplicativos AT precisam de uma maneira de declarar seus próprios comportamentos e semânticas. O lexicon resolve isso, ao mesmo tempo em que torna mais fácil para os desenvolvedores introduzirem novos esquemas.
+
+Os esquemas são identificados usando [NSIDs](/specs/nsid), um formato DNS reverso. Aqui estão alguns exemplos de pontos finais de API:
+```
+com.atproto.repo.getRecord
+com.atproto.identity.resolveHandle
+app.bsky.feed.getPostThread
+app.bsky.notification.listNotifications
+```
+E aqui estão alguns exemplos de tipos de registros:
+```
+app.bsky.feed.post
+app.bsky.feed.like
+app.bsky.actor.profile
+app.bsky.graph.follow
+```
+Os tipos de esquema, a linguagem de definição e as restrições de validação são descritos na [especificação do léxico](/specs/lexicon), e as representações em JSON e CBOR são descritas na [especificação do modelo de dados](/specs/data-model).
+## Métodos da API HTTP
+Os métodos da API HTTP Atproto abrangem e implementam um conjunto específico de léxicos. O sistema de API do Protocolo AT, [XRPC](/specs/xrpc), é essencialmente um invólucro fino em torno do HTTPS. Por exemplo, uma chamada para:
+```tsx
+client.call(app.bsky.actor.getProfile, {})
+```
+é, na verdade, apenas uma solicitação HTTP:
+```
+GET /xrpc/com.example.getProfile
+```
+Os esquemas estabelecem parâmetros de consulta válidos, corpos de solicitação e corpos de resposta.
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "defs": {
+    
+"main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": ["user"],
+        "properties": { "user": { "type": "string" } }
+      
+},
+      "output": {
+        "encoding": "application/json",
+        
+"schema": {
+          "type": "object",
+          "required": ["did", "name"],
+          "properties": {
+            "did": { "type": "string" },
+            "name": { "type": "string" },
+            
+"displayName": { "tipo": "string", "maxLength": 64 },
+            "description": { "tipo": "string", "maxLength": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+```
+## Tipos de registros
+Os esquemas definem os valores possíveis de um registro. Cada registro tem um "tipo" que mapeia para um esquema e também estabelece a URL de um registro.
+
+Por exemplo, este registro "follow":
+```json
+{
+  "$type": "com.example.follow",
+  "subject": "at://did:plc:12345",
+  
+"createdAt": "2022-10-09T17:51:55.043Z"
+}
+```
+...teria uma URL como:
+```
+at://bob.com/com.example.follow/12345
+```
+…e um esquema como:
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Um seguimento social",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { "type": "string" },
+          
+"createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
+```
+## Controle de versão
+Depois que um léxico é publicado, suas restrições nunca podem ser alteradas. Abrir uma restrição (adicionar valores possíveis) fará com que o software antigo falhe na validação de novos dados, e fechar uma restrição (remover valores possíveis) fará com que o software novo falhe na validação de dados antigos. Como consequência, os léxicos só podem adicionar restrições opcionais a campos anteriormente sem restrições.
+
+Se um léxico precisar alterar uma restrição publicada anteriormente, ele deve ser publicado como um novo léxico sob um novo NSID.
+## Leituras adicionais e recursos
+Os léxicos podem ser [instalados localmente](/guides/installing-lexicons) para cada um dos nossos SDKs a partir do nosso registro de léxicos. Você também pode [publicar seus próprios léxicos](/guides/publishing-lexicons) seguindo nosso [Guia de estilo](/guides/lexicon-style-guide).
+- [Instalando léxicos](/guides/installing-lexicons)
+- [Publicando léxicos](/guides/publishing-lexicons)
+- [Guia de estilo de léxico](/guides/lexicon-style-guide)
+- [Especificações de léxico](/specs/lexicon)
