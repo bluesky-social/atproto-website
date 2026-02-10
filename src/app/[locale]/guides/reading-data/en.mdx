@@ -130,28 +130,28 @@ Some API endpoints can be accessed without authentication. You can create an una
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
     </TabPanel>
     <TabPanel value="go">
-```go
-import (
-	"context"
-	appbsky "github.com/bluesky-social/indigo/api/bsky"
-	"github.com/bluesky-social/indigo/xrpc"
-)
+    ```go
+    import (
+        "context"
+        appbsky "github.com/bluesky-social/indigo/api/bsky"
+        "github.com/bluesky-social/indigo/xrpc"
+    )
 
-ctx := context.Background()
+    ctx := context.Background()
 
-client := &xrpc.Client{
-  Host: "https://public.api.bsky.app", // public API endpoint
-}
-```
+    client := &xrpc.Client{
+        Host: "https://public.api.bsky.app", // public API endpoint
+    }
+    ```
 
     As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
     ```go
-profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
+    profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
 
-fmt.Printf("Handle: %s\n", profile.Handle)
-fmt.Printf("Display Name: %s\n", *profile.DisplayName)
-fmt.Printf("Followers: %d\n", *profile.FollowersCount)
+    fmt.Printf("Handle: %s\n", profile.Handle)
+    fmt.Printf("Display Name: %s\n", *profile.DisplayName)
+    fmt.Printf("Followers: %d\n", *profile.FollowersCount)
     ```
 
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the Go SDK libraries](https://pkg.go.dev/github.com/bluesky-social/indigo).
