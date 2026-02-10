@@ -65,17 +65,17 @@ Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get
     <TabPanel value="go">
     You can use `RepoGetRecord()` to read an individual record by its [`rkey`](/specs/record-key):
     
-  ```go
-  resp, _ := comatproto.RepoGetRecord(ctx, client, 
-      "",                    // cid (empty for latest)
-      "app.bsky.feed.post",  // lexicon
-      "alex.bsky.team",      // handle or DID
-      "3mbl5xdw4yk2r",       // rkey
-  )
+    ```go
+    resp, _ := comatproto.RepoGetRecord(ctx, client, 
+        "",                    // cid (empty for latest)
+        "app.bsky.feed.post",  // lexicon
+        "alex.bsky.team",      // handle or DID
+        "3mbl5xdw4yk2r",       // rkey
+    )
 
-  fmt.Printf("URI: %s\n", resp.Uri)
-  // resp.Value contains the record data
-  ```
+    fmt.Printf("URI: %s\n", resp.Uri)
+    // resp.Value contains the record data
+    ```
     </TabPanel>
   </TabPanels>
 </TabGroup>
