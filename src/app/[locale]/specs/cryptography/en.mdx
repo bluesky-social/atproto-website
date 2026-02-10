@@ -19,7 +19,7 @@ The atproto reference implementation from Bluesky supports both curves in all co
 
 Key points for both systems have loss-less "compressed" representations, which are useful when sharing the public keys. This is usually supported natively for `k256`, but sometimes requires extra methods or jumping through hoops for `p256`. You can read more about this at: [02, 03 or 04? So What Are Compressed and Uncompressed Public Keys?](https://medium.com/asecuritysite-when-bob-met-alice/02-03-or-04-so-what-are-compressed-and-uncompressed-public-keys-6abcb57efeb6).
 
-A common pattern when signing data in atproto is to encode the data in DAG-CBOR, hash the CBOR bytes with SHA-256, yielding raw bytes (not a hex-encoded string), and then sign the hash bytes.
+A common pattern when signing data in atproto is to encode the data in a strict CBOR format ([DRISL](https://dasl.ing/drisl.html)), hash the CBOR bytes with SHA-256, yielding raw bytes (not a hex-encoded string), and then sign the hash bytes.
 
 
 ## ECDSA Signature Malleability

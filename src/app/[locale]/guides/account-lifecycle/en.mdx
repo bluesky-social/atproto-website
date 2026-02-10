@@ -35,7 +35,7 @@ The relevant events and behaviors when migrating an account to a new PDS:
 
 - PDS emits an `#account` event, with `active` false and status `deleted`.
 - Relay updates local account status for the repo, and passes through the `#account` event. If the Relay is a full mirror, it immediately stops serving `getRepo`, `getRecord`, and similar API requests for the account, indicating the reason in the response error. The Relay may fully delete repo content locally according to local policy. The firehose backfill window does not need to be immediately purged of commit events for the repo, as long as the backfill window is time-limited.
-- the PDS should not emit `#commit` events for an account which is not "active'. If any further `#commit` messages are emitted for the repo (eg, by accident or out-of-order processing or delivery), all downstream services should ignore the event and not pass it through
+- the PDS should not emit `#commit` events for an account which is not "active". If any further `#commit` messages are emitted for the repo (eg, by accident or out-of-order processing or delivery), all downstream services should ignore the event and not pass it through
 - downstream services (eg, AppView) **should** immediately stop serving/distributing content for the account. They *may* defer permanent data deletion according to local policy. Updating aggregations (eg, record counts) may also be deferred or processed in a background queue according to policy and implementation. Error status messages may indicate either that the content is "gone" (existed, but no longer available), or that content is "not found" (not revealing that content existed previously)
 
 <Note>
