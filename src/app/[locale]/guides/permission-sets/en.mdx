@@ -112,7 +112,7 @@ Note the `auth` prefix in the `app.example.feed.authOnlyPost` and `com.example.a
 
 Permission sets are limited to expressing permissions that reference resources under the same NSID namespace as the set itself. For example, the set `app.example.feed.authOnlyPost` could include permissions to `app.example.feed.post` records and making `app.example.feed.getPostThread` API endpoint requests to remote services. But it could not grant permissions to `app.example.actor.profile`. A permission set `app.example.authFull`, which is a level up in the hierarchy, could include permissions to all these resources.
 
-The `title` and `details` fields are descriptive, and will be displayed as part of the OAuth flow; see the [for users](#for-users) section for an example. Internationalization of these descriptive fields is supported — refer to [the permission sets spec](/specs/permission#permission-sets).
+The `title` and `details` fields are descriptive, and will be displayed as part of the OAuth flow; see the [OAuth flow examples](#oauth-flow-examples) section for an example. Internationalization of these descriptive fields is supported — refer to [the permission sets spec](/specs/permission#permission-sets).
 
 The use of `inheritAud` in the `rpc` permission allows you to [control inheritance behavior](/specs/permission#rpc).
 
