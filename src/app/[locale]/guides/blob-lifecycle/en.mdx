@@ -18,7 +18,7 @@ const { data } = await agent.uploadBlob(convertDataURIToUint8Array(image), {
 
 This `data` object could then be referenced in another record, e.g. as an `embed`.
 
-Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff the blob mimetype to validate against the declared **`Content-Type`** header, and either return a modified mimetype in the response, or reject the upload. See "Security Considerations" below. If the actual blob upload size differs from the **`Content-Length`** header, the server should reject the upload.
+Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff the blob mimetype to validate against the declared **`Content-Type`** header, and either return a modified mimetype in the response, or reject the upload. See ["Security Considerations"](/specs/blob#security-considerations). If the actual blob upload size differs from the **`Content-Length`** header, the server should reject the upload.
 
 ## Garbage collecting
 
