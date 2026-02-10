@@ -43,27 +43,27 @@ After [authenticating](/guides/sdk-auth#creating-a-client), you'll be able to ma
     This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
     </TabPanel>
     <TabPanel value="go">
-  ```go
-  import (
-    "context"
-    appbsky "github.com/bluesky-social/indigo/api/bsky"
-    comatproto "github.com/bluesky-social/indigo/api/atproto"
-    lexutil "github.com/bluesky-social/indigo/lex/util"
-    "github.com/bluesky-social/indigo/xrpc"
-  )
+    ```go
+    import (
+      "context"
+      appbsky "github.com/bluesky-social/indigo/api/bsky"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      lexutil "github.com/bluesky-social/indigo/lex/util"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
 
-  ctx := context.Background()
-  ```
+    ctx := context.Background()
+    ```
     Import the SDK libraries and go directly to [making requests](/guides/reading-data)!
 
-<Note>
-Note that you'll need to [blank import](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html) the `bsky` and `util` libraries if you aren't using them directly, due to the way Go imports work:
+    <Note>
+    Note that you'll need to [blank import](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html) the `bsky` and `util` libraries if you aren't using them directly, due to the way Go imports work:
 
-```go
-_ "github.com/bluesky-social/indigo/api/bsky"
-_ "github.com/bluesky-social/indigo/lex/util"
-```
-</Note>
+    ```go
+    _ "github.com/bluesky-social/indigo/api/bsky"
+    _ "github.com/bluesky-social/indigo/lex/util"
+    ```
+    </Note>
 
     </TabPanel>
   </TabPanels>
