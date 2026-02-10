@@ -22,7 +22,7 @@ Chunked transfer encoding may also be permitted for uploads. Servers *may* sniff
 
 ## Garbage collecting
 
-After a successful upload, blobs are placed in temporary storage. They are not accessible for download or distribution while in this state. Servers should "garbage collect" (delete) un-referenced temporary blobs after an appropriate time span (see implementation guidelines below). Blobs which are in temporary storage should not be included in the **`listBlobs`** output.
+After a successful upload, blobs are placed in temporary storage. They are not accessible for download or distribution while in this state. Servers should "garbage collect" (delete) un-referenced temporary blobs after an appropriate time span (see [implementation guidelines](#web-accessibility)). Blobs which are in temporary storage should not be included in the **`listBlobs`** output.
 
 ## Referencing blobs
 
