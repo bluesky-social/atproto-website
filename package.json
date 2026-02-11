@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "blog": "node scripts/new-blog-post.mjs",
+    "rmblog": "node scripts/remove-blog-post.mjs",
     "create-publication": "tsx --env-file=.env scripts/create-publication.mjs",
     "publish-post": "tsx --env-file=.env scripts/publish-post.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",

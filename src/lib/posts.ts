@@ -8,11 +8,10 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
-    slug: 'welcome-to-the-blog',
-    title: 'Welcome to the AT Protocol Blog',
-    description:
-      'Introducing the official AT Protocol blog where we share updates, tutorials, and insights about building on the decentralized social web.',
-    date: 'January 20, 2026',
+    slug: 'relay-rollout',
+    title: 'Upcoming Relay Transition',
+    description: 'What the new relay rollout means for consumers of the firehose.',
+    date: 'January 24, 2026',
     author: 'AT Protocol Team',
   },
   {

@@ -36,6 +36,27 @@ This will prompt you for:
 
 The script creates the necessary files and updates the blog index automatically.
 
+### Removing a blog post
+
+```bash
+npm run rmblog
+```
+
+This displays a paginated list of blog posts (10 at a time, most recent first). Select a post by number to remove it. The script will:
+- Ask for confirmation before proceeding
+- Remove the post entry from `src/lib/posts.ts`
+- Delete the post directory and all its files (content, translations, images)
+
+### RSS / Atom / JSON Feed
+
+The blog provides three feed formats, auto-discoverable via `<link>` tags:
+
+- **Atom** (recommended): `/feed.xml`
+- **RSS 2.0**: `/rss.xml`
+- **JSON Feed 1.1**: `/feed.json`
+
+Each feed includes the 50 most recent posts. Post data is shared from `src/lib/posts.ts`.
+
 ---
 
 ### Publishing blog posts to AT Protocol
