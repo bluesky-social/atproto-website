@@ -18,8 +18,7 @@ export const header = {
 
 export default function DocsHome() {
   return (
-    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-16 xl:max-w-6xl xl:px-16">
-      <Usecases />
+    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-8 md:pt-16 xl:max-w-6xl xl:px-16">
       <div className="grid gap-6 md:grid-cols-2">
         <NavItem
           icon="key"
