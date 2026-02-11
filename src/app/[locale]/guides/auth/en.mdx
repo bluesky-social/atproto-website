@@ -5,9 +5,78 @@ export const header = {
   description: 'Auth for Atproto application developers',
 }
 
-## About authorization
+## Logging in
 
-**Authorization is the first part of our docs for a reason!** You don't always need to be authenticated to [read data](/reading-data#unauthenticated-reads) from AT Protocol records or even to [stream data from the firehose](/guides/streaming-data). But if you're looking to build an application that integrates with the Atmosphere of Atproto apps in some way, you'll begin with authentication. You might start out by just using AT Protocol identities as an OAuth source — though you'll find that there's lots more you can do by building on top of the Atproto [social graph](/guides/social-graph).
+Auth is the first part of our docs for a reason! You don't need to log in to read data, but if you're looking to write it, you'll need a user session.
+
+The simple way is with a password, [which you can read more about here](/guides/sdk-auth).
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```tsx
+    import { Client } from '@atproto/lex'
+    import { PasswordAgent } from '@atproto/lex-password-agent'
+
+    const result = await PasswordAgent.login({
+      service: 'https://bsky.social', // or your PDS host
+      identifier: 'your-handle.bsky.social',
+      password: 'your-app-password',
+    })
+    const client = new Client(result.value)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+      TODO
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+We don't recommend this! Password auth is fine for bots and command line tools, but you don't want to handle a user's password.
+
+Instead, you want to use OAuth:
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```tsx
+    import { Client } from '@atproto/lex'
+    import {
+      NodeOAuthClient,
+      buildAtprotoLoopbackClientMetadata,
+    } from "@atproto/oauth-client-node";
+
+    const oauthClient = new NodeOAuthClient({
+      clientMetadata: buildAtprotoLoopbackClientMetadata({
+        scope: "atproto",
+        redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
+      }),
+      stateStore,
+      sessionStore,
+    });
+    const session = await oauthClient.restore(did)
+    const client = new Client(session)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+      TODO
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+There's a bit more to it than that code, but you get the idea.
+
+If you're building on NextJS, you can [read our full tutorial on OAuth here](/guides/oauth-tutorial). If you're in Expo, NodeJS, Electron, the Web, or Golang, you can [find the code you need in OAuth patterns](/guides/oauth-patterns).
+
+## About authorization
 
 This section is aimed at developers building applications on Atproto. Applications with their own end-user login flow should implement [OAuth](#what-is-oauth) for authentication. Single-purpose applications such as bots or command line tools may use [password authentication](/guides/sdk-auth) instead.
 
