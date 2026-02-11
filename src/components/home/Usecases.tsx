@@ -53,7 +53,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
             />
             <CardTitle>Login with user-owned identities</CardTitle>
             <CardParagraph>
-              Usernames are just domains. We're @atproto.com!
+              Usernames are just domains. We&apos;re @atproto.com!
             </CardParagraph>
             <CardCTA>LEARN MORE</CardCTA>
           </DotPatternContainer>

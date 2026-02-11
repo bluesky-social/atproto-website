@@ -86,7 +86,7 @@ export default function DocsHome() {
           </li>
           <li>
             <Link href="https://overreacted.io/where-its-at/">
-              <strong>Where it's at://</strong>
+              <strong>Where it&apos;s at://</strong>
             </Link>{' '}
             - From handles to hosting.
           </li>
