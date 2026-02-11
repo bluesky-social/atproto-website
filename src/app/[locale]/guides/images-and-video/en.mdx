@@ -5,50 +5,114 @@ export const header = {
 
 ## Using blobs
 
-"Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID) for the blob.
+"Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID; `ref`) for the blob .
 
-```typescript
-const imageBytes = fs.readFileSync('./photo.jpg')
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```typescript
+    const imageBytes = fs.readFileSync('./photo.jpg')
 
-const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
-  encoding: 'image/jpeg',
-  data: imageBytes,
-})
+    const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
+      encoding: 'image/jpeg',
+      data: imageBytes,
+    })
 
-const blob = uploadRes.data.blob
-console.log(JSON.stringify(blob, null, 2))
-```
+    const blob = uploadRes.data.blob
+    console.log(JSON.stringify(blob, null, 2))
+    ```
 
-```
-{
-  "$type": "blob",
-  // Blob CID
-  "ref": {
-    "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
-  },
-  "mimeType": "image/jpeg",
-  "size": 354028
-}
-```
-
-Blob files are uploaded and distributed separately from records:
-
-```typescript
-await client.create(app.bsky.feed.post, {
-  text: 'Using a previously uploaded image',
-  createdAt: new Date().toISOString(),
-  embed: {
-    $type: 'app.bsky.embed.images',
-    images: [
-      {
-        alt: 'A photo uploaded earlier',
-        image: blobRef,
-        aspectRatio: { width: 1200, height: 800 },
+    ```
+    {
+      "$type": "blob",
+      "ref": {
+        "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
       },
-    ],
-  },
-})
-```
+      "mimeType": "image/jpeg",
+      "size": 354028
+    }
+    ```
+
+    Blob files are uploaded and distributed separately from records:
+
+    ```typescript
+    await client.create(app.bsky.feed.post, {
+      text: 'Using a previously uploaded image',
+      createdAt: new Date().toISOString(),
+      embed: {
+        $type: 'app.bsky.embed.images',
+        images: [
+          {
+            alt: 'A photo uploaded earlier',
+            image: blobRef,
+            aspectRatio: { width: 1200, height: 800 },
+          },
+        ],
+      },
+    })
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    imgBytes, err := os.ReadFile("./photo.jpg")
+    if err != nil {
+      panic(err)
+    }
+
+    uploadResp, err := comatproto.RepoUploadBlob(ctx, xrpcc, bytes.NewReader(imgBytes))
+    if err != nil {
+      panic(err)
+    }
+
+    fmt.Println(string(json.MarshalIndent(uploadResp, "", "  ")))
+    ```
+
+    ```
+    {
+      "blob": {
+        "$type": "blob",
+        "ref": {
+          "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+        },
+        "mimeType": "image/jpeg",
+        "size": 354028
+      }
+    }
+    ```
+
+    Blob files are uploaded and distributed separately from records:
+
+    ```go
+    post := &bsky.FeedPost{
+        Text:      "Using a previously uploaded image",
+        CreatedAt: time.Now().UTC().Format(time.RFC3339),
+        Embed: &bsky.FeedPost_Embed{
+          EmbedImages: &bsky.EmbedImages{
+            Images: []*bsky.EmbedImages_Image{
+              {
+                Alt: "A photo uploaded earlier",
+                Image: &lexutil.LexBlob{
+                  Ref:      uploadResp.Blob.Ref,
+                  MimeType: http.DetectContentType(imgBytes),
+                  Size:     uploadResp.Blob.Size,
+                },
+                AspectRatio: &bsky.EmbedDefs_AspectRatio{
+                  Width:  1200,
+                  Height: 800,
+                },
+              },
+            },
+          },
+        },
+      }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
 
 ## Blob objects
 
