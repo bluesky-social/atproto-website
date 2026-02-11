@@ -1,0 +1,54 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'Lexiconの公開',
+  description: 'Lexiconを世界と共有する',
+}
+
+<Heading level={2} id="using-goat">goatの利用</Heading>
+
+Lexiconは機械可読かつネットワークアクセス可能なよう設計されています。現時点ではレキシコンがネットワーク上で利用可能であることは*必須*ではありませんが、利用者が単一の正規かつ信頼できる表現にアクセスできるよう、レキシコンを公開することを強く推奨します。
+
+コマンドラインツール[`goat`](https://github.com/bluesky-social/goat)を使って、Lexiconを作成・公開できます。Lexicon関連の機能は[`goat lex`](https://github.com/bluesky-social/goat?tab=readme-ov-file#lexicon-development)にあります。
+
+- スキーマを公開してATネットワークと同期する
+- スキーマの差分比較、lint、およびスキーマ進化ルールの検証
+
+`goat`はmacOSとLinuxで[Homebrew](https://formulae.brew.sh/formula/goat)からインストールできます。
+
+```shell
+brew install goat
+```
+
+プロジェクトディレクトリで既存のLexiconをダウンロードすると、`./lexicons/`にJSONファイルとして保存されます。
+
+```markdown
+$ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile
+ 🟢 com.atproto.repo.strongRef
+ 🟢 com.atproto.moderation.defs
+ 🟢 com.atproto.moderation.createReport
+ 🟢 app.bsky.actor.profile
+```
+
+`goat lex new record`を使って新しいLexiconレコードを作成できます。
+
+```markdown
+$ goat lex new record dev.project.thing
+
+$ open ./lexicons/dev/project/thing.json
+```
+
+最後に`goat lex publish`で公開します。
+
+```markdown
+$ goat lex publish
+ 🟢 dev.project.thing
+```
+
+新しいLexiconを作成する際は、[Lexiconスタイルガイド](/guides/lexicon-style-guide)を参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [Lexicon](/guides/lexicon)
+- [Lexiconスタイルガイド](/guides/lexicon-style-guide)
+- [Lexicon仕様](/specs/lexicon)

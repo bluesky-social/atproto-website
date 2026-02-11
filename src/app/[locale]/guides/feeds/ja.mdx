@@ -1,0 +1,122 @@
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@/components/mdx'
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'フィード',
+  description: 'カスタムフィードジェネレーターの作成と利用',
+}
+
+<Heading level={2} id="custom-feeds">カスタムフィード</Heading>
+
+カスタムフィード（フィードジェネレーター）は、ATプロトコルを通じてユーザーにカスタムアルゴリズムを提供するサービスです。これにより、ユーザーは自分のタイムラインを選択でき、フィードビルダーはレコードの[専門的なビューを作成して組み込む](https://graze.leaflet.pub/3m4yjmbnyec2c)ことができます。
+
+カスタムフィードの仕組みは単純です。サーバーはユーザーのサーバーからリクエストを受け取り、オプションのメタデータが付加された投稿URIのリストを返します。これらの投稿はリクエスト元のサーバーによって完全なビューに変換され、クライアントに送り返されます。
+
+フィードは独自のXRPCエンドポイントを提供するためにサーバーSDKを使用する必要があります。
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+      [lex-server](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server)パッケージを使います。
+
+      ```bash
+      npm install @atproto/lex-server
+      lex install app.bsky.feed.getFeed ...
+      lex build
+      ```
+
+      ```ts
+      import { LexRouter, LexError } from '@atproto/lex-server'
+      import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
+      import * as app from './lexicons/app.js'
+
+      const router = new LexRouter({ upgradeWebSocket })
+
+      // ここにハンドラーを追加
+
+      const server = await serve(router, { port: 3000 })
+      console.log('Server listening on port 3000')
+      ```
+    </TabPanel>
+    <TabPanel value="go">
+      GoではHTTPエンドポイントを手動で実装できます。
+
+      ```go
+      type Feed interface {
+          GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
+              feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
+          Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
+      }
+
+      ...
+
+      router.GET("/.well-known/did.json", GetWellKnownDID)
+      router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
+      router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
+      ```
+
+      コミュニティによる[https://github.com/jazware/go-bsky-feed-generator](https://github.com/jazware/go-bsky-feed-generator)も参照してください。
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+フィードジェネレーターサービスは1つ以上のアルゴリズムをホストできます。サービス自体はDIDで識別され、ホストする各アルゴリズムはそれを作成したアカウントのリポジトリ内のレコードで宣言されます。例えば、Blueskyが提供するフィードは`@bsky.app`のリポジトリで宣言されるでしょう。したがって、特定のアルゴリズムは宣言レコードのat-uriで識別されます。この宣言レコードには、サービスのDIDへのポインターとフィードのプロフィール情報が含まれます。
+
+ユーザーにカスタムアルゴリズムを提供する一般的なフローは以下の通りです。
+
+- 宣言されたフィードのat-uriを使用してユーザーがAppViewからフィードをリクエストします
+- AppViewがat-uriを解決し、フィードジェネレーターのDIDドキュメントを見つけます
+- AppViewがフィードジェネレーターのDIDドキュメントで宣言されたサービスエンドポイントにgetFeedSkeletonリクエストを送信します
+  - このリクエストはユーザーのリポジトリ署名キーで署名されたJWTで認証されます
+- フィードジェネレーターがフィードのスケルトンをAppViewに返します。
+- AppViewがフィードをハイドレート（ユーザー情報、投稿内容、集計値などの注入）します
+- AppViewがハイドレートされたフィードをユーザーに返します
+
+ユーザーにとって、これはアプリのページを訪問するような感覚です。カスタムアルゴリズムを登録すると、ホームインターフェースで利用可能なフィードの一つとして表示されます。
+
+<Heading level={2} id="feed-generator-templates">フィードジェネレーターテンプレート</Heading>
+
+[TypeScript](https://github.com/bluesky-social/feed-generator)でフィードジェネレーターの例を提供しています。始め方はGitHubのreadmeを参照してください。 
+
+新しい[lex](https://www.npmjs.com/package/@atproto/lex) SDKと[tap](https://www.npmjs.com/package/@atproto/tap)のTypeScriptライブラリを使った[より小さなサンプル](https://tangled.org/strings/did:plc:vmt7o7y6titkqzzxav247zrn/3mbujziyniw22)もあります。
+
+[Python](https://github.com/MarshalX/bluesky-feed-generator)と[Ruby](https://github.com/mackuba/bluesky-feeds-rb)でコミュニティによる実装もあります。
+
+<Heading level={2} id="implementing-feeds">フィードの実装</Heading>
+
+`getFeedSkeleton`リクエストに対してフィードジェネレーターがどのように埋めるかは完全にその裁量に任されています。最も単純な場合、フィードジェネレーターはハードコードされた投稿のみを含むフィードを提供できます。
+
+ほとんどのユースケースでは、`com.atproto.sync.subscribeRepos`で[firehoseを取得する](/guides/streaming-data)ことをお勧めします。このwebsocketはネットワークで公開されたすべてのレコードを送信します。フィードジェネレーターはハイドレートされた投稿は提供する必要がないため、必要に応じてfirehoseから多量にも少量だけでもインデックスできます。これは重要なポイントです。フィードを提供するためにfirehoseと同期する必要があることはリソース集約的である*可能性*がありますが、そうである必要はありません。詳細については、このガイドからリンクされている例を参照してください。
+
+フィードのアルゴリズムによっては、長い間投稿を保持する必要がないかもしれません。フィードが「見逃した投稿」のようなものの提供を目的としていない限り、48時間以上前のデータはおそらくガベージコレクションしてよいでしょう。
+
+<Heading level={2} id="language-handling">使用言語対応</Heading>
+
+`getFeedSkeleton`にリクエストを送信する際、クライアントは`Accept-Language` HTTPヘッダーにカンマ区切りのBCP-47言語コード（例：`en`、`pr-BR`）を含めることが推奨されます。フィードジェネレーターはこの言語コンテキストを使用して投稿をフィルタリングまたはランク付けできます。言語フィルタリングが適用される場合、フィードジェネレーターはパースされた言語コードを示す`Content-Language`レスポンスヘッダーを使用する必要があります。
+
+<Heading level={2} id="feed-feedback">フィードのフィードバック</Heading>
+
+フィードジェネレーターは`app.bsky.feed.sendInteractions`エンドポイントを実装することでユーザーからの入力を受け取ることができます。これにはいいね、リポスト、共有などのインタラクションが含まれます。完全な一覧は[app.bsky.feed Lexicon](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/defs.json#L247)を参照してください。
+
+フィードフィードバックの実装は任意ですが、ユーザー体験の向上に役立つことがあります。
+
+<Heading level={2} id="example-feeds">フィードの例</Heading>
+
+- コミュニティフィード：そのコミュニティ内のDIDのリストをコンパイルし、そのリスト内のユーザーからのすべての投稿についてfirehoseをフィルタリングします。
+- トピックフィード：アルゴリズムが返す投稿に対して、投稿本文をフィルタリングメカニズム（LLM、キーワードマッチャーなど）に渡して、選択したトピック用にフィルタリングします。
+- [graze.social](https://www.graze.social/)はAtprotoフィードのアプリケーションモデルを提供します。
+- コミュニティが作成したその他のフィード例は[https://bsky.app/feeds](https://bsky.app/feeds)で見つけることができます。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [同期](/guides/sync)
+- [バックフィル](/guides/backfilling)
+- [データストリーミング](/guides/streaming-data)
+- [リポジトリ仕様](/specs/repository)
+- [イベントストリーム仕様](/specs/event-stream)
+- [同期仕様](/specs/sync)
+- [Microcosm](https://www.microcosm.blue/)コミュニティプロジェクトは、ローカルミラーリングなしでATレコードを大規模に操作するためのツールを保守しています。

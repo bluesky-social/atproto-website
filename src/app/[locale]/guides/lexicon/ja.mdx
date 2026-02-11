@@ -1,0 +1,136 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'Lexicon',
+  description: 'スキーマによる相互運用性フレームワーク',
+}
+
+<Heading level={2} id="about-lexicons">Lexiconとは</Heading>
+
+Lexiconはデータ型とRPCメソッドを定義するためのスキーマシステムです。すべてのLexiconスキーマはJSONで書かれており、[JSON-Schema](https://json-schema.org/)に近い形式で制約を定義します。
+
+**Lexiconは相互運用性を提供します**。ATアプリケーションには、各自の振る舞いとセマンティクスを宣言する方法が必要です。Lexiconはこれを解決しながら、開発者が新しいスキーマを導入するのを簡単にします。
+
+スキーマは[NSID](/specs/nsid)を使用して識別されます。これは逆ドメイン名形式です。以下にAPIエンドポイントの例を示します。
+
+```
+com.atproto.repo.getRecord
+com.atproto.identity.resolveHandle
+app.bsky.feed.getPostThread
+app.bsky.notification.listNotifications
+```
+
+レコード型の例を以下に示します。
+
+```
+app.bsky.feed.post
+app.bsky.feed.like
+app.bsky.actor.profile
+app.bsky.graph.follow
+```
+
+スキーマの種類、定義言語、および制約検証は[Lexicon仕様](/specs/lexicon)で説明されており、JSONおよびCBORでの表現は[データモデル仕様](/specs/data-model)で説明されています。
+
+<Heading level={2} id="http-api-methods">HTTP APIメソッド</Heading>
+
+AtprotoのHTTP APIメソッドは、それぞれ特定のLexiconセットに対して実装します。ATプロトコルのAPIシステムである[XRPC](/specs/xrpc)は、本質的にHTTPSの薄いラッパーです。例えば、次の呼び出しを考えます。
+
+```tsx
+client.call(app.bsky.actor.getProfile, {})
+```
+
+これは実質的にただのHTTPリクエストです。
+
+```
+GET /xrpc/com.example.getProfile
+```
+
+スキーマは有効なクエリパラメータ、リクエストボディ、およびレスポンスボディを規定します。
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": ["user"],
+        "properties": { "user": { "type": "string" } }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["did", "name"],
+          "properties": {
+            "did": { "type": "string" },
+            "name": { "type": "string" },
+            "displayName": { "type": "string", "maxLength": 64 },
+            "description": { "type": "string", "maxLength": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+<Heading level={2} id="record-types">レコード型</Heading>
+
+スキーマはレコードが取りうる値を定義します。すべてのレコードは"type"を持っており、これはスキーマにマップされ、レコードのURLも決めます。
+
+例えば、以下のようなfollowレコードについて考えます。
+
+```json
+{
+  "$type": "com.example.follow",
+  "subject": "at://did:plc:12345",
+  "createdAt": "2022-10-09T17:51:55.043Z"
+}
+```
+
+これは次のようなURLを持ちます。
+
+```
+at://bob.com/com.example.follow/12345
+```
+
+また、スキーマは以下のようになります。
+
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A social follow",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { "type": "string" },
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
+```
+
+<Heading level={2} id="versioning">バージョニング</Heading>
+
+Lexiconが発行されたら、その制約を変更することはできません。制約を緩和（取りうる値を追加）すると、古いソフトウェアが新しいデータの検証に失敗し、制約を厳しく（取りうる値を削減）すると、新しいソフトウェアが古いデータの検証に失敗します。その結果、Lexiconsはそれまで制約が無かったフィールドにはオプションの制約しか追加できません。
+
+Lexiconで以前に発行された制約を変更する必要がある場合は、新しいNSIDの下で新しいLexiconとして発行する必要があります。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+Lexiconは、Lexiconレジストリから各SDK用に[ローカルにインストール](/guides/installing-lexicons)できます。また、[スタイルガイド](/guides/lexicon-style-guide)に従って[独自のLexiconsを公開](/guides/publishing-lexicons)することもできます。
+
+- [Lexiconのインストール](/guides/installing-lexicons)
+- [Lexiconの公開](/guides/publishing-lexicons)
+- [Lexiconスタイルガイド](/guides/lexicon-style-guide)
+- [Lexicon仕様](/specs/lexicon)

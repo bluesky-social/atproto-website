@@ -1,0 +1,38 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import moderation from "./moderation.png"
+
+export const header = {
+  title: 'モデレーション',
+  description: 'Atmosphereのモデレーション',
+}
+
+<Heading level={2} id="about-moderation">モデレーションについて</Heading>
+
+Atprotoのモデルでは、*スピーチ*と*リーチ*は別個の層として設計され、相互に連携して動作します。スピーチ層は寛容で権限を分散し、誰もが発言できることを重視します。リーチ層はその上に位置し、柔軟性とスケーラビリティのために設計されています。Atprotoのモデレーションは[ラベル](/guides/labels)を用いて実装されています。
+
+<Container>
+  <Image src={moderation} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+私たちのモデレーションアーキテクチャは2つのサービスによって提供されています。[*Osprey*](#algorithmic-moderation)はイベントストリームの判定エンジンと分析用UIで、自動的な調査と措置の実行を目的としています。[*Ozone*](#using-ozone)はラベリングサービスとモデレーション判断のためのウェブフロントエンドです。
+
+当社のブログでモデレーションに関する[詳細な解説](https://docs.bsky.app/blog/blueskys-moderation-architecture)をご覧ください。
+
+<Heading level={2} id="algorithmic-moderation">アルゴリズムによるモデレーション</Heading>
+
+[Osprey](https://github.com/bluesky-social/osprey-atproto)は、持続可能な大規模モデレーションを可能にするために調査と自動対応を行う、イベントストリーム判定エンジンおよび分析用UIです。内部で[Kafka](https://kafka.apache.org/)と独自の[ルールエンジン](https://github.com/roostorg/osprey/blob/main/docs/rules.md)を利用します。
+
+別の見方をすれば、Ospreyは人間が記述したルールを通じてアクションを処理し、ラベルを発行したりAPIへのwebhookを出力したりするためのPythonライブラリです。構造化されたロジック、ユーザー定義関数、外部シグナルを用いてイベントを評価し、ラベル・判定・アクションを割り当てます。微調整されたLLMや他の分類器をOspreyのエンドポイントとして利用することも可能で、モデレーション報告の抽出に役立ちます。これらの報告は設定に従って自動または手動で処理されます。 
+
+Ospreyは、オープンソースモデレーションツールを開発している[Roost](https://roost.tools/)によって管理されています。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+モデレーション用[ラベル](/guides/labels)の種類と形式について詳しく学んでください。その後、モデレーションラベラーを[登録](/guides/subscriptions)して、アプリにラベルを適用できます。また、ラベルを発行するために[独自のラベラーを作成](/guides/creating-a-labeler)することも可能です。コンテンツを手動でモデレーションする必要がある場合は、ラベリング用のウェブインターフェースとして[Ozone](/guides/using-ozone)を使用できます。
+
+- [ラベル](/guides/labels)
+- [ラベラーの作成](/guides/creating-a-labeler)
+- [サブスクリプション](/guides/subscriptions)
+- [ラベル仕様](/specs/label)
+- [Ozoneの使用](/guides/using-ozone)
