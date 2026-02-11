@@ -5,9 +5,7 @@ export const header = {
 
 ## Querying social graphs
 
-Atproto HTTP API methods each scope and implement a particular set of [Lexicons](/guides/lexicon). For example, an app using the `app.bsky.feed.post` record type would be expected to also implement an application endpoint like `curl -X POST example.com/xrpc/app.bsky.feed.post -d {post-contents}`.
-
-This also means that all the POST requests you make to an Atproto app are retained and can be streamed back in that same format. This saves developers from having to make many backend implementation decisions. It also means that new applications that build on the AT Protocol can leverage existing social graph data — for example, from the `app.bsky.graph.getFollows` Lexicon RPC endpoint — to build new use cases, and bootstrap with an existing user base. This, in turn, gets you to native ATProtocol concepts like [A Social Filesystem](https://overreacted.io/a-social-filesystem/).
+New applications that build on the AT Protocol can leverage existing social graph data — for example, from the `app.bsky.graph.getFollows` Lexicon RPC endpoint — to build new use cases, and bootstrap with an existing user base. This, in turn, gets you to native ATProtocol concepts like [A Social Filesystem](https://overreacted.io/a-social-filesystem/).
 
 See [Exploring AT Protocol with Python](https://davidgasquez.com/exploring-atproto-python/) for another example of this approach.
 
@@ -24,6 +22,6 @@ Because all AT Protocol records are openly available and addressible via an `at:
 - [Reads and Writes](/guides/reads-and-writes)
 - [Reading data](/guides/reading-data)
 - [Writing data](/guides/writing-data)
-- [Accounts and deletions](/guides/writing-data)
+- [Accounts and deletions](/guides/account-lifecycle)
 - [Record Key spec](/specs/record-key)
 - [URI scheme](/specs/at-uri-scheme)

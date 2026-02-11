@@ -65,17 +65,17 @@ Refer to [`app.bsky.feed.post`](https://docs.bsky.app/docs/api/app-bsky-feed-get
     <TabPanel value="go">
     You can use `RepoGetRecord()` to read an individual record by its [`rkey`](/specs/record-key):
     
-  ```go
-  resp, _ := comatproto.RepoGetRecord(ctx, client, 
-      "",                    // cid (empty for latest)
-      "app.bsky.feed.post",  // lexicon
-      "alex.bsky.team",      // handle or DID
-      "3mbl5xdw4yk2r",       // rkey
-  )
+    ```go
+    resp, _ := comatproto.RepoGetRecord(ctx, client, 
+        "",                    // cid (empty for latest)
+        "app.bsky.feed.post",  // lexicon
+        "alex.bsky.team",      // handle or DID
+        "3mbl5xdw4yk2r",       // rkey
+    )
 
-  fmt.Printf("URI: %s\n", resp.Uri)
-  // resp.Value contains the record data
-  ```
+    fmt.Printf("URI: %s\n", resp.Uri)
+    // resp.Value contains the record data
+    ```
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -130,28 +130,28 @@ Some API endpoints can be accessed without authentication. You can create an una
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
     </TabPanel>
     <TabPanel value="go">
-```go
-import (
-	"context"
-	appbsky "github.com/bluesky-social/indigo/api/bsky"
-	"github.com/bluesky-social/indigo/xrpc"
-)
+    ```go
+    import (
+        "context"
+        appbsky "github.com/bluesky-social/indigo/api/bsky"
+        "github.com/bluesky-social/indigo/xrpc"
+    )
 
-ctx := context.Background()
+    ctx := context.Background()
 
-client := &xrpc.Client{
-  Host: "https://public.api.bsky.app", // public API endpoint
-}
-```
+    client := &xrpc.Client{
+        Host: "https://public.api.bsky.app", // public API endpoint
+    }
+    ```
 
     As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
     ```go
-profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
+    profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
 
-fmt.Printf("Handle: %s\n", profile.Handle)
-fmt.Printf("Display Name: %s\n", *profile.DisplayName)
-fmt.Printf("Followers: %d\n", *profile.FollowersCount)
+    fmt.Printf("Handle: %s\n", profile.Handle)
+    fmt.Printf("Display Name: %s\n", *profile.DisplayName)
+    fmt.Printf("Followers: %d\n", *profile.FollowersCount)
     ```
 
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the Go SDK libraries](https://pkg.go.dev/github.com/bluesky-social/indigo).
@@ -165,7 +165,7 @@ Next, you might try [writing](/guides/writing-data) to a user's data repository.
 
 - [Reads and Writes](/guides/reads-and-writes)
 - [Writing data](/guides/writing-data)
-- [Accounts and deletions](/guides/writing-data)
+- [Accounts and deletions](/guides/account-lifecycle)
 - [Social graph](/guides/social-graph)
 - [Record Key spec](/specs/record-key)
 - [URI scheme](/specs/at-uri-scheme)

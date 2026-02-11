@@ -1,0 +1,73 @@
+import {Heading} from '@/components/Heading'
+
+export const metadata = {
+  title: '운영 환경으로 배포하기',
+  description:
+    'PDS 배포 환경을 개선합니다.',
+}
+
+# 운영 환경으로 배포하기
+
+애트모스피어(Atmosphere)는 탈중앙화되도록 설계되었습니다. 이는 누구나 자유롭게 자신만의 AT Protocol 인프라를 호스팅할 수 있고, 또 그래야 함을 의미합니다. 수천 명 이상의 사용자를 대상으로 서비스를 제공하는 등 대규모로 셀프 호스팅을 하려는 경우, 호스팅 서비스에 대한 추가적인 “보안 강화” 가 필요하며 인프라 프로비저닝에 대해 더 복잡한 결정을 내려야 합니다.
+
+완전한 탈중앙화 네트워크를 구동하기 위한 [코드](https://github.com/bluesky-social/atproto) 는 지속적으로 개선되고 있습니다. 다음은 자체 서비스를 관리하기 위한 몇 가지 교훈과 모범 사례 가이드입니다.
+
+<Heading level={2} id="pds">PDS</Heading>
+
+공식적으로 제공되는 [PDS 설치 스크립트](https://github.com/bluesky-social/pds) 는 적절한 사양의 VPS에서 자신만의 PDS를 신속하게 구동할 수 있도록 설계되었습니다. 이를 통해 자체 데이터 저장소(Repository)를 호스팅하고, 계정을 생성 및 관리하며, 전체 네트워크나 다른 앱에 데이터를 제공할 수 있습니다. 이 섹션은 해당 PDS를 운영 환경(Production) 수준으로 끌어올리는 데 도움을 줄 것입니다.
+
+<Heading level={3} id="domain-names">도메인 이름</Heading>
+
+PDS 배포와 함께 Bluesky가 아닌 별도의 앱을 운영하는 경우, **PDS 호스팅용 도메인과 앱용 도메인을 분리해야** 합니다. 이는 이미지나 비디오 블롭(Blob)이 OAuth 및 세션 관리 페이지와 동일한 도메인에서 제공될 경우, 자격 증명 탈취와 같은 보안 문제가 발생할 수 있기 때문입니다. 따라서 서브도메인을 사용하는 것만으로는 충분한 해결책이 되지 않습니다.
+
+즉, 앱 주소가 [https://greensky.app](https://greensky.app/) 라면, PDS 호스트 이름으로 [https://pds.greensky.app](https://pds.greensky.app/) 를 사용해서는 안 됩니다. 대신 [https://greensky-pds.net](https://greensky-pds.net/) 와 같은 별도의 도메인을 사용해야 합니다. 만약 [https://pds.greensky.social](https://pds.greensky.social/) 를 사용한다면, 나중에 [https://chat.greensky.social](https://chat.greensky.social/) 와 같은 도메인에서 OAuth 클라이언트 앱을 운영하는 것이 보안상 제한될 수 있습니다. 대신 [https://chat.greensky.app](https://chat.greensky.app/) 와 같은 구성을 권장합니다.
+
+PDS는 기본적으로 엄격한 CORS 헤더를 가집니다.
+
+활성 계정이 있는 PDS의 호스트 이름을 변경하는 것은 어렵습니다 — 모든 계정을 개별적으로 마이그레이션해야 하기 때문입니다. [PLC 회전 키(Rotation Keys)] 를 사용하면 가능은 하지만, 과정이 자동화되어 있지는 않습니다. 또한 PDS는 사용자가 비밀번호를 입력하는 도메인이므로(비밀번호 관리자에 저장되는 도메인임) 신중하게 결정해야 합니다.
+
+<Heading level={3} id="backups-and-recovery">백업 및 복구</Heading>
+
+[공식 PDS 설치 스크립트](https://github.com/bluesky-social/pds) 는 SQLite를 데이터베이스 백엔드로 구성합니다. 구체적으로는 각 사용자의 [데이터 저장소] 마다 하나의 SQLite DB를 사용하며, PDS 전체 데이터를 위해 몇 개의 DB를 추가로 사용합니다. SQLite가 기본적으로 백업이나 복제 메커니즘을 제공하지 않는다는 점에 놀랄 수 있지만, 적절한 도구가 뒷받침된다면 SQLite는 [매우 훌륭하게 확장](https://fly.io/blog/sqlite-internals-rollback-journal/) 가능함이 입증되었습니다.
+
+여기서 핵심 도구는 SQLite의 백업 및 복구를 담당하는 [Litestream](https://github.com/benbjohnson/litestream) 입니다. Litestream을 사용하여 복구 가능하고 확장성 있는 PDS 환경을 구축하려면 다음 설정을 권장합니다:
+
+- `PDS_SQLITE_DISABLE_WAL_AUTO_CHECKPOINT` = `true` 로 설정하세요. 이 [환경 변수 설정](https://github.com/bluesky-social/atproto/blob/f8e56b387fcd3bc8405225c1bbdef66ca5dc1591/packages/pds/src/config/env.ts#L48)은 PDS의 SQLite 클라이언트가 쓰기 시점 기록을 열어두고, 실제 체크포인트 작업은 Litestream이 처리하도록 강제합니다.
+- [systemd와 함께 Litestream 사용](https://litestream.io/guides/systemd/) 하거나 다른 스케줄러를 사용하여 최근 업데이트된 DB를 찾아 백업하세요. 기본적으로 개별 사용자 DB는 `/pds/actors/` 에 위치합니다. Litestream이 WAL을 정리하고 자동으로 체크포인트를 수행하므로 WAL 파일이 무한정 커질 위험이 없습니다.
+- 컨테이너나 포드(Pod)를 종료할 때 SIGTERM 신호 발생 시 이 스크립트가 실행되도록 보장하세요.
+
+재해 복구 시나리오에서는 가장 최근의 계정 데이터베이스 파일(몇 시간 분량의 데이터가 누락되었을 수 있음)과 PDS 전체 데이터베이스 파일(대략 완전해야 함)을 내려받습니다. 그 다음 PDS 수준의 파이어호스(Firehose) 출력에서 모든 레포 작업을 적용하는 복구 스크립트를 실행합니다. 여기에는 신원 및 계정 업데이트를 포함 됩니다. 그런 다음 PDS를 백업 시작합니다.
+
+<Heading level={3} id="plc-key-management">PLC 키 관리</Heading>
+
+호스팅된 계정의 PLC ID 회전 키를 안전하게 보호하는 것이 중요합니다. 예를 들어 [키 관리 시스템(KMS)](https://developer.hashicorp.com/vault/docs/secrets/key-management) 이나 [하드웨어 보안 모듈(HSM)](https://csrc.nist.gov/glossary/term/hardware_security_module_hsm) 을 사용하는 것이 좋습니다. 다음 두 환경 변수에 주의하세요:
+
+- `PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX`: 사용자 계정 복구를 포함하여 PLC 작업을 수행하기 위해 PDS 서비스가 사용하는 키입니다. AWS를 사용하는 경우 `PDS_PLC_ROTATION_KEY_KMS_KEY_ID` 를 통해 [AWS KMS](https://aws.amazon.com/kms/) 로 구성할 수 있습니다.
+- `PDS_RECOVERY_DID_KEY`: 사용자의 DID에 추가되는 공개 키입니다. 이에 대응하는 개인 키는 **반드시** 안전한 곳에 보관해야 하며, `PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX` 를 포함한 데이터가 치명적으로 손실될 경우 계정을 복구하는 데 사용될 수 있습니다.
+
+<Heading level={3} id="working-with-images-video-and-other-blobs">이미지, 비디오 및 기타 블롭 작업</Heading>
+
+기본적으로 PDS 설치 스크립트는 이미지나 비디오와 같은 블롭(Blob)을 로컬 디스크에 저장하도록 구성합니다. 이는 소규모 배포에는 괜찮지만, 운영 환경에는 권장되지 않습니다.
+
+스토리지 요구 사항은 다양하겠지만, 로컬 디스크 대신 S3 호환 스토리지 (예: [Minio](https://github.com/minio/minio) 또는 VPS 제공업체의 오브젝트 스토리지)를 사용할 것을 강력히 권장합니다.
+
+<Heading level={3} id="rate-limits">속도 제한</Heading>
+
+PDS 구현체에는 기본적으로 [저장소 작업 제한(Rate limits)](https://docs.bsky.app/docs/advanced-guides/rate-limits) 이 포함되어 있습니다.
+
+이 제한을 제거하면 PDS 전체가 [릴레이(Relay)](https://github.com/bluesky-social/indigo/tree/main/cmd/relay) 에 의해 차단될 수 있습니다(릴레이 자체적으로 각 PDS 호스트에 대해 이벤트 속도 제한을 가짐). 자체 릴레이를 운영하지 않는다면 이 점에 유의해야 합니다.
+
+기본적으로 PDS 설치 스크립트는 단일 Node 애플리케이션 프로세스를 설정합니다. 만약 수평적 확장을 통해 여러 Node 프로세스를 실행하려면, 상태를 공유하기 위해 [Redis](https://redis.io/) 가 필요합니다. Redis 구성을 위해 다음 두 환경 변수를 사용합니다:
+
+- `PDS_REDIS_SCRATCH_ADDRESS`  — Redis 인스턴스 주소 (예: localhost:6379)
+- `PDS_REDIS_SCRATCH_PASSWORD` — Redis 인증 정보
+
+이를 통해 속도 제한 시스템이 안정적으로 확장될 수 있습니다.
+
+<Heading level={3} id="moderation">중재</Heading>
+
+중재 작업은 거의 항상 PDS 수준에서 수행됩니다. 하지만 릴레이를 함께 운영하는 경우, 릴레이 관리자 웹 인터페이스를 통해 계정 및 PDS 수준의 조치를 취할 수 있습니다. 또한 XRPC로 노출되지 않는 일부 중재 관련 PDS 엔드포인트는 [goat](https://github.com/bluesky-social/goat) CLI 도구로 상호작용할 수 있습니다. 자세한 내용은 [goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go) 를 참조하세요.
+
+[Ozone](https://github.com/bluesky-social/ozone) 은 공식 라벨링 서비스 및 중재 인터페이스입니다. 자체 AppView를 구축하는 경우, Ozone의 `subscribeLabel` 파이어호스를 사용하여 업데이트를 받을 수 있습니다. Ozone은 계정 이메일과 같은 PDS 수준의 개인 정보에 접근할 권한을 부여받을 수 있으며, 이는 계정 복구 등에 유용합니다.
+
+보통 PDS 중재용 Ozone 인스턴스(개인 정보 접근 가능)와 독립형 AppView 중재용 인스턴스는 분리하여 운영하는 것이 원칙입니다. 단, 단일 관리 조직이 두 역할을 모두 수행하는 경우에는 예외일 수 있습니다.

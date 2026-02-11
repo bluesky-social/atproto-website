@@ -1,0 +1,30 @@
+export const header = {
+  title: 'Self-hosting',
+  description:
+    'Resources for self-hosting various components of the Atmosphere stack',
+}
+
+A maioria das partes da pilha Atmosphere oferece suporte a implantações. Alguns componentes são mais fáceis de hospedar do que outros, dependendo se você está fornecendo infraestrutura no nível do aplicativo (como um AppView ou Relay) ou infraestrutura no nível dos dados (como um PDS).
+## PDS
+Os recursos para hospedar um PDS, incluindo etapas de instalação, imagens Docker e perguntas frequentes, estão disponíveis no repositório Github do [PDS](https://github.com/bluesky-social/pds). Comece aqui se quiser hospedar seu próprio PDS!
+A imagem Docker do PDS inclui [goat](https://github.com/bluesky-social/goat), nossa ferramenta de linha de comando para executar funções administrativas.
+Se você estiver transferindo sua conta de um PDS (como um PDS hospedado pela Bluesky) para outro, consulte [Migração de conta](/guides/account-migration).
+Se você precisar alterar o *nome de domínio* de um PDS auto-hospedado, será necessário:
+- Alterar as entradas PLC para *cada* uma de suas contas hospedadas. Você pode usar interfaces mantidas pela comunidade, como [boat](https://boat.kelinci.net/plc-applicator), para isso.
+- Atualizar sua configuração de DNS como faria para qualquer outro servidor e, em seguida, alterar o nome de domínio em `pds.env`.
+Para obter orientações sobre como dimensionar e fortalecer um PDS, consulte [Indo para a produção](/guides/going-to-production).
+O Bluesky executa muitos PDSs com uma “entrada” na frente deles. Para obter informações sobre essa implementação, consulte [Entrada](https://docs.bsky.app/docs/advanced-guides/entryway).
+Existem também várias implementações de PDS da comunidade! Por exemplo:
+- [Tranquil PDS](https://tangled.org/lewis.moe/bspds-sandbox), escrito em Rust.
+- [Cocoon](https://tangled.org/hailey.at/cocoon), escrito em Go.
+## Tap
+O Tap é usado para sincronizar registros existentes da rede AT e, em seguida, continuar recebendo novos registros do firehose. Para obter um guia de implantação do Tap, consulte o [Tap readme](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md#distribution--deployment).
+Também fornecemos um guia de início rápido para [implantar o Tap](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/RAILWAY_DEPLOY.md) no [Railway](https://railway.com/).
+## AppViews ou Relays
+É possível hospedar seu próprio AppView ou Relay, mas isso consome muitos recursos. Em comparação com hospedar seu próprio PDS, que é uma forma de controlar pessoalmente o acesso ao seu próprio repositório de dados, hospedar um AppView ou Relay é algo que você só faria para fornecer infraestrutura no nível do aplicativo. Geralmente, a primeira coisa que você precisa fazer aqui é replicar todos os dados na rede para os Lexicons que seu aplicativo lida. Consulte os documentos [Sync](/guides/sync) para um ponto de partida.
+Há muitas outras decisões que serão tomadas ao projetar e executar seus próprios aplicativos Atmosphere! Esta não será uma lista abrangente de recomendações.
+- Para o fluxo de inscrição do seu aplicativo, você precisará que os usuários façam login ou criem uma conta. Geralmente, recomendamos hospedar seu próprio PDS junto com seu aplicativo para permitir que os usuários iniciantes do Atmosphere — que talvez ainda não estejam cientes do conceito de PDS — se inscrevam diretamente em seu aplicativo. Seu PDS e AppView devem ter [nomes de domínio diferentes](/going-to-production#domain-names).
+## Ozone
+Consulte [Usando o Ozone](/guides/using-ozone) para obter orientações sobre hospedagem própria.
+## Receitas de implantação
+Para soluções de implantação contribuídas pela comunidade que não utilizam nossas ferramentas oficiais e podem oferecer suporte a diferentes ambientes, consulte o repositório Github [deploy-recipes](https://github.com/bluesky-social/deploy-recipes). Contribuições são bem-vindas!

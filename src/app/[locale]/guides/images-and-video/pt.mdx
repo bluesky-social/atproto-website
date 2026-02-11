@@ -1,0 +1,24 @@
+export const header = {
+  title: 'Images and Video',
+  description: 'Working with image and video blobs',
+}
+
+## Objetos blob
+"Blobs" são arquivos de mídia armazenados junto com o repositório de uma conta. Eles incluem imagens, vídeos e áudio, mas também podem incluir qualquer outro formato de arquivo. Os blobs são referenciados por registros individuais pelo tipo de dados lexical **`blob`**, que inclui um hash de conteúdo (CID) para o blob.
+
+Os arquivos blob são carregados e distribuídos separadamente dos registros. Os blobs são armazenados de forma autoritativa pela instância PDS da conta, mas as visualizações são comumente servidas por CDNs associadas a aplicativos individuais ("AppViews"), para reduzir o tráfego no PDS. As CDNs podem servir versões transformadas (redimensionadas, transcodificadas, etc.) do blob original.
+
+Embora os blobs sejam universalmente endereçados por conteúdo (por CID), eles são sempre referenciados e gerenciados no contexto de uma conta individual (DID).
+
+O blob vazio (zero bytes) é válido em geral, embora possa ser proibido por léxicos / aplicativos individuais.
+
+A criação de blobs requer o escopo de permissão **`blob:*/*`**.
+
+Em geral, é recomendável usar uma implementação de armazenamento de objetos para trabalhar com blobs se você estiver hospedando seu próprio PDS. Consulte [indo para produção](/guides/going-to-production#object-storage) para obter mais informações.
+
+## Leituras e recursos adicionais
+- [Ciclo de vida do blob](/guides/blob-lifecycle)
+- [Segurança de blobs](/guides/blob-security)
+- [Manipulação de vídeo](/guides/video-handling)
+- [Especificações de blobs](/specs/blob)
+- [Streamplace](https://stream.place/docs/) fornece uma implementação e um léxico relacionado para streaming de vídeo no ATProto.
