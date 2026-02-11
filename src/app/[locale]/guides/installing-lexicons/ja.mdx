@@ -1,0 +1,58 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'Lexiconのインストール',
+  description: '開発環境におけるLexiconの利用',
+}
+
+<Heading level={2} id="using-lex">lexの利用</Heading>
+
+Lexiconスキーマは、型と検証を備えたコード生成を実現します。SDKには、各ATエンドポイントが期待するパラメータを知っている型安全なクライアントを生成できる`lex`ツールがインストールされています。
+
+<Heading level={2} id="typescript">TypeScript</Heading>
+
+まず、`@atproto/lex`パッケージをインストールします。
+
+```bash
+npm install -g @atproto/lex
+```
+
+これにより`lex`コマンドが提供され、ローカルプロジェクトにLexiconをインストールできます。
+
+```bash
+lex install app.bsky.feed.post app.bsky.feed.like
+```
+
+これにより以下が作成されます。
+
+- `lexicons.json` - インストールされたLexiconとそのバージョン（CID）を追跡するマニフェスト
+- `lexicons/` - Lexicon JSONファイルを含むディレクトリ
+
+最後に、インストールされたLexiconからTypeScriptスキーマを生成します。
+
+```bash
+lex build
+```
+
+これにより`./src/lexicons`にTypeScriptファイルが生成されます。これで、コードでこれらの関数が利用可能になります。
+
+```tsx
+import { Client } from '@atproto/lex'
+import * as app from './lexicons/app.js'
+
+// 認証無しのクライアントインスタンスを作成
+const client = new Client('https://public.api.bsky.app')
+
+// 生成されたスキーマを使用してリクエストの作成を開始する
+const response = await client.call(app.bsky.actor.getProfile, {
+  actor: 'pfrazee.com',
+})
+```
+
+`lex`の使用方法に関する詳細については、[readme](https://github.com/bluesky-social/atproto-internal/blob/msi/lex/packages/lex/lex/README.md#json-schemas)を参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [Lexiconの公開](/guides/publishing-lexicons)
+- [Lexiconスタイルガイド](/guides/lexicon-style-guide)
+- [Lexicon仕様](/specs/lexicon)

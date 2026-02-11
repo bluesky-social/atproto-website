@@ -1,0 +1,399 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import bsky from "./feeds-bsky.png"
+
+export const header = {
+  title: 'カスタムフィード作成',
+  description: 'Blueskyのようなアプリからアクセス可能なアルゴリズムのホスト',
+}
+
+カスタムフィード（フィードジェネレーター）は、ユーザーにアルゴリズムを提供するサービスです。これにより、自分好みのタイムライン表示を選んだり、[他のユーザー向けに埋め込み可能なフィードを作成したり](https://graze.leaflet.pub/3m4yjmbnyec2c)といった高い自由度が得られます。
+
+このチュートリアルでは、[firehose](/guides/streaming-data)から投稿を取り込み、アルゴリズムで並び替え、[XRPCフィードとして配信する](/guides/feeds)ことで、カスタムフィードサーバーを作成します。
+
+<Heading level={2} id="prerequisites">前提条件</Heading>
+
+このチュートリアルでは、TypeScriptアプリケーションをゼロから構築します。TypeScriptとNode.jsの基本的な理解を前提としています。
+
+以下をインストールしておいてください。
+- Node.js 18以上
+- Go 1.25以上
+
+[homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
+
+```bash
+brew install node go
+```
+
+さらに、`lex` CLIツールをグローバルにインストールしておく必要があります。
+
+```bash
+npm install -g @atproto/lex
+```
+
+ネットワーク上の投稿をfirehoseで取り込むために、[`tap`](/guides/the-at-stack#tap)のインストールも必要です。 
+
+```bash
+go install github.com/bluesky-social/indigo/cmd/tap
+```
+
+次に、新しいTypeScriptプロジェクトディレクトリを作成し、プロジェクトを初期化します。
+
+```bash
+mkdir my-agent
+cd my-agent
+npm init -y
+npm i -D typescript ts-node @types/node dotenv @atproto/lex @atproto/lex-server @atproto/tap
+npx tsc --init --verbatimModuleSyntax false
+```
+
+まず、プロジェクトにLexiconを追加します。
+
+<Heading level={2} id="part-1-lexicons-and-tap">パート1：LexionとTap</Heading>
+
+[Lexicon](/guides/lexicon)はAtprotoのレコードを定義します。基本的なフィードジェネレーターには`app.bsky.feed.describeFeedGenerator`と`app.bsky.feed.getFeedSkeleton`のLexiconが必要です。`lex`を使えば、これらのLexiconをダウンロードしてプロジェクトに組み込めます。
+
+```bash
+lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton
+```
+
+ここから`lex build`を実行すると、インストール済みLexiconすべてに対してTypeScriptの型を生成できます。
+
+```bash
+lex build
+```
+
+生成されたコードは`src/lexicons`に配置されます。
+
+ネットワーク上の投稿をインデックスするために、別ターミナルで`tap`を実行する必要があります。次のコマンドで開始します。
+
+```bash
+tap run --disable-acks=true
+```
+
+これでフィードジェネレーターの構築を始められます。
+
+<Heading level={2} id="part-2-feed-structure">パート2：フィードの構成</Heading>
+
+ユーザーにカスタムアルゴリズムを提供する一般的なフローは以下の通りです。
+
+- ユーザーがアプリケーションバックエンド（例：Bluesky）にフィードを要求する
+- アプリケーションが要求されたフィードのDIDドキュメントを見つけ、ホスティングサーバーを特定する
+- アプリケーションがホスティングサーバーへ`getFeedSkeleton`リクエストを送る
+- フィードのホスティングサーバーが投稿URLの一覧を返す
+- アプリケーションがフィードをハイドレート（ユーザー情報、投稿内容、集計情報などを付加）する
+- アプリケーションがハイドレート済みフィードをユーザーに返す
+
+最初に、環境変数から設定を読み取ります。多くは公開するフィード用の設定（`FEED_PUBLISHER_DID`, `FEED_NAME`）ですが、フィードの挙動を決める設定（`FEED_MAX_POSTS`, `SEARCH_TERMS`）も含まれます。
+
+この例では、アプリ全体を`src/index.ts`という単一ファイルで作成します。このファイルを作成し、以下のimportと設定行を追加してください。
+
+```ts
+import { AtUriString, DidString, asDidString } from '@atproto/lex'
+import { LexError, LexRouter, serviceAuth } from '@atproto/lex-server'
+import { serve } from '@atproto/lex-server/nodejs'
+import { Tap, SimpleIndexer } from '@atproto/tap'
+import * as app from './lexicons/app.js'
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+interface FeedConfig {
+    publisherDid: DidString
+    feedName: string
+    searchTerms: string[]
+    maxPosts: number
+    port: number
+    tapUrl: string
+    tapPassword: string
+    initialRepos: string[]
+}
+
+const DEFAULT_REPO = 'did:plc:ragtjsm2j2vknwkz3zp4oxrd' // pfrazee.com
+
+const config: FeedConfig = {
+    publisherDid: asDidString(process.env.FEED_PUBLISHER_DID || 'did:example:alice'),
+    feedName: process.env.FEED_NAME || 'whats-alf',
+    searchTerms: (process.env.FEED_SEARCH_TERMS || 'alf').split(',').map(s => s.trim()),
+    maxPosts: parseInt(process.env.FEED_MAX_POSTS || '1000', 10),
+    port: parseInt(process.env.FEED_PORT || '3000', 10),
+    tapUrl: process.env.TAP_URL || 'http://localhost:2480',
+    tapPassword: process.env.TAP_PASSWORD || 'secret',
+    initialRepos: (process.env.FEED_INITIAL_REPOS || DEFAULT_REPO).split(',').map(s => s.trim()),
+}
+
+const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
+```
+
+いくつか注目すべき点があります。`tap`で取得する対象として`DEFAULT_REPO`を指定しています。この例では一人のユーザーとして[`pfrazee.com`](https://bsky.app/profile/pfrazee.com)を追跡します。これにより、チュートリアルの例を扱いやすくしています。
+
+このフィードは、特定の語句を含む投稿を検索して並び替えます。語句は`FEED_SEARCH_TERMS`環境変数で設定できます。この例では"alf"に言及する投稿を検索します。
+
+次に、firehoseから投稿を取り込むロジックを設定します。
+
+<Heading level={2} id="part-3-consuming-the-firehose">パート3：firehose取り込み</Heading>
+
+配信対象の投稿は配列に保存します。
+
+`tap`がネットワーク上の投稿を検出すると、このフィードサーバーは投稿テキストを設定した検索語で検索します。一致した場合は投稿を配列に追加します。以下の内容を`src/index.ts`に追加してください。
+
+```ts
+// =============================================================================
+// Post Index
+// =============================================================================
+
+interface IndexedPost {
+    uri: AtUriString
+    indexedAt: number
+}
+
+const postIndex: IndexedPost[] = []
+
+// =============================================================================
+// Tap Indexer
+// =============================================================================
+
+const tap = new Tap(config.tapUrl, { adminPassword: config.tapPassword })
+const indexer = new SimpleIndexer()
+
+const searchPattern = new RegExp(
+    `\\b(${config.searchTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    'i'
+)
+
+indexer.record(async (evt) => {
+    if (evt.collection !== 'app.bsky.feed.post') return
+
+    const uri = `at://${evt.did}/${evt.collection}/${evt.rkey}` as AtUriString
+
+    if (evt.action === 'delete') {
+        const idx = postIndex.findIndex(p => p.uri === uri)
+        if (idx !== -1) {
+            postIndex.splice(idx, 1)
+            console.log(`DELETE ${uri}`)
+        }
+        return
+    }
+
+    const text = (evt.record?.text as string) || ''
+    if (!searchPattern.test(text)) return
+    if (postIndex.some(p => p.uri === uri)) return
+
+    postIndex.unshift({ uri, indexedAt: Date.now() })
+    if (postIndex.length > config.maxPosts) postIndex.pop()
+
+    const preview = text.substring(0, 60).replace(/\n/g, ' ')
+    console.log(`${evt.action.toUpperCase()} ${uri}`)
+    console.log(`  "${preview}${text.length > 60 ? '...' : ''}"`)
+    console.log(`  ⭐ Added to index (${postIndex.length} total)`)
+})
+
+indexer.identity(async (evt) => {
+    if (evt.status === 'active') return
+    // 削除/利用停止されたIDからの投稿を除去
+    const removed = postIndex.filter(p => p.uri.includes(evt.did)).length
+    if (removed > 0) {
+        postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))
+        console.log(`Identity ${evt.did} (${evt.status}): removed ${removed} posts`)
+    }
+})
+
+indexer.error((err) => console.error('Indexer error:', err))
+
+const channel = tap.channel(indexer)
+```
+
+ここでは`tap`に接続し、`@atproto/tap`ライブラリの`SimpleIndexer`関数を使って`app.bsky.feed.post` Lexicon、つまりBluesky投稿の受信レコードを処理しています。
+
+新しい投稿が見つかったら、テキストが検索語に一致するか確認します。一致した場合は`postIndex`配列に追加します。さらに削除とIDステータス変更イベントも処理し、インデックスの正確性を保ちます。
+
+要するに、条件に一致する投稿のインメモリ検索インデックスを構築し、それをフィードとして配信します。
+
+<Heading level={2} id="part-4-serving-the-feed">パート4：フィード配信</Heading>
+
+次に、フィードを配信するための[XRPC](/guides/lexicon#http-api-methods)ルートを追加します。サーバーは次の2種類のリクエストを扱います。
+
+```
+GET /xrpc/app.bsky.feed.describeFeedGenerator
+GET /xrpc/app.bsky.feed.getFeedSkeleton
+```
+
+`src/index.ts`にフィードジェネレーターサーバーのロジックを追加します。
+
+```ts
+// =============================================================================
+// Feed Generator Server
+// =============================================================================
+
+// このデモでは取得者のDIDを記録するだけなので認証は任意です。
+// 本番環境ではフィードのパーソナライズ用途で認証情報を使うこともできます。
+const auth = serviceAuth({
+    audience: config.publisherDid,
+    unique: async () => true,
+})
+
+const router = new LexRouter()
+
+router.add(app.bsky.feed.describeFeedGenerator, {
+    auth,
+    handler: (ctx) => {
+        console.log('describeFeedGenerator from', ctx.credentials?.did)
+        return {
+            body: {
+                did: config.publisherDid,
+                feeds: [app.bsky.feed.describeFeedGenerator.feed.$build({ uri: FEED_URI })],
+                links: {
+                    privacyPolicy: 'https://example.com/privacy',
+                    termsOfService: 'https://example.com/tos',
+                },
+            },
+        }
+    },
+})
+
+router.add(app.bsky.feed.getFeedSkeleton, {
+    auth,
+    handler: (ctx) => {
+        if (ctx.params.feed !== FEED_URI) {
+            throw new LexError('InvalidRequest', 'Feed not found')
+        }
+        console.log('getFeedSkeleton from', ctx.credentials?.did)
+
+        const limit = Math.min(ctx.params.limit ?? 50, 100)
+        const cursor = ctx.params.cursor as string | undefined
+
+        let startIdx = 0
+        if (cursor) {
+            const cursorTime = parseInt(cursor, 10)
+            startIdx = postIndex.findIndex(p => p.indexedAt < cursorTime)
+            if (startIdx === -1) startIdx = postIndex.length
+        }
+
+        const slice = postIndex.slice(startIdx, startIdx + limit)
+        const feed = slice.map(p => app.bsky.feed.defs.skeletonFeedPost.$build({ post: p.uri }))
+        const lastPost = slice.at(-1)
+        const nextCursor = lastPost && slice.length === limit && startIdx + limit < postIndex.length
+            ? lastPost.indexedAt.toString()
+            : undefined
+
+        return { body: { feed, cursor: nextCursor } }
+    },
+})
+```
+
+ここでは`@atproto/lex-server`パッケージの`LexRouter`を使ってXRPCルートを定義しています。`getFeedSkeleton`メソッドはレスポンスで`cursor`を返し、入力としても`cursor`パラメータを受け取ります。これによりクライアントはフィードをページネーションできます。
+
+<Note>
+このカーソルは不透明な値として扱われ、実装はフィードジェネレーター側に完全に委ねられます。AppViewはこの値をクライアントとの間でそのまま中継します。ページネーション時の予期しない挙動を防ぐため、カーソルは*各フィード項目に対して一意*である必要があります。例えば、次のようなタイムスタンプとCIDを組み合わせたカーソルです。
+`1683654690921::bafyreia3tbsfxe3cc75xrxyyn6qc42oupi73fxiox76prlyi5bpx7hr72u`
+</Note>
+
+最後に、サーバーを起動するためのランタイムロジックを追加します。
+
+<Heading level={2} id="part-5-running-the-server">パート5：サーバー起動</Heading>
+
+`channel.start()`でtapに接続してからサーバーを起動します。以下のランタイムロジックを`src/index.ts`に追加してください。
+
+```ts
+// =============================================================================
+// Start
+// =============================================================================
+
+channel.start()
+console.log('Indexer connected to Tap server')
+
+if (config.initialRepos.length > 0) {
+    tap.addRepos(config.initialRepos).then(() => {
+        console.log(`Added ${config.initialRepos.length} repo(s) to follow\n`)
+    })
+}
+
+serve(router, { port: config.port }).then((server) => {
+    const feedParam = encodeURIComponent(FEED_URI)
+
+    console.log(`
+Feed Generator Running
+
+Server: http://localhost:${config.port}
+Feed: ${config.feedName}
+Terms: ${config.searchTerms.join(', ')}
+Tap: ${config.tapUrl}
+Repos: ${config.initialRepos.length}
+
+To test (generate a JWT with goat):
+goat account service-auth --aud ${config.publisherDid}
+
+Then:
+curl -H "Authorization: Bearer <jwt>" "http://localhost:${config.port}/xrpc/app.bsky.feed.getFeedSkeleton?feed=${feedParam}"
+
+Listening for posts matching: ${config.searchTerms.join(', ')}
+`)
+
+    const shutdown = async () => {
+        console.log('Shutting down...')
+        await channel.destroy()
+        await server.terminate()
+        process.exit(0)
+    }
+
+    process.on('SIGINT', shutdown)
+    process.on('SIGTERM', shutdown)
+})
+```
+
+これで`tap`への接続（フィード入力）とXRPCサーバー（フィード出力）の両方が開始されます。フィードジェネレーターのテストに役立つログ出力も備えています。
+
+`ts-node src/index.ts`で実行します。初期投稿がインデックスされる様子が表示されるはずです。
+
+```
+Indexer connected to Tap server
+
+Feed Generator Running
+
+Server: http://localhost:3000
+Feed: whats-alf
+Terms: alf
+Tap: http://localhost:2480
+Repos: 1
+
+To test (generate a JWT with goat):
+goat account service-auth --aud did:example:alice
+
+Then:
+curl -H "Authorization: Bearer <jwt>" "http://localhost:3000/xrpc/app.bsky.feed.getFeedSkeleton?feed=at%3A%2F%2Fdid%3Aexample%3Aalice%2Fapp.bsky.feed.generator%2Fwhats-alf"
+
+Listening for posts matching: alf
+
+Added 1 repo(s) to follow
+
+CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux6xlrdb42v
+  "Run?? Alf was the date I struck out with ☹️"
+  ⭐ Added to index (1 total)
+CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux7x2uvip2v
+  "god is that okay? I'm really confused right now, Alf broke m..."
+  ⭐ Added to index (2 total)
+```
+
+<Note>
+この例では単一ユーザーのデータリポジトリだけを取得している点に注意してください。ネットワーク全体を取得するには、`tap`を停止して`--signal-collection`フラグ付きで再実行します。
+
+```bash
+tap run --collection-filters=app.bsky.feed.post \
+  --signal-collection=app.bsky.feed.post
+```
+</Note>
+
+<Heading level={2} id="conclusion">結論</Heading>
+
+これで、ネットワークから投稿を取得し、独自アルゴリズムでインデックスし、BlueskyのようなクライアントへXRPC経由で配信するカスタムAtprotoフィードを構築できました。
+
+フィードサーバーが動作したので、さらにカスタマイズして他の人が使えるように公開できます。そのためには、公開サーバー（例：AWS、DigitalOceanなど）へデプロイし、HTTPSでアクセス可能にしてください。
+
+その後、公式の[feed-generatorリポジトリ](https://github.com/bluesky-social/feed-generator)をクローンし、[publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts)スクリプトを対話的に実行できます。これにより、あなたのフィードサーバーを指すために必要なAtprotoレコードが作成され、発見可能になります。
+
+<Container>
+  <Image src={bsky} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+さらに多くのガイドやチュートリアルは[Guides](/guides)セクションで、より多くのサンプルアプリは[Cookbook](https://github.com/bluesky-social/cookbook/)リポジトリで確認できます。ぜひ開発を楽しんでください。

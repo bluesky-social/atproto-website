@@ -1,0 +1,57 @@
+import { Card, CardParagraph, CardTitle } from '@/components/Card'
+import { Heading } from '@/components/Heading'
+
+export const header = {
+  title: 'atprotoを知る',
+  description: '全体の仕組みの深掘り',
+}
+
+<Heading level={2} id="tl-dr">要約</Heading>
+
+Atprotoは、ビッグワールドでオープンなソーシャルです。ユーザーはJSONレコードをリポジトリに公開します。これらのレコードの変更ストリームがネットワーク全体で同期され、アプリケーションを動かします。
+
+コミュニティメンバーの[Dan Abramov](https://bsky.app/profile/danabra.mov)による、素晴らしい記事をおすすめします。
+
+- [**Open Social**](https://overreacted.io/open-social/) - プロトコルはAPIである
+- [**Where it's at://**](https://overreacted.io/where-its-at/) - ハンドルからホスティングに辿り着くまで
+- [**A Social Filesystem**](https://overreacted.io/a-social-filesystem/) - フォーマットはアプリを超える
+
+<Heading level={2} id="core-primitives">コアプリミティブ</Heading>
+
+- **ユーザーリポジトリ**：ユーザーごとの公開データベース。
+- **ユーザーハンドル**：DNSレコードとして表現されるユーザー名。私たちのアカウントは[@atproto.com](https://bsky.app/profile/atproto.com)です。
+- **ユーザーDID**：ユーザーの恒久的なID。
+
+<Heading level={2} id="data-models">データモデル</Heading>
+
+- **レコード**：コレクションごとに分類されたJSON。
+- **blob**：[画像と動画](/guides/images-and-video)。
+- **Lexicon**：スキーマ言語。
+- **Lexicon RPC (XRPC)**：HTTPSですが、ルートはLexiconで定義されます。
+
+<Heading level={2} id="the-stack">スタック</Heading>
+
+[セルフホスト](/guides/self-hosting)できるサービスには、いくつかの種類があります。
+
+- **パーソナルデータサーバー（PDS）**：ユーザーアカウントをホストします。
+- **リレー**：ユーザーの書き込みイベントを収集して再配信します。
+- **アプリケーション**：ユーザーデータを集約してアプリ体験を作ります。
+- **ラベラー**：モデレーションの判断をラベルメタデータとして公開します。
+
+<Heading level={2} id="making-it-happen">使い方</Heading>
+
+あなたがアプリケーションを作っているとします。ユーザーは[OAuth](/guides/auth)でサインインし、その結果としてあなたのアプリは各ユーザーのPDSアドレスを受け取ります。あなたのアプリは、そのPDSに接続してレコードを[読み書き](/guides/reads-and-writes)します。
+
+ネットワーク全体のアクティビティを監視するには、[リレーから同期](/guides/sync)します。ユーザーのPDSから直接同期することもできますが、リレーを使う方が便利です。すべてのデータには署名があるため、リレーのストリームが正確か検証できます。
+
+[Lexicon](/guides/lexicon)は、ネットワーク上で公開されるデータの識別に役立ちます。受け取ったHTTPリクエストを検証するように、読み取り時のデータ検証に使います。
+
+最後に、ユーザーからの報告を受け取りユーザーコンテンツにラベルを発行するラベラーを利用（または運用）して、[モデレーション](/guides/moderation)を行います。
+
+<Heading level={2} id="deeper-reads">さらに詳しく</Heading>
+
+チームによる次の深掘り記事もおすすめです。
+
+- [分散システムエンジニアのためのAtproto](/articles/atproto-for-distsys-engineers)：バックエンドを考える人のための解説
+- [Atprotoの基本理念](/articles/atproto-ethos)：Atprotoの設計を支える原則
+

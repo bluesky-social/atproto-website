@@ -1,0 +1,28 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: '画像と動画',
+  description: '画像と動画blobの活用',
+}
+
+<Heading level={2} id="blob-object">blobオブジェクト</Heading>
+
+「blob」はアカウントのリポジトリと共に保存されるメディアファイルです。これらは画像、動画、音声データを含みますが、他のファイル形式も含むことができます。blobは個別のレコードからLexiconの **`blob`** データ型によって参照され、blobのコンテンツハッシュ（CID）を含みます。
+
+blobファイルはレコードとは別にアップロードおよび配布されます。blobはアカウントのPDSインスタンスによって統合的に保存されますが、ビューは通常、PDSトラフィックを削減するために個別のアプリケーション（AppView）に関連付けられたCDNによって提供されます。CDNは元のblobの変換版（リサイズ、トランスコード等）を提供することがあります。
+
+blobは（CIDによって）ユニバーサルにコンテンツアドレス指定されていますが、常に個別のアカウント（DID）のコンテキストで参照および管理されます。
+
+空のblob（ゼロバイト）は一般的に有効ですが、個別のLexiconやアプリケーションによっては禁止される場合があります。
+
+blobを作成するには権限スコープ **`blob:*/*`** が必要です。
+
+自分自身のPDSをホストしている場合、blobを操作するにはオブジェクトストレージ実装の利用を一般的にお勧めします。詳細は[本番環境への移行](/guides/going-to-production#object-storage)を参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [blobライフサイクル](/guides/blob-lifecycle)
+- [blobのセキュリティ](/guides/blob-security)
+- [動画の取り扱い](/guides/video-handling)
+- [blob仕様](/specs/blob)
+- [Streamplace](https://stream.place/docs/)はATプロトコル上の動画ストリーミングの実装および関連Lexiconを提供します。
