@@ -1,4 +1,5 @@
 import { Card, CardCTA, CardParagraph, CardTitle } from '../Card'
+import { CTAButton, CTAButtonTitle } from '../CTAButton'
 import { DotPatternContainer } from '../DotPattern'
 import { SparklesIcon } from '../icons/outline/SparklesIcon'
 import { WindowIcon } from '../icons/outline/WindowIcon'
@@ -43,15 +44,27 @@ export function Usecases({ wide }: { wide?: boolean }) {
           </DotPatternContainer>
         </Card>
       </div>
-      <Card href="/guides/oauth-tutorial">
-        <DotPatternContainer className="px-6 py-4" fade>
-          <div className="flex items-center gap-4">
-            <KeyIcon className="size-8 shrink-0 stroke-white" strokeWidth="0.6" />
-            <CardTitle>Bring your own identity</CardTitle>
-            <CardCTA className="ml-auto mt-0">LEARN MORE</CardCTA>
-          </div>
-        </DotPatternContainer>
-      </Card>
+      <div className="md:hidden">
+        <Card className="flex-1" href="/guides/oauth-tutorial">
+          <DotPatternContainer className="px-6 py-4" fade>
+            <KeyIcon
+              className="mb-6 mt-2 size-12 stroke-white"
+              strokeWidth="0.6"
+            />
+            <CardTitle>Login with user-owned identities</CardTitle>
+            <CardParagraph>
+              Usernames are just domains. We're @atproto.com!
+            </CardParagraph>
+            <CardCTA>LEARN MORE</CardCTA>
+          </DotPatternContainer>
+        </Card>
+      </div>
+      <div className="hidden md:block">
+        <CTAButton href="/guides/oauth-tutorial">
+          <KeyIcon className="size-8 shrink-0 stroke-white" strokeWidth="0.6" />
+          <CTAButtonTitle title="Login with user-owned identities" subtitle="We're @atproto.com!" />
+        </CTAButton>
+      </div>
     </div>
   )
 }
