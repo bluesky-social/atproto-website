@@ -3,11 +3,56 @@ export const header = {
   description: 'Working with image and video blobs',
 }
 
-## Blob objects
+## Using blobs
 
 "Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID) for the blob.
 
-Blob files are uploaded and distributed separately from records. Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob.
+```typescript
+const imageBytes = fs.readFileSync('./photo.jpg')
+
+const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
+  encoding: 'image/jpeg',
+  data: imageBytes,
+})
+
+const blob = uploadRes.data.blob
+console.log(JSON.stringify(blob, null, 2))
+```
+
+```
+{
+  "$type": "blob",
+  // Blob CID
+  "ref": {
+    "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+  },
+  "mimeType": "image/jpeg",
+  "size": 354028
+}
+```
+
+Blob files are uploaded and distributed separately from records:
+
+```typescript
+await client.create(app.bsky.feed.post, {
+  text: 'Using a previously uploaded image',
+  createdAt: new Date().toISOString(),
+  embed: {
+    $type: 'app.bsky.embed.images',
+    images: [
+      {
+        alt: 'A photo uploaded earlier',
+        image: blobRef,
+        aspectRatio: { width: 1200, height: 800 },
+      },
+    ],
+  },
+})
+```
+
+## Blob objects
+
+Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob.
 
 While blobs are universally content addressed (by CID), they are always referenced and managed in the context of an individual account (DID).
 
