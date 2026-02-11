@@ -78,59 +78,18 @@ import {
   NodeOAuthClient,
   buildAtprotoLoopbackClientMetadata,
 } from "@atproto/oauth-client-node";
-import type {
-  NodeSavedSession,
-  NodeSavedState,
-} from "@atproto/oauth-client-node";
 
-export const SCOPE = "atproto";
+const stateStore ??= new Map();
+const sessionStore ??= new Map();
 
-// Use globalThis to persist across Next.js hot reloads
-const globalAuth = globalThis as unknown as {
-  stateStore: Map<string, NodeSavedState>;
-  sessionStore: Map<string, NodeSavedSession>;
-};
-globalAuth.stateStore ??= new Map();
-globalAuth.sessionStore ??= new Map();
-
-let client: NodeOAuthClient | null = null;
-
-export async function getOAuthClient(): Promise<NodeOAuthClient> {
-  if (client) return client;
-
-  client = new NodeOAuthClient({
-    clientMetadata: buildAtprotoLoopbackClientMetadata({
-      scope: SCOPE,
-      redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
-    }),
-  
-    stateStore: {
-      async get(key: string) {
-        return globalAuth.stateStore.get(key);
-      },
-      async set(key: string, value: NodeSavedState) {
-        globalAuth.stateStore.set(key, value);
-      },
-      async del(key: string) {
-        globalAuth.stateStore.delete(key);
-      },
-    },
-
-    sessionStore: {
-      async get(key: string) {
-        return globalAuth.sessionStore.get(key);
-      },
-      async set(key: string, value: NodeSavedSession) {
-        globalAuth.sessionStore.set(key, value);
-      },
-      async del(key: string) {
-        globalAuth.sessionStore.delete(key);
-      },
-    },
-  });
-
-  return client;
-}
+const client = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope: "atproto",
+    redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
+  }),
+  stateStore,
+  sessionStore,
+});
 ```
 
 `stateStore` is temporary storage using during the OAuth flow; `sessionStore` is persistent storage keyed by a user's DID. The `globalThis` pattern is a standard Next.js technique for persisting data across hot module reloads in development. Without this, the in-memory stores would be wiped every time you edit a file.
