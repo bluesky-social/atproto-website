@@ -9,6 +9,13 @@ export const metadata: Metadata = {
     template: '%s - AT Protocol',
     default: 'AT Protocol',
   },
+  alternates: {
+    types: {
+      'application/atom+xml': '/feed.xml',
+      'application/rss+xml': '/rss.xml',
+      'application/feed+json': '/feed.json',
+    },
+  },
   openGraph: {
     url: 'https://atproto.com/',
     siteName: 'AT Protocol',

@@ -103,9 +103,9 @@ Start writing your post here...
 `
   fs.writeFileSync(path.join(postDir, 'en.mdx'), mdxContent)
 
-  // Update blog/page.tsx with new post entry
-  const blogIndexPath = path.join(BLOG_DIR, 'page.tsx')
-  let blogIndex = fs.readFileSync(blogIndexPath, 'utf-8')
+  // Update src/lib/posts.ts with new post entry
+  const postsFilePath = path.join(__dirname, '../src/lib/posts.ts')
+  let postsFile = fs.readFileSync(postsFilePath, 'utf-8')
 
   const newPostEntry = `  {
     slug: '${slug}',
@@ -115,13 +115,13 @@ Start writing your post here...
     author: '${authorName.replace(/'/g, "\\'")}',
   },`
 
-  // Insert after "const posts = ["
-  blogIndex = blogIndex.replace(
-    /const posts = \[/,
-    `const posts = [\n${newPostEntry}`
+  // Insert after "export const posts: BlogPost[] = ["
+  postsFile = postsFile.replace(
+    /export const posts: BlogPost\[\] = \[/,
+    `export const posts: BlogPost[] = [\n${newPostEntry}`
   )
 
-  fs.writeFileSync(blogIndexPath, blogIndex)
+  fs.writeFileSync(postsFilePath, postsFile)
 
   console.log(`
 ✅ Blog post created!
