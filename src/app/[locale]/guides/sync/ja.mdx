@@ -1,0 +1,63 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: '同期',
+  description: 'ATプロトコルデータの同期',
+}
+
+<Heading level={2} id="handles-and-dids">ハンドルとDID</Heading>
+
+ATでは、ハンドルは[DID](/specs/did)（[分散型識別子](https://en.wikipedia.org/wiki/Decentralized_identifier)）を通じて解決されます。現在、2つの異なるDIDプレフィックスがサポートされています。
+- `did:web`（W3C DID標準に基づく）
+- `did:plc`（Blueskyによって開発および実装されたDIDメソッド）
+詳細については[did-method-plc](https://github.com/did-method-plc/did-method-plc)リポジトリを参照してください。
+
+Atmosphereアプリを使用して新しいアカウントを登録すると、そのアプリはPDSと通信し、PDS管理下のドメイン名（例：`*.bsky.social`）を使用して新しいハンドルを登録します。
+
+<Heading level={2} id="data-repositories">データリポジトリ</Heading>
+
+データリポジトリは、単一のユーザーによって公開されたデータのコレクションです。リポジトリは自己認証データ構造であり、各更新は署名され、誰でも検証できます。
+
+データリポジトリ内では複数の種類の識別子が使用されます。
+
+- [**分散型識別子（DID）**](https://w3c.github.io/did/)はデータリポジトリを識別します。これは広くユーザーIDとして使用されますが、すべてのユーザーが1つのデータリポジトリを持っているため、DIDはデータリポジトリへの参照として見なすことができます。
+- [**名前空間識別子（NSID）**](/specs/nsid)は、リポジトリ内のレコード群に対するLexicon型を識別します。
+- [**レコードキー**](/specs/record-key)（rkey）は、特定のリポジトリ内のコレクションに含まれる個々のレコードを識別します。形式はコレクションのLexicon（`record`型）によって指定されます。
+- [**コンテンツID（CID）**](https://github.com/multiformats/cid)は、フィンガープリントハッシュを使用してコンテンツを識別します。これはリポジトリ全体で使用され、リポジトリ内のオブジェクト（ノード）を参照します。
+
+例えば、一つのATレコードを見てみましょう。
+
+```
+at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
+```
+
+これは`at://DID/NSID/rkey`または`at://repository/collection/record`に分解できます。対応するCIDは`bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`です。
+
+AT APIエンドポイントに書き込みリクエストを行うとき（新しい投稿を作成する場合など）、この完全なリポジトリパスが応答として返されます。
+
+```json
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+これが、個々のレコードがATデータリポジトリ内で一意に識別され、保存される方法です。
+
+<Heading level={2} id="pds">PDS</Heading>
+
+PDS（パーソナルデータサーバー）は、ユーザー個々人のデータリポジトリ（投稿、フォロワー、プロフィール情報など）をホストするサーバーです。PDSは、ホストされたユーザーアカウントのアカウントライフサイクル機能、アイデンティティ管理、および鍵解決を処理します。
+
+[自分のPDSをホスト](/guides/self-hosting)したり、あるPDSから別のPDSに[アカウントを移行](/guides/account-migration)したりできます。詳細については[ATスタック](/guides/the-at-stack#pds)を参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+ATデータを同期およびストリーミングする方法は多数あります。[Jetstream](/guides/streaming-data)を使ってリアルタイムの更新をストリーミングしたり、ネットワーク上に既に存在するデータをローカルに[バックフィル](/guides/backfilling)したりできます。
+
+- [データストリーミング](/guides/streaming-data)
+- [バックフィル](/guides/backfilling)
+- [フィード](/guides/feeds)
+- [リポジトリ仕様](/specs/repository)
+- [イベントストリーム仕様](/specs/event-stream)
+- [同期仕様](/specs/sync)
+- [Microcosm](https://www.microcosm.blue/)コミュニティプロジェクトは、ローカルミラーリングなしでATレコードを大規模に操作するためのツールを保守しています。

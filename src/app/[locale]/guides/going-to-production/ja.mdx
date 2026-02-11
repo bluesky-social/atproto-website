@@ -1,0 +1,71 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: '本番環境への移行',
+  description:
+    'スケール環境での本番運用に向けたAtmosphereスタックデプロイメントの改善',
+}
+
+Atmosphereは分散型として構築されているため、誰もが自分のATプロトコルのインフラをホストできるようになっています。大規模な自己ホスト、つまり数千人のユーザーにサービスを提供する場合、ホストされたサービスの追加の「強化」が必要になる可能性があり、インフラの用意について更に複雑な判断が求められます。
+
+完全に分散されたAtmosphereを動かすための[コード](https://github.com/bluesky-social/atproto)は常に改善され続けています。ここでは、自分のサービスを管理するための教訓と最適なプラクティスに関するガイドを提供します。
+
+<Heading level={2} id="pds">PDS</Heading>
+
+リソースが限定されたVPS上で独自のPDSを起動して実行するように設計された[PDSインストールスクリプト](https://github.com/bluesky-social/pds)を提供しています。これにより、自分のデータリポジトリをホストし、アカウントを作成・管理し、より広いAtmosphereネットワークまたは他のAtmosphereアプリにセルフホストされたデータを提供できます。このセクションは、PDSを本番環境に移行するのに役立つでしょう。
+
+<Heading level={2} id="domain-names">ドメイン名</Heading>
+
+PDSデプロイメントに加えてBluesky以外のアプリを実行している場合、PDSホスティングとアプリには**異なるドメイン名が必要**です。そうしないと、画像や動画のblobがOAuthやセッション管理ページと同じドメイン名から提供されることになります。これは認証情報盗難などのセキュリティ問題につながる可能性があり、サブドメインの使用は実用的ではないことを意味します。
+
+言い換えれば、`https://greensky.app`にアプリがある場合、`https://pds.greensky.app`をPDSホスト名として使用するのではなく、`https://greensky-pds.net`のようなものを使用する必要があります。`https://pds.greensky.social`を使用した場合（一見理にかなっています）、将来`https://chat.greensky.social`にOAuthクライアントアプリを置くことができなくなります。しかし、`https://chat.greensky.app`のようにすることはできます。
+
+PDSはデフォルトで制限的なCORSヘッダーを持っています。 
+
+アクティブなアカウントを持つようになると、PDSホスト名の変更は困難です。すべてのアカウントを個別に移行する必要があります。これは[PLCローテーション鍵](https://web.plc.directory/spec/v0.1/did-plc)を使えば間違いなく可能ですが、移行は簡単ではありません。また、PDSはユーザーがパスワードを入力するドメインである（したがってパスワードマネージャーで記憶される）ことに注意してください。
+
+<Heading level={2} id="backup-and-recovery">バックアップと復旧</Heading>
+
+公式の[PDSインストールスクリプト](https://github.com/bluesky-social/pds)はSQLiteをデータベースバックエンドとして構成します。具体的には、各ユーザーの[データリポジトリ](https://atproto.com/guides/data-repos)に対して1つのSQLite DBを使用し、PDS全体のデータ用にいくつかのDBを使用します。SQLiteにはボックスの外からバックアップまたはレプリケーションを処理するメカニズムがないため、これは驚くかもしれませんが、SQLiteは追加のツールを使用すると[非常にうまくスケール](https://fly.io/blog/sqlite-internals-rollback-journal/)する事例が増えています。
+
+秘訣は[Litestream](https://fly.io/blog/litestream-v050-is-here/)です。これはまさしく[SQLiteのバックアップと復旧](https://github.com/benbjohnson/litestream)を行います。Litestreamで復旧可能でスケーラブルなPDS SQLiteデプロイメントを取得するには、以下をお勧めします。
+
+- `PDS_SQLITE_DISABLE_WAL_AUTO_CHECKPOINT` = `true`を設定します。これはPDSの[環境変数設定](https://github.com/bluesky-social/atproto/blob/f8e56b387fcd3bc8405225c1bbdef66ca5dc1591/packages/pds/src/config/env.ts#L48)にあります。これが行うことは、PDS SQLiteクライアントにライトアヘッドログ（WAL）を開いたままにして、実際のチェックポイント処理をLitestreamに任せることを強制することです。
+
+災害復旧シナリオでは、最新のアカウントデータベースファイル（数時間分のデータが失われている可能性があります）とPDS全体のデータベースファイル（ほぼ完全であるはず）をすべてプルダウンします。次に、PDSのfirehose出力からリポジトリ操作を適用する復旧スクリプトを実行します。これにはIDとアカウントの更新が含まれます。その後、PDSを再起動します。
+
+<Heading level={2} id="plc-key-management">PLC鍵管理</Heading>
+
+ホストされたアカウント用の追加のPLC IDローテーション鍵を安全に保管することが重要です。例えば、[鍵管理システム](https://developer.hashicorp.com/vault/docs/secrets/key-management)または[HSM](https://csrc.nist.gov/glossary/term/hardware_security_module_hsm)内で。以下の2つの環境変数に注意してください。
+
+- `PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX`：PDSサービスがユーザーアカウントの復旧を含むPLC上の操作を実行するために使用されます。AWSを使用している場合、これは[AWS KMS](https://aws.amazon.com/kms/)で`PDS_PLC_ROTATION_KEY_KMS_KEY_ID`を使用して構成可能です。
+- `PDS_RECOVERY_DID_KEY`：ユーザーDIDに追加される公開鍵。対応する秘密鍵は安全な場所に保存**されなければならず**、`PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX`を含むデータの壊滅的な損失の場合にユーザーアカウントを復旧するために使用できます。
+
+<Heading level={2} id="object-storage">オブジェクトストレージ</Heading>
+
+デフォルトでは、PDSインストールスクリプトはblob（画像、動画など）のローカルディスクストレージを構成します。これは小規模なデプロイメントには問題ありませんが、本番環境のデプロイメントには推奨されません。
+
+ストレージの需要は様々ですが、ローカルディスクに画像と動画を保存する代わりに、S3互換ストレージ（例：[Minio](https://github.com/minio/minio)やVPSプロバイダーからのブロックストレージオファリング）を使用することを強くお勧めします。
+
+<Heading level={2} id="rate-limits">レート制限</Heading>
+
+PDS実装にはデフォルトで[リポジトリ操作制限](https://docs.bsky.app/docs/advanced-guides/rate-limits)が含まれています。 
+
+これらの制限を撤廃すると、PDS全体が[リレー](https://github.com/bluesky-social/indigo/tree/main/cmd/relay)で制限される可能性があるため（リレーはPDSホスト毎にデフォルトのイベントレート制限を持ちます）、独自のリレーを実行していない場合は注意してください。
+
+デフォルトでは、PDSインストールスクリプトは単一のNodeアプリケーションプロセスをセットアップします。これはSQLiteの上で実行されるステートレスバックエンドアプリケーションです。複数のNodeプロセスを実行して水平スケールする場合、状態を共有するために[Redis](https://redis.io/)も使用する必要があります。Redisを構成するために使用される2つの環境変数があります。
+
+- `PDS_REDIS_SCRATCH_ADDRESS` — Redisインスタンス（例：localhost:6379）
+- `PDS_REDIS_SCRATCH_PASSWORD` — Redis認証情報
+
+これにより、レート制限を段階的にスケールできます。
+
+複数プロセスを並列実行する場合、SQLiteデータベースに[サイドカーコンテナ](https://litestream.io/guides/docker/#why-sidecar-containers-work)を利用することもできます。
+
+<Heading level={2} id="moderation">モデレーション</Heading>
+
+モデレーションはほとんどがPDSレベルで実行されます。ただし、リレーも実行している場合は、必要に応じてアカウントレベルおよびPDSレベルのアクションを実行するためのフォームがリレー管理ウェブインターフェースにあることに注意してください。XRPC経由で公開されていないモデレーション関連のPDSエンドポイントもいくつかあり、[goat](https://github.com/bluesky-social/goat) CLIツールがこれらと対話できます。例については[goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go)を参照してください。
+
+[Ozone](https://github.com/bluesky-social/ozone)はラベリングサービスおよびモデレーションインターフェースです。独自のAppViewを構築している場合、AppViewはOzoneの`subscribeLabel` firehoseを使用して更新を受け取ることができます。Ozoneにはアカウントメールのような追加のPDSレベルのプライベート情報を読み取る権限を与えることもできます。これはアカウント復旧などに役立ちます。
+
+PDSのモデレーション（プライベートアカウント情報が表示される）とスタンドアロンAppView用に、通常は個別のOzoneインスタンスを実行する必要がありますが、実際に両方をモデレーションしている単一の管理組織がある場合は別です。

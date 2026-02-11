@@ -2,20 +2,20 @@ import {DescriptionList, Description} from '@/components/DescriptionList'
 import {Heading} from '@/components/Heading'
 
 export const header = {
-title: '個人データ リポジトリ',
+title: '個人データリポジトリ',
 description:
-'AT プロトコル リポジトリ構造のガイド。',
+'ATプロトコルのリポジトリ構造のガイド',
 }
 
-# データ リポジトリ
+# データリポジトリ
 
-データ リポジトリは、単一のユーザーによって公開されたデータのコレクションです。リポジトリは自己認証データ構造であり、各更新は署名されており、誰でも検証できます。
+データリポジトリは、単一のユーザーによって公開されたデータのコレクションです。リポジトリは自己認証データ構造であり、各更新は署名され、誰でも検証できます。
 
-[リポジトリ仕様](/specs/repository) で詳細に説明されています。
+[リポジトリ仕様](/specs/repository)で詳細に説明されています。
 
-<Heading level={2} id="data-layout">データ レイアウト</Heading>
+<Heading level={2} id="data-layout">データレイアウト</Heading>
 
-リポジトリの内容は [Merkle 検索ツリー (MST)](https://hal.inria.fr/hal-02303490/document) にレイアウトされ、状態が単一のルート ハッシュに縮小されます。これは次のレイアウトとして視覚化できます:
+リポジトリの内容は[Merkle探索木（MST）](https://hal.inria.fr/hal-02303490/document)にレイアウトされ、状態が単一のルートハッシュに縮小されます。これは次のレイアウトとして視覚化できます。
 
 ```
 ┌────────────────┐
@@ -31,25 +31,25 @@ description:
 └────────────────┘
 ```
 
-すべてのノードは [IPLD](https://ipld.io/) オブジェクト ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) であり、[CID](https://github.com/multiformats/cid) ハッシュによって参照されます。上の図の矢印は CID 参照を表します。
+すべてのノードは[IPLD](https://ipld.io/)オブジェクト（[dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)）であり、[CID](https://github.com/multiformats/cid)ハッシュによって参照されます。上の図の矢印はCID参照を表します。
 
-このレイアウトは、[AT URI](/specs/at-uri-scheme) に反映されています:
+このレイアウトは、[AT URI](/specs/at-uri-scheme)に反映されています。
 
 ```
-ルート | at://alice.com
+ルート       | at://alice.com
 コレクション | at://alice.com/app.bsky.feed.post
-レコード | at://alice.com/app.bsky.feed.post/1234
+レコード     | at://alice.com/app.bsky.feed.post/1234
 ```
 
-データ リポジトリへの「コミット」は、ルート ノードの CID に対するキーペア署名にすぎません。リポジトリが変更されるたびに、新しいコミット ノードが生成されます。
+データリポジトリへの「コミット」は、ルートノードのCIDに対する鍵ペア署名にすぎません。リポジトリが変更されるたびに、新しいコミットノードが生成されます。
 
 <Heading level={2} id="identifier-types">識別子の種類</Heading>
 
-個人データ リポジトリ内では、複数の種類の識別子が使用されます。
+個人データリポジトリ内では、複数の種類の識別子が使用されます。
 
 <DescriptionList>
-<Description title="DIDs"><a href="https://w3c.github.io/did/">分散 ID (DID)</a> は、データ リポジトリを識別します。これらはユーザー ID として広く使用されていますが、すべてのユーザーには 1 つのデータ リポジトリがあるため、DID はデータ リポジトリへの参照と見なすことができます。DID の形式は使用される「DID 方式」によって異なりますが、すべての DID は最終的にキー ペアとサービス プロバイダーのリストに解決されます。このキー ペアは、データ リポジトリへのコミットに署名できます。</Description>
-<Description title="CIDs"><a href="https://github.com/multiformats/cid">コンテンツ ID (CID)</a> は、フィンガープリント ハッシュを使用してコンテンツを識別します。これらはリポジトリ全体で使用され、リポジトリ内のオブジェクト (ノード) を参照します。リポジトリ内のノードが変更されると、その CID も変更されます。ノードを参照する親は参照を更新する必要があり、その結果、親の CID も変更されます。これはコミット ノードまで連鎖し、その後コミット ノードが署名されます。</Description>
-<Description title="NSIDs"><a href="/specs/nsid">名前空間識別子 (NSID)</a> は、リポジトリ内のレコード グループの Lexicon タイプを識別します。</Description>
-<Description title="rkey"><a href="/specs/record-key">レコード キー</a> ("rkeys") は、特定のリポジトリ内のコレクション内の個々のレコードを識別します。形式はコレクション Lexicon によって指定され、一部のコレクションには "self" などのキーを持つレコードが 1 つだけ含まれ、他のコレクションには多数のレコードがあり、キーにはタイムスタンプ識別子 (TID) と呼ばれる base32 エンコードされたタイムスタンプが使用されます。</Description>
+<Description title="DID">[分散型識別子（DID）](https://w3c.github.io/did/)はデータリポジトリを識別します。これは広くユーザーIDとして使用されますが、すべてのユーザーが1つのデータリポジトリを持っているため、DIDはデータリポジトリへの参照と見なすことができます。DIDの形式は使用される「DIDメソッド」によって異なりますが、すべてのDIDは最終的に鍵ペアとサービスプロバイダーのリストに解決されます。この鍵ペアは、データリポジトリへのコミットに署名できます。</Description>
+<Description title="CID">[コンテンツID（CID）](https://github.com/multiformats/cid)は、フィンガープリントハッシュを使用してコンテンツを識別します。これはリポジトリ全体で使用され、リポジトリ内のオブジェクト（ノード）を参照します。リポジトリ内のノードが変更されると、そのCIDも変更されます。ノードを参照する親は参照を更新する必要があり、その結果、親のCIDも変更されます。これはコミットノードまで連鎖し、その後コミットノードが署名されます。</Description>
+<Description title="NSID">[名前空間識別子（NSID）](/specs/nsid)は、リポジトリ内のレコードグループのLexiconタイプを識別します。</Description>
+<Description title="rkey">[レコードキー（rkey）](specs/record-key)は、特定のリポジトリ内のコレクションに含まれる個々のレコードを識別します。形式はコレクションのLexiconによって指定されます。レコードを一つだけ持つコレクションは"self"などのキーでレコードを持ったり、多数のレコードを持つコレクションではキーにタイムスタンプ識別子（TID）と呼ばれるbase32エンコードされたタイムスタンプが使用されたりします。</Description>
 </DescriptionList>

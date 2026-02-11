@@ -1,0 +1,62 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import ozone from "./ozone.png"
+
+export const header = {
+  title: 'ラベラーの作成',
+  description: 'あなた自身のモジュラーモデレーションサービスを実行する',
+}
+
+<Heading level={2} id="declaring-a-labeler">ラベラーの宣言</Heading>
+
+ラベラーは、自身がラベラーであることを宣言し、ポリシーを公開するために、`/app.bsky.labeler.service/self`レコードを公開します。そのレコードは次のようになります。
+
+```json
+{
+  "$type": "app.bsky.labeler.service",
+  "policies": {
+    "labelValues": ["porn", "spider"],
+    "labelValueDefinitions": [
+      {
+        "identifier": "spider",
+        "severity": "alert",
+        "blurs": "media",
+        "defaultSetting": "warn",
+        "locales": [
+          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
+        ]
+      }
+    ]
+  },
+  "subjectTypes": ["record"],
+  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
+  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
+  "createdAt": "2024-03-03T05:31:08.938Z"
+}
+```
+
+`labelValues`はラベラーから何が期待できるかを宣言します。グローバルまたはカスタムラベル値が含まれます。
+
+`labelValueDefinitions`はカスタムラベルを定義します。様々な言語で人間可読なコピーを指定するための`locales`フィールドが含まれます。ユーザーの言語が見つからない場合は、配列の先頭の文字列セットを使用します。
+
+`subjectTypes`、`subjectCollections`、`reasonTypes`は、ラベラーが受け付ける報告のタイプを宣言します。`subjectTypes`は個別のコンテンツが対象の場合は`record`、アカウント全体が対象の場合は`account`を含めることができます。`subjectCollections`はレコードの型を示すNSIDのリストです。定義されていない場合は、任意の型のレコードが許可されます。`reasonTypes`は報告理由コードのリスト（Lexicon参照）です。
+
+<Heading level={2} id="ozone">Ozone</Heading>
+
+[Ozone](https://github.com/bluesky-social/ozone)はAtmosphereアプリ用のリファレンスラベリングサービスであり、報告をトリアージして対応するためのウェブインターフェースが含まれています。
+
+<Container>
+  <Image src={ozone} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+OzoneをセルフホストすることでATプロトコルのスタッカブルモデレーションアーキテクチャにラベラーとして参加できます。Ozoneサービスは、ウェブUI、バックエンド、およびPostgresデータベースで構成されています。 
+
+Ozoneサービスをセットアップする前に、メインアカウントから独立した*新しい*アカウントをネットワーク上に作成してください。これはラベラー利用者との窓口になるアカウントです。ラベラーアカウントはアプリ上で通常のアカウントとは異なるインターフェースで表示されます。詳細は[Ozoneユーザーガイド](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md)を参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [モデレーション](/guides/moderation)
+- [ラベル](/guides/labels)
+- [サブスクリプション](/guides/subscriptions)
+- [Ozoneの使用](/guides/using-ozone)
+- [ラベル仕様](/specs/label)

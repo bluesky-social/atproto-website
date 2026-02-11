@@ -2,37 +2,35 @@ import {DescriptionList, Description} from '@/components/DescriptionList'
 import {Heading} from '@/components/Heading'
 
 export const header = {
-title: 'Identity',
-description:
-'AT プロトコルがユーザー ID を処理する方法。',
+  title: 'Identity',
+  description:
+    'ATプロトコルがユーザーIDを処理する方法',
 }
 
-# Identity
+AtprotoのIDシステムには、いくつかの要件があります。
 
-atproto ID システムには、いくつかの要件があります。
+* **IDプロビジョニング**。ユーザーは、サービス間で安定したグローバルIDを作成できる必要があります。これらのIDは、コンテンツへのリンクが安定していることを保証するために、ほとんど変更されない必要があります。
+* **公開鍵の配布**。分散システムは、データの信頼性を証明し、エンドツーエンドのプライバシーを提供するために暗号化に依存しています。IDシステムは、強力なセキュリティで公開鍵を公開する必要があります。
+* **鍵のローテーション**。ユーザーは、IDを中断することなく鍵マテリアルをローテーションできる必要があります。
+* **サービスの検出**。ユーザーと対話するには、アプリケーションは、特定のユーザーが使用しているサービスを検出できる必要があります。
+* **使いやすさ**。ユーザーの名前は、人間が読みやすく、覚えやすいものにする必要があります。
+* **移植性**。IDはサービス間で移植可能である必要があります。プロバイダーを変更しても、ユーザーがID、ソーシャルグラフ、またはコンテンツを失うことはありません。
 
-* **ID プロビジョニング。** ユーザーは、サービス間で安定したグローバル ID を作成できる必要があります。これらの ID は、コンテンツへのリンクが安定していることを保証するために、ほとんど変更されない必要があります。
-* **公開キーの配布。** 分散システムは、データの信頼性を証明し、エンドツーエンドのプライバシーを提供するために暗号化に依存しています。ID システムは、強力なセキュリティで公開キーを公開する必要があります。
-* **キーのローテーション。** ユーザーは、ID を中断することなくキー マテリアルをローテーションできる必要があります。
-* **サービスの検出。** ユーザーと対話するには、アプリケーションは、特定のユーザーが使用しているサービスを検出できる必要があります。
-* **使いやすさ。** ユーザーの名前は、人間が読みやすく、覚えやすいものにする必要があります。
-* **移植性。** ID はサービス間で移植可能である必要があります。プロバイダーを変更しても、ユーザーが ID、ソーシャル グラフ、またはコンテンツを失うことはありません。
-
-このシステムを採用すると、エンドツーエンドの暗号化、署名されたユーザー データ、サービス サインイン、および一般的な相互運用のためのツールがアプリケーションに提供されるはずです。
+このシステムを採用すると、エンドツーエンドの暗号化、署名されたユーザーデータ、サービスサインイン、および一般的な相互運用のためのツールがアプリケーションに提供されるはずです。
 
 <Heading level={2} id="identifiers">識別子</Heading>
 
-私たちは、_ハンドル_ と _DID_ という 2 つの相互に関連する識別子形式を使用します。ハンドルは DNS 名ですが、DID は安全で安定した ID として機能する [新しい W3C 標準](https://www.w3.org/TR/did-core/) です。
+私たちは、*ハンドル*と*DID*という2つの相互に関連する識別子形式を使用します。ハンドルはDNS名ですが、DIDは安全で安定したIDとして機能する[新しいW3C標準](https://www.w3.org/TR/did-core/)です。
 
-以下はすべて有効なユーザー識別子です:
+以下はすべて有効なユーザー識別子です。
 
 ```
 alice.host.com
 at://alice.host.com
-at://did:plc:bv6ggog3tya2z3vxsub7hnal
+did:plc:bv6ggog3tya2z3vxsub7hnal
 ```
 
-これらの関係は次のように視覚化できます:
+これらの関係は次のように視覚化できます。
 
 ```
 ┌──────────────────┐                 ┌───────────────┐
@@ -49,133 +47,89 @@ at://did:plc:bv6ggog3tya2z3vxsub7hnal
                                     └───────────────┘
 ```
 
-DNS ハンドルはユーザー向けの識別子です。UI に表示され、ユーザーを見つける方法として宣伝される必要があります。アプリケーションはハンドルを DID に解決し、DID を安定した正規の識別子として使用します。その後、DID は、公開キーとユーザー サービスを含む DID ドキュメントに安全に解決できます。
+DNSハンドルはユーザー向けの識別子です。UIに表示され、ユーザーを見つける方法として宣伝される必要があります。アプリケーションはハンドルをDIDに解決し、DIDを安定した正規の識別子として使用します。その後、DIDは公開鍵とユーザーサービスを含むDIDドキュメントに安全に解決できます。
 
 <DescriptionList>
-<Description title="Handles">ハンドルは DNS 名です。これらは `com.atproto.identity.resolveHandle` XRPC メソッドを使用して解決され、DID ドキュメント内の一致するエントリによって確認される必要があります。詳細は <a href="/specs/handle">ハンドル仕様</a> をご覧ください。</Description>
-<Description title="DID">DID は、安定した安全な ID を提供するための新しい <a href="https://www.w3.org/TR/did-core/">W3C 標準</a> です。これらは、ユーザーの安定した正規 ID として使用されます。AT プロトコルでの使用方法の詳細については、<a href="/specs/did">DID 仕様</a> をご覧ください。</Description>
-<Description title="DID ドキュメント">
-DID ドキュメントは、DID レジストリによってホストされる標準化されたオブジェクトです。これらには次の情報が含まれます:
-<ul>
-<li>DID に関連付けられたハンドル。</li>
-<li>署名キー。</li>
-<li>ユーザーの PDS の URL。</li>
-</ul>
-</Description>
+  <Description title="ハンドル">ハンドルはDNS名です。これらは`com.atproto.identity.resolveHandle` XRPCメソッドを使用して解決され、DIDドキュメント内の一致するエントリによって確認される必要があります。詳細は<a href="/specs/handle">ハンドル仕様</a>をご覧ください。</Description>
+  <Description title="DID">DIDは、安定した安全なIDを提供するための新しい<a href="https://www.w3.org/TR/did-core/">W3C標準</a>です。これは、ユーザーの安定した正規IDとして使用されます。ATプロトコルでの使用方法の詳細については、<a href="/specs/did">DID仕様</a>をご覧ください。</Description>
+  <Description title="DIDドキュメント">
+    DIDドキュメントは、DIDレジストリによってホストされる標準化されたオブジェクトです。これらには次の情報が含まれます。
+    <ul>
+      <li>DIDに関連付けられたハンドル</li>
+      <li>署名鍵</li>
+      <li>ユーザーのPDSのURL</li>
+    </ul>
+  </Description>
 </DescriptionList>
 
-<Heading level={2} id="did-methods">DID メソッド</Heading>
 
-[DID 標準](https://www.w3.org/TR/did-core/) は、DID を [DID ドキュメント](https://www.w3.org/TR/did-core/#core-properties) に公開および解決するカスタム「メソッド」をサポートしています。さまざまな既存のメソッドが [公開](https://w3c.github.io/did-spec-registries/#did-methods) されているため、この提案に含めるための基準を確立する必要があります:
+<Heading level={2} id="did-methods">DIDメソッド</Heading>
 
-- **強力な一貫性。** 特定の DID に対して、解決クエリによって生成される有効なドキュメントは常に 1 つだけである必要があります。 (一部のネットワークでは、これは確率的なトランザクションの最終性に左右される可能性があります。)
+[DID標準](https://www.w3.org/TR/did-core/)は、DIDを公開し、[DIDドキュメント](https://www.w3.org/TR/did-core/#core-properties)に解決する「メソッド」を、ただ一つに定めず多様に定義できるフレームワークを設けています。さまざまな既存のメソッドが[公開](https://w3c.github.io/did-spec-registries/#did-methods)されおり、それぞれ異なる機能や特徴を持ちます。Atprotoでの使用に際して、以下の基準を設定しました。
+
+- **強い一貫性**。特定のDIDに対して、解決クエリによって生成される有効なドキュメントは常に1つだけである必要があります。（一部のネットワークでは、これは確率的なトランザクションの最終性に左右される可能性があります。）
 - **高可用性**。解決クエリは確実に成功する必要があります。
-- **オンライン API**。クライアントは、標準 API を介して新しい DID ドキュメントを公開できる必要があります。
+- **オンラインAPI**。クライアントは、標準APIを介して新しいDIDドキュメントを公開できる必要があります。
 - **安全**。ネットワークは、オペレーター、MITM、およびその他のユーザーからの攻撃から保護する必要があります。
-- **低コスト**。DID ドキュメントの作成と更新は、サービスとユーザーにとって手頃な価格である必要があります。
-- **キー ローテーション**。ユーザーは、ID を失うことなくキー ペアをローテーションできる必要があります。
-- **分散型ガバナンス**。ネットワークは単一の利害関係者によって管理されるべきではなく、オープン ネットワークまたはプロバイダーのコンソーシアムである必要があります。
+- **低コスト**。DIDドキュメントの作成と更新は、サービスとユーザーにとって手頃な価格である必要があります。
+- **鍵ローテーション**。ユーザーは、IDを失うことなく鍵ペアをローテーションできる必要があります。
+- **分散型ガバナンス**。ネットワークは単一の利害関係者によって管理されるべきではなく、オープンネットワークまたはプロバイダーのコンソーシアムである必要があります。
 
-プロジェクト開始時点で、DID 方式のいずれも当社の基準を完全に満たしていませんでした。 **そのため、私たちは[did-web](https://w3c-ccg.github.io/did-method-web/)と、私たちが作成した[DID PLC](https://github.com/bluesky-social/did-method-plc)という新規の方法をサポートすることを選択しました。**
+プロジェクト開始時点で、DIDメソッドのいずれも当社の基準を完全には満たしていませんでした。そのため、私たちは[did-web](https://w3c-ccg.github.io/did-method-web/)と、私たちが作成した[DID PLC](https://github.com/bluesky-social/did-method-plc)という新規メソッドをサポートすることを選択しました。
 
 <Heading level={2} id="handle-resolution">ハンドル解決</Heading>
 
-atproto のハンドルは、DID に解決されるドメイン名です。DID は、ユーザーの署名公開鍵とホスティング サービスを含む DID ドキュメントに解決されます。
+Atprotoのハンドルは、DIDに解決されるドメイン名です。DIDは、ユーザーの署名公開鍵とホスティングサービスを含むDIDドキュメントに解決されます。
 
-ハンドル解決では、`com.atproto.identity.resolveHandle` XRPC メソッドを使用します。メソッド呼び出しは、ハンドルによって識別されるサーバーに送信され、ハンドルはパラメーターとして渡される必要があります。
+ハンドル解決には、DNSのTXTレコードか、HTTPSのwell-knownエンドポイントを利用します。詳細は[ハンドル仕様](/specs/handle)を参照してください。
 
-疑似 TypeScript でのアルゴリズムは次のとおりです:
 
-```typescript
-async function resolveHandle(handle: string) {
-  const origin = `https://${handle}`
-  const res = await xrpc(origin, 'com.atproto.identity.resolveHandle', {handle})
-  assert(typeof res?.did === 'string' && res.did.startsWith('did:'))
-  return res.did
-}
-```
+<Heading level={3} id="example-hosting-service">例：ホスティングサービス</Heading>
 
-<Heading level={3} id="example-hosting-service">例: ホスティング サービス</Heading>
+ホスティングサービスがPLCを使用していて、ユーザーのハンドルをサブドメインとして提供しているシナリオを考えてみましょう。
 
-ホスティング サービスが PLC を使用していて、ユーザーのハンドルをサブドメインとして提供しているシナリオを考えてみましょう:
+- ハンドル：`alice.pds.com`
+- DID：`did:plc:12345`
+- ホスティングサービス：`https://pds.com`
 
-- ハンドル: `alice.pds.com`
-- DID: `did:plc:12345`
-- ホスティング サービス: `https://pds.com`
+まず、わかっているのは`alice.pds.com`なので、`_atproto.alice.pds.com`のDNS TXTレコードを見てみます。これにより、DIDが`did:plc:12345`であるとわかります。
 
-まず、わかっているのは`alice.pds.com` なので、`alice.pds.com` で `com.atproto.identity.resolveHandle()` を呼び出します。これにより、DID がわかります。
-
-```typescript
-await xrpc.service('https://alice.pds.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
-```
-
-次に、返された DID で PLC 解決メソッドを呼び出し、ホスティング サービスのエンドポイントとユーザーのキー マテリアルを確認します。
+次に、返されたDIDでPLCディレクトリに問い合わせ、ホスティングサービスのエンドポイントとユーザーの鍵マテリアルを確認します。
 
 ```typescript
 await didPlc.resolve('did:plc:12345') /* => {
   id: 'did:plc:12345',
   alsoKnownAs: `https://alice.pds.com`,
-  verifyMethod: [...],
+  verificationMethod: [...],
   service: [{serviceEndpoint: 'https://pds.com', ...}]
 }*/
 ```
 
-これで、`https://pds.com` と通信して Alice のデータにアクセスできるようになりました。
+これで、`https://pds.com`と通信してAliceのデータにアクセスできるようになりました。
 
-<Heading level={3} id="example-hosting-service-with-different-domain-name">例: 別のドメイン名を持つホスティング サービス</Heading>
+<Heading level={3} id="example-self-hosting">例：セルフホスト</Heading>
 
-ユーザーが独自のドメイン名を指定していることを除いて、前と同じシナリオがあるとします:
+セルフホストのシナリオを考えてみましょう。`did:plc`を使用している場合は、次のようになります。
 
-- ハンドル: `alice.com` (これは前とは異なります)
-- DID: `did:plc:12345`
-- ホスティング サービス: `https://pds.com`
+- ハンドル：`alice.com`
+- DID：`did:plc:12345`
+- ホスティングサービス：`https://alice.com`
 
-`alice.com` で `com.atproto.identity.resolveHandle()` を呼び出して、DID を取得します。
+ただし、**セルフホストする人がドメイン名の所有権を保持し続けられると確信している場合**、`did:plc`ではなく`did:web`を使用できます。
 
-```typescript
-await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:plc:12345'}
-```
+- ハンドル：`alice.com`
+- DID：`did:web:alice.com`
+- ホスティングサービス：`https://alice.com`
 
-次に、前と同じように DID を解決します:
+解決方法は同じく`_atproto.alice.com`で、DIDとして`did:web:alice.com`が得られます。
 
-```typescript
-await didPlc.resolve('did:plc:12345') /* => {
-  id: 'did:plc:12345',
-  alsoKnownAs: `https://alice.com`,
-  verifyMethod: [...],
-  service: [{serviceEndpoint: 'https://pds.com', ...}]
-}*/
-```
-
-これで、`https://pds.com` と通信して Alice のデータにアクセスできます。`https://alice.com` エンドポイントは、`com.atproto.identity.resolveHandle()` 呼び出しを処理するためだけに機能します。実際のユーザー データは `pds.com` にあります。
-
-<Heading level={3} id="example-self-hosting">例: セルフ ホスト</Heading>
-
-セルフ ホスティングのシナリオを考えてみましょう。`did:plc` を使用している場合は、次のようになります。
-
-- ハンドル: `alice.com`
-- DID: `did:plc:12345`
-- ホスティング サービス: `https://alice.com`
-
-ただし、**セルフ ホスティング側がドメイン名の所有権を保持できると確信している場合**、`did:plc` ではなく `did:web` を使用できます。
-
-- ハンドル: `alice.com`
-- DID: `did:web:alice.com`
-- ホスティング サービス: `https://alice.com`
-
-DID を取得するには、`alice.com` で `com.atproto.identity.resolveHandle()` を呼び出します。
-
-```typescript
-await xrpc.service('https://alice.com').com.atproto.identity.resolveHandle() // => {did: 'did:web:alice.com'}
-```
-
-次に、`did:web` を使用して解決します:
+これを解決すると以下のようになります。
 
 ```typescript
 await didWeb.resolve('did:web:alice.com') /* => {
   id: 'did:web:alice.com',
   alsoKnownAs: `https://alice.com`,
-  verifyMethod: [...],
+  verificationMethod: [...],
   service: [{serviceEndpoint: 'https://alice.com', ...}]
 }*/
 ```
