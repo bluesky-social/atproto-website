@@ -103,9 +103,7 @@ export const Header = forwardRef<
             <TopLevelNavItem href="https://blueskydirectory.com/">
               Showcase
             </TopLevelNavItem>
-            <TopLevelNavItem href="https://docs.bsky.app/blog">
-              Blog
-            </TopLevelNavItem>
+            <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
           </ul>
         </nav>
         <nav className="hidden md:block">
