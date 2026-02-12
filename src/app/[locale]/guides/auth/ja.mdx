@@ -2,13 +2,46 @@ import {Container} from "@/components/Container"
 import {Heading} from "@/components/Heading"
 
 export const header = {
-  title: '認可',
-  description: 'Atprotoアプリケーション開発者向けの認可ガイド',
+  title: '認証',
+  description: 'Atprotoアプリケーション開発者向けの認証・認可ガイド',
 }
 
-<Heading level={2} id="about-authorization">認可について</Heading>
+<Heading level={2} id="getting-started">はじめましょう</Heading>
 
-**認可が最初のドキュメントであることには理由があります**。ATプロトコルのレコードから[データを読む](/reading-data#unauthenticated-reads)ために常に認証・認可が必要というわけではありませんし、[firehoseからデータをストリーム](/guides/streaming-data)する場合も同じです。ただしAtprotoアプリの環境（Atmosphere）に何らかの形で統合されるアプリケーションを構築したい場合は、認可から始めることになります。まずATプロトコルのIDをOAuthソースとして使うだけから始めるかもしれませんが、Atprotoの[ソーシャルグラフ](/guides/social-graph)上でさらに多くのことができることに気付くでしょう。
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    任意の[OAuth](/guides/auth)プロバイダでログインできます。SDKの[PasswordSession](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-session)でパスワード認証もできます。
+
+    まずAtprotoパッケージをインストールしてください。
+
+    ```bash
+    npm install @atproto/lex @atproto/lex-password-session
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    任意の[OAuth](/guides/auth)プロバイダでログインすることもできますし、SDKのパスワード認証を使用することもできます。
+
+    まずAtprotoパッケージをインストールしてください。
+
+    ```bash
+    go get github.com/bluesky-social/indigo
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+続いて、[SDK](/guides/sdk-auth)を使って認証します。
+
+<Heading level={2} id="about-authorization">認証について</Heading>
+
+**認証が最初のドキュメントであることには理由があります**。[レコードを読み出す](/reading-data#unauthenticated-reads)ために認証が必要というわけではありませんし、[firehoseからデータをストリーム](/guides/streaming-data)する場合も同じです。ただしAtmosphereに統合されるアプリケーションを構築する場合は、認証から始めることになります。
+
+最初はAtprotoのIDをOAuthソースとして使うだけかもしれませんが、Atprotoの[ソーシャルグラフ](/guides/social-graph)上でさらに多くのことができることに気付くでしょう。
 
 このセクションはAtprotoでアプリケーションを構築している開発者を対象としています。独自のログインフローを持つアプリケーションは認証に[OAuth](#what-is-oauth)を実装すべきです。ボットやコマンドラインツールなどの単一目的のアプリケーションは[パスワード認証](/guides/sdk-auth)を使うこともできます。
 

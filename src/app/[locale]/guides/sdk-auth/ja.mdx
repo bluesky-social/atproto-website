@@ -6,37 +6,6 @@ export const header = {
   description: 'SDKでの認証',
 }
 
-<Heading level={2} id="creating-a-client">クライアントの生成</Heading>
-
-<TabGroup defaultValue="ts">
-  <TabList>
-    <Tab value="ts">TypeScript</Tab>
-    <Tab value="go">Go</Tab>
-  </TabList>
-  <TabPanels>
-    <TabPanel value="ts">
-    ATデータを扱う最初のステップは認証です。任意の[OAuth](/guides/auth)プロバイダを使用して認証することもできますし、パスワードを使う場合はSDKの[PasswordAgent](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-agent)を使用して認証することもできます。
-
-    まずAtproto SDKパッケージをインストールしてください。
-
-    ```bash
-    npm install @atproto/lex @atproto/lex-password-agent
-    ```
-    </TabPanel>
-    <TabPanel value="go">
-    ATデータを扱う最初のステップは認証です。任意の[OAuth](/guides/auth)プロバイダを使用して認証することもできますし、SDKのパスワード認証を使用することもできます。
-
-    まずAtproto SDKパッケージをインストールしてください。
-
-    ```bash
-    go get github.com/bluesky-social/indigo
-    ```
-    </TabPanel>
-  </TabPanels>
-</TabGroup>
-
-ATは通常のHTTPメソッドとエンドポイントを使用するため、cURLのようなCLIツールで[HTTPリファレンス](https://docs.bsky.app/docs/category/http-reference)に従ってHTTPリクエストを行うことでこのガイドに従うこともできます。ほとんどのユーザーはSDKを使用したいでしょう。
-
 <Heading level={2} id="password-authentication">パスワード認証</Heading>
 
 パスワード認証を使用している場合は、メインのアカウントパスワードではなく[アプリパスワード](/specs/xrpc#app-passwords)を生成するべきです。Blueskyを使用している場合は、[アカウント設定](https://bsky.app/settings/app-passwords)でアプリパスワードを生成できます。
@@ -48,26 +17,26 @@ ATは通常のHTTPメソッドとエンドポイントを使用するため、cU
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    `PasswordAgent`をインポートし、`PasswordAgent.login()`に資格情報を与えて`agent`を作るところから始めましょう。
+    まずは`PasswordSession`をインポートし、`PasswordSession.login()`に資格情報を与えて`session`を生成します。
 
     ```tsx
-    import { PasswordAgent } from '@atproto/lex-password-agent'
+    import { PasswordSession } from '@atproto/lex-password-session'
 
-    const result = await PasswordAgent.login({
+    const result = await PasswordSession.login({
       service: 'https://bsky.social', // or your PDS host
       identifier: 'your-handle.bsky.social',
       password: 'your-app-password',
     })
 
     if (result.success) {
-        const agent = result.value
+        const session = result.value
     }
     ```
 
-    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/auth)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。どちらの方法でも同じ認証済み`agent`が生成されます。
+    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/auth)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。どちらの方法でも同じ認証済み`session`が生成されます。
     </TabPanel>
     <TabPanel value="go">
-    `atproto`と`xrpc`ライブラリをインポートし、`&xrpc.Client{}`を作って`ServerCreateSession()`に資格情報を与えるところから始めましょう。
+    まずは`atproto`と`xrpc`ライブラリをインポートし、`&xrpc.Client{}`を作って`ServerCreateSession()`に資格情報を与えます。
 
     ```go
     import (
@@ -102,14 +71,14 @@ ATは通常のHTTPメソッドとエンドポイントを使用するため、cU
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    ログインした`agent`が取得できたら、`Client`インスタンスを作成してデータの読み書きができます。
+    ログインした`session`が取得できたら、`Client`インスタンスを作成してデータの読み書きができます。
 
     ```tsx
     import { Client } from '@atproto/lex'
-    const client = new Client(agent)
+    const client = new Client(session)
 
     // 認証付きでAPIを呼び出す
-    console.log('Logged in as:', agent.did)
+    console.log('Logged in as:', session.did)
     ```
     </TabPanel>
     <TabPanel value="go">
@@ -134,13 +103,11 @@ ATは通常のHTTPメソッドとエンドポイントを使用するため、cU
 
 <Heading level={2} id="api-tokens">APIトークン</Heading>
 
-ログインのレート制限は一般的に他のAPI操作よりも低く設定されています。短期間に何度もログインメソッドを呼び出すとレート制限が発動する可能性があります。セッションを認証するためにログインメソッドを呼ぶのはセッション毎に一度だけで十分です。
+ログインのレート制限は一般的に他のAPI操作よりも低く設定されています。短期間に何度もログインメソッドを呼び出すとレート制限が発動する可能性があります。認証するためにログイン用メソッドを呼ぶのはセッション毎に一度だけで十分です。
 
 ログインメソッドが呼ぶ`com.atproto.server.createSession` APIエンドポイントは、2つのAPIトークンを含むセッションオブジェクトを返します。
 * `accessJwt`：数分で期限が切れる、リクエストを認証するために使用されるアクセストークン
 * `refreshJwt`：期限が長く、アクセストークンを更新するためだけに使用されるリフレッシュトークン
-
-SDKはこのセッション情報を保存し、リクエストのヘッダに含めます。
 
 <Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 
