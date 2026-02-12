@@ -32,7 +32,7 @@ export default async function HomePage({ params }: any) {
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 sm:text-center xl:text-left">
             <Stat value="40M+" desc="Users" first />
-            <Stat value="1.961B+" desc="Totally normal posts" />
+            <Stat value="2.4B+" desc="Totally normal posts" />
             <Stat value="100%" desc="Open data" />
           </div>
         </div>
