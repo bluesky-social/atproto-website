@@ -5,11 +5,132 @@ export const header = {
   description: '画像と動画blobの活用',
 }
 
+<Heading level={2} id="using-blobs">blobの利用</Heading>
+
+「blob」はアカウントのリポジトリと共に保存されるメディアファイルです。画像、動画、音声データを含みますが、他のファイル形式も可能です。blobは個別のレコードからLexiconの **`blob`** データ型によって参照され、blobのコンテンツハッシュ（CIDまたは`ref`）を含みます。
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```typescript
+    const imageBytes = fs.readFileSync('./photo.jpg')
+
+    const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
+      encoding: 'image/jpeg',
+      data: imageBytes,
+    })
+
+    const blob = uploadRes.data.blob
+    console.log(JSON.stringify(blob, null, 2))
+    ```
+
+    ```
+    {
+      "$type": "blob",
+      "ref": {
+        "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+      },
+      "mimeType": "image/jpeg",
+      "size": 354028
+    }
+    ```
+
+    blobファイルのアップロードや配信はレコードとは別で行います。
+
+    ```typescript
+    await client.create(app.bsky.feed.post, {
+      text: 'Using a previously uploaded image',
+      createdAt: new Date().toISOString(),
+      embed: {
+        $type: 'app.bsky.embed.images',
+        images: [
+          {
+            alt: 'A photo uploaded earlier',
+            image: blobRef,
+            aspectRatio: { width: 1200, height: 800 },
+          },
+        ],
+      },
+    })
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    imgBytes, err := os.ReadFile("./photo.jpg")
+    if err != nil {
+      panic(err)
+    }
+
+    uploadResp, err := comatproto.RepoUploadBlob(ctx, xrpcc, bytes.NewReader(imgBytes))
+    if err != nil {
+      panic(err)
+    }
+
+    fmt.Println(string(json.MarshalIndent(uploadResp, "", "  ")))
+    ```
+
+    ```
+    {
+      "blob": {
+        "$type": "blob",
+        "ref": {
+          "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+        },
+        "mimeType": "image/jpeg",
+        "size": 354028
+      }
+    }
+    ```
+
+    blobファイルのアップロードや配信はレコードとは別で行います。
+
+    ```go
+    post := &bsky.FeedPost{
+        Text:      "Using a previously uploaded image",
+        CreatedAt: time.Now().UTC().Format(time.RFC3339),
+        Embed: &bsky.FeedPost_Embed{
+          EmbedImages: &bsky.EmbedImages{
+            Images: []*bsky.EmbedImages_Image{
+              {
+                Alt: "A photo uploaded earlier",
+                Image: &lexutil.LexBlob{
+                  Ref:      uploadResp.Blob.Ref,
+                  MimeType: http.DetectContentType(imgBytes),
+                  Size:     uploadResp.Blob.Size,
+                },
+                AspectRatio: &bsky.EmbedDefs_AspectRatio{
+                  Width:  1200,
+                  Height: 800,
+                },
+              },
+            },
+          },
+        },
+      }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+既存のblobレコードがどのようなものかは[pdsls](https://pdsls.dev/at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juft56hdjg2o)で確認できます。以下のような画像が見えるでしょう。
+
+![https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py@jpeg](https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py@jpeg)
+
+CDNから提供される場合、この美しいblobのURLは次のようになります。
+
+```
+https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py
+```
+
+URLをよく見てください。blobはCDNから提供されていますが、パスにはblobのCIDだけでなく、アップロードしたアカウントのDIDが含まれています。
+
 <Heading level={2} id="blob-object">blobオブジェクト</Heading>
 
-「blob」はアカウントのリポジトリと共に保存されるメディアファイルです。これらは画像、動画、音声データを含みますが、他のファイル形式も含むことができます。blobは個別のレコードからLexiconの **`blob`** データ型によって参照され、blobのコンテンツハッシュ（CID）を含みます。
-
-blobファイルはレコードとは別にアップロードおよび配布されます。blobはアカウントのPDSインスタンスによって統合的に保存されますが、ビューは通常、PDSトラフィックを削減するために個別のアプリケーション（AppView）に関連付けられたCDNによって提供されます。CDNは元のblobの変換版（リサイズ、トランスコード等）を提供することがあります。
+blobはアカウントのPDSインスタンスに権威的に保存されますが、ビューは通常、PDSトラフィックを削減するために個別のアプリケーション（AppView）に関連付けられたCDNによって提供されます。CDNは元のblobの変換版（リサイズ、トランスコード等）を提供することがあります。
 
 blobは（CIDによって）ユニバーサルにコンテンツアドレス指定されていますが、常に個別のアカウント（DID）のコンテキストで参照および管理されます。
 

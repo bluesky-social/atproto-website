@@ -57,9 +57,52 @@ export default function DocsHome() {
           href="/guides/moderation"
         />
       </div>
+      <div className="[html_:where(&amp;&gt;*)]:max-w-2xl [html_:where(&amp;&gt;*)]:lg:max-w-3xl prose flex-auto dark:prose-invert">
+        <h2 className="scroll-mt-24">
+          Atprotoとは
+        </h2>
+        <p>
+          Atprotoは、大規模向けのオープンソーシャルプロトコルです。ユーザーはJSONレコードをリポジトリに公開します。レコードの変更ストリームはネットワーク全体で同期され、アプリケーションを駆動します。
+        </p>
+        <p>
+          コミュニティメンバーの
+          <a
+            href="https://bsky.app/profile/danabra.mov"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Dan Abramov
+          </a>
+          による、素晴らしい記事をおすすめします。
+        </p>
+        <ul>
+          <li>
+            <Link href="https://overreacted.io/open-social/">
+              <strong>Open Social</strong>
+            </Link>{' '}
+            - プロトコルはAPIである
+          </li>
+          <li>
+            <Link href="https://overreacted.io/where-its-at/">
+              <strong>Where it&apos;s at://</strong>
+            </Link>{' '}
+            - ハンドルからホスティングに辿り着くまで
+          </li>
+          <li>
+            <Link href="https://overreacted.io/a-social-filesystem/">
+              <strong>A Social Filesystem</strong>
+            </Link>{' '}
+            - フォーマットはアプリを超える
+          </li>
+        </ul>
+        <p>
+          さらに学びたければ、<Link href="/guides/understanding-atproto">導入</Link>をお読みください。
+        </p>
+      </div>
     </div>
   )
 }
+
 
 function NavItem({
   title,
