@@ -22,10 +22,10 @@ const ASCII_VISIBLE_THRESHOLD = 64 // how "bright" does a pixel need to be to re
 // ASCII characters for 1×2 vertical binary patterns
 // Index = bit pattern: top(2) + bottom(1)
 const ASCII_MAP = [
-  '\u00a0', // 00 - empty
+  ' ', // 00 - empty
   '.', // 01 - bottom only
   "'", // 10 - top only
-  '♦', // 11 - full
+  '#', // 11 - full
 ]
 
 // ============ SHADER SOURCES ============
@@ -377,6 +377,22 @@ function convertToAscii(
   return lines.join('\n')
 }
 
+const MONOSPACE_FONT_STACK = [
+  '"IBM Plex Mono"', // preferred (matches original design)
+  '"Cascadia Mono"', // Windows 11+
+  '"SF Mono"', // macOS / iOS
+  '"Fira Mono"', // common Linux / web
+  '"Roboto Mono"', // Android / Google
+  '"Source Code Pro"', // Adobe, widely installed
+  '"JetBrains Mono"', // popular dev font
+  '"Consolas"', // Windows
+  '"Menlo"', // macOS
+  '"Liberation Mono"', // Linux
+  '"DejaVu Sans Mono"', // Linux
+  '"Courier New"', // universal fallback
+  'monospace', // generic keyword — last resort
+].join(', ')
+
 // ============ MAIN COMPONENT ============
 interface GlobeProps {
   lines?: number
@@ -384,6 +400,7 @@ interface GlobeProps {
 
 export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
   const canvasSize = lines * TILE_SIZE * RENDER_SCALE
+  const charsPerLine = lines * TILE_SIZE
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textureCanvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -842,11 +859,34 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
           padding: 0,
           userSelect: 'none',
 
-          // NOTE(@elijaharita): font and font weight affect what line height
-          // needs to be used for a square output
-          fontFamily: 'IBM Plex Mono',
+          // ── Monospace hardening ──
+          // Deep fallback chain so *some* monospace font always loads.
+          fontFamily: MONOSPACE_FONT_STACK,
           fontWeight: 'bold',
           lineHeight: 1.2,
+
+          // Lock the width to exactly the character count.
+          // `ch` = width of the "0" glyph in the current font, which in
+          // any monospace face equals the width of every other glyph.
+          width: `${charsPerLine}ch`,
+
+          // Prevent the browser from collapsing runs of spaces or
+          // wrapping lines — every character must stay in its grid cell.
+          whiteSpace: 'pre',
+
+          // Disable ligatures, kerning, and other OpenType features that
+          // could shift glyph widths and break the character grid.
+          fontFeatureSettings: '"liga" 0, "clig" 0, "dlig" 0, "kern" 0, "calt" 0',
+          fontKerning: 'none',
+          fontVariantLigatures: 'none',
+
+          // Prevent iOS / macOS text size inflation on rotation.
+          WebkitTextSizeAdjust: 'none',
+          textSizeAdjust: 'none',
+
+          // Prevent sub-pixel rendering differences from shifting
+          // character positions across platforms.
+          textRendering: 'geometricPrecision',
         }}
       >
         {asciiText}

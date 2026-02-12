@@ -12,7 +12,7 @@ export const posts: BlogPost[] = [
     title: 'Welcome to the New atproto.com',
     description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 12, 2026',
-    author: 'AT Protocol Team',
+    author: 'Alex Garnett',
   },
   {
     slug: 'relay-rollout',
