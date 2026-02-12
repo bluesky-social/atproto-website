@@ -33,7 +33,7 @@ type Autocomplete = AutocompleteApi<
   React.KeyboardEvent
 >
 
-function useAutocomplete({ close }: { close: () => void }) {
+function useAutocomplete({ close, locale }: { close: () => void; locale: string }) {
   let id = useId()
   let router = useRouter()
   let [autocompleteState, setAutocompleteState] = useState<
@@ -80,7 +80,7 @@ function useAutocomplete({ close }: { close: () => void }) {
             {
               sourceId: 'documentation',
               getItems() {
-                return search(query, { limit: 5 })
+                return search(query, { limit: 5, locale })
               },
               getItemUrl({ item }) {
                 return item.url
@@ -315,6 +315,13 @@ const SearchInput = forwardRef<
   )
 })
 
+const locales = ['pt', 'ja', 'ko']
+
+function getLocaleFromPathname(pathname: string): string {
+  const firstSegment = pathname.split('/')[1]
+  return locales.includes(firstSegment) ? firstSegment : 'en'
+}
+
 function SearchDialog({
   open,
   setOpen,
@@ -327,12 +334,14 @@ function SearchDialog({
   let formRef = useRef<React.ElementRef<'form'>>(null)
   let panelRef = useRef<React.ElementRef<'div'>>(null)
   let inputRef = useRef<React.ElementRef<typeof SearchInput>>(null)
+  let pathname = usePathname()
+  let locale = getLocaleFromPathname(pathname)
   let { autocomplete, autocompleteState } = useAutocomplete({
     close() {
       setOpen(false)
     },
+    locale,
   })
-  let pathname = usePathname()
   let searchParams = useSearchParams()
 
   useEffect(() => {

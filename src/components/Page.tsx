@@ -4,6 +4,7 @@ import {
   PageSectionProp,
 } from './PageSectionsNavigation'
 import { SectionProvider } from './SectionProvider'
+import { SubpageLinks } from './SubpageLinks'
 
 interface PageProps {
   default: React.FunctionComponent
@@ -15,6 +16,7 @@ export function Page(page: PageProps) {
   return (
     <SectionProvider sections={page.sections ?? []}>
       {page.header && <PageHeader {...page.header} />}
+      <SubpageLinks />
       <div className="flex items-start">
         <page.default />
         {page.sections && <PageSectionsNavigation sections={page.sections} />}

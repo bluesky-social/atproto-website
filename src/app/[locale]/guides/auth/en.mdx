@@ -5,9 +5,42 @@ export const header = {
   description: 'Auth for Atproto application developers',
 }
 
+## Getting Started
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    You can log in using any [OAuth](/guides/auth) provider, or with [PasswordSession](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-session) from our SDK if you are using password auth.
+
+    Begin by installing the Atproto packages:
+
+    ```bash
+    npm install @atproto/lex @atproto/lex-password-session
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    You can log in using any [OAuth](/guides/auth) provider, or with password authentication from our SDK.
+
+    Begin by installing the Atproto packages:
+
+    ```bash
+    go get github.com/bluesky-social/indigo
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+Next, authenticate with an [SDK](/guides/sdk-auth).
+
 ## About authorization
 
-**Authorization is the first part of our docs for a reason!** You don't always need to be authenticated to [read data](/reading-data#unauthenticated-reads) from AT Protocol records or even to [stream data from the firehose](/guides/streaming-data). But if you're looking to build an application that integrates with the Atmosphere of Atproto apps in some way, you'll begin with authentication. You might start out by just using AT Protocol identities as an OAuth source — though you'll find that there's lots more you can do by building on top of the Atproto [social graph](/guides/social-graph).
+**Auth is the first part of our docs for a reason!** You don't need to be authed to [read records](/reading-data#unauthenticated-reads) or even to [stream data from the firehose](/guides/streaming-data). But if you're building an app that integrates with the Atmosphere, you'll begin with auth.
+
+You might start out by just using Atproto identities as an OAuth source — though you'll find that there's lots more you can do by building on top of the Atproto [social graph](/guides/social-graph).
 
 This section is aimed at developers building applications on Atproto. Applications with their own end-user login flow should implement [OAuth](#what-is-oauth) for authentication. Single-purpose applications such as bots or command line tools may use [password authentication](/guides/sdk-auth) instead.
 

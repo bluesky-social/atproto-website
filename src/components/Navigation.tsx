@@ -9,7 +9,7 @@ import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
 
 // Strip locale prefix from pathname for comparison with nav hrefs
 const LOCALES = ['en', 'pt', 'ja', 'ko']
-function stripLocalePrefix(pathname: string): string {
+export function stripLocalePrefix(pathname: string): string {
   for (const locale of LOCALES) {
     if (pathname.startsWith(`/${locale}/`)) {
       return pathname.slice(locale.length + 1)

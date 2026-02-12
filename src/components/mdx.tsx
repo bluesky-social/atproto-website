@@ -3,13 +3,79 @@
 import Link from 'next/link'
 import NextImage, { ImageProps } from 'next/image'
 import clsx from 'clsx'
-import { createContext, useContext, useState, useId, useCallback } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useId,
+  useCallback,
+  useEffect,
+} from 'react'
+import { createPortal } from 'react-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
 
-export function Image({ ...props }: ImageProps) {
-  return <NextImage {...props} />
+export function Image({ className, ...props }: ImageProps) {
+  const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open])
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mx-auto block cursor-zoom-in"
+      >
+        <NextImage className={className} {...props} />
+      </button>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-zoom-out"
+                onClick={() => setOpen(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="max-w-7xl w-full px-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <NextImage
+                    {...props}
+                    className="w-full h-auto max-h-[90vh] object-contain rounded-lg cursor-zoom-out"
+                    onClick={() => setOpen(false)}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
+    </>
+  )
 }
 
 export const a = function ExternalAwareLink({

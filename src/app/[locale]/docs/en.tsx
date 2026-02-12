@@ -18,8 +18,7 @@ export const header = {
 
 export default function DocsHome() {
   return (
-    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-16 xl:max-w-6xl xl:px-16">
-      <Usecases />
+    <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-8 md:pt-16 xl:max-w-6xl xl:px-16">
       <div className="grid gap-6 md:grid-cols-2">
         <NavItem
           icon="key"
@@ -58,9 +57,54 @@ export default function DocsHome() {
           href="/guides/moderation"
         />
       </div>
+      <div className="[html_:where(&amp;&gt;*)]:max-w-2xl [html_:where(&amp;&gt;*)]:lg:max-w-3xl prose flex-auto dark:prose-invert">
+        <h2 className="scroll-mt-24">
+          What is this?
+        </h2>
+        <p>
+          Atproto is a big-world open social protocol. Users publish JSON records into
+          repositories. The changestreams of those records then sync across the
+          network to drive applications.
+        </p>
+        <p>
+          We recommend these fantastic articles by community member{' '}
+          <a
+            href="https://bsky.app/profile/danabra.mov"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Dan Abramov
+          </a>
+          :
+        </p>
+        <ul>
+          <li>
+            <Link href="https://overreacted.io/open-social/">
+              <strong>Open Social</strong>
+            </Link>{' '}
+            - The protocol is the API.
+          </li>
+          <li>
+            <Link href="https://overreacted.io/where-its-at/">
+              <strong>Where it&apos;s at://</strong>
+            </Link>{' '}
+            - From handles to hosting.
+          </li>
+          <li>
+            <Link href="https://overreacted.io/a-social-filesystem/">
+              <strong>A Social Filesystem</strong>
+            </Link>{' '}
+            - Formats over apps.
+          </li>
+        </ul>
+        <p>
+          Or, learn more <Link href="/guides/understanding-atproto">in our intro doc</Link>.
+        </p>
+      </div>
     </div>
   )
 }
+
 
 function NavItem({
   title,

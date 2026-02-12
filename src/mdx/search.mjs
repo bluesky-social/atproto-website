@@ -178,9 +178,12 @@ export default function Search(nextConfig = {}) {
                 }
               }
 
+              const nonDefaultLocales = ${JSON.stringify(i18nConfig.locales.filter(l => l !== i18nConfig.defaultLocale))}
+
               export function search(query, options = {}) {
+                const { locale, ...searchOptions } = options
                 let results = sectionIndex.search(query, {
-                  ...options,
+                  ...searchOptions,
                   enrich: true,
                 })
 
@@ -190,6 +193,23 @@ export default function Search(nextConfig = {}) {
                   const boost = fieldResult.field === 'title' ? 0 : 1000
                   fieldResult.result.forEach((item, idx) => {
                     const id = item.id
+
+                    // Filter by locale if specified
+                    if (locale) {
+                      const urlPath = id.split('#')[0]
+                      if (locale === 'en') {
+                        // English: exclude URLs that start with other locale prefixes
+                        if (nonDefaultLocales.some(l => urlPath.startsWith('/' + l + '/'))) {
+                          return
+                        }
+                      } else {
+                        // Other locales: only include URLs that start with this locale prefix
+                        if (!urlPath.startsWith('/' + locale + '/')) {
+                          return
+                        }
+                      }
+                    }
+
                     if (!seen.has(id) || seen.get(id).score > boost + idx) {
                       seen.set(id, {
                         url: id,
