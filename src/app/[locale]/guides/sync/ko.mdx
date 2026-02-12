@@ -1,0 +1,48 @@
+export const header = {
+  title: 'Sync',
+  description: 'Synchronizing AT Protocol data',
+}
+
+## 핸들 및 DID
+AT에서는 핸들이[DID](/specs/did)를 통해 해결되며, 이는[분산 식별자](https://en.wikipedia.org/wiki/Decentralized_identifier)로도 알려져 있습니다. 현재 두 가지 다른 DID 접두사가 지원됩니다:
+- `did:web`: W3C DID 표준을 기반으로 합니다.
+- `did:plc`: Bluesky에서 개발 및 구현한 DID 방식입니다.자세한 내용은 [did-method-plc](https://github.com/did-method-plc/did-method-plc) 저장소를 참조하세요.
+
+Atmosphere 앱을 통해 새 계정에 가입하면, 해당 앱은 PDS와 통신하여 도메인 이름(예: `*.bsky.social`)을 사용하여 사용자를 위한 새 핸들을 등록합니다.
+## 데이터 저장소
+데이터 저장소는 단일 사용자가 게시한 데이터의 모음입니다.저장소는 자체 인증 데이터 구조로, 각 업데이트는 서명되어 누구나 검증할 수 있습니다.
+데이터 저장소 내에서는 여러 유형의 식별자가 사용됩니다:
+- [**분산식 식별자(DID)**](https://w3c.github.io/did/)는 데이터 저장소를 식별합니다. 일반적으로 사용자 ID로 사용되지만, 모든 사용자가 하나의 데이터 저장소를 가지므로 DID는 데이터 저장소에 대한 참조로 간주될 수 있습니다.
+- [**네임스페이스 식별자(NSIDs)**](/specs/nsid)는 저장소 내 레코드 그룹의 어휘 유형을 식별합니다.
+- [**레코드 키**](/specs/record - key)("rkeys")는 특정 저장소 내 컬렉션의 개별 레코드를 식별합니다.형식은 컬렉션 어휘에 의해 지정됩니다.
+- [**콘텐츠 ID(CID)**](https://github.com/multiformats/cid)는 지문 해시를 사용하여 콘텐츠를 식별합니다. 저장소 내 객체(노드)를 참조하기 위해 저장소 전체에서 사용됩니다.
+      예를 들어, 단일 AT 레코드를 살펴보겠습니다:
+```
+at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
+```
+이는`at://DID/NSID/rkey` 또는`at://repository/collection/record`로 분해할 수 있습니다.이에 대응하는 CID는`bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`입니다.
+
+AT API 엔드포인트에 쓰기 요청을 수행할 때(예: 새 게시물 생성 시) 이 전체 저장소 경로가 응답으로 반환됩니다:
+```json
+{
+"uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  
+"cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+이것이 AT 데이터 저장소 내에서 개별 레코드를 고유하게 식별하고 저장하는 방식입니다.
+
+## PDS
+PDS(개인 데이터 서버)는 게시물, 팔로워, 프로필 정보 등 사용자의 개별 데이터 저장소를 호스팅하는 서버입니다.PDS는 계정 수명 주기 기능, 신원 관리, 호스팅된 사용자 계정의 키 해결을 처리합니다.
+
+사용자는[자체 PDS 호스팅](/guides/self-hosting)이 가능하며, [개별 계정 이전](/guides/account-migration)을 통해 한 PDS에서 다른 PDS로 계정을 이동할 수 있습니다.자세한 내용은[AT 스택](/guides/the-at-stack#pds)을 참조하십시오.
+
+## 추가 자료 및 리소스
+AT 데이터 동기화 및 스트리밍에는 다양한 방법이 있습니다. [Jetstream](/guides/streaming - data)을 사용하여 실시간 업데이트를 스트리밍하거나, 네트워크에 이미 존재하는 데이터를 로컬에서[백필](/guides/backfilling)할 수 있습니다.
+- [스트리밍 데이터](/guides/streaming-data)
+  - [백필](/guides/backfilling)
+  - [피드](/guides/feeds)
+  - [저장소 사양](/specs/repository)
+  - [이벤트 스트림 사양](/specs/event-stream)
+  - [동기화 사양](/specs/sync)
+  - [Microcosm](https://www.microcosm.blue/) 커뮤니티 프로젝트는 로컬 미러링 없이 대규모로 AT 레코드를 처리하는 도구를 유지 관리합니다.

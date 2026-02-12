@@ -1,0 +1,90 @@
+import {Container} from "@/components/Container"
+import crawling from "./crawling.png"
+import did from "./did.png"
+import feeds from "./feeds.png"
+
+export const header = {
+  title: 'The AT Stack',
+  description:
+    'Components of the AT Protocol Stack',
+}
+
+## 인증 전송 프로토콜
+AT 프로토콜(인증 전송 프로토콜)은 공개 대화 표준이자 소셜 앱 구축을 위한 오픈소스 프레임워크입니다.
+사용자 신원, 팔로우, 소셜 앱 데이터에 대한 표준 형식을 생성하여 앱 간 상호 운용성을 보장하고 사용자가 자유롭게 이동할 수 있게 합니다. 계정 이동성을 갖춘 연합 네트워크입니다.
+## 분산형 아키텍처
+AT는 연합 네트워킹 모델에서 저장소를 동기화합니다. 연합은 네트워크의 사용 편의성과 안정적인 가용성을 보장합니다. 저장소 데이터는 표준 웹 기술(HTTP 및 WebSockets)을 통해 서버 간에 동기화됩니다.
+[**개인 데이터 서버**(PDS)](/guides/the-at-stack#pds)는 클라우드 상의 여러분의 집입니다. 이 서버는 여러분의 데이터를 호스팅하고 배포하며, 신원을 관리하고, 다른 서비스에 대한 요청을 조정하여 여러분의 뷰를 제공합니다.
+**릴레이**는 대규모 메트릭(좋아요, 리포스트, 팔로워) 조회, 콘텐츠 발견(알고리즘), 사용자 검색 등 모든 이벤트를 처리합니다.
+<Container>
+  <Image src={crawling} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+AT 프로토콜은 오픈 웹 자체를 모델로 삼아 “대규모 세계와 소규모 세계의 대체” 방식으로 설계되었습니다. 웹에서는 개별 컴퓨터가 콘텐츠를 네트워크에 업로드하면, 그 모든 콘텐츠가 다른 컴퓨터로 다시 브로드캐스트됩니다. 마찬가지로 AT 프로토콜에서는 훨씬 적은 수의 대규모 집계 서버로 메시지를 전송하며, 이 서버들이 네트워크 전반의 개인 데이터 서버로 해당 데이터를 브로드캐스트합니다.
+기술적으로, 단일 PDS만으로 AT 애플리케이션을 구현할 수 있습니다 — 릴레이는 사양상 필수 요소가 아닙니다. 릴레이는 대규모 소셜 네트워크를 위한 생태계 확장을 가능하게 합니다.
+## PDS
+PDS 인스턴스는 사용자 계정을 호스팅하며, 이는 일반 네트워크 서버와 유사한 계정 관리 및 수명 주기 제어가 필요합니다. 이론상 AT 신원(DID 및 핸들)은 PDS와 완전히 분리될 수 있지만, 실제로는 PDS가 사용자 신원 관리를 지원할 것으로 예상됩니다.
+[자체 PDS 호스팅](/guides/self-hosting)이 가능합니다.
+사용자 데이터는 서명된 데이터 저장소에 저장되며 DID로 검증됩니다. 서명된 데이터 저장소는 데이터베이스 레코드를 위한 Git 저장소와 유사하며, DID는 사용자 인증서 레지스트리로 TLS 인증서 시스템과 일부 유사합니다. 이들은 안전하고 신뢰할 수 있으며 사용자의 PDS와 독립적이어야 합니다.
+<Container>
+  <Image src={did} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+PDS가 처리하는 사항:
+- 계정 수명주기: 가입, 삭제, 이전
+- 계정 보안: 이메일 인증, 비밀번호 재설정 절차, 이메일 변경 절차
+- AT 신원 확인: DID, 핸들 [자세히 보기](https://fusectore.dev/2025/01/04/atproto-identity.html) 신원 확인 방식.
+- 선호도 및 개인 상태 저장
+- 계정 삭제/정지 및 관리 연락처 처리
+- 비밀 키 관리: AT 서명 키, PLC 회전 키
+- [PLC](https://web.plc.directory/) 신원 작업 및 엔드포인트: 핸들 변경; PLC 작업 검증, 서명 및 제출
+- 이메일 전송: 재설정 절차 및 모더레이션 메일 전달용
+- 저장소 이벤트 스트림에서 `#identity` 및 `#account`(출시 예정) 이벤트 출력
+- 기본 핸들 네임스페이스(기본 도메인) 관리 기능
+- 웹 로그인 페이지 및 선택적 MFA를 포함한 OAuth 클라이언트 흐름
+개별 계정의 데이터 저장소를 한 PDS에서 다른 PDS로 자유롭게 마이그레이션할 수 있습니다. 이는 저장소를 CAR 파일로 내보내고 가져오는 과정을 포함합니다. 이를 용이하게 하는 커뮤니티 도구가 몇 가지 있습니다:
+- https://pdsls.dev/: 자신의 저장소에 저장된 모든 데이터(및 현재 호스팅 중인 PDS)를 탐색할 수 있음
+- https://pdsmoover.com/: PDS 마이그레이션을 위한 도구 모음
+- https://boat.kelinci.net/: 저장소 가져오기 및 내보내기를 위한 인터페이스 세트
+- https://github.com/bluesky-social/goat: Go AT 명령줄 도구
+## Tap
+Tap은 AT 네트워크의 기존 레코드를 동기화한 후 파이어호스에서 새로운 레코드를 계속 수신하는 데 사용됩니다.
+Tap은 파이어호스 연결, 검증, 백필, 필터링을 처리하여 AT 동기화를 간소화합니다. 애플리케이션은 Tap에 연결하여 관심 있는 저장소 및 컬렉션에 대한 간단한 JSON 이벤트만 수신하므로, 암호화 서명 검증을 위한 이진 형식에 대해 걱정할 필요가 없습니다. Tap 주요 기능:
+- 저장소 구조, MST 무결성, 신원 서명 검증
+- 자동 백필: 새 저장소 추가 시 PDS에서 전체 저장소 기록 가져옴
+- 필터링된 출력: DID 목록별, 컬렉션별 또는 전체 네트워크 모드
+- 순서 보장: 실시간 이벤트는 과거 백필 완료까지 대기
+- 전달 모드: 확인 응답이 포함된 WebSocket, 일회성 전송(fire-and-forget), 웹훅
+- 단일 Go 바이너리
+- SQLite 또는 Postgres 백엔드
+- 중간 규모 설계(수백만 리포지토리, 초당 30,000건 이상 이벤트)
+Tap 작업용 Typescript 라이브러리는 [@atproto/tap](https://www.npmjs.com/package/@atproto/tap)에서 확인하세요.
+## 앱 뷰 및 릴레이
+**릴레이**는 대규모 메트릭(좋아요, 리포스트, 팔로워) 조회, 콘텐츠 발견(알고리즘), 사용자 검색 등 모든 이벤트를 처리합니다. 릴레이는 또한 네트워크 전반에서 콘텐츠가 색인될 수 있도록 개별 PDS의 [속도 제한](https://docs.bsky.app/docs/advanced-guides/rate-limits)을 관리합니다.
+앱 뷰는 앱에서 볼 수 있는 피드 및 기타 모든 데이터를 실제로 조립하는 구성 요소로, 릴레이의 방대한 데이터 흐름 하류에 위치합니다. 이는 네트워크 전반에 걸친 집계와 네트워크 일부에 대한 뷰를 생성하는 의미론적 인식 서비스입니다. 예를 들어, 릴레이가 특정 게시물의 좋아요 및 리포스트와 같은 데이터를 크롤링하여 가져오면 앱 뷰는 해당 메트릭의 수를 출력합니다.
+네트워크에 배포된 각 어휘집(lexicon)에 대해 앱 뷰 생태계가 존재할 수 있습니다. 예를 들어, *Bluesky*는 현재 마이크로블로깅 모드인 `app.bsky` 어휘집을 지원합니다. 새로운 어휘집을 만드는 개발자는 해당 어휘집을 이해하는 대응 앱 뷰를 배포하여 사용자에게 서비스를 제공할 수 있습니다.
+ 
+다른 어휘집에는 [동영상](https://stream.place/), [장문 블로그](https://leaflet.pub/), [협업 코딩](https://tangled.org/) 등이 포함될 수 있습니다. 기존 릴레이를 기반으로 부트스트랩하면, 이러한 신규 애플리케이션의 데이터 수집은 이미 처리된 상태가 됩니다.
+ 
+이들은 이미 Bluesky에 게시하고 다른 어휘로 저장소를 채우고 있는 사용자들의 임계 질량으로부터 혜택을 받을 수 있습니다. 애플리케이션에 필요한 색인화 동작만 제공하면 됩니다.
+앱 뷰와 릴레이는 모두 애플리케이션 수준의 도구이며, AT 프로토콜의 본질적인 부분이 아닙니다. 우리의 앱 뷰 구현은 [XRPC](/specs/xrpc) 호출(우리의 HTTP API)에 응답합니다.
+다른 앱 뷰 및 릴레이 구현에 대한 잘 문서화된 예시는 [The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture)에서 확인할 수 있습니다. 서로 다른 Atmosphere 애플리케이션은 각기 다른 구현 방식을 선택할 수 있습니다.
+## DID PLC
+[DID PLC](https://web.plc.directory/)는 자체 인증이 가능한 DID로, 강력하게 일관성을 유지하며 복구 가능하고 키 회전을 허용합니다. 각 신원(identity)은 일련의 서명된 작업으로 구성되며, 각 작업은 생성 작업(genesis operation)까지 거슬러 올라가는 체인에서 이전 작업을 참조합니다. 관찰자는 작업 체인을 검증하여 신원의 현재 상태를 확인할 수 있습니다.
+PLC 작업은 디렉터리([plc.directory](http://plc.directory)에서 운영 중)에 저장됩니다. 이 중앙 집중식 서비스는 작업을 검증하고 저장하며, 작업 자체와 작업에서 파생된 신원 정보의 계산된 뷰를 제공합니다. 디렉터리의 신뢰 모델은 해당 신원을 대신한 서명 작업 없이는 신원을 수정할 수 없기 때문에 상당히 제한적입니다.
+PLC 미러링에 대한 안내는 [이 개발자 블로그](https://dholms.leaflet.pub/3m6zswymcqk2p)를 참조하십시오.
+## 피드
+웹 검색 엔진과 마찬가지로 사용자는 자유롭게 애그리게이터를 선택할 수 있습니다. 피드, 검색 인덱스, 전체 앱 뷰는 독립적인 제3자가 제공할 수 있으며, 요청은 사용자 설정에 따라 PDS에 의해 라우팅됩니다.
+<Container>
+  <Image src={feeds} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+사용자 지정 피드(피드 생성기)는 AT 프로토콜을 통해 사용자에게 맞춤형 알고리즘을 제공하는 서비스입니다. 이를 통해 사용자는 알고리즘 기반 추천 페이지든 고양이 사진 전용 피드든 자신만의 타임라인을 선택할 수 있습니다.
+사용자 지정 피드는 간단하게 작동합니다: 서버는 사용자 서버로부터 요청을 수신하고 선택적 메타데이터가 첨부된 게시물 URI 목록을 반환합니다. 요청 서버는 해당 게시물을 완전한 뷰로 생성하여 클라이언트에 다시 전송합니다.
+피드 생성기 서비스는 하나 이상의 알고리즘을 호스팅할 수 있습니다. 서비스 자체는 DID로 식별되며, 호스팅하는 각 알고리즘은 생성한 계정의 저장소 내 레코드로 선언됩니다. 예를 들어, Bluesky가 제공하는 피드는 `@bsky.app`의 저장소에 선언될 가능성이 높습니다. 따라서 특정 알고리즘은 선언 레코드의 at-uri로 식별됩니다. 이 선언 레코드에는 서비스의 DID 포인터와 피드에 대한 일부 프로필 정보가 포함됩니다.
+[사용자 지정 피드 둘러보기](https://blueskydirectory.com/feeds/all).
+## Osprey와 Ozone
+검열은 스택의 두 부분에서 처리됩니다: 자동 조치를 조사하고 수행하도록 설계된 이벤트 스트림 결정 엔진 및 분석 UI인 [*Osprey*](https://github.com/roostorg/osprey); 그리고 검열 결정을 내리기 위한 라벨링 서비스 및 웹 프론트엔드인 [*Ozone*](/guides/using-ozone).
+## 도구 및 SDK
+대부분의 AT 툴링은 Go와 TypeScript로 구현됩니다.
+- [indigo](https://github.com/bluesky-social/indigo) 저장소에는 [Relay](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md) 및 Go SDK 코드를 포함한 대부분의 Go 툴링이 포함되어 있습니다.
+- 또한 Go AT 명령줄 도구인 https://github.com/bluesky-social/goat도 있습니다.
+- https://github.com/bluesky-social/atproto 저장소에는 [PDS](https://github.com/bluesky-social/atproto/tree/main/packages/pds) 및 TypeScript SDK 코드를 포함한 대부분의 TypeScript 툴링이 포함되어 있습니다.
+- 매일 사용하는 커뮤니티 도구가 많이 있습니다. 예를 들어, Rust로 작성된 [Microcosm](https://www.microcosm.blue/) 툴링은 전용 AppView 없이도 쿼리 레이어를 구축하는 데 도움이 되는 API 세트를 제공합니다! 자세한 내용은 https://constellation.microcosm.blue/를 참조하세요.

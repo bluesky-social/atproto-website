@@ -7,5 +7,9 @@ declare module '@/mdx/search.mjs' {
     pageTitle?: string
   }
 
-  export function search(query: string, options?: SearchOptions): Array<Result>
+  export type LocalizedSearchOptions = SearchOptions & {
+    locale?: string
+  }
+
+  export function search(query: string, options?: LocalizedSearchOptions): Array<Result>
 }

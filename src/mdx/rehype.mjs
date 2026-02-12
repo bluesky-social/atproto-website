@@ -95,6 +95,25 @@ function rehypeAddMDXExports(getExports) {
   }
 }
 
+function getJsxAttr(node, name) {
+  let attr = node.attributes?.find((a) => a.name === name)
+  if (!attr) return undefined
+  // Expression attributes like level={2} have an object value with .value as string
+  if (typeof attr.value === 'object' && attr.value?.value != null) {
+    return attr.value.value
+  }
+  // String attributes like id="foo" have a plain string value
+  return attr.value
+}
+
+function isJsxHeading(node, level) {
+  return (
+    node.type === 'mdxJsxFlowElement' &&
+    node.name === 'Heading' &&
+    getJsxAttr(node, 'level') === String(level)
+  )
+}
+
 function getSections(node) {
   let sections = []
 
@@ -104,6 +123,11 @@ function getSections(node) {
         title: ${JSON.stringify(toString(child))},
         id: ${JSON.stringify(child.properties.id)},
         ...${child.properties.annotation}
+      }`)
+    } else if (isJsxHeading(child, 2)) {
+      sections.push(`{
+        title: ${JSON.stringify(toString(child))},
+        id: ${JSON.stringify(getJsxAttr(child, 'id'))},
       }`)
     } else if (child.children) {
       sections.push(...getSections(child))

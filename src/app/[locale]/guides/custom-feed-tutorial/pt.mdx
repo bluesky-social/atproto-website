@@ -1,0 +1,311 @@
+import {Container} from "@/components/Container"
+import bsky from "./feeds-bsky.png"
+
+export const header = {
+  title: 'Write a Custom Feed',
+  description: 'Host an algorithm that\'s accessible from apps like Bluesky.',
+}
+
+Feeds personalizados, ou geradores de feeds, são serviços que fornecem algoritmos aos usuários. Isso lhe dá muita liberdade: escolher sua própria visualização da linha do tempo ou criar um feed incorporável para outros usuários.
+Neste tutorial, você criará um servidor de feed personalizado consumindo postagens do [firehose](http://localhost:3000/guides/streaming-data), classificando-as algoritmicamente e [transmitindo-as como um feed XRPC](/guides/feeds).
+## Pré-requisitos
+Este tutorial envolve a criação de um aplicativo TypeScript do zero. Você deve ter um conhecimento prático de TypeScript e Node.js.
+Você deve ter instalado:
+- Node.js 18+
+- Go 1.25+
+Em plataformas compatíveis com [homebrew](https://brew.sh/), você pode instalá-los com:
+```bash
+brew install node go
+```
+Você também deve ter nossa ferramenta CLI `lex` instalada globalmente:
+```bash
+npm install -g @atproto/lex
+```
+Você também precisará instalar o [`tap`](/guides/the-at-stack#tap) para consumir o fluxo de postagens da rede.
+```bash
+go install github.com/bluesky-social/indigo/cmd/tap
+```
+Agora, crie um novo diretório de projeto Typescript e inicialize seu projeto:
+```bash
+mkdir my-agent
+cd my-agent
+npm init -y
+npm i -D typescript ts-node @types/node dotenv @atproto/lex @atproto/lex-server @atproto/tap
+npx tsc --init --verbatimModuleSyntax false
+```
+Você começará adicionando léxicos ao seu projeto.
+## Parte 1: Léxicos e Tap
+[Léxicos](/guides/lexicon) definem registros Atproto. Um gerador de feed de linha de base requer os léxicos `app.bsky.feed.describeFeedGenerator` e `app.bsky.feed.getFeedSkeleton`. Você pode usar o `lex` para baixar e construir esses lexicons em seu projeto:
+```bash
+lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton
+```
+A partir daqui, você pode executar o `lex build` para gerar tipos TypeScript para todos os seus lexicons instalados:
+```bash
+lex build
+```
+O código gerado ficará em `src/lexicons`.
+Você também precisará executar o `tap` em um terminal separado para indexar as postagens da rede. Inicie o `tap` com:
+```bash
+tap run --disable-acks=true
+```
+Agora você pode começar a criar seu gerador de feed.
+## Parte 2: Estrutura do feed
+O fluxo geral para fornecer um algoritmo personalizado a um usuário é o seguinte:
+- Um usuário solicita um feed do back-end do aplicativo (por exemplo, Bluesky)
+- O aplicativo encontra o documento DID do feed solicitado para procurar seu servidor de hospedagem
+- O aplicativo envia uma solicitação `getFeedSkeleton` ao servidor de hospedagem
+- O servidor de hospedagem do feed retorna uma lista de URLs de postagens
+- O aplicativo hidrata o feed (informações do usuário, conteúdo da postagem, agregados, etc.)
+- O aplicativo retorna o feed hidratado para o usuário
+Você começará capturando algumas configurações das variáveis de ambiente. Grande parte disso é configuração para o feed publicado (`FEED_PUBLISHER_DID`, `FEED_NAME`), mas alguns detalhes configuram como o feed se comportará (`FEED_MAX_POSTS`, `SEARCH_TERMS`) .
+Para este exemplo, você criará todo o nosso aplicativo em um único arquivo em `src/index.ts`. Crie esse arquivo agora e adicione estas importações e linhas de configuração:
+```ts
+import { AtUriString, DidString, asDidString } from '@atproto/lex'
+import { LexError, LexRouter, serviceAuth } from '@atproto/lex-server'
+import { serve } from '@atproto/lex-server/nodejs'
+import { Tap, SimpleIndexer } from '@atproto/tap'
+import * as app from './lexicons/app.js'
+// =============================================================================
+// Configuração
+// =============================================================================
+interface FeedConfig {
+    publisherDid: DidString
+    
+feedName: string
+    searchTerms: string[]
+    maxPosts: number
+    port: number
+    tapUrl: string
+    tapPassword: string
+    initialRepos: string[]
+}
+const DEFAULT_REPO = 'did:plc:ragtjsm2j2vknwkz3zp4oxrd' // pfrazee.com
+const config: FeedConfig = {
+    
+publisherDid: asDidString(process.env.FEED_PUBLISHER_DID || 'did:example:alice'),
+    feedName: process.env.FEED_NAME || 'whats-alf',
+    
+searchTerms: (process.env.FEED_SEARCH_TERMS || 'alf').split(',').map(s => s.trim()),
+    maxPosts: parseInt(process.env.FEED_MAX_POSTS || '1000', 10),
+    
+porta: parseInt(process.env.FEED_PORT || '3000', 10),
+    tapUrl: process.env.TAP_URL || 'http://localhost:2480',
+    tapPassword: process.env.TAP_PASSWORD || 'secret',
+    
+initialRepos: (process.env.FEED_INITIAL_REPOS || DEFAULT_REPO).split(',').map(s => s.trim()),
+}
+const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
+```
+Há algumas coisas a serem observadas aqui. Você forneceu um `DEFAULT_REPO` para buscar com `tap`. Neste caso, você está seguindo um único usuário, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com). Isso manterá o exemplo do tutorial gerenciável.
+Você está classificando esse feed procurando por postagens que contenham determinados termos. Você pode configurar esses termos com a variável de ambiente `FEED_SEARCH_TERMS`. Neste caso, você está procurando por postagens que mencionem “alf”.
+Em seguida, você configurará a lógica para consumir postagens do firehose.
+## Parte 3: Consumindo o Firehose
+Você armazenará as postagens que deseja servir em uma matriz.
+À medida que o `tap` descobre postagens da rede, este servidor de feed pesquisará seu texto pelos termos de pesquisa configurados. Se encontrar uma correspondência, ele adicionará a postagem à sua matriz. Adicione o seguinte conteúdo ao `src/index.ts`:
+```ts
+// =============================================================================
+// Índice de postagens
+// =============================================================================
+interface PostagemIndexada {
+    uri: AtUriString
+    indexadaEm: número
+}
+const postIndex: PostagemIndexada[] = []
+// =============================================================================
+// Tap Indexer
+// =============================================================================
+const tap = new Tap(config.tapUrl, { adminPassword: config.tapPassword })
+const indexador = novo SimpleIndexer()
+const padrãoDePesquisa = novo RegExp(
+    `\\b(${config.searchTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    'i'
+)
+indexador.registrar(async (evt) => {
+    
+if (evt.collection !== 'app.bsky.feed.post') return
+    const uri = `at://${evt.did}/${evt.collection}/${evt.rkey}` as AtUriString
+    if (evt.action === 'delete') {
+        
+const idx = postIndex.findIndex(p => p.uri === uri)
+        if (idx !== -1) {
+            postIndex.splice(idx, 1)
+            console.log(`DELETE ${uri}`)
+        }
+        return
+    }
+    const text = (evt.record?.text as string) || ''
+    se (!searchPattern.test(texto)) retornar
+    
+if (postIndex.some(p => p.uri === uri)) return
+    postIndex.unshift({ uri, indexedAt: Date.now() })
+    if (postIndex.length > config.maxPosts) postIndex.pop()
+    const preview = text.substring(0, 60).replace(/\n/g, ' ')
+    
+console.log(`${evt.action.toUpperCase()} ${uri}`)
+    console.log(`  “${preview}${text.length > 60 ? '...' : ''}”`)
+console.log(`  ⭐ Adicionado ao índice (${postIndex.length} total)`)
+})
+indexador.identidade(async (evt) => {
+    se (evt.status === 'ativo') retornar
+    // Remover publicações de identidades desativadas/excluídas
+    const removido = postIndex.filter(p => p.uri.includes(evt.did)).length
+    se (removido > 0) {
+        
+postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))
+        console.log(`Identidade ${evt.did} (${evt.status}): removidas ${removed} postagens`)
+    }
+})
+indexer.error((err) => console.error('Erro do indexador:', err))
+const channel = tap.channel(indexador)
+```
+Aqui, você se conecta ao `tap` e usa a função `SimpleIndexer` fornecida pela biblioteca `@atproto/tap` para processar os registros recebidos do Lexicon `app.bsky.feed.post` — ou seja, as postagens do Bluesky.
+Quando uma nova postagem é descoberta, você verifica se o texto corresponde aos seus termos de pesquisa. Se corresponder, você o adiciona à sua matriz `postIndex`. Você também lidará com exclusões e alterações de status de identidade para manter seu índice preciso.
+Essencialmente, você está criando um índice de pesquisa na memória de postagens que correspondem aos seus critérios. Em seguida, você servirá esse índice como um feed.
+## Parte 4: Servindo o feed
+Agora, você adicionará rotas [XRPC](/guides/lexicon#http-api-methods) para servir nosso feed. Seu servidor tratará dois tipos de solicitações:
+```
+GET /xrpc/app.bsky.feed.describeFeedGenerator
+GET /xrpc/app.bsky.feed.getFeedSkeleton
+```
+Adicione a lógica do servidor Feed Generator ao `src/index.ts`:
+```ts
+// =============================================================================
+// Servidor Feed Generator
+// =============================================================================
+// A autenticação é opcional para esta demonstração, pois apenas registramos o DID do solicitante.
+// Em produção, você pode usar credenciais para personalizar o feed.
+const auth = serviceAuth({
+    audience: config.publisherDid,
+    unique: async () => true,
+})
+const router = new LexRouter()
+router.add(app.bsky.feed.describeFeedGenerator, {
+    auth,
+    handler: (ctx) => {
+        console.log('describeFeedGenerator from', ctx.credentials?.did)
+        
+return {
+            body: {
+                did: config.publisherDid,
+                feeds: [app.bsky.feed.describeFeedGenerator.feed.$build({ uri: FEED_URI })],
+                links: {
+                    privacyPolicy: 'https://example.com/privacy',
+                    termsOfService: 'https://example.com/tos',
+                
+},
+            },
+        }
+    },
+})
+router.add(app.bsky.feed.getFeedSkeleton, {
+    auth,
+    handler: (ctx) => {
+        if (ctx.params.feed !== FEED_URI) {
+            throw new LexError('InvalidRequest', 'Feed não encontrado')
+        }
+        console.log('getFeedSkeleton de', ctx.credentials?.did)
+        
+const limit = Math.min(ctx.params.limit ?? 50, 100)
+        const cursor = ctx.params.cursor como string | indefinido
+        let startIdx = 0
+        if (cursor) {
+            const cursorTime = parseInt(cursor, 10)
+            startIdx = postIndex.findIndex (p => p.indexedAt < cursorTime)
+            if (startIdx === -1) startIdx = postIndex.length
+        }
+        const slice = postIndex.slice(startIdx, startIdx + limit)
+        const feed = slice.map(p => app.bsky.feed.defs.skeletonFeedPost.$build({ post: p.uri }))
+        
+const lastPost = slice.at(-1)
+        const nextCursor = lastPost && slice.length === limit && startIdx + limit < postIndex.length
+?
+ lastPost.indexedAt.toString()
+: undefined
+        return { body: { feed, cursor: nextCursor } }
+},
+})
+```
+Aqui, você está usando o `LexRouter` do pacote `@atproto/lex-server` para definir suas rotas XRPC. Você notará que o método `getFeedSkeleton` retorna um `cursor` em sua resposta e recebe um parâmetro `cursor` como entrada. Isso permite que os clientes paginem seu feed.
+<Note>
+Este cursor é tratado como um valor opaco e fica totalmente a critério do Feed Generator. Ele é passado através do AppView diretamente de e para o cliente. O cursor deve ser _único por item do feed_ para evitar comportamentos inesperados na paginação. Por exemplo, um cursor composto com um carimbo de data/hora + um CID:
+`1683654690921::bafyreia3tbsfxe3cc75xrxyyn6qc42oupi73fxiox76prlyi5bpx7hr72u`
+</Note>
+Por fim, você adicionará a lógica de tempo de execução para iniciar o servidor.
+## Parte 5: Executando o servidor
+Você se conectará ao tap com `channel.start()` e, em seguida, iniciará seu servidor. Adicione a lógica de tempo de execução a `src/index.ts`:
+```ts
+// =============================================================================
+// Iniciar
+// =============================================================================
+channel.start()
+console.log('Indexador conectado ao servidor Tap')
+if (config.initialRepos.length > 0) {
+    tap.addRepos(config.initialRepos).then(() => {
+        console.log(`Adicionado ${config.initialRepos.length} repositório(s) para acompanhar\n`)
+    })
+}
+serve(router, { port: config.port }).then((server) => {
+    
+const feedParam = encodeURIComponent(FEED_URI)
+    console.log(`
+Gerador de feed em execução
+Servidor: http://localhost:${config.port}
+Feed: ${config.feedName}
+Termos: ${config.searchTerms.join(', ')}
+Tap: ${config.tapUrl}
+Repos: ${config.initialRepos.length}
+Para testar (gerar um JWT com goat):
+goat account service-auth --aud ${config.publisherDid}
+Em seguida:
+curl -H “Authorization: Bearer <jwt>” “http://localhost:${config.port}/xrpc/app.bsky.feed.getFeedSkeleton?feed=${feedParam}”
+A escutar publicações que correspondam a: ${config.searchTerms.join(', ')}
+`)
+    const shutdown = async () => {
+        console.log('A desligar...')
+        await channel.destroy()
+        await server.terminate()
+        process.exit(0)
+    }
+    
+process.on('SIGINT', shutdown)
+    process.on('SIGTERM', shutdown)
+})
+```
+Isso inicia sua conexão com o `tap` (sua entrada de feed) e seu servidor XRPC (sua saída de feed). Ele também fornece alguns registros para ajudá-lo a testar seu gerador de feed.
+Execute-o com `ts-node src/index.ts`. Você deverá ver algumas postagens iniciais sendo indexadas:
+```
+Indexador conectado ao servidor Tap
+Gerador de feed em execução
+Servidor: http://localhost:3000
+Feed: whats-alf
+Termos: alf
+Tap: http://localhost:2480
+Repositórios: 1
+Para testar (gerar um JWT com goat):
+goat account service-auth --aud did:example:alice
+Em seguida:
+curl -H “Authorization: Bearer <jwt>” “http://localhost:3000/xrpc/app.bsky.feed.getFeedSkeleton?feed=at%3A%2F%2Fdid%3Aexample%3Aalice%2Fapp.bsky.feed.generator%2Fwhats-alf”
+A escutar publicações correspondentes: alf
+Adicionado 1 repositório(s) para seguir
+CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux6xlrdb42v
+“Executar?? Alf foi a data em que eu me destaquei ☹️”
+⭐ Adicionado ao índice (1 no total)
+CREATE em://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux7x2uvip2v
+“Deus, isso está tudo bem? Estou muito confuso agora, Alf quebrou m...”
+⭐ Adicionado ao índice (2 no total)
+```
+<Note>
+Lembre-se de que este exemplo busca apenas o repositório de dados de um único usuário. Para buscar toda a rede, pare e execute novamente o `tap` com o sinalizador `--signal-collection`:
+```bash
+tap run --collection-filters=app.bsky.feed.post \
+  --signal-collection=app.bsky.feed.post
+```
+</Note>
+## Conclusão
+Você criou um feed Atproto personalizado que recupera postagens da rede, as indexa com base em seu próprio algoritmo e as serve via XRPC para clientes como o Bluesky.
+Agora que seu servidor de feed está em execução, você pode personalizá-lo ainda mais e publicá-lo para que outras pessoas possam usar. Para fazer isso, você precisará implantá-lo em um servidor público (por exemplo, AWS, DigitalOcean etc.) e garantir que ele esteja acessível por HTTPS.
+Depois disso, você pode clonar nosso [repositório feed-generator](https://github.com/bluesky-social/feed-generator) original e executar o script [publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts) de forma interativa. Isso cria os registros Atproto necessários para apontar para o seu servidor de feed e permitir que ele seja descoberto:
+<Container>
+  <Image src={bsky} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+Você pode encontrar mais guias e tutoriais em nossa seção [Guias](/guides) e mais exemplos de aplicativos no repositório [Cookbook](https://github.com/bluesky-social/cookbook/). Boa construção!

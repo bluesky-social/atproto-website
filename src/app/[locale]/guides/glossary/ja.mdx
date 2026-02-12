@@ -1,120 +1,120 @@
 import {Heading} from '@/components/Heading'
 
-export const metadata = {
-title: '用語集',
-description:
-'AT プロトコルで使用される用語とその定義のコレクション。',
+export const header = {
+  title: '用語集',
+  description:
+    'ATプロトコルで使用される用語とその定義のコレクション',
 }
 
 # 用語集
 
-AT プロトコルでは、すぐには馴染みのない用語が多数使用されています。このページでは、これらの用語を簡単に参照でき、移動情報へのリンクもいくつか含まれています。 {{className: 'lead'}}
+ATプロトコルでは、すぐには馴染みのない用語が多数使用されています。このページでは、これらの用語を簡単に参照でき、追加情報へのリンクも含まれています。 {{className: 'lead'}}
 
 <Heading level={2} id="atmosphere">Atmosphere</Heading>
 
-「Atmosphere」は、[AT プロトコル](#at-protocol) のエコシステムを説明するために使用する用語です。
+「Atmosphere」は、[ATプロトコル](#at-protocol)のエコシステムを説明するために使用する用語です。
 
-<Heading level={2} id="at-protocol">AT プロトコル</Heading>
+<Heading level={2} id="at-protocol">ATプロトコル</Heading>
 
-AT プロトコルは、「Authenticated Transfer Protocol」の略です。この名前は、すべてのユーザー データが作成ユーザーによって署名されているという事実に由来しています。これにより、多くのサービスを通じてデータをブロードキャストし、発信元サーバーと直接通信しなくても、データが本物であることを証明できます。
+ATプロトコルは、「Authenticated Transfer Protocol」の略です。この名前は、すべてのユーザーデータが作成ユーザーによって署名されているという事実に由来しています。これにより、多くのサービスを通じてデータをブロードキャストし、発信元サーバーと直接通信しなくても、データが本物であることを証明できます。
 
-この名前は、atproto がソーシャル システム向けに設計されているため、「@」記号、別名「at」記号をもじったものです。
+この名前は、Atprotoがソーシャルシステム向けに設計されているため、「@」記号、別名「at」記号をもじったものです。
 
-<Heading level={2} id="pds-personal-data-server">PDS (パーソナル データ サーバー)</Heading>
+<Heading level={2} id="pds-personal-data-server">PDS（パーソナルデータサーバー）</Heading>
 
-PDS (パーソナル データ サーバー) は、ユーザーをホストするサーバーです。PDS は常にユーザーの [データ リポジトリ](#data-repo) と署名キーを保存します。また、ユーザーに [ハンドル](#handle) と [DID](#did-分散-id) を割り当てることもあります。多くの PDS は複数のユーザーをホストします。
+PDS（パーソナルデータサーバー）は、ユーザーをホストするサーバーです。PDSは常にユーザーの[データリポジトリ](#data-repo)と署名鍵を保存します。また、ユーザーに[ハンドル](#handle)と[DID](#did-decentralized-id)を割り当てることもあります。多くのPDSは複数のユーザーをホストします。
 
-PDS は [AppViews](#appview) と通信してアプリケーションを実行します。PDS は通常、それ自体ではアプリケーションを実行しませんが、OAuth ログイン画面などの一般的なアカウント管理インターフェイスを備えています。PDS は [データ リポジトリ](#data-repo) を [リレー](#relay) と積極的に同期します。
+PDSは[AppView](#appview)と通信してアプリケーションを実行します。PDSは通常、それ自体ではアプリケーションを実行しませんが、OAuthログイン画面などの一般的なアカウント管理インターフェイスを備えています。PDSは[データリポジトリ](#data-repo)を[リレー](#relay)と積極的に同期します。
 
 <Heading level={2} id="app-view">AppView</Heading>
 
-AppView は [Atmosphere](#atmosphere) 内のアプリケーションです。ネットワークの 1 つのビューにすぎないため、「AppView」と呼ばれます。正規データは、[PDS](#pds-personal-data-server) によってホストされる [データ リポジトリ](#data-repo) に保存され、そのデータはさまざまな方法で表示できます。
+AppViewは[Atmosphere](#atmosphere)内のアプリケーションです。ネットワークの一つのビューにすぎないため、「AppView」と呼ばれます。正規データは、[PDS](#pds-personal-data-server)によってホストされる[データリポジトリ](#data-repo)に保存され、そのデータはさまざまな方法で表示できます。
 
-AppView は Web 上の検索エンジンに少し似ています。Atmosphere 全体からデータを集約して UI を生成します。違いは、AppView がユーザーの [PDS](#pds) とも通信して [リポジトリ](#data-repo) に情報を公開し、完全なアプリケーション モデルを形成することです。この通信は、OAuth ログイン フローの一部として確立されます。
+AppViewはウェブ上の検索エンジンに少し似ています。Atmosphere全体からデータを集約してUIを生成します。違いは、AppViewがユーザーの[PDS](#pds)とも通信して[リポジトリ](#data-repo)に情報を公開し、完全なアプリケーションモデルを形成することです。この通信は、OAuthログインフローの一部として確立されます。
 
 <Heading level={2} id="relay">リレー</Heading>
 
-リレーは、[Atmosphere](#atmosphere) 全体からの [データ リポジトリ](#data-repo) の集約機能です。[PDS](#pds) からリポジトリを同期し、変更イベントのファイアホースを生成します。[AppView](#appview) はリレーを使用してユーザー データを取得します。
+リレーは、[Atmosphere](#atmosphere)全体からの[データリポジトリ](#data-repo)の集約機能です。[PDS](#pds)からリポジトリを同期し、変更イベントのfirehoseを生成します。[AppView](#appview)はリレーを使用してユーザーデータを取得します。
 
-リレーは最適化であり、厳密には必要ではありません。[AppView](#appview) は [PDS](#pds) と直接通信できます (実際、必要な場合はこれが推奨されます)。リレーは、ネットワークで必要な接続の数を減らすのに役立ちます。
+リレーは最適化用途であり、厳密には必要ではありません。[AppView](#appview)は[PDS](#pds)と直接通信できます（実際、それが推奨されることもあります）。リレーは、ネットワークで必要な接続の数を減らすのに役立ちます。
 
 <Heading level={2} id="lexicon">Lexicon</Heading>
 
-Lexicon はスキーマ言語です。[Atmosphere](#atmosphere) で [データ レコード](#record) と HTTP API を記述するために使用されます。機能的には、[JSON-Schema](https://json-schema.org/) や [OpenAPI](https://www.openapis.org/) と非常によく似ています。
+Lexiconはスキーマ言語です。[Atmosphere](#atmosphere)で[データレコード](#record)とHTTP APIを記述するために使用されます。機能的には、[JSON-Schema](https://json-schema.org/)や[OpenAPI](https://www.openapis.org/)と非常によく似ています。
 
-Lexicon の唯一の目的は、開発者が互換性のあるソフトウェアを構築できるようにすることです。
+Lexiconの唯一の目的は、開発者が互換性のあるソフトウェアを構築できるようにすることです。
 
-- [Lexicon の紹介](/guides/lexicon)
-- [Lexicon の仕様](/specs/lexicon)
+- [Lexiconの紹介](/guides/lexicon)
+- [Lexicon仕様](/specs/lexicon)
 
-<Heading level={2} id="data-repo">データ リポジトリ</Heading>
+<Heading level={2} id="data-repo">データリポジトリ</Heading>
 
-「データ リポジトリ」または「リポジトリ」は、ユーザーを表すパブリック データセットです。これは、JSON [レコード](#record) と非構造化 [blob](#blob) の [コレクション](#collection) で構成されています。すべてのリポジトリには、それを識別する 1 つの永続的な [DID](#did-分散-id) が割り当てられます。リポジトリには、人間が読める名前として機能する [ドメイン ハンドル](#handle) をいくつでも持つことができます。
+「データリポジトリ」または「リポジトリ」は、ユーザーを表すパブリックデータセットです。これは、JSON[レコード](#record)と非構造化[blob](#blob)の[コレクション](#collection)で構成されています。すべてのリポジトリには、それを識別する1つの永続的な[DID](#did-decentralized-id)が割り当てられます。リポジトリには、人間が読める名前として機能する[ドメインハンドル](#handle)を1つ持つことができます。
 
-データ リポジトリは、署名されたマークル ツリーです。その署名は、リポジトリの [did](#did-分散-id) で公開されたキー マテリアルに対して検証できます。
+データリポジトリは、署名されたマークルツリーです。その署名は、リポジトリの[did](#did-decentralized-id)で公開された鍵マテリアルに対して検証できます。
 
-- [データ リポジトリの概要](/guides/data-repos)
+- [データリポジトリの紹介](/guides/data-repos)
 - [リポジトリ仕様](/specs/repository)
 
 <Heading level={2} id="collection">コレクション</Heading>
 
-「コレクション」は、[データ リポジトリ](#data-repo) 内の JSON [レコード](#record) のバケットです。順序付きリスト操作をサポートします。すべてのコレクションは、[NSID](#nsid-名前空間-id) によって識別され、[Lexicon](#lexicon) スキーマにマップされることが想定されています。
+「コレクション」は、[データリポジトリ](#data-repo)内のJSON[レコード](#record)のバケツです。順序付きリスト操作をサポートします。すべてのコレクションは、[NSID](#nsid-namespace-id)によって識別され、[Lexicon](#lexicon)スキーマにマップされることが想定されています。
 
 <Heading level={2} id="record">レコード</Heading>
 
-「レコード」は、[repo](#data-repo) [collection](#collection) 内の JSON ドキュメントです。レコードのタイプは `$type` フィールドによって識別され、[Lexicon](#lexicon) スキーマにマッピングされることが期待されます。また、タイプは、それを含む [collection](#collection) と一致することが期待されます。
+「レコード」は、[リポジトリ](#data-repo)の[collection](#collection)内のJSONドキュメントです。レコードの型は`$type`フィールドによって識別され、[Lexicon](#lexicon)スキーマにマッピングされることが期待されます。また、型はそのレコードを含む[collection](#collection)と一致することが期待されます。
 
-- [レコード キー仕様](/specs/record-key)
+- [レコードキー仕様](/specs/record-key)
 
-<Heading level={2} id="blob">BLOB</Heading>
+<Heading level={2} id="blob">blob</Heading>
 
-BLOB は、[repo](#data-repo) 内に格納される非構造化データです。画像や動画などのメディアを格納するために最もよく使用されます。
+blobは、[リポジトリ](#data-repo)内に格納される非構造化データです。画像や動画などのメディアを格納するために最もよく使用されます。
 
 <Heading level={2} id="label">ラベル</Heading>
 
-ラベルは、[repos](#data-repo) および [records](#record) に添付されるメタデータ オブジェクトです。通常、ラベルの意味を識別する「nudity」や「graphic-media」などの値によって参照されます。ラベルは主にアプリケーションによってモデレーションに使用されますが、他の目的にも使用できます。
+ラベルは、[リポジトリ](#data-repo)および[レコード](#record)に付与されるメタデータオブジェクトです。通常、ラベルの意味を識別する「nudity」や「graphic-media」などの値によって参照されます。ラベルは主にアプリケーションによってモデレーションに使用されますが、他の目的にも使用できます。
 
 - [ラベル仕様](/specs/label)
 
 <Heading level={2} id="handle">ハンドル</Heading>
 
-ハンドルは、[データ リポジトリ](#data-repo) を識別するために使用されるドメイン名です。リポジトリには複数のハンドルを割り当てることができます。ハンドルは、ドメイン セグメントの `at://` URI で使用できます。
+ハンドルは、[データリポジトリ](#data-repo)を識別するために使用されるドメイン名です。リポジトリには複数のハンドルを割り当てることができます。ハンドルは、ドメインセグメントの`at://` URIで使用できます。
 
 - [ハンドル仕様](/specs/handle)
-- [URI スキーム仕様](/specs/at-uri-scheme)
+- [URIスキーム仕様](/specs/at-uri-scheme)
 
-<Heading level={2} id="did-decentralized-id">DID (分散 ID)</Heading>
+<Heading level={2} id="did-decentralized-id">DID（分散型識別子）</Heading>
 
-DID (分散 ID) は、[データ リポジトリ](#data-repo) を表す、ユニバーサルに一意な識別子です。これらは永続的で、人間が判読することはできません。DID は [W3C 仕様](https://www.w3.org/TR/did-core/) です。AT プロトコルは現在、2 つの異なる DID メソッドである `did:web` と `did:plc` をサポートしています。
+DID（分散型識別子）は、[データリポジトリ](#data-repo)を表す、ユニバーサルに一意な識別子です。これは永続的で、人間可読性は求められません。DIDは[W3C仕様](https://www.w3.org/TR/did-core/)です。ATプロトコルは現在、2つの異なるDIDメソッド`did:web`と`did:plc`をサポートしています。
 
-DID は、[リポジトリ](#data-repo) に関するメタデータ (リポジトリの [PDS](#pds) のアドレス、リポジトリの [ハンドル](#handle)、公開署名キーなど) を含むドキュメントに解決されます。
+DIDは、[リポジトリ](#data-repo)に関するメタデータ（リポジトリの[PDS](#pds)のアドレス、リポジトリの[ハンドル](#handle)、公開署名鍵など）を含むドキュメントに解決されます。
 
-- [DID 仕様](/specs/did)
+- [DID仕様](/specs/did)
 
-<Heading level={2} id="nsid-namespaced-id">NSID (名前空間 ID)</Heading>
+<Heading level={2} id="nsid-namespaced-id">NSID（名前空間ID）</Heading>
 
-NSID (名前空間 ID) は、[Atmosphere](#atmosphere) で [Lexicon](#lexicon) スキーマを識別するために使用される識別子形式です。これらは、`app.bsky.feed.post` などの逆 DNS 形式に従います。これらは、ドメイン所有権を介して明確なスキーマ ガバナンスを提供するため選択されました。逆 DNS 形式は、URI 内のドメインとの混乱を避けるために選択されました。
+NSID（名前空間ID）は、[Atmosphere](#atmosphere)で[Lexicon](#lexicon)スキーマを識別するために使用される識別子形式です。これらは、`app.bsky.feed.post`などの逆DNS形式に従います。これらは、ドメイン所有権を介して明確なスキーマガバナンスを提供するため選択されました。逆DNS形式は、URI内のドメインとの混乱を避けるために選択されました。
 
-- [NSID 仕様](/specs/nsid)
+- [NSID仕様](/specs/nsid)
 
-<Heading level={2} id="tid-timestamp-id">TID (タイムスタンプ ID)</Heading>
+<Heading level={2} id="tid-timestamp-id">TID（タイムスタンプID）</Heading>
 
-TID (タイムスタンプ ID) は、[レコード](#record) キーに使用される識別子形式です。これらは現在の時刻から派生し、衝突を回避し、辞書式ソートを維持し、[データ リポジトリ](#data-repo) の内部データ構造を効率的にバランスさせるように設計されています。
+TID（タイムスタンプID）は、[レコード](#record)キーに使用される識別子形式です。これらは現在の時刻から派生し、衝突を回避し、辞書順ソートを維持し、[データリポジトリ](#data-repo)の内部データ構造を効率的にバランスさせるように設計されています。
 
-- [レコード キー仕様](/specs/record-key)
+- [レコードキー仕様](/specs/record-key)
 
-<Heading level={2} id="cid-content-id">CID (コンテンツ ID)</Heading>
+<Heading level={2} id="cid-content-id">CID（コンテンツID）</Heading>
 
-CID またはコンテンツ識別子は、[レコード](#record) の暗号化ハッシュです。レコードの特定のバージョンを追跡するために使用されます。
+CIDまたはコンテンツ識別子は、[レコード](#record)の暗号化ハッシュです。レコードの特定のバージョンを追跡するために使用されます。
 
 <Heading level={2} id="dag-cbor">DAG-CBOR</Heading>
 
-DAG-CBOR は、[atproto](#at-protocol) で使用されるシリアル化形式です。暗号検証に重要な信頼性の高い標準形式を提供するため、この形式が選択されました。
+DAG-CBORは、[Atproto](#at-protocol)で使用されるシリアル化形式です。暗号検証に重要な信頼性の高い標準形式を提供するため、この形式が選択されました。
 
-- [データ モデル仕様](/specs/data-model)
+- [データモデル仕様](/specs/data-model)
 
 <Heading level={2} id="xrpc">XRPC</Heading>
 
-XRPC は非推奨の用語ですが、歴史的には [atproto](#at-protocol) の HTTP 使用法を説明するために使用されていました。これは「組織間リモート プロシージャ コール」の略語ですが、実際には HTTP を使用しているだけなので、この用語を発明したことを後悔しています。
+XRPCは非推奨の用語ですが、歴史的には[Atproto](#at-protocol)のHTTP用法を説明するために使用されていました。これは「Cross-organizational Remote Procedure Calls」の略語ですが、実際にはHTTPを使用しているだけなので、この用語を発明したことを後悔しています。
 
-- [HTTP API 仕様](/specs/xrpc)
+- [HTTP API仕様](/specs/xrpc)

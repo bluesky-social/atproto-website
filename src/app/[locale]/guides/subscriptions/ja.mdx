@@ -1,0 +1,84 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+
+export const header = {
+  title: '登録',
+  description: 'ラベラーサービスの登録',
+}
+
+<Heading level={2} id="labeler-subscriptions">ラベラー登録</Heading>
+
+ラベラーサービスはそれぞれサービスIDを持ち、DIDドキュメントを意味します。これはラベルのソース（**`src`**）フィールドに表示されるDIDです。
+
+特定のラベラーからのラベルを含めるには、XRPCリクエストの`atproto-accept-labelers`ヘッダーを、含めたいラベラーのDIDのカンマ区切りリストに設定します。
+
+```bash
+curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
+```
+
+TypeScript SDKを使用してラベラーを追加することもできます。
+
+```tsx
+import { Client } from '@atproto/lex'
+
+// アプリレベルのグローバルなラベラー
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// Clientインスタンス固有のラベラー
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// ラベラーを動的に追加
+client.addLabelers(['did:plc:labeler4'])
+
+// すべてのラベラーを置き換える
+client.setLabelers(['did:plc:labeler5'])
+
+// ラベラーをクリア
+client.clearLabelers()
+ ```
+
+<Heading level={2} id="use-labelers-in-your-app">アプリでラベルを使う</Heading>
+
+ラベルはアカウントやレコードに紐付けられます。アプリはターゲットを異なる方法で解釈できます。
+
+- アカウントに対して：アカウント全体に影響があります。
+- プロフィールに対して：プロフィールレコード（例：ユーザーアバター）にのみ影響し、一覧からアカウントを隠すことはありません。
+- コンテンツに対して：コンテンツ毎に固有の影響があります（投稿レコード、リスト、フィードなど）。
+
+<Heading level={2} id="reporting">報告</Heading>
+
+ラベラーに報告を送信するには、`com.atproto.moderation.createReport`を使用します。ユーザーはどのラベラーにでも報告を送信できます。
+
+どのラベラーが報告を受け取るべきかを指定するには、ラベラーのDIDと`atproto_labeler`サービスキーを`atproto-proxy`ヘッダーを設定します。TypeScript SDKでは、次のようになります。
+
+```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [モデレーション](/guides/moderation)
+- [ラベル](/guides/labels)
+- [ラベラーの作成](/guides/creating-a-labeler)
+- [ラベル仕様](/specs/label)
+- [Ozoneの使用](/guides/using-ozone)

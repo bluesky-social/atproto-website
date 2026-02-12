@@ -1,0 +1,187 @@
+export const header = {
+  title: 'Writing Data',
+  description: 'Write AT Protocol Records',
+}
+
+## Writing Data
+
+Writing data — for example, by posting to a Bluesky feed — works similarly to [reading data](/guides/reading-data), but with different methods.
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+To create a new record, call `client.create()` with an imported Lexicon, along with any required fields:
+
+```tsx
+import * as app from './lexicons/app.js'
+
+const result = await client.create(app.bsky.feed.post, {
+  text: 'Hello, world!',
+  createdAt: new Date().toISOString(),
+})
+```
+
+`text` and `createdAt` are required values under the [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html).
+
+<Note>
+This will post using the currently-authenticated user session. If you want to post as another user, reuse [`agent.login()`](/guides/reads-and-writes#creating-a-client) to get a new user session.
+</Note>
+
+The API will respond with the `at://` URI of the post and a content hash of the post as the `cid`:
+
+```tsx
+console.log(result.uri) // at://did:plc:...
+console.log(result.cid)
+```
+    </TabPanel>
+    <TabPanel value="go">
+To create a new record, call `RepoCreateRecord()` with your target Lexicon and any required fields:
+
+```go
+now := time.Now().UTC().Format(time.RFC3339)
+
+post := &appbsky.FeedPost{
+    Text:      "Hello from Go!",
+    CreatedAt: now,
+}
+
+resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
+    Repo:       client.Auth.Did,         // handle or DID
+    Collection: "app.bsky.feed.post",    // lexicon
+    Record:     &lexutil.LexiconTypeDecoder{Val: post},
+})
+```
+`Text` and `CreatedAt` are required values under the [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html).
+
+<Note>
+This will post using the currently-authenticated user session. If you want to post as another user, reuse [`ServerCreateSession()`](/guides/sdk-auth#creating-a-client) to get a new user session.
+</Note>
+
+The API will respond with the `at://` URI of the post and a content hash of the post as the `cid`:
+
+```go
+fmt.Printf("Created post: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>    
+
+```
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+If you are building a client or another interface that both reads and writes data, it is important to ensure that you read your own writes using this response. 
+
+## Read-after-Write
+
+Depending on how an AT app frontend is designed, a user may take some action (such as updating their profile), rapidly refresh the view, and find that their recent change is not immediately reflected in the updated response.
+
+This is because services such as the App View do not have transactional writes from a user's PDS. Therefore the views that they calculate are eventually consistent. In other words, a user may have created a record on their PDS that is not yet reflected in the API responses provided by the App View.
+
+Because all requests from the application are sent to the user's PDS, the PDS is in a position to smooth over this behavior. [Our PDS distribution](https://github.com/bluesky-social/pds) provides some basic read-after-write behaviors by looking at response headers from the App View, determining if there are any new records that are not in the response, and modifying the response to reflect those new records.
+
+The App View communicates the current state of its indices by setting the `Atproto-Repo-Rev` response header. This is set by the `rev` of the most recent commit that's been indexed from the requesting user's repository. If the PDS sees this header on a response, it will search for all records that it has locally that are more recent than the provided rev and determine if they affect the App View's response.
+
+This read-after-write behavior *only* applies to records from the user making the request. Records from other users that happen to be on the same PDS will not affect the requesting user's response.
+
+## Updating Records
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+To update an existing record, like a user's profile, use `client.put()`:
+
+```bash
+lex install app.bsky.actor.profile
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.put(app.bsky.actor.profile, {
+  displayName: 'New Name',
+  description: 'Updated bio',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+To update an existing record, like a user's profile, use `RepoPutRecord()`:
+
+```go
+newProfile := &appbsky.ActorProfile{
+  DisplayName: ptrString("New Display Name"),
+  Description: ptrString("Updated bio"),
+}
+
+resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
+  Repo:       client.Auth.Did,                // handle or DID
+  Collection: "app.bsky.actor.profile",       // lexicon
+  Rkey:       "self",                         // rkey
+  Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
+})
+
+fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+
+`RepoPutRecord` is idempotent — it'll create the record if it doesn't exist, or overwrite it if it does.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## Deleting Records
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+To delete a record, like an individual post, use `client.delete()`:
+
+```bash
+lex install app.bsky.actor.post
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.delete(app.bsky.feed.post, {
+  rkey: '3jxf7z2k3q2',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+    To delete a record, like an individual post, use `RepoDeleteRecord():`
+```go
+comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
+    Repo:       client.Auth.Did,      // handle or DID
+    Collection: "app.bsky.feed.post", // lexicon
+    Rkey:       "3mbl5xdw4yk2r",      // rkey
+})
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## Further Reading and Resources
+
+- [Reads and Writes](/guides/reads-and-writes)
+- [Reading data](/guides/reading-data)
+- [Accounts and deletions](/guides/account-lifecycle)
+- [Social graph](/guides/social-graph)
+- [Record Key spec](/specs/record-key)
+- [URI scheme](/specs/at-uri-scheme)

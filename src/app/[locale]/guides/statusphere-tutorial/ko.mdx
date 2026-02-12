@@ -1,0 +1,657 @@
+import {Container} from "@/components/Container"
+import setstatus from "./set-status.png"
+import pdsls from "./pdsls-status.png"
+import tap from "./tap-status.png"
+import feed from "./feed-status.png"
+
+export const header = {
+  title: 'Create a Social App',
+  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+}
+
+이 튜토리얼에서는 사용자 정의 어휘집(Lexicon)과 실시간 동기화를 활용하여 상태 설정 앱을 구축합니다.
+이 튜토리얼의 소스 코드와 다른 예제 프로젝트는 [Cookbook](https://github.com/bluesky-social/cookbook/) 저장소의 `statusphere` 디렉터리에서 확인할 수 있습니다.
+## 필수 조건
+본 튜토리얼은 [NextJS를 활용한 OAuth 튜토리얼](/guides/oauth-tutorial)에서 생성한 앱을 기반으로 합니다. 시작하기 전에 NextJS OAuth 앱을 완성해 두셔야 합니다. 해당 단계를 건너뛰고 싶다면 [Cookbook]( (https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559)에서 완성된 OAuth 앱을 복제할 수 있습니다.
+다음이 설치되어 있어야 합니다:
+- Node.js 18 이상
+- Go 1.25 이상
+- pnpm 패키지 관리자
+[homebrew](https://brew.sh/)가 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
+```bash
+brew install node pnpm go
+```
+기존 프로젝트에 다음 Atproto 라이브러리를 추가하세요:
+```bash
+pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
+```
+또한 `lex` CLI 도구를 전역으로 설치해야 합니다:
+```bash
+npm install -g @atproto/lex
+```
+프로젝트에 어휘집(Lexicon)을 추가하는 것으로 시작합니다.
+## 파트 1: 어휘집
+[어휘집](/guides/lexicon)은 Atproto 내 레코드의 스키마를 정의합니다. 본 튜토리얼을 위해 저희는 이미 새로운 "Statusphere" Lexicon을 `xyz.statusphere.status`에서 확인할 수 있습니다. `lex`를 사용하여 이 Lexicon을 다운로드하고 프로젝트에 빌드할 수 있습니다:
+```bash
+lex install xyz.statusphere.status
+```
+원한다면 다운로드된 Lexicon 파일을 `lib/lexicons/ xyz.statusphere.status.json`에서 확인할 수 있습니다. 여기서 `lex build`를 실행하면 설치된 모든 레식콘에 대한 TypeScript 타입을 생성할 수 있습니다:
+```bash
+lex build --importExt=\"\"
+```
+<Note>
+필요하다면 이 명령어를 `package.json`에 추가할 수 있지만, 사전이 빌드된 상태에서 이 튜토리얼에서는 더 이상 사용하지 않을 것입니다. `lex install`로 프로젝트에 다른 사전을 추가할 경우, ` --override` 플래그를 사용하여 `lex build`를 다시 실행해야 합니다.
+</Note>
+지금 해야 할 한 가지 더는 `lib/auth/client.ts` 파일의 `SCOPE` 상수를 업데이트하여 이 컬렉션에 대한 액세스를 요청하는 것입니다. Atproto 권한 범위는 Lexicons이므로 앱이 요청하는 범위 목록에 `xyz.statusphere.status`를 추가할 수 있습니다:
+```typescript
+export const SCOPE = "atproto repo:xyz.statusphere.status";
+```
+이제 데이터베이스 스키마 생성을 진행할 수 있습니다.
+## 파트 2: 데이터베이스 스키마
+`lib/db/index.ts`를 업데이트하여 새 테이블을 추가하세요:
+```typescript
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+  account: AccountTable;   // 신규
+  status: StatusTable;     // 신규
+}
+// ... 기존 인증 테이블 ...
+export interface AccountTable {
+  did: string;
+  handle: string;
+  active: 0 | 1;
+}
+export interface StatusTable {
+  uri: string;
+  authorDid: string;
+  status: string;
+  createdAt: string;
+  indexedAt: string;
+  current: 0 | 1;
+}
+```
+다음으로, 이 테이블들을 생성하는 마이그레이션 스크립트를 추가합니다. OAuth 튜토리얼을 기반으로 구축 중이고 이미 데이터베이스를 배포/마이그레이션한 경우, 이들을 `lib/db/migrations.ts`에 "002"와 같은 새 마이그레이션으로 넣어야 합니다:
+```typescript
+const migrations: Record<string, Migration> = {
+  "001": {} // 인증 테이블용 기존 마이그레이션
+  "002": {
+    async up(db: Kysely<unknown>) {
+      
+await db.schema
+        .createTable("account")
+        .addColumn("did", "text", (col) => col.primaryKey())
+        .addColumn("handle", "text", (col) => col.notNull())
+        .addColumn('active', "integer", (col) => col.notNull().defaultTo(1))
+        .execute();
+      
+await db.schema
+ 
+        .createTable("status")
+        .addColumn("uri", "text", (col) => col.primaryKey())
+        .addColumn('authorDid', "text", (col) => col.notNull())
+        
+.addColumn("status", "text", (col) => col.notNull())
+        .addColumn("createdAt", "text", (col) => col.notNull())
+        .addColumn("indexedAt", "text", (col) => col.notNull())
+        .addColumn('current', "integer", (col) => col.notNull().defaultTo(0))
+        
+.execute();
+      await db.schema
+        .createIndex("status_current_idx")
+        .on("status")
+        .columns(['current', "indexedAt"])
+        .execute ();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("status").execute();
+      await db.schema.dropTable('account').execute();
+      await db.schema.dropTable("auth_session").execute ();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+```
+`pnpm migrate`를 실행하여 이러한 새로운 마이그레이션을 데이터베이스에 적용할 수 있습니다. 이제 실제 앱 로직을 구축해 보겠습니다!
+## 파트 3: 상태 제출
+먼저 사용자가 자신의 [PDS](/guides/the-at-stack#pds)에 상태를 작성할 수 있는 기능을 구축합니다. `app/api/status/route.ts`에 새 API 경로를 생성하세요:
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client } from "@atproto/lex";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as xyz from "@/src/lexicons/xyz";
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  
+if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { status } = await request.json();
+  if (!status || typeof status !== 'string') {
+    return NextResponse.json({ error: "Status is required" }, { status: 400 });
+  
+}
+  const client = await getOAuthClient();
+  const oauthSession = await client.restore(session.did);
+  const lexClient = new Client(oauthSession);
+  const createdAt = new Date().toISOString();
+  const res = await lexClient.create(xyz.statusphere.status, {
+    status,
+    
+createdAt,
+  });
+  return NextResponse.json({
+    success: true,
+    uri: res.uri,
+  });
+```
+이 코드는 사용자가 로그인했는지 확인하고, OAuth 세션을 사용해 lex `Client`를 생성한 후 제출된 상태 텍스트로 새로운 `xyz.statusphere.status` 레코드를 생성합니다.
+다음으로 `components/StatusPicker.tsx`에 상태 선택기 컴포넌트를 생성하세요:
+```tsx
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+const EMOJIS = ["👍", "👎", "💙", "🔥", "😆", "😢", "🤔", "😴", "🎉", "🤩", "😭", "🥳", "😤", "💀", "✨", "👀", "🙏", "📚", "💻", "🍕", "🌴"];
+interface StatusPickerProps {
+  currentStatus?: string | null;
+}
+export function StatusPicker({ currentStatus }: StatusPickerProps) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(currentStatus ?? null);
+  const [loading, setLoading] = useState(false);
+  
+async function handleSelect(emoji: string) {
+    setLoading(true);
+    
+setSelected(emoji);
+    try {
+      const res = await fetch("/api/status", {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: emoji }),
+      });
+      
+if (!res.ok) {
+        throw new Error("상태 업데이트 실패");
+      }
+      router.refresh();
+    } catch (err) {
+      console.error("상태 업데이트 실패:", err);
+      
+setSelected(currentStatus ?? null);
+    } finally {
+      setLoading(false);
+    }
+  }
+  return (
+    <div>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
+        상태 설정
+      
+</p>
+      <div className="flex flex-wrap gap-2">
+        {EMOJIS.map((emoji) => (
+          <button
+            key={emoji}
+            onClick={() => handleSelect(emoji)}
+            disabled={loading}
+            className={`text-2xl p-2 rounded-lg transition-all
+              
+${selected === emoji
+                ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500"
+                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              }
+              disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            
+{emoji}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+마지막으로 `app/page.tsx`를 업데이트하여 상태 선택기를 포함시킵니다:
+```tsx
+import { getSession } from "@/lib/auth/session";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+export default async function Home() {
+  
+const session = await getSession();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          
+<h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            Statusphere
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Atmosphere에서 상태 설정하기
+          
+</p>
+        </div>
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          {session ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                
+<p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  로그인됨
+                </p>
+                <LogoutButton />
+              </div>
+              <StatusPicker />
+            </div>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+`pnpm dev`로 앱을 실행하세요 — 로그인하고 이모지를 선택해 상태를 설정할 수 있습니다!
+<Container>
+  <Image src={setstatus} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+이 앱에서는 아직 상태를 확인할 수 없지만, [pdsls](https:// pdsls.dev)에서 계정을 조회하고 `xyz.statusphere.status` 어휘를 확인하여 이 기록을 볼 수 있습니다.
+<Container>
+  <Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+다음으로 상태 업데이트를 실제로 수신하기 위한 동기화 기능을 추가할 것입니다.
+## 파트 4: Tap을 이용한 실시간 동기화
+[Tap](/guides/backfilling#using-tap)은 AT Protocol 레코드를 동기화하고 스트리밍하는 가장 좋은 방법입니다. 데이터베이스의 새 레코드를 동기화하기 위해 Tap [TypeScript 라이브러리](https://www.npmjs.com/package/@atproto/tap)를 사용할 것입니다. `lib/tap/index.ts`를 생성하세요:
+```typescript
+import { Tap } from "@atproto/tap";
+const TAP_URL = process.env.TAP_URL || "http://localhost:2480";
+let _tap: Tap | null = null;
+export const getTap = (): Tap => {
+  if (!_tap) {
+    _tap = new Tap(TAP_URL);
+  
+}
+  return _tap;
+};
+```
+다음으로, Tap 이벤트 처리를 위한 데이터베이스 쿼리를 포함하는 `lib/db/queries.ts`를 생성합니다:
+```typescript
+import { getDb, AccountTable, StatusTable, DatabaseSchema } from ".";
+import { AtUri } from "@atproto/syntax";
+import { Transaction } from "kysely";
+export async function getAccountStatus(did: string) {
+  const db = getDb();
+  const status = await db
+    .selectFrom("status")
+    .selectAll()
+    .where("authorDid", "=", did)
+    .orderBy('createdAt', "desc")
+    
+.limit(1)
+    .executeTakeFirst();
+  return status ?? null;
+}
+export async function insertStatus(data: StatusTable) {
+  getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx
+        .insertInto("status")
+        .values(data)
+        
+.onConflict((oc) =>
+          oc.column("uri").doUpdateSet({
+            status: data.status,
+            createdAt: data.createdAt,
+            indexedAt: data.indexedAt,
+          }),
+        )
+        .execute();
+      setCurrStatus(tx, data.authorDid);
+    
+});
+}
+export async function deleteStatus(uri: AtUri) {
+  await getDb()
+    .transaction()
+    .execute(async (tx) => {
+      await tx.deleteFrom("status").where('uri', "=", uri.toString()).execute();
+      await setCurrStatus(tx, uri.hostname);
+    
+});
+}
+export async function upsertAccount(data: AccountTable) {
+  await getDb()
+    .insertInto("account")
+    .values(data)
+    .onConflict((oc) =>
+      oc.column("did").doUpdateSet({
+        handle: data.handle,
+        active: data.active,
+      }),
+    )
+    
+.execute();
+}
+export async function deleteAccount(did: string) {
+  await getDb().deleteFrom("account").where("did", "=", did).execute();
+  await getDb().deleteFrom("status").where('authorDid', "=", did).execute();
+}
+// 사용자의 "현재" 상태를 업데이트하는 헬퍼 함수 (트랜잭션 내부에서 사용)
+async function setCurrStatus(tx: Transaction<DatabaseSchema>, did: string) {
+  // 모든 사용자의 상태에 대한 현재 플래그 지우기
+  await tx
+    .updateTable("status")
+    .set({ current: 0 })
+    .where("authorDid", "=", did)
+    .where('current', "=", 1)
+    .execute ();
+  // 가장 최근 상태를 현재 상태로 설정
+  await tx
+    .updateTable("status")
+    .set({ current: 1 })
+    .where("uri", "=", (qb) =>
+      qb
+        .selectFrom("status")
+        .select("uri")
+        .where('authorDid', "=", did)
+        
+.orderBy("createdAt", "desc")
+        .limit(1),
+    )
+    .execute();
+}
+```
+`setCurrStatus` 헬퍼는 사용자당 가장 최근 상태만 `current = 1`이 되도록 보장합니다. 이는 나중에 사용될 것입니다.
+Tap은 `app/api/webhook/route.ts`의 웹훅 엔드포인트를 통해 이벤트를 전달합니다:
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { parseTapEvent, assureAdminAuth } from "@atproto/tap";
+import { AtUri } from "@atproto/syntax";
+import {
+  
+upsertAccount,
+  insertStatus,
+  deleteStatus,
+  deleteAccount,
+} from "@/lib/db/queries";
+import * as xyz from "@/src/lexicons/xyz";
+const TAP_ADMIN_PASSWORD = process.env.TAP_ADMIN_PASSWORD;
+export async function POST(request: NextRequest) {
+  // 요청이 TAP 서버에서 온 것인지 확인
+  if (TAP_ADMIN_PASSWORD) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      
+return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    try {
+      assureAdminAuth(TAP_ADMIN_PASSWORD, authHeader);
+    } catch {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  
+}
+  const body = await request.json();
+  const evt = parseTapEvent(body);
+  // 계정/신원 변경 처리
+  if (evt.type === "identity") {
+    if (evt.status === "deleted") {
+      
+await deleteAccount(evt.did);
+    } else {
+      await upsertAccount({
+        did: evt.did,
+        handle: evt.handle,
+        active: evt.isActive ? 1 : 0,
+      });
+    }
+  }
+  // 상태 레코드 변경 처리
+  if (evt.type === "record") {
+    
+const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
+    if (evt.action === "create" || evt.action === "update") {
+      let record: xyz.statusphere.status.Main;
+      try {
+        record = xyz.statusphere.status.$parse(evt.record);
+      
+} catch {
+        return NextResponse.json({ success: false });
+      }
+      await insertStatus({
+        uri: uri.toString(),
+        authorDid: evt.did,
+        status: record.status,
+        
+createdAt: record.createdAt,
+        indexedAt: new Date().toISOString(),
+        current: 1,
+      });
+    } else if (evt.action === "delete") {
+      await deleteStatus(uri);
+    }
+  }
+  return NextResponse.json( { success: true });
+}
+```
+Tap은 네트워크 어디에서든 레코드가 변경될 때 웹훅 이벤트를 전송합니다. 요청은 공유 비밀 키를 사용하여 검증됩니다. `identity` 이벤트의 경우 계정 캐시를 업데이트하고, `record` 이벤트의 경우 레코드가 어휘집(Lexicon)과 일치하는지 확인한 후 데이터베이스에 삽입/업데이트/삭제합니다.
+현재 사용자의 상태를 가져와 전달하도록 `app/page.tsx`를 다시 업데이트하세요:
+```tsx
+import { getAccountStatus } from "@/lib/db/queries";
+// Home 함수 내:
+const accountStatus = session ? await getAccountStatus(session.did) : null;
+// StatusPicker 요소에 추가:
+<StatusPicker currentStatus={accountStatus?.status} />
+```
+이렇게 하면 페이지 로드 시 `StatusPicker`가 사용자의 현재 상태를 강조 표시합니다.
+이제 다른 터미널에서 소스 저장소에서 `tap`을 설치하고 실행하세요:
+```bash
+go install github.com/bluesky-social/indigo/cmd/tap
+tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+```
+실행 중인 앱을 Ctrl+C로 중지하세요. 그런 다음 추적을 위해 데이터 저장소를 Tap에 추가합니다(나중에 다른 데이터 소스를 추가할 예정입니다):
+```bash
+# 아래에 본인 DID로 대체
+curl -H 'Content-Type: application/json' -d '{"dids":["DID"]}' http://localhost:2480/repos/add
+```
+`pnpm dev`로 앱을 재시작하고 로그인 절차를 완료하면 저장된 상태가 강조 표시됩니다:
+<Container>
+  
+<Image src={tap} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+## 파트 5: 핸들 및 피드 표시
+마지막으로 사용자 핸들과 모든 사용자의 상태 피드를 표시하는 기능을 추가합니다.
+먼저 `lib/db/queries.ts`에 추가 임포트를 추가하세요:
+```typescript
+import { getHandle } from "@atproto/common-web";
+import { getTap } from "@/lib/tap";
+```
+그런 다음 계정 핸들과 상태를 가져오는 추가 함수를 추가합니다:
+```typescript
+export async function getAccountHandle(did: string): Promise<string | null> {
+  const db = getDb();
+  // Tap을 통해 계정을 추적하고 계정 정보를 얻은 경우, 해당 정보에서 로드합니다
+  const account = await db
+    .selectFrom("account")
+    .select("handle")
+    
+.where("did", "=", did)
+    .executeTakeFirst();
+  if (account) return account.handle;
+  // 그렇지 않으면 Tap을 통해 계정 DID를 해결합니다. Tap은 신원 캐싱을 제공합니다.
+  try {
+    const didDoc = await getTap().resolveDid(did);
+    if (!didDoc) return null;
+    return getHandle(didDoc) ?? null;
+  
+} catch {
+    return null;
+  }
+}
+export async function getRecentStatuses(limit = 5) {
+  const db = getDb ();
+  return db
+    .selectFrom("status")
+    .innerJoin("account", "status.authorDid", "account.did")
+    .selectAll()
+    .orderBy('createdAt', "desc")
+    .limit(limit)
+    .execute();
+}
+export async function getTopStatuses(limit = 10) {
+  const db = getDb ();
+  return db
+    .selectFrom("status")
+    .select(["status", db.fn.count("uri").as("count")])
+    .where("current", "=", 1)
+    .groupBy('status')
+    .orderBy("count", "desc")
+    .limit(limit)
+    .execute();
+}
+```
+다음으로 `app/page.tsx`를 업데이트하여 상위 상태, 핸들, 타임스탬프가 포함된 전체 피드를 표시합니다:
+```tsx
+import { getSession } from "@/lib/auth/session";
+import {
+  getAccountStatus,
+  getRecentStatuses,
+  getTopStatuses,
+  
+getAccountHandle,
+} from "@/lib/db/queries";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+export default async function Home() {
+  
+const session = await getSession();
+  const [statuses, topStatuses, accountStatus, accountHandle] =
+    await Promise.all([
+      getRecentStatuses(),
+      getTopStatuses(),
+      session ? getAccountStatus(session.did) : null,
+      session ? getAccountHandle(session.did) : null,
+    ]);
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          
+<h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            Statusphere
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Atmosphere에서 상태 설정하기
+          </ p>
+        </div>
+        {session ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            
+<div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                @{accountHandle ?? session.did} 로 로그인됨
+              </p>
+              <LogoutButton />
+            
+</div>
+            <StatusPicker currentStatus={accountStatus?.status} />
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <LoginForm />
+          
+</div>
+        )}
+        {topStatuses.length > 0 && (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
+            <h3 className="text-sm font-medium text-zinc-500 dark: text-zinc-400 mb-3">
+              주요 상태
+            </h3>
+            
+<div className="flex flex-wrap gap-2">
+              {topStatuses.map((s) => (
+                <span
+                  key={s.status}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm"
+                
+>
+                  <span className="text-lg">{s.status}</span>
+                  <span className="text-zinc-500 dark:text-zinc-400">
+                    {String(s.count)}
+                  </span>
+                
+</span>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          
+<h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+            최근
+          </h3>
+          {statuses.length === 0 ? (
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+              아직 상태가 없습니다. 첫 번째로 남겨보세요!
+            
+</p>
+          ) : (
+            <ul className="space-y-3">
+              {statuses.map((s) => (
+                <li key={s.uri} className="flex items-center gap-3">
+                  <span className="text-2xl">{s.status}</span>
+                  
+<span className="text-zinc-600 dark:text-zinc-400 text-sm">
+                    @{s.handle}
+                  </span>
+                  
+<span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
+                    {timeAgo(s.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+function timeAgo(dateString: string): string {
+  const now = Date.now();
+  const then = new Date(dateString).getTime();
+  const seconds = Math.floor((now - then) / 1000);
+  if (seconds < 60) return "방금 전";
+  
+const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor (hours / 24);
+  return `${days}d`;
+}
+```
+이제 로그인한 사용자는 단순히 "로그인됨" 대신 "@사용자명 님으로 로그인됨"을 볼 수 있으며, 모든 사용자의 최근 상태 업데이트 피드와 함께 현재 가장 인기 있는 상태 업데이트를 보여주는 "인기 상태" 섹션도 확인할 수 있습니다.
+`pnpm dev`로 앱을 중지하고 다시 시작할 수 있습니다.
+마지막으로 한 가지 — 앞서 `tap`에 단일 데이터 소스만 추가했음을 기억하세요. 전체 네트워크의 상태를 보려면 `--signal-collection` 플래그와 함께 `tap`을 중지하고 재실행하세요:
+```bash
+tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  
+--collection-filters=xyz.statusphere.status \
+  --signal-collection=xyz.statusphere.status
+```...
+ 그러면 네트워크 내 다른 사용자들의 상태 메시지가 표시되기 시작합니다!
+<Container>
+  <Image src={feed} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+## 결론
+이제 OAuth로 로그인하고, 상태 레코드를 정의하는 커스텀 어휘(Lexicon)를 사용하며, Tap으로 레코드를 실시간 동기화하는 완전한 Atproto 앱을 구축했습니다.
+이를 통해 AT Protocol 기반 개발을 계속하는 데 필요한 모든 도구를 확보했습니다. 더 많은 가이드와 튜토리얼은 저희 [가이드](/guides) 섹션에서 더 많은 가이드와 튜토리얼을, [쿡북](https://github.com/bluesky-social/cookbook/) 저장소에서 더 많은 예제 앱을 확인하실 수 있습니다. 즐거운 개발 되세요!

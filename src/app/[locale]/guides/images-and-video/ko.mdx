@@ -1,0 +1,23 @@
+export const header = {
+  title: 'Images and Video',
+  description: 'Working with image and video blobs',
+}
+
+## 블롭 객체
+“블롭”은 계정의 저장소와 함께 저장되는 미디어 파일입니다.여기에는 이미지, 동영상, 오디오가 포함되며, 다른 파일 형식도 포함될 수 있습니다.블롭은 개별 레코드에서 **`blob`** 어휘 데이터 타입으로 참조되며, 여기에는 블롭의 콘텐츠 해시(CID)가 포함됩니다.
+
+블롭 파일은 레코드와 별도로 업로드 및 배포됩니다. 블롭은 계정의 PDS 인스턴스에 의해 권한 있게 저장되지만, PDS 트래픽을 줄이기 위해 일반적으로 개별 애플리케이션 (“AppViews”) 과 연결된 CDN을 통해 뷰가 제공됩니다. CDN은 원본 블롭의 변환된 버전(크기 조정, 트랜스코딩 등) 을 제공할 수 있습니다.
+
+블롭은 보편적으로 콘텐츠 주소(CID) 로 참조되지만, 항상 개별 계정(DID) 의 컨텍스트 내에서 참조 및 관리됩니다.
+
+빈 블롭 (0바이트) 은 일반적으로 유효하지만, 개별 레식콘 / 애플리케이션에서 허용하지 않을 수 있습니다.
+
+블롭 생성은 **`blob:*/*`** 권한 범위가 필요합니다.
+
+자체 PDS를 호스팅하는 경우 일반적으로 객체 저장소 구현을 사용하여 블롭을 처리할 것을 권장합니다.자세한 내용 [프로덕션 환경 구축](/guides/going-to-production#object-storage) 을 참조하십시오.
+## 추가 자료 및 리소스
+  - [블롭 수명 주기](/guides/blob-lifecycle)
+  - [블롭 보안](/guides/blob-security)
+  - [비디오 처리](/guides/video-handling)
+  - [블롭 사양](/specs/blob)
+  - [Streamplace](https://stream.place/docs/) 는 ATProto에서 비디오 스트리밍을 위한 구현체 및 관련 레식콘을 제공합니다.

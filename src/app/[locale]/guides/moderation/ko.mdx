@@ -1,0 +1,29 @@
+import {Container} from "@/components/Container"
+import moderation from "./moderation.png"
+
+export const header = {
+  title: 'Moderation',
+  description: 'Moderation in the Atmosphere',
+}
+
+## 모더레이션에 관하여
+Atproto 모델은 *발화* 와 *도달* 이 서로 협력하도록 설계된 별개의 두 계층이어야 한다는 것입니다. “발화” 계층은 허용적이어야 하며, 권한을 분산하고 모든 사람이 목소리를 낼 수 있도록 보장하도록 설계되어야 합니다. “도달” 계층은 그 위에 위치하며, 유연성을 위해 구축되고 확장성을 위해 설계됩니다. Atproto의 모더레이션은 [라벨](/guides/labels) 을 사용하여 구현됩니다.
+<Container>
+  <Image src={ moderation } alt = "" className = "w-full max-w-md mx-auto" />
+</Container>
+우리의 검토 아키텍처는 두 서비스로 구성됩니다: 자동 조사 및 조치를 위한 이벤트 스트림 결정 엔진 및 분석 UI인 [*Osprey*](#algorithmic-moderation) 와 검토 결정을 위한 라벨링 서비스 및 웹 프론트엔드인 [*Ozone*](#using-ozone) 입니다.
+
+[자세히 보기](https://docs.bsky.app/blog/blueskys-moderation-architecture)
+## 알고리즘 기반 모더레이션
+[Osprey](https://github.com/bluesky-social/osprey-atproto) 는 지속 가능한 대규모 모더레이션을 가능하게 하기 위해 자동 조사를 수행하고 조치를 취하도록 설계된 이벤트 스트림 의사 결정 엔진 및 분석 UI입니다. [Kafka](https://kafka.apache.org/) 를 활용하며 자체 [규칙 엔진](https://github.com/roostorg/osprey/blob/main/docs/rules.md) 을 갖추고 있습니다.
+
+다른 관점에서 Osprey는 인간이 작성한 규칙을 통해 작업을 처리하고 라벨, 웹훅을 API 및 기타 싱크로 출력하는 Python 라이브러리입니다. 구조화된 논리, 사용자 정의 함수, 외부 신호를 사용하여 이벤트를 평가하여 라벨, 판정, 작업을 할당합니다. Osprey에 자체 웹 엔드포인트를 노출하는 미세 조정된 LLM 및 기타 분류기를 활용할 수 있습니다. LLM은 검토 보고서를 생성하는 유용한 도구가 될 수 있습니다.이러한 보고서는 구성에 따라 자동 및/또는 수동으로 처리될 수 있습니다. 
+
+Osprey는 오픈소스 검토 도구를 개발하는 [Roost](https://roost.tools/) 에서 유지 관리합니다.
+## 추가 자료 및 리소스
+검토 [라벨](/guides/labels) 의 유형과 형식에 대해 자세히 알아보세요. 그런 다음, 검토 레이블러에 [구독](/guides/subscriptions) 하여 해당 레이블을 애플리케이션에 적용할 수 있습니다. 또한 [자체 레이블러 생성](/guides/creating-a-labeler) 하여 레이블을 게시할 수도 있습니다. 콘텐츠를 수동으로 검토해야 하는 경우, 콘텐츠 레이블링을 위한 웹 인터페이스로 [Ozone](/guides/using-ozone) 을 사용할 수 있습니다.
+- [라벨](/guides/labels)
+- [라벨러 생성](/guides/creating-a-labeler)
+- [구독](/guides/subscriptions)
+- [라벨 사양](/specs/label)
+- [Ozone 사용](/guides/using-ozone)

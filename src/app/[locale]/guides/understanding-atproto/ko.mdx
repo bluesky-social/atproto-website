@@ -1,0 +1,55 @@
+import { Card, CardParagraph, CardTitle } from '@/components/Card'
+
+export const header = {
+  title: 'Understanding Atproto',
+  description: 'A closer look into how it all works',
+}
+
+## TL;DR
+
+Atproto는 대규모 오픈 소셜 플랫폼입니다. 사용자는 JSON 레코드를 저장소에 게시합니다. 해당 레코드의 변경 스트림은 네트워크 전반에 동기화되어 애플리케이션을 구동합니다.
+
+커뮤니티 멤버 [Dan Abramov](https://bsky.app/profile/danabra.mov)의 훌륭한 글을 추천합니다:
+
+- [**오픈 소셜**](https://overreacted.io/open-social/) - 프로토콜이 바로 API입니다.
+- [**현황://**](https://overreacted.io/where-its-at/) - 핸들에서 호스팅까지.
+- [**소셜 파일 시스템**](https://overreacted.io/a-social-filesystem/) - 앱보다 포맷이 우선.
+
+## 핵심 원시 요소
+
+- **사용자 저장소.** 공개 사용자별 데이터베이스.
+- **사용자 핸들.** DNS 레코드인 사용자 이름. 저희 계정은 [@atproto.com](https://bsky.app/profile/atproto.com)입니다.
+- **사용자 DID.** 사용자의 영구 ID.
+
+## 데이터 모델
+
+- **레코드**. JSON 형식으로, 컬렉션별로 분류됩니다.
+- **블롭**. [이미지와 동영상](/guides/images-and-video)을 저장합니다.
+- **렉시콘**. 스키마 언어입니다.
+- **렉시콘 RPC (XRPC)**. HTTPS 기반이지만 경로가 렉시콘으로 정의됩니다.
+
+## 스택
+
+여러분이 [자체 호스팅](/guides/self-hosting)할 수 있는 다양한 종류의 서비스가 있습니다:
+
+- **개인 데이터 서버(PDS).** 사용자 계정을 호스팅합니다.
+- **릴레이**. 사용자 작성 이벤트를 수집하고 재전송합니다.
+- **애플리케이션**. 사용자 데이터를 집계하여 앱 경험을 생성합니다.
+- **라벨러(Labelers)**. 검토 결정을 라벨 메타데이터로 게시합니다.
+
+## 구현 방법
+
+애플리케이션을 구축한다고 가정해 보겠습니다. 사용자는 [OAuth](/guides/auth)로 로그인하며, 이 과정에서 애플리케이션에 사용자의 PDS 주소를 전달합니다. 이후 애플리케이션은 해당 PDS에 접속하여 레코드를 [읽고 쓰게](/guides/reads-and-writes) 됩니다.
+
+네트워크 전반의 활동을 수신하려면 [릴레이에서 동기화](/guides/sync)합니다. 사용자의 PDS에서 직접 동기화할 수도 있지만, 릴레이를 사용하는 것이 더 편리합니다. 모든 데이터가 서명되어 있으므로 릴레이의 스트림이 정확한지 확인할 수 있습니다.
+
+[용어집](/guides/lexicon)은 네트워크에 게시되는 데이터 식별에 도움을 줍니다. HTTP 요청을 검증하듯, 데이터를 읽으면서 이를 검증하는 데 활용합니다.
+
+마지막으로, 사용자 신고를 수신하고 콘텐츠에 라벨을 게시하는 라벨러를 구독(또는 실행)하여 [모더레이션](/guides/moderation)을 처리합니다.
+
+## 심층 자료
+
+팀이 작성한 심층 분석 글도 추천합니다:
+
+- [**분산 시스템 엔지니어를 위한 Atproto**](/articles/atproto-for-distsys-engineers). 백엔드 사고방식을 가진 분들을 위한 설명서.
+- [**Atproto의 정신**](/articles/atproto-ethos). Atproto 설계의 기반이 되는 원칙들.

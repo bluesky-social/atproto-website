@@ -1,0 +1,46 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: '動画の取り扱い',
+  description: '動画のアップロードと処理',
+}
+
+<Heading level={2} id="video-uploads">動画のアップロード</Heading>
+
+動画のアップロードは画像のアップロードとは少し異なり、通常はファイルがとても大きく、処理時間も大幅に長くなります。個々のAtmosphereアプリやCDNは、動画のアップロードに追加の制限を課す場合があります。
+
+<Heading level={2} id="Aspect-ratios">アスペクト比</Heading>
+
+アプリケーションの要件に応じて、動画のアップロード時にアスペクト比の提供が必要な場合があります。このメタデータは計算が厄介かもしれません。ブラウザで開発している場合は、動画を`<video>`に読み込み、読み込まれたときの寸法を観察できます。ネイティブアプリの場合は、メディアピッカーAPIを介して取得できる可能性が高いです。代わりに、`ffprobe`のようなツールを使用することもできます。
+
+```jsx
+import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
+
+export async function getAspectRatio(fileName: string) {
+  const { streams } = await ffprobe(fileName, {});
+  const videoSteam = streams.find((stream) => stream.codec_type === "video");
+  return {
+    width: videoSteam.width,
+    height: videoSteam.height,
+  };
+}
+```
+
+<Heading level={2} id="transcoding">トランスコーディング</Heading>
+
+動画は、サーバー側で`ffmpeg`のようなツールを使用してトランスコードするのに時間がかかります。これによりUXのギャップが生じる可能性があります。新しい投稿に動画のblobが付随している場合、動画サービスは投稿がfirehoseに現れるまで動画について知ることができません。つまり、処理が完了する前に投稿を見ることができ、その間に数秒間動画が表示されないことになります。
+
+アプリケーションエンドポイントを設計して、投稿を作成する前に動画を別のマイクロサービスに送信して処理することが可能です。この方法は処理状態をユーザーに表示し、処理ジョブが失敗した場合にそれを知らせるため、より良いUXを提供します。
+
+以下に両方の方法のクライアント側のコードサンプルがあります。
+
+- [簡単な方法](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw74be4dr422)
+- [ビデオサービスを使う方法](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw743ejno722)
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [画像と動画](/guides/images-and-video)
+- [blobライフサイクル](/guides/blob-lifecycle)
+- [blobのセキュリティ](/guides/blob-security)
+- [blob仕様](/specs/blob)
+- [Streamplace](https://stream.place/docs/)はATプロトコル上の動画ストリーミングの実装および関連Lexiconを提供します。

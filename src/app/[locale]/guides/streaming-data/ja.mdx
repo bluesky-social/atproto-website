@@ -1,0 +1,69 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'データストリーミング',
+  description: 'firehoseとJetstreamの使用',
+}
+
+<Heading level={2} id="streaming-data">データストリーミング</Heading>
+
+ATプロトコルのコアプリミティブの一つは*firehose*です。これは、ユーザーの更新（投稿、いいね、フォロー、ハンドル変更など）を効率的に同期するために使用される署名付きイベントストリームです。
+
+ストリーミングデータ受信を必要とする多くのATアプリケーションは、フィードジェネレーターからラベラー、ボット、検索エンジンに至るまで、firehoseを利用します。ATエコシステムには、これらのfirehose APIを提供する多くの異なるエンドポイントがあります。各PDSは、担当するリポジトリ上のすべてのアクティビティのストリームを提供します。そこから、リレーは参加している各PDSのストリームを単一の統合ストリーム（firehose）に集約します。
+
+<Heading level={2} id="firehose">firehose</Heading>
+
+誰でも認証なしでfirehoseに接続できます。これはプロトコルのコア機能です。開始するには、`com.atproto.sync.subscribeRepos`エンドポイントのプロバイダーへのWebSocket接続を開きます。
+
+```shell
+$ websocat wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos
+```
+
+ここから、入ってくる各メッセージを読み込み、関連するデータをデコードする必要があります。当社の[Go](https://github.com/bluesky-social/indigo) SDKは、現在firehoseと直接対話するには最も機能が揃っています。
+
+firehose出力形式はATの特に複雑な部分の一つであり、バイナリ[CBOR](/specs/data-model)データと[CAR](/specs/repository#car-file-serialization)ファイルのデコードが含まれることに注意してください。さらに、ネットワークが成長するにつれてデータの量は急速に増加しています。完全な同期firehoseはコアネットワークインフラストラクチャですが、[フィード開発者](/guides/feeds)などのエンドユーザーのために、**Jetstream**という代替ストリーミングソリューションを提供しています。
+
+<Heading level={2} id="jetstream">Jetstream</Heading>
+
+Jetstreamにはいくつかの大きな利点があります。
+
+- シンプルなJSONエンコーディング
+- 帯域幅の削減と圧縮
+- コレクション（NSID）またはリポジトリ（DID）でフィルタリングする機能
+
+Jetstreamサーバーはfirehoseを受け取り、多くの利用者に配信します。[オープンソース](https://github.com/bluesky-social/jetstream)で、Goで実装されており、セルフホストが簡単です。公式Goクライアントライブラリがあり、[コミュニティクライアントライブラリ](https://skyware.js.org/guides/jetstream/introduction/getting-started/)も開発されています。
+
+Jetstreamは他のWebSocketと同じように操作できます。`wss://jetstream2.us-east.bsky.network/subscribe`のようなJetstreamエンドポイントと、`?wantedCollections=app.bsky.feed.post`のような`wantedCollections`パラメータを指定するだけです。
+
+Pythonの例を次に示します。
+
+```python
+import asyncio
+import websockets
+
+uri = "wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post"
+
+async def listen_to_websocket():
+  async with websockets.connect(uri) as websocket:
+    while True:
+      try:
+        message = await websocket.recv()
+        print(message)
+      except websockets.ConnectionClosed as e:
+        print(f"Connection closed: {e}")
+        break
+      except Exception as e:
+        print(f"Error: {e}")
+
+asyncio.get_event_loop().run_until_complete(listen_to_websocket())
+```
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [同期](/guides/sync)
+- [バックフィル](/guides/backfilling)
+- [フィード](/guides/feeds)
+- [リポジトリ仕様](/specs/repository)
+- [イベントストリーム仕様](/specs/event-stream)
+- [同期仕様](/specs/sync)
+- [Microcosm](https://www.microcosm.blue/)コミュニティプロジェクトは、ローカルミラーリングなしでATレコードを大規模に操作するためのツールを保守しています。

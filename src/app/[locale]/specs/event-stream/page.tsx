@@ -1,3 +1,5 @@
+import { Page } from '@/components/Page'
+
 export const metadata = {
   title: 'Event Stream',
   description:
@@ -6,11 +8,11 @@ export const metadata = {
 }
 
 export default async function HomePage({ params }: any) {
+  let Content
   try {
-    const Content = (await import(`./${params.locale}.mdx`)).default
-    return <Content />
+    Content = await import(`./${params.locale}.mdx`)
   } catch (error) {
-    const Content = (await import(`./en.mdx`)).default
-    return <Content />
+    Content = await import(`./en.mdx`)
   }
+  return <Page {...Content} />
 }

@@ -1,0 +1,37 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'blobのセキュリティ',
+  description: 'blobを取り扱う際のセキュリティの考慮事項',
+}
+
+<Heading level={2} id="http-requests">HTTPリクエスト</Heading>
+
+ユーザーがアップロードした任意のファイルをウェブサーバーから配信することは、多くのコンテンツセキュリティ問題を引き起こします。例えば、スクリプトやSVGのクロスサイトスクリプティング（XSS）は他のウェブページと同じ「オリジン」から配信されることで発生します。**`getBlob`** エンドポイントでは[コンテンツセキュリティポリシー](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)の有効化が事実上必須です。blobストレージからブラウザへ直接、動的に資産を配信（**`getBlob`**）することは実質的に非対応です。アプリケーションはCDN、プロキシ、またはその他の独立したウェブサービスを介してblobやファイルを配信し、それらのサービスが適切なセキュリティ対策を実装する必要があります。
+
+このエンドポイントのコンテンツセキュリティヘッダーの例は次の通りです。
+
+```jsx
+Content-Security-Policy: default-src 'none';
+sandbox X-Content-Type-Options: nosniff
+```
+
+<Heading level={2} id="metadata">メタデータ</Heading>
+
+一部のメディアタイプは機密性の高いメタデータを含む場合があります。例えばJPEGのEXIFメタデータにはGPS座標が含まれることがあります。サーバーはblobを永続化する前にメタデータを除去するなど、偶発的な漏洩を防ぐ対策を検討すべきです。
+
+メディアファイルの解析はメモリ安全性のバグや脆弱性の原因になりやすいことで知られています。コンテンツタイプの検出（スニッフィング）ですら攻撃のきっかけになり得ます。サーバーは強力なサンドボックスを用いずにメディアファイル（画像、動画、音声、その他の複雑なフォーマット）を直接解析することを強く避けるべきです。特にPDSインスタンス自体でメディアのリサイズやトランスコーディングを実装するべきではなく、アプリケーション層で処理することが推奨されます。
+
+<Heading level={2} id="adversarial-use">悪意による利用</Heading>
+
+リッチなメディアは有害・違法コンテンツのリスクを高めます。サービスは検出や報告に応じて適切に公開停止や対応の仕組みを実装する必要があります。
+
+サーバーは悪意あるリソース消費を防ぐための対策が必要な場合があります。例えば、ディスク容量の枯渇、ネットワーク輻輳、帯域幅圧迫が考えられるため、レート制限、サイズ制限、クォータなどの対策を推奨します。
+
+<Heading level={2} id="related-resources">参考資料</Heading>
+
+- [画像と動画](/guides/images-and-video)
+- [blobのセキュリティ](/guides/blob-security)
+- [動画の取り扱い](/guides/video-handling)
+- [blob仕様](/specs/blob)
+- [Streamplace](https://stream.place/docs/)はATプロトコル上の動画ストリーミングの実装および関連Lexiconを提供します。

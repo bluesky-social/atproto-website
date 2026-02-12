@@ -1,0 +1,72 @@
+export const header = {
+  title: 'Looking Back At 2024 AT Protocol Development',
+  description: 'A lot of progress was made on the protocol in 2024, here\'s a look at the big milestones',
+  date: 'January 10, 2025',
+}
+
+# Looking Back At 2024 AT Protocol Development
+
+In May 2024, we published a 2024 [Protocol Roadmap](https://docs.bsky.app/blog/2024-protocol-roadmap), and we want to give an end-of-year update. We will follow up soon with a forward-looking roadmap for 2025.
+
+In the big picture, most of the public data aspects of the protocol have now been designed and implemented. The last missing pieces are nearing completion, and we do not foresee disruptive changes or additions which would impact interoperability. Now is a great time to start building on the protocol and assembling independent infrastructure.
+
+A lot of progress was made in 2024! Some large protocol milestones include:
+
+- [**Open PDS federation in the live network**:](https://bsky.social/about/blog/02-22-2024-open-social-web) At the time of roll-out, Bluesky initially required pre-registration and placed a limit on the number of hosted accounts. These limits have since been removed, and now any PDS can participate in the live network without prior coordination. We encourage the growth of independent PDS instances of any size. There are some rate-limits in place to prevent bot farms, but we will increase them when needed to accommodate PDS growth.
+- [**Labeling**:](https://docs.bsky.app/blog/blueskys-moderation-architecture) We launched the stackable moderation system with labels and reports.
+- **Account Migration:** Users can migrate their account to alternate PDSes using command-line tooling.
+- **Generic Service Proxying**: Client XRPC requests to the PDS can be proxied on to arbitrary service providers, using inter-service auth, via a client-controlled HTTP header.
+- **Flexible Record Schemas**: Data records of any schema can be written to atproto repositories, with "eager" Lexicon validation controlled by query parameter.
+- **Account Deactivation:** This was implemented at the protocol layer, along with an overhaul of the `#identity` and `#account` firehose events.
+- [**Initial OAuth Support**](https://docs.bsky.app/blog/oauth-atproto): This was launched in production, with extensive documentation.
+- [**Jetstream**](https://docs.bsky.app/blog/jetstream): We shipped an alternative WebSocket API for the firehose, which uses simple JSON and record-level operations (as opposed to "commits"). This makes it easier for independent developers to process the Bluesky firehose.
+
+
+## Lexicon Resolution
+
+One of the more recently-completed components is Lexicon resolution. This is the mechanism for looking up the schema of new data by NSID. After feedback on a [public proposal](https://github.com/bluesky-social/atproto/discussions/3074), we settled on a design that uses DNS TXT records that map to a DID, then schemas stored as records in an atproto repo. We have some early implementations which prove out the design.
+
+We plan on writing this up as a formal specification, and would like to build tooling to support publishing, mirroring, discovery, and integration of Lexicons.
+
+## Auth and OAuth
+
+The OAuth [announcement blog post](https://docs.bsky.app/blog/oauth-atproto) gives a good overview of the progress made in 2024, and links out to developer resources. Server-side support has been implemented in the Bluesky PDS distribution, and several independent projects are using it for login in the live network. We iterated on our design to align with the Web Auth Working Group of the IETF, and will make small changes as needed to stay in alignment.
+
+One of the missing pieces is Auth Scopes, which will allow more granular and flexible Authorization grants. We have made a fair amount of design progress on this mechanism but still have a few issues to resolve. Keep an eye out for a public summary of this work soon.
+
+Based on the [OAuth Roadmap](https://github.com/bluesky-social/atproto/discussions/2656), we are still in the first phase. Apart from Scopes, we have feedback from developers that token lifetimes may need tuning.
+
+Apart from OAuth, we are increasingly interested in a more powerful and flexible auth token mechanism, but have not started any design or planning work yet.
+
+## Sync, Firehose, and Backfill
+
+As the overall network has scaled to over 26 million accounts, resource costs around Relays and the firehose mechanism have become more urgent.
+
+The initial Relay design required a full mirror of all repository data (records and MST nodes) to fully verify each commit message. This meant that disk consumption increased both with the number of accounts, and the amount of data each account stored. This was considered [relatively affordable](https://whtwnd.com/bnewbold.net/entries/Notes%20on%20Running%20a%20Full-Network%20atproto%20Relay%20\(July%202024\)), and further scaling could be achieved with infrastructure sharding.
+
+However, we are currently exploring a "non-archival" relay design which is significantly cheaper to operate, even at full network scale. This will simplify the role of relays in the network, replace the `tooBig` mechanism for large commits, and clarify what a downstream service needs to do to synchronize data reliably.
+
+We are also working on improved ergonomics for working with subsets of data in the network. In particular, new small applications (Lexicon schemas) should be able to start small. It is important to be able to backfill only the relevant data already in the network and then subscribe to just a subset of data downstream of the firehose.
+
+## Specifications and Ecosystem
+
+We refreshed the [AT Protocol website](https://atproto.com), and the written specifications were expanded to cover the Firehose, Blobs, Account Hosting, and more.
+
+Bluesky sent a representative to IETF 120 in Vancouver, Canada. We have started participating in the OAuth and DNSOP working groups, and have been discussing timelines and strategy for the standards process with members of the community.
+
+[DASL](https://dasl.ing/) is an independent effort to define a coherent subset of the IPLD specifications which projects can build upon without the full complexity and large implementation surface of those systems. These align very tightly with the atproto data model! It should be possible for atproto software to build on top of DASL implementation libraries (which have fewer dependencies than full IPLD implementations), and there is potential for collaboration within formal standards bodies.
+
+[lexicon.community](https://lexicon.community) is an independent effort to develop reusable atproto Lexicon schemas in a collaborative manner. They have a defined governance and contribution model, and an initial schema declared for bookmarks.
+
+## What Else?
+
+A few important areas did not see much change in 2024. The PLC identity system has been operating reliably, but the `plc.directory` service needs to be decentralized through technical and governance improvements. Protocol features to support private content in the network continue to be a top external request, and are likewise a priority within the team. E2EE DMs are the planned successor to the initial DM system, but we have not begun work on them.
+
+All the above are important and will take time to get right. We will share a forward-looking protocol roadmap in the near future, covering these projects, decentralization efforts, and more.
+
+In the meanwhile, we encourage you to check in on both official and community channels for updates on AT Protocol. An increasing share of development is happening out in the ecosystem, with more projects and organizations getting started by the week:
+
+- [@atproto.com](https://bsky.app/profile/atproto.com) account on Bluesky
+- [Discussions](https://github.com/bluesky-social/atproto/discussions) on Github
+- [The Fediverse Report](https://fediversereport.com/) includes weekly AT Protocol coverage
+- [atprotocol.dev](https://atprotocol.dev/) runs Tech Talks

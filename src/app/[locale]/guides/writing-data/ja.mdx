@@ -1,0 +1,189 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'データ書き込み',
+  description: 'ATプロトコルレコードを書き込む',
+}
+
+<Heading level={2} id="writing-data">データ書き込み</Heading>
+
+Blueskyフィードに投稿するなどのデータ書き込みは、[読み取り](/guides/reading-data)に似ていますが、少しやり方が変わります。
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+新しいレコードの作成には、Lexiconをインポートした`client.create()`に必要なフィールドを添えて呼び出します。
+
+```tsx
+import * as app from './lexicons/app.js'
+
+const result = await client.create(app.bsky.feed.post, {
+  text: 'Hello, world!',
+  createdAt: new Date().toISOString(),
+})
+```
+
+`text`と`createdAt`は[`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)において必須の値です。
+
+<Note>
+これはその時点で認証しているユーザーセッションで投稿します。別のユーザーとして投稿したい場合、再度[`agent.login()`](/guides/reads-and-writes#creating-a-client)を呼んで新規セッションを取得してください。
+</Note>
+
+このAPIは応答に投稿の`at://` URIと`cid`形式のコンテンツハッシュを持ちます。
+
+```tsx
+console.log(result.uri) // at://did:plc:...
+console.log(result.cid)
+```
+    </TabPanel>
+    <TabPanel value="go">
+新しいレコードの作成には、`RepoCreateRecord()`に必要なフィールドを添えて、対象のLexiconに対して呼び出します。
+
+```go
+now := time.Now().UTC().Format(time.RFC3339)
+
+post := &appbsky.FeedPost{
+    Text:      "Hello from Go!",
+    CreatedAt: now,
+}
+
+  resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
+    Repo:       client.Auth.Did,         // handle or DID
+    Collection: "app.bsky.feed.post",    // lexicon
+    Record:     &lexutil.LexiconTypeDecoder{Val: post},
+})
+```
+`Text`と`CreatedAt`は[`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)において必須の値です。
+
+<Note>
+これはその時点で認証しているユーザーセッションで投稿します。別のユーザーとして投稿したい場合、再度[`ServerCreateSession()`](/guides/sdk-auth#creating-a-client)を呼んで新規セッションを取得してください。
+</Note>
+
+このAPIは応答に投稿の`at://` URIと`cid`形式のコンテンツハッシュを持ちます。
+
+```go
+fmt.Printf("Created post: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>    
+
+```
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+データの読み書き両方を行うクライアント等のインターフェースを構築している場合は、この応答を使用して書き込んだものを確実に読み取ることが重要です。 
+
+<Heading level={2} id="read-after-write">read-after-write</Heading>
+
+ATアプリフロントエンドの設計によっては、ユーザーが何らかのアクション（プロフィールの更新など）を実行し、ビューを迅速に更新すると、直近の変更が更新後の応答にすぐに反映されないことがあります。
+
+これは、AppViewなどのサービスにユーザーのPDSからのトランザクション書き込みがないためです。したがって、計算されたビューは結果整合性を持ちます。言い換えれば、ユーザーはAppViewによって提供されるAPI応答にまだ反映されていないレコードをPDS上に作成していることがあります。
+
+アプリケーションからのすべてのリクエストはユーザーのPDSに送信されるため、PDSはこの動作をスムーズに処理できる立場にあります。[BlueskyのPDSディストリビューション](https://github.com/bluesky-social/pds)は、AppViewから応答ヘッダーを確認し、応答にない新しいレコードがあるかどうかを判断し、それらの新しいレコードを反映するように応答を書き換えることにより、いくつかの基本的なread-after-write動作を提供します。
+
+AppViewは`Atproto-Repo-Rev`応答ヘッダーを設定することで、現在のインデックス状況を伝えます。これは、要求元のユーザーのリポジトリからインデックスされた最新のコミットの`rev`に設定されます。PDSは応答でこのヘッダーを検出すると、提示されたリビジョンよりも新しいローカルに存在するすべてのレコードを検索し、それらがAppViewの応答に影響を与えるかどうかを判断します。
+
+このread-after-write動作は、リクエストを行ったユーザーからのレコードに*のみ*適用されます。偶然同じPDS上に存在するだけの他のユーザーからのレコードは、要求側ユーザーの応答に影響を与えません。
+
+<Heading level={2} id="updating-records">レコードの更新</Heading>
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+ユーザーのプロフィールなど既存のレコードを更新するには、`client.put()`を使用します。
+
+```bash
+lex install app.bsky.actor.profile
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.put(app.bsky.actor.profile, {
+  displayName: 'New Name',
+  description: 'Updated bio',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+ユーザーのプロフィールなど既存のレコードを更新するには、`RepoPutRecord()`を使用します。
+
+```go
+newProfile := &appbsky.ActorProfile{
+  DisplayName: ptrString("New Display Name"),
+  Description: ptrString("Updated bio"),
+}
+
+resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
+  Repo:       client.Auth.Did,                // handle or DID
+  Collection: "app.bsky.actor.profile",       // lexicon
+  Rkey:       "self",                         // rkey
+  Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
+})
+
+fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+
+    `RepoPutRecord`は冪等です。レコードが存在しない場合は作成し、存在する場合は上書きします。
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+<Heading level={2} id="deleting-records">レコードの削除</Heading>
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+個々の投稿などのレコードを削除するには、`client.delete()`を使用します。
+
+```bash
+lex install app.bsky.actor.post
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.delete(app.bsky.feed.post, {
+  rkey: '3jxf7z2k3q2',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+    個々の投稿などのレコードを削除するには、`RepoDeleteRecord()`を使用します。
+```go
+comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
+    Repo:       client.Auth.Did,      // handle or DID
+    Collection: "app.bsky.feed.post", // lexicon
+    Rkey:       "3mbl5xdw4yk2r",      // rkey
+})
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [読み取りと書き込み](/guides/reads-and-writes)
+- [データ読み取り](/guides/reading-data)
+- [アカウントと削除](/guides/account-lifecycle)
+- [ソーシャルグラフ](/guides/social-graph)
+- [レコードキー仕様](/specs/record-key)
+- [URIスキーム](/specs/at-uri-scheme)

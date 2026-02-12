@@ -1,0 +1,44 @@
+export const header = {
+  title: 'Video Handling',
+  description: 'Handling video uploads and processing',
+}
+
+## Video uploads
+
+Video uploads differ slightly from image uploads, since they are typically much larger files and have a significantly long processing time. Individual Atmosphere apps or CDNs may impose additional limits on video uploads.
+
+## Aspect ratios
+
+Depending on the requirements of your application, you may need to supply an aspect ratio along with video uploads. This metadata can be tricky to compute. If you're developing in a browser, you can load the video into a `<video>` and observe the dimensions when loaded. If you're in a native app, you'll most likely be able to get it via the media picker APIs. Alternatively, you can use a tool like `ffprobe` :
+
+```jsx
+import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
+
+export async function getAspectRatio(fileName: string) {
+  const { streams } = await ffprobe(fileName, {});
+  const videoSteam = streams.find((stream) => stream.codec_type === "video");
+  return {
+    width: videoSteam.width,
+    height: videoSteam.height,
+  };
+}
+```
+
+## Transcoding
+
+Videos will need time to transcode using a tool like `ffmpeg` on the server side before they are available from the firehose. This can lead to UX gaps — if a video blob is accompanying a new post, the video service only knows about the video once the post appears in the firehose. This means that people will be able to see the post before processing is complete, which will show a missing video for several seconds.
+
+It is possible to design an application endpoint to allow submitting videos to a separate microservice for processing before creating a post. This method also allows for better UX, since you can show the processing state to the user and let them know if the processing job fails.
+
+There are client-side code samples for both methods here:
+
+- [Simple Method](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw74be4dr422)
+- [Video Service](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw743ejno722)
+
+## Further Reading and Resources
+
+- [Images and Video](/guides/images-and-video)
+- [Blob lifecycle](/guides/blob-lifecycle)
+- [Blob security](/guides/blob-security)
+- [Blob Specs](/specs/blob)
+- [Streamplace](https://stream.place/docs/) provides an implementation and related Lexicon for video streaming on ATProto.

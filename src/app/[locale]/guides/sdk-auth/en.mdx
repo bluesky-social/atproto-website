@@ -1,0 +1,118 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'SDK authentication',
+  description: 'Authenticating with the SDKs',
+}
+
+## Password Authentication
+
+If you are using password auth, you should generate an [app password](/specs/xrpc#app-passwords) for your account rather than using your main account password. If you are using Bluesky, you can generate an app password in your [account settings](https://bsky.app/settings/app-passwords).
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    Start by importing `PasswordSession`, providing credentials to `PasswordSession.login()`, and creating a `session`:
+
+    ```tsx
+    import { PasswordSession } from '@atproto/lex-password-session'
+
+    const result = await PasswordSession.login({
+      service: 'https://bsky.social', // or your PDS host
+      identifier: 'your-handle.bsky.social',
+      password: 'your-app-password',
+    })
+
+    if (result.success) {
+        const session = result.value
+    }
+    ```
+
+    Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `session`.
+    </TabPanel>
+    <TabPanel value="go">
+    Start by importing the `atproto` and `xrpc` libraries, creating an `&xrpc.Client{}`, and providing credentials to call `ServerCreateSession()`:
+
+    ```go
+    import (
+      "context"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
+
+    func main() {
+      ctx := context.Background()
+
+      client := &xrpc.Client{
+        Host: "https://bsky.social", // or your PDS host
+      }
+
+      session, _ := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
+        Identifier: "your-handle.bsky.social",
+        Password:   "your-app-password",
+      })
+    }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## Client Sessions
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    Once you have a logged-in `session`, you can create a `Client` instance to read and write data:
+
+    ```tsx
+    import { Client } from '@atproto/lex'
+    const client = new Client(session)
+
+    // Make authenticated API calls
+    console.log('Logged in as:', session.did)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    Once you have an authed `client`, you can store auth info and make API calls:
+
+    ```go
+    // Store auth info on the client for subsequent requests
+    client.Auth = &xrpc.AuthInfo{
+      AccessJwt:  session.AccessJwt,
+      RefreshJwt: session.RefreshJwt,
+      Handle:     session.Handle,
+      Did:        session.Did,
+    }
+
+    fmt.Printf("Logged in as: %s (%s)\n", session.Handle, session.Did)
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+From here, you can go directly to [making API requests](/guides/reads-and-writes).
+
+## API Tokens
+
+Rate limits for logging in are generally lower than for other API operations. Calling the login method multiple times in a short period may trigger rate limits. You only need to call the login method once per session to authenticate.
+
+The `com.atproto.server.createSession` API endpoint called by login methods returns a session object containing two API tokens:
+* `accessJwt`: an access token which is used to authenticate requests but expires after a few minutes
+* `refreshJwt`: a refresh token which lasts longer and is used only to update the session with a new access token
+
+## Further Reading and Resources
+
+- [Auth](/guides/auth)
+- [OAuth patterns](/guides/oauth-patterns)
+- [Scopes](/guides/scopes)
+- [Permission requests](/guides/permission-sets)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
