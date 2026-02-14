@@ -6,7 +6,7 @@ export const header = {
 }
 
 ## 인증에 관하여
-**인증이 문서의 첫 번째 부분인 데는 이유가 있습니다!** AT Protocol 레코드에서 [데이터 읽기](/reading-data#unauthenticated-reads)하거나 [파이어호스에서 데이터 스트리밍](/guides/streaming-data)하는 데 항상 인증이 필요한 것은 아닙니다. 하지만 Atproto 앱의 Atmosphere와 어떤 식으로든 통합되는 애플리케이션을 구축하려는 경우, 인증부터 시작해야 합니다. AT Protocol ID를 OAuth 소스로만 사용하는 것으로 시작할 수도 있지만, Atproto [소셜 그래프](/guides/social-graph)를 기반으로 구축하면 훨씬 더 많은 기능을 구현할 수 있다는 점을 알게 될 것입니다.
+**인증이 문서의 첫 번째 부분인 데는 이유가 있습니다!** AT Protocol 레코드에서 [데이터 읽기](/guides/reading-data#unauthenticated-reads)하거나 [파이어호스에서 데이터 스트리밍](/guides/streaming-data)하는 데 항상 인증이 필요한 것은 아닙니다. 하지만 Atproto 앱의 Atmosphere와 어떤 식으로든 통합되는 애플리케이션을 구축하려는 경우, 인증부터 시작해야 합니다. AT Protocol ID를 OAuth 소스로만 사용하는 것으로 시작할 수도 있지만, Atproto [소셜 그래프](/guides/social-graph)를 기반으로 구축하면 훨씬 더 많은 기능을 구현할 수 있다는 점을 알게 될 것입니다.
 
 이 섹션은 Atproto에서 애플리케이션을 구축하는 개발자를 대상으로 합니다. 자체 최종 사용자 로그인 흐름을 가진 애플리케이션은 인증을 위해 [OAuth](#what-is-oauth)를 구현해야 합니다. 봇이나 명령줄 도구와 같은 단일 목적 애플리케이션은 대신 [비밀번호 인증](/guides/sdk-auth)을 사용할 수 있습니다.
 
