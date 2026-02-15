@@ -6,9 +6,9 @@ export const header = {
 
 # Data Synchronization
 
-One of the main features of atproto (the "Authenticated Transfer Protocol") is reliable distribution (and redistribution) of public content between independent network services. This data transfer is trustworthy (cryptographicly authenticated) and relatively low-latency even at large scale. New participants can join the network at any time and “backfill” prior content.
+Synchronization of public data between independent network participants is one of the defining features of the atproto (which is named for "Authenticated Transfer"). Data redistibution is trustworthy, low-latency, and resource efficient at large scale. {{ className: 'lead' }}
 
-There are two main data synchronization mechanisms in atproto. Batch data transfer is supported using full-repository exports as CAR files over HTTP. Real-time synchronization can be provided by a repository event stream (over WebSocket), commonly referred to as a "firehose". Used together, they make it possible to bootstrap a complete, live-updated, and authenticated copy of network data.
+There are two main data synchronization mechanisms in atproto. Batch data transfer is supported using full-repository exports as CAR files over HTTP. Real-time synchronization can be provided by a repository event stream (over WebSocket), commonly referred to as a "firehose". Used together, they make it possible to bootstrap a complete, live-updated, and authenticated copy of network data. {{ className: 'lead' }}
 
 
 ## Repository Revisions
@@ -236,6 +236,8 @@ To prevent traffic amplification attacks, outbound network requests should be ra
 ## Future Work
 
 The `subscribeRepos` lexicon is likely to be tweaked, with deprecated fields removed, even if this breaks lexicon evolution rules.
+
+The repository export mechanism is likely to support partial synchronization of repository subsets. For example, sub-tree CAR files covering specific collections or repo path ranges.
 
 The firehose event stream sequence/cursor scheme may be iterated on to support sharding, timestamp-based resumption, and easier failover between servers with different sequences.
 

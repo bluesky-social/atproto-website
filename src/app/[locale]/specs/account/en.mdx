@@ -49,7 +49,7 @@ To summarize, when an account status is non-`active`, the content that hosts sho
 
 Unlike other aspects of atproto, account status is not self-certifying, and there is not a method for authenticated transfer or redistributing of account status between arbitrary parties.
 
-Most commonly, account status is propagated "hop by hop", with each "downstream" service accepting and adopting the hosting status for accounts at their upstream. If an intermediate service (such as a relay) overrides the status of their upstream (for example, an infrastructure account takedown), they will broadcast and propagate that action downstream to subscribers.
+Most commonly, account status is propagated "hop by hop", with each "downstream" service accepting and adopting the hosting status for accounts at their upstream. If an intermediary service (such as a relay) overrides the status of their upstream (for example, an infrastructure account takedown), they will broadcast and propagate that action downstream to subscribers.
 
 By default, if an account’s current active PDS is not available, account status should remain unchanged, at least for some time period. This keeps the network resilient and accounts online during temporary infrastructure outages. Services may decide their own policies for accounts whose PDS hosts remain offline for long periods of time.
 
