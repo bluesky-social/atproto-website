@@ -19,9 +19,9 @@ In the atproto federation architecture, the authoritative location of an account
 In real-world use, it is expected that individual repositories will contain anywhere from dozens to millions of records. {{ className: 'lead' }}
 
 
-## Repo Data Structure (v3)
+## Repository Data Structure
 
-This describes version `3` of the repository binary format.
+This document describes version `3` of the repository binary format.
 
 Version `2` had a slightly different commit object schema, but is mostly compatible with `3`.
 
@@ -109,51 +109,55 @@ The standard file format for storing data objects is Content Addressable aRchive
 
 The CARv1 format is very simple. It contains a small metadata header (which can indicate one or more "root" CID links), and then a series of binary "blocks", each of which is a data object. In the context of atproto repositories:
 
-- The first element of the CAR `roots` metadata array must be the CID of the most relevant Commit object. for a generic export, this is the current (most recent) commit. additional CIDs may also be present in the `roots` array, with (for now) undefined meaning or order
+- The first element of the CAR `roots` metadata array must be the CID of the most relevant Commit object. For a generic export, this is the current (most recent) commit. Additional CIDs may also be present in the `roots` array, with (for now) undefined meaning or order
 - For full exports, the full repo structure must be included for the indicated commit, which includes all records and all MST nodes
-- The order of blocks within the CAR file is not currently defined or restricted. implementations may have a "preferred" ordering, but should be tolerant of unexpected ordering
+- The preferred order of blocks within the CAR file is described below. At this time, this order is not required, and parsing implementations (and services) must be tolerant of CAR files with arbitrary block ordering.
 - Additional blocks, including records, may or may not be included in the CAR file
 
 When importing CAR files, note that there may existing dangling CID references. For example, repositories may contain CID Links to blobs or records in other repositories, and the blocks corresponding to those blobs or references would likely not be included in the CAR file.
 
 The CARv1 specification is agnostic about the same block appearing multiple times in the same file ("Duplicate Blocks)". Implementations should be robust to both duplication and de-duplication of blocks, and should also ignore any unnecessary or unlinked blocks.
 
-## Repository Diffs
+### Streamable CAR Block Ordering
 
 <Note>
-An updated version of the Synchronization protocol is being rolled out to the live network in early 2025. There is a ["Sync v1.1" proposal document](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) and an [update blog post](https://docs.bsky.app/blog/relay-sync-updates) with deployment details. The written specifications will be updated soon.
+The block ordering scheme described here is still work-in-progress. As of February 2026, it has not been included in popular implementations or deployed broadly in the atproto network. Details may change based on implementation experience.
 </Note>
 
-A concept which supports efficient synchronization of data between independent services is "diffs" of repository trees between different revisions. The basic principle is that a repository diff contains all the data (commit object, MST nodes, and records) that have changed between an older revision and the current revision of a repo. The diff can be "applied" to the older mirror of the repository, and the result will be the complete MST tree at the current (newer) commit revision.
+Repository export CAR files are usually parsed in to an MST structure. If the blocks in the CAR file are in a consistent order, this can be done by "walking" references in a single pass, without buffering the entire CAR file in memory. This memory efficiency is helpful when working with large repositories, or processing many repositories in parallel.
 
-Repo diffs can be serialized as CAR files, sometimes referred to as "CAR slices". Some details about diff CAR slices:
+The consistent block ordering rules to support this use case are:
 
-- same format, version, and atproto-specific constraints as full repo export CAR files
-    - blocks "should" be de-duplicated by CID (only one copy included), though receiving implementations must be resilient to duplication
-- the root CID indicated in the CAR header (the first element of `roots`) should point to the commit block (which must be included)
-- any required blocks must be included even if they have appeared in the history of the repository previously. eg, if a record is created in rev C, deleted in rev F, and re-created in rev N, the diff "since F" must include the record block
+- The commit object must be the first block.
+- MST nodes are included in "pre-order", meaning that parent nodes precede child nodes and leaf nodes. Record blocks are interleaved between MST nodes. This starts with the root MST node (referenced from the commit `data` field) as the second block.
+- Following each MST node in the tree, include the blocks corresponding to the entries in that node, in the order they are listed in the node. If an entry slot is a child MST node, include that node (and recurse depth-first). If the entry slot is a record, include the record block.
+
+
+## Repository Diffs
+
+Mutations to a repository tree can be encapsulated as a "diff". The basic idea is that all new data blocks (including the new commit object, MST nodes, and records) that have changed since a previous revision can be bundled together and serialized in CAR format. Conceptually, diffs could be "applied" to mirrors of a repository to keep them updated. This forms the basis of the [Data Synchronization](/specs/sync) part of the specification.
+
+Some details about representing repository diffs are "CAR slices":
+
+- uses the same CAR format described above for full repository exports
+- the root CID indicated in the CAR header (the first element of `roots`) must point to the new commit block (which must be included)
+- all MST nodes in the current repo revision which did not exist in the previous repo revision must be included
+- any additional MST nodes needed to support "operation inversion" must be included (described below)
+- all required blocks must be included even if they appeared previously in the history of the repository.
+  - for example, if a record is created in rev C, deleted in rev F, and re-created in rev N, the diff "since F" must include the record block
 - all "created" records must be included
-- any records which have been "deleted" and do not exist in the current repo should not be included
-- any records which have been "updated" should include the final version, and should not include the previous version
-- all MST nodes in the current repo which didn't exist in the previous repo version must be included
-- with the exception of removed record data, the diff may include additional blocks, which receivers should ignore.
-  - however, diffs which intentionally contain a large amount of irrelevant block data to consume network or compute resources are considered a form of network abuse.
+- any records which have been "deleted" should not have the record value included
+- any records which have been "updated" should include the new value, and should not include the previous version
+- if a record value has been deleted from one path and created (or updated) at a new path in the same diff (eg, was "moved"), it should be included
+- parsing implementation must be tolerant of additional unexpected blocks in the diff, which they should ignore
+  - note that unreasonable quantities of unnecessary block data may be considered a form of resource abuse
 
-The diff is a partial Merkle tree, including a signed commit, and can be partially verified. This means that an observer which has successfully resolved the identity of the relevant account (including cryptographic public keys) can verify certain aspects of the data. The diff is a reliable "proof chain" for creation and updates of records: an observer can verify that the new or updated records have the specific record values in the overall repo as of the commit revision. If the observer knows of specific records (by repo path, or by full AT-URI) that have been deleted, they can verify that those records no longer exist in the repo as of the final commit revision.
+The diff is a partial Merkle tree, including a signed commit, and can be partially verified. For example, the diff contains a "proof chain" to verify any created or updated records. However, without knowing more about the previous state of the repository, it is not possible to enumerate or confirm which record paths have been deleted.
 
-However, an observer which does not know the full state of the repository at the "older" revision *can not* reliably enumerate all of the records that have been removed from the repository. Such an observer also can not see the previous values of deleted or updated records, either as full values or by CID. Note that the later is an intentional design goal for the diff concept: it is desired that content deletion happen rapidly and not "draw attention" to the content which has been deleted. It is technically possible for "archival" observers to track deletion events and lookup the previous content value, but this requires additional resources and effort.
+The sync "firehose" mechanism uses a process called "operation inversion" to validate a list of record operations against a diff. In this process, the diff is parsed as a partial MST, and then each operation is applied in reverse: a "create" is applied as a "delete", etc. After all operations have been applied, the root CID (hash) of the MST is recomputed, and should match the `data` field of the previous revision of the repository. If the list of record operations is inaccurate or incomplete, the inverted MST will not match.
 
-Sometimes repo diffs are generated automatically. For example, every commit to a repo can result in a diff against the immediately preceding commit. In other contexts, diffs are generated on demand: a diff can be requested "since" an arbitrary previous revision. It is not expected that repo hosts support generating diffs between two arbitrary revisions, only "from" an arbitrary older revision and the current revision. Repo hosts are not required to maintain a complete history of prior commits/revisions, and in some cases (such as account migration) may never have had prior repo history. Some details about how to interpret and service requests for diffs "since" a prior revision:
+In some cases the inversion process requires the inclusion of contextual MST nodes in the diff, which would not otherwise need to be included. For example, MST nodes that reference record paths directly adjacent (in sorted order) to those mutated in the diff. The definition of which nodes need to be included in the diff is ultimately tautological: those MST nodes which are necessary for the inversion process. A set of test vectors is included in the [atproto test case git repository](https://github.com/bluesky-social/atproto-interop-tests).
 
-- it is helpful to track internally the commit revision when a block (record or MST node) was created or re-created. This enables querying blocks "since" a point in time
-- "since" revisions are not expected to be an exact match
-    - for example, if a repo had a sequence of commits "333", "666", "999", and a "since" value of "444" was requested, the changes in "666" and "999" should be included, as if the "since" parameter was "666"..
-- a host is allowed to include additional history, but is encouraged to return the minimal or most granular requested data
-    - for example, a host may have "compacted" repo rev history to a smaller number of commits. If a repo had commit history "288", "300", "320", "340", "400", and got a request "since" 340, it might return all changes since 300. Hosts are encouraged to return the smallest diff when possible (eg, “since” 340), but clients should be resilient.
-- if a host receives a “since” request earlier than the oldest available revision for a repository, it should return the full repository. This may happen if the host does not have the complete history of the repository.
-    - for example, if a repository had revisions "140", "150", and "160", then migrated to a new PDS and revisions continued "161" and "170", if the new PDS is asked for a diff "since" 150, the new PDS would probably need to return the full repository, because the earliest revision it would be aware of was "160" or "161" (depending on how migration was implemented).
-
-In the specific case of chained commit-to-commit diffs which appear on the firehose, diffs should be "minimal": they should not contain additional records or additional history.
 
 ## Security Considerations
 
@@ -179,8 +183,6 @@ At the overall atproto specification level, additional "blessed" cryptographic a
 Repository CAR exports may include linked "blobs" (larger binary files). This might become the default, or a configurable option, or some another mechanism for blob export might be chosen (eg, `.tar` or `.zip` export).
 
 Record content could conceivably be something other than CBOR some day. This would probably be a repo format version bump. Note that it is possible to efficiently wrap other data formats in a CBOR wrapper (via a byte array field), or to have a small CBOR record type that links to a blob in arbitrary format.
-
-Repository CAR exports may end up with a preferred block ordering scheme specified.
 
 The CARv2 file format, which includes optimizations for some use cases, may be adopted in some form.
 

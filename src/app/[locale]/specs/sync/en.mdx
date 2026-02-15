@@ -6,31 +6,34 @@ export const header = {
 
 # Data Synchronization
 
-One of the main design goals of atproto (the "Authenticated Transfer Protocol") is to reliably distribute public content between independent network services. This data transfer should be trustworthy (cryptographicly authenticated) and relatively low-latency even at large scale. It is also important that new participants can join the network at any time and “backfill” prior content.
+One of the main features of atproto (the "Authenticated Transfer Protocol") is reliable distribution (and redistribution) of public content between independent network services. This data transfer is trustworthy (cryptographicly authenticated) and relatively low-latency even at large scale. New participants can join the network at any time and “backfill” prior content.
 
-This section describes the major data synchronization features in atproto. The primary real-time data synchronization mechanism is repository event streams, commonly referred to as "firehoses". The primary batch data transfer mechanism is repository exports as CAR files. These two mechanisms can be combined in a "bootstrapping" process which result in a live-synchronized copy of the network.
+There are two main data synchronization mechanisms in atproto. Batch data transfer is supported using full-repository exports as CAR files over HTTP. Real-time synchronization can be provided by a repository event stream (over WebSocket), commonly referred to as a "firehose". Used together, they make it possible to bootstrap a live-updated mirror of the atproto network.
 
-<Note>
-An updated version of the Synchronization protocol is being rolled out to the live network in early 2025. There is a ["Sync v1.1" proposal document](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) and an [update blog post](https://docs.bsky.app/blog/relay-sync-updates) with deployment details. The written specifications will be updated soon.
-</Note>
 
-## Synchronization Primitives
+## Repository Revisions
 
-As described in the repository spec, each commit to a repository has a *revision* number, in TID syntax. The revision number must always increase between commits for the same account, even if the account is migrated between hosts or has a period of inactivity in the network. Revision numbers can be used as a logical clock to aid synchronization of individual accounts. To keep this simple, it is recommended to use the current time as a TID for each commit, including the initial commit when creating a new account. Services should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Network services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.
+As described in the [Repository specification](/specs/repo), each commit to a repository has a *revision* number, in TID syntax. The revision number must always increase between commits for the same account, even if the account is migrated between hosts or has a period of inactivity in the network. Revision numbers can be used as a logical clock to aid synchronization of individual accounts. To keep this simple, it is recommended that PDS implementations use the current time as a TID for each commit, including the initial commit when creating a new account.
+
+Consuming servics should reject or ignore revision numbers corresponding to future timestamps (beyond a short fuzzy time drift window). Services can track the commit revision for every account they have seen, and use this to verify synchronization progress. Services which synchronize data can include the most-recently-processed revision in HTTP responses to API requests from the account in question, in the `Atproto-Repo-Rev` HTTP response header. This allows clients (and users) to detect if the response is up-to-date with the actual repository, and detect any problems with synchronization.
 
 ## Firehose
 
-The repository event stream (`com.atproto.sync.subscribeRepos`, also called the "firehose") is an [Event Stream](/specs/event-stream) which broadcasts updates to repositories (`#commit` events), handles and DID documents (`#identity`), and account hosting status (`#account`). PDS hosts provide a single stream with updates for all locally-hosted accounts. "Relays" are network services which subscribe to one or more repo streams (eg, multiple PDS instances) and aggregate them in to a single combined repo stream. The combined stream has the same structure and event types. A Relay which aggregates nearly all accounts from nearly all PDS instances in the network (possibly through intermediate relays) outputs a “full-network” firehose.  Relays often mirror and can re-distribute the repository contents, though their core functionality is to verify content and output a unified firehose.
+The repository event stream (`com.atproto.sync.subscribeRepos`, also called the "firehose") is an [Event Stream](/specs/event-stream) which broadcasts updates to repositories (`#commit` events), handles and DID documents (`#identity`), and account hosting status (`#account`). PDS hosts provide a single stream with updates for all locally-hosted accounts.
 
-In most cases the repository data synchronized over the firehose is self-certifying (contains verifiable signatures), and consumers can verify content without making additional requests directly to account PDS instances. It is possible for services to redact events from the firehose, such that downstream services would not be aware of new content.
+**Relays** are network services which subscribe to one or more repo streams (eg, multiple PDS instances) and aggregate them in to a single combined repo stream. The combined stream has the same structure and event types. A relay which attempts to aggregate accounts from all PDS instances in the network outputs a "full-network" firehose.
 
-Identity and account information is *not* self-certifying, and services may need need to verify independently. This usually means independent DID and [handle resolution](/specs/handle). Account hosting status might also be checked at account PDS hosts, to disambiguate hosting status at different pieces of infrastructure.
+Repository data synchronized over the firehose is self-certifying (contains verifiable signatures), and consumers can verify content without making additional requests directly to the account's PDS instances. Gaps in repository updates are detectable. If an intermediary service were to filter all messages pertaining to repository, that would not necessarily be detectable by consuming services.
 
-The event message types are declared in the `com.atproto.sync.subscribeRepos` Lexicon schema, and are summarized below. A few fields are the same for all event types (except for `repo` vs `did` for `#commit` events):
+Identity and account information is *not* self-certifying, and consuming services are responsible for verifying. This usually means independent [DID resolution](/specs/did) and [handle resolution](/specs/handle). [Account hosting status](/specs/account) can be checked against the account's PDS host, though it is legitimate for intermediary services to apply takedowns.
+
+The event message types are declared in the `com.atproto.sync.subscribeRepos` lexicon schema, and are summarized below. A few fields are the same for all event types (except for `repo` versus `did` field names for `#commit` events):
 
 - `seq` (integer, required): used to ensure reliable consumption, as described in Event Streams
 - `did` / `repo`(string with DID syntax, required): the account/identity associated with the event
-- `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediate services may decide to pass this field through as-is, or update to the current time
+- `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediary services may decide to pass this field through as-is, or update to the current time
+
+Firehose event stream messages have a hard maximum size limit of 5 MBytes, measured as WebSocket frames. This this is inclusive of all encoding and nesting overhead, and rules out some messages which would not otherwise exceed lexicon schema limits. Messages are generally expected to be well below this hard size limit. This limit may evolve over time.
 
 ### `#identity` Events
 
@@ -49,7 +52,7 @@ The semantics and expected behavior are that downstream services should update a
 
 Identity events are emitted on a "best-effort" basis. It is possible for the DID document or handle resolution status to change without any atproto service detecting the change, in which case an event would not be emitted. It is also possible for the event to be emitted redundantly, when nothing has actually changed.
 
-Intermediate services (eg, relays) may chose to modify or pass through identity events:
+Intermediary services (eg, relays) may chose to modify or pass through identity events:
 
 - they may replace the handle with the result of their own resolution; or always remove the handle field; or always pass it through unaltered
 - they may filter out identity events if they observe that identity has not actually changed
@@ -73,13 +76,11 @@ Event Fields:
 
 When coming from any service which redistributes account data, the event describes what the new status is *at that service*, and is authoritative in that context. In other words, the event is hop-by-hop for repository hosts and mirrors.
 
-See the Account Hosting specification for more details.
+See the [Account Hosting specification](/specs/account) for more context.
 
 ### `#commit` Events
 
 This event indicates that there has been a new repository commit for the indicated account. The event usually contains the "diff" of repository data, in the form of a CAR slice. See the [Repository specification](/specs/repository) for details on "diffs" and the CAR file format.
-
-See the Repository specification for more details around repo diffs.
 
 Event Fields:
 
@@ -90,8 +91,8 @@ Event Fields:
 - `since` (string with TID syntax, nullable): indicates the `rev` of a preceding commit, which the the repo diff contains differences from
 - `commit` (cid-link, required): CID of the commit object (in `blocks`)
 - `tooBig` (boolean, required): this field is deprecated, but still technically required. Producers should always set it to `false`, and consumers should ignore it.
-- `blocks` (bytes, required): CAR "slice" for the corresponding repo diff. The commit object must always be included, and the CAR header must indicate the commit block as the first "root".
-- `ops` (array of objects, required): list of record-level operations in this commit: specific records created, updated, deleted
+- `blocks` (bytes, required): CAR "slice" for the corresponding repo diff. The commit object must always be included, and the CAR header must indicate the commit block as the first "root". See size limit note below.
+- `ops` (array of objects, required): list of record-level operations in this commit: specific records created, updated, deleted. See length limitation below.
 - `blobs` (array of cid-link, required): this field is deprecated, but still technically required. Producers should set it to an empty array, and consumers should ignore it.
 - `prevData` (cid-link, semi-optional): the root CID of the MST tree for the last commit of this repository. Similar to the "since" field, which indicates the previous "rev". Effectively required for MST inversion, despite being marked "optional".
 
@@ -102,7 +103,15 @@ Event Fields:
 - `cid` (cid-link, required, nullable): indicates new version of record, or `null` if record has been deleted
 - `prev` (cid-link, optional): indicates previous version of record (for 'update' and 'delete'), or not defined (for 'create')
 
-Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates. Only the commit object, record blocks, and MST tree nodes are authenticated (signed): the `since` and `ops` fields are not self-certifying, and could in theory be manipulated, or otherwise be incorrect or incomplete.
+Commit events are broadcast when the account repository changes. Commits can be "empty", meaning no actual record content changed, and only the `rev` was incremented. They can contain a single record update, or multiple updates.
+
+Commit events have the following size limits:
+
+- the `blocks` bytes field has a hard size limit of 2 million bytes
+- individual record blocks within the `blocks` field have a hard limit of one million bytes
+- at most 200 record operations can be included in a commit
+
+As an example, a single commit can not contain 50 record operations each including 60 KBytes: the limits on number of operations and per-record size would be met, but the `blocks` field size would be too large.
 
 ### `#sync` Events
 
@@ -118,11 +127,11 @@ Event Fields:
 
 Sync events are broadcast when the account repository state has been reset to a new state, or in situations where there might be ambiguity about the current state of the repository. For example, a `#sync` event could be emitted for an account reactivating after data corruption.
 
-Note that the repository *contents* are not included in the sync event: the `blocks` field generally contains only the repo commit object. Downstream services would need to fetch the full repo CAR file to re-synchronize.
+Note that the repository *contents* are not included in the sync event: the `blocks` field only contains the repo commit object. Downstream services would need to fetch the full repo CAR file to re-synchronize.
 
-### Firehose Validation Best Practices
+### Message Validation and Verification
 
-A service which does full validation of upstream events has a number of properties to track and check. For example, Relay instances should fully validate content from PDS instances before re-broadcasting.
+Services consuming firehose event streams may have different validation and verification needs. Intermediary services (like public relays) may do some checks to reduce network abuse, but ultimately consuming services are responsible for validating data and verifying authenticity.
 
 Here is a summary of validation rules and behaviors:
 
@@ -130,36 +139,34 @@ Here is a summary of validation rules and behaviors:
 - services which subscribe directly to PDS instances should keep track of which PDS is authoritative for each DID. They should remember the host each subscription (WebSocket) is connected to, and reject `#commit` events for accounts if they come from a stream which does not correspond to the current account for that DID
 - services should track account hosting status for each DID, and ignore `#commit` events for events which are not `active`
 - services should verify commit signatures for each `#commit` event, using the current identity data. If the signature initially fails to verify, the service should refresh the identity metadata in case it had recently changed. Events with conclusively invalid signatures should be rejected.
-- services should reject any event messages which exceed reasonable limits. A reasonable upper bound for producers is 5 MBytes (for any event stream message type). The `subscribeRepos` Lexicon also limits `blocks` to one million bytes, and `ops` to 200 entries.
+- services should verify `#commit` message `blocks` field (CAR diff) against the `ops` list and `prevData` field, using record operation MST inversion.
+- services should reject any event messages which exceed reasonable size limits.
 - services should verify that repository data structures are valid against the specification. Missing fields, incorrect MST structure, or other protocol-layer violations should result in events being rejected.
 - services may apply rate-limits to identity, account, commit, and sync events, and suspend accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, missing or out-of-order commits, etc.
-- services should ignore commit events with a `rev` lower or equal to the most recent processed `rev` for that DID, and should reject commit events with a `rev` corresponding to a future timestamp (beyond a clock drift window of a few minutes)
-- services should check the `since` value in commit events, and if it is not consistent with the previous seen `rev` for that DID (see discussion in "Reliable Synchronization"), mark the repo as out-of-sync
-- data limits on records specifically should be verified. Events containing corrupt or entirely invalid records may be rejected. for example, a record not being CBOR at all, or exceeding normal data size limits.
-- more subtle data validation of records may be enforced, or may be ignored, depending on the service. For example, unsupported CID hash types embedded in records should probably be ignored by Relays (even if they violate the atproto data model), but may result in the record or commit event being rejected by an AppView
-- Relays (specifically) should not validate records against Lexicons
+- services should ignore commit events with a `rev` lower or equal to the most recent successfully processed `rev` for that DID, and should reject commit events with a `rev` corresponding to a future timestamp (beyond a clock drift window of a few minutes)
+- services should check the `since` value in commit events, and if it is not consistent with the most recent `rev` for that DID, mark the repo as out-of-sync (see discussion in "Reliable Synchronization")
+- similarly, services should check the `prevData` value against the most recent commit object `data` field
+- data limits on records specifically should be verified. Events containing corrupt or entirely invalid records may be rejected. for example, a record not being CBOR at all, or exceeding normal data size limits (eg, one million byte limit on record size).
+- more subtle data validation of records may be enforced, or may be ignored, depending on the service. For example, unsupported CID hash types embedded in records should probably be ignored by relays (even if they violate the atproto data model), but may result in the record or commit event being rejected by an AppView
+- relays (specifically) should not validate records against lexicons
 
-## Reliable Synchronization
+## Repository Synchronization
 
-This section describes some details on how to reliably subscribe to the firehose and maintain an existing synchronized mirror of the network.
+Services should usually retain a few pieces of state for each account they are tracking data from:
 
-Services should generally maintain a few pieces of state for all accounts they are tracking data from:
-
-- track the most recent commit `rev` they have successfully processed
-- keep cached identity data, and use cache expiration to ensure periodic re-validation of that data
-- track account status
+- identity data (cached, with appropriate expiration)
+- account hosting status (both "upstream" and local to the service itself)
+- last commit revision (`rev`) and MST root hash (`data`)
 
 Identity caches should be purged any time an `#identity` event is received. Additionally, identity resolution should be refreshed if a commit signature fails to verify, in case the signing key was updated but the identity cache has not been updated yet.
 
-When `#sync` events are emitted on the firehose, downstream services may need to make a separate HTTP request to fetch the repo CAR file. This usually means an API request to the `com.atproto.sync.getRepo` endpoint on the current PDS host for the account, with the `since` field included. The `since` value should be the most recently processed `rev` value for the account, which may or may not match the `since` field in the commit event message.
+When `#sync` events are emitted on the firehose, downstream services may need to make a separate HTTP request to fetch the repo CAR file. This usually means an API request to the `com.atproto.sync.getRepo` endpoint on the current PDS host for the account.
 
-If a `#commit` is received with a `since` that does not match the most recently processed `rev` for the account, and is “later” (higher value) than the most recent commit `rev` the service has processed for that account, the service may need to do the same kind of out-of-band fetch as for a `#sync` event.
+If a `#commit` is received with a `since` that does not match the most recently processed `rev` for the account, and is "later" (higher value) than the most recent commit `rev` the service has processed for that account, the service may need to do the same kind of out-of-band fetch as for a `#sync` event.
 
-Services should keep track of the `seq` number of their upstream subscriptions. This should be stored separately per-upstream, even if there is only a single Relay connection, in case a different Relay is subscribed to in the future (which will have different `seq` numbers).
+Services should keep track of the `seq` number of their upstream subscriptions. This should be stored separately per-upstream, even if there is only a single relay connection, in case a different relay is subscribed to in the future (which will have different `seq` numbers).
 
 Events can be processed concurrently, but they should be processed sequentially in-order for any given account. This can be accomplished by partitioning multiple workers using the repo DID as a partitioning key.
-
-Services can confirm that they are consuming content reliably by fetching a snapshot of repository DIDs and `rev` numbers from other services, including PDS hosts and Relay instances. After a short delay, these can be compared against the current state of the service to identify any accounts which have lower than expected `rev` numbers. These repos can then be updated out-of-band.
 
 ## Bootstrapping a Live Mirror
 
@@ -193,7 +200,7 @@ To prevent traffic amplification attacks, outbound network requests should be ra
 
 ## Future Work
 
-The `subscribeRepos` Lexicon is likely to be tweaked, with deprecated fields removed, even if this breaks Lexicon evolution rules.
+The `subscribeRepos` lexicon is likely to be tweaked, with deprecated fields removed, even if this breaks lexicon evolution rules.
 
 The event stream sequence/cursor scheme may be iterated on to support sharding, timestamp-based resumption, and easier failover between independent instances.
 
