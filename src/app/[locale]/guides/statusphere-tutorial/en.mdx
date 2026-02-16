@@ -1,8 +1,8 @@
 import {Container} from "@/components/Container"
 import setstatus from "./set-status.png"
-import pdsls from "./pdsls-status.png"
 import tap from "./tap-status.png"
 import feed from "./feed-status.png"
+import taproot from "./taproot-status.png"
 
 export const header = {
   title: 'Create a Social App',
@@ -42,7 +42,7 @@ npm install -g @atproto/lex
 
 You'll begin by adding Lexicons to your project.
 
-## Part 1: Lexicons 
+## Part 1: Lexicons
 
 [Lexicons](/guides/lexicon) define the schema for records in Atproto. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
 
@@ -305,7 +305,7 @@ Run the app with `pnpm dev` — you'll be able to log in, and select an emoji to
 You won't yet have a way to see your status in this app, but you can look up your account on [atproto.at](https://atproto.at/) and check the `xyz.statusphere.status` Lexicon to see this record.
 
 <Container>
-  <Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+  <Image src={taproot} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
 Next, you'll add sync features to actually receive status updates.
