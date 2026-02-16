@@ -30,7 +30,7 @@ interface LibraryProp {
 
 const official: LibraryProp[] = [
   {
-    href: 'https://github.com/bluesky-social/atproto/tree/main/packages/api',
+    href: 'https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex',
     name: 'Typescript',
     description:
       'Created by Bluesky Social PBC. Works on Web, NodeJS, and React Native.',

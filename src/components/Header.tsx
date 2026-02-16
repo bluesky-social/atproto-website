@@ -99,13 +99,6 @@ export const Header = forwardRef<
       <Search />
       <div className="hidden flex-1 sm:flex" />
       <div className="flex items-center gap-5">
-        <nav className="hidden pr-4 xl:block">
-          <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="https://blueskydirectory.com/">
-              Showcase
-            </TopLevelNavItem>
-          </ul>
-        </nav>
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-6">
             <TopLevelNavItem href="https://bsky.app/profile/atproto.com">

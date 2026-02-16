@@ -123,7 +123,7 @@ function SmallPrint({ minimal }: { minimal?: boolean }) {
       )}
     >
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-        &copy; Copyright {new Date().getFullYear()}. All rights reserved.
+        &copy; Copyright (CC-BY) Bluesky Social PBC {new Date().getFullYear()}. All rights reserved.
       </p>
       <div className="flex gap-4">
         <SocialLink
