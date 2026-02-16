@@ -27,7 +27,7 @@ npx tsc --init --verbatimModuleSyntax false
 ```
 기존 계정을 사용하지 않고 게시할 경우, 봇용 [새 계정 생성](https://bsky.app/)이 필요합니다. 또한 해당 계정에 대한 [앱 비밀번호 생성](/guides/sdk-auth)도 수행해야 합니다.
 ## 파트 1: 어휘집
-[어휘집](/guides/lexicon)은 Atproto 레코드를 정의합니다. 봇은 [app.bsky.feed.post](https://pdsls.dev/at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juc4thkx452i#schema) 어휘를 사용하여 Bluesky 게시물을 생성합니다. `lex`를 사용하여 이 어휘집을 다운로드하고 프로젝트에 빌드할 수 있습니다:
+[어휘집](/guides/lexicon)은 Atproto 레코드를 정의합니다. 봇은 [app.bsky.feed.post](https://atproto.at/viewer?uri=did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juc4thkx452i) 어휘를 사용하여 Bluesky 게시물을 생성합니다. `lex`를 사용하여 이 어휘집을 다운로드하고 프로젝트에 빌드할 수 있습니다:
 ```bash
 lex install app.bsky.feed.post
 ```

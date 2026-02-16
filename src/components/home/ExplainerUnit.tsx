@@ -259,7 +259,7 @@ export function ExplainerUnitUrlbar({ url }: { url: string }) {
   return (
     <Link
       className="block rounded-sm px-4 py-3 font-mono text-sm text-blue-600 ring-1 ring-zinc-900/20 hover:underline dark:text-blue-400 dark:ring-zinc-100/15"
-      href={`https://pdsls.dev/${url}`}
+      href={`https://atproto.at/viewer?uri=${url.replace('at://', '')}`}
     >
       {url}
     </Link>
