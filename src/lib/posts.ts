@@ -8,17 +8,10 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
-    slug: 'plc-replicas',
-    title: 'PLC Read Replicas',
-    description: 'Introducing a self-hostable did:plc read-replica service.',
-    date: 'February 12, 2026',
-    author: 'AT Protocol Team',
-  },
-  {
     slug: 'new-site-2026',
     title: 'Welcome to the New atproto.com',
     description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
-    date: 'February 12, 2026',
+    date: 'February 17, 2026',
     author: 'Alex Garnett',
   },
   {
