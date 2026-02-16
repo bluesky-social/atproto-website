@@ -1,0 +1,85 @@
+export const header = {
+  title: 'PLC Read Replicas',
+  description: 'Introducing a self-hostable did:plc read-replica service.',
+  date: 'February 19, 2026',
+}
+
+# PLC Read Replicas
+
+Today we're releasing a reference implementation of a PLC directory read-replica service. What does that mean, and how does it make the atproto ecosystem more resilient and trustworthy?
+
+First, what is PLC? `did:plc` is the Decentralized Identifier (DID) method used by the majority of accounts on atproto. DID is a [W3C standard](https://www.w3.org/TR/did-1.1/) for persistent identifiers that map to a "DID document". For atproto users, that DID document declares your signing keys, handle, and PDS host. `did:plc` currently relies on the [PLC directory](https://web.plc.directory/) to maintain these mappings.
+
+Migrating your atproto presence from one PDS host to another involves updating the contents of your DID document, while maintaining the same identifier string (which is what makes it so seamless). PLC makes these updates possible even if your previous PDS host isn't cooperating \- even if it becomes actively [adversarial](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html). This idea is central to the "credible exit" promises of the AT Protocol.
+
+But what if your adversary is the PLC directory itself?
+
+We try to mitigate this possibility on several fronts:
+
+* Self-authenticating cryptographic mechanisms (this is the core of PLC, and has been present since its introduction in late 2022\)  
+* Working towards independent governance (see: [Creating an Independent PLC Directory Organization](https://docs.bsky.app/blog/plc-directory-org))  
+* WebPKI-inspired transparency logging (watch this space\!)
+
+And, the subject of this article \- Read Replicas.
+
+## Why are Read Replicas useful?
+
+Although PLC is built on self-authenticated data, we trust the central [plc.directory](http://plc.directory) instance to:
+
+* Reliably and accurately respond to resolution queries for a given DID  
+* Accept valid PLC operations  
+* Accurately report the timestamps and order of operations
+
+A read replica is a service that maintains a full, independently-queryable copy of the PLC directory's data by syncing from the primary instance. Additionally, a read replica should audit the synced data in real-time \- verifying all operation hashes, signatures, and timestamp constraints, and rejecting any that do not pass validation. This does not catch *all* *possible* types of misbehaviour from the primary instance, but it makes it more accountable.
+
+For example, if the primary instance decided to roll back a DID to an earlier state by deleting an update operation and pretending it never existed, the replicas would still have a copy of the deleted data. Every replica instance acts as a "witness" of the primary, and they collectively hold evidence that the primary instance has misbehaved. Third parties can also query public replicas to see the evidence for themselves.
+
+Aside from the boost in accountability (which benefits the whole atproto ecosystem), there are several operational benefits to running your own PLC replica service:
+
+* **Availability:** if the primary PLC instance has an outage, you can still resolve DIDs via your own replica.  
+* **Rate-limit flexibility:** If you've ever made millions of rapid DID lookups at plc.directory, you might have run into rate limits. By running your own replica, you can define your own rate limit policies (as long as your infrastructure can keep up\!)
+
+Bluesky PBC will be running replica instances internally to achieve these same benefits.
+
+## How does it work?
+
+Since its introduction, PLC has supported bulk export of all operations via the `/export` endpoint. This enables point-in-time snapshots and audits of the state of the directory. It is possible to poll `/export` to achieve close-to-real-time sync, but the API had some sharp edges that made it suboptimal for live-replica use cases.
+
+In PLC spec version 0.3.0, we [introduced](https://github.com/bluesky-social/atproto/discussions/4508) a new `/export/stream` websocket endpoint, which allows for real-time sync of new operations without needing to poll, as well as improving the behaviour of the paginated `/export` endpoint.
+
+Our replica service ingests from either the paginated or the streaming API (for backfill and live-tailing respectively,) switching between the two automatically.
+
+The replica implementation makes use of the [go-didplc](https://github.com/did-method-plc/go-didplc) library for operation validation, which notably is a different codebase to the TypeScript [implementation](https://github.com/did-method-plc/did-method-plc/) of the reference PLC directory. Having two implementations of the same spec makes us more confident in the spec, and allows us to test the two against each other.
+
+## Some Remaining Sharp Edges
+
+### Read After Write
+
+When you submit an operation to the central PLC directory, once the HTTP request succeeds then the update is immediately visible to subsequent queries, both from yourself and other clients on the network.
+
+For example, if a PDS updates a user’s handle and emits an `#identity` event on the firehose, a consuming relay may try to re-resolve the user’s DID document. If the relay queries the central PLC directory, it’ll see the updated DID. If it queries a replica, it *might* see stale data (and then cache it).
+
+The replica should be no more than a few hundred milliseconds behind the primary (network-latency permitting), but any latency above 0 could surface race conditions for clients that weren’t expecting this possibility.
+
+This means a replica service might not be a direct drop-in replacement for some scenarios, *yet*.
+
+We hope to improve this situation through some combination of:
+
+- Finding sensible workaround strategies for clients (e.g. delayed/deferred requests, retry strategies)  
+- Improving the protocol/APIs to ensure clients know what version of the DID document to expect, and have an efficient way to wait for it to be resolvable (which could involve embedding a cid or timestamp in `#identity` events, and creative use of HTTP cache-related headers)
+
+### JSON vs LD-JSON Compatibility
+
+See [here](https://github.com/did-method-plc/go-didplc/tree/main/cmd/plc-replica#did-document-format-differences) for technical details.
+
+## How do I run my own?
+
+Check out the [docs](https://github.com/did-method-plc/go-didplc/tree/main/cmd/plc-replica) for deployment details. This is new software so there may be some teething issues, but we aim to be responsive to bug reports, including incompatibility issues with other atproto software.
+
+At time of writing, you'll need approximately 150GB of free disk space to sync the whole directory. This number will go up slowly over time.
+
+While our reference implementation is focused on correctness and scalable performance, there are other plc replica/mirroring tools developed by the community that may offer more compact on-disk representations via compression, spam filtering, or other tricks. These approaches may be more appropriate for deployment on resource-constrained systems:
+
+* [https://tangled.org/@microcosm.blue/Allegedly](https://tangled.org/@microcosm.blue/Allegedly)  
+* [https://github.com/char/zplc-server](https://github.com/char/zplc-server)  
+* [https://tangled.org/atscan.net/plcbundle-ref](https://tangled.org/atscan.net/plcbundle-ref)
