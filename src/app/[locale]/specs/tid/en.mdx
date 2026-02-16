@@ -6,9 +6,9 @@ export const header = {
 
 # Timestamp Identifiers (TIDs)
 
-A TID ("timestamp identifier") is a compact string identifier based on an integer timestamp. They are sortable, appropriate for use in web URLs, and useful as a "logical clock" in networked systems. TIDs are currently used in atproto as record keys and for repository commit "revision" numbers.
+A Timestamp Identifier (TID) is a compact string identifier, based on 64-bit integer, which can also be interpreted as a timestamp. An example TID is `3jzfcijpj2z2a`. They are sortable, appropriate for use in web URLs, and useful as a "logical clock" in networked systems. TIDs are currently used in atproto as record keys and for repository commit "revision" numbers. {{ className: 'lead' }}
 
-Note: There are similarities to ["snowflake identifiers"](https://en.wikipedia.org/wiki/Snowflake_ID). In the decentralized context of atproto, the global uniqueness of TIDs can not be guaranteed, and an antagonistic repo controller could trivially create records re-using known TIDs.
+TIDs have some similarities to ["snowflake identifiers"](https://en.wikipedia.org/wiki/Snowflake_ID), which are designed for global uniqueness. But because atproto is an open network, uniqueness of TIDs can not be guaranteed. An adversarial party can easily create new records reusing known TIDs.
 
 ## TID Structure
 

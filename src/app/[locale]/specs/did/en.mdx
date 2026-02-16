@@ -6,23 +6,34 @@ export const header = {
 
 # AT Protocol DIDs
 
-The AT Protocol uses [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier) (DIDs) as persistent, long-term account identifiers. DID is a W3C standard, with many standardized and proposed DID method implementations. {{ className: 'lead' }}
+AT Protocol uses [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier) (DIDs) as persistent account identifiers. The core DID standard was developed by the W3C, and describes a framework for compliant identifier systems ("DID methods"), of which several exist. To ensure broad interoperation across the ecosystem, atproto only supports a small number of "blessed" DID methods. {{ className: 'lead' }}
+
+An example DID is `did:plc:ewvi7nxzyoun6zhxrhs64oiz`.
+
 
 ## Blessed DID Methods
 
 Currently, atproto supports two DID methods:
 
-- `did:web`, which is a W3C standard based on HTTPS (and DNS). The identifier section is a hostname. This method is supported in atproto to provide an independent alternative to `did:plc`. The method is inherently tied to the domain name used, and does not provide a mechanism for migration or recovering from loss of control of the domain name. In the context of atproto, only hostname-level `did:web` DIDs are supported: path-based DIDs are not supported. The same restrictions on top-level domains that apply to handles (eg, no `.arpa`) also apply to `did:web` domains. The special `localhost` hostname is allowed, but only in testing and development environments. Port numbers (with separating colon hex-encoded) are only allowed for `localhost`, and only in testing and development.
-- `did:plc`, which is a novel DID method developed by Bluesky. See the [did-method-plc](https://github.com/did-method-plc/did-method-plc) GitHub repository for details.
+- `did:plc`: a self-authenticating DID method developed specifically for use with atproto. See the [DID PLC website](https://web.plc.directory) for more details.
+- `did:web`: a [W3C community draft](https://w3c-ccg.github.io/did-method-web/) based on HTTPS (and DNS). The identifier section is a hostname. This method is supported in atproto to provide an independent alternative to `did:plc`. See usage details below
 
-In the future, a small number of additional methods may be supported. It is not the intention to support all or even many DID methods, even with the existence of universal resolver software.
+It is possible that other methods will be supported in the future, but the intention is to keep the "blessed" set as small as possible. It is certainly not the intention to support all or even a significant fraction of all DID methods.
+
+### `did:web` in AT Protocol
+
+The [DID Web method](https://w3c-ccg.github.io/did-method-web/) is inherently tied to the domain name used, and does not provide a mechanism for migration or recovering from loss of control of the domain name.
+
+In the context of atproto, only hostname-level `did:web` DIDs are supported: path-based DIDs are not supported. The same restrictions on top-level domains that apply to handles (eg, no `.arpa`) also apply to `did:web` domains. The special `localhost` hostname is allowed, but only in testing and development environments. Port numbers (with separating colon hex-encoded) are only allowed for `localhost`, and only in testing and development.
 
 
-## AT Protocol DID Identifier Syntax
+## DID Identifier Syntax
 
 Lexicon string format type: `did`
 
-The DID Core specification constraints on DID identifier syntax, regardless of the method used. A summary of those syntax constraints, which may be used to validate DID generically in atproto are:
+The DID Core specification places syntax restrictions on all DID identifiers, and individual DID methods might have their own more specific syntax. While atproto supports only a small set of DID methods today, it still makes sense to consider the general DID syntax in many parsing and validation contexts.
+
+The general syntax constraints used to validate generic DID identifiers in atproto are:
 
 - The entire URI is made up of a subset of ASCII, containing letters (`A-Z`, `a-z`), digits (`0-9`), period, underscore, colon, percent sign, or hyphen (`._:%-`)
 - The URI is case-sensitive
@@ -33,7 +44,7 @@ The DID Core specification constraints on DID identifier syntax, regardless of t
 - Percent-sign (`%`) is used for "percent encoding" in the identifier section, and must always be followed by two hex characters
 - Query (`?`) and fragment (`#`) sections are allowed in DID URIs, but not in DID identifiers. In the context of atproto, the query and fragment parts are not allowed.
 
-DID identifiers do not generally have a maximum length restriction, but in the context of atproto, there is an initial hard limit of 2048 characters.
+DID identifiers do not generally have a maximum length restriction, but in the context of atproto, there is a current hard limit of 2048 characters.
 
 In the context of atproto, implementations do not need to validate percent encoding. The percent symbol is allowed in DID identifier segments, but the identifier should not end in a percent symbol. A DID containing invalid percent encoding *should* fail any attempt at registration, resolution, etc.
 
@@ -50,8 +61,8 @@ A reasonable starting-point regex for DIDs in the context of atproto is:
 Valid DIDs for use in atproto (correct syntax, and supported method):
 
 ```
-did:plc:z72i7hdynmk6r22z27h6tvur
-did:web:blueskyweb.xyz
+did:plc:ewvi7nxzyoun6zhxrhs64oiz
+did:web:user.example.com
 ```
 
 Valid DID syntax (would pass Lexicon syntax validation), but unsupported DID method:
@@ -76,25 +87,32 @@ did:method:val?two
 did:method:val#two
 ```
 
+
 ## DID Documents
 
 After a DID document has been resolved, atproto-specific information needs to be extracted. This parsing process is agnostic to the DID method used to resolve the document.
 
-The current **handle** for the DID is found in the `alsoKnownAs` array. Each element of this array is a URI. Handles will have the URI scheme `at://`, followed by the handle, with no path or other URI parts. The current primary handle is the first valid handle URI found in the ordered list. Any other handle URIs should be ignored.
+The DID declared in the document (in the `id` field) should always be verified against what was expected (eg, used for resolution).
 
-It is crucial to validate the handle bidirectionally, by resolving the handle to a DID and checking that it matches the current DID document.
+The [handle](/specs/handle) claimed by the DID is found in the `alsoKnownAs` array. Each element of this array is a URI string. Handles will have the URI prefix `at://`, followed by the handle hostname, with no other URI parts or trailing characters. The first syntaxtually valid handle found in the ordered list is treated as the claimed handle, even if it fails to resolve bi-directionally. Any other handle URIs should be ignored.
 
-The DID is the primary account identifier, and an account whose DID document does not contain a valid and confirmed handle can still, in theory, participate in the atproto ecosystem. Software should be careful to either not display any handle for such account, or obviously indicate that any handle associated with it is invalid.
+It is crucial to validate the handle bidirectionally, by resolving the handle to a DID and checking that it matches the current DID document. See the [handle specification](/specs/handle) for details.
 
-The public **signing key** for the account is found under the `verificationMethod` array, in an object with `id` ending `#atproto`, the `controller` matching the DID itself, and `type` matching the fixed string `"Multikey"`. The first valid atproto signing key in the array should be used, and any others ignored. The `publicKeyMultibase` field will be the public key in multibase encoding. A legacy format exists with slightly different requirements. See below for details about parsing fields for both formats.
+The DID is the primary account identifier in atproto, and an account whose DID document does not contain a valid and confirmed handle can still participate in the atproto ecosystem. Software should be careful to either not display any handle for such account, or obviously indicate that any handle associated with it is invalid.
 
-A valid signing key is required for atproto functionality, and an account with no valid key in their DID document is broken.
+The public **atproto signing key** for the account is found under the `verificationMethod` array, in an object with `id` ending `#atproto`, the `controller` matching the DID itself, and `type` matching the fixed string `Multikey`. The first valid atproto signing key in the array should be used, and any others ignored. The `publicKeyMultibase` field will be the public key in multibase encoding. A legacy format exists with slightly different requirements. See below for details about parsing fields for both formats.
+
+A valid signing key is required for most atproto functionality. An account with no valid key in their DID document is likely broken.
 
 The **PDS service network location** for the account is found under the `service` array, with `id` ending `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
 
-A working PDS is required for atproto account functionality, and an account with no valid PDS location in their DID document is broken.
+A working PDS is required for most atproto account functionality. An account with no valid PDS location in their DID document is likely broken.
 
 Note that a valid URL doesn't mean the the PDS itself is currently functional or hosting content for the account. During account migrations or server downtime there may be windows when the PDS is not accessible, but this does not mean the account should immediately be considered broken or invalid.
+
+Other protocol and application features may make use of `verificationMethod` keys and `service` entries. For example, [labeling](/specs/label) uses an additional key type, and application-specific "AppView" instances use bespoke service entries.
+
+When parsing the `id` field in object elements of the `service` and `verificationMethod` arrays, implementations should support both relative fragment syntax (eg, `"id": "#atproto_pds"`) and fully-qualified syntax (eg, `"id": "did:web:example.com#atproto_pds"`).
 
 
 ## Representation of Public Keys
@@ -106,7 +124,7 @@ Public keys in DID documents under `verificationMethod`, including atproto signi
 - `id` (string, required): the DID followed by an identifying fragment. Use `#atproto` as the fragment for atproto signing keys
 - `type` (string, required): the fixed string `Multikey`
 - `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
-- `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format (with multicodec type indicator, and "compressed" key bytes)
+- `publicKeyMultibase` (string, required): the public key itself, encoded in "multikey" format
 
 The `publicKeyMultibase` format for `Multikey` is the same encoding scheme as used with `did:key`, but without the `did:key:` prefix. See [Cryptography](/specs/cryptography) for details.
 
@@ -174,4 +192,4 @@ Interop test vectors are available from the [atproto-interop-tests](https://gith
 
 The hard maximum DID length limit may be reduced, at the protocol syntax level. We are not aware of any DID methods that we would consider supporting which have identifiers longer than, say, 256 characters.
 
-There is a good chance that the set of "blessed" DID methods will slowly expand over time.
+There is a chance that the set of "blessed" DID methods will slowly expand over time.

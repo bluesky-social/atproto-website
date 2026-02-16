@@ -6,16 +6,16 @@ export const header = {
 
 # Namespaced Identifiers (NSIDs)
 
-Namespaced Identifiers (NSIDs) are used to reference Lexicon schemas for records, XRPC endpoints, and more. {{ className: 'lead' }}
+Namespaced Identifiers (NSIDs) are used to reference Lexicon schemas for records, XRPC endpoints, and more. For example, `com.atproto.sync.getRecord`. {{ className: 'lead' }}
 
-The basic structure and semantics of an NSID are a fully-qualified hostname in Reverse Domain-Name Order, followed by a simple name. The hostname part is the **domain authority,** and the final segment is the **name**. {{ className: 'lead' }}
+The basic structure and semantics of an NSID are a fully-qualified hostname in reverse domain-name order, followed by an additional name segment. The hostname part is the **domain authority,** and the final segment is the **name**. {{ className: 'lead' }}
 
 
 ### NSID Syntax
 
 Lexicon string type: `nsid`
 
-The domain authority part of an NSID must be a valid handle with the order of segments reversed. That is followed by a name segment which must be an ASCII camel-case string.
+The domain authority part of an NSID must be a valid [handle](/specs/handle) (hostname) with the order of segments reversed. That is followed by a name segment that must be an ASCII camel-case string.
 
 For example, `com.example.fooBar` is a syntactically valid NSID, where `com.example` is the domain authority, and `fooBar` is the name segment.
 
