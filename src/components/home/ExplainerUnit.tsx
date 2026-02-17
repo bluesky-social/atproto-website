@@ -157,7 +157,7 @@ export function ExplainerUnit() {
               isAutoRotating={!hasInteracted}
             />
           ))}
-          <ExplainerUnitCTA>LEARN MORE</ExplainerUnitCTA>
+          <ExplainerUnitCTA href="/guides/understanding-atproto">LEARN MORE</ExplainerUnitCTA>
         </ExplainerDesktopNav>
       </div>
     </div>
@@ -383,15 +383,17 @@ export function ExplainerMobileNavItem({
 
 export function ExplainerUnitCTA({
   className,
+  href,
   children,
 }: React.PropsWithChildren<{
   className?: string
+  href: string
 }>) {
   return (
-    <div className={clsx('mt-8 flex items-center pl-8 font-medium', className)}>
+    <Link className={clsx('mt-8 flex items-center pl-8 font-medium', className)} href={href}>
       <div>{children}</div>
       <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
-    </div>
+    </Link>
   )
 }
 
