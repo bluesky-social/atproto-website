@@ -915,8 +915,7 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
 
           // Disable ligatures, kerning, and other OpenType features that
           // could shift glyph widths and break the character grid.
-          fontFeatureSettings:
-            '"liga" 0, "clig" 0, "dlig" 0, "kern" 0, "calt" 0',
+          fontFeatureSettings: '"liga" 0, "clig" 0, "dlig" 0, "kern" 0, "calt" 0',
           fontKerning: 'none',
           fontVariantLigatures: 'none',
 
