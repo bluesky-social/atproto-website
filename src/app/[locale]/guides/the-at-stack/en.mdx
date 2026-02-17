@@ -53,6 +53,7 @@ The PDS handles:
 - secret key management: AT signing key, and PLC rotation key
 - [PLC](https://web.plc.directory/) identity operations and endpoints: change handle; validate, sign, and submit PLC ops
 - email delivery: for reset flows, as well as forwarding moderation mail
+- data synchronisation using repository event streams
 - output `#identity` and `#account` (coming soon) events on repo event stream
 - usually the ability to manage a default handle namespace (base domain)
 - OAuth client flows, including web sign-in pages, and optional MFA
@@ -64,9 +65,19 @@ You can migrate an individual account's data repository freely from one PDS to a
 - https://boat.kelinci.net/, a set of interfaces for repository import and export
 - https://github.com/bluesky-social/goat, our Go AT command-line tool.
 
+## Relays
+
+**Relays** handle all of your events in real-time. The Relay also handles rate limiting and network abuse of individual PDSes to ensure that availability from across the network. Importantly, relays themselves do not interpret records in repositories; they simply store them temporarily and forward them to consumers. Relays produce what is commonly known as a *firehose* of events, which combines the event streams from multiple repositories and PDSes.
+
+Relays can be operated at different scales. Full-network relays track all repositories across the entire network, providing complete coverage. Partial-network relays might focus on specific communities, applications, or regions, reducing resource requirements. Specialized relays could serve particular use cases, such as academic research, brand monitoring, or archive preservation.
+
+A full network relay can be run for about [$20 USD per month](https://bsky.app/profile/did:plc:hdhoaan3xa3jiuq4fg4mefid/post/3lne2wvr5hc2b) on fairly comodity hardware, as of the Sync 1.1 protocol.
+
+There are several relays available, each may have their own rate limits and network policies. The most well-known relays at present are operated by [Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose), and they have documented their [rate limits](https://docs.bsky.app/docs/advanced-guides/rate-limits) on their website.
+
 ## Tap
 
-Tap is used for syncing existing records from the AT network and then continuing to receive new records from the firehose.
+Tap is used for syncing existing records from the AT network from PDS repositories and then continuing to receive new records from the firehose via a relay.
 
 Tap simplifies AT sync by handling the firehose connection, verification, backfill, and filtering. Your application connects to a Tap and receives simple JSON events for only the repos and collections you care about, no need to worry about binary formats for validating cryptographic signatures. Tap features:
 
@@ -81,17 +92,17 @@ Tap simplifies AT sync by handling the firehose connection, verification, backfi
 
 There is a Typescript library for working with Tap at [@atproto/tap](https://www.npmjs.com/package/@atproto/tap).
 
-## App Views and Relay
+## App Views
 
-**Relays** handle all of your events, like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search. The Relay also handles [rate limiting](https://docs.bsky.app/docs/advanced-guides/rate-limits) of individual PDSes to ensure that content can be indexed from across the network.
+**App Views** handle application specific logic like retrieving large-scale metrics (likes, reposts, followers), content discovery (algorithms), and user search.
 
 An App View is the piece that actually assembles your feed and all the other data you see in the app, and is downstream from a Relay's firehose of data. This is a semantically-aware service that produces aggregations across the network and views over some subset of the network. For example, the Relay might crawl to grab data such as a certain post's likes and reposts, and the app view will output the count of those metrics.
 
 There can be an ecosystem of App Views for each lexicon deployed on the network. For example, *Bluesky* currently supports a micro-blogging mode: the `app.bsky` Lexicon. Developers who create new lexicons could deploy a corresponding App View that understands their Lexicon to service their users. Other lexicons could include [video](https://stream.place/), or [long-form blogging](https://leaflet.pub/), or [collaborative coding](https://tangled.org/). By bootstrapping off of an existing Relay, data collation will already be taken care of for these new applications. They can benefit from the critical mass of users already posting on Bluesky and populating their repositories with other Lexicons; they only need to provide the indexing behaviors necessary for their application.
 
-App Views and Relays are both application-level tooling, rather than inherent parts of the AT protocol. Our App View implementation responds to [XRPC](/specs/xrpc) calls — our HTTP API.
+App Views are application-level tooling, rather than inherent parts of the AT protocol. App Views respond to [XRPC](/specs/xrpc) calls over HTTP.
 
-You can find a well-documented example of other App View and Relay implementations in [The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture). Different Atmosphere applications may make different implementation choices.
+You can find a well-documented example of other App View implementations in [The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture). Different Atmosphere applications may make different implementation choices.
 
 ## DID PLC
 
