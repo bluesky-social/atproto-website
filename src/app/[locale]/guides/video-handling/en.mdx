@@ -7,6 +7,8 @@ export const header = {
 
 Video uploads differ slightly from image uploads, since they are typically much larger files and have a significantly long processing time. Individual Atmosphere apps or CDNs may impose additional limits on video uploads.
 
+For this reason, video uploads are typically handled by a side-car service before the final file(s) are uploaded to the PDS as blobs. For example, Bluesky has the `https://video.bsky.app` service for handling the upload and transcoding of videos before they are written to the PDS as a blob.
+
 ## Aspect ratios
 
 Depending on the requirements of your application, you may need to supply an aspect ratio along with video uploads. This metadata can be tricky to compute. If you're developing in a browser, you can load the video into a `<video>` and observe the dimensions when loaded. If you're in a native app, you'll most likely be able to get it via the media picker APIs. Alternatively, you can use a tool like `ffprobe` :
