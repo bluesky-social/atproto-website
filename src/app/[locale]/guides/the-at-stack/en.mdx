@@ -67,7 +67,7 @@ You can migrate an individual account's data repository freely from one PDS to a
 
 ## Relays
 
-**Relays** handle all of your events in real-time. The Relay also handles rate limiting and network abuse of individual PDSes to ensure that availability from across the network. Importantly, relays themselves do not interpret records in repositories; they simply store them temporarily and forward them to consumers. Relays produce what is commonly known as a *firehose* of events, which combines the event streams from multiple repositories and PDSes.
+**Relays** handle all of your events in real-time. The Relay also handles rate limiting and network abuse of individual PDSes to ensure that availability from across the network. Importantly, relays themselves do not interpret records in repositories; they simply store them temporarily and forward them to consumers. Relays produce a [**firehose**](/guides/streaming-data) of events, which combines the [event streams](/specs/event-stream) from multiple repositories and PDSes.
 
 Relays can be operated at different scales. Full-network relays track all repositories across the entire network, providing complete coverage. Partial-network relays might focus on specific communities, applications, or regions, reducing resource requirements. Specialized relays could serve particular use cases, such as academic research, brand monitoring, or archive preservation.
 
