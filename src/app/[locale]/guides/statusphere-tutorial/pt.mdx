@@ -1,8 +1,8 @@
 import {Container} from "@/components/Container"
 import setstatus from "./set-status.png"
-import pdsls from "./pdsls-status.png"
 import tap from "./tap-status.png"
 import feed from "./feed-status.png"
+import taproot from "./taproot-status.png"
 
 export const header = {
   title: 'Create a Social App',
@@ -77,24 +77,24 @@ const migrations: Record<string, Migration> = {
   "001": {} // migrações existentes para tabelas de autenticação
   "002": {
     async up(db: Kysely<unknown>) {
-      
+
 await db.schema
         .createTable("account")
         .addColumn("did", "text", (col) => col.primaryKey())
         .addColumn("handle", "text", (col) => col.notNull())
         .addColumn('active', "integer", (col) => col.notNull().defaultTo(1))
         .execute();
-      
+
 await db.schema
 .createTable("status")
 .addColumn("uri", "text", (col) => col.primaryKey())
 .addColumn('authorDid', "text", (col) => col.notNull())
-        
+
 .addColumn("status", "text", (col) => col.notNull())
         .addColumn("createdAt", "text", (col) => col.notNull())
         .addColumn("indexedAt", "text", (col) => col.notNull())
         .addColumn('current', "integer", (col) => col.notNull().defaultTo(0))
-        
+
 .execute();
       await db.schema
         .createIndex("status_current_idx")
@@ -122,14 +122,14 @@ import { getOAuthClient } from "@/lib/auth/client";
 import * as xyz from "@/src/lexicons/xyz";
 export async function POST(request: NextRequest) {
   const session = await getSession();
-  
+
 if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { status } = await request.json();
   if (!status || typeof status !== 'string') {
     return NextResponse.json({ error: "Status is required" }, { status: 400 });
-  
+
 }
   const client = await getOAuthClient();
 const oauthSession = await client.restore(session.did);
@@ -137,7 +137,7 @@ const lexClient = new Client(oauthSession);
 const createdAt = new Date().toISOString();
 const res = await lexClient.create(xyz.statusphere.status, {
 status,
-    
+
 criadoEm,
   });
   retorne NextResponse.json({
@@ -160,10 +160,10 @@ export function StatusPicker({ currentStatus }: StatusPickerProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<string | null>(currentStatus ?? null);
   const [loading, setLoading] = useState(false);
-  
+
 função assíncrona handleSelect(emoji: string) {
     setLoading(true);
-    
+
 setSelected(emoji);
     try {
       const res = await fetch("/api/status", {
@@ -171,14 +171,14 @@ setSelected(emoji);
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: emoji }),
       });
-      
+
 if (!res.ok) {
         throw new Error("Falha ao atualizar o status");
       }
       router.refresh();
     } catch (err) {
       console.error("Falha ao atualizar o status:", err);
-      
+
 setSelected(currentStatus ?? null);
     } finally {
       setLoading(false);
@@ -188,7 +188,7 @@ setSelected(currentStatus ?? null);
     <div>
       <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
 Defina seu status
-      
+
 </p>
       <div className="flex flex-wrap gap-2">
         {EMOJIS.map((emoji) => (
@@ -197,14 +197,14 @@ Defina seu status
             onClick={() => handleSelect(emoji)}
             disabled={loading}
             className={`text-2xl p-2 rounded-lg transition-all
-              
+
 ${selected === emoji
                 ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500"
                 : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
               }
               disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            
+
 {emoji}
           </button>
         ))}
@@ -220,26 +220,26 @@ import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { StatusPicker } from "@/components/StatusPicker";
 export default async function Home() {
-  
+
 const session = await getSession();
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
       <main className="w-full max-w-md mx-auto p-8">
         <div className="text-center mb-8">
-          
+
 <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
 Statusphere
 </h1>
 <p className="text-zinc-600 dark:text-zinc-400">
 Defina seu status na Atmosfera
-          
+
 </p>
         </div>
         <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
           {session ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
-                
+
 <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   Conectado
                 </p>
@@ -262,7 +262,7 @@ Execute o aplicativo com `pnpm dev` — você poderá fazer login e selecionar u
 </Container>
 Você ainda não terá como ver seu status neste aplicativo, mas pode procurar sua conta no [atproto.at](https://atproto.at/) e verificar o `xyz.statusphere.status` Lexicon para ver esse registro.
 <Container>
-<Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+<Image src={taproot} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 Em seguida, você adicionará recursos de sincronização para realmente receber atualizações de status.
 ## Parte 4: Sincronização em tempo real com o Tap
@@ -274,7 +274,7 @@ let _tap: Tap | null = null;
 export const getTap = (): Tap => {
   if (!_tap) {
     _tap = new Tap(TAP_URL);
-  
+
 }
   return _tap;
 };
@@ -291,7 +291,7 @@ const status = aguardar db
 .selectAll()
 .where("authorDid", "=", did)
 .orderBy('createdAt', "desc")
-    
+
 .limit(1)
     .executeTakeFirst();
   return status ?? null;
@@ -303,7 +303,7 @@ exportar função assíncrona insertStatus(data: StatusTable) {
       await tx
         .insertInto("status")
         .values(data)
-        
+
 .onConflict((oc) =>
           oc.column("uri").doUpdateSet({
             status: data.status,
@@ -313,7 +313,7 @@ exportar função assíncrona insertStatus(data: StatusTable) {
         )
         .execute();
       setCurrStatus(tx, data.authorDid);
-    
+
 });
 }
 exportar função assíncrona deleteStatus(uri: AtUri) {
@@ -322,7 +322,7 @@ exportar função assíncrona deleteStatus(uri: AtUri) {
 .execute(async (tx) => {
 aguardar tx.deleteFrom("status").where('uri', "=", uri.toString()).execute();
 aguardar setCurrStatus(tx, uri.hostname);
-    
+
 });
 }
 exportar função assíncrona upsertAccount(data: AccountTable) {
@@ -335,7 +335,7 @@ handle: data.handle,
 active: data.active,
 }),
 )
-    
+
 .execute();
 }
 exportar função assíncrona deleteAccount(did: string) {
@@ -360,7 +360,7 @@ await tx
         .selectFrom("status")
         .select("uri")
         .where('authorDid', "=", did)
-        
+
 .orderBy("createdAt", "desc")
         .limit(1),
     )
@@ -374,7 +374,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { parseTapEvent, assureAdminAuth } from "@atproto/tap";
 import { AtUri } from "@atproto/syntax";
 import {
-  
+
 upsertAccount,
   insertStatus,
   deleteStatus,
@@ -387,7 +387,7 @@ exportar função assíncrona POST(solicitação: NextRequest) {
   if (TAP_ADMIN_PASSWORD) {
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
-      
+
 retorne NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 tente {
@@ -395,14 +395,14 @@ assureAdminAuth(TAP_ADMIN_PASSWORD, authHeader);
 } catch {
 retorne NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 }
-  
+
 }
   const body = await request.json();
 const evt = parseTapEvent(body);
 // Tratar alterações de conta/identidade
 if (evt.type === "identity") {
 if (evt.status === "deleted") {
-      
+
 await deleteAccount(evt.did);
     } else {
       await upsertAccount({
@@ -414,13 +414,13 @@ await deleteAccount(evt.did);
 }
 // Tratar alterações no registro de status
 if (evt.type === "record") {
-    
+
 const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
     if (evt.action === "create" || evt.action === "update") {
       let record: xyz.statusphere.status.Main;
       try {
         record = xyz.statusphere.status.$parse(evt.record);
-      
+
 } catch {
         return NextResponse.json({ success: false });
       }
@@ -428,7 +428,7 @@ const uri = AtUri.make(evt.did, evt.collection, evt.rkey);
         uri: uri.toString(),
         authorDid: evt.did,
         status: record.status,
-        
+
 criadoEm: registro.criadoEm,
         indexadoEm: new Date().toISOString(),
         atual: 1,
@@ -462,7 +462,7 @@ curl -H 'Content-Type: application/json' -d '{"dids":["DID"]}' http://localhost:
 ```
 Reinicie seu aplicativo com `pnpm dev`, conclua o fluxo de login e você deverá encontrar seu status salvo destacado:
 <Container>
-  
+
 <Image src={tap} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 ## Parte 5: Exibindo identificadores e feeds
@@ -480,7 +480,7 @@ export async function getAccountHandle(did: string): Promise<string | null> {
   const account = await db
     .selectFrom("account")
     .select("handle")
-    
+
 .where("did", "=", did)
     .executeTakeFirst();
 if (account) return account.handle;
@@ -489,7 +489,7 @@ try {
 const didDoc = await getTap().resolveDid(did);
 if (!didDoc) return null;
 return getHandle(didDoc) ?? null;
-  
+
 } catch {
     retornar null;
   }
@@ -523,14 +523,14 @@ import {
   getAccountStatus,
   getRecentStatuses,
   getTopStatuses,
-  
+
 getAccountHandle,
 } from "@/lib/db/queries";
 import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { StatusPicker } from "@/components/StatusPicker";
 export default async function Home() {
-  
+
 const sessão = aguardar getSession();
   const [estatutos, topStatuses, accountStatus, accountHandle] =
     aguardar Promise.all([
@@ -543,7 +543,7 @@ const sessão = aguardar getSession();
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
       <main className="w-full max-w-md mx-auto p-8">
         <div className="text-center mb-8">
-          
+
 <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
 Statusphere
 </h1>
@@ -553,20 +553,20 @@ Defina seu status no Atmosphere
         </div>
         {session ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
-            
+
 <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Conectado como @{accountHandle ?? session.did}
 </p>
 <LogoutButton />
-            
+
 </div>
             <StatusPicker status atual={status da conta?.status} />
 </div>)
  : (
 <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 mb-6">
 <LoginForm />
-          
+
 </div>
         )}
         {topStatuses.length > 0 && (
@@ -574,44 +574,44 @@ Defina seu status no Atmosphere
             <h3 className="text-sm font-medium text-zinc-500 dark: text-zinc-400 mb-3">
 Status principais
 </h3>
-            
+
 <div className="flex flex-wrap gap-2">
               {topStatuses.map((s) => (
                 <span
                   key={s.status}
                   className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-sm"
-                
+
 >
                   <span className="text-lg">{s.status}</span>
                   <span className="text-zinc-500 dark:text-zinc-400">
                     {String(s.count)}
                   </span>
-                
+
 </span>
               ))}
 </div>
 </div>
 )}
 <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
-          
+
 <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
 Recentes
 </h3>
 {statuses.length === 0 ? (
 <p className="text-zinc-500 dark:text-zinc-400 text-sm">
 Ainda não há status. Seja o primeiro!
-            
+
 </p>
           ) : (
 <ul className="space-y-3">
 {statuses.map((s) => (
 <li key={s.uri} className="flex items-center gap-3">
 <span className="text-2xl">{s.status}</span>
-                  
+
 <span className="text-zinc-600 dark:text-zinc-400 text-sm">
                     @{s.handle}
                   </span>
-                  
+
 <span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
                     {timeAgo(s.createdAt)}
                   </span>
@@ -629,7 +629,7 @@ const agora = Date.now();
 const então = new Date(dateString).getTime();
 const segundos = Math.floor((agora - então) / 1000);
 if (segundos < 60) return "agora mesmo";
-  
+
 const minutos = Math.floor(segundos / 60);
   if (minutos < 60) return `${minutos}m`;
 const horas = Math.floor(minutos / 60);
@@ -644,5 +644,5 @@ Uma última coisa — lembre-se de que você adicionou apenas uma única fonte d
 ```bash
 tap run \
   --webhook-url=http://localhost:3000/api/webhook \
-  
+
 --collection-filters=xyz.statusphere.status \  --signal-collection=xyz.statusphere.status```... e você começará a ver os status de outros usuários na rede!<Container>  <Image src={feed} alt="" className="w-full max-w-md mx-auto" /></Container>## ConclusãoVocê criou um aplicativo Atproto completo que usa OAuth para fazer login, um Lexicon personalizado para definir registros de status e Tap para sincronizar registros em tempo real.Isso lhe dá todas as ferramentas necessárias para continuar criando no AT Protocol. Você pode encontrar mais guias e tutoriais em nossa seção [Guias](/guides) e mais exemplos de aplicativos no repositório [Cookbook](https://github.com/bluesky-social/cookbook/). Boa construção!

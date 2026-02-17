@@ -1,9 +1,9 @@
 import {Container} from "@/components/Container"
 import {Heading} from "@/components/Heading"
 import setstatus from "./set-status.png"
-import pdsls from "./pdsls-status.png"
 import tap from "./tap-status.png"
 import feed from "./feed-status.png"
+import taproot from "./taproot-status.png"
 
 export const header = {
   title: 'ソーシャルアプリの作成',
@@ -42,7 +42,7 @@ npm install -g @atproto/lex
 
 まず、プロジェクトにLexiconを追加します。
 
-<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading> 
+<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading>
 
 [Lexicon](/guides/lexicon)はAtprotoのレコードスキーマを定義します。このチュートリアル向けに、新しい"Statusphere" Lexicon（`xyz.statusphere.status`）をすでに公開しています。`lex`を使ってこのLexiconを取得し、プロジェクトに取り込みます。
 
@@ -305,7 +305,7 @@ export default async function Home() {
 この時点ではアプリ内で自分のステータスを表示できませんが、[atproto.at](https://atproto.at/)でアカウントを確認し、`xyz.statusphere.status` Lexiconを見るとレコードを確認できます。
 
 <Container>
-  <Image src={pdsls} alt="" className="w-full max-w-md mx-auto" />
+  <Image src={taproot} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
 次に、実際にステータス更新を受け取るための同期機能を追加します。
