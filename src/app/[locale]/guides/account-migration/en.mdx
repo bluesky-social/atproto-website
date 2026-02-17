@@ -58,7 +58,7 @@ Because identity operations are sensitive, they require an additional security t
 
 This token is included as part of a call to `com.atproto.identity.signPlcOperation` on the old PDS, along with the requested DID fields (new signing key, rotation keys, PDS location, etc). The old PDS will validate the request, sign using the PDS-managed PLC rotation key, and return the signed PLC operation. The operation will not have been submitted to any PLC directory at this point in time.
 
-The user is then recommended to submit the operation to the new PDS (using the `com.atproto.identity.submitPlcOperation` endpoint), which will validate that the changes are "safe" (aka, that they enable the the PDS to help manage the identity and atproto account), and then submit it to the PLC directory.
+The user is then recommended to submit the operation to the new PDS (using the `com.atproto.identity.submitPlcOperation` endpoint), which will validate that the changes are "safe" (aka, that they enable the PDS to help manage the identity and atproto account), and then submit it to the PLC directory.
 
 With the identity successfully updated, the new PDS is now the "current" host for the account from the perspective of the entire network. This will be immediately apparent to new services which resolve the identity. Existing services that consume from the firehose will be alerted by the `#identity` event. Other services, which may have now-stale cached identity metadata for the account, will either refresh when the cache expires, or should refresh their cache when they encounter errors (such as invalid service auth signatures).
 
