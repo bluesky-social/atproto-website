@@ -1,0 +1,27 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'ソーシャルグラフ',
+  description: 'ATプロトコルのソーシャルグラフの操作',
+}
+
+<Heading level={2} id="querying-social-graphs">ソーシャルグラフの取得</Heading>
+
+ATプロトコル上に構築された新しいアプリケーションは、既存のソーシャルグラフデータ（`app.bsky.graph.getFollows` Lexicon RPCエンドポイントで得られるようなもの）を活用して、新しいユースケースを構築し、既存のユーザーベースでブートストラップできます。これにより、[A Social Filesystem](https://overreacted.io/a-social-filesystem/)のようなネイティブATプロトコルの概念が得られます。
+
+このアプローチの別の例として、[『Exploring AT Protocol with Python」](https://davidgasquez.com/exploring-atproto-python/)も参照してください。
+
+<Heading level={2} id="backlinks">バックリンク</Heading>
+
+ATプロトコルからソーシャルグラフデータを取得する強力な方法として、**バックリンク**があります。バックリンクを取得すると、特定のレコード*や*ID*に*リンクしているすべてのレコードを解決できます。
+
+[Microcosm](https://constellation.microcosm.blue)はバックリンクを操作するための一連のリソースを提供します。ATプロトコルのレコードは全て誰でも取得可能で、`at://` URIで指定可能なため、これによりネストされたAPIクエリを個別のURLにエンコードできるようになります。一例として、[Microcosm](https://constellation.microcosm.blue/xrpc/blue.microcosm.links.getBacklinks?subject=at%3A%2F%2Fdid%3Aplc%3Aa4pqq234yw7fqbddawjo7y35%2Fapp.bsky.feed.post%2F3m237ilwc372e&source=app.bsky.feed.like%3Asubject.uri&limit=16)はこれを行います。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [読み取りと書き込み](/guides/reads-and-writes)
+- [データ読み取り](/guides/reading-data)
+- [データ書き込み](/guides/writing-data)
+- [アカウントと削除](/guides/account-lifecycle)
+- [レコードキー仕様](/specs/record-key)
+- [URIスキーム](/specs/at-uri-scheme)

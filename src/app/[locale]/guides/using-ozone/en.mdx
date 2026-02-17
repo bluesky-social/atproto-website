@@ -1,0 +1,137 @@
+import {Container} from "@/components/Container"
+import acknowledged from "./acknowledged.png"
+import confirm from "./confirm.png"
+import credentials from "./credentials.png"
+import eventstream from "./event-stream.png"
+import labeler from "./labeler-account-view.png"
+import login from "./login.png"
+import actions from "./moderation-actions.png"
+import reported from "./ozone-post-reported.png"
+import report from "./report-post.png"
+import reporting from "./reporting-interface.png"
+import repositories from "./search-repositories.png"
+import welcome from "./welcome.png"
+import plc from "./plc-update.png"
+
+export const header = {
+  title: 'Using Ozone',
+  description: 'Working with the Ozone moderation interface',
+}
+
+## Getting started
+
+Ozone is a web-based moderation interface that allows you to run your own Labeler service, and review and content reports efficiently. This guide will walk you through installing and using Ozone.
+
+## Installing Ozone
+
+Ozone should be run on a dedicated VPS, from a cloud provider like [OVHcloud](https://us.ovhcloud.com/vps/), [DigitalOcean](https://digitalocean.com/), or [Vultr](https://vultr.com/). 1-2GB of memory and 1-2 CPU cores is sufficient to get started.
+
+**To install Ozone**, refer to [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md) in the [Ozone GitHub repository](https://github.com/bluesky-social/ozone).
+
+<Note>
+Before setting up your Ozone service you should create a new account on the network, separate from your main account. This is the account that subscribers to your labeler will interact with: accounts for labelers appear differently in Bluesky than normal accounts.
+</Note>
+
+After completing the server-side installation, you can access the Ozone web interface by navigating to your server's IP address or domain name in a web browser:
+
+<Container>
+  <Image src={login} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+From here, you can begin configuring your Labeler service.
+
+## Configuring Ozone
+
+First, provide the credentials of the account you created for your labeler service:
+
+<Container>
+  <Image src={credentials} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Make sure to provide your full handle, including the `.bsky.social` suffix (or your custom domain if applicable).
+
+Next, you'll be prompted to update your account registration with the [PLC](https://web.plc.directory/), to mark this account as a moderation service. This will trigger an email verification. Verify that you are using the correct account and domain name, and then provide the verification code:
+
+<Container>
+  <Image src={plc} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Finally, confirm that you will be using this account as a labeler service. This publishes an [AT Record](https://atproto.at/viewer?uri=did:plc:wwjhjtgw5ksxrzdswtvnsnjs/app.bsky.labeler.service/self) of the type `app.bsky.labeler.service` to your account.
+
+<Container>
+  <Image src={confirm} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Now your Ozone instance is set up and ready to use!
+
+<Container>
+  <Image src={welcome} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+## Submitting and managing reports
+
+Now, you'll create and action an example moderation report. In Bluesky or another application, sign back in to a regular (non-labeler) account. Then, navigate to the account page for your labeler service.
+
+<Container>
+  <Image src={labeler} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Click the "Subscribe to Labeler" button to subscribe your account to the labeler service. This allows your account to submit reports to this labeler, and receive labels from it.
+
+Next, navigate to a post you wish to report, and select "Report Post":
+
+<Container>
+  <Image src={report} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Because this is just a tutorial, we're going to report a post from Bluesky's own team for being too enthusiastic. This would not normally be a reason to report a post, but it works for our example!
+
+<Container>
+  <Image src={reporting} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Fill out the reporting interface as desired. Make sure select your labeler as the moderation service to send the report to. Then, submit the report.
+
+Now, return to the Ozone interface. You should see the new report listed in the *Reports* section:
+
+<Container>
+  <Image src={reported} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Click on the report to view its details. From here, you can review the reported content and take appropriate moderation actions.
+
+<Container>
+  <Image src={actions} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+In this case, the most straightforward action is to acknowledge the report without taking further action. Select "Ackonwledge" from the drop-down, provide a note, then submit the action. You can use keyboard shortcuts to speed up moderation actions — for example, `S` for Submit.
+
+<Container>
+  <Image src={acknowledged} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+If you had wanted to mute the user for subscribers to your labeler, you could have selected "Mute" from the action drop-down instead. Refer to [Ozone Concepts](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md#concepts) for an explanation of each action.
+
+You can review the event stream of reports and actions in the *Events* section:
+
+<Container>
+  <Image src={eventstream} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Or, use the *Repositories* section to search reports by user, content, or action:
+
+<Container>
+  <Image src={repositories} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+## Next steps
+
+You now have an understanding of the Ozone moderation flow. Ozone also allows you to create additional user accounts with different permissions, to help manage your moderation workload. To aggregate the data from your Ozone instance, see the [#OzoneInsights](https://bsky.app/search?q=%23ozoneinsights) feed for solutions.
+
+## Further Reading and Resources
+
+- [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
+- [Creating a labeler](/guides/creating-a-labeler)
+- [Subscriptions](/guides/subscriptions)
+- [Label Specs](/specs/label)

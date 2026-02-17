@@ -1,0 +1,138 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import acknowledged from "./acknowledged.png"
+import confirm from "./confirm.png"
+import credentials from "./credentials.png"
+import eventstream from "./event-stream.png"
+import labeler from "./labeler-account-view.png"
+import login from "./login.png"
+import actions from "./moderation-actions.png"
+import reported from "./ozone-post-reported.png"
+import report from "./report-post.png"
+import reporting from "./reporting-interface.png"
+import repositories from "./search-repositories.png"
+import welcome from "./welcome.png"
+import plc from "./plc-update.png"
+
+export const header = {
+  title: 'Ozoneの利用',
+  description: 'Ozoneモデレーションインターフェースの運用',
+}
+
+<Heading level={2} id="getting-started">はじめる</Heading>
+
+Ozoneはラベラーサービスを動かし、レビューやコンテンツ報告を効率的に行うためのウェブベースのモデレーションインターフェースです。このガイドではOzoneのインストールと利用について解説します。
+
+<Heading level={2} id="installing-ozone">Ozoneのインストール</Heading>
+
+Ozoneは、[OVHcloud](https://us.ovhcloud.com/vps/)、[DigitalOcean](https://digitalocean.com/)、[Vultr](https://vultr.com/)などのクラウドプロバイダーの専用VPS上で実行してください。1～2GBのメモリと1～2個のCPUコアがあれば十分です。
+
+**Ozoneをインストールする**には、[Ozone GitHubリポジトリ](https://github.com/bluesky-social/ozone)の[HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)を参照してください。
+
+<Note>
+Ozoneサービスを設定する前に、メインアカウントとは別に、ネットワーク上に新しいアカウントを作成する必要があります。これはラベラー利用者との窓口になるアカウントです。Blueskyでは、ラベラーアカウントは通常のアカウントとは異なる表示になります。
+</Note>
+
+サーバー側のインストールが完了したら、ウェブブラウザーでサーバーのIPアドレスまたはドメイン名でOzoneウェブインターフェースにアクセスできます。
+
+<Container>
+  <Image src={login} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+ここから、ラベラーサービスの設定を開始できます。
+
+<Heading level={2} id="configuring-ozone">Ozoneの設定</Heading>
+
+まず、ラベラーサービス用に作成したアカウントの資格情報を指定します。
+
+<Container>
+  <Image src={credentials} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+`.bsky.social`サフィックス（もしくはカスタムドメイン）を含む完全なハンドルを必ず指定してください。
+
+次に、このアカウントをモデレーションサービスとしてマークするために、[PLC](https://web.plc.directory/)上のアカウント情報更新を要求します。この時、電子メールの確認がトリガーされます。正しいアカウントとドメイン名を使用していることを確認し、確認コードを入力します。
+
+<Container>
+  <Image src={plc} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+最後に、このアカウントをラベラーサービスとして使用することを承認します。これにより、`app.bsky.labeler.service`型の[ATレコード](https://atproto.at/viewer?uri=did:plc:wwjhjtgw5ksxrzdswtvnsnjs/app.bsky.labeler.service/self)がアカウントに公開されます。
+
+<Container>
+  <Image src={confirm} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+これで、あなたのOzoneインスタンスの設定が完了し、利用する準備ができました。
+
+<Container>
+  <Image src={welcome} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+<Heading level={2} id="submitting-and-managing-reports">報告の送信と管理</Heading>
+
+次に、モデレーション報告をの例を作成して処理します。Blueskyまたは別のアプリケーションで、通常の（ラベラーではない）アカウントにサインインし直します。次に、ラベラーサービスのアカウントページに移動します。
+
+<Container>
+  <Image src={labeler} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+「ラベラーを登録する（Subscribe to Labeler）」ボタンをクリックして、アカウントをラベラーサービスに登録します。これにより、アカウントはこのラベラーに報告を送信したり、ラベルを受け取ったりできるようになります。
+
+次に、報告したい投稿に移動し、「投稿を報告（Report Post）」を選択します。
+
+<Container>
+  <Image src={report} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+これは単なるチュートリアルなので、Blueskyチームからの投稿があまりにも熱がこもっていることを報告します。通常、これは投稿を報告する理由にはなりませんが、例としては機能します。
+
+<Container>
+  <Image src={reporting} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+必要に応じて報告インターフェースに入力します。報告の送信先モデレーションサービスとしてラベラーを必ず選択してください。その後、報告を提出します。
+
+ここで、Ozoneインターフェースに戻ります。新しい報告が*Reports*セクションに列挙されているはずです。
+
+<Container>
+  <Image src={reported} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+報告をクリックして詳細を表示します。ここから、報告されたコンテンツを確認し、適切な管理措置を講じることができます。
+
+<Container>
+  <Image src={actions} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+この場合、最も簡単なアクションは、それ以上のアクションをとらずにレポートを承認することです。ドロップダウンから「Ackonwledge」を選択し、メモを入力してアクションを送信します。キーボードショートカットを使用すると、モデレーションアクションを高速化できます。たとえば、Submitの「S」で送信できます。
+
+<Container>
+  <Image src={acknowledged} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+ラベラーの登録者に対してユーザーをミュートしたい場合は、代わりにアクションのドロップダウンから「Mute」を選択することもできます。各アクションの説明については、[OzoneのConcepts](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md#concepts)を参照してください。
+
+*Events*セクションで報告とアクションのイベントストリームを確認できます。
+
+<Container>
+  <Image src={eventstream} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+または、*Repositories*セクションを使用して、ユーザー、コンテンツ、またはアクション別に報告を検索します。
+
+<Container>
+  <Image src={repositories} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+<Heading level={2} id="next-steps">次のステップ</Heading>
+
+これで、Ozoneによるモデレーションの流れが理解できました。Ozoneでは、モデレーションワークロードの管理に役立つ、さまざまな権限を持つ追加のユーザーアカウントを作成することもできます。Ozoneインスタンスからデータを集計するには、[#OzoneInsights](https://bsky.app/search?q=%23ozoneinsights)フィードを参照してください。
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [モデレーション](/guides/moderation)
+- [ラベル](/guides/labels)
+- [ラベラーの作成](/guides/creating-a-labeler)
+- [サブスクリプション](/guides/subscriptions)
+- [ラベル仕様](/specs/label)

@@ -1,0 +1,81 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: '読み取りと書き込み',
+  description: 'Atmosphereのレコードを読み書きする',
+}
+
+<Heading level={2} id="at-records">ATレコード</Heading>
+
+ATプロトコルは、ウェブの基本的な構成要素を用いてネットワークの異なるノードにユーザーデータを分散します。ATプロトコルはアプリケーションを相互接続し、各バックエンドが個々のデータリポジトリに含まれるアカウントやコンテンツなどの状態を共有します。Atprotoアプリで行う操作の多くは、これらのデータリポジトリの読み書きを伴います。
+
+詳しい背景は、[分散システムエンジニアのためのAtproto](/articles/atproto-for-distsys-engineers)と[atprotoの基本理念](/articles/atproto-ethos)を参照してください。
+
+<Heading level={2} id="prerequisites">前提条件</Heading>
+
+ATデータリポジトリの読み書きには認証済みのクライアントが必要です。[パスワード](/guides/sdk-auth)または[OAuth](/guides/oauth-patterns)で認証できます。このセクションのガイドは、既に認証済みクライアントを設定していることを前提としています。
+
+<Heading level={2} id="api-methods">APIメソッド</Heading>
+
+[認証](/guides/sdk-auth#creating-a-client)後に、他のAPIリクエストを実行できるようになります。
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    APIリクエストを行うには、特定の[Lexicon](/guides/lexicon)を指定する必要があります。例えば、Blueskyの投稿は`app.bsky.feed.post` Lexiconで提供されます。
+
+    [Lexiconのインストール](/guides/installing-lexicons)に記載の通り、`lex`を使って`app.bsky.feed.post`と`app.bsky.actor.profile`のLexiconをインストールしてください。
+
+    ```bash
+    npm install -g @atproto/lex
+    lex install app.bsky.feed.post app.bsky.actor.profile
+    lex build
+    ```
+
+    これによりプロジェクト内にLexicon用のTypeScriptの型が生成されます。インストールしたLexiconには`import`文でアクセスできます。
+
+    ```tsx
+    import * as app from './lexicons/app.js'
+    ```
+
+    これによりLexiconのAPIメソッドにアクセスできるようになります。これで[リクエストを行う](/guides/reading-data)準備が整いました。
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    import (
+      "context"
+      appbsky "github.com/bluesky-social/indigo/api/bsky"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      lexutil "github.com/bluesky-social/indigo/lex/util"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
+
+    ctx := context.Background()
+    ```
+    SDKライブラリをインポートしたら、そのまま[リクエストの作成](/guides/reading-data)に進みましょう。
+
+    <Note>
+    Goインポートの仕組み上、`bsky`ライブラリと`util`ライブラリを直接使用していない場合は、これらを[空インポート](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html)する必要があることに注意してください。
+
+    ```go
+    _ "github.com/bluesky-social/indigo/api/bsky"
+    _ "github.com/bluesky-social/indigo/lex/util"
+    ```
+    </Note>
+
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [データ読み取り](/guides/reading-data)
+- [データ書き込み](/guides/writing-data)
+- [アカウントと削除](/guides/account-lifecycle)
+- [ソーシャルグラフ](/guides/social-graph)
+- [レコードキー仕様](/specs/record-key)
+- [URIスキーム](/specs/at-uri-scheme)

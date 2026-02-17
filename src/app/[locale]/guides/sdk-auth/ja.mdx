@@ -1,0 +1,119 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+
+export const header = {
+  title: 'SDK認証',
+  description: 'SDKでの認証',
+}
+
+<Heading level={2} id="password-authentication">パスワード認証</Heading>
+
+パスワード認証を使用している場合は、メインのアカウントパスワードではなく[アプリパスワード](/specs/xrpc#app-passwords)を生成するべきです。Blueskyを使用している場合は、[アカウント設定](https://bsky.app/settings/app-passwords)でアプリパスワードを生成できます。
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    まずは`PasswordSession`をインポートし、`PasswordSession.login()`に資格情報を与えて`session`を生成します。
+
+    ```tsx
+    import { PasswordSession } from '@atproto/lex-password-session'
+
+    const result = await PasswordSession.login({
+      service: 'https://bsky.social', // or your PDS host
+      identifier: 'your-handle.bsky.social',
+      password: 'your-app-password',
+    })
+
+    if (result.success) {
+        const session = result.value
+    }
+    ```
+
+    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/auth)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。どちらの方法でも同じ認証済み`session`が生成されます。
+    </TabPanel>
+    <TabPanel value="go">
+    まずは`atproto`と`xrpc`ライブラリをインポートし、`&xrpc.Client{}`を作って`ServerCreateSession()`に資格情報を与えます。
+
+    ```go
+    import (
+      "context"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
+
+    func main() {
+      ctx := context.Background()
+
+      client := &xrpc.Client{
+        Host: "https://bsky.social", // or your PDS host
+      }
+
+      session, _ := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
+        Identifier: "your-handle.bsky.social",
+        Password:   "your-app-password",
+      })
+    }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+<Heading level={2} id="client-sessions">クライアントセッション</Heading>
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ログインした`session`が取得できたら、`Client`インスタンスを作成してデータの読み書きができます。
+
+    ```tsx
+    import { Client } from '@atproto/lex'
+    const client = new Client(session)
+
+    // 認証付きでAPIを呼び出す
+    console.log('Logged in as:', session.did)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    ログインした`client`が取得できたら、認証情報を入力してAPIを呼び出します。
+
+    ```go
+    // 後続のリクエストのために認証情報をクライアントに保存します
+    client.Auth = &xrpc.AuthInfo{
+      AccessJwt:  session.AccessJwt,
+      RefreshJwt: session.RefreshJwt,
+      Handle:     session.Handle,
+      Did:        session.Did,
+    }
+
+    fmt.Printf("Logged in as: %s (%s)\n", session.Handle, session.Did)
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+ここから直接[APIリクエストの作成](/guides/reads-and-writes)に進めます。
+
+<Heading level={2} id="api-tokens">APIトークン</Heading>
+
+ログインのレート制限は一般的に他のAPI操作よりも低く設定されています。短期間に何度もログインメソッドを呼び出すとレート制限が発動する可能性があります。認証するためにログイン用メソッドを呼ぶのはセッション毎に一度だけで十分です。
+
+ログインメソッドが呼ぶ`com.atproto.server.createSession` APIエンドポイントは、2つのAPIトークンを含むセッションオブジェクトを返します。
+* `accessJwt`：数分で期限が切れる、リクエストを認証するために使用されるアクセストークン
+* `refreshJwt`：期限が長く、アクセストークンを更新するためだけに使用されるリフレッシュトークン
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [認証](/guides/auth)
+- [OAuthパターン](/guides/oauth-patterns)
+- [スコープ](/guides/scopes)
+- [権限リクエスト](/guides/permission-sets)
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)

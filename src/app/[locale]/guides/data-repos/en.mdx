@@ -1,6 +1,6 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
 
-export const metadata = {
+export const header = {
   title: 'Personal Data Repositories',
   description:
     'A guide to the AT Protocol repo structure.',
@@ -47,8 +47,8 @@ A “commit” to a data repository is simply a keypair signature over a Root no
 Multiple types of identifiers are used within a Personal Data Repository.
 
 <DescriptionList>
-  <Description title="DIDs"><a href="https://w3c.github.io/did/">Decentralized IDs (DIDs)</a> identify data repositories. They are broadly used as user IDs, but since every user has one data repository then a DID can be considered a reference to a data repository. The format of a DID varies by the “DID method” used but all DIDs ultimately resolve to a keypair and a list of service providers. This keypair can sign commits to the data repository.</Description>
-  <Description title="CIDs"><a href="https://github.com/multiformats/cid">Content IDs (CIDs)</a> identify content using a fingerprint hash. They are used throughout the repository to reference the objects (nodes) within it. When a node in the repository changes, its CID also changes. Parents which reference the node must then update their reference, which in turn changes the parent’s CID as well. This chains all the way to the Commit node, which is then signed.</Description>
-  <Description title="NSIDs"><a href="/specs/nsid">Namespaced Identifiers (NSIDs)</a> identify the Lexicon type for groups of records within a repository.</Description>
-  <Description title="rkey"><a href="/specs/record-key">Record Keys</a> ("rkeys") identify individual records within a collection in a given repository. The format is specified by the collection Lexicon, with some collections having only a single record with a key like "self", and other collections having many records, with keys using a base32-encoded timestamp called a Timestamp Identifier (TID).</Description>
+  <Description title="DIDs">[Decentralized IDs (DIDs)](https://w3c.github.io/did/) identify data repositories. They are broadly used as user IDs, but since every user has one data repository then a DID can be considered a reference to a data repository. The format of a DID varies by the “DID method” used but all DIDs ultimately resolve to a keypair and a list of service providers. This keypair can sign commits to the data repository.</Description>
+  <Description title="CIDs">[Content IDs (CIDs)](https://github.com/multiformats/cid) identify content using a fingerprint hash. They are used throughout the repository to reference the objects (nodes) within it. When a node in the repository changes, its CID also changes. Parents which reference the node must then update their reference, which in turn changes the parent’s CID as well. This chains all the way to the Commit node, which is then signed.</Description>
+  <Description title="NSIDs">[Namespaced Identifiers (NSIDs)](/specs/nsid) identify the Lexicon type for groups of records within a repository.</Description>
+  <Description title="rkey">[Record Keys ("rkeys")](/specs/record-key) identify individual records within a collection in a given repository. The format is specified by the collection Lexicon, with some collections having only a single record with a key like "self", and other collections having many records, with keys using a base32-encoded timestamp called a Timestamp Identifier (TID).</Description>
 </DescriptionList>

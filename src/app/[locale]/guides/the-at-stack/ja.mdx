@@ -1,0 +1,132 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import crawling from "./crawling.png"
+import did from "./did.png"
+import feeds from "./feeds.png"
+
+export const header = {
+  title: 'ATスタック',
+  description:
+    'ATプロトコルスタックを構成するもの',
+}
+
+<Heading level={2} id="the-authenticated-transfer-protocol">Authenticated Transferプロトコル</Heading>
+
+ATプロトコル（Authenticated Transfer Protocol）は公開会話の標準であり、ソーシャルアプリを構築するためのオープンソースフレームワークです。
+
+ソーシャルアプリ上のユーザーID、フォロー、データの標準形式を作成し、アプリの相互運用とユーザーの自由なアプリ間移動を可能にします。これは、アカウントのポータビリティを備えたフェデレーションネットワークです。
+
+<Heading level={2} id="decentralized-architecture">分散アーキテクチャ</Heading>
+
+ATはフェデレーションネットワークモデルでリポジトリを同期します。フェデレーションにより、ネットワークが使いやすく、確実に利用できることが保証されます。リポジトリデータは、標準のウェブテクノロジー（HTTPおよびWebSocket）を介してサーバー間で同期されます。
+
+[**パーソナルデータサーバー**（PDS）](/guides/the-at-stack#pds)は、クラウドにおけるあなたのホームです。データをホストし、配布し、IDを管理し、他のサービスへのリクエストを調整してビューを提供してくれます。
+
+**リレー**は広域的な指標（いいね数、リポスト数、フォロワー数）の取得、コンテンツ発見（アルゴリズム）、ユーザー検索など、すべてのイベントを処理します。
+
+<Container>
+  <Image src={crawling} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+ATプロトコルは、オープンウェブそのものをモデルにした「小さな世界へのフォールバックを伴う大きな世界」という設計です。ウェブでは、個々のコンピューターがコンテンツをネットワークにアップロードし、そのすべてのコンテンツが他のコンピューターへブロードキャストされます。同様に、ATプロトコルでは、少数の大規模アグリゲーターにメッセージを送り、ネットワーク全体のパーソナルデータサーバーへデータをブロードキャストします。
+
+技術的には、単一のPDSだけでATアプリケーションを実装できます。リレーは仕様上必須の要素ではありませんが、大規模なソーシャルネットワーク向けにエコシステムをスケールさせます。
+
+<Heading level={2} id="pds">PDS</Heading>
+
+PDSインスタンスはユーザーのアカウントをホストし、他のネットワークサーバーが行うようなアカウント管理とライフサイクル制御を求められます。ATのID（DIDとハンドル）は理論上PDSから完全に分離できますが、実用上はPDSがユーザーのID管理を支援することが期待されています。 
+
+[自分のPDSをホスト](/guides/self-hosting)できます。
+
+ユーザーデータは署名付きデータリポジトリに保存され、DIDによって検証されます。署名付きデータリポジトリはデータベースレコード用のGitリポジトリに似たもので、DIDはTLS証明書システムのようなユーザー証明書のレジストリと喩えられます。これらは安全で信頼性が高く、ユーザーのPDSから独立していることが期待されます。
+
+<Container>
+  <Image src={did} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+PDSは以下を担います。
+
+- アカウントのライフサイクル：登録、削除、移行
+- アカウントのセキュリティ：メール認証、パスワードリセットフロー、メールアドレス変更フロー
+- ATのID解決：DID、ハンドル。ID解決の仕組みについて[詳しくはこちら](https://fusectore.dev/2025/01/04/atproto-identity.html)。
+- 設定とプライベート状態の保存
+- アカウントの公開停止または凍結の実行と、モデレーション連絡の対応
+- 秘密鍵管理：AT署名鍵とPLCローテーション鍵
+- [PLC](https://web.plc.directory/)のID操作とエンドポイント：ハンドル変更、PLC操作の検証・署名・送信
+- メール配信：リセットフローおよびモデレーションメールの転送用
+- リポジトリのイベントストリームで`#identity`と`#account`（近日追加）イベントを出力
+- デフォルトのハンドル名前空間（ベースドメイン）を管理（例外あり）
+- OAuthクライアントフロー（サインインページや任意のMFAを含む）
+
+個々のアカウントのデータリポジトリは、PDS間を自由に移行できます。これには、リポジトリをCARファイルとしてインポート/エクスポートすることが含まれます。これを容易にするコミュニティツールがいくつかあります。
+
+- https://atproto.at/, 自分のリポジトリに保存されたすべてのデータ（現在どのPDSにホストされているか）を閲覧できる
+- https://pdsmoover.com/, PDS移行のためのツール集
+- https://boat.kelinci.net/, リポジトリのインポート/エクスポート用インターフェース群
+- https://github.com/bluesky-social/goat, 私たちのGo製ATコマンドラインツール。
+
+<Heading level={2} id="tap">Tap</Heading>
+
+TapはATネットワークから既存のレコードを同期し、その後firehoseから新しいレコードを継続的に受信するために使用されます。
+
+Tapはfirehose接続、検証、バックフィル、フィルタリングを処理することでAT同期を簡素化します。アプリケーションはTapに接続し、あなたが関心のあるリポジトリとコレクションのみのシンプルなJSONイベントを受け取ります。署名検証のためのバイナリ形式について心配する必要はありません。Tapは以下の特徴を持ちます。
+
+- リポジトリ構造、MST整合性、ID署名を検証
+- 自動バックフィル：新しいリポジトリ追加時にPDSから全履歴を取得
+- フィルタ出力：DIDリスト単位、コレクション単位、全ネットワーク
+- 順序保証：ライブイベントは履歴バックフィル完了まで待機
+- 配信モード：ack付きWebSocket、fire-and-forget、webhook
+- 単一のGoバイナリ
+- SQLiteまたはPostgresバックエンド
+- 中規模スケール向け（数百万のリポジトリ、毎秒3万件超のイベント）
+
+Tapを扱うためのTypescriptライブラリは[@atproto/tap](https://www.npmjs.com/package/@atproto/tap)にあります。
+
+<Heading level={2} id="app-views-and-relay">AppViewとリレー</Heading>
+
+**リレー**は広域的な指標（いいね数、リポスト数、フォロワー数）の取得、コンテンツ発見（アルゴリズム）、ユーザー検索など、すべてのイベントを処理します。リレーは個々のPDSの[レート制限](https://docs.bsky.app/docs/advanced-guides/rate-limits)も処理し、ネットワーク全体からコンテンツをインデックスできるようにします。
+
+AppViewは、アプリで見るフィードやその他すべてのデータを実際に組み立てる部分で、リレーのfirehoseデータの下流に位置します。これはセマンティクスに基づくサービスで、ネットワーク全体にわたる集計や、ネットワークの一部に対するビューを生成します。例えば、リレーが特定の投稿のいいねやリポストなどのデータをクロールして取得し、AppViewがそれらの指標のカウントを出力します。
+
+ネットワークに展開された各Lexiconごとに、AppViewのエコシステムが存在し得ます。例えば、*Bluesky*は現在マイクロブログの側面、つまり`app.bsky` Lexiconをサポートしています。新しいLexiconを作成する開発者は、ユーザーに提供するために、そのLexiconを理解するAppViewをデプロイできます。他のLexiconの例としては、[動画](https://stream.place/)や[長文ブログ](https://leaflet.pub/)や[共同コーディング](https://tangled.org/)などが挙げられます。既存のリレーでブートストラップすることで、新しいアプリケーションのためのデータ収集が行われている状態から始められます。これにより、Blueskyに投稿し、他のLexiconでリポジトリを使っているクリティカルマスの既存ユーザーから恩恵を受けることができます。必要なのは、自分のアプリケーションに必要なインデックス処理を提供することだけです。
+
+AppViewとリレーはいずれもATプロトコルに固有の部品ではなく、アプリケーションレベルのツールです。私たちのAppView実装は[XRPC](/specs/xrpc)呼び出し（私たちのHTTP API）に応答します。
+
+他のAppViewとリレー実装のよく文書化された例は、[The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture)で見つけられます。各Atmosphereアプリケーションによって実装上の判断が異なる場合があります。
+
+<Heading level={2} id="did-plc">DID PLC</Heading>
+
+[DID PLC](https://web.plc.directory/)は自己認証型のDIDで、強い一貫性があり、復旧可能で、鍵のローテーションを可能にします。各IDは、前のオペレーションを連鎖的に参照する署名付きオペレーションの系列で構成され、ID作成オペレーションまで遡ります。任意の観測者はオペレーションの連鎖を検証することで、IDの現在の状態を検証できます。
+
+PLCオペレーションはディレクトリ（現在は[plc.directory](http://plc.directory)で運用）に保存されます。このディレクトリはオペレーションを検証・保存し、オペレーションそのものと、オペレーションから導出されたIDのビューを提供する中央集権型サービスです。ディレクトリは署名付きのオペレーションがなければIDを変更できないため、信頼モデルは比較的限定的です。
+
+PLCミラーリングのガイダンスは[この開発者ブログ](https://dholms.leaflet.pub/3m6zswymcqk2p)を参照してください。
+
+<Heading level={2} id="feeds">フィード</Heading>
+
+ウェブ検索エンジンがそうであるように、ユーザーはアグリゲーターを自由に選べます。フィード、検索インデックス、そしてアプリビュー全体を独立した第三者が提供でき、リクエストはユーザー設定に基づきPDSによってルーティングされます。
+
+<Container>
+  <Image src={feeds} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+カスタムフィード（フィードジェネレーター）は、ATプロトコルを通じてユーザーにカスタムアルゴリズムを提供するサービスです。これにより、ユーザーはアルゴリズムによるFor Youページや猫の写真だけのフィード等、自分のタイムラインを選択できます。
+
+カスタムフィードの仕組みは単純です。サーバーはユーザーのサーバーからリクエストを受け取り、オプションのメタデータが付加された投稿URIのリストを返します。これらの投稿はリクエスト元のサーバーによって完全なビューに変換され、クライアントに送り返されます。
+
+フィードジェネレーターサービスは1つ以上のアルゴリズムをホストできます。サービス自体はDIDで識別され、ホストする各アルゴリズムはそれを作成したアカウントのリポジトリ内のレコードで宣言されます。例えば、Blueskyが提供するフィードは`@bsky.app`のリポジトリで宣言されるでしょう。したがって、特定のアルゴリズムは宣言レコードのat-uriで識別されます。この宣言レコードには、サービスのDIDへのポインターとフィードのプロフィール情報が含まれます。
+
+[カスタムフィードを探す](https://blueskydirectory.com/feeds/all)
+
+<Heading level={2} id="osprey-and-ozone">OspreyとOzone</Heading>
+
+モデレーションはスタックの2箇所で処理されます。[*Osprey*](https://github.com/roostorg/osprey)はイベントストリームの判定エンジンと分析用UIで、自動的な調査と措置の実行を目的としています。[*Ozone*](/guides/using-ozone)はラベリングサービスとモデレーション判断のためのウェブフロントエンドです。
+
+<Heading level={2} id="tools-and-sdks">ツールとSDK</Heading>
+
+ATの主要なツール群はGoとTypeScriptで実装されています。
+
+- [indigo](https://github.com/bluesky-social/indigo)リポジトリには、[リレー](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md)のコードとGo SDKを含む、私たちのGoツールの大半が含まれています。
+- 他にも私たちのGo製ATコマンドラインツールである https://github.com/bluesky-social/goat があります。
+- https://github.com/bluesky-social/atproto リポジトリには、[PDS](https://github.com/bluesky-social/atproto/tree/main/packages/pds)のコードとTypeScript SDKを含む、TypeScriptツールの大半が含まれています。
+- 私たちが日常的に使うコミュニティツールも多数あります。例えば、Rustで書かれた[Microcosm](https://www.microcosm.blue/)のツール群は、専用のAppViewを必要とせずにクエリ層を構築するためのAPI群を提供します。詳細は https://constellation.microcosm.blue/ を参照してください。

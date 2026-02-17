@@ -1,0 +1,79 @@
+export const header = {
+  title: 'Reads and Writes',
+  description: 'Read and Write from the Atmosphere',
+}
+
+## AT Records
+
+The AT Protocol distributes user data across different nodes of your network, using the core building blocks of the web. The AT Protocol interconnects applications so that their backends share state, including user accounts and content, in individual data repositories. Many operations you'll perform when working with Atproto apps involve reading and writing these data repositories.
+
+For more context, see [Atproto for distributed systems engineers](/articles/atproto-for-distsys-engineers) and [The ATProto Ethos](/articles/atproto-ethos).
+
+## Prerequisites
+
+Reading and writing AT data repositories requires an authenticated client. You can authenticate with [password authentication](/guides/sdk-auth) or [OAuth](/guides/oauth-patterns). The guides in this section assume you have already set up an authenticated client.
+
+## API Methods
+
+After [authenticating](/guides/sdk-auth#creating-a-client), you'll be able to make other API requests.
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    To make API requests, you'll need to specify a particular [Lexicon](/guides/lexicon). For example, Bluesky posts are available under the `app.bsky.feed.post` Lexicon.
+
+    Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
+
+    ```bash
+    npm install -g @atproto/lex
+    lex install app.bsky.feed.post app.bsky.actor.profile
+    lex build
+    ```
+
+    This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
+
+    ```tsx
+    import * as app from './lexicons/app.js'
+    ```
+
+    This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    import (
+      "context"
+      appbsky "github.com/bluesky-social/indigo/api/bsky"
+      comatproto "github.com/bluesky-social/indigo/api/atproto"
+      lexutil "github.com/bluesky-social/indigo/lex/util"
+      "github.com/bluesky-social/indigo/xrpc"
+    )
+
+    ctx := context.Background()
+    ```
+    Import the SDK libraries and go directly to [making requests](/guides/reading-data)!
+
+    <Note>
+    Note that you'll need to [blank import](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html) the `bsky` and `util` libraries if you aren't using them directly, due to the way Go imports work:
+
+    ```go
+    _ "github.com/bluesky-social/indigo/api/bsky"
+    _ "github.com/bluesky-social/indigo/lex/util"
+    ```
+    </Note>
+
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## Further Reading and Resources
+
+- [Reading data](/guides/reading-data)
+- [Writing data](/guides/writing-data)
+- [Accounts and deletions](/guides/account-lifecycle)
+- [Social graph](/guides/social-graph)
+- [Record Key spec](/specs/record-key)
+- [URI scheme](/specs/at-uri-scheme)

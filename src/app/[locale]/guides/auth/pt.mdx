@@ -1,0 +1,46 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'Auth',
+  description: 'Auth for Atproto application developers',
+}
+
+## Sobre a autorização
+**A autorização é a primeira parte de nossos documentos por um motivo!** Nem sempre é necessário estar autenticado para [ler dados](/reading-data#unauthenticated-reads) dos registros do AT Protocol ou mesmo para [transmitir dados do firehose](/guides/streaming-data).
+
+Mas se você deseja criar um aplicativo que se integre de alguma forma ao Atmosphere dos aplicativos Atproto, você começará com a autenticação. Você pode começar usando apenas identidades do Protocolo AT como fonte OAuth — embora descubra que há muito mais que você pode fazer ao desenvolver com base no [gráfico social](/guides/social-graph) do Atproto.
+
+Esta seção é destinada a desenvolvedores que criam aplicativos no Atproto. Aplicativos com seu próprio fluxo de login de usuário final devem implementar [OAuth](#what-is-oauth) para autenticação. Aplicativos de finalidade única, como bots ou ferramentas de linha de comando, podem usar [autenticação por senha](/guides/sdk-auth) em vez disso.
+
+<Note>
+Também oferecemos suporte ao uso de [senhas de aplicativo](/specs/xrpc#app-passwords). As contas podem criar e revogar senhas de aplicativo separadamente da senha principal. Dessa forma, você não precisa fornecer sua senha principal para aplicativos que usam autenticação por senha.
+</Note>
+
+Para implementar o OAuth em seu aplicativo, consulte os [padrões OAuth](/guides/oauth-patterns) para casos de uso comuns e o guia [Escopos](/guides/scopes) para entender os modelos de permissão. Se você estiver criando sua própria implementação de protocolo ou SDK de cliente OAuth, consulte a [especificação OAuth](/specs/oauth).
+
+## O que *é* OAuth?
+
+OAuth é uma estrutura de autorização que permite que os desenvolvedores solicitem acesso a uma conta sem exigir que os usuários forneçam sua senha. Sem o OAuth, se alguém quisesse autorizar um aplicativo de terceiros a acessar sua conta, sua única opção seria digitar seu nome de usuário e senha nesse aplicativo. Isso é ruim por vários motivos, sendo o primeiro deles o fato de que um aplicativo de terceiros pode ver e, provavelmente, salvar senhas. E, uma vez que o aplicativo tenha o nome de usuário e a senha, ele terá acesso total à conta.
+
+O OAuth visa resolver esses problemas com um conjunto de especificações abertas para gerenciar a autorização segura sem exigir o nome de usuário e a senha de uma pessoa. Se você já usou um botão ou link “Entrar com...” na web, você já usou o OAuth.
+
+Como desenvolvedor, você pode solicitar acesso limitado à conta de uma pessoa, o que significa que, se precisar apenas postar uma mensagem na linha do tempo pública de alguém, não precisará solicitar acesso para ler suas mensagens privadas. Isso é ótimo para o seu aplicativo, pois você não precisa se preocupar em gerenciar dados desnecessários, e é ótimo para a pessoa que usa o seu aplicativo, pois ela não precisa se preocupar com a violação de suas mensagens diretas.
+
+## Como o OAuth é diferente no protocolo AT?
+
+O Atproto [especifica](/specs/oauth) um “perfil” específico dos padrões OAuth, usando o [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html) como base.
+Existem alguns detalhes que podem pegá-lo de surpresa se você estiver acostumado a usar outros sistemas OAuth.
+
+- **O Atproto é distribuído**: normalmente, quando um aplicativo tem um botão “entrar com...”, ele oferece uma opção de quais autoridades ele permite para autenticar usuários (geralmente uma das poucas grandes corporações). Com o ATProto OAuth, o aplicativo não tem nenhuma relação prévia com o provedor de autenticação: o [PDS](/guides/the-at-stack#pds) do usuário. Essa também é a razão pela qual o Atproto OAuth não é compatível com o OIDC, que exige uma relação pré-estabelecida.
+- **Migração**: os usuários do Atproto podem migrar suas contas entre servidores ([PDSes](/guides/glossary#pds-personal-data-server)) ao longo do tempo. Para facilitar isso, o Atproto possui uma camada de [Identidade](/guides/identity) flexível, que permite que nomes de usuário ([handles](/specs/handle)) sejam resolvidos para um ID de usuário estático ([DID](/specs/did)), que por sua vez pode ser resolvido para localizar o PDS do usuário. Quando um usuário faz login em um aplicativo, o cliente OAuth resolve dinamicamente essas relações.
+- **IDs de cliente**: em outros ecossistemas OAuth, muitas vezes é necessário que os aplicativos clientes se pré-registrem no servidor de recursos. Isso não é viável em um sistema descentralizado (com muitos clientes e muitos servidores de recursos), então a Atproto resolve isso usando [Documentos de metadados de ID de cliente](/specs/oauth#client-id-metadata-document).
+
+## Leituras adicionais e recursos
+
+Comece lendo [autenticação SDK](/guides/sdk-auth). Para implementar o OAuth em seu aplicativo, consulte [padrões OAuth](/guides/oauth-patterns) para casos de uso comuns e o guia [Escopos](/guides/scopes) para entender os modelos de permissão.
+- [Autenticação SDK](/guides/sdk-auth)
+- [Padrões OAuth](/guides/oauth-patterns)
+- [Escopos](/guides/scopes)
+- [Solicitações de permissão](/guides/permission-sets)
+- [Especificação OAuth](/specs/oauth)
+- [Especificação de permissões](/specs/permission)

@@ -1,0 +1,55 @@
+import { Card, CardParagraph, CardTitle } from '@/components/Card'
+
+export const header = {
+  title: 'Understanding Atproto',
+  description: 'A closer look into how it all works',
+}
+
+## TL;DR
+
+O Atproto é um mundo aberto e social. Os usuários publicam registros JSON em repositórios. As mudanças nesses registros são sincronizadas pela rede para impulsionar aplicativos.
+
+Recomendamos estes artigos fantásticos do membro da comunidade [Dan Abramov](https://bsky.app/profile/danabra.mov):
+
+- [**Open Social**](https://overreacted.io/open-social/) - O protocolo é a API.
+- [**Onde está://**](https://overreacted.io/where-its-at/) - De identificadores a hospedagem.
+- [**Um sistema de arquivos social**](https://overreacted.io/a-social-filesystem/) - Formatos acima de aplicativos.
+
+## Primitivas principais
+
+- **Repositórios de usuários.** Os bancos de dados públicos por usuário.
+- **Identificadores de usuários.** Nomes de usuário, que são registros DNS. Nossa conta é [@atproto.com](https://bsky.app/profile/atproto.com).
+- **DIDs de usuários.** Os IDs permanentes dos usuários.
+
+## Modelos de dados
+
+- **Registros**. JSON, categorizados em coleções.
+- **Blobs**. As [imagens e vídeos](/guides/images-and-video).
+- **Lexicon**. A linguagem de esquema.
+- **Lexicon RPC (XRPC).** É HTTPS, mas com as rotas definidas por Lexicons.
+
+## A pilha
+
+Existem diferentes tipos de serviços que você pode [auto-hospedar](/guides/self-hosting):
+
+- **Servidores de dados pessoais (PDS).** Eles hospedam contas de usuários.
+- **Relés**. Eles coletam e retransmitem eventos de gravação do usuário.
+- **Aplicativos**. Eles agregam dados do usuário para produzir experiências de aplicativos.
+- **Rotuladores**. Publicam decisões de moderação como metadados de rótulo.
+
+## Fazendo acontecer
+
+Vamos supor que você esteja criando um aplicativo. Seus usuários farão login com [OAuth](/guides/auth), que fornece ao seu aplicativo o endereço do PDS deles. Seu aplicativo então [lê e grava](/guides/reads-and-writes) registros entrando em contato com o PDS deles.
+
+Para ouvir a atividade na rede, você [sincroniza a partir de relés](/guides/sync). Você poderia sincronizar diretamente a partir dos PDS dos usuários, mas é mais conveniente usar os relés. Como todos os dados são assinados, você pode confirmar que o fluxo do relé é preciso.
+
+Os [Lexicons](/guides/lexicon) ajudam a identificar os dados que estão sendo publicados na rede. Você os utiliza para validar os dados à medida que os lê, assim como valida as solicitações HTTP recebidas.
+
+Por fim, você lida com a [moderação](/guides/moderation) assinando (ou executando) rotuladores que recebem relatórios dos usuários e publicam rótulos no conteúdo dos usuários.
+
+## Leituras mais aprofundadas
+
+Também recomendamos estes artigos aprofundados da equipe:
+
+- [**Atproto para engenheiros de sistemas distribuídos**](/articles/atproto-for-distsys-engineers). Uma explicação para pensadores de back-end.
+- [**O Ethos Atproto**](/articles/atproto-ethos). Os princípios que sustentam o design do atproto.

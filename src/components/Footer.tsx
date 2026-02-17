@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/Button'
-import { navigation } from '@/components/Navigation'
+import { allPages } from '@/components/Navigation'
+import clsx from 'clsx'
 
 function PageLink({
   label,
@@ -39,7 +40,6 @@ function PageLink({
 
 function PageNavigation() {
   let pathname = usePathname()
-  let allPages = navigation.flatMap((group) => group.links)
   let currentPageIndex = allPages.findIndex((page) => page.href === pathname)
 
   if (currentPageIndex === -1) {
@@ -114,11 +114,16 @@ function SocialLink({
   )
 }
 
-function SmallPrint() {
+function SmallPrint({ minimal }: { minimal?: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-between gap-5 border-t border-zinc-900/5 pt-8 sm:flex-row dark:border-white/5">
+    <div
+      className={clsx(
+        'flex flex-col items-center justify-between gap-5 border-zinc-900/5 pt-8 sm:flex-row dark:border-white/5',
+        !minimal && 'border-t',
+      )}
+    >
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-        &copy; Copyright {new Date().getFullYear()}. All rights reserved.
+        &copy; Copyright (CC-BY) Bluesky Social PBC {new Date().getFullYear()}. All rights reserved.
       </p>
       <div className="flex gap-4">
         <SocialLink
@@ -138,11 +143,18 @@ function SmallPrint() {
   )
 }
 
-export function Footer() {
+export function Footer({ minimal }: { minimal?: boolean }) {
   return (
-    <footer className="mx-auto w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl">
-      <PageNavigation />
-      <SmallPrint />
+    <footer
+      className={clsx(
+        'w-full max-w-2xl space-y-10 pb-16 lg:max-w-5xl',
+        minimal
+          ? 'mx-auto max-w-6xl px-8 lg:max-w-7xl'
+          : 'max-w-2xl px-4 md:px-16 lg:max-w-5xl',
+      )}
+    >
+      {!minimal && <PageNavigation />}
+      <SmallPrint minimal={minimal} />
     </footer>
   )
 }

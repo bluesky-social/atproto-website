@@ -1,0 +1,147 @@
+export const header = {
+  title: 'Images and Video',
+  description: 'Working with image and video blobs',
+}
+
+## Using blobs
+
+"Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the **`blob`** lexicon datatype, which includes a content hash (CID; `ref`) for the blob .
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```typescript
+    const imageBytes = fs.readFileSync('./photo.jpg')
+
+    const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
+      encoding: 'image/jpeg',
+      data: imageBytes,
+    })
+
+    const blob = uploadRes.data.blob
+    console.log(JSON.stringify(blob, null, 2))
+    ```
+
+    ```
+    {
+      "$type": "blob",
+      "ref": {
+        "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+      },
+      "mimeType": "image/jpeg",
+      "size": 354028
+    }
+    ```
+
+    Blob files are uploaded and distributed separately from records:
+
+    ```typescript
+    await client.create(app.bsky.feed.post, {
+      text: 'Using a previously uploaded image',
+      createdAt: new Date().toISOString(),
+      embed: {
+        $type: 'app.bsky.embed.images',
+        images: [
+          {
+            alt: 'A photo uploaded earlier',
+            image: blobRef,
+            aspectRatio: { width: 1200, height: 800 },
+          },
+        ],
+      },
+    })
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    imgBytes, err := os.ReadFile("./photo.jpg")
+    if err != nil {
+      panic(err)
+    }
+
+    uploadResp, err := comatproto.RepoUploadBlob(ctx, xrpcc, bytes.NewReader(imgBytes))
+    if err != nil {
+      panic(err)
+    }
+
+    fmt.Println(string(json.MarshalIndent(uploadResp, "", "  ")))
+    ```
+
+    ```
+    {
+      "blob": {
+        "$type": "blob",
+        "ref": {
+          "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
+        },
+        "mimeType": "image/jpeg",
+        "size": 354028
+      }
+    }
+    ```
+
+    Blob files are uploaded and distributed separately from records:
+
+    ```go
+    post := &bsky.FeedPost{
+        Text:      "Using a previously uploaded image",
+        CreatedAt: time.Now().UTC().Format(time.RFC3339),
+        Embed: &bsky.FeedPost_Embed{
+          EmbedImages: &bsky.EmbedImages{
+            Images: []*bsky.EmbedImages_Image{
+              {
+                Alt: "A photo uploaded earlier",
+                Image: &lexutil.LexBlob{
+                  Ref:      uploadResp.Blob.Ref,
+                  MimeType: http.DetectContentType(imgBytes),
+                  Size:     uploadResp.Blob.Size,
+                },
+                AspectRatio: &bsky.EmbedDefs_AspectRatio{
+                  Width:  1200,
+                  Height: 800,
+                },
+              },
+            },
+          },
+        },
+      }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+You can see what an existing Blob record looks like in [atproto.at](https://atproto.at/viewer?uri=did:plc:ewvi7nxzyoun6zhxrhs64oiz/app.bsky.feed.post/3juft56hdjg2o). It's this one right here:
+
+![https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py@jpeg](https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py@jpeg)
+
+And here's what the URL to that beautiful blob looks like when served from a CDN:
+
+```
+https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py
+```
+
+Note the URL structure: the blob is served from the CDN, but the path includes the DID of the account that uploaded it, as well as the CID of the blob itself.
+
+## Blob objects
+
+Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob.
+
+While blobs are universally content addressed (by CID), they are always referenced and managed in the context of an individual account (DID).
+
+The empty blob (zero bytes) is valid in general, though it may be disallowed by individual Lexicons/applications.
+
+Creating blobs requires the permission scope **`blob:*/*` .**
+
+It is generally recommended to use an object storage implementation for working with blobs if you are hosting your own PDS. See [going to production](/guides/going-to-production#object-storage) for more.
+
+## Further Reading and Resources
+
+- [Blob lifecycle](/guides/blob-lifecycle)
+- [Blob security](/guides/blob-security)
+- [Video handling](/guides/video-handling)
+- [Blob Specs](/specs/blob)
+- [Streamplace](https://stream.place/docs/) provides an implementation and related Lexicon for video streaming on ATProto.

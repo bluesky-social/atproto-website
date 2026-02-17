@@ -1,44 +1,44 @@
 import {Heading} from '@/components/Heading'
 
-export const metadata = {
-title: 'FAQ',
-description:
-'AT プロトコルに関するよくある質問。',
+export const header = {
+  title: 'FAQ',
+  description:
+   'ATプロトコルに関するよくある質問',
 }
 
 # FAQ
 
-認証転送プロトコル (AT Proto) に関するよくある質問。Bluesky に関するよくある質問については、[こちら](https://bsky.social/about/faq) をご覧ください。
+Authenticated Transfer Protocol（Atproto）に関するよくある質問。Blueskyに関するよくある質問については、[こちら](https://bsky.social/about/faq)をご覧ください。
 
-<Heading level={2} id="is-the-at-protocol-a-blockchain">AT プロトコルはブロックチェーンですか?</Heading>
+<Heading level={2} id="is-the-at-protocol-a-blockchain">ATプロトコルはブロックチェーンですか？</Heading>
 
-いいえ。AT プロトコルは [フェデレーション プロトコル](https://en.wikipedia.org/wiki/Federation_(information_technology)) です。ブロックチェーンではありませんし、ブロックチェーンを使用していません。
+いいえ。ATプロトコルは[フェデレーションプロトコル](https://en.wikipedia.org/wiki/Federation_(information_technology))です。ブロックチェーンではありませんし、ブロックチェーンを使用していません。
 
-<Heading level={2} id="why-not-use-activitypub">ActivityPub を使用しないのはなぜですか?</Heading>
+<Heading level={2} id="why-not-use-activitypub">ActivityPubを使用しないのはなぜですか？</Heading>
 
-[ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) は、[Mastodon](https://joinmastodon.org/) によって普及したフェデレーション ソーシャル ネットワーキング テクノロジです。
+[ActivityPub](https://en.wikipedia.org/wiki/ActivityPub)は、[Mastodon](https://joinmastodon.org/)によって普及したフェデレーションソーシャルネットワーキングテクノロジーです。
 
-アカウントのポータビリティは、別のプロトコルを構築することを選択した主な理由です。ポータビリティは、突然の禁止、サーバーのシャットダウン、ポリシーの不一致からユーザーを保護するため、非常に重要であると考えています。ポータビリティのソリューションには、[署名済みデータ リポジトリ](/guides/data-repos) と [DID](/guides/identity) の両方が必要ですが、どちらも ActivityPub に後から簡単に組み込むことはできません。ActivityPub の移行ツールは比較的制限されており、元のサーバーがリダイレクトを提供する必要があり、ユーザーの以前のデータを移行することはできません。
+アカウントのポータビリティは、新しいプロトコルを構築することを選択した主な理由です。ポータビリティは、突然のBAN、サーバーのシャットダウン、ポリシーの不一致からユーザーを保護するため、非常に重要であると考えています。ポータビリティのソリューションには、[署名付きデータリポジトリ](/guides/data-repos)と[DID](/guides/identity)の両方が必要ですが、どちらもActivityPubに後から簡単に組み込むことはできません。ActivityPubの移行ツールは比較的制限されており、元のサーバーがリダイレクトを提供する必要があり、ユーザーの以前のデータを移行することはできません。
 
-もう 1 つの大きな理由は、スケーラビリティです。ActivityPub は、小規模から中規模のノードの広範なネットワーク間でメッセージを配信することに大きく依存しているため、個々のノードにトラフィックが殺到し、アクティビティのグローバル ビューを提供するのが困難になることがあります。AT プロトコルは、集約アプリケーションを使用してユーザーのホストからのアクティビティをマージし、全体的なトラフィックを削減して、個々のホストの負荷を大幅に削減します。
+もう一つの大きな理由は、スケーラビリティです。ActivityPubは、小規模から中規模のノードの広範なネットワーク間でメッセージを配信することに大きく依存しているため、個々のノードにトラフィックが殺到し、アクティビティのグローバルビューを提供するのが困難になることがあります。ATプロトコルは、集約アプリケーションを使用してユーザーのホストからのアクティビティをマージし、全体的なトラフィックを削減して、個々のホストの負荷を大幅に削減します。
 
-その他の小さな違いとしては、スキーマの扱い方に関する異なる視点、AP のダブル @ メール ユーザー名よりもドメイン ユーザー名を優先すること、大規模な検索とアルゴリズム フィードを実現するという目標などがあります。
+その他の小さな違いとしては、スキーマの扱い方に関する異なる視点、APの@を二重にしたメール式ユーザー名よりもドメインユーザー名を優先すること、大規模な検索とアルゴリズムフィードを実現するという目標などがあります。
 
-<Heading level={2} id="why-create-lexicon-instead-of-using-json-ld-or-rdf">JSON-LD や RDF を使用する代わりに Lexicon を作成する理由</Heading>
+<Heading level={2} id="why-create-lexicon-instead-of-using-json-ld-or-rdf">JSON-LDやRDFを使用する代わりにLexiconを作成する理由</Heading>
 
-Atproto は組織間でデータと RPC コマンドを交換します。データと RPC が有用であるためには、ソフトウェアが別のチームによって作成されたスキーマを正しく処理する必要があります。これが [Lexicon](/guides/lexicon) の目的です。
+Atprotoは組織間でデータとRPCコマンドを交換します。データとRPCが有用であるためには、ソフトウェアが別のチームによって作成されたスキーマを正しく処理する必要があります。これが[Lexicon](/guides/lexicon)の目的です。
 
-私たちは、エンジニアが新しいスキーマを快適に使用および作成できるようにし、開発者がシステムの DX を楽しめるようにしたいと考えています。Lexicon は、開発者にとって非常に馴染み深く、さまざまな実行時正確性チェックを提供する、厳密に型指定された API の作成に役立ちます。
+私たちは、エンジニアが新しいスキーマを快適に使用および作成できるようにし、開発者がシステムのDXを楽しめるようにしたいと考えています。Lexiconは、開発者にとって非常に馴染み深く、さまざまな実行時正確性チェックを提供する、厳密に型指定されたAPIの作成に役立ちます。
 
-[RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) は、システムがほとんどインフラストラクチャを共有しない、極めて一般的なケースを対象としています。概念的にはエレガントですが、使いにくく、開発者が理解できない構文が多数追加されることがよくあります。JSON-LD は RDF ボキャブラリの使用タスクを簡素化しますが、RDF を読みやすくするのではなく、基礎となる概念を隠すことによって簡素化します。
+[RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)は、システムがほとんどインフラストラクチャを共有しない、極めて一般的なケースを対象としています。概念的にはエレガントですが、使いにくく、開発者が理解できない構文が多数追加されることがよくあります。JSON-LDはRDFボキャブラリの使用タスクを簡素化しますがRDFを読みやすくするのではなく、基礎となる概念を隠すことによって簡素化します。
 
-私たちは RDF の使用を非常に詳しく検討しましたが、開発者エクスペリエンス (DX) やそれが提供するツールが気に入りませんでした。
+私たちはRDFの使用を非常に詳しく検討しましたが、開発者体験（DX）や提供ツールが気に入りませんでした。
 
-<Heading level={2} id="what-is-xrpc-and-why-not-use-___">「XRPC」とは何ですか。なぜ ___ を使用しないのですか?</Heading>
+<Heading level={2} id="what-is-xrpc-and-why-not-use-___">XRPCとは何ですか。なぜ___を使用しないのですか?</Heading>
 
-[XRPC](/specs/xrpc) は、いくつかの規則が追加された HTTP です。私たちは「XRPC」という用語を廃止し、単に HTTP の ATProto 使用法と呼ぶことを目指しています。
+[XRPC](/specs/xrpc)は、いくつかの規則が追加されたHTTPです。
 
-XRPC は [Lexicon](/guides/lexicon) を使用して HTTP 呼び出しを記述し、それらを `/xrpc/{methodId}` にマッピングします。たとえば、次の API 呼び出し:
+XRPCは[Lexicon](/guides/lexicon)を使用してHTTP呼び出しを記述し、それらを`/xrpc/{methodId}`にマッピングします。たとえば、次のようなAPI呼び出しを考えます。
 
 ```typescript
 await api.com.atproto.repo.listRecords({
@@ -47,7 +47,7 @@ await api.com.atproto.repo.listRecords({
 })
 ```
 
-...次のものにマップされます:
+これは以下のようにマップされます。
 
 ```text
 GET /xrpc/com.atproto.repo.listRecords
@@ -55,4 +55,4 @@ GET /xrpc/com.atproto.repo.listRecords
   &collection=app.bsky.feed.post
 ```
 
-Lexicon は、共有メソッド ID (`com.atproto.repo.listRecords`) と、予想されるクエリ パラメータ、入力本文、および出力本文を確立します。Lexicon を使用すると、呼び出しの入力と出力のランタイム チェックが実行され、上記の API 呼び出しの例のような型付きコードを生成できます。
+Lexiconは、共有メソッドID（`com.atproto.repo.listRecords`）と、予想されるクエリパラメータ、入力および出力を明示します。Lexiconを使用すると、呼び出しの入力と出力の実行時チェックが実行され、上記のAPI呼び出しの例のような型付きコードを生成できます。

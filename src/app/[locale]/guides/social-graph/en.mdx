@@ -1,0 +1,25 @@
+export const header = {
+  title: 'Social graph',
+  description: 'Working with AT Protocol Social Graphs',
+}
+
+## Querying social graphs
+
+New applications that build on the AT Protocol can leverage existing social graph data — for example, from the `app.bsky.graph.getFollows` Lexicon RPC endpoint — to build new use cases, and bootstrap with an existing user base. This, in turn, gets you to native ATProtocol concepts like [A Social Filesystem](https://overreacted.io/a-social-filesystem/).
+
+See [Exploring AT Protocol with Python](https://davidgasquez.com/exploring-atproto-python/) for another example of this approach.
+
+## Backlinks
+
+One of the most powerful ways to get social graph data from AT Protocol is through the use of **backlinks**. Querying backlinks lets you resolve all of the records linking *to* any given record, *or* identity.
+
+[Microcosm](https://constellation.microcosm.blue) provides a set of resources for working with backlinks. Because all AT Protocol records are openly available and addressible via an `at://` URI, this makes it possible to encode nested API queries into individual URLs. Microcosm [does this](https://constellation.microcosm.blue/xrpc/blue.microcosm.links.getBacklinks?subject=at%3A%2F%2Fdid%3Aplc%3Aa4pqq234yw7fqbddawjo7y35%2Fapp.bsky.feed.post%2F3m237ilwc372e&source=app.bsky.feed.like%3Asubject.uri&limit=16), for example.
+
+## Further Reading and Resources
+
+- [Reads and Writes](/guides/reads-and-writes)
+- [Reading data](/guides/reading-data)
+- [Writing data](/guides/writing-data)
+- [Accounts and deletions](/guides/account-lifecycle)
+- [Record Key spec](/specs/record-key)
+- [URI scheme](/specs/at-uri-scheme)

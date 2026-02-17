@@ -1,4 +1,4 @@
-export const metadata = {
+export const header = {
   title: 'FAQ',
   description:
     'Frequently Asked Questions about AT Protocol.',
@@ -6,7 +6,7 @@ export const metadata = {
 
 # FAQ
 
-Frequently Asked Questions about the Authenticated Transfer Protocol (AT Proto). For FAQ about Bluesky, visit [here](https://bsky.social/about/faq).
+Frequently Asked Questions about the Authenticated Transfer Protocol (Atproto). For FAQ about Bluesky, visit [here](https://bsky.social/about/faq).
 
 ## Is the AT Protocol a blockchain?
 
@@ -34,9 +34,9 @@ We looked very closely at using RDF but just didn't love the developer experienc
 
 ## What is “XRPC,” and why not use ___?
 
-[XRPC](/specs/xrpc) is HTTP with some added conventions. We're aiming to retire the term "XRPC" and just refer to it as the ATProto usage of HTTP.
+[XRPC](/specs/xrpc) is HTTP with some added conventions.
 
-XRPC uses [Lexicon](/guides/lexicon) to describe HTTP calls and maps them to `/xrpc/{methodId}`. For example, this API call:
+XRPC uses [Lexicons](/guides/lexicon) to describe HTTP calls and maps them to `/xrpc/{methodId}`. For example, this API call:
 
 ```typescript
 await api.com.atproto.repo.listRecords({
@@ -53,4 +53,4 @@ GET /xrpc/com.atproto.repo.listRecords
   &collection=app.bsky.feed.post
 ```
 
-Lexicon establishes a shared method id (`com.atproto.repo.listRecords`) and the expected query params, input body, and output body. By using Lexicon we get runtime checks on the inputs and outputs of the call, and can generate typed code like the API call example above.
+Lexicons establish shared method id (`com.atproto.repo.listRecords`) and the expected query params, input body, and output body. By using Lexicons we get runtime checks on the inputs and outputs of the call, and can generate typed code like the API call example above.

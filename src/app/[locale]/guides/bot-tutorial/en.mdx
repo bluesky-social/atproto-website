@@ -1,0 +1,248 @@
+export const header = {
+  title: 'Build an Agent',
+  description: 'Create a bot that automatically posts on Bluesky',
+}
+
+Bots are accounts on the network that post automatically. Popular ones include bots that post the magnitude of recent earthquakes, photos from an archive on a regular schedule, etc.
+
+In this tutorial, you'll create a bot that authenticates with an [app password](/guides/sdk-auth) to interact with the network.
+
+## Prerequisites
+
+This tutorial involves building a TypeScript application from scratch. You should have a working understanding of TypeScript and Node.js.
+
+You should have installed:
+- Node.js 18+
+
+On platforms supported by [homebrew](https://brew.sh/), you can install it with:
+
+```bash
+brew install node
+```
+
+You should also have our `lex` CLI tool installed globally:
+
+```bash
+npm install -g @atproto/lex
+```
+
+Now, create a new Typescript project directory and initialize your project:
+
+```bash
+mkdir my-agent
+cd my-agent
+npm init -y
+npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-password-session
+npx tsc --init --verbatimModuleSyntax false
+```
+
+If you aren't using an existing account to post from, you should [create a new account](https://bsky.app/) for your bot. You should also generate an [app password](/guides/sdk-auth) for that account.
+
+## Part 1: Lexicons 
+
+[Lexicons](/guides/lexicon) define Atproto records. Your bot will create Bluesky posts, using the [app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post) Lexicon. You can use `lex` to download and build this Lexicon into your project:
+
+```bash
+lex install app.bsky.feed.post
+```
+
+If you want, you can view the downloaded Lexicon file at `lib/lexicons/app.bsky.post.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
+
+```bash
+lex build
+```
+
+The generated code will live in `src/lexicons`. Now you can create your bot script.
+
+## Part 2: Create a Bot
+
+Create a new file at `src/index.ts`. This file will contain the code for your bot.
+
+First, add the imports that you'll need, and a call to `PasswordSession.create()` to authenticate your bot using an app password:
+
+```ts
+import { Client } from '@atproto/lex'
+import { PasswordSession } from '@atproto/lex-password-session'
+import * as dotenv from 'dotenv'
+import { CronJob } from 'cron'
+import * as process from 'process'
+import * as app from './lexicons/app.js'
+
+dotenv.config()
+
+// Create a session
+async function login() {
+    const service = process.env.BOT_PDS!
+    const identifier = process.env.BOT_HANDLE!
+    const password = process.env.BOT_PASSWORD!
+    const session = await PasswordSession.login({
+        service, // eg 'https://bsky.social'
+        identifier, // eg 'alice.bsky.social'
+        password,
+    })
+
+    return session
+}
+```
+
+Next, add a function that posts. This will instantiate a new `Client` using the authenticated session, and use it to create a post. The `app.bsky.feed.post` Lexicon requires two parameters: the text of a post — you'll use "🙂" — and a timestamp.
+
+```ts
+// Posting logic
+async function makePost(session: PasswordSession) {
+    const client = new Client(session)
+    await client.create(app.bsky.feed.post, {
+        text: '🙂',
+        createdAt: new Date().toISOString(),
+    })
+    console.log('Just posted!')
+}
+
+async function main() {
+    const session = await login()
+    await makePost(session)
+}
+
+main().catch(console.error)
+```
+
+Finally, add another code block inside of `main()` using the `cron` package to schedule your bot to post every three hours:
+
+```ts
+async function main() {
+    const session = await login()
+    await makePost(session)
+    // Run this on a cron job
+    const scheduleExpression = '0 */3 * * *'
+    const job = new CronJob(scheduleExpression, () => makePost(session))
+    job.start()
+}
+```
+
+That's all the code you need for your bot! Next, you'll test it out.
+
+## Part 3: Run the Bot
+
+Save your bot's host (PDS), username, and password to an `.env` file.
+
+```bash
+BOT_PDS= # eg 'https://bsky.social' if you aren't self-hosting your PDS
+BOT_HANDLE= # eg 'alice.bsky.social'
+BOT_PASSWORD=
+```
+
+Now you can test the bot using `ts-node`.
+
+```bash
+ts-node src/index.ts
+```
+
+You can run this bot on your own machine, or deploy it on a platform like [Fly.io](http://fly.io/).
+
+Keep in mind that bots should respect the network's rate limits. For instance, [Bluesky has its own set of rate limits](https://docs.bsky.app/docs/advanced-guides/rate-limits). 
+
+## Part 4: From Bot to Agent
+
+So far, you've created a bot that makes posts on a regular interval. Now, you can expand your bot into a more complex agent that interacts with other users!
+
+In this section, you'll use the [Vercel AI SDK](https://www.npmjs.com/package/ai). This library provides a unified API to interact with model providers like Anthropic through the Vercel AI Gateway. You'll need to sign up for a free [Hobby project](https://vercel.com/) to get an API key.
+
+Once you've got an API key, add the AI SDK to your project:
+
+```bash
+npm i ai
+```
+
+Then, add another environment variable to your `.env` file:
+
+```bash
+BOT_PDS=
+BOT_HANDLE=
+BOT_PASSWORD=
+AI_GATEWAY_API_KEY=xxxxxxxxx
+```
+
+Finally, you'll need to install some additional Lexicons to get mentions. Run the following command to install and build the necessary Lexicons:
+
+```bash
+lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
+lex build --override
+```
+
+Almost there. Add the `ai` import to your `src/index.ts` file:
+
+```ts
+import { generateText } from 'ai'
+```
+
+Now you can replace everything after the `login` function in your script with new logic that uses the AI SDK to generate replies:
+
+```ts
+async function generateReply(mentionText: string): Promise<string> {
+  const { text } = await generateText({
+    model: 'anthropic/claude-sonnet-4-5',
+    system: 'You are a mystical fortune teller bot on Bluesky named "The Oracle". Speak in a dramatic, mysterious tone with occasional emoji (🔮 ✨ 🌙 ⭐). If someone asks a yes/no question, give a cryptic but leaning answer. If they ask for general guidance, offer a brief horoscope-style prediction. Keep responses under 280 characters. Never break character.',
+    prompt: mentionText,
+  })
+  return text
+}
+
+// Check for new mentions and reply
+async function checkMentions(session: PasswordSession) {
+  const client = new Client(session)
+  const notifications = await client.call(app.bsky.notification.listNotifications, {
+    limit: 20,
+  })
+
+  for (const notif of notifications.notifications) {
+    // Only process unread mentions
+    if (notif.reason !== 'mention' || notif.isRead) continue
+
+    // Get the post that mentioned us
+    const post = await client.call(app.bsky.feed.getPostThread, {
+      uri: notif.uri,
+    })
+
+    const mentionText = post.thread.post.record.text
+    const reply = await generateReply(mentionText)
+
+    // Reply to the post
+    await client.create(app.bsky.feed.post, {
+      text: reply,
+      createdAt: new Date().toISOString(),
+      reply: {
+        root: { uri: notif.uri, cid: post.thread.post.cid },
+        parent: { uri: notif.uri, cid: post.thread.post.cid },
+      },
+    })
+
+    console.log(`Replied to mention: ${mentionText}`)
+  }
+}
+
+async function main() {
+    const session = await login()
+    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
+    job.start()
+
+    console.log('Agent is running...')
+}
+
+main().catch(console.error)
+```
+
+There are a few new concepts here. You'll recognize the `app.bsky.feed.post` logic, and now you'll also implement `app.bsky.notification.listNotifications` and `app.bsky.feed.getPostThread`. The first Lexicon is used to get a list of notifications for, and the second fetches the full thread for a given post URI.
+
+...and feel free to change our silly example prompt.
+
+Redeploy your bot, and it will now reply to mentions!
+
+<Note>
+Automated bots that post to an account on an regular interval are welcome on the network. If your bot interacts with other users, please only interact (like, repost, reply, etc.) if the user has tagged the bot account. It should be an opt-in interaction, or your bot may be flagged for spam.
+</Note>
+
+## Conclusion
+
+You've now built an automated Atproto app that creates records on the network!
+
+You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!

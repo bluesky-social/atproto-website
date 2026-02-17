@@ -1,0 +1,50 @@
+export const header = {
+  title: 'Welcome to the New atproto.com',
+  description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
+  date: 'February 12, 2026',
+}
+
+# Welcome to the New atproto.com
+
+You might have noticed [the official AT Protocol website](https://atproto.com/) has been completely redesigned. This isn’t just a refreshed stylesheet — we’ve added new [tutorials](/guides/tutorials), [documentation](/docs) (featuring our [redesigned SDKs and tooling](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex)), a new interactive homepage, internationalization, and moved the blog you are reading right now to a [proper home](/blog). The goal, as always: to make it easier than ever for developers to just build things on AT Protocol.
+
+## New homepage
+
+The homepage now shows you what is actually happening on the network, live and in real time. A live firehose viewer streams actual activity from the AT Protocol network in real time — posts, likes, follows — all flowing past as they happen. Alongside that, we step through the core concepts of the protocol: it’s just JSON, it’s strongly typed, it’s hyperlinked, and those links are content-addressed.
+
+From the homepage, you can jump straight to building. [Create a new social app](/guides/statusphere-tutorial), [build an agent](/guides/bot-tutorial), [code a custom feed with algorithms you decide](/guides/custom-feed-tutorial), and [manage your own identity](/guides/oauth-tutorial).
+
+## New design and navigation
+
+The site has a refreshed visual design with light/dark toggles and better responsive layouts for every screen size. Our site IA has been completely rewritten into top-level categories: Auth, Reads and Writes, Sync, Lexicons, Media, and Moderation — with an accessible side nav that makes it easy to find what you’re looking for and understand where you are in the docs.
+
+In particular, we want to thank [INTDEV](https://internet.dev/) for their excellent design work.
+
+## New documentation
+
+This is the biggest part of the diff. New tutorials, guides, and docs to make it easier for anyone to get building. There are now four end-to-end tutorials:
+
+- **Build an Agent** — build an automated agent that posts to Bluesky
+- **Custom feed** — create and publish a feed based on algorithms *you* control
+- **OAuth** — it all starts with identity, here’s how to scaffold a web app with OAuth
+- **Statusphere refresh** — we rebuilt the long-standing Statusphere app using our new lex SDX showcasing a full social app with custom Lexicons, real-time sync, and a custom UI
+
+Beyond tutorials, there are more than two dozen new topical guides covering every aspect of the AT Protocol, providing a clear baseline for total beginners and experienced devs alike. Wherever possible, code samples are available in both TypeScript and Go with embedded samples inline.
+
+The new docs cover the new SDK workflow using [atproto/lex](https://www.npmjs.com/package/@atproto/lex). Install Lexicons with `lex install`, generate types with `lex build`, and import them directly into your project — providing first-class support for any new Lexicons you create! We also now feature our newest tooling, \`tap\` and \`goat\`, as complete solutions for working with the Atmosphere, and we explicitly recommend several community projects like [Microcosm](https://www.microcosm.blue/) as well.
+
+## New blog
+
+We moved the blog posts about AT Protocol from the Bluesky docs site over here and we’ll be publishing more posts, more frequently. Add the RSS feed to stay up-to-date on the latest news.
+
+We’re also publishing new posts into the Atmosphere as [standard.site](https://standard.site) Lexicons to make it possible to discover and share on protocol.
+
+## Internationalization
+
+Virtually all of the site has been translated into Japanese thanks to incredible contributions from community member [yamarten](https://bsky.app/profile/yamarten.bsky.social). We’ve also included machine-translated Korean and Portuguese coverage across top-level guides and tutorials, with more to come. Contributions are extremely welcome!
+
+## We can just build things
+
+Explore the tutorials. Try the new SDKs. The [entire site is open source](https://github.com/bluesky-social/atproto-website) and contributions, corrections, and translations are all welcome.
+
+The ethos of the AT Protocol is that we can just build things. [Let's make that more real than ever](https://atproto.com).

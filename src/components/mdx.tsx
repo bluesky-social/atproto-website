@@ -1,26 +1,104 @@
+'use client'
+
 import Link from 'next/link'
 import NextImage, { ImageProps } from 'next/image'
 import clsx from 'clsx'
+import {
+  createContext,
+  useContext,
+  useState,
+  useId,
+  useCallback,
+  useEffect,
+} from 'react'
+import { createPortal } from 'react-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Heading } from '@/components/Heading'
 import { Prose } from '@/components/Prose'
 
 export function Image({ className, ...props }: ImageProps) {
-  // eslint-disable-next-line jsx-a11y/alt-text
-  const cls =
-    className && className?.includes('max-w')
-      ? className
-      : clsx(className, 'max-w-full')
-  return <NextImage {...props} className={cls} />
+  const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [open])
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="mx-auto block cursor-zoom-in"
+      >
+        <NextImage className={className} {...props} />
+      </button>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-zoom-out"
+                onClick={() => setOpen(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="max-w-7xl w-full px-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <NextImage
+                    {...props}
+                    className="w-full h-auto max-h-[90vh] object-contain rounded-lg cursor-zoom-out"
+                    onClick={() => setOpen(false)}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
+    </>
+  )
 }
 
-export const a = Link
+export const a = function ExternalAwareLink({
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<'a'>) {
+  const isExternal = href?.startsWith('http://') || href?.startsWith('https://')
+
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...props} />
+    )
+  }
+
+  return <Link href={href ?? ''} {...props} />
+}
+
 export { Button } from '@/components/Button'
 export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <article className="flex h-full flex-col pb-24 pt-16">
+    <article className="flex h-full flex-col pb-24 pt-8 md:pt-16">
       <Prose className="flex-auto">{children}</Prose>
       {/* <footer className="mx-auto mt-16 w-full max-w-2xl lg:max-w-5xl">
         <Feedback /> TODO
@@ -138,5 +216,137 @@ export function Property({
         </dd>
       </dl>
     </li>
+  )
+}
+
+type SyncedTabsContextType = {
+  selectedValue: string | null
+  setSelectedValue: (value: string) => void
+}
+
+const SyncedTabsContext = createContext<SyncedTabsContextType | null>(null)
+
+export function SyncedTabs({ children }: { children: React.ReactNode }) {
+  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+
+  return (
+    <SyncedTabsContext.Provider value={{ selectedValue, setSelectedValue }}>
+      {children}
+    </SyncedTabsContext.Provider>
+  )
+}
+
+// Individual TabGroup context
+type TabGroupContextType = {
+  selectedValue: string
+  setSelectedValue: (value: string) => void
+  groupId: string
+}
+
+const TabGroupContext = createContext<TabGroupContextType | null>(null)
+
+function useTabGroup() {
+  const context = useContext(TabGroupContext)
+  if (!context) {
+    throw new Error('Tab components must be used within a TabGroup')
+  }
+  return context
+}
+
+export function TabGroup({
+  children,
+  defaultValue,
+}: {
+  children: React.ReactNode
+  defaultValue?: string
+}) {
+  const groupId = useId()
+  const syncedContext = useContext(SyncedTabsContext)
+  const [localValue, setLocalValue] = useState(defaultValue ?? '')
+
+  // Use synced value if this TabGroup has a tab matching it, otherwise use local
+  const selectedValue = syncedContext?.selectedValue ?? localValue
+
+  const setSelectedValue = (value: string) => {
+    setLocalValue(value)
+    syncedContext?.setSelectedValue(value)
+  }
+
+  return (
+    <TabGroupContext.Provider
+      value={{ selectedValue, setSelectedValue, groupId }}
+    >
+      <div className="my-6">{children}</div>
+    </TabGroupContext.Provider>
+  )
+}
+
+export function TabList({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      role="tablist"
+      className="flex gap-1 border-b border-zinc-200 dark:border-zinc-800"
+    >
+      {children}
+    </div>
+  )
+}
+
+export function Tab({
+  children,
+  value,
+}: {
+  children: React.ReactNode
+  value: string
+}) {
+  const { selectedValue, setSelectedValue, groupId } = useTabGroup()
+  const isSelected = selectedValue === value
+
+  return (
+    <button
+      role="tab"
+      id={`tab-${groupId}-${value}`}
+      aria-selected={isSelected}
+      aria-controls={`tabpanel-${groupId}-${value}`}
+      tabIndex={isSelected ? 0 : -1}
+      onClick={() => setSelectedValue(value)}
+      className={clsx(
+        'px-4 py-2 text-sm font-medium transition-colors',
+        '-mb-px border-b-2',
+        isSelected
+          ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+          : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function TabPanels({ children }: { children: React.ReactNode }) {
+  return <div className="mt-4">{children}</div>
+}
+
+export function TabPanel({
+  children,
+  value,
+}: {
+  children: React.ReactNode
+  value: string
+}) {
+  const { selectedValue, groupId } = useTabGroup()
+  const isSelected = selectedValue === value
+
+  if (!isSelected) return null
+
+  return (
+    <div
+      role="tabpanel"
+      id={`tabpanel-${groupId}-${value}`}
+      aria-labelledby={`tab-${groupId}-${value}`}
+      className="[&>:first-child]:mt-0 [&>:last-child]:mb-0"
+    >
+      {children}
+    </div>
   )
 }

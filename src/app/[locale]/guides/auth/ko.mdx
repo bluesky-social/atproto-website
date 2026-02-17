@@ -1,0 +1,47 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'Auth',
+  description: 'Auth for Atproto application developers',
+}
+
+## 인증에 관하여
+**인증이 문서의 첫 번째 부분인 데는 이유가 있습니다!** AT Protocol 레코드에서 [데이터 읽기](/reading-data#unauthenticated-reads)하거나 [파이어호스에서 데이터 스트리밍](/guides/streaming-data)하는 데 항상 인증이 필요한 것은 아닙니다. 하지만 Atproto 앱의 Atmosphere와 어떤 식으로든 통합되는 애플리케이션을 구축하려는 경우, 인증부터 시작해야 합니다. AT Protocol ID를 OAuth 소스로만 사용하는 것으로 시작할 수도 있지만, Atproto [소셜 그래프](/guides/social-graph)를 기반으로 구축하면 훨씬 더 많은 기능을 구현할 수 있다는 점을 알게 될 것입니다.
+
+이 섹션은 Atproto에서 애플리케이션을 구축하는 개발자를 대상으로 합니다. 자체 최종 사용자 로그인 흐름을 가진 애플리케이션은 인증을 위해 [OAuth](#what-is-oauth)를 구현해야 합니다. 봇이나 명령줄 도구와 같은 단일 목적 애플리케이션은 대신 [비밀번호 인증](/guides/sdk-auth)을 사용할 수 있습니다.
+
+<Note>
+[앱 비밀번호](/specs/xrpc#app-passwords) 사용도 지원합니다. 계정은 기본 비밀번호와 별도로 앱 비밀번호를 생성 및 취소할 수 있습니다. 이렇게 하면 비밀번호 인증을 사용하는 애플리케이션에 기본 비밀번호를 제공할 필요가 없습니다.
+</Note>
+
+애플리케이션에 OAuth를 구현하려면 일반적인 사용 사례에 대한 [OAuth 패턴](/guides/oauth-patterns)과 권한 모델 이해를 위한 [범위](/guides/scopes) 가이드를 참조하세요. 자체 프로토콜 구현이나 OAuth 클라이언트 SDK를 구축하는 경우 [OAuth 사양](/specs/oauth)을 참조하세요.
+
+## OAuth란 무엇인가?
+
+OAuth는 개발자가 사용자에게 비밀번호를 요구하지 않고도 계정 접근 권한을 요청할 수 있게 하는 인증 프레임워크입니다. OAuth가 없다면, 제3자 앱이 자신의 계정에 접근하도록 허용하려면 사용자가 해당 앱에 사용자 이름과 비밀번호를 직접 입력하는 방법밖에 없습니다. 이는 여러 가지 이유로 좋지 않은데, 첫 번째는 제3자 앱이 비밀번호를 볼 수 있고 저장할 가능성이 있다는 점입니다. 앱이 사용자 이름과 비밀번호를 확보하면 해당 계정에 대한 완전한 접근 권한을 가지게 됩니다.
+
+OAuth는 사용자의 사용자 이름과 비밀번호를 요구하지 않으면서도 안전한 인증을 관리하기 위한 공개 사양 집합으로 이러한 문제를 해결하고자 합니다. 웹에서 “~로 로그인” 버튼이나 링크를 사용해 본 적이 있다면, 이미 OAuth를 사용한 것입니다.
+
+개발자로서 사용자의 계정에 대한 제한된 접근 권한을 요청할 수 있습니다. 즉, 누군가의 공개 타임라인에 메시지를 게시하기만 하면 되는 경우, 그들의 비공개 메시지를 읽을 수 있는 권한까지 요청할 필요가 없습니다. 이는 앱 개발자에게는 필요하지 않은 데이터 관리를 걱정할 필요가 없어서 좋고, 앱 사용자에게는 DM이 유출될까 걱정할 필요가 없어서 좋습니다.
+
+## AT 프로토콜에서 OAuth의 차이점은?
+
+Atproto는 [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)을 기반으로 OAuth 표준의 특정 “프로필”을 [지정](/specs/oauth)합니다.
+
+다른 OAuth 시스템에 익숙한 사용자에게는 몇 가지 예상치 못한 세부 사항이 있을 수 있습니다.
+
+- **Atproto는 분산형**입니다: 일반적으로 앱에 “~로 로그인” 버튼이 있을 때, 사용자를 인증할 수 있는 권한 기관(보통 몇몇 대기업 중 하나)을 선택할 수 있게 합니다. ATProto OAuth에서는 앱이 인증 제공자와 사전 관계를 맺지 않습니다: 사용자의 [PDS](/guides/the-at-stack#pds)가 그 역할을 합니다. 이는 사전 관계 설정이 필요한 OIDC와 호환되지 않는 이유이기도 합니다.
+
+- **이동성(Migration)**: Atproto 사용자는 시간이 지남에 따라 서버([PDS](/guides/glossary#pds-personal-data-server)) 간에 계정을 이동할 수 있습니다. 이를 지원하기 위해 Atproto는 유연한 [Identity](/guides/identity) 계층을 갖추고 있습니다. 이 계층을 통해 사용자 이름([handles](/specs/handle))을 정적 사용자 ID([DID](/specs/did))로 변환할 수 있으며, 이 DID는 다시 사용자의 PDS를 찾아내는 데 활용됩니다. 사용자가 앱에 로그인할 때 OAuth 클라이언트는 이러한 관계를 동적으로 해결합니다.
+
+- **클라이언트 ID**: 다른 OAuth 생태계에서는 클라이언트 앱이 리소스 서버에 사전 등록해야 하는 경우가 많습니다. 이는 분산형 시스템(수많은 클라이언트와 리소스 서버가 존재하는)에서는 실현 불가능하므로, Atproto는 [클라이언트 ID 메타데이터 문서](/specs/oauth#client-id-metadata-document)를 통해 이를 해결합니다.
+
+## 추가 자료 및 리소스
+
+[SDK 인증](/guides/sdk-auth)부터 읽어보세요. 애플리케이션에 OAuth를 구현하려면 일반적인 사용 사례에 대한 [OAuth 패턴](/guides/oauth-patterns)과 권한 모델 이해를 위한 [범위](/guides/scopes) 가이드를 참조하세요.
+- [SDK 인증](/guides/sdk-auth)
+- [OAuth 패턴](/guides/oauth-patterns)
+- [범위](/guides/scopes)
+- [권한 요청](/guides/permission-sets)
+- [OAuth 사양](/specs/oauth)
+- [권한 사양](/specs/permission)

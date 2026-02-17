@@ -1,0 +1,29 @@
+import {Container} from "@/components/Container"
+import moderation from "./moderation.png"
+
+export const header = {
+  title: 'Moderation',
+  description: 'Moderation in the Atmosphere',
+}
+
+## Sobre moderação
+O modelo Atproto consiste em que *discurso* e *alcance* devem ser duas camadas separadas, construídas para funcionar em conjunto. A camada “discurso” deve permanecer permissiva, distribuindo autoridade e projetada para garantir que todos tenham voz. A camada “alcance” fica na parte superior, construída para oferecer flexibilidade e projetada para ser escalável. A moderação Atproto é implementada usando [Etiquetas](/guides/labels).
+<Container>
+  <Image src={moderation} alt = "" className = "w-full max-w-md mx-auto" />
+</Container>
+Nossa arquitetura de moderação é fornecida por dois serviços: [*Osprey*](#algorithmic-moderation), um mecanismo de decisões de fluxo de eventos e interface de usuário de análise projetado para investigar e tomar medidas automáticas; e [*Ozone*](#using-ozone), um serviço de rotulagem e interface web para tomar decisões de moderação.
+
+[Leia mais](https://docs.bsky.app/blog/blueskys-moderation-architecture) sobre moderação em nosso blog.
+## Moderação algorítmica
+[Osprey](https://github.com/bluesky-social/osprey-atproto) é um mecanismo de decisões de fluxo de eventos e uma interface de usuário de análise projetada para investigar e tomar medidas automáticas, a fim de permitir uma moderação sustentável em escala. Ele utiliza o [Kafka](https://kafka.apache.org/) com seu próprio [mecanismo de regras](https://github.com/roostorg/osprey/blob/main/docs/rules.md).
+
+De outra perspectiva, o Osprey é uma biblioteca Python para processar ações por meio de regras escritas por humanos e gerar rótulos, webhooks de volta para uma API e outros sumidouros. Ele avalia eventos usando lógica estruturada, funções definidas pelo usuário e sinais externos para atribuir rótulos, veredictos e ações. Ele pode fazer uso de LLMs ajustados e outros classificadores que expõem seus próprios pontos finais da web para o Osprey. Os LLMs podem ser uma ferramenta útil para gerar relatórios de moderação; esses relatórios podem ser acionados automaticamente e/ou manualmente, dependendo da sua configuração. 
+
+O Osprey é mantido pela [Roost](https://roost.tools/), que desenvolve ferramentas de moderação de código aberto.
+## Leituras adicionais e recursos
+Saiba tudo sobre os tipos e formatos de [rótulos](/guides/labels) de moderação. Em seguida, você pode [se inscrever](/guides/subscriptions) em rotuladores de moderação para que seus rótulos sejam aplicados em seu aplicativo. Você também pode [criar seu próprio rotulador](/guides/creating-a-labeler) para publicar rótulos. Se precisar moderar o conteúdo manualmente, você pode usar o [Ozone](/guides/using-ozone) como uma interface web para rotular o conteúdo.
+- [Etiquetas](/guides/labels)
+- [Criando um rotulador](/guides/creating-a-labeler)
+- [Assinaturas](/guides/subscriptions)
+- [Especificações de etiquetas](/specs/label)
+- [Usando o Ozone](/guides/using-ozone)

@@ -1,0 +1,52 @@
+export const header = {
+  title: 'Sync',
+  description: 'Synchronizing AT Protocol data',
+}
+
+## Identificadores e DIDs
+No AT, os identificadores são resolvidos por meio de [DIDs](/specs/did), também conhecidos como [Identificadores Descentralizados](https://en.wikipedia.org/wiki/Decentralized_identifier). Atualmente, dois prefixos DID diferentes são suportados:
+- `did:web`, que é baseado no padrão W3C DID.
+- `did:plc`, que é um método DID desenvolvido e implementado pela Bluesky. Consulte o repositório [did-method-plc](https://github.com/did-method-plc/did-method-plc) para obter detalhes.
+
+Quando você se inscreve para uma nova conta usando um aplicativo Atmosphere, esse aplicativo se comunica com um PDS para registrar um novo identificador para você, usando seu nome de domínio(por exemplo, `*.bsky.social`).
+
+## Repositórios de dados
+Um repositório de dados é uma coleção de dados publicados por um único usuário.Os repositórios são estruturas de dados com autenticação automática, o que significa que cada atualização é assinada e pode ser verificada por qualquer pessoa.
+Vários tipos de identificadores são usados em um repositório de dados:
+- [**IDs descentralizadas(DIDs)**](https://w3c.github.io/did/) identificam repositórios de dados. Elas são amplamente utilizadas como IDs de usuário, mas como cada usuário tem um repositório de dados, uma DID pode ser considerada uma referência a um repositório de dados.
+- [**Identificadores com namespace(NSIDs)**](/specs/nsid) identificam o tipo de léxico para grupos de registros dentro de um repositório.
+- [**Chaves de registro**](/specs/record-key) ("rkeys") identificam registros individuais dentro de uma coleção em um determinado repositório.O formato é especificado pelo léxico da coleção.
+- [**IDs de conteúdo(CIDs)**](https://github.com/multiformats/cid) identificam o conteúdo usando um hash de impressão digital. Eles são usados em todo o repositório para referenciar os objetos (nós) dentro dele.
+
+Tomemos, por exemplo, um único registro AT:
+```
+at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
+```
+Isso pode ser dividido em`at://DID/NSID/rkey` ou `at://repository/collection/record`. Ele tem um CID correspondente de `bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`.
+
+Ao fazer uma solicitação de gravação para um endpoint da API AT — como ao criar uma nova postagem — esse caminho completo do repositório será retornado como resposta:
+
+```json
+{
+"uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  
+"cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+É assim que os registros individuais são identificados e armazenados de forma exclusiva nos repositórios de dados AT.
+
+## PDS
+Um PDS, ou Servidor de Dados Pessoais, é um servidor que hospeda repositórios de dados individuais dos usuários, como postagens, seguidores e informações de perfil. O PDS lida com recursos do ciclo de vida da conta, gerenciamento de identidade e resolução de chaves para contas de usuários hospedadas.
+
+Você pode [hospedar seu próprio PDS](/guides/self-hosting) e [migrar contas individuais](/guides/account-migration) de um PDS para outro. Consulte [The AT Stack](/guides/the-at-stack#pds) para obter mais informações.
+
+## Leituras adicionais e recursos
+Existem muitas maneiras de sincronizar e transmitir dados AT. Você pode usar o[Jetstream](/guides/streaming-data) para transmitir atualizações em tempo real ou [preencher](/guides/backfilling) localmente os dados que já existem na rede.
+
+- [Transmissão de dados](/guides/streaming-data)
+- [Preenchimento](/guides/backfilling)
+- [Feeds](/guides/feeds)
+- [Especificação do repositório](/specs/repository)
+- [Especificação do fluxo de eventos](/specs/event-stream)
+- [Especificação de sincronização](/specs/sync)
+- O projeto comunitário [Microcosm](https://www.microcosm.blue/) mantém ferramentas para trabalhar com registros AT em escala sem espelhamento local.

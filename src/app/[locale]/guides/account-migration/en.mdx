@@ -1,14 +1,18 @@
-export const metadata = {
+export const header = {
   title: 'Account Migration',
   description:
-    'Account Migration Details',
+    'Migrating an account to a new PDS',
 }
-
-# Account Migration Details
 
 This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time.
 
-## Creating New Account
+If you're just looking to migrate an account to a new PDS using existing tools, we recommend:
+- [Migrating PDS Account with `goat`](https://whtwnd.com/bnewbold.net/3l5ii332pf32u)
+- [PDS MOOver](https://pdsmoover.com/) — a community-developed tool
+
+For an in-depth explanation of the steps involved in a migration, read on.
+
+## Creating a New Account
 
 To create a PDS account with an existing identity, it is necessary to prove control the identity.
 
@@ -54,7 +58,7 @@ Because identity operations are sensitive, they require an additional security t
 
 This token is included as part of a call to `com.atproto.identity.signPlcOperation` on the old PDS, along with the requested DID fields (new signing key, rotation keys, PDS location, etc). The old PDS will validate the request, sign using the PDS-managed PLC rotation key, and return the signed PLC operation. The operation will not have been submitted to any PLC directory at this point in time.
 
-The user is then recommended to submit the operation to the new PDS (using the `com.atproto.identity.submitPlcOperation` endpoint), which will validate that the changes are "safe" (aka, that they enable the the PDS to help manage the identity and atproto account), and then submit it to the PLC directory.
+The user is then recommended to submit the operation to the new PDS (using the `com.atproto.identity.submitPlcOperation` endpoint), which will validate that the changes are "safe" (aka, that they enable the PDS to help manage the identity and atproto account), and then submit it to the PLC directory.
 
 With the identity successfully updated, the new PDS is now the "current" host for the account from the perspective of the entire network. This will be immediately apparent to new services which resolve the identity. Existing services that consume from the firehose will be alerted by the `#identity` event. Other services, which may have now-stale cached identity metadata for the account, will either refresh when the cache expires, or should refresh their cache when they encounter errors (such as invalid service auth signatures).
 
@@ -71,8 +75,3 @@ The user can activate their account on the new PDS with a call to `com.atproto.s
 At this point the migration is complete. New content can be published by writing to the repo, preferences can be updated, and inter-service auth and proxying should work as expected. It may be necessary to log out of any clients and log back in. In some cases, if services have aggressive identity caching and do not refresh on signature failure, service auth requests could fail for up to 24 hours.
 
 It will still be possible to login and authenticate with the old PDS. The user may wish to fully terminated their old account eventually. This can be automated with the `deleteAfter` parameter to the `com.atproto.server.deactivateAccount` request. Note that the old PDS may be able to assist with PLC identity recovery during a fixed 72hr window, but only if the account was not fully deleted during that window.
-
-## Further Reading and Resources
-
-- [Migrating PDS Account with `goat`](https://whtwnd.com/bnewbold.net/3l5ii332pf32u)
-- [PDS MOOver](https://pdsmoover.com/) — a third-party tool for migrating PDS accounts

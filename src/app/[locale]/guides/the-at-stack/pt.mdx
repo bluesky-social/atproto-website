@@ -1,0 +1,86 @@
+import {Container} from "@/components/Container"
+import crawling from "./crawling.png"
+import did from "./did.png"
+import feeds from "./feeds.png"
+
+export const header = {
+  title: 'The AT Stack',
+  description:
+    'Components of the AT Protocol Stack',
+}
+
+## O Protocolo de Transferência Autenticada
+O Protocolo AT (Protocolo de Transferência Autenticada) é um padrão para conversas públicas e uma estrutura de código aberto para a criação de aplicativos sociais.
+Ele cria um formato padrão para identidade do usuário, seguidores e dados em aplicativos sociais, permitindo que os aplicativos interoperem e os usuários transitem livremente entre eles. É uma rede federada com portabilidade de contas.
+## Arquitetura Descentralizada
+O AT sincroniza repositórios em um modelo de rede federada. A federação garante que a rede seja conveniente de usar e esteja disponível de forma confiável. Os dados do repositório são sincronizados entre servidores por meio de tecnologias web padrão (HTTP e WebSockets).
+[**Servidores de dados pessoais**, ou PDSes](/guides/the-at-stack#pds), são sua casa na nuvem. Eles hospedam seus dados, distribuem-nos, gerenciam sua identidade e orquestram solicitações a outros serviços para fornecer suas visualizações.
+Os **relés** lidam com todos os seus eventos, como recuperar métricas em grande escala (curtidas, repostagens, seguidores), descoberta de conteúdo (algoritmos) e pesquisa de usuários.
+<Container>
+  <Image src={crawling} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+O Protocolo AT foi arquitetado de forma a ser um “mundo grande com fallbacks de mundo pequeno”, inspirado na própria web aberta. Com a web, computadores individuais enviam conteúdo para a rede e, em seguida, todo esse conteúdo é transmitido de volta para outros computadores. Da mesma forma, com o Protocolo AT, enviamos mensagens para um número muito menor de grandes agregadores, que então transmitem esses dados para servidores de dados pessoais em toda a rede.
+Tecnicamente, você pode implementar um aplicativo AT com apenas um único PDS — os relés não são uma parte necessária da especificação. Eles permitem que o ecossistema seja dimensionado para redes sociais de grande porte.
+## PDS
+As instâncias PDS hospedam contas para usuários, que exigem gerenciamento de contas e controles de ciclo de vida semelhantes a qualquer servidor de rede. Embora as identidades AT (DIDs e identificadores) possam, em teoria, ser totalmente separadas do PDS, na prática, espera-se que o PDS ajude a gerenciar a identidade do usuário.
+Você pode [hospedar seu próprio PDS](/guides/self-hosting).
+Os dados do usuário são armazenados em repositórios de dados assinados e verificados por DIDs. Repositórios de dados assinados são como repositórios Git, mas para registros de banco de dados, e DIDs são essencialmente registros de certificados de usuário, semelhantes em alguns aspectos ao sistema de certificados TLS. Espera-se que sejam seguros, confiáveis e independentes do PDS do usuário.
+<Container>
+  <Image src={did} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+O PDS lida com:
+- ciclo de vida da conta: inscrição, exclusão, migração
+- segurança da conta: verificação de e-mail, fluxo de redefinição de senha, fluxo de alteração de e-mail
+- resolução de identidade AT: DIDs, identificadores. [Leia mais](https://fusectore.dev/2025/01/04/atproto-identity.html) sobre como funciona a resolução de identidade.
+- armazenamento de preferências e estado privado
+- capacidade de remover ou suspender contas e lidar com contatos de moderação
+- gerenciamento de chaves secretas: chave de assinatura AT e chave de rotação PLC
+- Operações e pontos finais de identidade [PLC](https://web.plc.directory/): alteração de identificador; validação, assinatura e envio de operações PLC
+- Entrega de e-mail: para fluxos de redefinição, bem como encaminhamento de e-mails de moderação
+- Saída de eventos `#identity` e `#account` (em breve) no fluxo de eventos do repositório
+- Normalmente, a capacidade de gerenciar um namespace de identificador padrão (domínio base)
+- Fluxos de cliente OAuth, incluindo páginas de login na web e MFA opcional
+Você pode migrar o repositório de dados de uma conta individual livremente de um PDS para outro. Isso envolve a importação e exportação de repositórios como arquivos CAR. Existem algumas ferramentas da comunidade que facilitam isso:
+- https://atproto.at/, que permite navegar por todos os dados armazenados em seu próprio repositório (e em qual PDS ele está hospedado atualmente)
+- https://pdsmoover.com/, uma coleção de ferramentas para migração de PDS
+- https://boat.kelinci.net/, um conjunto de interfaces para importação e exportação de repositórios
+- https://github.com/bluesky-social/goat, nossa ferramenta de linha de comando Go AT.
+## Tap
+O Tap é usado para sincronizar registros existentes da rede AT e, em seguida, continuar recebendo novos registros do firehose.
+O Tap simplifica a sincronização AT, lidando com a conexão, verificação, preenchimento e filtragem do firehose. Seu aplicativo se conecta a um Tap e recebe eventos JSON simples apenas para os repositórios e coleções de seu interesse, sem a necessidade de se preocupar com formatos binários para validar assinaturas criptográficas. Recursos do Tap:
+- verifica a estrutura do repositório, a integridade do MST e as assinaturas de identidade
+- preenchimento automático: busca o histórico completo do repositório do PDS ao adicionar novos repositórios
+- saída filtrada: por lista DID, por coleção ou modo de rede completa
+- garantias de ordenação: eventos ao vivo aguardam a conclusão do preenchimento histórico
+- modos de entrega: WebSocket com acks, fire-and-forget ou webhook
+- binário Go único
+- backend SQLite ou Postgres
+- projetado para escala moderada (milhões de repositórios, mais de 30 mil eventos/segundo)
+Existe uma biblioteca Typescript para trabalhar com o Tap em [@atproto/tap](https://www.npmjs.com/package/@atproto/tap).
+## Visualizações do aplicativo e retransmissão
+Os **relais** lidam com todos os seus eventos, como recuperação de métricas em grande escala (curtidas, repostagens, seguidores), descoberta de conteúdo (algoritmos) e pesquisa de usuários. O relé também lida com a [limitação de taxa](https://docs.bsky.app/docs/advanced-guides/rate-limits) de PDSes individuais para garantir que o conteúdo possa ser indexado em toda a rede.
+Uma visualização do aplicativo é a parte que realmente monta seu feed e todos os outros dados que você vê no aplicativo, e está a jusante do fluxo de dados do Relay. Este é um serviço semanticamente consciente que produz agregações em toda a rede e visualizações sobre algum subconjunto da rede. Por exemplo, o Relay pode rastrear para obter dados como curtidas e repostagens de uma determinada postagem, e a visualização do aplicativo exibirá a contagem dessas métricas.
+Pode haver um ecossistema de App Views para cada léxico implantado na rede. Por exemplo, o *Bluesky* atualmente suporta um modo de microblogging: o léxico `app.bsky`. Os desenvolvedores que criam novos léxicos podem implantar uma App View correspondente que entenda seu léxico para atender seus usuários. Outros léxicos podem incluir [vídeo](https://stream.place/), ou [blogging de formato longo](https://leaflet.pub/), ou [codificação colaborativa](https://tangled.org/). Ao inicializar a partir de um Relay existente, a coleta de dados já estará cuidada para essas novas aplicações. Eles podem se beneficiar da massa crítica de usuários que já postam no Bluesky e preenchem seus repositórios com outros léxicos; eles só precisam fornecer os comportamentos de indexação necessários para sua aplicação.
+App Views e Relays são ferramentas no nível da aplicação, em vez de partes inerentes ao protocolo AT. Nossa implementação do App View responde a chamadas [XRPC](/specs/xrpc) — nossa API HTTP.
+Você pode encontrar um exemplo bem documentado de outras implementações de App View e Relay em [The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture). Diferentes aplicativos Atmosphere podem fazer diferentes escolhas de implementação.
+## DID PLC
+O [DID PLC](https://web.plc.directory/) é um DID com autenticação automática que é altamente consistente, recuperável e permite a rotação de chaves. Cada identidade é composta por uma série de operações assinadas, cada uma referenciando a operação anterior em uma cadeia que remonta à operação inicial. Qualquer observador pode verificar a cadeia de operações para confirmar o estado atual da identidade.
+As operações PLC são armazenadas em um diretório (atualmente executado em [plc.directory](http://plc.directory)), que é um serviço centralizado que valida as operações, as armazena e as serve, bem como as visualizações computadas das identidades derivadas das operações. O modelo de confiança para o diretório é bastante limitado, pois não é possível modificar identidades sem uma operação assinada em seu nome.
+Para obter orientações sobre espelhamento PLC, consulte [este blog do desenvolvedor](https://dholms.leaflet.pub/3m6zswymcqk2p).
+## Feeds
+Assim como nos mecanismos de pesquisa da Web, os usuários são livres para selecionar seus agregadores. Feeds, índices de pesquisa e visualizações completas de aplicativos podem ser fornecidos por terceiros independentes, com solicitações encaminhadas pelo PDS com base na configuração do usuário.
+<Container>
+  <Image src={feeds} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+Feeds personalizados, ou geradores de feeds, são serviços que fornecem algoritmos personalizados aos usuários por meio do Protocolo AT. Isso permite que os usuários escolham suas próprias linhas do tempo, seja uma página algorítmica “Para você” ou um feed inteiramente com fotos de gatos.
+Os feeds personalizados funcionam de maneira simples: o servidor recebe uma solicitação do servidor de um usuário e retorna uma lista de URIs de postagens com alguns metadados opcionais anexados. Essas postagens são então hidratadas em visualizações completas pelo servidor solicitante e enviadas de volta ao cliente.
+Um serviço Feed Generator pode hospedar um ou mais algoritmos. O serviço em si é identificado pelo DID, enquanto cada algoritmo que ele hospeda é declarado por um registro no repositório da conta que o criou. Por exemplo, os feeds oferecidos pelo Bluesky provavelmente serão declarados no repositório do `@bsky.app`. Portanto, um determinado algoritmo é identificado pelo at-uri do registro de declaração. Esse registro de declaração inclui um ponteiro para o DID do serviço, juntamente com algumas informações de perfil do feed.
+[Navegue](https://blueskydirectory.com/feeds/all) pelos feeds personalizados.
+## Osprey e Ozone
+A moderação é tratada por duas partes da nossa pilha: [*Osprey*](https://github.com/roostorg/osprey), um mecanismo de decisões de fluxo de eventos e interface de usuário de análise projetado para investigar e tomar medidas automáticas; e [*Ozone*](/guides/using-ozone), um serviço de rotulagem e interface web para tomar decisões de moderação.
+## Ferramentas e SDKs
+A maioria das ferramentas AT é implementada em Go e TypeScript.
+- O repositório [indigo](https://github.com/bluesky-social/indigo) contém a maioria das nossas ferramentas Go, incluindo o código para o [Relay](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md) e o SDK Go.
+- Há também o https://github.com/bluesky-social/goat, nossa ferramenta de linha de comando AT em Go.
+- O repositório https://github.com/bluesky-social/atproto contém a maioria das nossas ferramentas TypeScript, incluindo o código para o [PDS](https://github.com/bluesky-social/atproto/tree/main/packages/pds) e o SDK TypeScript.
+- Existem muitas outras ferramentas da comunidade que usamos todos os dias. Por exemplo, as ferramentas [Microcosm](https://www.microcosm.blue/), escritas em Rust, fornecem um conjunto de APIs para ajudar a construir camadas de consulta sem a necessidade de AppViews dedicadas! Consulte https://constellation.microcosm.blue/ para obter detalhes.

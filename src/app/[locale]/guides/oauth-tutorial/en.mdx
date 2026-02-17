@@ -1,0 +1,802 @@
+import {Container} from "@/components/Container"
+import workingauth from "./authentication-working.png"
+import starter from "./nextjs-starter.png"
+import metadata from "./client-metadata.png"
+
+export const header = {
+  title: 'OAuth with NextJS Tutorial',
+  description: 'Build a Next.js app supporting OAuth with ATProto identity.',
+}
+
+In this tutorial, you'll build a Next.js app where users can log in with their AT Protocol identity using OAuth. If you [host your own PDS](/guides/self-hosting), that means you can provide your own auth source for any apps in the Atmosphere.
+
+You can find the source code for this tutorial, along with other example projects, in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository, under `nextjs-oauth`.
+
+See a demo version running at: [https://nextjs-oauth-tutorial.up.railway.app/](https://nextjs-oauth-tutorial.up.railway.app/).
+
+## Prerequisites
+
+This OAuth tutorial does not use many Atproto concepts or dependencies. You should have a working understanding of Next.js and TypeScript.
+
+You should have installed:
+- Node.js 20+
+- The pnpm package manager
+
+On platforms supported by [homebrew](https://brew.sh/), you can install these with:
+
+```bash
+brew install node pnpm
+```
+
+## Part 1: Project Setup
+
+You'll start by creating a new Next.js project using the `create-next-app` command.
+
+```bash
+npx create-next-app@latest my-app --yes
+cd my-app
+```
+
+Next, add the `oauth-client-node` package from the Atproto ecosystem, which provides OAuth client functionality.
+
+```bash
+pnpm add @atproto/oauth-client-node
+```
+
+That's all you need to get started! You can now run the development server with:
+
+```bash
+pnpm dev
+```
+
+Navigate to your app in a browser at [http://127.0.0.1:3000](http://127.0.0.1:3000).
+
+<Note>
+In general, when working with OAuth, you should use `127.0.0.1` URLs instead of `localhost`. This will be important for the OAuth redirect flow to work correctly.
+</Note>
+
+You should receive the Next.js starter page:
+
+<Container>
+  <Image src={starter} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Next, you'll implement baseline OAuth functionality.
+
+## Part 2: Implementing OAuth
+
+You'll start out implementing OAuth using a local *loopback* client with in-memory storage.
+
+OAuth loopback works by using a special redirect URI (like http://127.0.0.1:PORT/callback) to send authorization codes directly back to an app, which listens on a local port, avoiding browser-based callbacks and enabling secure, direct communication for token exchange. Instead of a web redirect, the app opens a local listener, you can auth in a browser, and the server redirects back to the app's local URI, letting the app grab the code and exchange it for a token. It's particularly useful for development scenarios.
+
+To do this, you'll implement a [confidential client](/specs/oauth#types-of-clients). Your Next.js server will hold credentials for talking to a user's PDS. The server will verify incoming requests from the browser using cookies for session auth.
+
+First, create `lib/auth/client.ts`:
+
+```typescript
+import {
+  NodeOAuthClient,
+  buildAtprotoLoopbackClientMetadata,
+} from "@atproto/oauth-client-node";
+import type {
+  NodeSavedSession,
+  NodeSavedState,
+} from "@atproto/oauth-client-node";
+
+export const SCOPE = "atproto";
+
+// Use globalThis to persist across Next.js hot reloads
+const globalAuth = globalThis as unknown as {
+  stateStore: Map<string, NodeSavedState>;
+  sessionStore: Map<string, NodeSavedSession>;
+};
+globalAuth.stateStore ??= new Map();
+globalAuth.sessionStore ??= new Map();
+
+let client: NodeOAuthClient | null = null;
+
+export async function getOAuthClient(): Promise<NodeOAuthClient> {
+  if (client) return client;
+
+  client = new NodeOAuthClient({
+    clientMetadata: buildAtprotoLoopbackClientMetadata({
+      scope: SCOPE,
+      redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
+    }),
+  
+    stateStore: {
+      async get(key: string) {
+        return globalAuth.stateStore.get(key);
+      },
+      async set(key: string, value: NodeSavedState) {
+        globalAuth.stateStore.set(key, value);
+      },
+      async del(key: string) {
+        globalAuth.stateStore.delete(key);
+      },
+    },
+
+    sessionStore: {
+      async get(key: string) {
+        return globalAuth.sessionStore.get(key);
+      },
+      async set(key: string, value: NodeSavedSession) {
+        globalAuth.sessionStore.set(key, value);
+      },
+      async del(key: string) {
+        globalAuth.sessionStore.delete(key);
+      },
+    },
+  });
+
+  return client;
+}
+```
+
+`stateStore` is temporary storage using during the OAuth flow; `sessionStore` is persistent storage keyed by a user's DID. The `globalThis` pattern is a standard Next.js technique for persisting data across hot module reloads in development. Without this, the in-memory stores would be wiped every time you edit a file.
+
+AT Protocol OAuth has a special carveout for local development. The `client_id` must be `localhost` and the `redirect_uri` must be on host 127.0.0.1. Read more in the [Localhost Client Development specs](/specs/oauth#localhost-client-development).
+
+<Note>
+There's no way around it — this section of the tutorial is pretty dry! You'll be implementing standard OAuth flows, which are inherently boilerplate-heavy. But once you have this baseline working, you'll be able to build on top of it!
+</Note>
+
+Next, create `lib/auth/session.ts` to manage user sessions:
+
+```typescript
+import { cookies } from "next/headers";
+import { getOAuthClient } from "./client";
+import type { OAuthSession } from "@atproto/oauth-client-node";
+
+export async function getSession(): Promise<OAuthSession | null> {
+  const did = await getDid();
+  if (!did) return null;
+
+  try {
+    const client = await getOAuthClient();
+    return await client.restore(did);
+  } catch {
+    return null;
+  }
+}
+
+export async function getDid(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get("did")?.value ?? null;
+}
+```
+
+Then, create `app/oauth/login/route.ts`. This route initiates the login flow. You only need the user's handle — with it, you can resolve the user's Authorization Server (their PDS) and redirect them there:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { getOAuthClient, SCOPE } from "@/lib/auth/client";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { handle } = await request.json();
+
+    if (!handle || typeof handle !== "string") {
+      return NextResponse.json(
+        { error: "Handle is required" },
+        { status: 400 }
+      );
+    }
+
+    const client = await getOAuthClient();
+
+    // Resolves handle, finds their auth server, returns authorization URL
+    const authUrl = await client.authorize(handle, {
+      scope: SCOPE,
+    });
+
+    return NextResponse.json({ redirectUrl: authUrl.toString() });
+  } catch (error) {
+    console.error("OAuth login error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Login failed" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+After a user approves the authorization consent screen, they'll be redirected to a callback route. Here, you'll exchange the code from the redirect for actual credentials, then set a cookie for the user's DID. Create `app/oauth/callback/route.ts`:
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { getOAuthClient } from "@/lib/auth/client";
+
+const PUBLIC_URL = process.env.PUBLIC_URL || "http://127.0.0.1:3000";
+
+export async function GET(request: NextRequest) {
+  try {
+    const params = request.nextUrl.searchParams;
+    const client = await getOAuthClient();
+
+    // Exchange code for session
+    const { session } = await client.callback(params);
+
+    const response = NextResponse.redirect(new URL("/", PUBLIC_URL));
+
+    // Set DID cookie
+    response.cookies.set("did", session.did, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      path: "/",
+    });
+
+    return response;
+  } catch (error) {
+    console.error("OAuth callback error:", error);
+    return NextResponse.redirect(new URL("/?error=login_failed", PUBLIC_URL));
+  }
+}
+```
+
+`PUBLIC_URL` falls back to `127.0.0.1:3000` to ensure you always redirect to the correct host. This avoids cookie issues that arise from `localhost` vs `127.0.0.1` mismatches.
+
+Next, you should also create a logout route at `app/oauth/logout/route.ts` to clear the user's session:
+
+```typescript
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getOAuthClient } from "@/lib/auth/client";
+
+export async function POST() {
+  try {
+    const cookieStore = await cookies();
+    const did = cookieStore.get("did")?.value;
+
+    if (did) {
+      const client = await getOAuthClient();
+      await client.revoke(did);
+    }
+
+    cookieStore.delete("did");
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Logout error:", error);
+    const cookieStore = await cookies();
+    cookieStore.delete("did");
+    return NextResponse.json({ success: true });
+  }
+}
+```
+
+Finally, you'll make one last route, to expose the `oauth-client-metadata.json` at a well-known URL. This is [used in ATProto OAuth](/specs/oauth#clients) to discover client configuration. Create `app/oauth-client-metadata.json/route.ts`:
+
+```typescript
+import { getOAuthClient } from "@/lib/auth/client";
+import { NextResponse } from "next/server";
+
+// The URL of this endpoint IS your client_id
+// Authorization servers fetch this to learn about your app
+
+export async function GET() {
+  const client = await getOAuthClient();
+  return NextResponse.json(client.clientMetadata);
+}
+```
+
+You can visit http://127.0.0.1:3000/oauth-client-metadata.json to see your client configuration.
+
+<Container>
+  <Image src={metadata} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Now you just need to add a few forms. Create `components/LoginForm.tsx`:
+
+```tsx
+"use client";
+
+import { useState } from "react";
+
+export function LoginForm() {
+  const [handle, setHandle] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/oauth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ handle }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      // Redirect to authorization server
+      window.location.href = data.redirectUrl;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+          Handle
+        </label>
+        <input
+          type="text"
+          value={handle}
+          onChange={(e) => setHandle(e.target.value)}
+          placeholder="user.example.com"
+          className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+          disabled={loading}
+        />
+      </div>
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={loading || !handle}
+        className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+      >
+        {loading ? "Signing in..." : "Sign in"}
+      </button>
+    </form>
+  );
+}
+```
+
+Do the same for `components/LogoutButton.tsx`:
+
+```tsx
+"use client";
+
+import { useRouter } from "next/navigation";
+
+export function LogoutButton() {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/oauth/logout", { method: "POST" });
+    router.refresh();
+  }
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+    >
+      Sign out
+    </button>
+  );
+}
+```
+
+And, finally, replace the starter `app/page.tsx` to use these components and show the user's DID when logged in:
+
+```tsx
+import { getSession } from "@/lib/auth/session";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+
+export default async function Home() {
+  const session = await getSession();
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+            AT Protocol OAuth
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Sign in with your AT Protocol account
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          {session ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  Signed in as{" "}
+                  <span className="font-mono">{session.did}</span>
+                </p>
+                <LogoutButton />
+              </div>
+              <p className="text-green-600">Authentication working!</p>
+            </div>
+          ) : (
+            <LoginForm />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+At this point, you should be able to test the OAuth flow!
+
+If your app isn't already running from Part 1, start it with:
+
+```bash
+pnpm dev
+```
+
+Then:
+1. Navigate to your app in a browser at [http://127.0.0.1:3000](http://127.0.0.1:3000).
+2. Enter your handle
+3. Authorize the app
+4. You should see "Authentication working!" with your DID:
+
+<Container>
+  <Image src={workingauth} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Congratulations — you've now implemented working OAuth as a baseline, and can move on to more exciting features.
+
+## Part 3: Adding Database Persistence
+
+The in-memory approach used so far works for local development, but for production you'll want a proper database. Let's add SQLite and some other dependencies to manage this:
+
+<Note>
+If you're using `pnpm` as a package manager as suggeseted here, you should create a file called `pnpm-workspace.yaml` in the root of your project with the following content to ensure `better-sqlite3` is built correctly in the next step:
+
+```
+onlyBuiltDependencies:
+  - better-sqlite3
+```
+</Note>
+
+```bash
+pnpm add better-sqlite3 kysely
+pnpm add -D @types/better-sqlite3 tsx
+```
+
+Next, replace the contents of `next.config.ts` to use `better-sqlite3` server-side:
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  serverExternalPackages: ["better-sqlite3"],
+};
+
+export default nextConfig;
+```
+
+Then, add the actual database connection in `lib/db/index.ts`:
+
+```typescript
+import Database from "better-sqlite3";
+import { Kysely, SqliteDialect } from "kysely";
+
+const DATABASE_PATH = process.env.DATABASE_PATH || "app.db";
+
+let _db: Kysely<DatabaseSchema> | null = null;
+
+export const getDb = (): Kysely<DatabaseSchema> => {
+  if (!_db) {
+    const sqlite = new Database(DATABASE_PATH);
+    sqlite.pragma("journal_mode = WAL");
+
+    _db = new Kysely<DatabaseSchema>({
+      dialect: new SqliteDialect({ database: sqlite }),
+    });
+  }
+  return _db;
+};
+
+export interface DatabaseSchema {
+  auth_state: AuthStateTable;
+  auth_session: AuthSessionTable;
+}
+
+interface AuthStateTable {
+  key: string;
+  value: string;
+}
+
+interface AuthSessionTable {
+  key: string;
+  value: string;
+}
+```
+
+Next, create the "migrations" that you'll run to populate the database schema. Create `lib/db/migrations.ts`:
+
+```typescript
+import { Kysely, Migration, Migrator } from "kysely";
+import { getDb } from ".";
+
+const migrations: Record<string, Migration> = {
+  "001": {
+    async up(db: Kysely<unknown>) {
+      await db.schema
+        .createTable("auth_state")
+        .addColumn("key", "text", (col) => col.primaryKey())
+        .addColumn("value", "text", (col) => col.notNull())
+        .execute();
+
+      await db.schema
+        .createTable("auth_session")
+        .addColumn("key", "text", (col) => col.primaryKey())
+        .addColumn("value", "text", (col) => col.notNull())
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("auth_session").execute();
+      await db.schema.dropTable("auth_state").execute();
+    },
+  },
+};
+
+export function getMigrator() {
+  const db = getDb();
+  return new Migrator({
+    db,
+    provider: {
+      getMigrations: async () => migrations,
+    },
+  });
+}
+```
+
+Next, create `scripts/migrate.ts` so the migrations can be run from the command line:
+
+```typescript
+import { getMigrator } from "@/lib/db/migrations";
+
+async function main() {
+  const migrator = getMigrator();
+  const { error } = await migrator.migrateToLatest();
+  if (error) throw error;
+  console.log("Migrations complete.");
+}
+
+main();
+```
+
+Add those command line scrips to `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "pnpm migrate && next dev",
+    "build": "next build",
+    "start": "pnpm migrate && next start",
+    "lint": "eslint",
+    // Add this line:
+    "migrate": "tsx scripts/migrate.ts",
+  }
+}
+```
+
+And finally, update the `stateStore:` and `sessionStore` code blocks in `lib/auth/client.ts` to use the database. You'll need to import `getDb` at the top too:
+
+```typescript
+import { getDb } from "../db";
+
+...
+
+stateStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_state")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedState) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_state")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_state").where("key", "=", key).execute();
+  },
+},
+
+sessionStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_session")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedSession) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_session")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_session").where("key", "=", key).execute();
+  },
+}
+```
+
+All set! You can Ctrl+C the dev server if it's running, then start it again with:
+
+```bash
+pnpm dev
+```
+
+You should see "Migrations complete." and an `app.db` file created. Now this app will persist state and sessions across restarts.
+
+## Part 4: Deploying to Production
+
+For production, you need a "confidential client" instead of the loopback client you used. This requires:
+- a public URL
+- a private key for signing
+- public endpoints for client metadata and JWKS
+
+You don't need your own domain name to test the app at a public URL. You can host it on [Railway](https://railway.app/) by following our [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). First, follow these steps.
+
+Create a `well-known` JWKS endpoint that advertises your client's public key at `app/.well-known/jwks.json/route.ts`:
+
+```typescript
+import { NextResponse } from "next/server";
+import { JoseKey } from "@atproto/oauth-client-node";
+
+// Serves the public keys for the OAuth client
+// Required for confidential clients using private_key_jwt authentication
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+export async function GET() {
+  if (!PRIVATE_KEY) {
+    return NextResponse.json({ keys: [] });
+  }
+
+  const key = await JoseKey.fromJWK(JSON.parse(PRIVATE_KEY));
+  return NextResponse.json({
+    keys: [key.publicJwk],
+  });
+}
+```
+
+Next, update `lib/auth/client.ts` once more to use the confidential client configuration when in production:
+
+```typescript
+import {
+    JoseKey,
+    Keyset,
+    NodeOAuthClient,
+    buildAtprotoLoopbackClientMetadata,
+} from "@atproto/oauth-client-node";
+import type {
+    NodeSavedSession,
+    NodeSavedState,
+    OAuthClientMetadataInput,
+} from "@atproto/oauth-client-node";
+import { getDb } from "../db";
+
+export const SCOPE = "atproto";
+
+let client: NodeOAuthClient | null = null;
+
+const PUBLIC_URL = process.env.PUBLIC_URL;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+function getClientMetadata(): OAuthClientMetadataInput {
+    if (PUBLIC_URL) {
+        return {
+            client_id: `${PUBLIC_URL}/oauth-client-metadata.json`,
+            client_name: "OAuth Tutorial",
+            client_uri: PUBLIC_URL,
+            redirect_uris: [`${PUBLIC_URL}/oauth/callback`],
+            grant_types: ["authorization_code", "refresh_token"],
+            response_types: ["code"],
+            scope: SCOPE,
+            token_endpoint_auth_method: "private_key_jwt" as const,
+            token_endpoint_auth_signing_alg: "ES256" as const, // must match the alg in scripts/gen-key.ts
+            jwks_uri: `${PUBLIC_URL}/.well-known/jwks.json`,
+            dpop_bound_access_tokens: true,
+        };
+    } else {
+        return buildAtprotoLoopbackClientMetadata({
+            scope: SCOPE,
+            redirect_uris: ["http://127.0.0.1:3000/oauth/callback"],
+        });
+    }
+}
+
+async function getKeyset(): Promise<Keyset | undefined> {
+    if (PUBLIC_URL && PRIVATE_KEY) {
+        return new Keyset([await JoseKey.fromJWK(JSON.parse(PRIVATE_KEY))]);
+    } else {
+        return undefined;
+    }
+}
+
+export async function getOAuthClient(): Promise<NodeOAuthClient> {
+    if (client) return client;
+
+    client = new NodeOAuthClient({
+        clientMetadata: getClientMetadata(),
+        keyset: await getKeyset(),
+...
+```
+
+This will serve a [client metadata document](/specs/oauth#client-id-metadata-document).
+
+Finally, you'll need to generate a private key for signing. Create a script for that in `scripts/gen-key.ts`:
+
+```typescript
+import { JoseKey } from "@atproto/oauth-client-node";
+
+async function main() {
+  const kid = Date.now().toString();
+  const key = await JoseKey.generate(["ES256"], kid);
+  console.log(JSON.stringify(key.privateJwk));
+};
+
+main();
+```
+
+Add this script to `package.json`:
+
+```json
+{
+  "scripts": {
+    // Add this line:
+    "gen-key": "tsx scripts/gen-key.ts",
+  }
+}
+```
+
+Run the script as `pnpm gen-key` and save the output. This will be `PRIVATE_KEY`, one of two environment variables needed for your deployment:
+
+```bash
+PRIVATE_KEY={"kty":"EC","kid":"...","alg":"ES256",...}
+PUBLIC_URL=https://your-app.example.com
+```
+
+You can provide these as part of our Railway [deployment guide](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md). Follow those steps, and this app should then work from a public URL just like our [demo instance](https://nextjs-oauth-tutorial.up.railway.app/).
+
+## Conclusion
+
+You now have a complete, production-deployed app with persistent storage. However, it doesn't actually do anything with the AT Protocol yet! As you add features from here, you'll need to request additional permission scopes during the OAuth flow.
+
+By default, the app requests only the `atproto` scope. The `atproto` scope is required and offers basic authentication for an `atproto` identity, but it does not authorize the client to access any privileged information or perform any actions on behalf of the user. Refer to the [Scopes guide](/guides/scopes) for more information.
+
+To change the requested scope, update the SCOPE constant in `lib/auth/client.ts`. It should be a space-delimited string:
+
+```typescript
+export const SCOPE = "atproto account:email repo:com.example.record";
+```
+
+This constant is used in three places:
+
+- The loopback client metadata (for local development)
+- The production client metadata
+- The login route's authorize call
+
+By centralizing it in one constant, you only need to change it in one place. Now, when you log in to your app again, you'll be prompted to approve the additional scopes.
+
+Congratulations on completing this tutorial! You now have a solid Next.js foundation for building Atproto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).

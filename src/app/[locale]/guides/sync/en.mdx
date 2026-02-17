@@ -1,0 +1,60 @@
+export const header = {
+  title: 'Sync',
+  description: 'Synchronizing AT Protocol data',
+}
+
+## Handles and DIDs
+
+In AT, handles are resolved through [DIDs](/specs/did), also known as [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier). Currently, two different DID prefixes are supported:
+- `did:web`, which is based on the W3C DID standard.
+- `did:plc`, which is a DID method developed and implemented by Bluesky. See the [did-method-plc](https://github.com/did-method-plc/did-method-plc) repository for details.
+
+When you sign up for a new account using an Atmosphere app, that app will communicate with a PDS to register a new handle for you, using its domain name (for example, `*.bsky.social`).
+
+## Data Repositories
+
+A data repository is a collection of data published by a single user. Repositories are self-authenticating data structures, meaning each update is signed and can be verified by anyone.
+
+Multiple types of identifiers are used within a data repository:
+
+- [**Decentralized IDs (DIDs)**](https://w3c.github.io/did/) identify data repositories. They are broadly used as user IDs, but since every user has one data repository then a DID can be considered a reference to a data repository.
+- [**Namespaced Identifiers (NSIDs)**](/specs/nsid) identify the Lexicon type for groups of records within a repository.
+- [**Record Keys**](/specs/record-key) ("rkeys") identify individual records within a collection in a given repository. The format is specified by the collection Lexicon.
+- [**Content IDs (CIDs)**](https://github.com/multiformats/cid) identify content using a fingerprint hash. They are used throughout the repository to reference the objects (nodes) within it.
+
+Take, for example, a single AT record:
+
+```
+at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
+```
+
+This can be broken down as `at://DID/NSID/rkey` , or `at://repository/collection/record`. It has a corresponding CID of `bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`.
+
+When making a write request to an AT API endpoint — such as when creating a new post — this full repository path will be returned as a response:
+
+```json
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+This is how individual records are uniquely identified and stored within AT data repositories.
+
+## PDS
+
+A PDS, or Personal Data Server, is a server that hosts users' individual data repositories, such as posts, followers, and profile information. The PDS handles account lifecycle features, identity management, and key resolution for hosted user accounts.
+
+You can [host your own PDS](/guides/self-hosting), and [migrate individual accounts](/guides/account-migration) from one PDS to another. Refer to [The AT Stack](/guides/the-at-stack#pds) for more information.
+
+## Further Reading and Resources
+
+There are many ways of synchronizing and streaming AT data. You can use [Jetstream](/guides/streaming-data) to stream real-time updates, or locally [Backfill](/guides/backfilling) the data that already exists on the network.
+
+- [Streaming data](/guides/streaming-data)
+- [Backfilling](/guides/backfilling)
+- [Feeds](/guides/feeds)
+- [Repository spec](/specs/repository)
+- [Event Stream spec](/specs/event-stream)
+- [Sync spec](/specs/sync)
+- The [Microcosm](https://www.microcosm.blue/) community project maintains tools for working with AT records at scale without local mirroring.

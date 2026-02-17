@@ -1,0 +1,83 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'Subscriptions',
+  description: 'Subscribing to a labeler service',
+}
+
+## Labeler Subscriptions
+
+Labeler services each have a service identity, meaning a DID document. This is the DID that appears in the label source (**`src`**) field.
+
+To include labels from a given labeler, set the `atproto-accept-labelers` header on an XRPC request to a comma-separated list of the DIDs of the labelers you want to include, like so:
+
+```bash
+curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
+```
+
+You can also add labelers using the TypeScript SDK:
+
+```tsx
+import { Client } from '@atproto/lex'
+
+// Global app-level labelers
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// Client-specific labelers
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// Add labelers dynamically
+client.addLabelers(['did:plc:labeler4'])
+
+// Replace all labelers
+client.setLabelers(['did:plc:labeler5'])
+
+// Clear labelers
+client.clearLabelers()
+```
+
+## Use labels in your app
+
+Labels may be placed on accounts or records. Apps can interprets targets in different ways:
+
+- On an account: has account-wide effects
+- On a profile: affects only the profile record (e.g. user avatar) and never hides any content, including the account in listings.
+- On content: affects the content specifically (a post record, a list, a feed, etc.)
+
+## Reporting
+
+To send a report to a Labeler, use the `com.atproto.moderation.createReport` procedure. Users may send reports to any of their labelers.
+
+To specify which labeler should receive the report, set the `atproto-proxy` header with the DID of the labeler and the service key of `atproto_labeler`. In the TypeScript SDK, it looks like this:
+
+```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```
+
+## Further Reading and Resources
+
+- [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
+- [Creating a labeler](/guides/creating-a-labeler)
+- [Label Specs](/specs/label)
+- [Using Ozone](/guides/using-ozone)

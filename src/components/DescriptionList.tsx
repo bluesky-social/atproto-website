@@ -17,10 +17,10 @@ export function Description({
 }) {
   return (
     <div className="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
-      <dt className="text-sm font-medium leading-6 text-gray-900 dark:text-white">
+      <dt className="text-md font-medium leading-6 text-gray-900 dark:text-white">
         {title}
       </dt>
-      <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-3 sm:mt-0 dark:text-gray-400">
+      <dd className="text-md mt-1 leading-6 text-gray-700 sm:col-span-3 sm:mt-0 dark:text-gray-400">
         {children}
       </dd>
     </div>

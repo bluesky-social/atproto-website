@@ -4,11 +4,12 @@ export default function typographyStyles({ theme }: PluginUtils) {
   return {
     DEFAULT: {
       css: {
-        '--tw-prose-body': theme('colors.zinc.700'),
-        '--tw-prose-headings': theme('colors.zinc.900'),
-        '--tw-prose-links': theme('colors.blue.500'),
+        '--tw-prose-body': theme('black'),
+        '--tw-prose-headings': theme('black'),
+        '--tw-prose-links': theme('black'),
+        '--tw-prose-links-underline': theme('colors.zinc.600 / 0.5'),
         '--tw-prose-links-hover': theme('colors.blue.600'),
-        '--tw-prose-links-underline': theme('colors.blue.500 / 0.3'),
+        '--tw-prose-links-underline-hover': theme('colors.blue.500 / 0.3'),
         '--tw-prose-bold': theme('colors.zinc.900'),
         '--tw-prose-counters': theme('colors.zinc.500'),
         '--tw-prose-bullets': theme('colors.zinc.300'),
@@ -17,12 +18,12 @@ export default function typographyStyles({ theme }: PluginUtils) {
         '--tw-prose-quote-borders': theme('colors.zinc.200'),
         '--tw-prose-captions': theme('colors.zinc.500'),
         '--tw-prose-code': theme('colors.zinc.900'),
-        '--tw-prose-code-bg': theme('colors.zinc.100'),
-        '--tw-prose-code-ring': theme('colors.zinc.300'),
+        '--tw-prose-code-bg': theme('colors.zinc.50'),
+        '--tw-prose-code-ring': theme('colors.zinc.100'),
         '--tw-prose-th-borders': theme('colors.zinc.300'),
         '--tw-prose-td-borders': theme('colors.zinc.200'),
 
-        '--tw-prose-invert-body': theme('colors.zinc.400'),
+        '--tw-prose-invert-body': theme('colors.zinc.300'),
         '--tw-prose-invert-headings': theme('colors.white'),
         '--tw-prose-invert-links': theme('colors.blue.400'),
         '--tw-prose-invert-links-hover': theme('colors.blue.500'),
@@ -42,7 +43,7 @@ export default function typographyStyles({ theme }: PluginUtils) {
 
         // Base
         color: 'var(--tw-prose-body)',
-        fontSize: theme('fontSize.sm')[0],
+        fontSize: theme('fontSize.base')[0],
         lineHeight: theme('lineHeight.6'),
 
         // Text
@@ -171,7 +172,7 @@ export default function typographyStyles({ theme }: PluginUtils) {
         // Headings
         h1: {
           color: 'var(--tw-prose-headings)',
-          fontWeight: '700',
+          fontWeight: '600',
           fontSize: theme('fontSize.2xl')[0],
           ...theme('fontSize.2xl')[1],
           marginBottom: theme('spacing.2'),
@@ -179,15 +180,15 @@ export default function typographyStyles({ theme }: PluginUtils) {
         h2: {
           color: 'var(--tw-prose-headings)',
           fontWeight: '600',
-          fontSize: theme('fontSize.lg')[0],
-          ...theme('fontSize.lg')[1],
+          fontSize: theme('fontSize.2xl')[0],
+          ...theme('fontSize.xl')[1],
           marginTop: theme('spacing.16'),
           marginBottom: theme('spacing.2'),
         },
         h3: {
           color: 'var(--tw-prose-headings)',
-          fontSize: theme('fontSize.base')[0],
-          ...theme('fontSize.base')[1],
+          fontSize: theme('fontSize.lg')[0],
+          ...theme('fontSize.lg')[1],
           fontWeight: '600',
           marginTop: theme('spacing.10'),
           marginBottom: theme('spacing.2'),
@@ -269,14 +270,15 @@ export default function typographyStyles({ theme }: PluginUtils) {
         // Inline elements
         a: {
           color: 'var(--tw-prose-links)',
-          textDecoration: 'underline transparent',
-          fontWeight: '500',
+          textDecoration: 'underline',
+          textDecorationColor: 'var(--tw-prose-links-underline)',
+          fontWeight: '400',
           transitionProperty: 'color, text-decoration-color',
           transitionDuration: theme('transitionDuration.DEFAULT'),
           transitionTimingFunction: theme('transitionTimingFunction.DEFAULT'),
           '&:hover': {
             color: 'var(--tw-prose-links-hover)',
-            textDecorationColor: 'var(--tw-prose-links-underline)',
+            textDecorationColor: 'var(--tw-prose-links-underline-hover)',
           },
         },
         ':is(h1, h2, h3) a': {
@@ -284,28 +286,23 @@ export default function typographyStyles({ theme }: PluginUtils) {
         },
         strong: {
           color: 'var(--tw-prose-bold)',
-          fontWeight: '600',
+          fontWeight: '500',
         },
         ':is(a, blockquote, thead th) strong': {
           color: 'inherit',
         },
         code: {
           color: 'var(--tw-prose-code)',
-          // borderRadius: theme('borderRadius.lg'),
-          // paddingTop: theme('padding.1'),
-          // paddingRight: theme('padding[1.5]'),
-          // paddingBottom: theme('padding.1'),
-          // paddingLeft: theme('padding[1.5]'),
-          // boxShadow: 'inset 0 0 0 1px var(--tw-prose-code-ring)',
-          // backgroundColor: 'var(--tw-prose-code-bg)',
-          fontSize: theme('fontSize.2xs'),
-          fontWeight: '600',
-        },
-        'code::before': {
-          content: "'`'",
-        },
-        'code::after': {
-          content: "'`'",
+          backgroundColor: 'var(--tw-prose-code-bg)',
+          fontSize: theme('fontSize.sm'),
+          borderRadius: theme('borderRadius.sm'),
+          paddingTop: theme('padding.1'),
+          paddingRight: theme('padding[1.5]'),
+          paddingBottom: theme('padding.1'),
+          paddingLeft: theme('padding[1.5]'),
+          boxShadow: 'inset 0 0 0 1px var(--tw-prose-code-ring)',
+          wordBreak: 'break-all',
+          // fontWeight: '600',
         },
         ':is(a, h1, h2, h3, blockquote, thead th) code': {
           color: 'inherit',
