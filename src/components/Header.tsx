@@ -111,7 +111,9 @@ export const Header = forwardRef<
             <TopLevelNavItem href="https://github.com/bluesky-social/atproto" label='AT Protocol on GitHub'>
               <GithubIcon className="h-6 w-6 fill-slate-900 dark:fill-slate-50" />
             </TopLevelNavItem>
-            <LanguageChanger />
+            <li>
+              <LanguageChanger />
+            </li>
           </ul>
         </nav>
         {!isHome && (
