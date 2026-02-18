@@ -41,7 +41,7 @@ export function Image({ className, ...props }: ImageProps) {
         onClick={() => setOpen(true)}
         className="mx-auto block cursor-zoom-in"
       >
-        <NextImage className={className} {...props} />
+        <NextImage className={clsx('rounded-lg', className)} {...props} />
       </button>
       {mounted &&
         createPortal(
@@ -65,7 +65,7 @@ export function Image({ className, ...props }: ImageProps) {
                 >
                   <NextImage
                     {...props}
-                    className="w-full h-auto max-h-[90vh] object-contain rounded-lg cursor-zoom-out"
+                    className="w-full h-auto max-h-[90vh] object-contain rounded-[14px] cursor-zoom-out"
                     onClick={() => setOpen(false)}
                   />
                 </motion.div>
