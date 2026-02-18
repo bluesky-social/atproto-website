@@ -458,6 +458,28 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
     let lastMouseX = 0
     let lastMouseY = 0
 
+    const horizontalDrag = (deltaX: number) => {
+      // Horizontal drag -> rotate around Y axis
+      if (deltaX !== 0) {
+        const rotY = createRotationMatrix(0, 1, 0, deltaX * DRAG_SENSITIVITY)
+        rotationMatrixRef.current = multiplyMatrices(
+          rotY,
+          rotationMatrixRef.current,
+        )
+      }
+    }
+
+    const verticalDrag = (deltaY: number) => {
+      // Vertical drag -> rotate around X axis
+      if (deltaY !== 0) {
+        const rotX = createRotationMatrix(1, 0, 0, deltaY * DRAG_SENSITIVITY)
+        rotationMatrixRef.current = multiplyMatrices(
+          rotX,
+          rotationMatrixRef.current,
+        )
+      }
+    }
+
     const handleMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true
       lastMouseX = e.clientX
@@ -472,23 +494,8 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
       lastMouseX = e.clientX
       lastMouseY = e.clientY
 
-      // Horizontal drag -> rotate around Y axis
-      if (deltaX !== 0) {
-        const rotY = createRotationMatrix(0, 1, 0, deltaX * DRAG_SENSITIVITY)
-        rotationMatrixRef.current = multiplyMatrices(
-          rotY,
-          rotationMatrixRef.current,
-        )
-      }
-
-      // Vertical drag -> rotate around X axis
-      if (deltaY !== 0) {
-        const rotX = createRotationMatrix(1, 0, 0, deltaY * DRAG_SENSITIVITY)
-        rotationMatrixRef.current = multiplyMatrices(
-          rotX,
-          rotationMatrixRef.current,
-        )
-      }
+      horizontalDrag(deltaX)
+      verticalDrag(deltaY)
     }
 
     const handleMouseUp = () => {
@@ -503,6 +510,35 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('mouseup', handleMouseUp)
     container.addEventListener('mouseleave', handleMouseLeave)
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        isDraggingRef.current = true
+        lastMouseX = e.touches[0].clientX
+        lastMouseY = e.touches[0].clientY
+      }
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDraggingRef.current || e.touches.length !== 1) return
+      e.preventDefault()
+
+      const deltaX = e.touches[0].clientX - lastMouseX
+      const deltaY = e.touches[0].clientY - lastMouseY
+      lastMouseX = e.touches[0].clientX
+      lastMouseY = e.touches[0].clientY
+
+      horizontalDrag(deltaX)
+      verticalDrag(deltaY)
+    }
+
+    const handleTouchEnd = () => {
+      isDraggingRef.current = false
+    }
+
+    container.addEventListener('touchstart', handleTouchStart)
+    container.addEventListener('touchmove', handleTouchMove, { passive: false })
+    container.addEventListener('touchend', handleTouchEnd)
 
     const init = async () => {
       // Compile shaders and create programs
@@ -701,6 +737,9 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
       container.removeEventListener('mouseleave', handleMouseLeave)
+      container.removeEventListener('touchstart', handleTouchStart)
+      container.removeEventListener('touchmove', handleTouchMove)
+      container.removeEventListener('touchend', handleTouchEnd)
     }
   }, [canvasSize, lines])
 
