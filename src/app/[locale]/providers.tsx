@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { ThemeProvider, useTheme } from 'next-themes'
 import { usePathname } from 'next/navigation'
+import { stripLocalePrefix } from '@/components/Navigation'
 
 function ThemeWatcher() {
   let { resolvedTheme, setTheme } = useTheme()
@@ -30,7 +31,7 @@ function ThemeWatcher() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isHome = pathname === '/'
+  const isHome = stripLocalePrefix(pathname) === '/'
 
   return (
     <ThemeProvider
