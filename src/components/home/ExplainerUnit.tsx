@@ -61,7 +61,7 @@ export function ExplainerUnit() {
   }, [])
 
   return (
-    <div className="relative">
+    <div className="relative [overflow-x:clip]">
       <ExplainerMobileNav>
         {NAV_ITEMS.map(({ id, title, description }) => (
           <ExplainerMobileNavItem
