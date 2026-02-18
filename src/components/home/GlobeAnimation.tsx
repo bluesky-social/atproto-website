@@ -870,6 +870,10 @@ export function GlobeAnimation({ lines = DEFAULT_LINES }: GlobeProps) {
           // any monospace face equals the width of every other glyph.
           width: `${charsPerLine}ch`,
 
+          // Reserve the exact height up front so the container never
+          // shifts when asciiText is populated after WebGL init.
+          height: `${lines * 1.2}em`,
+
           // Prevent the browser from collapsing runs of spaces or
           // wrapping lines — every character must stay in its grid cell.
           whiteSpace: 'pre',
