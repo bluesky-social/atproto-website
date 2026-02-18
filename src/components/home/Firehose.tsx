@@ -125,6 +125,7 @@ function PlayIcon() {
       viewBox="0 0 24 24"
       fill="currentColor"
       className="size-4"
+      aria-hidden="true"
     >
       <path
         fillRule="evenodd"
@@ -142,6 +143,7 @@ function StopIcon() {
       viewBox="0 0 24 24"
       fill="currentColor"
       className="size-4"
+      aria-hidden="true"
     >
       <path
         fillRule="evenodd"
