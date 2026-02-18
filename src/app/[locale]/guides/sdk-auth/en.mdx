@@ -32,7 +32,9 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     }
     ```
 
-    Applications with an end user login flow should use [OAuth](/guides/auth) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools. Both methods will produce the same authenticated `session`.
+    Applications with an end user login flow should use [OAuth](/guides/oauth-cli-tutorial) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
+    
+    Both methods will produce the same authenticated `session`.
     </TabPanel>
     <TabPanel value="go">
     Start by importing the `atproto` and `xrpc` libraries, creating an `&xrpc.Client{}`, and providing credentials to call `ServerCreateSession()`:
@@ -57,6 +59,8 @@ If you are using password auth, you should generate an [app password](/specs/xrp
       })
     }
     ```
+
+    Applications with an end user login flow should use [OAuth](/guides/go-oauth-cli-tutorial) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
     </TabPanel>
   </TabPanels>
 </TabGroup>

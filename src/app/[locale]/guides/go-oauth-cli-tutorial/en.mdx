@@ -1,9 +1,9 @@
 export const header = {
   title: 'OAuth with Go Tutorial',
-  description: 'Authenticate with ATProto OAuth from a Go command-line app',
+  description: 'Authenticate with Atproto OAuth from a Go app',
 }
 
-In this tutorial, you'll build a minimal Go command-line tool that authenticates a user with [ATProto OAuth](/guides/auth) and fetches their session info. The entire app fits in a single file.
+In this tutorial, you'll build a minimal Go tool that authenticates a user with [Atproto OAuth](/guides/auth) and fetches their session info. The entire app fits in a single file.
 
 This is a good starting point for understanding how OAuth works in AT Protocol. For a TypeScript version, see the [OAuth with Node Tutorial](/guides/oauth-cli-tutorial). For building production web apps, see the [OAuth with NextJS Tutorial](/guides/oauth-tutorial).
 
@@ -12,7 +12,7 @@ This is a good starting point for understanding how OAuth works in AT Protocol. 
 You should have a working understanding of Go.
 
 You should have installed:
-- Go 1.21+
+- Go 1.24+
 
 On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 
@@ -20,20 +20,20 @@ On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 brew install go
 ```
 
-You should also have a [Bluesky](https://bsky.app/) account (or any ATProto account) to test with.
+You should also have an Atproto handle to test with.
 
 ## Part 1: Project Setup
 
-Create a new Go module and install the indigo SDK:
+Create a new Go module and install the [Go SDK](https://github.com/bluesky-social/indigo):
 
 ```bash
 mkdir go-oauth-cli
 cd go-oauth-cli
 go mod init go-oauth-cli
-go get github.com/bluesky-social/indigo
+go get github.com/bluesky-social/indigo/atproto/auth/oauth
 ```
 
-That's it — the indigo SDK includes everything you need for OAuth, including an in-memory session store for development.
+That's it — the Go SDK includes everything you need for OAuth, including an in-memory session store for development.
 
 ## Part 2: Build the OAuth Client
 
@@ -91,7 +91,13 @@ func run(ctx context.Context, handle string) error {
 	oauthClient := oauth.NewClientApp(&config, store)
 ```
 
-`NewLocalhostConfig` sets up a [loopback client](/specs/oauth#localhost-client-development) — AT Protocol has a special carveout for localhost so you don't need a public URL. `NewMemStore` provides in-memory session storage for development.
+`NewLocalhostConfig` sets up a loopback client.
+
+<Note>
+OAuth loopback works by using a special redirect URI (like `http://127.0.0.1:PORT/callback`) to send authorization codes directly back to an app, which listens on a local port, avoiding browser-based callbacks and enabling secure, direct communication for token exchange. Instead of a web redirect, the app opens a local listener, you can auth in a browser, and the server redirects back to the app's local URI, letting the app grab the code and exchange it for a token. It's particularly useful for development scenarios.
+</Note>
+
+`NewMemStore` provides in-memory session storage for development.
 
 ## Part 3: Login Flow
 
@@ -121,7 +127,7 @@ Continue the `run` function with the login flow. This resolves the handle, opens
 
 The flow works like this:
 
-1. `StartAuthFlow` resolves the user's handle, discovers their PDS, sends a Pushed Authorization Request (PAR), and returns an authorization URL.
+1. `StartAuthFlow` resolves the user's handle, discovers their PDS, sends a [Pushed Authorization Request (PAR)](/guides/permission-sets#requesting-permissions), and returns an authorization URL.
 2. The user's browser opens to a consent screen.
 3. After the user approves, their PDS redirects back to `http://127.0.0.1:<port>/callback` with an authorization code.
 
@@ -238,7 +244,7 @@ You've built a minimal OAuth CLI tool in Go that authenticates with the AT Proto
 A few things to keep in mind:
 
 - **This is for local development.** The localhost client won't work in production. For a production-ready Go example with SQLite persistence and multiple commands, see the [go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app) in the Cookbook.
-- **Sessions are in-memory.** Every run requires re-authorization. The Cookbook example above shows how to persist sessions with SQLite.
+- **Sessions are in-memory.** Every run requires re-authorization. The Cookbook example shows how to persist sessions with SQLite.
 - **Scopes.** This tutorial requests only the base `atproto` scope. To read or write data on behalf of the user, you'll need additional [scopes](/guides/scopes).
 
-You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!
+You can find more guides and tutorials in our [Docs](/guides), and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!

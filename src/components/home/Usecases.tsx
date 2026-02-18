@@ -45,7 +45,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
         </Card>
       </div>
       <div className="md:hidden">
-        <Card className="flex-1" href="/guides/oauth-tutorial">
+        <Card className="flex-1" href="/guides/tutorials#o-auth-with-go">
           <DotPatternContainer className="px-6 py-4" fade>
             <KeyIcon
               className="mb-6 mt-2 size-12 stroke-white"
@@ -60,7 +60,7 @@ export function Usecases({ wide }: { wide?: boolean }) {
         </Card>
       </div>
       <div className="hidden md:block">
-        <CTAButton href="/guides/oauth-tutorial">
+        <CTAButton href="/guides/tutorials#o-auth-with-go">
           <KeyIcon className="size-8 shrink-0 stroke-white" strokeWidth="0.6" />
           <CTAButtonTitle title="Login with user-owned identities" subtitle="We're @atproto.com!" />
         </CTAButton>
