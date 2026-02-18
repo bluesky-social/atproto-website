@@ -10,9 +10,11 @@ import { Navigation } from '@/components/Navigation'
 import { SectionProvider } from './SectionProvider'
 import { SyncedTabs } from '@/components/mdx'
 
+const localeHomePaths = ['/', '/pt', '/ja', '/ko']
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isHome = pathname === '/'
+  const isHome = localeHomePaths.includes(pathname)
 
   return (
     <SectionProvider sections={[]} /* fallback to be overridden */>
