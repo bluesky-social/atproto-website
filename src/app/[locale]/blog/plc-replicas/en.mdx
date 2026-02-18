@@ -1,7 +1,7 @@
 export const header = {
   title: 'PLC Read Replicas',
   description: 'Introducing a self-hostable did:plc read-replica service.',
-  date: 'February 19, 2026',
+  date: 'February 18, 2026',
 }
 
 # PLC Read Replicas
@@ -16,8 +16,8 @@ But what if your adversary is the PLC directory itself?
 
 We try to mitigate this possibility on several fronts:
 
-* Self-authenticating cryptographic mechanisms (this is the core of PLC, and has been present since its introduction in late 2022\)  
-* Working towards independent governance (see: [Creating an Independent PLC Directory Organization](https://docs.bsky.app/blog/plc-directory-org))  
+* Self-authenticating cryptographic mechanisms (this is the core of PLC, and has been present since its introduction in late 2022\)
+* Working towards independent governance (see: [Creating an Independent PLC Directory Organization](https://docs.bsky.app/blog/plc-directory-org))
 * WebPKI-inspired transparency logging (watch this space\!)
 
 And, the subject of this article \- Read Replicas.
@@ -26,8 +26,8 @@ And, the subject of this article \- Read Replicas.
 
 Although PLC is built on self-authenticated data, we trust the central [plc.directory](http://plc.directory) instance to:
 
-* Reliably and accurately respond to resolution queries for a given DID  
-* Accept valid PLC operations  
+* Reliably and accurately respond to resolution queries for a given DID
+* Accept valid PLC operations
 * Accurately report the timestamps and order of operations
 
 A read replica is a service that maintains a full, independently-queryable copy of the PLC directory's data by syncing from the primary instance. Additionally, a read replica should audit the synced data in real-time \- verifying all operation hashes, signatures, and timestamp constraints, and rejecting any that do not pass validation. This does not catch *all* *possible* types of misbehaviour from the primary instance, but it makes it more accountable.
@@ -36,7 +36,7 @@ For example, if the primary instance decided to roll back a DID to an earlier st
 
 Aside from the boost in accountability (which benefits the whole atproto ecosystem), there are several operational benefits to running your own PLC replica service:
 
-* **Availability:** if the primary PLC instance has an outage, you can still resolve DIDs via your own replica.  
+* **Availability:** if the primary PLC instance has an outage, you can still resolve DIDs via your own replica.
 * **Rate-limit flexibility:** If you've ever made millions of rapid DID lookups at plc.directory, you might have run into rate limits. By running your own replica, you can define your own rate limit policies (as long as your infrastructure can keep up\!)
 
 Bluesky PBC will be running replica instances internally to achieve these same benefits.
@@ -65,7 +65,7 @@ This means a replica service might not be a direct drop-in replacement for some 
 
 We hope to improve this situation through some combination of:
 
-- Finding sensible workaround strategies for clients (e.g. delayed/deferred requests, retry strategies)  
+- Finding sensible workaround strategies for clients (e.g. delayed/deferred requests, retry strategies)
 - Improving the protocol/APIs to ensure clients know what version of the DID document to expect, and have an efficient way to wait for it to be resolvable (which could involve embedding a cid or timestamp in `#identity` events, and creative use of HTTP cache-related headers)
 
 ### JSON vs LD-JSON Compatibility
@@ -80,6 +80,6 @@ At time of writing, you'll need approximately 150GB of free disk space to sync t
 
 While our reference implementation is focused on correctness and scalable performance, there are other plc replica/mirroring tools developed by the community that may offer more compact on-disk representations via compression, spam filtering, or other tricks. These approaches may be more appropriate for deployment on resource-constrained systems:
 
-* [https://tangled.org/@microcosm.blue/Allegedly](https://tangled.org/@microcosm.blue/Allegedly)  
-* [https://github.com/char/zplc-server](https://github.com/char/zplc-server)  
+* [https://tangled.org/@microcosm.blue/Allegedly](https://tangled.org/@microcosm.blue/Allegedly)
+* [https://github.com/char/zplc-server](https://github.com/char/zplc-server)
 * [https://tangled.org/atscan.net/plcbundle-ref](https://tangled.org/atscan.net/plcbundle-ref)
