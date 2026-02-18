@@ -241,7 +241,9 @@ export const navigation: Array<NavGroup> = [
             title: 'Write a Custom Feed',
             href: '/guides/custom-feed-tutorial',
           },
-          { title: 'Log in with OAuth', href: '/guides/oauth-tutorial' },
+          { title: 'OAuth with Go', href: '/guides/go-oauth-cli-tutorial' },
+          { title: 'OAuth with Node.js', href: '/guides/oauth-cli-tutorial' },
+          { title: 'OAuth with Next.js', href: '/guides/oauth-tutorial' },
           {
             title: 'Create a Social App',
             href: '/guides/statusphere-tutorial',

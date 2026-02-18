@@ -1,0 +1,202 @@
+export const header = {
+  title: 'OAuth with Node Tutorial',
+  description: 'Authenticate with Atproto OAuth from Node.js',
+}
+
+In this tutorial, you'll build a minimal Node.js tool that authenticates a user with [Atproto OAuth](/guides/auth) and fetches their profile. The entire app fits in a single TypeScript file.
+
+This is a good starting point for understanding how OAuth works in AT Protocol. For building production web apps, see the full [OAuth with NextJS Tutorial](/guides/oauth-tutorial).
+
+## Prerequisites
+
+This tutorial involves building a TypeScript application from scratch. You should have a working understanding of TypeScript and Node.js.
+
+You should have installed:
+- Node.js 18+
+
+On platforms supported by [homebrew](https://brew.sh/), you can install it with:
+
+```bash
+brew install node
+```
+
+You should also have an Atproto handle to test with.
+
+## Part 1: Project Setup
+
+Create a new project directory and install the [SDK](https://www.npmjs.com/package/@atproto/lex) and other project dependencies:
+
+```bash
+mkdir oauth-cli
+cd oauth-cli
+npm init -y
+npm i -D typescript @types/node @atproto/oauth-client-node @atproto/lex open
+npx tsc --init --target ES2022 --module NodeNext --moduleResolution NodeNext --types node --strict --esModuleInterop --skipLibCheck --verbatimModuleSyntax false
+```
+
+You'll also need the `lex` CLI tool installed globally, and the `app.bsky.actor.profile` Lexicon installed in this project to fetch the user's profile:
+
+```bash
+npm i -g @atproto/lex
+lex install app.bsky.actor.profile
+lex build
+```
+
+This generates TypeScript types for the Lexicon in your project, which you'll use later to read the authenticated user's profile.
+
+## Part 2: Build the OAuth Client
+
+Create a new file at `src/index.ts`. This file will contain all of the code for your CLI tool.
+
+Start by importing the packages you'll need, and setting up the OAuth client:
+
+```ts
+import http from 'node:http'
+import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
+import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
+import { Client } from '@atproto/lex'
+import open from 'open'
+import * as app from './lexicons/app.js'
+
+const stateStore = new Map<string, NodeSavedState>()
+const sessionStore = new Map<string, NodeSavedSession>()
+
+const oauthClient = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope: 'atproto',
+    redirect_uris: ['http://127.0.0.1:3000/callback'],
+  }),
+  stateStore: {
+    async get(key: string) { return stateStore.get(key) },
+    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
+    async del(key: string) { stateStore.delete(key) },
+  },
+  sessionStore: {
+    async get(key: string) { return sessionStore.get(key) },
+    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
+    async del(key: string) { sessionStore.delete(key) },
+  },
+})
+```
+
+The `NodeOAuthClient` manages the OAuth flow. `buildAtprotoLoopbackClientMetadata` configures it for local development using loopback.
+
+<Note>
+OAuth loopback works by using a special redirect URI (like `http://127.0.0.1:PORT/callback`) to send authorization codes directly back to an app, which listens on a local port, avoiding browser-based callbacks and enabling secure, direct communication for token exchange. Instead of a web redirect, the app opens a local listener, you can auth in a browser, and the server redirects back to the app's local URI, letting the app grab the code and exchange it for a token. It's particularly useful for development scenarios.
+</Note>
+
+The `stateStore` and `sessionStore` are in-memory Maps. The state store holds temporary data during the OAuth handshake; the session store holds the authenticated session keyed by DID. In a production app, you'd use a database for these.
+
+## Part 3: Login Flow
+
+Now add the login flow. You'll start a temporary HTTP server to receive the OAuth callback, then open the user's browser to authorize the app:
+
+```ts
+async function login(handle: string) {
+  // Start the OAuth flow — this resolves the handle, finds their auth
+  // server (PDS), and returns a URL to redirect the user to
+  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
+
+  // Wait for the callback from the authorization server
+  const params = await new Promise<URLSearchParams>((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      const url = new URL(req.url!, 'http://127.0.0.1:3000')
+      if (url.pathname === '/callback') {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end('<h1>Authorized! You can close this tab.</h1>')
+        resolve(url.searchParams)
+        server.close()
+      }
+    })
+    server.listen(3000, '127.0.0.1', () => {
+      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
+      open(authUrl.toString())
+    })
+    server.on('error', reject)
+  })
+
+  // Exchange the authorization code for a session
+  const { session } = await oauthClient.callback(params)
+  return session
+}
+```
+
+The flow works like this:
+
+1. `oauthClient.authorize(handle)` resolves the user's handle, discovers their PDS, and returns an authorization URL.
+2. The `open` package opens that URL in the user's browser, where they'll see a consent screen.
+3. After the user approves, their PDS redirects back to `http://127.0.0.1:3000/callback` with an authorization code.
+4. `oauthClient.callback(params)` exchanges that code for an authenticated session.
+
+## Part 4: Use the Session
+
+With the session in hand, you can create a lex `Client` to interact with the AT Protocol. Add a `main()` function that ties it all together:
+
+```ts
+async function main() {
+  const handle = process.argv[2]
+  if (!handle) {
+    console.error('Usage: npx tsx src/index.ts <your-handle>')
+    process.exit(1)
+  }
+
+  console.log(`Logging in as ${handle}...`)
+  const session = await login(handle)
+  console.log(`Logged in! DID: ${session.did}`)
+
+  // Create a lex Client with the authenticated session
+  const client = new Client(session)
+
+  // Fetch the user's profile
+  const profile = await client.get(app.bsky.actor.profile, {
+    repo: session.did,
+  })
+
+  console.log('\nProfile:')
+  console.log(`  Handle: ${handle}`)
+  console.log(`  DID: ${session.did}`)
+  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
+  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+```
+
+The `Client` from `@atproto/lex` accepts the OAuth session directly — the same way it accepts a `PasswordSession` in the [Build an Agent tutorial](/guides/bot-tutorial). From here you can `.get()`, `.list()`, `.create()`, and `.call()` any installed Lexicon.
+
+## Part 5: Run It
+
+Run your CLI tool with `npx tsx`, passing your handle as an argument:
+
+```bash
+npx tsx src/index.ts your-handle.bsky.social
+```
+
+Your browser should open to a consent screen. After you approve, the CLI will print your profile:
+
+```
+Logging in as your-handle.bsky.social...
+Listening on http://127.0.0.1:3000/callback for OAuth redirect...
+Logged in! DID: did:plc:xxxxx
+
+Profile:
+  Handle: your-handle.bsky.social
+  DID: did:plc:xxxxx
+  Display name: Your Name
+  Description: Your bio here
+```
+
+## Conclusion
+
+You've built a minimal OAuth CLI tool that authenticates with the AT Protocol. The full source is about 80 lines of code.
+
+A few things to keep in mind:
+
+- **This is for local development.** The loopback client won't work in production — see the [OAuth with NextJS Tutorial](/guides/oauth-tutorial) for deploying a real app.
+- **Sessions are in-memory.** Every run requires re-authorization. For persistent sessions, use a database as shown in the [NextJS tutorial](/guides/oauth-tutorial#part-3-adding-database-persistence).
+- **Scopes.** This tutorial requests only the base `atproto` scope. To read or write data on behalf of the user, you'll need additional [scopes](/guides/scopes).
+
+You can find more guides and tutorials in our [Docs](/guides), and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!
