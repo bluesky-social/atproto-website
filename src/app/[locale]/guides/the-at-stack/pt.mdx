@@ -56,7 +56,7 @@ O Tap simplifica a sincronização AT, lidando com a conexão, verificação, pr
 - binário Go único
 - backend SQLite ou Postgres
 - projetado para escala moderada (milhões de repositórios, mais de 30 mil eventos/segundo)
-Existe uma biblioteca Typescript para trabalhar com o Tap em [@atproto/tap](https://www.npmjs.com/package/@atproto/tap).
+Existe uma biblioteca TypeScript para trabalhar com o Tap em [@atproto/tap](https://www.npmjs.com/package/@atproto/tap).
 ## Visualizações do aplicativo e retransmissão
 Os **relais** lidam com todos os seus eventos, como recuperação de métricas em grande escala (curtidas, repostagens, seguidores), descoberta de conteúdo (algoritmos) e pesquisa de usuários. O relé também lida com a [limitação de taxa](https://docs.bsky.app/docs/advanced-guides/rate-limits) de PDSes individuais para garantir que o conteúdo possa ser indexado em toda a rede.
 Uma visualização do aplicativo é a parte que realmente monta seu feed e todos os outros dados que você vê no aplicativo, e está a jusante do fluxo de dados do Relay. Este é um serviço semanticamente consciente que produz agregações em toda a rede e visualizações sobre algum subconjunto da rede. Por exemplo, o Relay pode rastrear para obter dados como curtidas e repostagens de uma determinada postagem, e a visualização do aplicativo exibirá a contagem dessas métricas.
