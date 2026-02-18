@@ -104,9 +104,11 @@ export const Header = forwardRef<
           <ul role="list" className="flex items-center gap-6">
             <TopLevelNavItem href="https://bsky.app/profile/atproto.com">
               <BlueskyIcon className="h-5 w-5 fill-slate-900 dark:fill-slate-50" />
+              <span className='sr-only'>AT Protocol on Bluesky</span>
             </TopLevelNavItem>
             <TopLevelNavItem href="https://github.com/bluesky-social/atproto">
               <GithubIcon className="h-6 w-6 fill-slate-900 dark:fill-slate-50" />
+              <span className='sr-only'>AT Protocol on GitHub</span>
             </TopLevelNavItem>
             <LanguageChanger />
           </ul>
