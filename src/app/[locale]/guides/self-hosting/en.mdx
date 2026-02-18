@@ -27,15 +27,23 @@ There are also several community PDS implementations! For example:
 - [Tranquil PDS](https://tangled.org/tranquil.farm/tranquil-pds), written in Rust.
 - [Cocoon](https://tangled.org/hailey.at/cocoon), written in Go.
 
+## Relays
+
+Hosting your own Relay is possible, though bandwidth intensive. Relays typically operate in a [full-network mode](/guides/the-at-stack#relays), where they replicate data from all PDSes and repositories on the AT Protocol network. However, operating a Relay is *not* storage-intensive, as Relays are not required to retain archival copies of network data as of [Sync 1.1](/blog/relay-updates-sync-v1-1).
+
+There are a few different relay implementations:
+- [Reference Implementation](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md), written in Go.
+- [Blacksky Relay](https://github.com/blacksky-algorithms/rsky/tree/main/rsky-relay#rsky-relay), written in Rust.
+
 ## Tap
 
 Tap is used for syncing existing records from the AT network and then continuing to receive new records from the firehose. For a guide to deploying Tap, refer to the [Tap readme](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md#distribution--deployment).
 
 We also provide a quick start guide for [deploying Tap](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/RAILWAY_DEPLOY.md) to [Railway](https://railway.com/).
 
-## AppViews or Relays
+## AppViews
 
-Hosting your own AppView or Relay is possible, but resource intensive. Compared with hosting your own PDS, which is a way of personally controlling access to your own data repository, hosting an AppView or Relay is something that you would only do to provide application-level infrastructure. Generally, the first thing you would need to do here is replicate all of the data in the network for the Lexicons that your application handles. Refer to the [Sync](/guides/sync) docs for a starting point.
+Creating or hosting your own AppView is possible, but resource intensive. Compared with hosting your own PDS, which is a way of personally controlling access to your own data repository, hosting an AppView is something that you would only do to provide application-level infrastructure. Generally, the first thing you would need to do here is replicate all of the data in the network for the Lexicons that your application handles. Refer to the [Sync](/guides/sync) docs for a starting point, or see the Tap section above.
 
 There are lots of other decisions that will go into designing and running your own Atmosphere apps! This will not be a comprehensive list of recommendations.
 
