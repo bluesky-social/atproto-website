@@ -108,7 +108,7 @@ JWT의 주요 매개변수는 다음과 같습니다:
 
 요청을 받는 서비스는 특정 리소스나 엔드포인트에 접근할 때 특정 서비스 식별자의 사용을 요구하거나 금지할 수 있습니다.
 
-서명은 계정의 서명 키(레포지토리 커밋에 서명하는 데 사용된 동일한 키)를 사용하여 일반적인 JWT 프로세스를 통해 계산됩니다. Typescript 의사 코드는 다음과 같습니다:
+서명은 계정의 서명 키(레포지토리 커밋에 서명하는 데 사용된 동일한 키)를 사용하여 일반적인 JWT 프로세스를 통해 계산됩니다. TypeScript 의사 코드는 다음과 같습니다:
 
 ```
 const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))

@@ -109,7 +109,7 @@ If the service identifier is not included, the scope is general purpose and the 
 
 The receiving service may require or prohibit specific service identifiers for access to specific resources or endpoints.
 
-The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As Typescript pseudo-code, this looks like:
+The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As TypeScript pseudo-code, this looks like:
 
 ```
 const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))
