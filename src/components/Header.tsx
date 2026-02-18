@@ -15,6 +15,7 @@ import LanguageChanger from './LanguageChanger'
 import { BlueskyIcon } from './icons/BlueskyIcon'
 import { GithubIcon } from './icons/GithubIcon'
 import { usePathname } from 'next/navigation'
+import { stripLocalePrefix } from '@/components/Navigation'
 
 function TopLevelNavItem({
   className,
@@ -42,7 +43,7 @@ export const Header = forwardRef<
   React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
 >(function Header({ className, minimal, ...props }, ref) {
   const pathname = usePathname()
-  const isHome = pathname === '/'
+  const isHome = stripLocalePrefix(pathname) === '/'
 
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
