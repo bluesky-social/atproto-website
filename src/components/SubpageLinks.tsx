@@ -3,18 +3,20 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { navigation, stripLocalePrefix } from './Navigation'
+import { navT, getLocaleFromPathname } from '@/lib/nav-translations'
 import clsx from 'clsx'
 
 export function SubpageLinks() {
   const rawPathname = usePathname()
   const pathname = stripLocalePrefix(rawPathname)
+  const locale = getLocaleFromPathname(rawPathname)
 
   for (const group of navigation) {
     for (const link of group.links) {
       if (link.href === pathname && link.links && link.links.length > 0) {
         return (
           <div className="px-4 pt-4 md:pt-8 md:px-16">
-            <div className="pb-2 font-medium md:hidden">Pages:</div>
+            <div className="pb-2 font-medium md:hidden">{navT(locale, 'Pages:')}</div>
             <div className={clsx(
               "flex flex-wrap gap-2",
               "flex-col md:flex-row"
@@ -29,7 +31,7 @@ export function SubpageLinks() {
                     "py-3 md:py-1.5"
                   )}
                 >
-                  {sublink.title}
+                  {navT(locale, sublink.href, sublink.title)}
                 </Link>
               ))}
             </div>

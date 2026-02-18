@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
+import { navT, getLocaleFromPathname } from '@/lib/nav-translations'
 
 // Strip locale prefix from pathname for comparison with nav hrefs
 const LOCALES = ['en', 'pt', 'ja', 'ko']
@@ -161,6 +162,7 @@ function NavigationGroup({
   let [rawPathname] = useInitialValue([usePathname()], isInsideMobileNavigation)
   // Normalize pathname by stripping locale prefix for comparison with nav hrefs
   const pathname = stripLocalePrefix(rawPathname)
+  const locale = getLocaleFromPathname(rawPathname)
 
   // Check if any link or subpage is active
   const activePage = group.links.find((link) => {
@@ -179,7 +181,7 @@ function NavigationGroup({
       )}
     >
       <h2 className="px-3 text-xs font-medium uppercase text-slate-500 dark:text-slate-300">
-        {group.title}
+        {navT(locale, group.title)}
       </h2>
       <ul role="list" className="border-l border-transparent">
         {group.links.map((link) => {
@@ -195,7 +197,7 @@ function NavigationGroup({
                   hasChildren ? (isExpanded ? 'down' : 'right') : undefined
                 }
               >
-                {link.title}
+                {navT(locale, link.href, link.title)}
               </NavLink>
               {/* Render subpages */}
               {hasChildren && isExpanded && (
@@ -208,7 +210,7 @@ function NavigationGroup({
                         active={sublink.href === pathname}
                         isSubpage
                       >
-                        {sublink.title}
+                        {navT(locale, sublink.href, sublink.title)}
                       </NavLink>
                     </li>
                   ))}
