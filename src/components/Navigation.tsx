@@ -180,9 +180,9 @@ function NavigationGroup({
         className,
       )}
     >
-      <h2 className="px-3 text-xs font-medium uppercase text-slate-500 dark:text-slate-300">
+      <span className="px-3 text-xs font-medium uppercase text-slate-500 dark:text-slate-300">
         {navT(locale, group.title)}
-      </h2>
+      </span>
       <ul role="list" className="border-l border-transparent">
         {group.links.map((link) => {
           const hasChildren = link.links && link.links.length > 0
