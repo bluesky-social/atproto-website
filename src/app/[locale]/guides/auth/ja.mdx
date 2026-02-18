@@ -67,7 +67,7 @@ Atprotoは[OAuth仕様](/specs/oauth)でOAuth標準の特定のプロファイ�
 
 - **Atprotoは分散しています**：通常、アプリに「…でサインイン」ボタンがある場合、ユーザーの認証を許可する権威を選択できます（大抵は少数の大企業のどれか）。AtprotoのOAuthでは、アプリは認証プロバイダー、つまりユーザーの[PDS](/guides/the-at-stack#pds)との事前の関係がありません。これは、AtprotoのOAuthが、事前に確立された関係を必要とするOIDCと互換性がない理由でもあります。
 
-- **移行**：ATプロトコルユーザーはアカウントをサーバー（[PDS](/guides/glossary#pds-personal-data-server)）間で移行できます。これを促進するため、ATプロトコルは柔軟な[ID](/guides/identity)レイヤーを持っており、ユーザー名（[ハンドル](/specs/handle)）を不変のユーザーID（[DID](/specs/did)）に解決でき、さらにそれを解決してユーザーのPDSを見つけることができます。ユーザーがアプリケーションにログインすると、OAuthクライアントはこれらの関係を動的に解決します。
+- **移行**：Atprotoユーザーはアカウントをサーバー（[PDS](/guides/glossary#pds-personal-data-server)）間で移行できます。これを促進するため、Atprotoは柔軟な[ID](/guides/identity)レイヤーを持っており、ユーザー名（[ハンドル](/specs/handle)）を不変のユーザーID（[DID](/specs/did)）に解決でき、さらにそれを解決してユーザーのPDSを見つけることができます。ユーザーがアプリケーションにログインすると、OAuthクライアントはこれらの関係を動的に解決します。
 
 - **クライアントID**：他のOAuthエコシステムでは、クライアントアプリケーションがリソースサーバーに事前登録が必要なことがよくあります。これは分散型システム（多数のクライアントと多数のリソースサーバーがある）では実行できないため、Atprotoは[Client ID Metadata Documents](/specs/oauth#client-id-metadata-document)を使用してこれに対処しています。
 

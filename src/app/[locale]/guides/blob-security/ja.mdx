@@ -7,7 +7,7 @@ export const header = {
 
 <Heading level={2} id="http-requests">HTTPリクエスト</Heading>
 
-ユーザーがアップロードした任意のファイルをウェブサーバーから配信することは、多くのコンテンツセキュリティ問題を引き起こします。例えば、スクリプトやSVGのクロスサイトスクリプティング（XSS）は他のウェブページと同じ「オリジン」から配信されることで発生します。**`getBlob`** エンドポイントでは[コンテンツセキュリティポリシー](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)の有効化が事実上必須です。blobストレージからブラウザへ直接、動的に資産を配信（**`getBlob`**）することは実質的に非対応です。アプリケーションはCDN、プロキシ、またはその他の独立したウェブサービスを介してblobやファイルを配信し、それらのサービスが適切なセキュリティ対策を実装する必要があります。
+ユーザーがアップロードした任意のファイルをウェブサーバーから配信することは、多くのコンテンツセキュリティ問題を引き起こします。例えば、スクリプトやSVGのクロスサイトスクリプティング（XSS）は他のウェブページと同じ「オリジン」から配信されることで発生します。**`getBlob`** エンドポイントでは[コンテンツセキュリティポリシー](https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/CSP)の有効化が事実上必須です。blobストレージからブラウザへ直接、動的に資産を配信（**`getBlob`**）することは実質的に非対応です。アプリケーションはCDN、プロキシ、またはその他の独立したウェブサービスを介してblobやファイルを配信し、それらのサービスが適切なセキュリティ対策を実装する必要があります。
 
 このエンドポイントのコンテンツセキュリティヘッダーの例は次の通りです。
 
@@ -34,4 +34,4 @@ sandbox X-Content-Type-Options: nosniff
 - [blobのセキュリティ](/guides/blob-security)
 - [動画の取り扱い](/guides/video-handling)
 - [blob仕様](/specs/blob)
-- [Streamplace](https://stream.place/docs/)はATプロトコル上の動画ストリーミングの実装および関連Lexiconを提供します。
+- [Streamplace](https://stream.place/docs/)はAtproto上の動画ストリーミングの実装および関連Lexiconを提供します。
