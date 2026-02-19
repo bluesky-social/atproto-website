@@ -211,13 +211,20 @@ function NetworkDiagram({ currentStep }: { currentStep: number }) {
     return 0.1
   }
 
+  // Shift alignment based on layer so mobile viewports show the right portion
+  const getPreserveAspectRatio = () => {
+    if (layer <= 1) return 'xMinYMid slice'
+    if (layer >= 4) return 'xMaxYMid slice'
+    return 'xMidYMid slice'
+  }
+
   return (
     <motion.svg
       viewBox={getViewBox()}
       className="w-full h-full"
       animate={{ viewBox: getViewBox() }}
       transition={{ type: 'spring', stiffness: 35, damping: 16 }}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio={getPreserveAspectRatio()}
     >
       <defs>
         <filter id="glow">
@@ -292,7 +299,7 @@ function NetworkDiagram({ currentStep }: { currentStep: number }) {
       <motion.g animate={{ opacity: currentStep === 5 ? 1 : 0.06 }} transition={{ duration: 0.3 }}>
         <rect x={660} y={48} width={55} height={28} rx={5} fill="#18181b" stroke={currentStep === 5 ? '#a855f7' : '#3f3f46'} strokeWidth={1} />
         <text x={687} y={62} textAnchor="middle" fill={currentStep === 5 ? '#c084fc' : '#52525b'} style={{ fontSize: '8px' }}>Labeler</text>
-        <text x={687} y={72} textAnchor="middle" fill="#3f3f46" style={{ fontSize: '6px' }}>moderation</text>
+        <text x={687} y={72} textAnchor="middle" fill="#3f3f46" style={{ fontSize: '7px' }}>moderation</text>
         <path d="M 645 58 L 658 58" fill="none" stroke={currentStep === 5 ? '#a855f7' : '#3f3f46'} strokeWidth={1} markerEnd="url(#flowArrowPurple)" />
         <path d="M 658 68 L 645 68" fill="none" stroke={currentStep === 5 ? '#a855f7' : '#3f3f46'} strokeWidth={1} markerEnd="url(#flowArrowPurple)" />
       </motion.g>
@@ -444,7 +451,7 @@ function ServiceBox({
           y={y + 19}
           textAnchor="middle"
           fill={lexicon ? '#60a5fa' : '#52525b'}
-          style={{ fontSize: '6px', fontFamily: lexicon ? 'monospace' : 'inherit' }}
+          style={{ fontSize: '7px', fontFamily: lexicon ? 'monospace' : 'inherit' }}
         >
           {sub}
         </text>
