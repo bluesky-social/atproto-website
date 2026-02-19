@@ -54,9 +54,9 @@ export function Firehose() {
       <div className="relative z-10 mx-auto rounded-sm bg-zinc-900 ring-1 ring-zinc-900/20 md:w-full lg:w-[800px] dark:ring-zinc-100/15">
         <div className="flex justify-center py-8">
           <div className="max-md:px-6 md:w-[420px]">
-            <h3 className="pb-1 text-center text-2xl font-medium md:text-4xl">
+            <h2 className="pb-1 text-center text-2xl font-medium md:text-4xl">
               Public Firehose
-            </h3>
+            </h2>
             <p className="text-center text-lg text-zinc-400">
               Tap into the event stream for all public activity. Build feeds,
               bots, search engines, and applications using live activity. No API
@@ -125,6 +125,7 @@ function PlayIcon() {
       viewBox="0 0 24 24"
       fill="currentColor"
       className="size-4"
+      aria-hidden="true"
     >
       <path
         fillRule="evenodd"
@@ -142,6 +143,7 @@ function StopIcon() {
       viewBox="0 0 24 24"
       fill="currentColor"
       className="size-4"
+      aria-hidden="true"
     >
       <path
         fillRule="evenodd"

@@ -20,16 +20,19 @@ import { stripLocalePrefix } from '@/components/Navigation'
 function TopLevelNavItem({
   className,
   href,
+  label,
   children,
 }: {
   className?: string
   href: string
+  label?: string
   children: React.ReactNode
 }) {
   return (
     <li className={className}>
       <Link
         href={href}
+        aria-label={label}
         className="text-sm leading-5 text-slate-700 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
       >
         {children}
@@ -102,13 +105,15 @@ export const Header = forwardRef<
       <div className="flex items-center gap-5">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-6">
-            <TopLevelNavItem href="https://bsky.app/profile/atproto.com">
+            <TopLevelNavItem href="https://bsky.app/profile/atproto.com" label='AT Protocol on Bluesky'>
               <BlueskyIcon className="h-5 w-5 fill-slate-900 dark:fill-slate-50" />
             </TopLevelNavItem>
-            <TopLevelNavItem href="https://github.com/bluesky-social/atproto">
+            <TopLevelNavItem href="https://github.com/bluesky-social/atproto" label='AT Protocol on GitHub'>
               <GithubIcon className="h-6 w-6 fill-slate-900 dark:fill-slate-50" />
             </TopLevelNavItem>
-            <LanguageChanger />
+            <li>
+              <LanguageChanger />
+            </li>
           </ul>
         </nav>
         {!isHome && (
