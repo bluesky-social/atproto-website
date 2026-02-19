@@ -33,14 +33,14 @@ const STEPS: Step[] = [
   },
   {
     id: 'backfill',
-    title: 'Backfill',
+    title: 'Tap',
     description: 'New services can backfill historical data from Relays using tap, catching up on past activity.',
     layer: 2,
     isSecondary: true,
   },
   {
     id: 'appview',
-    title: 'AppView',
+    title: 'App',
     description: 'AppViews consume the firehose, build indexes, and serve data via Lexicon-defined API endpoints.',
     layer: 3,
   },
@@ -53,7 +53,7 @@ const STEPS: Step[] = [
   },
   {
     id: 'read',
-    title: 'Interact',
+    title: 'Read',
     description: 'Clients query AppViews for data via apps, feeds, screen readers, or RSS. New interactions create new records.',
     layer: 4,
   },
