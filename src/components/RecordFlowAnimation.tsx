@@ -15,7 +15,7 @@ interface Step {
 const STEPS: Step[] = [
   {
     id: 'identity',
-    title: 'Authenticate',
+    title: 'Auth',
     description: 'Users sign in via OAuth through their PDS. The handle resolves to a DID, which points to the user\'s data server. Identity is portable.',
     layer: 0,
   },
@@ -372,7 +372,6 @@ function NetworkDiagram({ currentStep }: { currentStep: number }) {
           <rect x={10} y={0} width={20} height={32} rx={3} fill={layer === 4 ? '#292524' : '#18181b'} stroke={layer === 4 ? '#fbbf24' : '#3f3f46'} strokeWidth={1} />
           <rect x={14} y={4} width={12} height={18} rx={1} fill={layer === 4 ? '#3f3f46' : '#27272a'} />
           <circle cx={20} cy={27} r={2} fill={layer === 4 ? '#fbbf24' : '#3f3f46'} />
-          <text x={40} y={18} fill={layer === 4 ? '#a1a1aa' : '#52525b'} style={{ fontSize: '5px' }}>app</text>
         </g>
         {/* RSS icon */}
         <g transform="translate(735, 85)">
@@ -380,14 +379,14 @@ function NetworkDiagram({ currentStep }: { currentStep: number }) {
           <circle cx={15} cy={15} r={2} fill={layer === 4 ? '#fb923c' : '#52525b'} />
           <path d="M 14 8 Q 14 12, 18 12" fill="none" stroke={layer === 4 ? '#fb923c' : '#52525b'} strokeWidth={1.5} strokeLinecap="round" />
           <path d="M 14 4 Q 14 14, 24 14" fill="none" stroke={layer === 4 ? '#fb923c' : '#52525b'} strokeWidth={1.5} strokeLinecap="round" />
-          <text x={40} y={12} fill={layer === 4 ? '#a1a1aa' : '#52525b'} style={{ fontSize: '5px' }}>rss</text>
+          <text x={40} y={12} fill={layer === 4 ? '#a1a1aa' : '#52525b'} style={{ fontSize: '9px' }}>rss</text>
         </g>
         {/* Screen reader / accessibility */}
         <g transform="translate(735, 110)">
           <rect x={10} y={0} width={20} height={20} rx={3} fill={layer === 4 ? '#292524' : '#18181b'} stroke={layer === 4 ? '#fbbf24' : '#3f3f46'} strokeWidth={1} />
           <circle cx={20} cy={7} r={3} fill={layer === 4 ? '#60a5fa' : '#52525b'} />
           <path d="M 17 12 L 20 17 L 23 12" fill="none" stroke={layer === 4 ? '#60a5fa' : '#52525b'} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
-          <text x={40} y={12} fill={layer === 4 ? '#a1a1aa' : '#52525b'} style={{ fontSize: '5px' }}>a11y</text>
+          <text x={40} y={12} fill={layer === 4 ? '#a1a1aa' : '#52525b'} style={{ fontSize: '9px' }}>a11y</text>
         </g>
       </motion.g>
 
