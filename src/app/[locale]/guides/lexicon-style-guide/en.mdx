@@ -116,7 +116,7 @@ Design recommendations to make schemas flexible to future evolution and extensio
 - the `app.bsky.richtext.facet` system can be used to annotate short text strings in a way that is simpler and safer to work with than full-featured markup languages
     - for more details see ["Why RichText facets in Bluesky"](https://www.pfrazee.com/blog/why-facets)
     - the feature type system is an open union which can be extended with additional types
-    - more powerful systems like Markdown are more appropriate for long-form text
+    - Markdown can also be used for long-form text
 - One pattern for extending or supplementing a record is to define “sidecar” records in the same account repository with the same record key and different types (collections).
     - Sidecar records can be defined and managed by the original Lexicon designer or by independent developers.
     - The sidecar records can be updated (mutated) without breaking strong references to the original record.
