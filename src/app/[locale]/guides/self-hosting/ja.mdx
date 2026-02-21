@@ -29,15 +29,23 @@ Blueskyは多くのPDSの前に「entryway」を置いて運用しています�
 - [Tranquil PDS](https://tangled.org/tranquil.farm/tranquil-pds)（Rust）
 - [Cocoon](https://tangled.org/hailey.at/cocoon)（Go）
 
+<Heading level={2} id="relays">リレー</Heading>
+
+独自のリレーをホストすることは可能ですが、帯域幅を大量に消費します。リレーは通常、ATプロトコルネットワーク上のすべてのPDSやリポジトリからデータを複製する[フルネットワークモード](/guides/the-at-stack#relays)で動作します。ただし、[Sync 1.1](/blog/relay-updates-sync-v1-1)以降のリレーはネットワークデータのアーカイブを保持する必要がないため、ストレージを大量に消費することは*ありません*。
+
+いくつかの異なるリレー実装があります。
+- [リファレンス実装](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md)（Go）
+- [Blacksky Relay](https://github.com/blacksky-algorithms/rsky/tree/main/rsky-relay#rsky-relay)（Rust）
+
 <Heading level={2} id="tap">Tap</Heading>
 
 TapはATネットワークから既存のレコードを同期し、その後firehoseから新しいレコードを継続的に受信するために使用されます。Tapのデプロイ方法については[Tapのreadme](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md#distribution--deployment)を参照してください。
 
 また、[Railway](https://railway.com/)向けの[Tapデプロイのクイックスタートガイド](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/RAILWAY_DEPLOY.md)も提供しています。
 
-<Heading level={2} id="appviews-or-relays">AppViewおよびリレー</Heading>
+<Heading level={2} id="app-views">AppView</Heading>
 
-独自のAppViewやリレーをホスティングすることは可能ですが、リソースを大量に消費します。自身のデータリポジトリへのアクセスを個人的に制御する手段であるPDSのホスティングと比較すると、AppViewやリレーのホスティングはアプリケーションレベルのインフラを提供するために行うものです。通常は必要なLexiconに関するネットワーク上の全データを複製することが最初の作業になります。始めるには[同期](/guides/sync)のドキュメントを参照してください。
+独自のAppViewを作成・ホスティングすることは可能ですが、リソースを大量に消費します。自身のデータリポジトリへのアクセスを個人的に制御する手段であるPDSのホスティングと比較すると、AppViewのホスティングはアプリケーションレベルのインフラを提供するために行うものです。通常は必要なLexiconに関するネットワーク上の全データを複製することが最初の作業になります。始めるには[同期](/guides/sync)のドキュメントや、後述のTapセクションを参照してください。
 
 Atmosphereアプリを設計・運用する際には他にも多くの判断事項があります。このガイドは推奨事項の包括的なリストではありません。
 

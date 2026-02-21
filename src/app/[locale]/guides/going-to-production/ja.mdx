@@ -66,7 +66,7 @@ PDS実装にはデフォルトで[リポジトリ操作制限](https://docs.bsky
 
 <Heading level={2} id="moderation">モデレーション</Heading>
 
-モデレーションはほとんどがPDSレベルで実行されます。ただし、リレーも実行している場合は、必要に応じてアカウントレベルおよびPDSレベルのアクションを実行するためのフォームがリレー管理ウェブインターフェースにあることに注意してください。XRPC経由で公開されていないモデレーション関連のPDSエンドポイントもいくつかあり、[goat](https://github.com/bluesky-social/goat) CLIツールがこれらと対話できます。例については[goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go)を参照してください。
+モデレーションはほとんどがAppViewおよびPDSレベルで実施されます。ただし、リレーも実行している場合は、必要に応じてアカウントレベルおよびPDSレベルのアクションを実行するためのフォームがリレー管理ウェブインターフェースにあることに注意してください。XRPC経由で公開されていないモデレーション関連のPDSエンドポイントもいくつかあり、[goat](https://github.com/bluesky-social/goat) CLIツールがこれらと対話できます。例については[goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go)を参照してください。
 
 [Ozone](https://github.com/bluesky-social/ozone)はラベリングサービスおよびモデレーションインターフェースです。独自のAppViewを構築している場合、AppViewはOzoneの`subscribeLabel` firehoseを使用して更新を受け取ることができます。Ozoneにはアカウントメールのような追加のPDSレベルのプライベート情報を読み取る権限を与えることもできます。これはアカウント復旧などに役立ちます。
 
