@@ -28,7 +28,7 @@ export const header = {
 brew install node pnpm go
 ```
 
-まず、用意したプロジェクトに以下のAtprotoライブラリを追加します。
+まず、用意したプロジェクトに以下のatprotoライブラリを追加します。
 
 ```bash
 pnpm add @atproto/common-web @atproto/lex @atproto/syntax @atproto/tap
@@ -44,7 +44,7 @@ npm install -g @atproto/lex
 
 <Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading>
 
-[Lexicon](/guides/lexicon)はAtprotoのレコードスキーマを定義します。このチュートリアル向けに、新しい"Statusphere" Lexicon（`xyz.statusphere.status`）をすでに公開しています。`lex`を使ってこのLexiconを取得し、プロジェクトに取り込みます。
+[Lexicon](/guides/lexicon)はatprotoのレコードスキーマを定義します。このチュートリアル向けに、新しい"Statusphere" Lexicon（`xyz.statusphere.status`）をすでに公開しています。`lex`を使ってこのLexiconを取得し、プロジェクトに取り込みます。
 
 ```bash
 lex install xyz.statusphere.status
@@ -60,7 +60,7 @@ lex build --importExt=\"\"
 必要に応じてこのコマンドを`package.json`に追加することもできますが、Lexiconがビルドできたので、このチュートリアルではもう使用しません。 `lex install`を使用して別のLexiconをプロジェクトに追加した場合は、`--override`フラグを指定して`lex build`を再実行することで型を再生成する必要があります。
 </Note>
 
-もう1つ、`lib/auth/client.ts`の`SCOPE`定数を更新してこのコレクションへのアクセスを要求してください。Atprotoの権限スコープはLexicon単位なので、アプリが要求するスコープに`xyz.statusphere.status`を追加します。
+もう1つ、`lib/auth/client.ts`の`SCOPE`定数を更新してこのコレクションへのアクセスを要求してください。atprotoの権限スコープはLexicon単位なので、アプリが要求するスコープに`xyz.statusphere.status`を追加します。
 
 ```typescript
 export const SCOPE = "atproto repo:xyz.statusphere.status";
@@ -726,6 +726,6 @@ tap run \
 
 <Heading level={2} id="conclusion">結論</Heading>
 
-これで、OAuthログイン、カスタムLexiconによるステータスレコード定義、Tapによるリアルタイム同期を備えた完全なAtprotoアプリが完成しました。
+これで、OAuthログイン、カスタムLexiconによるステータスレコード定義、Tapによるリアルタイム同期を備えた完全なatprotoアプリが完成しました。
 
 さらに多くのガイドやチュートリアルは[Guides](/guides)セクションで、より多くのサンプルアプリは[Cookbook](https://github.com/bluesky-social/cookbook/)リポジトリで確認できます。ぜひ開発を楽しんでください。

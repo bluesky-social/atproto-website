@@ -1,7 +1,7 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Understanding ATProto - AT Protocol Docs',
+  title: 'Understanding Atproto - AT Protocol Docs',
   description: 'Dive deeper into the concepts behind the AT Protocol.',
 }
 

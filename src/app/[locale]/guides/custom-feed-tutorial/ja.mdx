@@ -51,7 +51,7 @@ npx tsc --init --verbatimModuleSyntax false
 
 <Heading level={2} id="part-1-lexicons-and-tap">パート1：LexionとTap</Heading>
 
-[Lexicon](/guides/lexicon)はAtprotoのレコードを定義します。基本的なフィードジェネレーターには`app.bsky.feed.describeFeedGenerator`と`app.bsky.feed.getFeedSkeleton`のLexiconが必要です。`lex`を使えば、これらのLexiconをダウンロードしてプロジェクトに組み込めます。
+[Lexicon](/guides/lexicon)はatprotoのレコードを定義します。基本的なフィードジェネレーターには`app.bsky.feed.describeFeedGenerator`と`app.bsky.feed.getFeedSkeleton`のLexiconが必要です。`lex`を使えば、これらのLexiconをダウンロードしてプロジェクトに組み込めます。
 
 ```bash
 lex install app.bsky.feed.describeFeedGenerator app.bsky.feed.getFeedSkeleton
@@ -386,11 +386,11 @@ tap run --collection-filters=app.bsky.feed.post \
 
 <Heading level={2} id="conclusion">結論</Heading>
 
-これで、ネットワークから投稿を取得し、独自アルゴリズムでインデックスし、BlueskyのようなクライアントへXRPC経由で配信するカスタムAtprotoフィードを構築できました。
+これで、ネットワークから投稿を取得し、独自アルゴリズムでインデックスし、BlueskyのようなクライアントへXRPC経由で配信するカスタムatprotoフィードを構築できました。
 
 フィードサーバーが動作したので、さらにカスタマイズして他の人が使えるように公開できます。そのためには、公開サーバー（例：AWS、DigitalOceanなど）へデプロイし、HTTPSでアクセス可能にしてください。
 
-その後、公式の[feed-generatorリポジトリ](https://github.com/bluesky-social/feed-generator)をクローンし、[publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts)スクリプトを対話的に実行できます。これにより、あなたのフィードサーバーを指すために必要なAtprotoレコードが作成され、発見可能になります。
+その後、公式の[feed-generatorリポジトリ](https://github.com/bluesky-social/feed-generator)をクローンし、[publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts)スクリプトを対話的に実行できます。これにより、あなたのフィードサーバーを指すために必要なatprotoレコードが作成され、発見可能になります。
 
 <Container>
   <Image src={bsky} alt="" className="w-full max-w-md mx-auto" />

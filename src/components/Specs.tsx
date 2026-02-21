@@ -45,9 +45,9 @@ const specs: Array<Spec> = [
     href: '/specs/lexicon',
     name: { en: 'Lexicon', pt: 'Lexicon', ja: '用語集' },
     description: {
-      en: 'A schema definition language for ATProto.',
-      pt: 'Uma linguagem de definição de esquema para ATProto.',
-      ja: 'ATProto のスキーマ定義言語。',
+      en: 'A schema definition language for atproto.',
+      pt: 'Uma linguagem de definição de esquema para atproto.',
+      ja: 'atproto のスキーマ定義言語。',
     },
     icon: ShapesIcon,
     pattern: {
@@ -83,9 +83,9 @@ const specs: Array<Spec> = [
     href: '/specs/at-uri-scheme',
     name: { en: 'URI Scheme', pt: 'Esquema URI', ja: 'URI スキーム' },
     description: {
-      en: 'A URI scheme for addressing ATProto repository data.',
-      pt: 'Um esquema URI para endereçar dados do repositório ATProto.',
-      ja: 'ATProto リポジトリ データをアドレス指定するための URI スキーム。',
+      en: 'A URI scheme for addressing atproto repository data.',
+      pt: 'Um esquema URI para endereçar dados do repositório atproto.',
+      ja: 'atproto リポジトリ データをアドレス指定するための URI スキーム。',
     },
     icon: LinkIcon,
     pattern: {
