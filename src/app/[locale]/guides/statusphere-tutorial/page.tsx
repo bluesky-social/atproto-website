@@ -2,7 +2,7 @@ import { Page } from '@/components/Page'
 
 export const metadata = {
   title: 'Statusphere Example App Tutorial',
-  description: 'Build a Next.js app supporting OAuth with ATProto identity.',
+  description: 'Build a Next.js app supporting OAuth with atproto identity.',
 }
 
 export default async function HomePage({ params }: any) {

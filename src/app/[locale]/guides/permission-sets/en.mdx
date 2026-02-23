@@ -12,15 +12,15 @@ export const header = {
 
 ## For app developers
 
-This guide describes how to request permissions for your Atproto application. [OAuth](/guides/auth) is used to authorize third-party applications to access users' social graphs, and is a prerequisite for the concepts described here.
+This guide describes how to request permissions for your atproto application. [OAuth](/guides/auth) is used to authorize third-party applications to access users' social graphs, and is a prerequisite for the concepts described here.
 
-Control over Atproto resources is described and granted using [permissions](/specs/permission). A group of a permissions related to a specific Lexicon namespace (record types and API endpoints) can be bundled together as a "permission set". Both are used in the context of [OAuth](/specs/auth) to grant client software access to account resources on a PDS: For example, the ability to write records of specific types to the user's public repository, or make authenticated API requests to remote services. Developers declare the permissions their app requires to function, and end users are shown the permissions when granting access to the app.
+Control over atproto resources is described and granted using [permissions](/specs/permission). A group of a permissions related to a specific Lexicon namespace (record types and API endpoints) can be bundled together as a "permission set". Both are used in the context of [OAuth](/specs/auth) to grant client software access to account resources on a PDS: For example, the ability to write records of specific types to the user's public repository, or make authenticated API requests to remote services. Developers declare the permissions their app requires to function, and end users are shown the permissions when granting access to the app.
 
 In general, it is best to use existing permission sets for cleaner UI, but you can also request individual permissions and define your own permission sets as needed. Refer to the [OAuth flow examples](#oauth-flow-examples) section for how these requests appear in the OAuth flow.
 
 ## Requesting permissions
 
-When your app initiates an OAuth flow with an Atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](/specs/oauth#clients) when registering your OAuth client:
+When your app initiates an OAuth flow with an atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](/specs/oauth#clients) when registering your OAuth client:
 
 ```
 {
@@ -69,7 +69,7 @@ Your release and deployment process for the [client metadata document](/specs/oa
 
 Lexicons are authored in JSON — you can find examples in the [Lexicon Guide](/guides/lexicon). Atmosphere HTTP API methods each scope and implement a particular set of Lexicons, so Lexicons must include valid query parameters, request bodies, and response bodies as appropriate. Each Lexicon, in turn, becomes a permission scope — in other words, `app.bsky.feed.post` is an AT record format, a web endpoint, and a granular permission all at once.
 
-Lexicon schemas are published publicly as records in ATProto Lexicon repositories. Refer to [Lexicon Publication and Resolution](/specs/lexicon#lexicon-publication-and-resolution) for technical details.
+Lexicon schemas are published publicly as records in atproto Lexicon repositories. Refer to [Lexicon Publication and Resolution](/specs/lexicon#lexicon-publication-and-resolution) for technical details.
 
 ## Permission Set design
 
@@ -174,11 +174,11 @@ $ goat lex resolve app.bsky.feed.post
 
 ## Revising Permission Sets
 
-Permission sets can be revised, but removing them or making destructive changes can break existing applications. In general, permission sets should be closely tied to the applications they are designed for, but not necessarily 1:1. Remember that Atproto applications can utilize multiple different Lexicons.
+Permission sets can be revised, but removing them or making destructive changes can break existing applications. In general, permission sets should be closely tied to the applications they are designed for, but not necessarily 1:1. Remember that atproto applications can utilize multiple different Lexicons.
 
 ## OAuth flow examples
 
-Apps that are using Atproto identity providers *solely* for authentication [only need to request the `atproto` permission](/guides/scopes). This provides the same OAuth flow that you might expect from other identity providers; no features of the Atmosphere social graph are used, and no additional permissions are required:
+Apps that are using atproto identity providers *solely* for authentication [only need to request the `atproto` permission](/guides/scopes). This provides the same OAuth flow that you might expect from other identity providers; no features of the Atmosphere social graph are used, and no additional permissions are required:
 
 <Container>
   <Image src={oauth} alt="" className="w-full max-w-md mx-auto"/>
@@ -200,7 +200,7 @@ You can click through on the **?** icons to see the details of each permission s
   <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-From the expanded Atproto and Bluesky permissions, you might recognize `atproto` (for OAuth login), `blob:*/*` (for image and video handling), and several other `app.bsky.*` permissions for profile and social graph interactions.
+From the expanded atproto and Bluesky permissions, you might recognize `atproto` (for OAuth login), `blob:*/*` (for image and video handling), and several other `app.bsky.*` permissions for profile and social graph interactions.
 
 The *Skyblur* Lexicon permissions are defined and summarized differently:
 

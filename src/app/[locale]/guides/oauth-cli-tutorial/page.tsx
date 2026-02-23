@@ -2,7 +2,7 @@ import { Page } from '@/components/Page'
 
 export const metadata = {
   title: 'OAuth for CLI Apps',
-  description: 'Authenticate with ATProto OAuth from a command-line app.',
+  description: 'Authenticate with atproto OAuth from a command-line app.',
 }
 
 export default async function HomePage({ params }: any) {
