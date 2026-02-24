@@ -41,7 +41,7 @@ curl -X POST http://localhost:2480/repos/add \
 4. 切り替え：履歴イベントが完了した後、バッファされたライブイベントが排出されます。
 5. ライブストリーミング：新しいfirehoseイベント（live: true）が即座に配信されます。
 
-Tapを使うための[TypeScriptライブラリ](https://www.npmjs.com/package/@atproto/tap)も提供しています。詳細については、[The AT Stack](/guides/the-at-stack#tap)および[tapリポジトリ](https://github.com/bluesky-social/indigo/tree/main/cmd/tap)を参照してください。
+Tapを使うための[TypeScriptライブラリ](https://www.npmjs.com/package/@atproto/tap)も提供しています。詳細については、[The AT Stack](/guides/the-at-stack#tap)および[tapリポジトリ](https://github.com/bluesky-social/indigo/tree/main/cmd/tap)を参照してください。Tapで大量のレコードをバックフィルしており、スケーラブルなデータベースサービスが必要な場合は、[ClickHouse](https://clickhouse.com/)を使うと良い体験が得られます。
 
 <Heading level={2} id="how-backfilling-works">バックフィルの仕組み</Heading>
 
