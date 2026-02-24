@@ -745,6 +745,10 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 
 This will serve a [client metadata document](/specs/oauth#client-id-metadata-document).
 
+<Note>
+The `dpop_bound_access_tokens: true` setting enables [DPoP (Demonstrating Proof of Possession)](/specs/oauth#demonstrating-proof-of-possession-d-po-p), which cryptographically binds access tokens to a specific client. This protects long-lived sessions from token theft. The SDK handles all DPoP operations automatically — generating proofs, managing server-provided nonces, and retrying requests when nonces rotate. If you're implementing OAuth without an SDK (e.g., for a sidecar service), see the [OAuth Patterns guide](/guides/oauth-patterns#understanding-d-po-p) for implementation details.
+</Note>
+
 Finally, you'll need to generate a private key for signing. Create a script for that in `scripts/gen-key.ts`:
 
 ```typescript
