@@ -18,7 +18,7 @@ ATプロトコルでは、すぐには馴染みのない用語が多数使用さ
 
 ATプロトコルは、「Authenticated Transfer Protocol」の略で、よく「atproto」と省略されます。この名前は、すべてのユーザーデータが作成ユーザーによって署名されているという事実に由来しています。これにより、多くのサービスを通じてデータをブロードキャストし、発信元サーバーと直接通信しなくても、データが本物であることを証明できます。
 
-この名前は、Atprotoがソーシャルシステム向けに設計されているため、「@」記号、別名「at」記号をもじったものです。
+この名前は、atprotoがソーシャルシステム向けに設計されているため、「@」記号、別名「at」記号をもじったものです。
 
 <Heading level={2} id="pds-personal-data-server">PDS（パーソナルデータサーバー）</Heading>
 
@@ -109,12 +109,12 @@ CIDまたはコンテンツ識別子は、[レコード](#record)の暗号化ハ
 
 <Heading level={2} id="dag-cbor">DAG-CBOR</Heading>
 
-DAG-CBORは、[Atproto](#at-protocol)で使用されるシリアル化形式です。暗号検証に重要な信頼性の高い標準形式を提供するため、この形式が選択されました。
+DAG-CBORは、[atproto](#at-protocol)で使用されるシリアル化形式です。暗号検証に重要な信頼性の高い標準形式を提供するため、この形式が選択されました。
 
 - [データモデル仕様](/specs/data-model)
 
 <Heading level={2} id="xrpc">XRPC</Heading>
 
-XRPCは[Atproto](#at-protocol)で用いるHTTP APIです。これは「Cross-organizational Remote Procedure Calls」の略語で、HTTPSの薄いラッパーです。XRPCでは[Lexicon](#lexicon)スキーマを使って、各APIエンドポイントの有効なパラメータやレスポンスを定義します。
+XRPCは[atproto](#at-protocol)で用いるHTTP APIです。これは「Cross-organizational Remote Procedure Calls」の略語で、HTTPSの薄いラッパーです。XRPCでは[Lexicon](#lexicon)スキーマを使って、各APIエンドポイントの有効なパラメータやレスポンスを定義します。
 
 - [HTTP API仕様](/specs/xrpc)

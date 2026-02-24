@@ -5,7 +5,7 @@ import metadata from "./client-metadata.png"
 
 export const header = {
   title: 'OAuth with NextJS Tutorial',
-  description: 'Build a Next.js app supporting OAuth with ATProto identity.',
+  description: 'Build a Next.js app supporting OAuth with atproto identity.',
 }
 
 Neste tutorial, você criará um aplicativo Next.js onde os usuários podem fazer login com sua identidade AT Protocol usando OAuth. Se você hospeda seu próprio PDS, isso significa que você pode fornecer sua própria fonte de autenticação para qualquer aplicativo no Atmosphere.
@@ -214,7 +214,7 @@ const cookieStore = await cookies();
   }
 }
 ```
-Por fim, você criará uma última rota para expor o `oauth-client-metadata.json` em uma URL conhecida. Isso é [usado no ATProto OAuth](/specs/oauth#clients) para descobrir a configuração do cliente. Crie `app/oauth-client-metadata.json/route.ts`:
+Por fim, você criará uma última rota para expor o `oauth-client-metadata.json` em uma URL conhecida. Isso é [usado no atproto OAuth](/specs/oauth#clients) para descobrir a configuração do cliente. Crie `app/oauth-client-metadata.json/route.ts`:
 ```typescript
 import { getOAuthClient } from "@/lib/auth/client";
 import { NextResponse } from "next/server";

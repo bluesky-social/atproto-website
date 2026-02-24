@@ -59,10 +59,10 @@ export default function DocsHome() {
       </div>
       <div className="[html_:where(&amp;&gt;*)]:max-w-2xl [html_:where(&amp;&gt;*)]:lg:max-w-3xl prose flex-auto dark:prose-invert">
         <h2 className="scroll-mt-24">
-          Atprotoとは
+          atprotoとは
         </h2>
         <p>
-          Atprotoは、大規模向けのオープンソーシャルプロトコルです。ユーザーはJSONレコードをリポジトリに公開します。レコードの変更ストリームはネットワーク全体で同期され、アプリケーションを駆動します。
+          atprotoは、大規模向けのオープンソーシャルプロトコルです。ユーザーはJSONレコードをリポジトリに公開します。レコードの変更ストリームはネットワーク全体で同期され、アプリケーションを駆動します。
         </p>
         <p>
           コミュニティメンバーの

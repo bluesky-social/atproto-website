@@ -19,7 +19,7 @@ $ websocat wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos
 
 From here, you would need to read each message as it comes in, and decode the associated data. Our [Go](https://github.com/bluesky-social/indigo) SDK is currently the most feature-complete for interacting with the firehose directly.
 
-Bear in mind that firehose output format is one of the more complex parts of AT, involving decoding binary [CBOR](/specs/data-model) data and [CAR](/specs/repository#car-file-serialization) files. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users such as [feed developers](/guides/feeds), we provide an alternative streaming solution called **Jetstream.**
+Bear in mind that firehose output format is one of the more complex parts of atproto, involving decoding binary [CBOR](/specs/data-model) data and [CAR](/specs/repository#car-file-serialization) files. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users such as [feed developers](/guides/feeds), we provide an alternative streaming solution called **Jetstream.**
 
 ## Jetstream
 

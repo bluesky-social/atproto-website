@@ -87,7 +87,7 @@ Note that the legacy format has no `$type` and can only be parsed for known Lexi
 
 ## JSON Representation
 
-atproto uses its own conventions for JSON, instead of using DAG-JSON directly. The main motivation was to have more idiomatic and human-readable representations for `link` and `bytes` in HTTP APIs. The DAG-JSON specification itself mentions that it is primarily oriented toward debugging and development environments, and we found that the use of `/` as a field key was confusing to developers.
+Atproto uses its own conventions for JSON, instead of using DAG-JSON directly. The main motivation was to have more idiomatic and human-readable representations for `link` and `bytes` in HTTP APIs. The DAG-JSON specification itself mentions that it is primarily oriented toward debugging and development environments, and we found that the use of `/` as a field key was confusing to developers.
 
 Normalizations like key sorting are also not required or enforced when using JSON in atproto: only DRISL-CBOR is used as a byte-reproducible representation.
 

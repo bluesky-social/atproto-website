@@ -2,7 +2,7 @@ import { Page } from '@/components/Page'
 
 export const metadata = {
   title: 'Lexicon Style Guide',
-  description: 'A style guide for creating new ATProto schemas',
+  description: 'A style guide for creating new atproto schemas',
 }
 
 export default async function HomePage({ params }: any) {

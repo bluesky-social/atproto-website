@@ -3,7 +3,7 @@ import {Heading} from "@/components/Heading"
 
 export const header = {
   title: '認証',
-  description: 'Atprotoアプリケーション開発者向けの認証・認可ガイド',
+  description: 'atprotoアプリケーション開発者向けの認証・認可ガイド',
 }
 
 <Heading level={2} id="getting-started">はじめましょう</Heading>
@@ -17,7 +17,7 @@ export const header = {
     <TabPanel value="ts">
     任意の[OAuth](/guides/oauth-cli-tutorial)プロバイダでログインできます。SDKの[PasswordSession](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-session)でパスワード認証もできます。
 
-    まずAtprotoパッケージをインストールしてください。
+    まずatprotoパッケージをインストールしてください。
 
     ```bash
     npm install @atproto/lex @atproto/lex-password-session
@@ -26,7 +26,7 @@ export const header = {
     <TabPanel value="go">
     任意の[OAuth](/guides/go-oauth-cli-tutorial)プロバイダでログインすることもできますし、SDKのパスワード認証を使用することもできます。
 
-    まずAtprotoパッケージをインストールしてください。
+    まずatprotoパッケージをインストールしてください。
 
     ```bash
     go get github.com/bluesky-social/indigo
@@ -41,9 +41,9 @@ export const header = {
 
 **認証が最初のドキュメントであることには理由があります**。[レコードを読み出す](/guides/reading-data#unauthenticated-reads)ために認証が必要というわけではありませんし、[firehoseからデータをストリーム](/guides/streaming-data)する場合も同じです。ただしAtmosphereに統合されるアプリケーションを構築する場合は、認証から始めることになります。
 
-最初はAtprotoのIDをOAuthソースとして使うだけかもしれませんが、Atprotoの[ソーシャルグラフ](/guides/social-graph)上でさらに多くのことができることに気付くでしょう。
+最初はatprotoのIDをOAuthソースとして使うだけかもしれませんが、atprotoの[ソーシャルグラフ](/guides/social-graph)上でさらに多くのことができることに気付くでしょう。
 
-このセクションはAtprotoでアプリケーションを構築している開発者を対象としています。独自のログインフローを持つアプリケーションは認証に[OAuth](#what-is-oauth)を実装すべきです。ボットやコマンドラインツールなどの単一目的のアプリケーションは[パスワード認証](/guides/sdk-auth)を使うこともできます。
+このセクションはatprotoでアプリケーションを構築している開発者を対象としています。独自のログインフローを持つアプリケーションは認証に[OAuth](#what-is-oauth)を実装すべきです。ボットやコマンドラインツールなどの単一目的のアプリケーションは[パスワード認証](/guides/sdk-auth)を使うこともできます。
 
 <Note>
 私たちは[アプリパスワード](/specs/xrpc#app-passwords)の使用もサポートしています。アカウントは主パスワードとは別にアプリパスワードの作成・取消しができます。これにより、パスワード認証を使うアプリケーションに主パスワードを渡す必要がありません。
@@ -61,15 +61,15 @@ OAuthはこれらの問題を、個人のユーザー名とパスワードを必
 
 <Heading level={2} id="how-is-oauth-different-in-at-protocol">ATプロトコルのOAuthは何が違う？</Heading>
 
-Atprotoは[OAuth仕様](/specs/oauth)でOAuth標準の特定のプロファイルを指定し、[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)を基礎としています。
+atprotoは[OAuth仕様](/specs/oauth)でOAuth標準の特定のプロファイルを指定し、[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)を基礎としています。
 
 他のOAuthシステムを使っている場合は細かい部分で意外に感じるかもしれません。
 
-- **Atprotoは分散しています**：通常、アプリに「…でサインイン」ボタンがある場合、ユーザーの認証を許可する権威を選択できます（大抵は少数の大企業のどれか）。AtprotoのOAuthでは、アプリは認証プロバイダー、つまりユーザーの[PDS](/guides/the-at-stack#pds)との事前の関係がありません。これは、AtprotoのOAuthが、事前に確立された関係を必要とするOIDCと互換性がない理由でもあります。
+- **atprotoは分散しています**：通常、アプリに「…でサインイン」ボタンがある場合、ユーザーの認証を許可する権威を選択できます（大抵は少数の大企業のどれか）。atprotoのOAuthでは、アプリは認証プロバイダー、つまりユーザーの[PDS](/guides/the-at-stack#pds)との事前の関係がありません。これは、atprotoのOAuthが、事前に確立された関係を必要とするOIDCと互換性がない理由でもあります。
 
 - **移行**：atprotoユーザーはアカウントをサーバー（[PDS](/guides/glossary#pds-personal-data-server)）間で移行できます。これを促進するため、atprotoは柔軟な[ID](/guides/identity)レイヤーを持っており、ユーザー名（[ハンドル](/specs/handle)）を不変のユーザーID（[DID](/specs/did)）に解決でき、さらにそれを解決してユーザーのPDSを見つけることができます。ユーザーがアプリケーションにログインすると、OAuthクライアントはこれらの関係を動的に解決します。
 
-- **クライアントID**：他のOAuthエコシステムでは、クライアントアプリケーションがリソースサーバーに事前登録が必要なことがよくあります。これは分散型システム（多数のクライアントと多数のリソースサーバーがある）では実行できないため、Atprotoは[Client ID Metadata Documents](/specs/oauth#client-id-metadata-document)を使用してこれに対処しています。
+- **クライアントID**：他のOAuthエコシステムでは、クライアントアプリケーションがリソースサーバーに事前登録が必要なことがよくあります。これは分散型システム（多数のクライアントと多数のリソースサーバーがある）では実行できないため、atprotoは[Client ID Metadata Documents](/specs/oauth#client-id-metadata-document)を使用してこれに対処しています。
 
 <Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 

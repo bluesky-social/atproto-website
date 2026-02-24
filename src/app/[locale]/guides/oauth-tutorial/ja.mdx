@@ -6,7 +6,7 @@ import metadata from "./client-metadata.png"
 
 export const header = {
   title: 'OAuth with NextJSチュートリアル',
-  description: 'Atproto IDによるOAuthに対応したNext.jsアプリの作成',
+  description: 'atproto IDによるOAuthに対応したNext.jsアプリの作成',
 }
 
 このチュートリアルでは、OAuthを使ってユーザーがATプロトコルのIDでログインできるNext.jsアプリを作成します。[自分のPDSをホスト](/guides/self-hosting)している場合、Atmosphere上の任意のアプリに対して独自の認証ソースを提供できます。
@@ -17,7 +17,7 @@ export const header = {
 
 <Heading level={2} id="prerequisites">前提条件</Heading>
 
-このOAuthチュートリアルではAtprotoの概念や依存関係をあまり使いません。Next.jsとTypeScriptの実用的な理解があることを前提とします。
+このOAuthチュートリアルではatprotoの概念や依存関係をあまり使いません。Next.jsとTypeScriptの実用的な理解があることを前提とします。
 
 以下をインストールしておいてください。
 - Node.js 20以上
@@ -38,7 +38,7 @@ npx create-next-app@latest my-app --yes
 cd my-app
 ```
 
-次に、OAuthクライアント機能を提供するAtprotoエコシステムの`oauth-client-node`パッケージを追加します。
+次に、OAuthクライアント機能を提供するatprotoエコシステムの`oauth-client-node`パッケージを追加します。
 
 ```bash
 pnpm add @atproto/oauth-client-node
@@ -267,7 +267,7 @@ export async function POST() {
 }
 ```
 
-最後にもう1つルートを作成し、`oauth-client-metadata.json`をwell-known URLで公開します。これはAtproto OAuthでクライアント設定の検出に[使われます](/specs/oauth#clients)。`app/oauth-client-metadata.json/route.ts`を作成してください。
+最後にもう1つルートを作成し、`oauth-client-metadata.json`をwell-known URLで公開します。これはatproto OAuthでクライアント設定の検出に[使われます](/specs/oauth#clients)。`app/oauth-client-metadata.json/route.ts`を作成してください。
 
 ```typescript
 import { getOAuthClient } from "@/lib/auth/client";
@@ -799,4 +799,4 @@ export const SCOPE = "atproto account:email repo:com.example.record";
 
 1つの定数に集約しておくことで、変更箇所は1か所で済みます。これで再度ログインすると、追加スコープの承認を求められます。
 
-おめでとうございます、チュートリアルは完了です。これでOAuthを使ったAtprotoアプリを作るための堅実なNext.js基盤ができました。次は[**Statusphereサンプルアプリチュートリアル**](/guides/statusphere-tutorial)に進めます。
+おめでとうございます、チュートリアルは完了です。これでOAuthを使ったatprotoアプリを作るための堅実なNext.js基盤ができました。次は[**Statusphereサンプルアプリチュートリアル**](/guides/statusphere-tutorial)に進めます。

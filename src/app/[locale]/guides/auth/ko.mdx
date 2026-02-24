@@ -30,7 +30,7 @@ Atproto는 [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.
 
 다른 OAuth 시스템에 익숙한 사용자에게는 몇 가지 예상치 못한 세부 사항이 있을 수 있습니다.
 
-- **Atproto는 분산형**입니다: 일반적으로 앱에 “~로 로그인” 버튼이 있을 때, 사용자를 인증할 수 있는 권한 기관(보통 몇몇 대기업 중 하나)을 선택할 수 있게 합니다. ATProto OAuth에서는 앱이 인증 제공자와 사전 관계를 맺지 않습니다: 사용자의 [PDS](/guides/the-at-stack#pds)가 그 역할을 합니다. 이는 사전 관계 설정이 필요한 OIDC와 호환되지 않는 이유이기도 합니다.
+- **Atproto는 분산형**입니다: 일반적으로 앱에 “~로 로그인” 버튼이 있을 때, 사용자를 인증할 수 있는 권한 기관(보통 몇몇 대기업 중 하나)을 선택할 수 있게 합니다. Atproto OAuth에서는 앱이 인증 제공자와 사전 관계를 맺지 않습니다: 사용자의 [PDS](/guides/the-at-stack#pds)가 그 역할을 합니다. 이는 사전 관계 설정이 필요한 OIDC와 호환되지 않는 이유이기도 합니다.
 
 - **이동성(Migration)**: Atproto 사용자는 시간이 지남에 따라 서버([PDS](/guides/glossary#pds-personal-data-server)) 간에 계정을 이동할 수 있습니다. 이를 지원하기 위해 Atproto는 유연한 [Identity](/guides/identity) 계층을 갖추고 있습니다. 이 계층을 통해 사용자 이름([handles](/specs/handle))을 정적 사용자 ID([DID](/specs/did))로 변환할 수 있으며, 이 DID는 다시 사용자의 PDS를 찾아내는 데 활용됩니다. 사용자가 앱에 로그인할 때 OAuth 클라이언트는 이러한 관계를 동적으로 해결합니다.
 

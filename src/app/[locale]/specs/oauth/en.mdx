@@ -14,7 +14,7 @@ OAuth is the primary mechanism in atproto for clients to make authorized request
 
 See the [HTTP API specification](./xrpc) for other forms of auth in atproto, including legacy HTTP client sessions/tokens, and inter-service auth.
 
-OAuth is a constantly evolving framework of standards and best practices, standardized by the IETF. atproto uses a specific "profile" of OAuth which mandates a particular combination of OAuth standards, as described in this document.
+OAuth is a constantly evolving framework of standards and best practices, standardized by the IETF. Atproto uses a specific "profile" of OAuth which mandates a particular combination of OAuth standards, as described in this document.
 
 At a high level, we start with the "OAuth 2.1" ([`draft-ietf-oauth-v2-1`](https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/)) evolution of OAuth 2.0, which means:
 
@@ -24,7 +24,7 @@ At a high level, we start with the "OAuth 2.1" ([`draft-ietf-oauth-v2-1`](https:
 
 Unlike a centralized app platform, in atproto there are many independent server implementations, so server discovery and client registration are automated using a combination of public auth server metadata and public client metadata. The `client_id` is a fully-qualified web URL pointing to the public client metadata (JSON document). There is no `client_secret` shared between servers and clients. When initiating a login with a handle or DID, an atproto-specific identity resolution step is required to discover the account’s PDS network location.
 
-In OAuth terminology, an atproto Personal Data Server (PDS) is a "Resource Server" to which authorized HTTP requests are made using access tokens. Sometimes the PDS is also the "Authorization Server" - which services OAuth authorization flows and token requests - while in other situations a separate "entryway" service acts as the Authorization Server for multiple PDS instances. Clients from a metadata file from the PDS to discover the Authorization Server network location.
+In OAuth terminology, an atproto Personal Data Server (PDS) is a "Resource Server" to which authorized HTTP requests are made using access tokens. Sometimes the PDS is also the "Authorization Server" - which services OAuth authorization flows and token requests - while in other situations a separate "entryway" service acts as the Authorization Server for multiple PDS instances. Clients request a metadata file from the PDS to discover the Authorization Server network location.
 
 DPoP (with mandatory server issued nonces) is required to bind auth tokens to specific client software instances (eg, end devices or browser sessions). Pushed Authentication Requests (PAR) are used to streamline the authorization request flow. "Confidential" clients use JWTs signed with a secret key to authenticate the client software to Authorization Servers when making authorization requests.
 
