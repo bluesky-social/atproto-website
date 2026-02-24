@@ -45,7 +45,7 @@ export const header = {
 - ネットワークfirehoseで新しいデータを継続的に取得する {{className: 'lead'}}
 - カスタムスキーマを使用してユーザーのアカウントにデータを公開する {{className: 'lead'}}
 
-ATプロトコルをすぐに理解できるように、ここでは簡単な内容に留めます。各ステップについて、詳細情報へのリンクがあります。 {{className: 'lead'}}
+atprotoをすぐに理解できるように、ここでは簡単な内容に留めます。各ステップについて、詳細情報へのリンクがあります。 {{className: 'lead'}}
 
 <Heading level={2} id="introduction">はじめに</Heading>
 
@@ -436,7 +436,7 @@ router.post(
 )
 ```
 
-<Heading level={2} id="step-6-listening-to-the-firehose">ステップ6. ファイアホースをリッスン</Heading>
+<Heading level={2} id="step-6-listening-to-the-firehose">ステップ6. firehoseをリッスン</Heading>
 
 ここまでで、以下の操作を実行しました。
 
@@ -596,7 +596,7 @@ ${statuses.map((status, i) => {
 
 <Image alt="楽観的更新を示す図" src={DiagramOptimisticUpdate} />
 
-これは、ユーザーがアプリの使用中に自分の変更を確認できるようにするため、重要な最適化です。最終的にイベントがファイアホースから到着すると、すでにローカルに保存されているため、それを破棄します。
+これは、ユーザーがアプリの使用中に自分の変更を確認できるようにするため、重要な最適化です。最終的にイベントがfirehoseから到着すると、すでにローカルに保存されているため、それを破棄します。
 
 これを行うには、SQLite DBへの追加の書き込みを含めるように`POST /status`を更新するだけです。
 
@@ -649,7 +649,7 @@ router.post(
 
 このコードは、`ingester.ts`で行っていることとほとんど同じであることがわかります。
 
-<Heading level={2} id="thinking-in-at-proto">ATプロトコル的に考える</Heading>
+<Heading level={2} id="thinking-in-at-proto">atproto的に考える</Heading>
 
 このチュートリアルでは、atprotoアプリを構築するための重要な手順について説明しました。データは、ユーザーの`at://`リポジトリに正規形で公開され、その後、アプリのデータベースに集約されてネットワークのビューが生成されます。
 

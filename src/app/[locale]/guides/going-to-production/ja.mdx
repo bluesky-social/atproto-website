@@ -31,6 +31,8 @@ PDSはデフォルトで制限的なCORSヘッダーを持っています。
 秘訣は[Litestream](https://fly.io/blog/litestream-v050-is-here/)です。これはまさしく[SQLiteのバックアップと復旧](https://github.com/benbjohnson/litestream)を行います。Litestreamで復旧可能でスケーラブルなPDS SQLiteデプロイメントを取得するには、以下をお勧めします。
 
 - `PDS_SQLITE_DISABLE_WAL_AUTO_CHECKPOINT` = `true`を設定します。これはPDSの[環境変数設定](https://github.com/bluesky-social/atproto/blob/f8e56b387fcd3bc8405225c1bbdef66ca5dc1591/packages/pds/src/config/env.ts#L48)にあります。これが行うことは、PDS SQLiteクライアントにライトアヘッドログ（WAL）を開いたままにして、実際のチェックポイント処理をLitestreamに任せることを強制することです。
+- [Litestream with systemd](https://litestream.io/guides/systemd/)または別のスケジューラーを使用して、直近で更新されたDBを見つけてバックアップします。デフォルトでは、個々のユーザーデータベースは`/pds/actors/`に配置されます。Litestreamはライトアヘッドログとチェックポイントを自動的にクリーンアップするため、WALが制御不能に増加するリスクはありません。
+- 必要に応じて、デプロイメントからコンテナまたはポッドをクリーンアップするときに、このスクリプトがSIGTERMでも実行されるようにしてください。
 
 災害復旧シナリオでは、最新のアカウントデータベースファイル（数時間分のデータが失われている可能性があります）とPDS全体のデータベースファイル（ほぼ完全であるはず）をすべてプルダウンします。次に、PDSのfirehose出力からリポジトリ操作を適用する復旧スクリプトを実行します。これにはIDとアカウントの更新が含まれます。その後、PDSを再起動します。
 
@@ -64,7 +66,7 @@ PDS実装にはデフォルトで[リポジトリ操作制限](https://docs.bsky
 
 <Heading level={2} id="moderation">モデレーション</Heading>
 
-モデレーションはほとんどがPDSレベルで実行されます。ただし、リレーも実行している場合は、必要に応じてアカウントレベルおよびPDSレベルのアクションを実行するためのフォームがリレー管理ウェブインターフェースにあることに注意してください。XRPC経由で公開されていないモデレーション関連のPDSエンドポイントもいくつかあり、[goat](https://github.com/bluesky-social/goat) CLIツールがこれらと対話できます。例については[goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go)を参照してください。
+モデレーションはほとんどがAppViewおよびPDSレベルで実施されます。ただし、リレーも実行している場合は、必要に応じてアカウントレベルおよびPDSレベルのアクションを実行するためのフォームがリレー管理ウェブインターフェースにあることに注意してください。XRPC経由で公開されていないモデレーション関連のPDSエンドポイントもいくつかあり、[goat](https://github.com/bluesky-social/goat) CLIツールがこれらと対話できます。例については[goat/pds_admin.go](https://github.com/bluesky-social/goat/blob/main/pds_admin.go)を参照してください。
 
 [Ozone](https://github.com/bluesky-social/ozone)はラベリングサービスおよびモデレーションインターフェースです。独自のAppViewを構築している場合、AppViewはOzoneの`subscribeLabel` firehoseを使用して更新を受け取ることができます。Ozoneにはアカウントメールのような追加のPDSレベルのプライベート情報を読み取る権限を与えることもできます。これはアカウント復旧などに役立ちます。
 

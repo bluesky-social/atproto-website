@@ -9,6 +9,8 @@ export const header = {
 
 動画のアップロードは画像のアップロードとは少し異なり、通常はファイルがとても大きく、処理時間も大幅に長くなります。個々のAtmosphereアプリやCDNは、動画のアップロードに追加の制限を課す場合があります。
 
+このため、動画のアップロードは通常、最終的なファイルがblobとしてPDSにアップロードされる前に補助サービスによって処理されます。例えば、Blueskyには`https://video.bsky.app`サービスがあり、動画がblobとしてPDSに書き込まれる前にアップロードとトランスコードを処理します。
+
 <Heading level={2} id="Aspect-ratios">アスペクト比</Heading>
 
 アプリケーションの要件に応じて、動画のアップロード時にアスペクト比の提供が必要な場合があります。このメタデータは計算が厄介かもしれません。ブラウザで開発している場合は、動画を`<video>`に読み込み、読み込まれたときの寸法を観察できます。ネイティブアプリの場合は、メディアピッカーAPIを介して取得できる可能性が高いです。代わりに、`ffprobe`のようなツールを使用することもできます。
@@ -43,4 +45,4 @@ export async function getAspectRatio(fileName: string) {
 - [blobライフサイクル](/guides/blob-lifecycle)
 - [blobのセキュリティ](/guides/blob-security)
 - [blob仕様](/specs/blob)
-- [Streamplace](https://stream.place/docs/)はATプロトコル上の動画ストリーミングの実装および関連Lexiconを提供します。
+- [Streamplace](https://stream.place/docs/)はatproto上の動画ストリーミングの実装および関連Lexiconを提供します。

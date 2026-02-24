@@ -1,0 +1,202 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'OAuth with Nodeチュートリアル',
+  description: 'Node.jsからatproto OAuthで認証する',
+}
+
+このチュートリアルでは、[atproto OAuth](/guides/auth)でユーザー認証し、プロフィールを取得する最小構成のNode.jsツールを作成します。アプリ全体は1つのTypeScriptファイルに収まります。
+
+これはATプロトコルでOAuthがどう動くかを理解するための良い出発点です。本番向けウェブアプリを作る場合は、完全版の[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
+
+<Heading level={2} id="prerequisites">前提条件</Heading>
+
+このチュートリアルでは、TypeScriptアプリケーションをゼロから構築します。TypeScriptとNode.jsの基本的な理解を前提としています。
+
+以下をインストールしておいてください。
+- Node.js 18以上
+
+[homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
+
+```bash
+brew install node
+```
+
+テスト用atprotoハンドルも用意しておいてください。
+
+<Heading level={2} id="part-1-project-setup">パート1：セットアップ</Heading>
+
+新しいプロジェクトディレクトリを作成し、[SDK](https://www.npmjs.com/package/@atproto/lex)とその他の依存関係をインストールします。
+
+```bash
+mkdir oauth-cli
+cd oauth-cli
+npm init -y
+npm i -D typescript @types/node @atproto/oauth-client-node @atproto/lex open
+npx tsc --init --target ES2022 --module NodeNext --moduleResolution NodeNext --types node --strict --esModuleInterop --skipLibCheck --verbatimModuleSyntax false
+```
+
+ユーザーのプロフィールを取得するには、`lex` CLIツールをグローバルにインストールし、このプロジェクトに`app.bsky.actor.profile` Lexiconを導入する必要があります。
+
+```bash
+npm i -g @atproto/lex
+lex install app.bsky.actor.profile
+lex build
+```
+
+これによりプロジェクト内にLexicon用のTypeScriptの型が生成され、後で認証済みユーザーのプロフィールを読む際に利用します。
+
+<Heading level={2} id="part-2-build-the-oauth-client">パート2：OAuthクライアントを作る</Heading>
+
+`src/index.ts`に新しいファイルを作成してください。このファイルにCLIツールのコードをすべて記述します。
+
+まず必要なパッケージをインポートし、OAuthクライアントを設定します。
+
+```ts
+import http from 'node:http'
+import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
+import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
+import { Client } from '@atproto/lex'
+import open from 'open'
+import * as app from './lexicons/app.js'
+
+const stateStore = new Map<string, NodeSavedState>()
+const sessionStore = new Map<string, NodeSavedSession>()
+
+const oauthClient = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope: 'atproto',
+    redirect_uris: ['http://127.0.0.1:3000/callback'],
+  }),
+  stateStore: {
+    async get(key: string) { return stateStore.get(key) },
+    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
+    async del(key: string) { stateStore.delete(key) },
+  },
+  sessionStore: {
+    async get(key: string) { return sessionStore.get(key) },
+    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
+    async del(key: string) { sessionStore.delete(key) },
+  },
+})
+```
+
+`NodeOAuthClient`はOAuthフローを管理します。`buildAtprotoLoopbackClientMetadata`はループバックを使ったローカル開発向け設定を行います。
+
+OAuthループバックは、特別なリダイレクトURI（例：`http://127.0.0.1:PORT/callback`）を使って認可コードをアプリへ直接返す仕組みです。アプリはローカルポートで待ち受けるため、ブラウザベースのコールバックを避けつつ安全にトークン交換できます。ウェブへのリダイレクトの代わりに、アプリがローカルリスナーを開き、ブラウザで認証したあとサーバーがアプリのローカルURIに戻すことで、アプリがコードを受け取ってトークンに交換します。特に開発時に有用です。
+
+`stateStore`と`sessionStore`はメモリ上のMapです。前者はOAuthハンドシェイク中の一時データを保持し、後者はDIDをキーに認証済みセッションを保持します。本番アプリではこれらにデータベースを使います。
+
+<Heading level={2} id="part-3-login-flow">パート3：ログインフロー</Heading>
+
+次にログインフローを追加します。OAuthコールバックを受け取る一時HTTPサーバーを起動し、ユーザーのブラウザを開いてアプリ認可を行います。
+
+```ts
+async function login(handle: string) {
+  // OAuthフローを開始：ハンドルを解決し、認可サーバー（PDS）を見つけ、
+  // ユーザーをリダイレクトするURLを返す
+  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
+
+  // 認可サーバーからのコールバックを待つ
+  const params = await new Promise<URLSearchParams>((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      const url = new URL(req.url!, 'http://127.0.0.1:3000')
+      if (url.pathname === '/callback') {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end('<h1>Authorized! You can close this tab.</h1>')
+        resolve(url.searchParams)
+        server.close()
+      }
+    })
+    server.listen(3000, '127.0.0.1', () => {
+      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
+      open(authUrl.toString())
+    })
+    server.on('error', reject)
+  })
+
+  // 認可コードを交換してセッション取得
+  const { session } = await oauthClient.callback(params)
+  return session
+}
+```
+
+フローは次のように進みます。
+
+1. `oauthClient.authorize(handle)`がユーザーのハンドルを解決し、PDSを見つけ、認可URLを返します。
+2. `open`パッケージがそのURLをユーザーのブラウザで開き、同意画面が表示されます。
+3. ユーザーが承認すると、PDSが認可コード付きで`http://127.0.0.1:3000/callback`にリダイレクトします。
+4. `oauthClient.callback(params)`がそのコードを認証済みセッションに交換します。
+
+<Heading level={2} id="part-4-use-the-session">パート4：セッションを使う</Heading>
+
+セッションが取得できたら、ATプロトコルとやり取りするためにlexの`Client`を作成できます。これらをまとめる`main()`関数を追加しましょう。
+
+```ts
+async function main() {
+  const handle = process.argv[2]
+  if (!handle) {
+    console.error('Usage: npx tsx src/index.ts <your-handle>')
+    process.exit(1)
+  }
+
+  console.log(`Logging in as ${handle}...`)
+  const session = await login(handle)
+  console.log(`Logged in! DID: ${session.did}`)
+
+  // 認証済みセッションでlex Clientを作成
+  const client = new Client(session)
+
+  // ユーザーのプロフィールを取得
+  const profile = await client.get(app.bsky.actor.profile, {
+    repo: session.did,
+  })
+
+  console.log('\nProfile:')
+  console.log(`  Handle: ${handle}`)
+  console.log(`  DID: ${session.did}`)
+  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
+  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+```
+
+`@atproto/lex`の`Client`はOAuthセッションを直接受け取れます。これは[エージェント作成チュートリアル](/guides/bot-tutorial)で`PasswordSession`を受け取るのと同じです。ここから先は、インストール済みLexiconに対して`.get()`、`.list()`、`.create()`、`.call()`を使えます。
+
+<Heading level={2} id="part-5-run-it">パート5：実行する</Heading>
+
+`npx tsx`でCLIツールを実行し、引数に自分のハンドルを渡します。
+
+```bash
+npx tsx src/index.ts your-handle.bsky.social
+```
+
+ブラウザで同意画面が開きます。承認すると、CLIがプロフィールを表示します。
+
+```
+Logging in as your-handle.bsky.social...
+Listening on http://127.0.0.1:3000/callback for OAuth redirect...
+Logged in! DID: did:plc:xxxxx
+
+Profile:
+  Handle: your-handle.bsky.social
+  DID: did:plc:xxxxx
+  Display name: Your Name
+  Description: Your bio here
+```
+
+<Heading level={2} id="conclusion">結論</Heading>
+
+ATプロトコルで認証する最小構成のOAuth CLIツールが完成しました。ソースコード全体はおよそ80行です。
+
+以下のことを覚えておいてください。
+
+- **これはローカル開発向けです**。ループバッククライアントは本番環境では動作しません。実アプリのデプロイは[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
+- **セッションはメモリ上に保持されます**。実行のたびに再認可が必要です。永続セッションが必要な場合は、[NextJSチュートリアル](/guides/oauth-tutorial#part-3-adding-database-persistence)のようにデータベースを使ってください。
+- **スコープに注意してください**。このチュートリアルが要求するのは基本の`atproto`スコープのみです。ユーザーに代わってデータを読み書きするには、追加の[スコープ](/guides/scopes)が必要です。
+
+さらに多くのガイドやチュートリアルは[Docs](/guides)で、より多くのサンプルアプリは[Cookbook](https://github.com/bluesky-social/cookbook/)リポジトリで確認できます。ぜひ開発を楽しんでください。

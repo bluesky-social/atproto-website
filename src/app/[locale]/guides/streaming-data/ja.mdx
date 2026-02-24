@@ -19,7 +19,7 @@ ATプロトコルのコアプリミティブの一つは*firehose*です。こ�
 $ websocat wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos
 ```
 
-ここから、入ってくる各メッセージを読み込み、関連するデータをデコードする必要があります。当社の[Go](https://github.com/bluesky-social/indigo) SDKは、現在firehoseと直接対話するには最も機能が揃っています。
+ここから、入ってくる各メッセージを読み込み、関連するデータをデコードする必要があります。私たちの[Go](https://github.com/bluesky-social/indigo) SDKは、現在firehoseと直接対話するには最も機能が揃っています。
 
 firehose出力形式はatprotoの特に複雑な部分の一つであり、バイナリ[CBOR](/specs/data-model)データと[CAR](/specs/repository#car-file-serialization)ファイルのデコードが含まれることに注意してください。さらに、ネットワークが成長するにつれてデータの量は急速に増加しています。完全な同期firehoseはコアネットワークインフラストラクチャですが、[フィード開発者](/guides/feeds)などのエンドユーザーのために、**Jetstream**という代替ストリーミングソリューションを提供しています。
 

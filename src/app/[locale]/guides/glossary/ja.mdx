@@ -16,7 +16,7 @@ ATプロトコルでは、すぐには馴染みのない用語が多数使用さ
 
 <Heading level={2} id="at-protocol">ATプロトコル</Heading>
 
-ATプロトコルは、「Authenticated Transfer Protocol」の略です。この名前は、すべてのユーザーデータが作成ユーザーによって署名されているという事実に由来しています。これにより、多くのサービスを通じてデータをブロードキャストし、発信元サーバーと直接通信しなくても、データが本物であることを証明できます。
+ATプロトコルは、「Authenticated Transfer Protocol」の略で、よく「atproto」と省略されます。この名前は、すべてのユーザーデータが作成ユーザーによって署名されているという事実に由来しています。これにより、多くのサービスを通じてデータをブロードキャストし、発信元サーバーと直接通信しなくても、データが本物であることを証明できます。
 
 この名前は、atprotoがソーシャルシステム向けに設計されているため、「@」記号、別名「at」記号をもじったものです。
 
@@ -24,7 +24,7 @@ ATプロトコルは、「Authenticated Transfer Protocol」の略です。こ�
 
 PDS（パーソナルデータサーバー）は、ユーザーをホストするサーバーです。PDSは常にユーザーの[データリポジトリ](#data-repo)と署名鍵を保存します。また、ユーザーに[ハンドル](#handle)と[DID](#did-decentralized-id)を割り当てることもあります。多くのPDSは複数のユーザーをホストします。
 
-PDSは[AppView](#appview)と通信してアプリケーションを実行します。PDSは通常、それ自体ではアプリケーションを実行しませんが、OAuthログイン画面などの一般的なアカウント管理インターフェイスを備えています。PDSは[データリポジトリ](#data-repo)を[リレー](#relay)と積極的に同期します。
+PDSは[AppView](#app-view)と通信してアプリケーションを実行します。PDSは通常、それ自体ではアプリケーションを実行しませんが、OAuthログイン画面などの一般的なアカウント管理インターフェイスを備えています。PDSは[データリポジトリ](#data-repo)を[リレー](#relay)と積極的に同期します。
 
 <Heading level={2} id="app-view">AppView</Heading>
 
@@ -34,9 +34,9 @@ AppViewはウェブ上の検索エンジンに少し似ています。Atmosphere
 
 <Heading level={2} id="relay">リレー</Heading>
 
-リレーは、[Atmosphere](#atmosphere)全体からの[データリポジトリ](#data-repo)の集約機能です。[PDS](#pds)からリポジトリを同期し、変更イベントのfirehoseを生成します。[AppView](#appview)はリレーを使用してユーザーデータを取得します。
+リレーは、[Atmosphere](#atmosphere)全体からの[データリポジトリ](#data-repo)の集約機能です。[PDS](#pds)からリポジトリを同期し、変更イベントのfirehoseを生成します。[AppView](#app-view)はリレーを使用してユーザーデータを取得します。
 
-リレーは最適化用途であり、厳密には必要ではありません。[AppView](#appview)は[PDS](#pds)と直接通信できます（実際、それが推奨されることもあります）。リレーは、ネットワークで必要な接続の数を減らすのに役立ちます。
+リレーは最適化用途であり、厳密には必要ではありません。[AppView](#app-view)は[PDS](#pds)と直接通信できます（実際、それが推奨されることもあります）。リレーは、ネットワークで必要な接続の数を減らすのに役立ちます。
 
 <Heading level={2} id="lexicon">Lexicon</Heading>
 
@@ -58,7 +58,7 @@ Lexiconの唯一の目的は、開発者が互換性のあるソフトウェア�
 
 <Heading level={2} id="collection">コレクション</Heading>
 
-「コレクション」は、[データリポジトリ](#data-repo)内のJSON[レコード](#record)のバケツです。順序付きリスト操作をサポートします。すべてのコレクションは、[NSID](#nsid-namespace-id)によって識別され、[Lexicon](#lexicon)スキーマにマップされることが想定されています。
+「コレクション」は、[データリポジトリ](#data-repo)内のJSON[レコード](#record)のバケツです。順序付きリスト操作をサポートします。すべてのコレクションは、[NSID](#nsid-namespaced-id)によって識別され、[Lexicon](#lexicon)スキーマにマップされることが想定されています。
 
 <Heading level={2} id="record">レコード</Heading>
 
@@ -72,7 +72,7 @@ blobは、[リポジトリ](#data-repo)内に格納される非構造化デー�
 
 <Heading level={2} id="label">ラベル</Heading>
 
-ラベルは、[リポジトリ](#data-repo)および[レコード](#record)に付与されるメタデータオブジェクトです。通常、ラベルの意味を識別する「nudity」や「graphic-media」などの値によって参照されます。ラベルは主にアプリケーションによってモデレーションに使用されますが、他の目的にも使用できます。
+ラベルは、アカウントの[DID](#did-decentralized-id)および[レコード](#record)に付与されるメタデータオブジェクトです。通常、ラベルの意味を識別する「nudity」や「graphic-media」などの値によって参照されます。ラベルは主にアプリケーションによってモデレーションに使用されますが、他の目的にも使用できます。
 
 - [ラベル仕様](/specs/label)
 
@@ -115,6 +115,6 @@ DAG-CBORは、[atproto](#at-protocol)で使用されるシリアル化形式で�
 
 <Heading level={2} id="xrpc">XRPC</Heading>
 
-XRPCは非推奨の用語ですが、歴史的には[atproto](#at-protocol)のHTTP用法を説明するために使用されていました。これは「Cross-organizational Remote Procedure Calls」の略語ですが、実際にはHTTPを使用しているだけなので、この用語を発明したことを後悔しています。
+XRPCは[atproto](#at-protocol)で用いるHTTP APIです。これは「Cross-organizational Remote Procedure Calls」の略語で、HTTPSの薄いラッパーです。XRPCでは[Lexicon](#lexicon)スキーマを使って、各APIエンドポイントの有効なパラメータやレスポンスを定義します。
 
 - [HTTP API仕様](/specs/xrpc)

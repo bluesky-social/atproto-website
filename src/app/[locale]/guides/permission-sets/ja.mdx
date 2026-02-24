@@ -21,7 +21,7 @@ atprotoのリソース制御は[権限](/specs/permission)で説明され、付�
 
 <Heading level={2} id="requesting-permissions">権限の要求</Heading>
 
-アプリがatprotoのIDプロバイダーでOAuthフローを開始する際、認可リクエストの`scope`パラメーターに含めることで特定の権限セットを要求できます。これはOAuthクライアント登録時に[`oauth-client-metadata.json`ファイル](/specs/oauth#clients)へ*スペース区切りのリスト*として指定します。
+アプリがatprotoのIDプロバイダーでOAuthフローを開始する際、認可リクエストの`scope`パラメータに含めることで特定の権限セットを要求できます。これはOAuthクライアント登録時に[`oauth-client-metadata.json`ファイル](/specs/oauth#clients)へ*スペース区切りのリスト*として指定します。
 
 ```
 {
@@ -30,7 +30,7 @@ scope: "atproto rpc:app.bsky.feed.searchPosts?aud=* blob:*/*",
 }
 ```
 
-ATにおけるOAuthは[Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/)（PAR）を使用します。クライアントメタデータファイルはセッションライフサイクル中に動的に取得され、`oauth-client-metadata.json`の`scope`パラメーターはアプリが実際に行う認可HTTPリクエストと*一致している必要があります*。
+ATにおけるOAuthは[Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/)（PAR）を使用します。クライアントメタデータファイルはセッションライフサイクル中に動的に取得され、`oauth-client-metadata.json`の`scope`パラメータはアプリが実際に行う認可HTTPリクエストと*一致している必要があります*。
 
 ```
 https://your-authorization-server.com/authorize?
@@ -68,9 +68,9 @@ PDSインスタンス上のユーザー所有リソースに関わる権限は�
 
 <Heading level={2} id="for-lexicon-designers">Lexicon設計者向け</Heading>
 
-LexiconはJSONで作成されます。例は[Lexiconガイド](/guides/lexicon)で確認できます。AtmosphereのHTTP APIメソッドは、それぞれ特定のLexiconセットをスコープし実装するため、Lexiconには適切なクエリパラメーター、リクエストボディ、レスポンスボディが含まれている必要があります。各Lexiconは権限スコープにもなります。つまり、`app.bsky.feed.post`はATレコード形式であり、ウェブエンドポイントであり、粒度の細かい権限でもあります。
+LexiconはJSONで作成されます。例は[Lexiconガイド](/guides/lexicon)で確認できます。AtmosphereのHTTP APIメソッドは、それぞれ特定のLexiconセットをスコープし実装するため、Lexiconには適切なクエリパラメータ、リクエストボディ、レスポンスボディが含まれている必要があります。各Lexiconは権限スコープにもなります。つまり、`app.bsky.feed.post`はATレコード形式であり、ウェブエンドポイントであり、粒度の細かい権限でもあります。
 
-LexiconスキーマはATプロトコルLexiconリポジトリのレコードとして公開されます。技術的な詳細は[Lexiconの発行と解決](/specs/lexicon#lexicon-publication-and-resolution)を参照してください。
+Lexiconスキーマはatproto上でLexiconリポジトリのレコードとして公開されます。技術的な詳細は[Lexiconの発行と解決](/specs/lexicon#lexicon-publication-and-resolution)を参照してください。
 
 <Heading level={2} id="permission-set-design">権限セットの設計</Heading>
 

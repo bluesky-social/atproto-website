@@ -1,0 +1,250 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'OAuth with Goチュートリアル',
+  description: 'Goアプリからatproto OAuthで認証する',
+}
+
+このチュートリアルでは、[atproto OAuth](/guides/auth)でユーザー認証し、セッション情報を取得する最小構成のGoツールを作成します。アプリ全体は1つのファイルに収まります。
+
+これはATプロトコルでOAuthがどう動くかを理解するための良い出発点です。TypeScript版は[OAuth with Nodeチュートリアル](/guides/oauth-cli-tutorial)、本番向けウェブアプリ構築は[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
+
+<Heading level={2} id="prerequisites">前提条件</Heading>
+
+Goの基本的な理解を前提としています。
+
+以下をインストールしておいてください。
+- Go 1.24以上
+
+[homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
+
+```bash
+brew install go
+```
+
+テスト用atprotoハンドルも用意しておいてください。
+
+<Heading level={2} id="part-1-project-setup">パート1：セットアップ</Heading>
+
+新しいGoモジュールを作成し、[Go SDK](https://github.com/bluesky-social/indigo)をインストールします。
+
+```bash
+mkdir go-oauth-cli
+cd go-oauth-cli
+go mod init go-oauth-cli
+go get github.com/bluesky-social/indigo/atproto/auth/oauth
+```
+
+以上です。Go SDKにはOAuthに必要なものがすべて含まれており、開発用のインメモリセッションストアも利用できます。
+
+<Heading level={2} id="part-2-build-the-oauth-client">パート2：OAuthクライアントを作る</Heading>
+
+`main.go`を作成します。まずはインポートとOAuthクライアントのセットアップから始めます。
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"net/url"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
+
+	"github.com/bluesky-social/indigo/atproto/auth/oauth"
+)
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "Usage: go run main.go <your-handle>")
+		os.Exit(1)
+	}
+	handle := os.Args[1]
+
+	if err := run(context.Background(), handle); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+次に`run`関数を追加します。まずランダムなポートでコールバックサーバーを立て、その後OAuthクライアントを設定します。
+
+```go
+func run(ctx context.Context, handle string) error {
+	// 利用可能なランダムポートでコールバックサーバーを起動
+	callbackCh := make(chan url.Values, 1)
+	port, server, err := listenForCallback(ctx, callbackCh)
+	if err != nil {
+		return err
+	}
+	defer server.Close()
+
+	callbackURL := fmt.Sprintf("http://127.0.0.1:%d/callback", port)
+
+	// localhost設定とインメモリストレージでOAuthクライアントを作成
+	config := oauth.NewLocalhostConfig(callbackURL, []string{"atproto"})
+	store := oauth.NewMemStore()
+	oauthClient := oauth.NewClientApp(&config, store)
+```
+
+`NewLocalhostConfig`はループバッククライアントを設定します。
+
+OAuthループバックは、特別なリダイレクトURI（例：`http://127.0.0.1:PORT/callback`）を使って認可コードをアプリへ直接返す仕組みです。アプリはローカルポートで待ち受けるため、ブラウザベースのコールバックを避けつつ安全にトークン交換できます。ウェブへのリダイレクトの代わりに、アプリがローカルリスナーを開き、ブラウザで認証したあとサーバーがアプリのローカルURIに戻すことで、アプリがコードを受け取ってトークンに交換します。特に開発時に有用です。
+
+`NewMemStore`は開発向けのインメモリセッションストレージを提供します。
+
+<Heading level={2} id="part-3-login-flow">パート3：ログインフロー</Heading>
+
+引き続き`run`関数にログインフローを実装します。ここではハンドルを解決し、ブラウザを開き、コールバックを待ちます。
+
+```go
+	// OAuthフローを開始
+	fmt.Printf("Logging in as %s...\n", handle)
+	authURL, err := oauthClient.StartAuthFlow(ctx, handle)
+	if err != nil {
+		return fmt.Errorf("starting auth flow: %w", err)
+	}
+
+	// 認可URLをブラウザで開く
+	fmt.Printf("Opening browser...\n")
+	if !strings.HasPrefix(authURL, "https://") {
+		return fmt.Errorf("unexpected non-https auth URL")
+	}
+	if err := openBrowser(authURL); err != nil {
+		fmt.Printf("Could not open browser automatically.\nPlease visit: %s\n", authURL)
+	}
+
+	// OAuthコールバックを待つ
+	fmt.Println("Waiting for authorization...")
+	params := <-callbackCh
+```
+
+フローは次のように進みます。
+
+1. `StartAuthFlow`がユーザーのハンドルを解決し、PDSを発見し、[Pushed Authorization Request (PAR)](/guides/permission-sets#requesting-permissions)を送信して認可URLを返します。
+2. ユーザーのブラウザで同意画面が開きます。
+3. ユーザーが承認すると、PDSが認可コード付きで `http://127.0.0.1:<port>/callback` にリダイレクトします。
+
+<Heading level={2} id="part-4-use-the-session">パート4：セッションを使う</Heading>
+
+コールバックをセッションに交換し、認証付きAPI呼び出しを行う処理を追加して`run`関数を完成させます。
+
+```go
+	// 認可コードをセッションに交換
+	sessData, err := oauthClient.ProcessCallback(ctx, params)
+	if err != nil {
+		return fmt.Errorf("processing callback: %w", err)
+	}
+	fmt.Printf("Logged in! DID: %s\n", sessData.AccountDID)
+
+	// セッションを再開してAPIクライアントを取得
+	session, err := oauthClient.ResumeSession(ctx, sessData.AccountDID, sessData.SessionID)
+	if err != nil {
+		return fmt.Errorf("resuming session: %w", err)
+	}
+
+	// 動作確認としてユーザーのセッション情報を取得
+	client := session.APIClient()
+	var resp struct {
+		DID    string `json:"did"`
+		Handle string `json:"handle"`
+	}
+	if err := client.Get(ctx, "com.atproto.server.getSession", nil, &resp); err != nil {
+		return fmt.Errorf("fetching session: %w", err)
+	}
+
+	fmt.Printf("\nSession:\n")
+	fmt.Printf("  Handle: %s\n", resp.Handle)
+	fmt.Printf("  DID:    %s\n", resp.DID)
+	fmt.Printf("  Host:   %s\n", sessData.HostURL)
+
+	return nil
+}
+```
+
+`ProcessCallback`は認可コードをトークンに交換します。`ResumeSession`はそのトークンを、DPoP署名とトークン更新を自動処理するセッションとしてラップします。`APIClient()`はユーザー資格情報で事前設定済みのHTTPクライアントを返し、任意の[XRPC](/specs/xrpc)呼び出しに利用できます。
+
+<Heading level={2} id="part-5-helper-functions">パート5：ヘルパー関数</Heading>
+
+コールバックサーバーとブラウザ起動のヘルパー関数を追加します。
+
+```go
+func listenForCallback(ctx context.Context, res chan url.Values) (int, *http.Server, error) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, nil, err
+	}
+
+	mux := http.NewServeMux()
+	server := &http.Server{Handler: mux}
+
+	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		res <- r.URL.Query()
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(200)
+		w.Write([]byte("<h1>Authorized! You can close this tab.</h1>"))
+		go server.Shutdown(ctx)
+	})
+
+	go func() {
+		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	return listener.Addr().(*net.TCPAddr).Port, server, nil
+}
+
+func openBrowser(url string) error {
+	switch runtime.GOOS {
+	case "darwin":
+		return exec.Command("open", url).Run()
+	case "windows":
+		return exec.Command("cmd", "/c", "start", url).Run()
+	default:
+		return exec.Command("xdg-open", url).Run()
+	}
+}
+```
+
+コールバックサーバーは`127.0.0.1:0`でリッスンします。これはOSに利用可能な任意ポートの割り当てを指示します。コールバックが届くと、クエリパラメーターをチャネル経由でメインフローへ渡し、自身をシャットダウンします。
+
+<Heading level={2} id="part-6-run-it">パート6：実行する</Heading>
+
+CLIツールを実行し、引数に自分のハンドルを渡します。
+
+```bash
+go run main.go your-handle.bsky.social
+```
+
+ブラウザで同意画面が開きます。承認後、CLIにセッション情報が表示されます。
+
+```
+Logging in as your-handle.bsky.social...
+Opening browser...
+Waiting for authorization...
+Logged in! DID: did:plc:xxxxx
+
+Session:
+  Handle: your-handle.bsky.social
+  DID:    did:plc:xxxxx
+  Host:   https://shimeji.us-east.host.bsky.network
+```
+
+<Heading level={2} id="conclusion">結論</Heading>
+
+ATプロトコルで認証する最小構成のGo製OAuth CLIツールが完成しました。ソースコード全体はおよそ120行です。
+
+以下のことを覚えておいてください。
+
+- **これはローカル開発向けです**。localhostクライアントは本番環境では動作しません。SQLite永続化と複数のコマンドを備えた本番向けGoの実装例は、Cookbookの[go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app)を参照してください。
+- **セッションはメモリ上に保持されます**。実行のたびに再認可が必要です。Cookbookの例ではSQLiteでセッションを永続化する方法を示しています。
+- **スコープに注意してください**。このチュートリアルが要求するのは基本の`atproto`スコープのみです。ユーザーに代わってデータを読み書きするには、追加の[スコープ](/guides/scopes)が必要です。
+
+さらに多くのガイドやチュートリアルは[Docs](/guides)で、より多くのサンプルアプリは[Cookbook](https://github.com/bluesky-social/cookbook/)リポジトリで確認できます。ぜひ開発を楽しんでください。

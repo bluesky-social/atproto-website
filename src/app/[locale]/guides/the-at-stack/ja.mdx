@@ -10,7 +10,7 @@ export const header = {
     'ATプロトコルスタックを構成するもの',
 }
 
-<Heading level={2} id="the-authenticated-transfer-protocol">Authenticated Transferプロトコル</Heading>
+<Heading level={2} id="the-authenticated-transfer-protocol">Authenticated Transfer Protocol</Heading>
 
 ATプロトコル（Authenticated Transfer Protocol）は公開会話の標準であり、ソーシャルアプリを構築するためのオープンソースフレームワークです。
 
@@ -54,6 +54,7 @@ PDSは以下を担います。
 - 秘密鍵管理：AT署名鍵とPLCローテーション鍵
 - [PLC](https://web.plc.directory/)のID操作とエンドポイント：ハンドル変更、PLC操作の検証・署名・送信
 - メール配信：リセットフローおよびモデレーションメールの転送用
+- リポジトリイベントストリームによるデータ同期
 - リポジトリのイベントストリームで`#identity`と`#account`（近日追加）イベントを出力
 - デフォルトのハンドル名前空間（ベースドメイン）を管理（例外あり）
 - OAuthクライアントフロー（サインインページや任意のMFAを含む）
@@ -65,9 +66,26 @@ PDSは以下を担います。
 - https://boat.kelinci.net/, リポジトリのインポート/エクスポート用インターフェース群
 - https://github.com/bluesky-social/goat, 私たちのGo製ATコマンドラインツール。
 
+<Heading level={2} id="relays">リレー</Heading>
+
+**リレー**はリアルタイムであなたのすべてのイベントを処理します。リレーはPDS単位のレート制限やネットワーク乱用も処理して、ネットワーク全体からの可用性を確保します。重要なこととして、リレー自体はリポジトリ内のレコードを解釈せず、単に一時的に保存し、消費者に転送するだけです。リレーは複数のリポジトリやPDSからの[イベントストリーム](/specs/event-stream)を組み合わせた[**firehose**](/guides/streaming-data)を生成します。
+
+リレーはさまざまな規模で運用できます。フルネットワークリレーは、ネットワーク全体のすべてのリポジトリを追跡し、完全なカバレッジを提供します。パーシャルネットワークリレーは、特定のコミュニティ、アプリケーション、地域に焦点を当てることで、リソース要件を減らすことができます。特化型リレーは、学術研究、ブランドモニタリング、アーカイブ保存などの特定のユースケースに対応することができます。
+
+フルネットワークリレーは特に高価ではなく、特殊なハードウェアも必要ありませんが、リレー運用の主なコストである大幅な入出力ネットワーク帯域幅が必要です。
+
+いくつかのリレーが利用可能で、それぞれ独自のレート制限やネットワークポリシーを持っている可能性があります。利用可能なリレーのいくつかは次のとおりです。
+- [microcosm](https://www.microcosm.blue/)の`relay.fire.hose.cam`と`relay3.fr.hose.cam`
+- [Blacksky](https://blackskyweb.xyz/)の`atproto.africa`
+- [Upcloud](https://upcloud.com/)の`relay.upcloud.world`
+- [Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose)の2つのリレー
+- [firehose.network](https://firehose.network)の3つのリレー
+
+[Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose)が運用するリレーは、PDSサーバーリファレンス実装のデフォルトリレーであり、多くのPDSホストが使用しているため、おそらく最も広く使用されているリレーです。ウェブサイトで[レート制限](https://docs.bsky.app/docs/advanced-guides/rate-limits)が公開されています。
+
 <Heading level={2} id="tap">Tap</Heading>
 
-TapはATネットワークから既存のレコードを同期し、その後firehoseから新しいレコードを継続的に受信するために使用されます。
+TapはATネットワークのPDSから既存のレコードを同期し、その後リレーのfirehoseから新しいレコードを継続的に受信するために使用されます。
 
 Tapはfirehose接続、検証、バックフィル、フィルタリングを処理することでAT同期を簡素化します。アプリケーションはTapに接続し、あなたが関心のあるリポジトリとコレクションのみのシンプルなJSONイベントを受け取ります。署名検証のためのバイナリ形式について心配する必要はありません。Tapは以下の特徴を持ちます。
 
@@ -82,17 +100,17 @@ Tapはfirehose接続、検証、バックフィル、フィルタリングを処
 
 Tapを扱うためのTypeScriptライブラリは[@atproto/tap](https://www.npmjs.com/package/@atproto/tap)にあります。
 
-<Heading level={2} id="app-views-and-relay">AppViewとリレー</Heading>
+<Heading level={2} id="app-views">AppView</Heading>
 
-**リレー**は広域的な指標（いいね数、リポスト数、フォロワー数）の取得、コンテンツ発見（アルゴリズム）、ユーザー検索など、すべてのイベントを処理します。リレーは個々のPDSの[レート制限](https://docs.bsky.app/docs/advanced-guides/rate-limits)も処理し、ネットワーク全体からコンテンツをインデックスできるようにします。
+**AppView**は、広域的な指標（いいね数、リポスト数、フォロワー数）の取得、コンテンツ発見（アルゴリズム）、ユーザー検索など、アプリケーション固有のロジックを処理します。
 
 AppViewは、アプリで見るフィードやその他すべてのデータを実際に組み立てる部分で、リレーのfirehoseデータの下流に位置します。これはセマンティクスに基づくサービスで、ネットワーク全体にわたる集計や、ネットワークの一部に対するビューを生成します。例えば、リレーが特定の投稿のいいねやリポストなどのデータをクロールして取得し、AppViewがそれらの指標のカウントを出力します。
 
 ネットワークに展開された各Lexiconごとに、AppViewのエコシステムが存在し得ます。例えば、*Bluesky*は現在マイクロブログの側面、つまり`app.bsky` Lexiconをサポートしています。新しいLexiconを作成する開発者は、ユーザーに提供するために、そのLexiconを理解するAppViewをデプロイできます。他のLexiconの例としては、[動画](https://stream.place/)や[長文ブログ](https://leaflet.pub/)や[共同コーディング](https://tangled.org/)などが挙げられます。既存のリレーでブートストラップすることで、新しいアプリケーションのためのデータ収集が行われている状態から始められます。これにより、Blueskyに投稿し、他のLexiconでリポジトリを使っているクリティカルマスの既存ユーザーから恩恵を受けることができます。必要なのは、自分のアプリケーションに必要なインデックス処理を提供することだけです。
 
-AppViewとリレーはいずれもATプロトコルに固有の部品ではなく、アプリケーションレベルのツールです。私たちのAppView実装は[XRPC](/specs/xrpc)呼び出し（私たちのHTTP API）に応答します。
+AppViewはATプロトコルに固有の部品ではなく、アプリケーションレベルのツールです。AppViewはHTTP上で[XRPC](/specs/xrpc)呼び出しに応答します。
 
-他のAppViewとリレー実装のよく文書化された例は、[The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture)で見つけられます。各Atmosphereアプリケーションによって実装上の判断が異なる場合があります。
+他のAppView実装のよく文書化された例は、[The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture)で見つけられます。各Atmosphereアプリケーションによって実装上の判断が異なる場合があります。
 
 <Heading level={2} id="did-plc">DID PLC</Heading>
 
@@ -104,7 +122,7 @@ PLCミラーリングのガイダンスは[この開発者ブログ](https://dho
 
 <Heading level={2} id="feeds">フィード</Heading>
 
-ウェブ検索エンジンがそうであるように、ユーザーはアグリゲーターを自由に選べます。フィード、検索インデックス、そしてアプリビュー全体を独立した第三者が提供でき、リクエストはユーザー設定に基づきPDSによってルーティングされます。
+ウェブ検索エンジンがそうであるように、ユーザーはアグリゲーターを自由に選べます。フィード、検索インデックス、そしてAppView全体を独立した第三者が提供でき、リクエストはユーザー設定に基づきPDSによってルーティングされます。
 
 <Container>
   <Image src={feeds} alt="" className="w-full max-w-md mx-auto" />
@@ -128,5 +146,5 @@ ATの主要なツール群はGoとTypeScriptで実装されています。
 
 - [indigo](https://github.com/bluesky-social/indigo)リポジトリには、[リレー](https://github.com/bluesky-social/indigo/blob/main/cmd/relay/README.md)のコードとGo SDKを含む、私たちのGoツールの大半が含まれています。
 - 他にも私たちのGo製ATコマンドラインツールである https://github.com/bluesky-social/goat があります。
-- https://github.com/bluesky-social/atproto リポジトリには、[PDS](https://github.com/bluesky-social/atproto/tree/main/packages/pds)のコードとTypeScript SDKを含む、TypeScriptツールの大半が含まれています。
+- https://github.com/bluesky-social/atproto リポジトリには、[PDS](https://github.com/bluesky-social/atproto/tree/main/packages/pds)のコードとTypeScript SDKを含む、TypeScriptツールの大半が含まれています。[atcute](https://github.com/mary-ext/atcute)コミュニティプロジェクトもまた、別のTypeScriptパッケージを提供します。
 - 私たちが日常的に使うコミュニティツールも多数あります。例えば、Rustで書かれた[Microcosm](https://www.microcosm.blue/)のツール群は、専用のAppViewを必要とせずにクエリ層を構築するためのAPI群を提供します。詳細は https://constellation.microcosm.blue/ を参照してください。

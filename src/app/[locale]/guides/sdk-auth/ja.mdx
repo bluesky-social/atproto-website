@@ -33,7 +33,9 @@ export const header = {
     }
     ```
 
-    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/auth)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。どちらの方法でも同じ認証済み`session`が生成されます。
+    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/oauth-cli-tutorial)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。
+    
+    どちらの方法でも同じ認証済み`session`が生成されます。
     </TabPanel>
     <TabPanel value="go">
     まずは`atproto`と`xrpc`ライブラリをインポートし、`&xrpc.Client{}`を作って`ServerCreateSession()`に資格情報を与えます。
@@ -58,6 +60,8 @@ export const header = {
       })
     }
     ```
+
+    エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/go-oauth-cli-tutorial)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。
     </TabPanel>
   </TabPanels>
 </TabGroup>
