@@ -34,7 +34,7 @@ AppViews function a bit like search engines on the Web: they aggregate data from
 
 A Relay is an aggregator of [data repos](#data-repo) from across the [Atmosphere](#atmosphere). They sync the repos from [PDSes](#pds) and produce a firehose of change events. [AppViews](#app-view) use a Relay to fetch user data.
 
-Relays are an optimization and are not strictly necessary. An [AppView](#app-view) could communicate directly with [PDSes](#pds) (in fact, this is encouraged if needed). The Relay serves to reduce the number of connections that are needed in the network.
+Relays are an optimization and are not strictly necessary. An [AppView](#app-view) could communicate directly with [PDSes](#pds) (in a smaller-scale application). The Relay serves to reduce the number of connections that are needed in the network.
 
 ## Lexicon
 
