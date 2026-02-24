@@ -94,6 +94,7 @@ export const a = function ExternalAwareLink({
 }
 
 export { Button } from '@/components/Button'
+export { LexiconHoverCard } from '@/components/LexiconHoverCard'
 export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
