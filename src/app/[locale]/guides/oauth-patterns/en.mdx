@@ -54,6 +54,20 @@ There are several design strategies that can be used to "upgrade" a public clien
 
 Of these three, the BFF pattern is the currently recommended approach for building confidential-client applications. This is demonstrated in the [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme) and [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) examples.
 
+## Understanding DPoP
+
+[DPoP (Demonstrating Proof of Possession)](https://datatracker.ietf.org/doc/html/rfc9449) cryptographically binds OAuth tokens to a key held by the client. Even if an attacker intercepts your access token, they can't use it without your private key. This is especially important for confidential clients with long-lived sessions (up to 2 years).
+
+DPoP is mandatory in atproto OAuth. **If you're using an SDK**, it's handled automatically. If you're implementing OAuth manually (e.g., for a sidecar that writes records), the key things to know are:
+
+- Generate an ES256 key pair once per session and reuse it for all requests
+- Every request needs a fresh DPoP proof JWT in the `DPoP` header, with `Authorization: DPoP {access_token}`
+- Track nonces separately for the authorization server and PDS — they may differ
+- When you get a 401 with `error="use_dpop_nonce"`, retry with the nonce from the `DPoP-Nonce` response header
+- For PDS requests, include an `ath` claim containing the SHA-256 hash of the access token
+
+The [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app) contains a complete manual DPoP implementation in `atproto_oauth.py`. For the full specification, see [DPoP in the OAuth spec](/specs/oauth#demonstrating-proof-of-possession-d-po-p).
+
 ## Further Reading and Resources
 
 - [Auth](/guides/auth)
