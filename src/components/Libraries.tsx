@@ -19,18 +19,20 @@ type Status = 'full' | 'partial' | 'none' | 'unknown'
 interface LibraryProp {
   href: string
   name: string
+  sdkName?: string
   description: string
   logo: any
   status: {
-    httpClient: Status
+    // Client features
     identifiers: Status
-    bsky: Status
-    crypto: Status
-    mst: Status
+    bskyHelpers: Status
     lexicon: Status
     identity: Status
     streaming: Status
     serviceAuth: Status
+    // Protocol features
+    crypto: Status
+    repo: Status
     plc: Status
     oauthServer: Status
   }
@@ -44,15 +46,14 @@ const official: LibraryProp[] = [
       'Created by Bluesky Social PBC. Works on Web, NodeJS, and React Native.',
     logo: logoTs,
     status: {
-      httpClient: 'full',
       identifiers: 'full',
-      bsky: 'full',
-      crypto: 'full',
-      mst: 'full',
+      bskyHelpers: 'full',
       lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'full',
+      crypto: 'full',
+      repo: 'full',
       plc: 'full',
       oauthServer: 'full',
     },
@@ -63,15 +64,14 @@ const official: LibraryProp[] = [
     description: 'Created by Bluesky Social PBC.',
     logo: logoGo,
     status: {
-      httpClient: 'partial',
       identifiers: 'full',
-      bsky: 'none',
-      crypto: 'full',
-      mst: 'full',
+      bskyHelpers: 'partial',
       lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'full',
+      crypto: 'full',
+      repo: 'full',
       plc: 'none',
       oauthServer: 'none',
     },
@@ -82,18 +82,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://atproto.blue/',
     name: 'Python',
+    sdkName: 'atproto',
     description: 'Created by @marshal.dev.',
     logo: logoPython,
     status: {
-      httpClient: 'full',
       identifiers: 'partial',
-      bsky: 'full',
-      crypto: 'partial',
-      mst: 'partial',
+      bskyHelpers: 'full',
       lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'partial',
+      crypto: 'partial',
+      repo: 'none',
       plc: 'partial',
       oauthServer: 'none',
     },
@@ -101,18 +101,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://github.com/blacksky-algorithms/rsky',
     name: 'Rust',
+    sdkName: 'rsky',
     description: 'Created by Blacksky Algorithms.',
     logo: logoRust,
     status: {
-      httpClient: 'full',
       identifiers: 'full',
-      bsky: 'full',
-      crypto: 'full',
-      mst: 'full',
+      bskyHelpers: 'full',
       lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'partial',
+      crypto: 'full',
+      repo: 'full',
       plc: 'partial',
       oauthServer: 'none',
     },
@@ -120,18 +120,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://github.com/myConsciousness/atproto.dart',
     name: 'Dart',
+    sdkName: 'atproto.dart',
     description: 'Created by @myConsciousness.',
     logo: logoDart,
     status: {
-      httpClient: 'full',
       identifiers: 'full',
-      bsky: 'full',
-      crypto: 'partial',
-      mst: 'partial',
+      bskyHelpers: 'full',
       lexicon: 'full',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'partial',
+      crypto: 'partial',
+      repo: 'none',
       plc: 'full',
       oauthServer: 'none',
     },
@@ -139,18 +139,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://github.com/MasterJ93/ATProtoKit',
     name: 'Swift',
+    sdkName: 'ATProtoKit',
     description: 'Created by @MasterJ93.',
     logo: logoSwift,
     status: {
-      httpClient: 'full',
       identifiers: 'full',
-      bsky: 'full',
-      crypto: 'none',
-      mst: 'partial',
+      bskyHelpers: 'full',
       lexicon: 'partial',
       identity: 'partial',
       streaming: 'none',
       serviceAuth: 'partial',
+      crypto: 'none',
+      repo: 'none',
       plc: 'none',
       oauthServer: 'none',
     },
@@ -158,37 +158,37 @@ const community: LibraryProp[] = [
   {
     href: 'https://github.com/blowdart/idunno.Bluesky',
     name: 'C# (.NET)',
+    sdkName: 'idunno.Bluesky',
     description: 'Created by Barry Dorrans.',
     logo: logoCsharp,
     status: {
-      httpClient: 'full',
       identifiers: 'partial',
-      bsky: 'full',
-      crypto: 'none',
-      mst: 'partial',
+      bskyHelpers: 'full',
       lexicon: 'none',
       identity: 'partial',
       streaming: 'partial',
       serviceAuth: 'partial',
+      crypto: 'none',
+      repo: 'none',
       plc: 'none',
       oauthServer: 'none',
     },
   },
   {
-    href: 'https://tangled.org/mackuba.eu/minisky/',
+    href: 'https://ruby.sdk.blue',
     name: 'Ruby',
+    sdkName: 'Ruby SDK',
     description: 'Created by @mackuba.eu.',
     logo: logoRuby,
     status: {
-      httpClient: 'full',
       identifiers: 'partial',
-      bsky: 'partial',
-      crypto: 'none',
-      mst: 'partial',
+      bskyHelpers: 'partial',
       lexicon: 'none',
-      identity: 'partial',
-      streaming: 'none',
+      identity: 'full',
+      streaming: 'full',
       serviceAuth: 'partial',
+      crypto: 'none',
+      repo: 'none',
       plc: 'none',
       oauthServer: 'none',
     },
@@ -196,18 +196,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://tangled.org/zat.dev/zat',
     name: 'Zig',
+    sdkName: 'zat',
     description: 'Created by @zzstoatzz.io.',
     logo: logoZig,
     status: {
-      httpClient: 'partial',
       identifiers: 'full',
-      bsky: 'none',
-      crypto: 'partial',
-      mst: 'partial',
+      bskyHelpers: 'none',
       lexicon: 'none',
       identity: 'full',
       streaming: 'full',
       serviceAuth: 'partial',
+      crypto: 'partial',
+      repo: 'none',
       plc: 'partial',
       oauthServer: 'none',
     },
@@ -215,18 +215,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://tangled.org/did:web:comet.sh/atex',
     name: 'Elixir',
+    sdkName: 'atex',
     description: 'Created by @ovyerus.com.',
     logo: logoElixir,
     status: {
-      httpClient: 'partial',
       identifiers: 'partial',
-      bsky: 'none',
-      crypto: 'none',
-      mst: 'partial',
+      bskyHelpers: 'none',
       lexicon: 'partial',
       identity: 'partial',
       streaming: 'none',
       serviceAuth: 'none',
+      crypto: 'none',
+      repo: 'none',
       plc: 'none',
       oauthServer: 'partial',
     },
@@ -234,18 +234,18 @@ const community: LibraryProp[] = [
   {
     href: 'https://github.com/aazsamir/libphpsky',
     name: 'PHP',
+    sdkName: 'libphpsky',
     description: 'Created by @aazsamir.',
     logo: logoPhp,
     status: {
-      httpClient: 'full',
       identifiers: 'partial',
-      bsky: 'full',
-      crypto: 'none',
-      mst: 'partial',
+      bskyHelpers: 'full',
       lexicon: 'full',
       identity: 'partial',
       streaming: 'full',
       serviceAuth: 'full',
+      crypto: 'none',
+      repo: 'none',
       plc: 'none',
       oauthServer: 'none',
     },
@@ -285,7 +285,7 @@ export function Libraries() {
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
         {official.map((library) => (
-          <Library key={library.name} library={library} />
+          <Library key={library.href} library={library} />
         ))}
       </div>
       <Heading level={2} id="community-libraries">
@@ -293,7 +293,7 @@ export function Libraries() {
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
         {community.map((library) => (
-          <Library key={library.name} library={library} />
+          <Library key={library.href} library={library} />
         ))}
       </div>
     </div>
@@ -304,29 +304,46 @@ export function Library({ library }: { library: LibraryProp }) {
   return (
     <div className="mt-8 flex flex-row-reverse gap-6">
       <div className="flex-auto">
-        <Link href={library.href}>
+        <Link href={library.href} target="_blank" rel="noopener noreferrer">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
             {library.name}
           </h3>
         </Link>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          {library.sdkName && (
+            <>
+              <Link
+                href={library.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-zinc-800 hover:underline dark:text-zinc-200"
+              >
+                {library.sdkName}
+              </Link>
+              {' · '}
+            </>
+          )}
           {library.description}
         </p>
-        <p className="mt-2 flex flex-wrap gap-1">
-          <Pill status={library.status.httpClient} label="http client" />
-          <Pill status={library.status.identifiers} label="identifiers" />
-          <Pill status={library.status.bsky} label="bsky" />
+        <p className="mt-2 flex flex-wrap items-center gap-1">
+          <span className="inline-flex flex-wrap items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-1 ring-1 ring-inset ring-zinc-200 dark:bg-zinc-800/60 dark:ring-zinc-700/50">
+            <span className="pr-1 text-xs text-zinc-400 dark:text-zinc-500">
+              Client
+            </span>
+            <Pill status={library.status.identifiers} label="identifiers" />
+            <Pill status={library.status.bskyHelpers} label="bsky helpers" />
+            <Pill status={library.status.lexicon} label="lexicon" />
+            <Pill status={library.status.identity} label="identity" />
+            <Pill status={library.status.streaming} label="streaming" />
+            <Pill status={library.status.serviceAuth} label="service auth" />
+          </span>
           <Pill status={library.status.crypto} label="crypto" />
-          <Pill status={library.status.mst} label="mst" />
-          <Pill status={library.status.lexicon} label="lexicon" />
-          <Pill status={library.status.identity} label="identity" />
-          <Pill status={library.status.streaming} label="streaming" />
-          <Pill status={library.status.serviceAuth} label="service auth" />
+          <Pill status={library.status.repo} label="repo" />
           <Pill status={library.status.plc} label="plc" />
           <Pill status={library.status.oauthServer} label="oauth server" />
         </p>
       </div>
-      <Link href={library.href}>
+      <Link href={library.href} target="_blank" rel="noopener noreferrer">
         <Image src={library.logo} alt="" className="h-12 w-12" unoptimized />
       </Link>
     </div>
