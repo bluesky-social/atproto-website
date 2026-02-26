@@ -16,12 +16,10 @@ import logoSwift from '@/images/logos/swift.svg'
 
 type Status = 'full' | 'partial' | 'none' | 'unknown'
 
-interface LibraryProp {
+interface SDKEntry {
   href: string
-  name: string
   sdkName?: string
   description: string
-  logo: any
   status: {
     // Client features
     identifiers: Status
@@ -38,217 +36,301 @@ interface LibraryProp {
   }
 }
 
-const official: LibraryProp[] = [
+interface LibraryGroupProp {
+  name: string
+  logo: any
+  sdks: SDKEntry[]
+}
+
+const official: LibraryGroupProp[] = [
   {
-    href: 'https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex',
     name: 'TypeScript',
-    description:
-      'Created by Bluesky Social PBC. Works on Web, NodeJS, and React Native.',
     logo: logoTs,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'full',
-      lexicon: 'full',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'full',
-      crypto: 'full',
-      repo: 'full',
-      plc: 'full',
-      oauthServer: 'full',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex',
+        description:
+          'Created by Bluesky Social PBC. Works on Web, NodeJS, and React Native.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'full',
+          crypto: 'full',
+          repo: 'full',
+          plc: 'full',
+          oauthServer: 'full',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/bluesky-social/indigo/tree/main',
     name: 'Go',
-    description: 'Created by Bluesky Social PBC.',
     logo: logoGo,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'partial',
-      lexicon: 'full',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'full',
-      crypto: 'full',
-      repo: 'full',
-      plc: 'none',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/bluesky-social/indigo/tree/main',
+        description: 'Created by Bluesky Social PBC.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'partial',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'full',
+          crypto: 'full',
+          repo: 'full',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
 ]
 
-const community: LibraryProp[] = [
+const community: LibraryGroupProp[] = [
   {
-    href: 'https://atproto.blue/',
     name: 'Python',
-    sdkName: 'atproto',
-    description: 'Created by @marshal.dev.',
     logo: logoPython,
-    status: {
-      identifiers: 'partial',
-      bskyHelpers: 'full',
-      lexicon: 'full',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'partial',
-      crypto: 'partial',
-      repo: 'none',
-      plc: 'partial',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://atproto.blue/',
+        sdkName: 'atproto',
+        description: 'Created by @marshal.dev.',
+        status: {
+          identifiers: 'partial',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'partial',
+          repo: 'none',
+          plc: 'partial',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/blacksky-algorithms/rsky',
     name: 'Rust',
-    sdkName: 'rsky',
-    description: 'Created by Blacksky Algorithms.',
     logo: logoRust,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'full',
-      lexicon: 'full',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'partial',
-      crypto: 'full',
-      repo: 'full',
-      plc: 'partial',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/blacksky-algorithms/rsky',
+        sdkName: 'rsky',
+        description: 'Created by Blacksky Algorithms.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'full',
+          repo: 'full',
+          plc: 'partial',
+          oauthServer: 'none',
+        },
+      },
+      {
+        href: 'https://crates.io/crates/jacquard',
+        sdkName: 'jacquard',
+        description: 'Created by @nonbinary.computer.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'partial',
+          lexicon: 'full',
+          identity: 'partial',
+          streaming: 'partial',
+          serviceAuth: 'partial',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/myConsciousness/atproto.dart',
     name: 'Dart',
-    sdkName: 'atproto.dart',
-    description: 'Created by @myConsciousness.',
     logo: logoDart,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'full',
-      lexicon: 'full',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'partial',
-      crypto: 'partial',
-      repo: 'none',
-      plc: 'full',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/myConsciousness/atproto.dart',
+        sdkName: 'atproto.dart',
+        description: 'Created by @myConsciousness.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'partial',
+          repo: 'none',
+          plc: 'full',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/MasterJ93/ATProtoKit',
     name: 'Swift',
-    sdkName: 'ATProtoKit',
-    description: 'Created by @MasterJ93.',
     logo: logoSwift,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'full',
-      lexicon: 'partial',
-      identity: 'partial',
-      streaming: 'none',
-      serviceAuth: 'partial',
-      crypto: 'none',
-      repo: 'none',
-      plc: 'none',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/MasterJ93/ATProtoKit',
+        sdkName: 'ATProtoKit',
+        description: 'Created by @MasterJ93.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'full',
+          lexicon: 'partial',
+          identity: 'partial',
+          streaming: 'none',
+          serviceAuth: 'partial',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+      {
+        href: 'https://github.com/nnabeyang/swift-atproto',
+        sdkName: 'swift-atproto',
+        description: 'Created by @nnabeyang.',
+        status: {
+          identifiers: 'none',
+          bskyHelpers: 'partial',
+          lexicon: 'full',
+          identity: 'none',
+          streaming: 'none',
+          serviceAuth: 'none',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/blowdart/idunno.Bluesky',
     name: 'C# (.NET)',
-    sdkName: 'idunno.Bluesky',
-    description: 'Created by Barry Dorrans.',
     logo: logoCsharp,
-    status: {
-      identifiers: 'partial',
-      bskyHelpers: 'full',
-      lexicon: 'none',
-      identity: 'partial',
-      streaming: 'partial',
-      serviceAuth: 'partial',
-      crypto: 'none',
-      repo: 'none',
-      plc: 'none',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/blowdart/idunno.Bluesky',
+        sdkName: 'idunno.Bluesky',
+        description: 'Created by Barry Dorrans.',
+        status: {
+          identifiers: 'partial',
+          bskyHelpers: 'full',
+          lexicon: 'none',
+          identity: 'partial',
+          streaming: 'partial',
+          serviceAuth: 'partial',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://ruby.sdk.blue',
     name: 'Ruby',
-    sdkName: 'Ruby SDK',
-    description: 'Created by @mackuba.eu.',
     logo: logoRuby,
-    status: {
-      identifiers: 'partial',
-      bskyHelpers: 'partial',
-      lexicon: 'none',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'partial',
-      crypto: 'none',
-      repo: 'none',
-      plc: 'none',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://ruby.sdk.blue',
+        sdkName: 'Ruby SDK',
+        description: 'Created by @mackuba.eu.',
+        status: {
+          identifiers: 'partial',
+          bskyHelpers: 'partial',
+          lexicon: 'none',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://tangled.org/zat.dev/zat',
     name: 'Zig',
-    sdkName: 'zat',
-    description: 'Created by @zzstoatzz.io.',
     logo: logoZig,
-    status: {
-      identifiers: 'full',
-      bskyHelpers: 'none',
-      lexicon: 'none',
-      identity: 'full',
-      streaming: 'full',
-      serviceAuth: 'partial',
-      crypto: 'partial',
-      repo: 'none',
-      plc: 'partial',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://tangled.org/zat.dev/zat',
+        sdkName: 'zat',
+        description: 'Created by @zzstoatzz.io.',
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'none',
+          lexicon: 'none',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'partial',
+          repo: 'none',
+          plc: 'partial',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
   {
-    href: 'https://tangled.org/did:web:comet.sh/atex',
     name: 'Elixir',
-    sdkName: 'atex',
-    description: 'Created by @ovyerus.com.',
     logo: logoElixir,
-    status: {
-      identifiers: 'partial',
-      bskyHelpers: 'none',
-      lexicon: 'partial',
-      identity: 'partial',
-      streaming: 'none',
-      serviceAuth: 'none',
-      crypto: 'none',
-      repo: 'none',
-      plc: 'none',
-      oauthServer: 'partial',
-    },
+    sdks: [
+      {
+        href: 'https://tangled.org/did:web:comet.sh/atex',
+        sdkName: 'atex',
+        description: 'Created by @ovyerus.com.',
+        status: {
+          identifiers: 'partial',
+          bskyHelpers: 'none',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'none',
+          serviceAuth: 'none',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'partial',
+        },
+      },
+    ],
   },
   {
-    href: 'https://github.com/aazsamir/libphpsky',
     name: 'PHP',
-    sdkName: 'libphpsky',
-    description: 'Created by @aazsamir.',
     logo: logoPhp,
-    status: {
-      identifiers: 'partial',
-      bskyHelpers: 'full',
-      lexicon: 'full',
-      identity: 'partial',
-      streaming: 'full',
-      serviceAuth: 'full',
-      crypto: 'none',
-      repo: 'none',
-      plc: 'none',
-      oauthServer: 'none',
-    },
+    sdks: [
+      {
+        href: 'https://github.com/aazsamir/libphpsky',
+        sdkName: 'libphpsky',
+        description: 'Created by @aazsamir.',
+        status: {
+          identifiers: 'partial',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'partial',
+          streaming: 'full',
+          serviceAuth: 'full',
+          crypto: 'none',
+          repo: 'none',
+          plc: 'none',
+          oauthServer: 'none',
+        },
+      },
+    ],
   },
 ]
 
@@ -277,6 +359,85 @@ function Pill({ status, label }: { status: Status; label: string }) {
   )
 }
 
+function SDKEntryRow({ sdk, first }: { sdk: SDKEntry; first: boolean }) {
+  return (
+    <div className={first ? 'mt-1' : 'mt-4'}>
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        {sdk.sdkName && (
+          <>
+            <Link
+              href={sdk.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-zinc-800 hover:underline dark:text-zinc-200"
+            >
+              {sdk.sdkName}
+            </Link>
+            {' · '}
+          </>
+        )}
+        {sdk.description}
+      </p>
+      <p className="mt-2 flex flex-wrap items-center gap-1">
+        <span className="inline-flex flex-wrap items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-1 ring-1 ring-inset ring-zinc-200 dark:bg-zinc-800/60 dark:ring-zinc-700/50">
+          <span className="pr-1 text-xs text-zinc-400 dark:text-zinc-500">
+            Client
+          </span>
+          <Pill status={sdk.status.identifiers} label="identifiers" />
+          <Pill status={sdk.status.bskyHelpers} label="bsky helpers" />
+          <Pill status={sdk.status.lexicon} label="lexicon" />
+          <Pill status={sdk.status.identity} label="identity" />
+          <Pill status={sdk.status.streaming} label="streaming" />
+          <Pill status={sdk.status.serviceAuth} label="service auth" />
+        </span>
+        <Pill status={sdk.status.crypto} label="crypto" />
+        <Pill status={sdk.status.repo} label="repo" />
+        <Pill status={sdk.status.plc} label="plc" />
+        <Pill status={sdk.status.oauthServer} label="oauth server" />
+      </p>
+    </div>
+  )
+}
+
+function LibraryGroup({ group }: { group: LibraryGroupProp }) {
+  const isOfficial = !group.sdks[0].sdkName
+  return (
+    <div className="mt-8 flex flex-row-reverse gap-6">
+      <div className="flex-auto">
+        {isOfficial ? (
+          <Link
+            href={group.sdks[0].href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <h3 className="text-lg font-semibold text-zinc-900 hover:underline dark:text-white">
+              {group.name}
+            </h3>
+          </Link>
+        ) : (
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+            {group.name}
+          </h3>
+        )}
+        {group.sdks.map((sdk, i) => (
+          <SDKEntryRow key={sdk.href} sdk={sdk} first={i === 0} />
+        ))}
+      </div>
+      {isOfficial ? (
+        <Link
+          href={group.sdks[0].href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image src={group.logo} alt="" className="h-12 w-12" unoptimized />
+        </Link>
+      ) : (
+        <Image src={group.logo} alt="" className="h-12 w-12" unoptimized />
+      )}
+    </div>
+  )
+}
+
 export function Libraries() {
   return (
     <div className="my-16 xl:max-w-none">
@@ -284,68 +445,18 @@ export function Libraries() {
         Official libraries
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
-        {official.map((library) => (
-          <Library key={library.href} library={library} />
+        {official.map((group) => (
+          <LibraryGroup key={group.name} group={group} />
         ))}
       </div>
       <Heading level={2} id="community-libraries">
         Community libraries
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
-        {community.map((library) => (
-          <Library key={library.href} library={library} />
+        {community.map((group) => (
+          <LibraryGroup key={group.name} group={group} />
         ))}
       </div>
-    </div>
-  )
-}
-
-export function Library({ library }: { library: LibraryProp }) {
-  return (
-    <div className="mt-8 flex flex-row-reverse gap-6">
-      <div className="flex-auto">
-        <Link href={library.href} target="_blank" rel="noopener noreferrer">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            {library.name}
-          </h3>
-        </Link>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          {library.sdkName && (
-            <>
-              <Link
-                href={library.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-zinc-800 hover:underline dark:text-zinc-200"
-              >
-                {library.sdkName}
-              </Link>
-              {' · '}
-            </>
-          )}
-          {library.description}
-        </p>
-        <p className="mt-2 flex flex-wrap items-center gap-1">
-          <span className="inline-flex flex-wrap items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-1 ring-1 ring-inset ring-zinc-200 dark:bg-zinc-800/60 dark:ring-zinc-700/50">
-            <span className="pr-1 text-xs text-zinc-400 dark:text-zinc-500">
-              Client
-            </span>
-            <Pill status={library.status.identifiers} label="identifiers" />
-            <Pill status={library.status.bskyHelpers} label="bsky helpers" />
-            <Pill status={library.status.lexicon} label="lexicon" />
-            <Pill status={library.status.identity} label="identity" />
-            <Pill status={library.status.streaming} label="streaming" />
-            <Pill status={library.status.serviceAuth} label="service auth" />
-          </span>
-          <Pill status={library.status.crypto} label="crypto" />
-          <Pill status={library.status.repo} label="repo" />
-          <Pill status={library.status.plc} label="plc" />
-          <Pill status={library.status.oauthServer} label="oauth server" />
-        </p>
-      </div>
-      <Link href={library.href} target="_blank" rel="noopener noreferrer">
-        <Image src={library.logo} alt="" className="h-12 w-12" unoptimized />
-      </Link>
     </div>
   )
 }
