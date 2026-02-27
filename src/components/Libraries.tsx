@@ -146,8 +146,8 @@ const community: LibraryGroupProp[] = [
           identity: 'partial',
           streaming: 'partial',
           serviceAuth: 'partial',
-          crypto: 'none',
-          repo: 'none',
+          crypto: 'full',
+          repo: 'full',
           plc: 'none',
           oauthServer: 'none',
         },
@@ -197,24 +197,7 @@ const community: LibraryGroupProp[] = [
           plc: 'none',
           oauthServer: 'none',
         },
-      },
-      {
-        href: 'https://github.com/nnabeyang/swift-atproto',
-        sdkName: 'swift-atproto',
-        description: 'Created by @nnabeyang.',
-        status: {
-          identifiers: 'none',
-          bskyHelpers: 'partial',
-          lexicon: 'full',
-          identity: 'none',
-          streaming: 'none',
-          serviceAuth: 'none',
-          crypto: 'none',
-          repo: 'none',
-          plc: 'none',
-          oauthServer: 'none',
-        },
-      },
+      }
     ],
   },
   {
@@ -456,6 +439,56 @@ export function Libraries() {
         {community.map((group) => (
           <LibraryGroup key={group.name} group={group} />
         ))}
+      </div>
+      <div className="not-prose mt-12 border-t border-zinc-900/5 pt-8 dark:border-white/5">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+          About these ratings
+        </h3>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          Status indicators show estimated feature completeness:
+        </p>
+        <ul className="mt-2 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+          {[
+            { color: 'fill-green-500 dark:fill-green-400', label: 'full', desc: 'complete or near-complete' },
+            { color: 'fill-yellow-500 dark:fill-yellow-400', label: 'partial', desc: 'some support with notable gaps' },
+            { color: 'fill-red-500 dark:fill-red-400', label: 'none', desc: 'not implemented' },
+          ].map(({ color, label, desc }) => (
+            <li key={label} className="flex items-center gap-2">
+              <svg viewBox="0 0 6 6" aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 ${color}`}><circle r={3} cx={3} cy={3} /></svg>
+              <span><span className="font-medium text-zinc-700 dark:text-zinc-300">{label}</span> — {desc}</span>
+            </li>
+          ))}
+        </ul>
+        <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+          <div>
+            <dt className="font-medium text-zinc-900 dark:text-white">
+              Client features
+            </dt>
+            <dd className="mt-1 text-zinc-600 dark:text-zinc-400">
+              <ul className="space-y-1">
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">identifiers</span> — DID and handle parsing, normalization, and validation</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">bsky helpers</span> — Bluesky-specific lexicons, types, and app helpers</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">lexicon</span> — generic Lexicon schema support and XRPC client</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">identity</span> — DID and handle resolution</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">streaming</span> — WebSocket event stream (firehose/Jetstream) subscription</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">service auth</span> — service-to-service JWT authentication</li>
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt className="font-medium text-zinc-900 dark:text-white">
+              Other features
+            </dt>
+            <dd className="mt-1 text-zinc-600 dark:text-zinc-400">
+              <ul className="space-y-1">
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">crypto</span> — key generation, signing, and signature verification</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">repo</span> — repository data structure parsing, reading, and writing</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">plc</span> — PLC directory read/write operations</li>
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">oauth server</span> — OAuth 2.0 authorization server implementation</li>
+              </ul>
+            </dd>
+          </div>
+        </dl>
       </div>
     </div>
   )
