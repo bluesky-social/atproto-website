@@ -82,7 +82,7 @@ const official: LibraryGroupProp[] = [
           serviceAuth: 'full',
           crypto: 'full',
           repo: 'full',
-          plc: 'none',
+          plc: 'full',
           oauthServer: 'none',
         },
       },
@@ -143,8 +143,8 @@ const community: LibraryGroupProp[] = [
           identifiers: 'full',
           bskyHelpers: 'partial',
           lexicon: 'full',
-          identity: 'partial',
-          streaming: 'partial',
+          identity: 'full',
+          streaming: 'full',
           serviceAuth: 'partial',
           crypto: 'full',
           repo: 'full',
@@ -233,14 +233,14 @@ const community: LibraryGroupProp[] = [
         description: 'Created by @mackuba.eu.',
         status: {
           identifiers: 'partial',
-          bskyHelpers: 'partial',
-          lexicon: 'none',
+          bskyHelpers: 'none',
+          lexicon: 'partial',
           identity: 'full',
           streaming: 'full',
-          serviceAuth: 'partial',
+          serviceAuth: 'none',
           crypto: 'none',
           repo: 'none',
-          plc: 'none',
+          plc: 'partial',
           oauthServer: 'none',
         },
       },
@@ -371,8 +371,8 @@ function SDKEntryRow({ sdk, first }: { sdk: SDKEntry; first: boolean }) {
           <Pill status={sdk.status.lexicon} label="lexicon" />
           <Pill status={sdk.status.identity} label="identity" />
           <Pill status={sdk.status.streaming} label="streaming" />
-          <Pill status={sdk.status.serviceAuth} label="service auth" />
         </span>
+        <Pill status={sdk.status.serviceAuth} label="service auth" />
         <Pill status={sdk.status.crypto} label="crypto" />
         <Pill status={sdk.status.repo} label="repo" />
         <Pill status={sdk.status.plc} label="plc" />
@@ -425,7 +425,7 @@ export function Libraries() {
   return (
     <div className="my-16 xl:max-w-none">
       <Heading level={2} id="official-libraries">
-        Official libraries
+        Reference implementations
       </Heading>
       <div className="not-prose border-t border-zinc-900/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3 dark:border-white/5">
         {official.map((group) => (
@@ -471,7 +471,6 @@ export function Libraries() {
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">lexicon</span> — generic Lexicon schema support and XRPC client</li>
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">identity</span> — DID and handle resolution</li>
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">streaming</span> — WebSocket event stream (firehose/Jetstream) subscription</li>
-                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">service auth</span> — service-to-service JWT authentication</li>
               </ul>
             </dd>
           </div>
@@ -481,6 +480,7 @@ export function Libraries() {
             </dt>
             <dd className="mt-1 text-zinc-600 dark:text-zinc-400">
               <ul className="space-y-1">
+                <li><span className="font-medium text-zinc-700 dark:text-zinc-300">service auth</span> — service-to-service JWT authentication</li>
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">crypto</span> — key generation, signing, and signature verification</li>
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">repo</span> — repository data structure parsing, reading, and writing</li>
                 <li><span className="font-medium text-zinc-700 dark:text-zinc-300">plc</span> — PLC directory read/write operations</li>
