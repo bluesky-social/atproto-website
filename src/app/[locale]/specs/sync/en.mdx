@@ -43,7 +43,7 @@ The event message types are specified below, and are also declared in the `com.a
 - `did` (string with DID syntax, required): the account associated with the event. The `#commit` message is inconsistent and uses `repo` as the field name
 - `time` (string with datetime syntax, required): an informal and non-authoritative estimate of when event was received. Intermediary services may decide to pass this field through as-is, or update to the current time
 
-Firehose event stream messages have a hard maximum size limit of 5 MBytes, measured as WebSocket frames. This this is inclusive of all encoding and nesting overhead, and rules out some messages which would not otherwise exceed lexicon schema limits. Messages are generally expected to be well below this hard size limit. This limit may evolve over time.
+Firehose event stream messages have a hard maximum size limit of 5 MBytes, measured as WebSocket frames. This is inclusive of all encoding and nesting overhead, and rules out some messages which would not otherwise exceed lexicon schema limits. Messages are generally expected to be well below this hard size limit. This limit may evolve over time.
 
 ### `#identity` Events
 
