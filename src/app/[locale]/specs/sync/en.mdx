@@ -22,7 +22,7 @@ Clients making API requests to a service may want to know if that service has sy
 
 ## Repository Exports
 
-Full repository exports can be fetch from the account's PDS host using the `com.atproto.sync.getRepo` XRPC endpoint (HTTP GET). This endpoint is not authenticated, and returns all repo records, MST nodes, and the current signed commit object, all in a single CAR file.
+Full repository exports can be fetched from the account's PDS host using the `com.atproto.sync.getRepo` XRPC endpoint (HTTP GET). This endpoint is not authenticated, and returns all repo records, MST nodes, and the current signed commit object, all in a single CAR file.
 
 Other servers may provide cached or mirrored copies of full repository CAR files. It is important for such mirrors to respect repository updates (eg, record deletion) and account status changes (eg, account deactivation or deletion) in a timely manner (within seconds or minutes). This generally means that static repository snapshots should not be redistributed publicly in bulk form (eg, archival datasets or torrent files).
 
