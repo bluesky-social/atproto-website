@@ -20,7 +20,7 @@ Identity metadata (DID documents and handle status), and the account hosting sta
 
 Network services are encouraged to implement API endpoints (such as `com.atproto.sync.getRepoStatus`) which describe current hosting status for individual accounts. If they expose an event stream, they should also emit `#account` events when their local account hosting status updates for an account.
 
-In addition to the `active` boolean, an account might in a more specific state:
+In addition to the `active` boolean, an account might be in a more specific state:
 
 - `deleted` (active is false): user or host has deleted the account, and content should be removed from the network. Implied permanent or long-term, though may be reverted (deleted accounts may reactivate on the same or another host).
 - `deactivated` (active is false): user has temporarily paused their overall account. Content should not be displayed or redistributed, but does not need to be deleted from infrastructure. Implied time-limited. Also the initial state for an account after migrating to another PDS instance.
