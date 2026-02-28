@@ -17,7 +17,7 @@ As described in the [Repository specification](/specs/repo), each commit to a re
 
 Synchronizing services should reject or ignore repository updates with revision values corresponding to future timestamps (beyond a short fuzzy time drift window). Services can track the commit revision for every account they have seen, and use this to verify synchronization status.
 
-Clients making API requests to a service may want to know if that service has synchronized and indexed recent updates to the most relevant account repository. For example, if a client updates a profile record for an account (by writing to the PDS), and then immediately requests an updated view of the account profile from a separate service, the client would want to know if the record update was applied. Services can indicate synchronization status using the `Atproto-Repo-Rev` HTTP response header, which should contain a single commit revision (TID) of the relevant account. This mechanism is only relevant to API endpoints where a single account was specified.
+Clients making API requests to a service may want to know if that service has synchronized and indexed recent updates to the authenticated account's repository. For example, if a client updates a profile record for their account (by writing to the PDS), and then immediately requests an updated view of their profile from a separate service, the client would want to know if the record update was applied. Services can indicate synchronization status using the `Atproto-Repo-Rev` HTTP response header, which should contain a single commit revision (TID) of the account making the API request.
 
 
 ## Repository Exports
@@ -171,7 +171,7 @@ Here is a summary of validation rules and behaviors:
 - services should verify `#commit` message `blocks` field (CAR diff) against the `ops` list and `prevData` field, using record operation MST inversion
 - services should reject any event messages which exceed reasonable size limits.
 - services should verify that repository data structures are valid against the specification. Missing fields, incorrect MST structure, or other protocol-layer violations should result in events being rejected.
-- services may apply rate-limits to identity, account, commit, and sync events, and suspend accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, missing or out-of-order commits, etc.
+- services may apply rate-limits to identity, account, commit, and sync events, and throttle accounts or upstream services which violate those limits. Rate limits might also be applied to recovery modes such as invalid signatures resulting in an identity refresh, missing or out-of-order commits, etc.
 - services should ignore `#commit` and `#sync` events with a `rev` lower or equal to the most recent successfully processed `rev` for that DID, and should reject commit events with a `rev` corresponding to a future timestamp (beyond a clock drift window of a few minutes)
 - services should check the `since` value in `#commit` events, and if it is not consistent with the most recent `rev` for that DID, mark the repo as out-of-sync
 - similarly, services should check `#commit` message `prevData` values against the most recent commit object `data` field

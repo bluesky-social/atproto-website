@@ -1,12 +1,12 @@
 export const header = {
   title: 'Repository',
   description:
-    'Self-authenticating storage for public account content',
+    'Self-certifying storage for public account content',
 }
 
 # Repository
 
-Each atproto account has a **repository** (or "repo") which stores all of their public data **records**. Repository contents are entirely public and verifiable. Record deletion is supported without leaving a trace or "tombstone" of previous contents. {{ className: 'lead' }}
+Each atproto account has a **repository** (or "repo") which stores all of their public data **records**. Repository contents are entirely public and verifiable ("self-certifying"). Record deletion is supported without leaving a trace or "tombstone" of previous contents. {{ className: 'lead' }}
 
 The repository data structure is a content-addressed [Merkle-tree](https://en.wikipedia.org/wiki/Merkle_tree). Creating, updating, or deleting records (or any other mutations to the repository) changes the root hash value of the overall repository tree. Each published version of the repository tree structure is represented as a **commit**. Commits are cryptographically signed, with rotatable signing keys, which allows recursive authentication of either the repository structure as a whole, or compact "proof chains" for individual records. {{ className: 'lead' }}
 
@@ -149,7 +149,7 @@ Some details about representing repository diffs are "CAR slices":
 - parsing implementation must be tolerant of additional unexpected blocks in the diff, which they should ignore
   - note that unreasonable quantities of unnecessary block data may be considered a form of resource abuse
 
-The diff is a partial Merkle tree, including a signed commit, and can be partially verified. For example, the diff contains a "proof chain" to verify any created or updated records. However, without knowing more about the previous state of the repository, it is not possible to enumerate or confirm which record paths have been deleted.
+The diff is a partial Merkle tree, including a signed commit, and can be partially verified in isolation. For example, the diff contains a "proof chain" to verify any created or updated records. If both metadata about the previous state of the repository and a complete set of record operations are available, then it becomes possible to fully verify the integrity of the diff.
 
 The sync "firehose" mechanism uses a process called "operation inversion" to validate a list of record operations against a diff. In this process, the diff is parsed as a partial MST, and then each operation is applied in reverse: a "create" is applied as a "delete", etc. After all operations have been applied, the root CID (hash) of the MST is recomputed, and should match the `data` field of the previous revision of the repository. If the list of record operations is inaccurate or incomplete, the inverted MST will not match.
 

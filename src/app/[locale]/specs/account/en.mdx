@@ -73,7 +73,7 @@ However, in the common case, when there is an active account on a functional cur
 
 - creating an account on the new PDS (which may start with `active` false, such as `deactivated`)
 - migrating data from the old PDS to the new PDS
-- updating identity (DID document) to point to the new PDS and using a new atproto signing key. For PLC DIDs, usually involves updating PLC rotation keys as well. This results in an `#identity` event being emitted from at least one of the PDS hosts.
+- updating identity (DID document) to point to the new PDS and using a new atproto signing key. For PLC DIDs, usually involves updating PLC rotation keys as well. This results in an `#identity` event being emitted from at least the new PDS host, and ideally from the old PDS as well.
 - updating account status on both PDS instances, such that old is inactive, and new is active. This results in `#account` event being emitted from each PDS.
 - emitting a `#sync` and/or `#commit` event from the new PDS, signed by the new atproto signing key, with a higher commit `rev`.
 
