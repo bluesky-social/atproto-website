@@ -155,7 +155,7 @@ If the chain of `#commit` messages is found to have broken, or a `#sync` message
 
 If many services attempt to re-synchronize a repository at the same time, the upstream PDS host may be overwhelmed with a "thundering herd" of requests. To mitigate this, receiving services should first attempt to fetch the repo CAR file from their direct upstream (often a relay instance). That gives the upstream an opportunity to coalesce and cache the repository export, which distributes load. The upstream may instead simply use an HTTP redirect to the PDS instance.
 
-The "Record-Level Synchronization" second below describes a design pattern for tracking record state and handling re-synchronization incidents.
+The "Record-Level Synchronization" section below describes a design pattern for tracking record state and handling re-synchronization incidents.
 
 ### Message Validation Checklist
 
