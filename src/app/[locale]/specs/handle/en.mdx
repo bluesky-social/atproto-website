@@ -6,7 +6,7 @@ export const header = {
 
 # Handles
 
-DIDs are the long-term persistent identifiers for accounts in atproto, but they can be opaque and unfriendly for human use. **Handles** are mutable and human-friendly account usernames, in the form of a DNS hostname. For example, `user.example.com`. Handles must be directionally linked to a DID: the DID document must claim the handle, and the handle must resolve to the DID identifier. Two methods of resolving handles to DID are supported: one using TXT DNS records, and the other using an HTTPS `/.well-known/` URL path. {{ className: 'lead' }}
+DIDs are the long-term persistent identifiers for accounts in atproto, but they can be opaque and unfriendly for human use. **Handles** are mutable and human-friendly account usernames, in the form of a DNS hostname. For example, `user.example.com`. Handles must be bi-directionally linked to a DID: the DID document must claim the handle, and the handle must resolve to the DID identifier. Two methods of resolving handles to DID are supported: one using TXT DNS records, and the other using an HTTPS `/.well-known/` URL path. {{ className: 'lead' }}
 
 The definition of "hostnames" (as a subset of all possible "DNS names") has evolved over time and across several IETF RFCs. Some relevant documents are [RFC-1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC-3696](https://www.rfc-editor.org/rfc/rfc3696) section 2, and [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) section 3. Almost every valid "hostname" is also a valid handle, though there are a small number of exceptions (described below). {{ className: 'lead' }}
 
@@ -169,7 +169,7 @@ Very long handles are known to present user interface challenges, but they are a
 
 Handles which look similar to a well-known domain present security and impersonation challenges. For example, handles like `paypa1.com` or `paypal.cc` being confused for `paypal.com`. Very long handles can result in similar issues when truncated at the start or end (`paypal.com…`).
 
-Handles should generally not be truncated to local context. For example, the handle `@robin.example.com` should not be displayed as `@robin`, even in the local context of an `example.com` service.
+Handles should generally not be truncated to local context. For example, the handle `@alice.example.com` should not be displayed as `@alice`, even in the local context of an `example.com` service.
 
 Providers of handle "namespaces" (eg, as subdomains on a registered domain) may impose any additional limits on handles that they wish. It is recommended to constrain the allowed segment length to something reasonable, and to reserve a common set of segment strings like `www`, `admin`, `mail`, etc. There are multiple public lists of "commonly disallowed usernames" that can be used as a starting point.
 
