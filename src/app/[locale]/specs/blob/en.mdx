@@ -6,13 +6,13 @@ export const header = {
 
 # Blobs
 
-"Blobs" are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the `blob` lexicon datatype, which includes a content hash (CID) for the blob.
+**Blobs** are media files stored alongside an account's repository. They include images, video, and audio, but could also include any other file format. Blobs are referenced by individual records by the `blob` lexicon datatype, which includes a content hash (CID) for the blob. {{ className: 'lead' }}
 
-Blob files are uploaded and distributed separately from records. Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob.
+Blob files are uploaded and distributed separately from records. Blobs are authoritatively stored by the account's PDS instance, but views are commonly served by CDNs associated with individual applications ("AppViews"), to reduce traffic on the PDS. CDNs may serve transformed (resized, transcoded, etc) versions of the original blob. {{ className: 'lead' }}
 
 While blobs are universally content addressed (by CID), they are always referenced and managed in the context of an individual account (DID).
 
-The empty blob (zero bytes) is valid in general, though it may be disallowed by individual Lexicons/applications.
+The empty blob (zero bytes) is generally valid, though it may be disallowed by individual Lexicons/applications.
 
 ## Blob Metadata
 

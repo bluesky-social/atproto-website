@@ -6,12 +6,12 @@ export const header = {
 
 # AT URI Scheme (at://)
 
-The AT URI scheme (`at://`) makes it easy to reference individual records in a specific repository, identified by either DID or handle. AT URIs can also be used to reference a collection within a repository, or an entire repository (aka, an identity). {{ className: 'lead' }}
+The AT URI scheme (`at://`) makes it easy to reference individual records in a specific repository, identified by either DID or handle. {{ className: 'lead' }}
 
 Both of these AT URIs reference the same record in the same repository; one uses the account's DID, and one uses the account's handle.
 
-- `at://did:plc:44ybard66vv44zksje25o7dz/app.bsky.feed.post/3jwdwj2ctlk26`
-- `at://bnewbold.bsky.team/app.bsky.feed.post/3jwdwj2ctlk26`
+- `at://did:plc:vwzwgnygau7ed7b7wt5ux7y2/app.bsky.feed.post/3k5nobkf2w72g`
+- `at://retr0.id/app.bsky.feed.post/3k5nobkf2w72g`
 
 <Note>
 **Caveats for Handle-based AT URIs**
@@ -39,7 +39,7 @@ In current atproto Lexicon use, the **query** and **fragment** parts are not yet
 "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 ```
 
-The **authority** section is required, and should be normalized. Similar to the rules for DID syntax elsewhere in atproto, it is syntaxtually valid to have AT URIs with unsupported DID methods, though the URI will not resolve or function properly. The optional **collection** part of the path must be a normalized [NSID](./nsid). The optional **rkey** part of the path must be a valid [Record Key](./record-key).
+The **authority** section is required, and should be normalized. Similar to the rules for DID syntax elsewhere in atproto, it is syntaxtually valid to have AT URIs with unsupported DID methods, though the URI will not resolve or function properly. The optional **collection** part of the path must be a normalized [NSID](/specs/nsid). The optional **rkey** part of the path must be a valid [record key](/specs/record-key).
 
 An AT URI pointing to a specific record in a repository is not a *strong* reference, in that it is not content-addressed. The record may change or be removed over time, or the DID itself may be deleted or unavailable. For `did:web`, control of the DID (and thus repository) may change over time. For AT URIs with a handle in the authority section, the handle-to-DID mapping can also change.
 
@@ -102,7 +102,7 @@ Particularly when included in atproto records, strict normalization should be fo
 - No trailing slashes in path part
 - No duplicate slashes or "dot" sections in path part (`/./` or `/abc/../` for example)
 - NSID in path: domain authority part lowercased
-- Record Key is case-sensitive and not normalized
+- Record key is case-sensitive and not normalized
 - Query and fragment parts should not be included when referencing repositories or records in Lexicon records
 
 Refer to [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) for generic rules to normalize paths and remove `..` / `.` relative references.

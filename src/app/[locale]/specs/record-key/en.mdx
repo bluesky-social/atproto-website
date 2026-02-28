@@ -6,14 +6,14 @@ export const header = {
 
 # Record Keys
 
-A **Record Key** (sometimes shortened to `rkey`) is used to name and reference an individual record within the same collection of an atproto repository. It ends up as a segment in AT URIs, and in the repo MST path. {{ className: 'lead' }}
+A **record key** (sometimes shortened to "rkey") is used to name and reference an individual record within the same collection of an atproto repository. It ends up as a segment in AT URIs, and in the repo MST path. {{ className: 'lead' }}
 
-A few different Record Key naming schemes are supported. Every record Lexicon schema will indicate which of the record key types should be used, depending on the needs and semantics of the record collection. {{ className: 'lead' }}
+A few different record key naming schemes are supported. Every record Lexicon schema will indicate which of the record key types should be used, depending on the needs and semantics of the record collection. {{ className: 'lead' }}
 
 
 ### Record Key Type: `tid`
 
-This is the most common record naming scheme, using [TID ("timestamp identifier") syntax](/specs/tid), such as `3jzfcijpj2z2a`. TIDs are usually generated from a local clock at the time of record creation, with some additional mechanisms to ensure they always increment and are not reused or duplicated with the same collection in a given repository.
+This is the most common record naming scheme, using [Timestamp Identifier (TID)(/specs/tid) syntax, such as `3jzfcijpj2z2a`. TIDs are usually generated from a local clock at the time of record creation, with some additional mechanisms to ensure they always increment and are not reused or duplicated with the same collection in a given repository.
 
 The original creation timestamp of a record can be inferred if it has a TID record key, but remember that these keys can be specified by the end user and could have any value, so they should not be trusted.
 
@@ -27,13 +27,13 @@ For cases where the record key must be a valid [NSID](/specs/nsid).
 
 ### Record Key Type: `literal:<value>`
 
-This key type is used when there should be only a single record in the collection, with a fixed, well-known Record Key.
+This key type is used when there should be only a single record in the collection, with a fixed, well-known record key.
 
 The most common value is `self`, specified as `literal:self` in a Lexicon schema.
 
 ### Record Key Type: `any`
 
-Any string meeting the overall Record Key schema requirements (see below) is allowed. This is the most flexible type of Record Key.
+Any string meeting the overall record key schema requirements (see below) is allowed. This is the most flexible type of record key.
 
 This may be used to encode semantics in the name, for example, a domain name, integer, or (transformed) AT URI. This enables de-duplication and known-URI lookups.
 
@@ -42,7 +42,7 @@ This may be used to encode semantics in the name, for example, a domain name, in
 
 Lexicon string type: `record-key`
 
-Regardless of the type, Record Keys must fulfill some baseline syntax constraints:
+Regardless of the type, record keys must fulfill some baseline syntax constraints:
 
 - restricted to a subset of ASCII characters — the allowed characters are alphanumeric (`A-Za-z0-9`), period, dash, underscore, colon, or tilde (`.-_:~`)
 - must have at least 1 and at most 512 characters
@@ -50,12 +50,12 @@ Regardless of the type, Record Keys must fulfill some baseline syntax constraint
 - must be a permissible part of repository MST path string (the above constraints satisfy this condition)
 - must be permissible to include in a path component of a URI (following RFC-3986, section 3.3).  The above constraints satisfy this condition, by matching the "unreserved" characters allowed in generic URI paths.
 
-Record Keys are case-sensitive.
+Record keys are case-sensitive.
 
 
 ### Examples
 
-Valid Record Keys:
+Valid record keys:
 
 ```
 3jui7kd54zh2y
@@ -67,7 +67,7 @@ pre:fix
 _
 ```
 
-Invalid Record Keys:
+Invalid record keys:
 
 ```
 alpha/beta
@@ -85,25 +85,23 @@ dHJ1ZQ==
 
 ### Usage and Implementation Guidelines
 
-Implementations should not rely on global uniqueness of TIDs, and should not trust TID timestamps as actual record creation timestamps. Record Keys are "user-controlled data" and may be arbitrarily selected by hostile accounts.
+Implementations should not rely on global uniqueness of TIDs, and should not trust TID timestamps as actual record creation timestamps. Record keys are "user-controlled data" and may be arbitrarily selected by hostile accounts.
 
-Most software processing repositories and records should be agnostic to the Record Key type and values, and usually treat them as simple strings. For example, relying on TID keys to decode as `base32` into a unique `uint64` makes it tempting to rely on this for use as a database key, but doing so is not resilient to key format changes and is discouraged.
+Most software processing repositories and records should be agnostic to the record key type and values, and usually treat them as simple strings. For example, relying on TID keys to decode as `base32` into a unique `uint64` makes it tempting to rely on this for use as a database key, but doing so is not resilient to key format changes and is discouraged.
 
-Note that in the context of a repository, the same Record Key value may be used under multiple collections. The tuple of `(did, rkey)` is not unique; the tuple `(did, collection, rkey)` is unique.
+Note that in the context of a repository, the same record key value may be used under multiple collections. The tuple of `(did, rkey)` is not unique; the tuple `(did, collection, rkey)` is unique.
 
-As a best practice, keep key paths to under 80 characters in virtually all situations.
-
-The colon character was de-facto allowed in the reference implementation in 2023, and the spec was updated to allow this character in February 2024.
+As a best practice, try to keep key paths to under 80 characters in virtually all situations.
 
 Note that "most" DIDs work as record keys, but that the full DID W3C specification allows DIDs with additional characters. This means that DIDs could be used as record keys at time of writing, and this will work with current "blessed" DID methods (note that `did:web` is restricted in atproto to only full domains, not paths or port specification), but that this could break in the future with different DID methods or DID features (like `did:web` paths) allowed.
 
-While Record Keys are case-sensitive, it is a recommended practice to use all-lower-case Record Keys to avoid confusion and maximize possible re-use in case-insensitive contexts.
+While record keys are case-sensitive, it is a recommended practice to use all-lower-case record keys to avoid confusion and maximize possible re-use in case-insensitive contexts.
 
 ### Possible Future Changes
 
-The constraints on Record Key syntax may be relaxed in the future to allow non-ASCII Unicode characters. Record keys will always be valid Unicode, never relaxed to allow arbitrary byte-strings.
+The constraints on record key syntax may be relaxed in the future to allow non-ASCII Unicode characters. Record keys will always be valid Unicode, never relaxed to allow arbitrary byte-strings.
 
-Additional Record Key types may be defined.
+Additional record key types may be defined.
 
 The maximum length may be tweaked.
 

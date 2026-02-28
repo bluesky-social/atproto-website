@@ -6,16 +6,16 @@ export const header = {
 
 # Namespaced Identifiers (NSIDs)
 
-Namespaced Identifiers (NSIDs) are used to reference Lexicon schemas for records, XRPC endpoints, and more. {{ className: 'lead' }}
+Namespaced Identifiers (NSIDs) are used to reference Lexicon schemas for records, XRPC endpoints, and more. For example, `com.atproto.sync.getRecord`. {{ className: 'lead' }}
 
-The basic structure and semantics of an NSID are a fully-qualified hostname in Reverse Domain-Name Order, followed by a simple name. The hostname part is the **domain authority,** and the final segment is the **name**. {{ className: 'lead' }}
+The basic structure and semantics of an NSID are a fully-qualified hostname in reverse domain-name order, followed by an additional name segment. The hostname part is the **domain authority,** and the final segment is the **name**. {{ className: 'lead' }}
 
 
 ### NSID Syntax
 
 Lexicon string type: `nsid`
 
-The domain authority part of an NSID must be a valid handle with the order of segments reversed. That is followed by a name segment which must be an ASCII camel-case string.
+The domain authority part of an NSID must be a valid [handle](/specs/handle) (hostname) with the order of segments reversed. That is followed by a name segment that must be an ASCII camel-case string.
 
 For example, `com.example.fooBar` is a syntactically valid NSID, where `com.example` is the domain authority, and `fooBar` is the name segment.
 
@@ -81,7 +81,7 @@ A **strongly-encouraged** best practice is to use authority domains with only AS
 
 The overall NSID is case-sensitive for display, storage, and validation. However, having multiple NSIDs that differ only by casing is not allowed. Namespace authorities are responsible for preventing duplication and confusion. Implementations should not force-lowercase NSIDs.
 
-It is common to use "subdomains" as part of the "domain authority" to organize related NSIDs. For example, the NSID `com.atproto.sync.getHead` uses the `sync` segment. Note that this requires control of the full domain `sync.atproto.com`, in addition to the domain `atproto.com`.
+It is common to use "subdomains" as part of the "domain authority" to organize related NSIDs. For example, the NSID `com.atproto.sync.getRecord` uses the `sync` segment. Note that this requires control of the full domain `sync.atproto.com`, in addition to the domain `atproto.com`.
 
 Lexicon language documentation will provide style guidelines on choosing and organizing NSIDs for both record types and XRPC methods. In short, records are usually single nouns, not pluralized. XRPC methods are usually in "verbNoun" form.
 

@@ -6,47 +6,45 @@ export const header = {
 
 # AT Protocol
 
-The Authenticated Transfer Protocol (AT Protocol or atproto) is a generic federated protocol for building open social media applications. Some recurring themes and features are: {{ className: 'lead' }}
+The Authenticated Transfer Protocol ("AT Protocol" or "atproto") is a network protocol for building open social web applications. {{ className: 'lead' }}
+
+Some of the main protocol features and design themes include: {{ className: 'lead' }}
 
 - Self-authenticating data and identity, allowing seamless account migrations and redistribution of content {{ className: 'lead' }}
 - Design for "big world" use cases, scaling to billions of accounts {{ className: 'lead' }}
 - Delegated authority over application-layer schemas and aggregation infrastructure {{ className: 'lead' }}
-- Re-use of existing data models from the dweb protocol family and network primitives from the web platform {{ className: 'lead' }}
+- Re-use of content-addressed data models from prior P2P protocols, and networking primitives from the web platform {{ className: 'lead' }}
 
 ## Protocol Structure
 
-**Identity:** account control is rooted in stable [DID](/specs/did) identifiers, which can be rapidly resolved to determine the current service provider location and [Cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) provide a more human-recognizable and mutable identifier for accounts.
+**Identity:** account control is rooted in persistent [DID](/specs/did) identifiers (like `did:plc:ewvi7nxzyoun6zhxrhs64oiz`). These can be universally resolved to determine the current service provider location and [cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) complement DIDs and provide mutable and human-meaninful usernames in the form of DNS hostnames (eg, `user.example.com`).
 
-**Data:** public content is stored in content-addressed and cryptographically verifiable [Repositories](/specs/repository). Data records and network messages all conform to a unified [Data Model](/specs/data-model) (with [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations). [Labels](/specs/label) are a separate lightweight form of metadata, individually signed and distributed outside repositories.
+**Data:** public content is stored in content-addressed and cryptographically verifiable [repositories](/specs/repository). Data records and network messages all conform to a unified [data model](/specs/data-model) with both [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations. [Labels](/specs/label) are a separate form of lightweight metadata, individually signed and distributed outside repositories, which can be used for moderation and badging.
 
-**Network:** HTTP client-server and server-server [APIs](/specs/xrpc) are described with Lexicons, as are WebSocket [Event Streams](/specs/event-stream). Individual records can be referenced across the network by [AT URI](/specs/at-uri-scheme). A [Personal Data Server (PDS)](/specs/account) acts as an account's trusted agent in the network, routes client network requests, and hosts repositories. A relay crawls many repositories and outputs a unified event [Firehose](/specs/sync).
+**Network:** client-server and server-server HTTP APIs are described with lexicon schemas ([XRPC](/specs/xrpc)), as are WebSocket [event streams](/specs/event-stream). Individual records can be globally referenced with [AT-URIs](/specs/at-uri-scheme). [Personal Data Servers (PDS)](/specs/account) host accounts, handle key management, manage repositories, provide authentication, and proxy client HTTP requests. Relays aggregate from many PDS hosts and output a unified full-network [firehose](/specs/sync).
 
-**Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers](/specs/nsid) (NSIDs). Application-specific aggregations (such as search) are provided by an Application View (App View) service. Clients can include mobile apps, desktop software, or web interfaces.
+**Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers (NSIDs)](/specs/nsid). Application-specific aggregations (like search) are provided by Application View (App View) services. Clients can include mobile apps, desktop software, or web interfaces. Clients are authorized using [OAuth](/specs/oauth), and [permissions](/specs/permission) are used to grant access to users' protocol resources.
 
-The AT Protocol itself does not specify common social media conventions like follows or avatars, leaving these to application-level Lexicons. The `com.atproto.*` Lexicons provide common APIs for things like account signup and login. These could be considered part of AT Protocol itself, though they can also be extended or replaced over time as needed. Bluesky is a microblogging social app built on top of AT Protocol, with lexicons under the `app.bsky.*` namespace.
+AT Protocol itself does not specify how common social web conventions like follows or avatars should work, and instead leaves them to application designers. Applications interoperate by reading and writing user data records following published Lexicon schemas.
+
+The `com.atproto.*` Lexicons provide common APIs for things like account management and record creation. These could be considered part of AT Protocol itself, though they may also be extended or replaced over time as needed.
 
 
 ## Protocol Extension and Applications
 
-AT Protocol was designed from the beginning to balance stability and interoperation against flexibility for third-party application development.
+AT Protocol was designed to provide stability and interoperation within mature network ecosystems, while at the same time allowing product designers to rapidly ship differentiating features and novel application experiences.
 
-The core protocol extension mechanism is development of new Lexicons under independent namespaces. Lexicons can declare new repository record schemas (stored in collections by NSID), new HTTP API endpoints, and new event stream endpoints and message types. It is also expected that new applications might require new network aggregation services ("AppViews") and client apps (eg, mobile apps or web interfaces).
+The core application development and extension mechanism is to design and publish new Lexicon schemas under independent NSID hierarchies. Lexicon schemas can define new data record schemas, new HTTP API endpoints, and new event stream message types. New applications often require new network aggregation services ("AppViews") and client app support (eg, mobile apps or web interfaces).
 
-It is expected that third parties will reuse Lexicons and record data across namespaces. For example, new applications are welcome to build on top of the social graph records specified in the `app.bsky.*` Lexicons, as long as they comply with the schemas controlled by the `bsky.app` authority.
+It is expected that competing developers will reuse Lexicon schemas and public data records across organizational boundaries. For example, applications developers can reuse and contribute to the existing public social graph data described by the `app.bsky.*` Lexicon schemas. They can extend with new data types by publishing Lexicon schemas under their own namespace. That data becomes part of the common pool of public data that any other developer can integrate and build with.
 
 Governance structures for individual Lexicon namespaces are flexible. They could be developed and maintained by volunteer communities, corporations, consortia, academic researchers, funded non-profits, etc.
 
-## What Is Missing?
 
-These specifications cover most details as implemented in Bluesky's reference implementation. A few important pieces have not been finalized, both in that reference implementation and in these specifications.
+## What is Missing?
 
-**Moderation Primitives:** The `com.atproto.admin.*` routes for handling moderation reports and doing infrastructure-level take-downs is specified in Lexicons but should also be described in more detail.
+**Non-Public Data:** mechanisms for personal and group data sharing are planned, and should support a wide variety of application functionality. These will be large additions to the protocol framework. We recommend against simply "bolting on" encryption or private content using the existing protocol primitives.
 
-## Future Work
+**Protocol Governance and Formal Standards Process:** once the basic protocol framework has been shown to work between multiple interoperating organizations, the plan is to bring the protocol specifications to an existing standards body (like the IETF) for revision and independent review.
 
-Smaller changes are described in individual specification documents, but a few large changes span the entire protocol.
-
-**Non-Public Content:** mechanisms for private group and one-to-one communication will be an entire second phase of protocol development. This encompasses primitives like "private accounts", direct messages, encrypted data, and more. We recommend against simply "bolting on" encryption or private content using the existing protocol primitives.
-
-**Protocol Governance and Formal Standards Process:** The current development focus is to demonstrate all the core protocol features via the reference implementation, including open federation. After that milestone, the intent is to stabilize the lower-level protocol and submit the specification for independent review and revision through a standards body such as the IETF or the W3C.
-
+Possible future changes and extensions to the protocol are described in the individual specification documents.

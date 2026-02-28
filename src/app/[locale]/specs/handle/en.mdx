@@ -4,11 +4,11 @@ export const header = {
     'A specification for human-friendly account identifiers.',
 }
 
-# Handle
+# Handles
 
-DIDs are the long-term persistent identifiers for accounts in atproto, but they can be opaque and unfriendly for human use. Handles are a less-permanent identifier for accounts. The mechanism for verifying the link between an account handle and an account DID relies on DNS, and possibly connections to a network host, so every handle must be a valid network hostname. *Almost* every valid "hostname" is also a valid handle, though there are a small number of exceptions. {{ className: 'lead' }}
+DIDs are the long-term persistent identifiers for accounts in atproto, but they can be opaque and unfriendly for human use. **Handles** are mutable and human-friendly account usernames, in the form of a DNS hostname. For example, `user.example.com`. Handles must be bi-directionally linked to a DID: the DID document must claim the handle, and the handle must resolve to the DID identifier. Two methods of resolving handles to DID are supported: one using TXT DNS records, and the other using an HTTPS `/.well-known/` URL path. {{ className: 'lead' }}
 
-The definition "hostnames" (as a subset of all possible "DNS names") has evolved over time and across several RFCs. Some relevant documents are [RFC-1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC-3696](https://www.rfc-editor.org/rfc/rfc3696) section 2, and [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) section 3. {{ className: 'lead' }}
+The definition of "hostnames" (as a subset of all possible "DNS names") has evolved over time and across several IETF RFCs. Some relevant documents are [RFC-1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC-3696](https://www.rfc-editor.org/rfc/rfc3696) section 2, and [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) section 3. Almost every valid "hostname" is also a valid handle, though there are a small number of exceptions (described below). {{ className: 'lead' }}
 
 ## Handle Identifier Syntax
 
@@ -99,7 +99,7 @@ blah.arpa
 
 ## Handle Resolution
 
-Handles have a limited role in atproto, and need to be resolved to a DID in almost all situations. Resolution mechanisms must demonstrate a reasonable degree of authority over the domain name at a point in time, and need to be relatively efficient to look up. There are currently two supported resolution mechanisms, one using a TXT DNS record containing the DID, and another over HTTPS at a special `/.well-known/` URL.
+Handles have a limited role in atproto, and need to be resolved to a DID in almost all situations. Resolution mechanisms must demonstrate a reasonable degree of authority over the domain name at a point in time, and need to be relatively efficient to look up. There are currently two supported resolution mechanisms: one using a TXT DNS record containing the DID, and another over HTTPS at a special `/.well-known/` URL.
 
 Clients can rely on network services (eg, their PDS) to resolve handles for them, using the `com.atproto.identity.resolveHandle` endpoint, and don't usually need to implement resolution directly themselves.
 
@@ -111,7 +111,7 @@ Handles should not be trusted or considered valid until the DID is also resolved
 
 For this resolution method, a DNS TXT record is registered for the `_atproto` sub-domain under the handle hostname. The record value should have the prefix `did=`, followed by the full DID. This method aligns with [RFC-1464](https://www.rfc-editor.org/rfc/rfc1464.html), "Using the Domain Name System To Store Arbitrary String Attributes".
 
-For example, the handle `bsky.app` would have a TXT record on the name `_atproto.bsky.app`, and the value would look like `did=did:plc:z72i7hdynmk6r22z27h6tvur`.
+For example, the handle `user.example.com` would have a TXT record on the name `_atproto.user.example.com`, and the value would look like `did=did:plc:ewvi7nxzyoun6zhxrhs64oiz`.
 
 Any TXT records with values not starting with `did=` should be ignored. Only a single valid record should exist at any point in time. If multiple valid records with different DIDs are present, resolution should fail. In this case resolution can be re-tried after a delay, or using a recursive resolver.
 
@@ -123,7 +123,7 @@ DNSSEC is not required.
 
 For this resolution method, a web server at the handle domain implements a special well-known endpoint at the path `/.well-known/atproto-did`. A valid HTTP response will have an HTTP success status (2xx), `Content-Type` header set to `text/plain`, and include the DID as the HTTP body with no prefix or wrapper formatting.
 
-For example, the handle `bsky.app` would be resolved by an GET request to `https://bsky.app/.well-known/atproto-did`, and a valid response would look like:
+For example, the handle `user.example.app` would be resolved by an GET request to `https://user.example.app/.well-known/atproto-did`, and a valid response would look like:
 
 ```
 HTTP/1.1 200 OK
@@ -131,15 +131,14 @@ Content-Length: 33
 Content-Type: text/plain
 Date: Wed, 14 Jun 2023 00:47:21 GMT
 
-did:plc:z72i7hdynmk6r22z27h6tvur
-
+did:plc:ewvi7nxzyoun6zhxrhs64oiz
 ```
 
 The response `Content-Type` header does not need to be strictly verified.
 
 The web server's response body should not contain any prefix or suffix whitespace, but clients should strip small amounts of prefix or suffix whitespace from the response body before attempting to parse as a DID.
 
-Secure HTTPS on the default port (443) is required for all real-world handle resolutions. HTTP should only be used for local development and testing.
+Secure HTTPS on the default port (443) is required for all real-world handle resolutions. Unsecured HTTP can only be used for local development and testing.
 
 HTTP redirects (eg, 301, 302) are allowed, up to a reasonable number of redirect hops.
 
@@ -160,7 +159,7 @@ With both techniques, it is beneficial to initiate resolution requests from a re
 
 ## Usage and Implementation Guidelines
 
-Handles may be prefixed with the "at" symbol (like `@jay.bsky.team`) in user interfaces, but this is not a valid syntax for a handle in records, APIs, and other back-end contexts.
+Handles may be prefixed with the "at" symbol (like `@user.example.com`) in user interfaces, but this is not a valid syntax for a handle in records, APIs, and other back-end contexts.
 
 Internationalized Domain Names ("IDN", or "punycode") are not directly relevant to the low-level handle syntax. In their encoded form, IDNs are already valid hostnames, and thus valid handles. Such handles must be stored and transmitted in encoded ASCII form. Handles that "look like" IDNs, but do not parse as valid IDNs, are valid handles, just as they are valid hostnames. Applications may, optionally, parse and display IDN handles as Unicode.
 
@@ -170,7 +169,7 @@ Very long handles are known to present user interface challenges, but they are a
 
 Handles which look similar to a well-known domain present security and impersonation challenges. For example, handles like `paypa1.com` or `paypal.cc` being confused for `paypal.com`. Very long handles can result in similar issues when truncated at the start or end (`paypal.com…`).
 
-Handles should generally not be truncated to local context. For example, the handle `@jay.bsky.social` should not be displayed as `@jay`, even in the local context of a `bsky.social` service.
+Handles should generally not be truncated to local context. For example, the handle `@alice.example.com` should not be displayed as `@alice`, even in the local context of an `example.com` service.
 
 Providers of handle "namespaces" (eg, as subdomains on a registered domain) may impose any additional limits on handles that they wish. It is recommended to constrain the allowed segment length to something reasonable, and to reserve a common set of segment strings like `www`, `admin`, `mail`, etc. There are multiple public lists of "commonly disallowed usernames" that can be used as a starting point.
 

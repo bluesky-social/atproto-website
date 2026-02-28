@@ -74,7 +74,7 @@ References to "blobs" (arbitrary files) have a consistent format in atproto, and
 Blob nodes are maps with following fields:
 
 - `$type` (string, required): fixed value `blob`. Note that this is not a valid NSID.
-- `ref` (link, required): CID reference to blob, with multicodec type `raw`. In JSON, encoded as a `$link` object as usual
+- `ref` (link, required): CID reference to blob, with codec type `raw`. In JSON, encoded as a `$link` object as usual
 - `mimeType` (string, required, not empty): content type of blob. `application/octet-stream` if not known
 - `size` (integer, required, positive, non-zero): length of blob in bytes
 
