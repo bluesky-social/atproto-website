@@ -19,7 +19,8 @@ type Status = 'full' | 'partial' | 'none' | 'unknown'
 interface SDKEntry {
   href: string
   sdkName?: string
-  description: string
+  description?: string
+  maintainer?: { handle: string; label?: string; href?: string }
   status: {
     // Client features
     identifiers: Status
@@ -98,7 +99,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://atproto.blue/',
         sdkName: 'atproto',
-        description: 'Created by @marshal.dev.',
+        maintainer: { handle: 'marshal.dev' },
         status: {
           identifiers: 'partial',
           bskyHelpers: 'full',
@@ -121,7 +122,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/blacksky-algorithms/rsky',
         sdkName: 'rsky',
-        description: 'Created by Blacksky Algorithms.',
+        maintainer: { handle: 'blacksky.app', label: 'Blacksky', href: 'https://blackskyweb.xyz/' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'full',
@@ -138,7 +139,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://crates.io/crates/jacquard',
         sdkName: 'jacquard',
-        description: 'Created by @nonbinary.computer.',
+        maintainer: { handle: 'nonbinary.computer' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'partial',
@@ -155,7 +156,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://tangled.org/ngerakines.me/atproto-crates',
         sdkName: 'atproto-crates',
-        description: 'Created by @ngerakines.me.',
+        maintainer: { handle: 'ngerakines.me' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'partial',
@@ -178,7 +179,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/mary-ext/atcute',
         sdkName: 'atcute',
-        description: 'Created by @mary.my.id.',
+        maintainer: { handle: 'mary.my.id' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'full',
@@ -201,7 +202,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/myConsciousness/atproto.dart',
         sdkName: 'atproto.dart',
-        description: 'Created by @myConsciousness.',
+        maintainer: { handle: 'shinyakato.dev' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'full',
@@ -224,7 +225,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/MasterJ93/ATProtoKit',
         sdkName: 'ATProtoKit',
-        description: 'Created by @MasterJ93.',
+        maintainer: { handle: 'cjrriley.ca' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'full',
@@ -247,7 +248,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/blowdart/idunno.Bluesky',
         sdkName: 'idunno.Bluesky',
-        description: 'Created by Barry Dorrans.',
+        maintainer: { handle: 'blowdart.me' },
         status: {
           identifiers: 'partial',
           bskyHelpers: 'full',
@@ -270,7 +271,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://ruby.sdk.blue',
         sdkName: 'Ruby SDK',
-        description: 'Created by @mackuba.eu.',
+        maintainer: { handle: 'mackuba.eu' },
         status: {
           identifiers: 'partial',
           bskyHelpers: 'none',
@@ -293,7 +294,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://tangled.org/zat.dev/zat',
         sdkName: 'zat',
-        description: 'Created by @zzstoatzz.io.',
+        maintainer: { handle: 'zzstoatzz.io' },
         status: {
           identifiers: 'full',
           bskyHelpers: 'none',
@@ -316,7 +317,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://tangled.org/did:web:comet.sh/atex',
         sdkName: 'atex',
-        description: 'Created by @ovyerus.com.',
+        maintainer: { handle: 'ovyerus.com' },
         status: {
           identifiers: 'partial',
           bskyHelpers: 'none',
@@ -339,7 +340,7 @@ const community: LibraryGroupProp[] = [
       {
         href: 'https://github.com/aazsamir/libphpsky',
         sdkName: 'libphpsky',
-        description: 'Created by @aazsamir.',
+        maintainer: { handle: 'samorollo.bsky.social' },
         status: {
           identifiers: 'partial',
           bskyHelpers: 'full',
@@ -382,6 +383,22 @@ function Pill({ status, label }: { status: Status; label: string }) {
   )
 }
 
+function MaintainerLink({ maintainer }: { maintainer: { handle: string; label?: string; href?: string } }) {
+  const href = maintainer.href ?? `https://bsky.app/profile/${maintainer.handle}`
+  const displayText = maintainer.label ?? maintainer.handle
+  const prefix = maintainer.href ? '' : '@'
+  return (
+    <Link
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-zinc-700 hover:underline dark:text-zinc-300"
+    >
+      {prefix}{displayText}
+    </Link>
+  )
+}
+
 function SDKEntryRow({ sdk, first }: { sdk: SDKEntry; first: boolean }) {
   return (
     <div className={first ? 'mt-1' : 'mt-4'}>
@@ -399,7 +416,13 @@ function SDKEntryRow({ sdk, first }: { sdk: SDKEntry; first: boolean }) {
             {' · '}
           </>
         )}
-        {sdk.description}
+        {sdk.description && sdk.maintainer ? (
+          <>{sdk.description} <MaintainerLink maintainer={sdk.maintainer} />.</>
+        ) : sdk.maintainer ? (
+          <>Created by <MaintainerLink maintainer={sdk.maintainer} />.</>
+        ) : (
+          sdk.description
+        )}
       </p>
       <p className="mt-2 flex flex-wrap items-center gap-1">
         <span className="inline-flex flex-wrap items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-1 ring-1 ring-inset ring-zinc-200 dark:bg-zinc-800/60 dark:ring-zinc-700/50">

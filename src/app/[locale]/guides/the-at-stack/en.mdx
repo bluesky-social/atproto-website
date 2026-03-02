@@ -65,6 +65,8 @@ You can migrate an individual account's data repository freely from one PDS to a
 - https://boat.kelinci.net/, a set of interfaces for repository import and export
 - https://github.com/bluesky-social/goat, our Go AT command-line tool.
 
+PDSs implement many AT endpoints, and by default will proxy requests to other services. Caching, CDNs, and so on are typically implemented at the [App View](#app-views) layer. Most other components of the AT stack are designed to direct load *away* from a PDS, so that hosting user data remains economical.
+
 ## Relays
 
 **Relays** handle all of your events in real-time. The Relay also handles rate limiting and network abuse of individual PDSes to ensure that availability from across the network. Importantly, relays themselves do not interpret records in repositories; they simply store them temporarily and forward them to consumers. Relays produce a [**firehose**](/guides/streaming-data) of events, which combines the [event streams](/specs/event-stream) from multiple repositories and PDSes.
