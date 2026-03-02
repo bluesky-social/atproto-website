@@ -41,6 +41,8 @@ When a repo is added, tap provides:
 
 We also provide a [TypeScript library](https://www.npmjs.com/package/@atproto/tap) for working with Tap. For more information, refer to [The AT Stack](/guides/the-at-stack#tap) and the [tap repository](https://github.com/bluesky-social/indigo/tree/main/cmd/tap). If you are backfilling a large number of records with Tap and need a scalable database service, we've had good experiences with [ClickHouse](https://clickhouse.com/).
 
+You can backfill from individual PDSes or from a Relay — they implement the same endpoints. For a list of available Relays, see [The AT Stack](/guides/the-at-stack#relays).
+
 ## How backfilling works
 
 If you are implementing backfilling on your own, the general process is:
