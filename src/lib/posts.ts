@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'npmx-alpha-launch',
+    title: 'Supporting the npmx Alpha Launch',
+    description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
+    date: 'March 3, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'plc-replicas',
     title: 'PLC Read Replicas',
     description: 'Introducing a self-hostable did:plc read-replica service.',
