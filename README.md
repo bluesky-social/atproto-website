@@ -33,8 +33,17 @@ This will prompt you for:
 - **Slug** - URL-friendly identifier (auto-suggested from title)
 - **Description** - Short summary for the blog index
 - **Author** - Defaults to "AT Protocol Team"
+- **Bluesky DID** - If the author isn't in the registry, you'll be prompted for their DID (optional)
 
 The script creates the necessary files and updates the blog index automatically.
+
+#### Author bylines
+
+Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.
+
+Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the single source of truth. The `PageHeader` component looks up the DID at render time based on the `author` name from the post's MDX header — no need to store DIDs in individual posts.
+
+When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
 
 ### Removing a blog post
 

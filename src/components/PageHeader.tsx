@@ -1,11 +1,13 @@
 import { DotPatternBackground } from './DotPattern'
 import { Button } from './Button'
 import clsx from 'clsx'
+import knownAuthors from '@/lib/authors.json'
 
 export interface PageHeaderProps {
   title: string
   description?: string
   date?: string
+  author?: string
   primaryCTA?: CtaProps
   secondaryCTA?: CtaProps
   fullwidth?: boolean
@@ -20,10 +22,14 @@ export function PageHeader({
   title,
   description,
   date,
+  author,
   primaryCTA,
   secondaryCTA,
   fullwidth,
 }: PageHeaderProps) {
+  const authorDid = author
+    ? (knownAuthors as Record<string, string>)[author]
+    : undefined
   return (
     <div className="relative">
       <DotPatternBackground />
@@ -45,6 +51,23 @@ export function PageHeader({
         {date && (
           <div className="mt-4 font-mono text-lg text-zinc-600 dark:text-zinc-400">
             {date}
+          </div>
+        )}
+        {author && (
+          <div className="mt-2 font-mono text-sm text-zinc-500 dark:text-zinc-400">
+            By{' '}
+            {authorDid ? (
+              <a
+                href={`https://bsky.app/profile/${authorDid}`}
+                className="underline hover:text-zinc-900 dark:hover:text-zinc-200"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {author}
+              </a>
+            ) : (
+              author
+            )}
           </div>
         )}
         {(primaryCTA || secondaryCTA) && (
