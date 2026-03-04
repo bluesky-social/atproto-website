@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
+const knownAuthors = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../src/lib/authors.json'), 'utf-8')
+)
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -56,6 +59,20 @@ async function main() {
   const author = await question('Author (AT Protocol Team): ')
   const authorName = author.trim() || 'AT Protocol Team'
 
+  let authorDid = knownAuthors[authorName] || null
+  if (!authorDid && authorName !== 'AT Protocol Team') {
+    const didInput = await question(`No DID found for "${authorName}". Bluesky DID (leave blank to skip): `)
+    const didValue = didInput.trim()
+    if (didValue) {
+      authorDid = didValue
+      // Save to authors.json for future posts
+      knownAuthors[authorName] = didValue
+      const authorsPath = path.join(__dirname, '../src/lib/authors.json')
+      fs.writeFileSync(authorsPath, JSON.stringify(knownAuthors, null, 2) + '\n')
+      console.log(`\n✅ Added "${authorName}" to authors.json\n`)
+    }
+  }
+
   const defaultDate = formatDate(new Date())
   const dateInput = await question(`Publish date (${defaultDate}): `)
   const date = dateInput.trim() || defaultDate
@@ -95,6 +112,7 @@ export default async function BlogPost({ params }: any) {
   title: '${title.replace(/'/g, "\\'")}',
   description: '${description.replace(/'/g, "\\'")}',
   date: '${date}',
+  author: '${authorName.replace(/'/g, "\\'")}',
 }
 
 # ${title}
