@@ -124,7 +124,9 @@ Some API endpoints can be accessed without authentication. You can create an una
     As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
     ```tsx
-    const profile = await client.get(app.bsky.actor.profile)
+    const profile = await client.call(app.bsky.actor.getProfile, {
+      actor: 'alex.bsky.team',
+    })
     ```
 
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
