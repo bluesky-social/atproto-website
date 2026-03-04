@@ -13,7 +13,7 @@ A few different record key naming schemes are supported. Every record Lexicon sc
 
 ### Record Key Type: `tid`
 
-This is the most common record naming scheme, using [Timestamp Identifier (TID)(/specs/tid) syntax, such as `3jzfcijpj2z2a`. TIDs are usually generated from a local clock at the time of record creation, with some additional mechanisms to ensure they always increment and are not reused or duplicated with the same collection in a given repository.
+This is the most common record naming scheme, using [Timestamp Identifier (TID)](/specs/tid) syntax, such as `3jzfcijpj2z2a`. TIDs are usually generated from a local clock at the time of record creation, with some additional mechanisms to ensure they always increment and are not reused or duplicated with the same collection in a given repository.
 
 The original creation timestamp of a record can be inferred if it has a TID record key, but remember that these keys can be specified by the end user and could have any value, so they should not be trusted.
 
