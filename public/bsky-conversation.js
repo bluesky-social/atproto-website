@@ -179,18 +179,24 @@ class BskyConversation extends HTMLElement {
     this.innerHTML = '<div class="bsky-conversation"><p class="loading">Loading conversation…</p></div>'
 
     try {
-      const [thread, quotesRes, repostsRes] = await Promise.all([
-        fetch(
-          `${API}/app.bsky.feed.getPostThread?uri=${encodeURIComponent(atUri)}&depth=6`
-        ).then((r) => r.json()),
-        fetch(
-          `${API}/app.bsky.feed.getQuotes?uri=${encodeURIComponent(atUri)}&limit=25`
-        ).then((r) => r.json()),
-        fetch(
-          `${API}/app.bsky.feed.getRepostedBy?uri=${encodeURIComponent(atUri)}&limit=25`
-        ).then((r) => r.json()),
-      ])
+      const fetchJson = (url) =>
+        fetch(url, { cache: 'no-store' })
+          .then((r) => r.ok ? r.json() : {})
+          .catch(() => ({}))
 
+      // Fetch the thread first to get the canonical DID-based URI,
+      // which is required for getQuotes and getRepostedBy to work correctly.
+      const thread = await fetchJson(
+        `${API}/app.bsky.feed.getPostThread?uri=${encodeURIComponent(atUri)}&depth=6&_t=${Date.now()}`
+      )
+
+      const canonicalUri = thread?.thread?.post?.uri || atUri
+      const encodedCanonical = encodeURIComponent(canonicalUri)
+
+      const [quotesRes, repostsRes] = await Promise.all([
+        fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${encodedCanonical}&limit=25&_t=${Date.now()}`),
+        fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${encodedCanonical}&limit=25&_t=${Date.now()}`),
+      ])
       this.render(url, thread, quotesRes, repostsRes)
     } catch (err) {
       console.error('bsky-conversation: failed to load', err)

@@ -1,31 +1,21 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 export function BlueskyConversation({ uri }: { uri: string }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
-    if (!containerRef.current) return
+    if (document.querySelector('script[src="/bsky-conversation.js"]')) return
+    const script = document.createElement('script')
+    script.src = '/bsky-conversation.js'
+    document.head.appendChild(script)
+  }, [])
 
-    // Dynamically load the web component script once
-    if (!document.querySelector('script[src="/bsky-conversation.js"]')) {
-      const script = document.createElement('script')
-      script.src = '/bsky-conversation.js'
-      document.head.appendChild(script)
-    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const BskyConversation = 'bsky-conversation' as any
 
-    // Create the custom element
-    const el = document.createElement('bsky-conversation')
-    el.setAttribute('uri', uri)
-    containerRef.current.appendChild(el)
-
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = ''
-      }
-    }
-  }, [uri])
-
-  return <div ref={containerRef} className="not-prose mx-auto w-full max-w-2xl px-4 py-12" />
+  return (
+    <div className="not-prose mx-auto w-full max-w-2xl px-4 py-12">
+      <BskyConversation uri={uri} />
+    </div>
+  )
 }
