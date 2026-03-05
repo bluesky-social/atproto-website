@@ -1,3 +1,6 @@
+;(function () {
+'use strict'
+
 const API = 'https://public.api.bsky.app/xrpc'
 
 /**
@@ -209,24 +212,30 @@ class BskyConversation extends HTMLElement {
     const engageText = engageAttr === '' ? null : (engageAttr || 'Comment or quote on Bluesky')
 
     // Direct replies (top-level threads)
+    // Filter out the original author's direct replies to their own post —
+    // those are extensions of the original post, not conversation.
+    // The author's replies deeper in the tree (replying to others) are kept.
+    const rootAuthorDid = threadView.post.author.did
     const directReplies = (threadView.replies || [])
       .filter((r) => r.$type === 'app.bsky.feed.defs#threadViewPost')
+      .filter((r) => r.post.author.did !== rootAuthorDid)
 
     const quotes = quotesRes.posts || []
     const repostedBy = repostsRes.repostedBy || []
 
-    // Count total replies recursively
-    function countReplies(replies) {
+    // Count total replies recursively, excluding the root author's
+    // direct replies to the root post (same filter as directReplies above)
+    function countReplies(replies, isTopLevel) {
       let count = 0
       for (const r of replies) {
-        if (r.$type === 'app.bsky.feed.defs#threadViewPost') {
-          count += 1
-          if (r.replies) count += countReplies(r.replies)
-        }
+        if (r.$type !== 'app.bsky.feed.defs#threadViewPost') continue
+        if (isTopLevel && r.post.author.did === rootAuthorDid) continue
+        count += 1
+        if (r.replies) count += countReplies(r.replies, false)
       }
       return count
     }
-    const totalReplies = countReplies(threadView.replies || [])
+    const totalReplies = countReplies(threadView.replies || [], true)
 
     // Nothing to show (unless we have engage text to display)
     if (totalReplies === 0 && quotes.length === 0 && repostedBy.length === 0 && !engageText) {
@@ -288,3 +297,5 @@ class BskyConversation extends HTMLElement {
 if (typeof customElements !== 'undefined' && !customElements.get('bsky-conversation')) {
   customElements.define('bsky-conversation', BskyConversation)
 }
+
+})();

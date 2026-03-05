@@ -9,7 +9,7 @@ export function BlueskyConversation({ uri }: { uri: string }) {
     if (!containerRef.current) return
 
     // Dynamically load the web component script once
-    if (!customElements.get('bsky-conversation')) {
+    if (!document.querySelector('script[src="/bsky-conversation.js"]')) {
       const script = document.createElement('script')
       script.src = '/bsky-conversation.js'
       document.head.appendChild(script)
