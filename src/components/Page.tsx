@@ -9,14 +9,14 @@ import { SubpageLinks } from './SubpageLinks'
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { atUri?: string }
+  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string }
   sections?: PageSectionProp[]
 }
 
 export function Page(page: PageProps) {
   return (
     <SectionProvider sections={page.sections ?? []}>
-      {page.header?.atUri && <AtprotoDocumentLink uri={page.header.atUri} />}
+      {page.header?.standardSiteUri && <AtprotoDocumentLink uri={page.header.standardSiteUri} />}
       {page.header && <PageHeader {...page.header} />}
       <SubpageLinks />
       <div className="flex items-start">
