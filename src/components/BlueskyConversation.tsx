@@ -18,7 +18,6 @@ export function BlueskyConversation({ uri, headerTemplate, footerTemplate }: { u
     document.head.appendChild(script)
   }, [])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const BskyConversation = 'bsky-conversation' as any
 
   return (
