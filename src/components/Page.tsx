@@ -15,14 +15,19 @@ interface PageProps {
 }
 
 export function Page(page: PageProps) {
+  const sections = page.sections ?? []
+  const navSections = page.header?.blueskyPostUrl
+    ? [...sections, { id: 'discuss', title: 'Discuss' }]
+    : sections
+
   return (
-    <SectionProvider sections={page.sections ?? []}>
+    <SectionProvider sections={navSections}>
       {page.header?.standardSiteUri && <AtprotoDocumentLink uri={page.header.standardSiteUri} />}
       {page.header && <PageHeader {...page.header} />}
       <SubpageLinks />
       <div className="flex items-start">
         <page.default />
-        {page.sections && <PageSectionsNavigation sections={page.sections} />}
+        {navSections.length > 0 && <PageSectionsNavigation sections={navSections} />}
       </div>
       {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} />}
     </SectionProvider>
