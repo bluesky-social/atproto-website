@@ -157,6 +157,13 @@ The web component at `public/bsky-conversation.js` has zero dependencies and can
 - Reposts appear only in the header summary, not as timeline items.
 - API failures (e.g., `getRepostedBy` returning 500) degrade gracefully — the rest of the conversation still renders.
 
+#### TODO
+- handle newlines in replies
+- handle images in replies (or don't!)
+- lots of styling
+- how should quote posts appear differently from replies?
+- extract into standalone project(?)
+
 ---
 
 ### Are you a developer interested in building on atproto?

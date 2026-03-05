@@ -116,29 +116,29 @@ function renderQuote(post) {
 /**
  * Render the header summary.
  */
-function renderHeader(replyCount, quotes, repostedBy, { engageText, postUrl: url }) {
+function renderHeader(stats, repostedBy, { engageText, postUrl: url }) {
   const items = []
 
-  if (replyCount > 0) {
+  if (stats.replyCount > 0) {
     items.push(
-      `<li class="replies">${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}</li>`
+      `<li class="replies">${stats.replyCount} ${stats.replyCount === 1 ? 'reply' : 'replies'}</li>`
     )
   }
 
-  if (quotes.length > 0) {
+  if (stats.quoteCount > 0) {
     items.push(
-      `<li class="quotes">${quotes.length} ${quotes.length === 1 ? 'quote' : 'quotes'}</li>`
+      `<li class="quotes"><a href="${url}/quotes">${stats.quoteCount} ${stats.quoteCount === 1 ? 'quote' : 'quotes'}</a></li>`
     )
   }
 
-  if (repostedBy.length > 0) {
+  if (stats.repostCount > 0) {
     const names = repostedBy.slice(0, 3).map((a) => {
       return `<a href="${profileUrl(a.did)}">@${escapeHtml(a.handle)}</a>`
     })
-    const remaining = repostedBy.length - names.length
+    const remaining = stats.repostCount - names.length
     let text = `reposted by ${names.join(', ')}`
     if (remaining > 0) {
-      text += `, and ${remaining} ${remaining === 1 ? 'other' : 'others'}`
+      text += `, and <a href="${url}/reposted-by">${remaining} ${remaining === 1 ? 'other' : 'others'}</a>`
     }
     items.push(`<li class="reposts">${text}</li>`)
   }
@@ -237,7 +237,8 @@ class BskyConversation extends HTMLElement {
     const totalReplies = countReplies(threadView.replies || [], true)
 
     // Nothing to show (unless we have engage text to display)
-    if (totalReplies === 0 && quotes.length === 0 && repostedBy.length === 0 && !engageText) {
+    const rootPost = threadView.post
+    if ((rootPost.replyCount || 0) === 0 && (rootPost.quoteCount || 0) === 0 && (rootPost.repostCount || 0) === 0 && !engageText) {
       this.innerHTML = ''
       return
     }
@@ -276,7 +277,13 @@ class BskyConversation extends HTMLElement {
     // Sort chronologically (oldest first)
     timelineItems.sort((a, b) => a.timestamp - b.timestamp)
 
-    const header = renderHeader(totalReplies, quotes, repostedBy, {
+    const stats = {
+      replyCount: rootPost.replyCount || 0,
+      quoteCount: rootPost.quoteCount || 0,
+      repostCount: rootPost.repostCount || 0,
+    }
+
+    const header = renderHeader(stats, repostedBy, {
       engageText,
       postUrl: originalUrl,
     })
@@ -286,9 +293,131 @@ class BskyConversation extends HTMLElement {
         : ''
 
     this.innerHTML = `
+      <style>
+        .bsky-conversation {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 0.9375rem;
+          line-height: 1.5;
+          color: inherit;
+        }
+
+        .bsky-conversation header ul {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem 1rem;
+          list-style: none;
+          padding: 0;
+          margin: 0 0 1.5rem;
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+
+        .bsky-conversation header .engage a {
+          color: #2563eb;
+          text-decoration: none;
+        }
+        .bsky-conversation header .engage a:hover {
+          text-decoration: underline;
+        }
+
+        .bsky-conversation .timeline {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .bsky-conversation .reply,
+        .bsky-conversation .quote,
+        .bsky-conversation .original {
+          padding: 0.75rem 0;
+          border-top: 1px solid #e5e7eb;
+        }
+
+        .bsky-conversation .quote {
+        }
+
+        .bsky-conversation .author {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          text-decoration: none;
+          color: inherit;
+          margin-bottom: 0.25rem;
+        }
+        .bsky-conversation .author:hover .displayname {
+          text-decoration: underline;
+        }
+
+        .bsky-conversation .avatar {
+          width: 1.5rem;
+          height: 1.5rem;
+          flex-shrink: 0;
+        }
+
+        .bsky-conversation .displayname {
+          font-weight: 600;
+        }
+
+        .bsky-conversation .handle {
+          color: #6b7280;
+          font-weight: 400;
+        }
+
+        .bsky-conversation .reply > p,
+        .bsky-conversation .quote > p,
+        .bsky-conversation .original > p {
+          margin: 0.25rem 0 0;
+        }
+
+        .bsky-conversation footer {
+          display: flex;
+          gap: 0.75rem;
+          margin-top: 0.25rem;
+          font-size: 0.8125rem;
+          color: #9ca3af;
+        }
+        .bsky-conversation footer a {
+          color: #9ca3af;
+          text-decoration: none;
+        }
+        .bsky-conversation footer a:hover {
+          text-decoration: underline;
+        }
+
+        .bsky-conversation .thread {
+          list-style: none;
+          padding: 0 0 0 1.5rem;
+          margin: 0;
+          border-left: 2px solid #e5e7eb;
+        }
+
+        .bsky-conversation .thread .reply {
+          border-top: none;
+          padding: 0.5rem 0;
+        }
+
+        .bsky-conversation .loading {
+          color: #9ca3af;
+        }
+
+        .bsky-conversation .continue {
+          text-align: center;
+          padding: 1rem 0 0.5rem;
+          border-top: 1px solid #e5e7eb;
+          font-size: 0.875rem;
+        }
+        .bsky-conversation .continue a {
+          color: #2563eb;
+          text-decoration: none;
+        }
+        .bsky-conversation .continue a:hover {
+          text-decoration: underline;
+        }
+      </style>
       <div class="bsky-conversation">
         ${header}
         ${timeline}
+        ${timeline ? `<footer class="continue"><a href="${originalUrl}">Continue the conversation on Bluesky</a></footer>` : ''}
       </div>`
   }
 }
