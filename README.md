@@ -147,7 +147,80 @@ The web component at `public/bsky-conversation.js` has zero dependencies and can
 |-----------|---------|-------------|
 | `uri` | (required) | The bsky.app post URL. Use DID-based URLs for reliability. |
 | `show-original-post` | `false` | Set to `"true"` to include the root post in the timeline. |
-| `engage-text` | `"Comment or quote on Bluesky"` | CTA link text. Set to `""` to hide. |
+| `engage-text` | `"Add your thoughts"` | CTA link text in the default header. Set to `""` to hide. |
+| `header-template` | (none) | Custom header template string. Overrides the default `<ul>` header format. |
+| `footer-template` | (none) | Custom footer template string. Default: link to post with "Add your thoughts on Bluesky". |
+
+#### Template syntax
+
+The `header-template` and `footer-template` attributes support a mini template language for interpolating conversation data.
+
+**Simple tokens** — replaced with their value:
+
+| Token | Value |
+|-------|-------|
+| `{replies}` | Raw reply count |
+| `{quotes}` | Raw quote count |
+| `{reposts}` | Raw repost count |
+| `{repostedBy}` | Linked names, e.g. `@alice, @bob, and 3 others` |
+| `{postUrl}` | The bsky.app post URL |
+
+**Pluralization** — `{name|singular|plural}` outputs nothing when the count is 0, `"1 singular"` when 1, `"N plural"` when 2+:
+
+```
+{replies|reply|replies}        → "" or "1 reply" or "17 replies"
+{quotes|quote|quotes}          → "" or "1 quote" or "5 quotes"
+```
+
+**Conditional blocks** — `{name?content}` renders content only if the value is truthy (non-zero, non-empty). Use this to wrap text around tokens that might be absent:
+
+```
+{repostedBy?Reposted by {repostedBy}.}    → "" or "Reposted by @alice, @bob."
+{replies?{replies|reply|replies} so far}   → "" or "17 replies so far"
+```
+
+**Full example:**
+
+```html
+<bsky-conversation
+  uri="https://bsky.app/profile/did:plc:.../post/..."
+  header-template="This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}. <a href='{postUrl}'>Add your thoughts on Bluesky.</a>"
+/>
+```
+
+When no template is provided, the component falls back to its default `<ul>`-based header with individual stats items.
+
+#### Site-wide defaults
+
+Header and footer templates for this site are configured as constants in `src/components/Page.tsx`. Per-page overrides are possible via the MDX header:
+
+```js
+export const header = {
+  // ...
+  blueskyHeaderTemplate: "...",
+  blueskyFooterTemplate: "...",
+}
+```
+
+#### CSS custom properties
+
+The component defines design tokens with sensible defaults, overridable from the host page. More to come!
+
+| Property | Light default | Dark default | Controls |
+|----------|--------------|-------------|----------|
+| `--bsky-border-color` | `#e5e7eb` | `#374151` | Separators, thread lines |
+| `--bsky-muted-color` | `#6b7280` | `#9ca3af` | Handles, timestamps, secondary text |
+| `--bsky-accent-color` | `#2563eb` | `#60a5fa` | Action links (engage, continue) |
+
+Override example:
+```css
+bsky-conversation {
+  --bsky-accent-color: #0066cc;
+  --bsky-muted-color: #888;
+}
+```
+
+The component inherits all typography (font-family, font-size, line-height, color) from its parent. All internal sizing uses `em` units so it scales with the inherited font size.
 
 #### Behavior notes
 
@@ -161,6 +234,7 @@ The web component at `public/bsky-conversation.js` has zero dependencies and can
 - handle newlines in replies
 - handle images in replies (or don't!)
 - lots of styling
+- more templating
 - how should quote posts appear differently from replies?
 - extract into standalone project(?)
 

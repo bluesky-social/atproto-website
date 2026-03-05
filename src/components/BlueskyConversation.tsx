@@ -1,8 +1,16 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { useSectionStore } from '@/components/SectionProvider'
 
-export function BlueskyConversation({ uri }: { uri: string }) {
+export function BlueskyConversation({ uri, headerTemplate, footerTemplate }: { uri: string; headerTemplate?: string; footerTemplate?: string }) {
+  const ref = useRef<HTMLHeadingElement>(null)
+  const registerHeading = useSectionStore((s) => s.registerHeading)
+
+  useEffect(() => {
+    registerHeading({ id: 'discuss', ref, offsetRem: 6 })
+  })
+
   useEffect(() => {
     if (document.querySelector('script[src="/bsky-conversation.js"]')) return
     const script = document.createElement('script')
@@ -14,8 +22,9 @@ export function BlueskyConversation({ uri }: { uri: string }) {
   const BskyConversation = 'bsky-conversation' as any
 
   return (
-    <div className="not-prose mx-auto w-full max-w-2xl px-4 py-12">
-      <BskyConversation uri={uri} />
+    <div id="discuss" className="mt-12 max-w-2xl lg:max-w-3xl px-4 md:px-16 basis-full">
+      <h2 ref={ref} className="scroll-mt-24 text-2xl font-semibold text-zinc-900 dark:text-white">Discussion</h2>
+      <BskyConversation uri={uri} header-template={headerTemplate} footer-template={footerTemplate} />
     </div>
   )
 }

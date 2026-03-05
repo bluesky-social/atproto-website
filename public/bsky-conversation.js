@@ -114,9 +114,88 @@ function renderQuote(post) {
 }
 
 /**
- * Render the header summary.
+ * Interpolate a header template string.
+ *
+ * Tokens:
+ *   {replies}              → raw reply count
+ *   {quotes}               → raw quote count
+ *   {reposts}              → raw repost count
+ *   {repostedBy}           → linked names: "@a, @b, and 3 others"
+ *   {postUrl}              → bsky.app post URL
+ *   {replies|one|many}     → hidden when 0, "1 one" when 1, "N many" when 2+
+ *   {quotes|one|many}      → same
+ *   {reposts|one|many}     → same
+ *   {name?...content...}   → conditional block, renders content only if name is truthy
  */
-function renderHeader(stats, repostedBy, { engageText, postUrl: url }) {
+function renderTemplate(template, stats, repostedBy, url) {
+  const vars = {
+    replies: stats.replyCount,
+    quotes: stats.quoteCount,
+    reposts: stats.repostCount,
+    postUrl: url,
+    repostedBy: formatRepostedBy(repostedBy, stats.repostCount, url),
+  }
+
+  let result = template
+
+  // Replace {name|singular|plural} first — output nothing when count is 0
+  result = result.replace(
+    /\{(replies|quotes|reposts)\|([^|}]+)\|([^}]+)\}/g,
+    (_, key, singular, plural) => {
+      const n = vars[key]
+      if (n === 0) return ''
+      return `${n} ${n === 1 ? singular : plural}`
+    }
+  )
+
+  // Replace {name} simple tokens
+  result = result.replace(/\{(\w+)\}/g, (_, key) =>
+    vars[key] !== undefined ? vars[key] : ''
+  )
+
+  // Replace {name?...content...} conditional blocks — now inner tokens are resolved
+  let prev
+  do {
+    prev = result
+    result = result.replace(
+      /\{(\w+)\?([^{}]*)\}/g,
+      (_, key, content) => (vars[key] ? content : '')
+    )
+  } while (result !== prev)
+
+  // Collapse multiple spaces / leading-trailing whitespace from removed tokens
+  result = result.replace(/\s{2,}/g, ' ').trim()
+
+  return result
+}
+
+/**
+ * Format repostedBy names as linked HTML.
+ */
+function formatRepostedBy(repostedBy, repostCount, url) {
+  if (repostCount === 0) return ''
+  const names = repostedBy.slice(0, 3).map((a) => {
+    return `<a href="${profileUrl(a.did)}">@${escapeHtml(a.handle)}</a>`
+  })
+  const remaining = repostCount - names.length
+  let text = names.join(', ')
+  if (remaining > 0) {
+    text += `, and <a href="${url}/reposted-by">${remaining} ${remaining === 1 ? 'other' : 'others'}</a>`
+  }
+  return text
+}
+
+/**
+ * Render the header summary.
+ * Uses header-template if provided, otherwise falls back to default format.
+ */
+function renderHeader(stats, repostedBy, { engageText, postUrl: url, headerTemplate }) {
+  if (headerTemplate) {
+    const html = renderTemplate(headerTemplate, stats, repostedBy, url)
+    if (!html) return ''
+    return `<header><p>${html}</p></header>`
+  }
+
   const items = []
 
   if (stats.replyCount > 0) {
@@ -206,9 +285,11 @@ class BskyConversation extends HTMLElement {
 
     // Read configurable attributes
     const showOriginalPost = this.getAttribute('show-original-post') === 'true'
+    const headerTemplate = this.getAttribute('header-template')
+    const footerTemplate = this.getAttribute('footer-template')
     const engageAttr = this.getAttribute('engage-text')
     // Default to showing engage link; only hide if explicitly set to empty string
-    const engageText = engageAttr === '' ? null : (engageAttr || 'Comment or quote on Bluesky')
+    const engageText = engageAttr === '' ? null : (engageAttr || 'Add your thoughts')
 
     // Direct replies (top-level threads)
     // Filter out the original author's direct replies to their own post —
@@ -286,6 +367,7 @@ class BskyConversation extends HTMLElement {
     const header = renderHeader(stats, repostedBy, {
       engageText,
       postUrl: originalUrl,
+      headerTemplate,
     })
     const timeline =
       timelineItems.length > 0
@@ -295,25 +377,28 @@ class BskyConversation extends HTMLElement {
     this.innerHTML = `
       <style>
         .bsky-conversation {
-          font-family: system-ui, -apple-system, sans-serif;
-          font-size: 0.9375rem;
-          line-height: 1.5;
-          color: inherit;
+          --bsky-border-color: #e5e7eb;
+          --bsky-muted-color: #6b7280;
+          --bsky-accent-color: #2563eb;
+        }
+        .dark .bsky-conversation {
+          --bsky-border-color: #374151;
+          --bsky-muted-color: #9ca3af;
+          --bsky-accent-color: #60a5fa;
         }
 
         .bsky-conversation header ul {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem 1rem;
+          gap: 0.5em 1em;
           list-style: none;
           padding: 0;
-          margin: 0 0 1.5rem;
-          font-size: 0.875rem;
-          color: #6b7280;
+          margin: 0 0 1.5em;
+          font-size: smaller;
         }
 
         .bsky-conversation header .engage a {
-          color: #2563eb;
+          color: var(--bsky-accent-color);
           text-decoration: none;
         }
         .bsky-conversation header .engage a:hover {
@@ -329,28 +414,26 @@ class BskyConversation extends HTMLElement {
         .bsky-conversation .reply,
         .bsky-conversation .quote,
         .bsky-conversation .original {
-          padding: 0.75rem 0;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .bsky-conversation .quote {
+          padding: 0.75em 0;
+          border-top: 1px solid var(--bsky-border-color);
         }
 
         .bsky-conversation .author {
           display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.5em;
           text-decoration: none;
           color: inherit;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.25em;
         }
         .bsky-conversation .author:hover .displayname {
           text-decoration: underline;
         }
 
         .bsky-conversation .avatar {
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 1.5em;
+          height: 1.5em;
+          border-radius: 50%;
           flex-shrink: 0;
         }
 
@@ -359,25 +442,24 @@ class BskyConversation extends HTMLElement {
         }
 
         .bsky-conversation .handle {
-          color: #6b7280;
-          font-weight: 400;
+          color: var(--bsky-muted-color);
         }
 
         .bsky-conversation .reply > p,
         .bsky-conversation .quote > p,
         .bsky-conversation .original > p {
-          margin: 0.25rem 0 0;
+          margin: 0.25em 0 0;
         }
 
         .bsky-conversation footer {
           display: flex;
-          gap: 0.75rem;
-          margin-top: 0.25rem;
-          font-size: 0.8125rem;
-          color: #9ca3af;
+          gap: 0.75em;
+          margin-top: 0.25em;
+          font-size: smaller;
+          color: var(--bsky-muted-color);
         }
         .bsky-conversation footer a {
-          color: #9ca3af;
+          color: var(--bsky-muted-color);
           text-decoration: none;
         }
         .bsky-conversation footer a:hover {
@@ -386,28 +468,24 @@ class BskyConversation extends HTMLElement {
 
         .bsky-conversation .thread {
           list-style: none;
-          padding: 0 0 0 1.5rem;
+          padding: 0 0 0 1.5em;
           margin: 0;
-          border-left: 2px solid #e5e7eb;
+          border-left: 2px solid var(--bsky-border-color);
         }
 
         .bsky-conversation .thread .reply {
           border-top: none;
-          padding: 0.5rem 0;
-        }
-
-        .bsky-conversation .loading {
-          color: #9ca3af;
+          padding: 0.5em 0;
         }
 
         .bsky-conversation .continue {
           text-align: center;
-          padding: 1rem 0 0.5rem;
-          border-top: 1px solid #e5e7eb;
-          font-size: 0.875rem;
+          padding: 1em 0 0.5em;
+          border-top: 1px solid var(--bsky-border-color);
+          font-size: smaller;
         }
         .bsky-conversation .continue a {
-          color: #2563eb;
+          color: var(--bsky-accent-color);
           text-decoration: none;
         }
         .bsky-conversation .continue a:hover {
@@ -417,7 +495,7 @@ class BskyConversation extends HTMLElement {
       <div class="bsky-conversation">
         ${header}
         ${timeline}
-        ${timeline ? `<footer class="continue"><a href="${originalUrl}">Continue the conversation on Bluesky</a></footer>` : ''}
+        ${timeline ? `<footer class="continue">${renderTemplate(footerTemplate || "<a href='{postUrl}'>Add your thoughts on Bluesky</a>", stats, repostedBy, originalUrl)}</footer>` : ''}
       </div>`
   }
 }
