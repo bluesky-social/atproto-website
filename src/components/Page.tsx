@@ -6,6 +6,7 @@ import {
 import { SectionProvider } from './SectionProvider'
 import { AtprotoDocumentLink } from './AtprotoDocumentLink'
 import { SubpageLinks } from './SubpageLinks'
+import { BlueskyConversation } from './BlueskyConversation'
 
 interface PageProps {
   default: React.FunctionComponent
@@ -23,6 +24,7 @@ export function Page(page: PageProps) {
         <page.default />
         {page.sections && <PageSectionsNavigation sections={page.sections} />}
       </div>
+      {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} />}
     </SectionProvider>
   )
 }
