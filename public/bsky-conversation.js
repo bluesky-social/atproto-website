@@ -184,18 +184,11 @@ class BskyConversation extends HTMLElement {
           .then((r) => r.ok ? r.json() : {})
           .catch(() => ({}))
 
-      // Fetch the thread first to get the canonical DID-based URI,
-      // which is required for getQuotes and getRepostedBy to work correctly.
-      const thread = await fetchJson(
-        `${API}/app.bsky.feed.getPostThread?uri=${encodeURIComponent(atUri)}&depth=6&_t=${Date.now()}`
-      )
-
-      const canonicalUri = thread?.thread?.post?.uri || atUri
-      const encodedCanonical = encodeURIComponent(canonicalUri)
-
-      const [quotesRes, repostsRes] = await Promise.all([
-        fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${encodedCanonical}&limit=25&_t=${Date.now()}`),
-        fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${encodedCanonical}&limit=25&_t=${Date.now()}`),
+      const encodedUri = encodeURIComponent(atUri)
+      const [thread, quotesRes, repostsRes] = await Promise.all([
+        fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=6&_t=${Date.now()}`),
+        fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
+        fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
       ])
       this.render(url, thread, quotesRes, repostsRes)
     } catch (err) {

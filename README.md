@@ -116,6 +116,49 @@ For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
 
 ---
 
+### Bluesky Discussion Component
+
+Blog posts can display a conversation section powered by Bluesky. The `<bsky-conversation>` web component fetches replies, quote posts, and reposts for a given Bluesky post and renders them as a threaded timeline.
+
+#### How it works
+
+1. Post the blog link from the account on Bluesky
+2. Add the post URL (using the DID, not the handle) to the blog post's MDX header:
+   ```js
+   export const header = {
+     // ...
+     blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mf2y35apvc2i'
+   }
+   ```
+3. The conversation section renders automatically below the post content
+
+#### Standalone usage
+
+The web component at `public/bsky-conversation.js` has zero dependencies and can be used on any site:
+
+```html
+<script src="/bsky-conversation.js"></script>
+<bsky-conversation uri="https://bsky.app/profile/did:plc:.../post/..."></bsky-conversation>
+```
+
+#### Attributes
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `uri` | (required) | The bsky.app post URL. Use DID-based URLs for reliability. |
+| `show-original-post` | `false` | Set to `"true"` to include the root post in the timeline. |
+| `engage-text` | `"Comment or quote on Bluesky"` | CTA link text. Set to `""` to hide. |
+
+#### Behavior notes
+
+- The root post author's direct replies are filtered out (they're extensions of the original post, not conversation). The author's replies to *other people's* comments are shown.
+- Reply threads stay grouped — nested replies are not flattened into the timeline.
+- Quote posts are interleaved chronologically with top-level reply threads.
+- Reposts appear only in the header summary, not as timeline items.
+- API failures (e.g., `getRepostedBy` returning 500) degrade gracefully — the rest of the conversation still renders.
+
+---
+
 ### Are you a developer interested in building on atproto?
 
 Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
