@@ -21,15 +21,11 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     ```tsx
     import { PasswordSession } from '@atproto/lex-password-session'
 
-    const result = await PasswordSession.login({
+    const session = await PasswordSession.login({
       service: 'https://bsky.social', // or your PDS host
       identifier: 'your-handle.bsky.social',
       password: 'your-app-password',
     })
-
-    if (result.success) {
-        const session = result.value
-    }
     ```
 
     Applications with an end user login flow should use [OAuth](/guides/oauth-cli-tutorial) authentication rather than app password sessions. Password auth is acceptable for bots and command line tools.
@@ -37,26 +33,26 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     Both methods will produce the same authenticated `session`.
     </TabPanel>
     <TabPanel value="go">
-    Start by importing the `atproto` and `xrpc` libraries, creating an `&xrpc.Client{}`, and providing credentials to call `ServerCreateSession()`:
+    Start by importing the `atclient` library and calling `LoginWithPasswordHost()`:
 
     ```go
     import (
       "context"
-      comatproto "github.com/bluesky-social/indigo/api/atproto"
-      "github.com/bluesky-social/indigo/xrpc"
+      "github.com/bluesky-social/indigo/atproto/atclient"
     )
 
     func main() {
       ctx := context.Background()
 
-      client := &xrpc.Client{
-        Host: "https://bsky.social", // or your PDS host
-      }
+      client, _ := atclient.LoginWithPasswordHost(ctx,
+        "https://bsky.social",       // or your PDS host
+        "your-handle.bsky.social",   // identifier
+        "your-app-password",         // password
+        "",                          // authToken (optional 2FA token)
+        nil,                         // refresh callback (optional)
+      )
 
-      session, _ := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
-        Identifier: "your-handle.bsky.social",
-        Password:   "your-app-password",
-      })
+      fmt.Printf("Logged in as: %s\n", client.AccountDID)
     }
     ```
 
@@ -85,18 +81,13 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     ```
     </TabPanel>
     <TabPanel value="go">
-    Once you have an authed `client`, you can store auth info and make API calls:
+    The `client` returned by `LoginWithPasswordHost()` is already authenticated and ready to make API calls:
 
     ```go
-    // Store auth info on the client for subsequent requests
-    client.Auth = &xrpc.AuthInfo{
-      AccessJwt:  session.AccessJwt,
-      RefreshJwt: session.RefreshJwt,
-      Handle:     session.Handle,
-      Did:        session.Did,
-    }
+    // The client handles auth automatically, including token refresh
+    fmt.Printf("Logged in as: %s\n", client.AccountDID)
 
-    fmt.Printf("Logged in as: %s (%s)\n", session.Handle, session.Did)
+    // Now you can make authenticated API calls with the client
     ```
     </TabPanel>
   </TabPanels>

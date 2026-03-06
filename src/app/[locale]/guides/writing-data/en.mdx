@@ -50,8 +50,8 @@ post := &appbsky.FeedPost{
 }
 
 resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
-    Repo:       client.Auth.Did,         // handle or DID
-    Collection: "app.bsky.feed.post",    // lexicon
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
     Record:     &lexutil.LexiconTypeDecoder{Val: post},
 })
 ```
@@ -126,7 +126,7 @@ newProfile := &appbsky.ActorProfile{
 }
 
 resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
-  Repo:       client.Auth.Did,                // handle or DID
+  Repo:       client.AccountDID.String(),     // handle or DID
   Collection: "app.bsky.actor.profile",       // lexicon
   Rkey:       "self",                         // rkey
   Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
@@ -168,9 +168,9 @@ await client.delete(app.bsky.feed.post, {
     To delete a record, like an individual post, use `RepoDeleteRecord():`
 ```go
 comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
-    Repo:       client.Auth.Did,      // handle or DID
-    Collection: "app.bsky.feed.post", // lexicon
-    Rkey:       "3mbl5xdw4yk2r",      // rkey
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
+    Rkey:       "3mbl5xdw4yk2r",             // rkey
 })
 ```
     </TabPanel>
