@@ -24,7 +24,7 @@ export function PageSectionsNavigation({
   }
 
   return (
-    <div className="sticky top-4 hidden pt-16 md:block">
+    <div className="sticky top-4 hidden pt-16 min-[1380px]:block max-w-[12rem]">
       {sections.map((section) => (
         <div
           key={section.id}

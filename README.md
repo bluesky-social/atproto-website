@@ -33,8 +33,17 @@ This will prompt you for:
 - **Slug** - URL-friendly identifier (auto-suggested from title)
 - **Description** - Short summary for the blog index
 - **Author** - Defaults to "AT Protocol Team"
+- **Bluesky DID** - If the author isn't in the registry, you'll be prompted for their DID (optional)
 
 The script creates the necessary files and updates the blog index automatically.
+
+#### Author bylines
+
+Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.
+
+Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the single source of truth. The `PageHeader` component looks up the DID at render time based on the `author` name from the post's MDX header — no need to store DIDs in individual posts.
+
+When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
 
 ### Removing a blog post
 
@@ -104,6 +113,130 @@ The site implements [site.standard verification](https://standard.site/):
 - **Documents:** Each published post includes a `<link rel="site.standard.document">` tag
 
 For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
+
+---
+
+### Bluesky Discussion Component
+
+Blog posts can display a conversation section powered by Bluesky. The `<bsky-conversation>` web component fetches replies, quote posts, and reposts for a given Bluesky post and renders them as a threaded timeline.
+
+#### How it works
+
+1. Post the blog link from the account on Bluesky
+2. Add the post URL (using the DID, not the handle) to the blog post's MDX header:
+   ```js
+   export const header = {
+     // ...
+     blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mf2y35apvc2i'
+   }
+   ```
+3. The conversation section renders automatically below the post content
+
+#### Standalone usage
+
+The web component at `public/bsky-conversation.js` has zero dependencies and can be used on any site:
+
+```html
+<script src="/bsky-conversation.js"></script>
+<bsky-conversation uri="https://bsky.app/profile/did:plc:.../post/..."></bsky-conversation>
+```
+
+#### Attributes
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `uri` | (required) | The bsky.app post URL. Use DID-based URLs for reliability. |
+| `show-original-post` | `false` | Set to `"true"` to include the root post in the timeline. |
+| `engage-text` | `"Add your thoughts"` | CTA link text in the default header. Set to `""` to hide. |
+| `header-template` | (none) | Custom header template string. Overrides the default `<ul>` header format. |
+| `footer-template` | (none) | Custom footer template string. Default: link to post with "Add your thoughts on Bluesky". |
+
+#### Template syntax
+
+The `header-template` and `footer-template` attributes support a mini template language for interpolating conversation data.
+
+**Simple tokens** — replaced with their value:
+
+| Token | Value |
+|-------|-------|
+| `{replies}` | Raw reply count |
+| `{quotes}` | Raw quote count |
+| `{reposts}` | Raw repost count |
+| `{repostedBy}` | Linked names, e.g. `@alice, @bob, and 3 others` |
+| `{postUrl}` | The bsky.app post URL |
+
+**Pluralization** — `{name|singular|plural}` outputs nothing when the count is 0, `"1 singular"` when 1, `"N plural"` when 2+:
+
+```
+{replies|reply|replies}        → "" or "1 reply" or "17 replies"
+{quotes|quote|quotes}          → "" or "1 quote" or "5 quotes"
+```
+
+**Conditional blocks** — `{name?content}` renders content only if the value is truthy (non-zero, non-empty). Use this to wrap text around tokens that might be absent:
+
+```
+{repostedBy?Reposted by {repostedBy}.}    → "" or "Reposted by @alice, @bob."
+{replies?{replies|reply|replies} so far}   → "" or "17 replies so far"
+```
+
+**Full example:**
+
+```html
+<bsky-conversation
+  uri="https://bsky.app/profile/did:plc:.../post/..."
+  header-template="This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}. <a href='{postUrl}'>Add your thoughts on Bluesky.</a>"
+/>
+```
+
+When no template is provided, the component falls back to its default `<ul>`-based header with individual stats items.
+
+#### Site-wide defaults
+
+Header and footer templates for this site are configured as constants in `src/components/Page.tsx`. Per-page overrides are possible via the MDX header:
+
+```js
+export const header = {
+  // ...
+  blueskyHeaderTemplate: "...",
+  blueskyFooterTemplate: "...",
+}
+```
+
+#### CSS custom properties
+
+The component defines design tokens with sensible defaults, overridable from the host page. More to come!
+
+| Property | Light default | Dark default | Controls |
+|----------|--------------|-------------|----------|
+| `--bsky-border-color` | `#e5e7eb` | `#374151` | Separators, thread lines |
+| `--bsky-muted-color` | `#6b7280` | `#9ca3af` | Handles, timestamps, secondary text |
+| `--bsky-accent-color` | `#2563eb` | `#60a5fa` | Action links (engage, continue) |
+
+Override example:
+```css
+bsky-conversation {
+  --bsky-accent-color: #0066cc;
+  --bsky-muted-color: #888;
+}
+```
+
+The component inherits all typography (font-family, font-size, line-height, color) from its parent. All internal sizing uses `em` units so it scales with the inherited font size.
+
+#### Behavior notes
+
+- The root post author's direct replies are filtered out (they're extensions of the original post, not conversation). The author's replies to *other people's* comments are shown.
+- Reply threads stay grouped — nested replies are not flattened into the timeline.
+- Quote posts are interleaved chronologically with top-level reply threads.
+- Reposts appear only in the header summary, not as timeline items.
+- API failures (e.g., `getRepostedBy` returning 500) degrade gracefully — the rest of the conversation still renders.
+
+#### TODO
+- handle newlines in replies
+- handle images in replies (or don't!)
+- lots of styling
+- more templating
+- how should quote posts appear differently from replies?
+- extract into standalone project(?)
 
 ---
 

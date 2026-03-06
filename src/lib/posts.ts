@@ -13,6 +13,7 @@ export const posts: BlogPost[] = [
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
     date: 'March 3, 2026',
     author: 'Jim Ray',
+
   },
   {
     slug: 'plc-replicas',
@@ -20,6 +21,7 @@ export const posts: BlogPost[] = [
     description: 'Introducing a self-hostable did:plc read-replica service.',
     date: 'February 18, 2026',
     author: 'David Buchanan',
+
   },
   {
     slug: 'new-site-2026',
@@ -27,6 +29,7 @@ export const posts: BlogPost[] = [
     description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 17, 2026',
     author: 'Alex Garnett',
+
   },
   {
     slug: 'relay-rollout',
@@ -42,6 +45,7 @@ export const posts: BlogPost[] = [
       'We recently released Tap, a tool designed to handle the hard parts of repo synchronization, so you can focus on building your application.',
     date: 'December 12, 2025',
     author: 'Jim Ray',
+
   },
   {
     slug: 'protocol-check-in-fall-2025',
