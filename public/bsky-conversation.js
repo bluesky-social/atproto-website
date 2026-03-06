@@ -3,6 +3,79 @@
 
 const API = 'https://public.api.bsky.app/xrpc'
 
+// Humanize filters inlined from human-eyes (https://tangled.org/jimray.net/human-eyes)
+
+/**
+ * Django-style pluralize: returns the appropriate suffix based on count.
+ *   pluralize(1, "y,ies") → "y"
+ *   pluralize(2, "y,ies") → "ies"
+ *   pluralize(1)          → ""
+ *   pluralize(2)          → "s"
+ */
+function pluralize(value, arg = 's') {
+  let singularSuffix, pluralSuffix
+  if (arg.includes(',')) {
+    ;[singularSuffix, pluralSuffix] = arg.split(',', 2)
+  } else {
+    singularSuffix = ''
+    pluralSuffix = arg
+  }
+  const n = typeof value !== 'string' && typeof value !== 'number' && typeof value?.length === 'number'
+    ? value.length
+    : Number(value)
+  return n === 1 ? singularSuffix : pluralSuffix
+}
+
+/**
+ * Converts a large integer to friendly text. Numbers under 1 million
+ * are returned with comma formatting.
+ *   intword(1200000)  → "1.2 million"
+ *   intword(500)      → "500"
+ */
+const MAGNITUDES = [
+  { threshold: 1e18, label: 'quintillion' },
+  { threshold: 1e15, label: 'quadrillion' },
+  { threshold: 1e12, label: 'trillion' },
+  { threshold: 1e9,  label: 'billion' },
+  { threshold: 1e6,  label: 'million' },
+]
+
+function intword(value) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return String(value)
+  const abs = Math.abs(num)
+  for (const { threshold, label } of MAGNITUDES) {
+    if (abs >= threshold) {
+      const formatted = parseFloat((num / threshold).toFixed(1))
+      return `${formatted} ${label}`
+    }
+  }
+  if (Number.isInteger(num)) return num.toLocaleString('en-US')
+  return String(num)
+}
+
+/**
+ * Joins a list into a human-readable string with an Oxford comma.
+ *   oxfordComma(["a", "b", "c"])      → "a, b, and c"
+ *   oxfordComma(["a", "b", "c"], 2)   → "a, b, and 1 other"
+ */
+function oxfordComma(items, limit, suffix) {
+  if (!Array.isArray(items) || items.length === 0) return ''
+  const list = items.map(String)
+  if (list.length === 1) return list[0]
+  if (list.length === 2 && (limit == null || limit >= 2)) {
+    return `${list[0]} and ${list[1]}`
+  }
+  if (limit != null && limit <= 0) return ''
+  if (limit != null && limit < list.length) {
+    const shown = list.slice(0, limit)
+    const remaining = list.length - limit
+    const tail = suffix ?? `and ${remaining} ${remaining === 1 ? 'other' : 'others'}`
+    return `${shown.join(', ')}, ${tail}`
+  }
+  return `${list.slice(0, -1).join(', ')}, and ${list[list.length - 1]}`
+}
+
 /**
  * Convert a bsky.app URL to an AT URI.
  * e.g. https://bsky.app/profile/atproto.com/post/3mg6cliy3lc26
@@ -144,7 +217,7 @@ function renderTemplate(template, stats, repostedBy, url) {
     (_, key, singular, plural) => {
       const n = vars[key]
       if (n === 0) return ''
-      return `${n} ${n === 1 ? singular : plural}`
+      return `${intword(n)} ${pluralize(n, `${singular},${plural}`)}`
     }
   )
 
@@ -178,11 +251,11 @@ function formatRepostedBy(repostedBy, repostCount, url) {
     return `<a href="${profileUrl(a.did)}">@${escapeHtml(a.handle)}</a>`
   })
   const remaining = repostCount - names.length
-  let text = names.join(', ')
   if (remaining > 0) {
-    text += `, and <a href="${url}/reposted-by">${remaining} ${remaining === 1 ? 'other' : 'others'}</a>`
+    const suffix = `and <a href="${url}/reposted-by">${intword(remaining)} other${pluralize(remaining)}</a>`
+    return oxfordComma(names, names.length, suffix)
   }
-  return text
+  return oxfordComma(names)
 }
 
 /**
@@ -200,26 +273,18 @@ function renderHeader(stats, repostedBy, { engageText, postUrl: url, headerTempl
 
   if (stats.replyCount > 0) {
     items.push(
-      `<li class="replies">${stats.replyCount} ${stats.replyCount === 1 ? 'reply' : 'replies'}</li>`
+      `<li class="replies">${intword(stats.replyCount)} ${pluralize(stats.replyCount, 'reply,replies')}</li>`
     )
   }
 
   if (stats.quoteCount > 0) {
     items.push(
-      `<li class="quotes"><a href="${url}/quotes">${stats.quoteCount} ${stats.quoteCount === 1 ? 'quote' : 'quotes'}</a></li>`
+      `<li class="quotes"><a href="${url}/quotes">${intword(stats.quoteCount)} ${pluralize(stats.quoteCount, 'quote,quotes')}</a></li>`
     )
   }
 
   if (stats.repostCount > 0) {
-    const names = repostedBy.slice(0, 3).map((a) => {
-      return `<a href="${profileUrl(a.did)}">@${escapeHtml(a.handle)}</a>`
-    })
-    const remaining = stats.repostCount - names.length
-    let text = `reposted by ${names.join(', ')}`
-    if (remaining > 0) {
-      text += `, and <a href="${url}/reposted-by">${remaining} ${remaining === 1 ? 'other' : 'others'}</a>`
-    }
-    items.push(`<li class="reposts">${text}</li>`)
+    items.push(`<li class="reposts">reposted by ${formatRepostedBy(repostedBy, stats.repostCount, url)}</li>`)
   }
 
   if (engageText && url) {
