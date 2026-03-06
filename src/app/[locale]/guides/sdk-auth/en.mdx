@@ -51,8 +51,6 @@ If you are using password auth, you should generate an [app password](/specs/xrp
         "",                          // authToken (optional 2FA token)
         nil,                         // refresh callback (optional)
       )
-
-      fmt.Printf("Logged in as: %s\n", client.AccountDID)
     }
     ```
 
@@ -81,14 +79,7 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     ```
     </TabPanel>
     <TabPanel value="go">
-    The `client` returned by `LoginWithPasswordHost()` is already authenticated and ready to make API calls:
-
-    ```go
-    // The client handles auth automatically, including token refresh
-    fmt.Printf("Logged in as: %s\n", client.AccountDID)
-
-    // Now you can make authenticated API calls with the client
-    ```
+    The `client` returned by `LoginWithPasswordHost()` is authenticated and ready to make API calls.
     </TabPanel>
   </TabPanels>
 </TabGroup>
