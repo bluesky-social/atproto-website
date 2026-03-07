@@ -95,6 +95,7 @@ export const a = function ExternalAwareLink({
 
 export { Button } from '@/components/Button'
 export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
+export { RecordFlowAnimation } from '@/components/RecordFlowAnimation'
 
 export function wrapper({ children }: { children: React.ReactNode }) {
   return (
