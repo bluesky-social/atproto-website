@@ -1,0 +1,57 @@
+export const header = {
+  title: 'Blob Lifecycle',
+  description: 'How blobs are uploaded, referenced, and deleted',
+}
+
+## Blob 업로드
+
+Blob은 해당 blob을 참조하는 record가 생성되기 전에 PDS에 먼저 업로드되어야 합니다. 서버는 업로드를 받을 때 의도된 Lexicon을 알 수 없으므로, 초기 업로드 시에는 일반적인 blob 제한과 제약만 적용할 수 있으며, record가 생성될 때 Lexicon에서 정의된 제한을 추가로 적용합니다.
+
+클라이언트는 PDS의 **`com.atproto.repo.uploadBlob`** 엔드포인트를 사용하며, 이는 Lexicon blob 객체 형태로 검증된 메타데이터를 반환합니다. 클라이언트는 업로드 요청에 HTTP **`Content-Type`** 헤더와 **`Content-Length`** 헤더를 설정해야 합니다. SDK는 이를 자동으로 처리할 수 있습니다:
+
+```typescript
+const image = 'data:image/png;base64,...'
+const { data } = await agent.uploadBlob(convertDataURIToUint8Array(image), {
+  encoding,
+})
+```
+
+이 `data` 객체는 다른 record에서 참조될 수 있습니다. 예를 들어 `embed`로 사용할 수 있습니다.
+
+청크 전송 인코딩도 업로드에 허용될 수 있습니다. 서버는 선언된 **`Content-Type`** 헤더와 대조하여 blob의 MIME 타입을 스니핑하여 검증할 수 있으며, 응답에서 수정된 MIME 타입을 반환하거나 업로드를 거부할 수 있습니다. ["보안 고려 사항"](/specs/blob#security-considerations)을 참조하세요. 실제 blob 업로드 크기가 **`Content-Length`** 헤더와 다른 경우 서버는 업로드를 거부해야 합니다.
+
+## 가비지 컬렉션
+
+업로드가 성공하면 blob은 임시 저장소에 배치됩니다. 이 상태에서는 다운로드나 배포가 불가능합니다. 서버는 적절한 시간이 지난 후 참조되지 않은 임시 blob을 "가비지 컬렉션"(삭제)해야 합니다([구현 가이드라인](#web-accessibility) 참조). 임시 저장소에 있는 blob은 **`listBlobs`** 출력에 포함되어서는 안 됩니다.
+
+## Blob 참조
+
+이제 업로드된 blob은 반환된 blob 메타데이터를 record에 포함하여 record에서 참조할 수 있습니다. record 생성 처리 시 서버는 참조된 모든 blob의 집합을 추출하고, 이미 참조되어 있거나 임시 저장소에 있는지 확인합니다. record 생성이 성공하면 서버는 blob을 공개적으로 접근 가능하게 만듭니다.
+
+동일한 blob은 같은 repository의 여러 record에서 참조될 수 있습니다. 이미 저장되고 참조된 blob을 다시 업로드하면 기존 blob이나 record에 변경이 없습니다.
+
+존재하지 않는 blob을 참조하는 새 개별 record의 생성은 생성(또는 업데이트) 시점에 거부되어야 합니다. 그러나 서버가 로컬에서 사용할 수 없는 blob을 참조하는 repository record를 호스팅하는 것은 가능합니다. 예를 들어, 대량 repository 가져오기 또는 계정 마이그레이션, 데이터 손실, 정책에 의한 콘텐츠 삭제/제거의 경우가 이에 해당합니다.
+
+## Blob 삭제
+
+blob을 참조하는 record가 삭제되면, 서버는 동일한 repository의 현재 다른 record가 해당 blob을 참조하는지 확인합니다. 그렇지 않은 경우 blob은 record와 함께 삭제됩니다.
+
+계정이 삭제되면 호스팅된 모든 blob이 적절한 시간 내에 삭제됩니다. 계정이 비활성화되거나 테이크다운되거나 정지된 경우 blob은 공개적으로 접근 불가능해야 합니다.
+
+서버는 계정 테이크다운이나 기타 계정 생명주기 이벤트와 별개로 개별 blob을 접근 불가능하게 만들기로 결정할 수 있습니다.
+
+## 웹 접근성
+
+원본 blob은 PDS의 **`com.atproto.sync.getBlob`** 엔드포인트를 사용하여 가져올 수 있습니다. 서버는 적절한 **`Content-Type`**과 **`Content-Length`** HTTP 헤더를 반환해야 합니다. PDS에서 최종 사용자 브라우저로 미디어를 직접 제공하는 것은 권장되거나 필수적인 패턴이 아니며, 서버는 이 사용 사례를 지원하거나 촉진할 필요가 없습니다. 자세한 내용은 "보안 고려 사항"을 참조하세요.
+
+서버는 Lexicon에서 정의된 제약과 별개로 blob에 대한 자체적인 일반 제한과 정책을 가질 수 있습니다. 계정 전체 데이터 저장 할당량, 최대 blob 크기, 콘텐츠 정책 등을 구현할 수 있습니다. 이러한 제한은 초기 업로드 시 적용될 수 있습니다. 서버 운영자는 제한 및 기타 제약이 기존 및 향후 애플리케이션의 기능에 영향을 미칠 수 있음을 인지해야 합니다. 상호 운용성을 최대화하기 위해 운영자는 전체 계정 리소스 소비 제한(예: "blob당" 크기 제한이 아닌 "총 blob 크기" 할당량)을 선호하는 것이 권장됩니다.
+
+일부 애플리케이션은 blob 업로드와 record에서의 참조 사이에 긴 지연이 있을 수 있습니다. 상호 운용성을 최대화하기 위해 서버 구현과 운영자는 "가비지 컬렉션" 전에 최소 몇 시간의 유예 시간을 허용하도록 권장되며, 최소 1시간은 확실한 하한선입니다.
+
+## 관련 리소스
+
+- [이미지 및 동영상](/guides/images-and-video)
+- [Blob 보안](/guides/blob-security)
+- [동영상 처리](/guides/video-handling)
+- [Blob 명세](/specs/blob)
+- [Streamplace](https://stream.place/docs/)는 atproto에서의 동영상 스트리밍을 위한 구현체와 관련 Lexicon을 제공합니다.

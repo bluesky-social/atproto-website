@@ -1,0 +1,51 @@
+import {Container} from "@/components/Container"
+import oauthdomain from "./oauth-domain.jpg"
+
+export const header = {
+  title: 'Scopes',
+  description: 'OAuth permission scopes and sets',
+}
+
+## OAuth 스코프 구현
+
+OAuth 흐름에는 세션에 부여된 접근 수준을 설명하는 권한 "스코프"가 필요합니다. 현재 세분화된 권한은 `bsky.social` 호스팅 서비스와 [자체 호스팅 PDS 배포판](/guides/self-hosting)에 구현되어 있습니다. 권한 집합(lexicon 해석 포함)에 대한 작업이 진행 중입니다. 개발자는 더 세분화된 권한을 구현하기 시작할 수 있습니다. 예를 들어, 특정 record 타입이나 API 엔드포인트에 대한 권한만 요청하는 앱을 만들 수 있습니다. 대부분의 앱은 상위 레벨의 "권한 집합"이 제공될 때 이를 사용하게 될 것으로 예상되며, 이는 부여되는 권한에 대해 더 이해하기 쉬운 언어를 제공할 것입니다.
+
+서드파티 AT 애플리케이션이 Bluesky로 로그인하기 위해 요청해야 하는 최소한의 OAuth 권한 집합은 다음과 같습니다:
+- `atproto`
+
+Bluesky 프로필 정보를 활용하는 경우 다음도 필요할 수 있습니다:
+- `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
+
+생성하는 record(게시물)에 업로드한 이미지나 동영상을 연결해야 하는 경우 다음도 필요합니다:
+- `blob:*/*`
+
+atproto에서 OAuth 스코프의 사용 방식은 아직 발전 중입니다. 이 최소 집합은 불필요한 권한을 부여하지 않는 앱 개발자를 위한 검증된 시작점으로 설계되었습니다. 세분화된 권한 스코프를 완성하는 동안, "전환 스코프"라고 불리는 임시 거친 권한 스코프 집합도 지원하고 있습니다. 현재 전환 스코프나 앱 비밀번호 사용을 폐기할 계획은 없습니다. 전환 스코프에 대한 개요와 OAuth에 대한 더 자세한 정보는 [인증 스코프](/specs/oauth#authorization-scopes)를 참고하세요. 세분화된 권한 스코프에 대해서는 [권한](/specs/permission)을 참고하세요.
+
+## 클라이언트
+
+OAuth 클라이언트 소프트웨어는 전 세계적으로 고유한 `client_id`로 식별됩니다. 동일한 소프트웨어의 서로 다른 변형은 각각 다른 `client_id` 값을 가질 수 있습니다. 예를 들어, 동일한 소프트웨어의 브라우저 앱과 Android(모바일 OS) 변형은 서로 다른 `client_id` 값을 가질 수 있습니다. `client_id`는 클라이언트 메타데이터 JSON 문서를 가져올 수 있는 완전한 웹 URL이어야 합니다. 예를 들어, `https://app.example.com/oauth-client-metadata.json`과 같습니다. `client_id`에 대한 추가 사항:
+
+- W3C URL 사양을 따르는 올바른 형식의 URL이어야 합니다
+- 스키마는 `https://`여야 하며 포트 번호를 포함해서는 안 됩니다. 개발을 위한 `http://localhost` `client_id` 값에 대한 [특별 예외](/specs/oauth#localhost-client-development)가 있습니다.
+- 경로에 반드시 `oauth-client-metadata.json`이 포함될 필요는 없지만, 유용한 관례입니다.
+
+<Note>
+`oauth-client-metadata.json` 대신 `client-metadata.json`을 사용해왔다면, URL 문자열 대신 도메인이 인증 흐름 페이지에 표시되도록 이를 변경할 수 있습니다.
+</Note>
+
+<Container>
+  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+인증 흐름 페이지에는 부여되는 모든 관련 권한이 표시됩니다. 이는 [세분화된 권한](/specs/permission)을 사용하는 앱과 [전환형](/specs/oauth#authorization-scopes) OAuth 스코프를 사용하는 앱 모두에 해당됩니다.
+
+클라이언트 앱은 인증 흐름 중 실제로 승인된 인증 스코프를 반드시 확인해야 합니다. 특히 계정 이메일 주소(`account:email`) 읽기 권한을 요청할 때, 사용자가 다른 권한은 부여하면서 해당 권한을 거부할 수 있습니다. 이론적으로 전체 요청이 승인되더라도 개별 권한은 거부될 수 있습니다.
+
+## 추가 읽기 자료
+
+- [인증](/guides/auth)
+- [SDK 인증](/guides/sdk-auth)
+- [OAuth 패턴](/guides/oauth-patterns)
+- [권한 요청](/guides/permission-sets)
+- [OAuth 명세](/specs/oauth)
+- [권한 명세](/specs/permission)

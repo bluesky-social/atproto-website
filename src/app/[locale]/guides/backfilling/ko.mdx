@@ -1,0 +1,69 @@
+export const header = {
+  title: 'Backfilling',
+  description: '네트워크 데이터 복제하기',
+}
+
+## Backfilling이란
+
+Backfilling은 네트워크의 모든 데이터를 처음부터 동기화하는 과정입니다. 네트워크 데이터의 완전한 복사본이 필요한 서비스를 운영하는 경우에 이 작업이 필요합니다. 피드 생성기, 레이블러, 봇 등을 운영하는 데는 일반적으로 필요하지 않습니다. 대부분의 경우 firehose에서 실시간 데이터를 처리하는 것으로 충분하기 때문입니다. 하지만 대규모 데이터 분석을 수행하려는 경우 backfilling이 유용할 수 있습니다.
+
+제3자가 전체 네트워크를 backfill할 수 있다는 것 자체가 atproto에서는 혁신적인 개념입니다. 다른 모놀리식 소셜 네트워크들은 일반적으로 현재 시점부터의 대규모 이벤트 스트림(저희 firehose와 유사)만 제공하므로, 별도의 데이터 공급업체 없이는 장기간에 걸친 데이터 분석이 어렵습니다. AT Protocol과 충분한 리소스만 있다면 언제든지 전체 네트워크를 직접 backfill할 수 있습니다. 이는 연구자와 다양한 형태의 데이터 분석에 이점을 줍니다. 충분한 스토리지를 확보할 수 있다면 전체 Atmosphere의 로컬 복사본을 보유할 수 있습니다.
+
+Backfilling을 수행할 때는 일반적으로 데이터의 '최신' 복제본을 유지해야 하며, backfill이 완료되면 스트리밍 firehose 데이터로 전환해야 합니다. 이 과정을 간소화하기 위해 `tap`을 만들었습니다.
+
+## tap 사용하기
+
+`tap`은 firehose 연결, 검증, backfill, 필터링을 처리하여 AT 동기화를 단순화합니다. 애플리케이션은 Tap에 연결하고 관심 있는 repo와 컬렉션에 대해서만 간단한 JSON 이벤트를 수신합니다. 바이너리 형식이나 암호화 서명 검증에 대해 걱정할 필요가 없습니다.
+
+Tap은 커맨드 라인에서 실행할 수 있습니다:
+
+```shell
+# Run tap
+go run ./cmd/tap run --disable-acks=true
+# By default, the service uses SQLite at `./tap.db` and binds to port `:2480`.
+
+# In a separate terminal, connect to receive events:
+websocat ws://localhost:2480/channel
+
+#  Add a repo to track
+curl -X POST http://localhost:2480/repos/add \
+  -H "Content-Type: application/json" \
+  -d '{"dids": ["did:plc:ewvi7nxzyoun6zhxrhs64oiz"]}' # @atproto.com repo
+```
+
+repo가 추가되면, tap은 다음을 제공합니다:
+
+1. 과거 데이터 backfill: Tap이 com.atproto.sync.getRepo를 사용하여 계정의 PDS에서 전체 repo를 가져옵니다
+2. 실시간 이벤트 버퍼링: backfill 중 이 repo에 대한 firehose 이벤트는 메모리에 보관됩니다
+3. 순서 보장: 과거 이벤트(live: false로 표시)가 먼저 전달됩니다
+4. 전환: 과거 이벤트 전달이 완료된 후 버퍼링된 실시간 이벤트가 소진됩니다
+5. 실시간 스트리밍: 새로운 firehose 이벤트가 즉시 전달됩니다(live: true로 표시)
+
+Tap과 함께 사용할 수 있는 [TypeScript 라이브러리](https://www.npmjs.com/package/@atproto/tap)도 제공합니다. 자세한 내용은 [The AT Stack](/guides/the-at-stack#tap)과 [tap 저장소](https://github.com/bluesky-social/indigo/tree/main/cmd/tap)를 참조하세요. Tap으로 많은 수의 레코드를 backfilling하고 확장 가능한 데이터베이스 서비스가 필요한 경우, [ClickHouse](https://clickhouse.com/)를 좋은 경험과 함께 사용해왔습니다.
+
+개별 PDS 또는 Relay에서 backfill할 수 있으며, 동일한 엔드포인트를 구현합니다. 사용 가능한 Relay 목록은 [The AT Stack](/guides/the-at-stack#relays)을 참조하세요.
+
+## Backfilling의 동작 방식
+
+직접 backfilling을 구현하는 경우, 일반적인 과정은 다음과 같습니다:
+
+- 특정 DID에 대해, 해당 DID의 현재 '리비전(revision)'을 확인합니다 (repo에 대한 각 변경사항은 사전순 정렬이 가능한 타임스탬프인 '리비전' 또는 'rev' 문자열로 태그됩니다).
+- 해당 repo의 rev가 없는 경우, `com.atproto.sync.getRepo` 엔드포인트에서 사용자 repo 체크포인트를 다운로드하고 처리합니다.
+- 처리하는 동안, 체크포인트 처리 후 검토할 repo 이벤트를 버퍼링합니다.
+- 체크포인트에는 해당 체크포인트에 이미 포함된 버퍼링된 이벤트를 건너뛰는 데 사용할 수 있는 rev 값이 포함됩니다.
+- 각 버퍼링된 이벤트에 대해, rev가 현재 보유한 rev보다 작으면 안전하게 건너뛸 수 있습니다.
+
+각 repo에 대해 위 과정을 수행하면 네트워크의 완전한 복제본을 얻을 수 있습니다. 모든 repo 목록을 가져오려면 relay나 각 PDS의 `com.atproto.sync.listRepos` 엔드포인트를 사용할 수 있습니다.
+
+- 상당히 많은 양의 데이터(작성 시점 기준 수백 GB)이며, 리소스 측면에서 다소 요구가 많을 수 있습니다.
+- 속도 제한에 걸리지 않도록 주의하세요. 사용자당 `getRepo`를 한 번씩 호출하게 됩니다. 데이터를 요청하는 PDS나 relay의 방화벽에 의해 요청이 차단되지 않도록 클라이언트 측 속도 제한을 구현하는 것을 권장합니다.
+
+## 추가 자료
+
+- [Sync](/guides/sync)
+- [스트리밍 데이터](/guides/streaming-data)
+- [Feeds](/guides/feeds)
+- [Repository 명세](/specs/repository)
+- [Event Stream 명세](/specs/event-stream)
+- [Sync 명세](/specs/sync)
+- [Microcosm](https://www.microcosm.blue/) 커뮤니티 프로젝트는 로컬 미러링 없이 대규모 AT 레코드 작업을 위한 도구를 유지 관리합니다.

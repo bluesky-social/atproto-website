@@ -1,0 +1,171 @@
+export const header = {
+  title: 'Reading Data',
+  description: 'AT Protocol 레코드 읽기',
+}
+
+## 레코드 목록 조회
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    `client.list()`를 사용하여 사용자의 데이터 repository에서 레코드를 읽을 수 있습니다:
+
+    ```tsx
+    const posts = await client.list(app.bsky.feed.post, {
+      limit: 10,
+      repo: 'alex.bsky.team',
+    })
+    ```
+
+    각 Lexicon에는 고유한 파라미터가 있습니다. `app.bsky.feed.post`의 경우, `repo`(사용자의 핸들 또는 [DID](#did-resolution))와 반환할 게시물 수의 `limit`을 지정할 수 있습니다.
+    </TabPanel>
+    <TabPanel value="go">
+    `RepoListRecords()`를 사용하여 사용자의 데이터 repository에서 게시물을 읽을 수 있습니다:
+
+    ```go
+    resp, _ := comatproto.RepoListRecords(ctx, client,
+        "app.bsky.feed.post",  // lexicon
+        "",                    // cursor
+        10,                    // limit
+        "alex.bsky.team",      // handle or DID
+        false,                 // reverse
+    )
+
+    for _, record := range resp.Records {
+        fmt.Printf("Record: %s\n", record.Uri)
+    }
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+이 Lexicon의 전체 내용은 [`app.bsky.feed.post`](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post)를 참조하세요.
+
+## 개별 레코드 조회
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    [`rkey`](/specs/record-key)를 사용하여 개별 레코드를 읽으려면 `client.get()`을 사용하세요:
+
+    ```tsx
+    const post = await client.get(app.bsky.feed.post, {
+      rkey: '3jxf7z2k3q2',
+    })
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    [`rkey`](/specs/record-key)를 사용하여 개별 레코드를 읽으려면 `RepoGetRecord()`를 사용하세요:
+
+    ```go
+    resp, _ := comatproto.RepoGetRecord(ctx, client,
+        "",                    // cid (empty for latest)
+        "app.bsky.feed.post",  // lexicon
+        "alex.bsky.team",      // handle or DID
+        "3mbl5xdw4yk2r",       // rkey
+    )
+
+    fmt.Printf("URI: %s\n", resp.Uri)
+    // resp.Value contains the record data
+    ```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+
+## DID 해석
+
+atproto에서 사용자 데이터는 [DID](/guides/sync#data-repositories)(분산 식별자, [Decentralized Identifiers](https://en.wikipedia.org/wiki/Decentralized_identifier)라고도 함)를 통해 해석됩니다. 대부분의 AT Protocol 애플리케이션은 사용자 계정 등록 시 [`did:plc` DID](/guides/the-at-stack#did-plc)를 사용합니다.
+
+`com.atproto.identity.resolveHandle` 엔드포인트를 사용하여 알려진 사용자명을 DID로 해석할 수 있습니다. 즉, 브라우저에서 `handle=` 인자와 함께 이 주소를 방문하여 DID를 조회할 수 있습니다:
+
+```
+https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=youraccount.bsky.social
+```
+
+```
+{
+did: "did:plc:3vekukmab2djjeengw2o3wln"
+}
+```
+
+TypeScript SDK는 현재 인증된 사용자의 DID를 `client.did`로 제공합니다:
+
+```tsx
+const your_did = client.did
+```
+
+## 비인증 읽기
+
+일부 API 엔드포인트는 인증 없이 접근할 수 있습니다. 공개 API URL을 새 `Client`에 전달하여 비인증 클라이언트를 만들 수 있습니다:
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    ```tsx
+    import { Client } from '@atproto/lex'
+    import * as app from './lexicons/app.js'
+
+    const client = new Client('https://public.api.bsky.app')
+    ```
+
+    인증된 클라이언트와 마찬가지로, 사용자 프로필과 같은 모든 공개 레코드를 `.get()`으로 조회할 수 있습니다:
+
+    ```tsx
+    const profile = await client.call(app.bsky.actor.getProfile, {
+      actor: 'alex.bsky.team',
+    })
+    ```
+
+    동일한 SDK 클라이언트 패턴을 사용하여 모든 Lexicon에 API 호출을 할 수 있습니다. 더 많은 예제는 [SDK 문서](https://www.npmjs.com/package/@atproto/lex)를 참조하세요.
+    </TabPanel>
+    <TabPanel value="go">
+    ```go
+    import (
+        "context"
+        appbsky "github.com/bluesky-social/indigo/api/bsky"
+        "github.com/bluesky-social/indigo/atproto/atclient"
+    )
+
+    ctx := context.Background()
+
+    client := atclient.NewAPIClient("https://public.api.bsky.app")
+    ```
+
+    인증된 클라이언트와 마찬가지로, 사용자 프로필과 같은 모든 공개 레코드를 `.get()`으로 조회할 수 있습니다:
+
+    ```go
+    profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
+
+    fmt.Printf("Handle: %s\n", profile.Handle)
+    fmt.Printf("Display Name: %s\n", *profile.DisplayName)
+    fmt.Printf("Followers: %d\n", *profile.FollowersCount)
+    ```
+
+    동일한 SDK 클라이언트 패턴을 사용하여 모든 Lexicon에 API 호출을 할 수 있습니다. 더 많은 예제는 [Go SDK 라이브러리](https://pkg.go.dev/github.com/bluesky-social/indigo)를 참조하세요.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+다음으로 사용자의 데이터 repository에 [쓰기](/guides/writing-data)를 시도해볼 수 있습니다.
+
+## 추가 자료
+
+- [읽기 및 쓰기](/guides/reads-and-writes)
+- [데이터 쓰기](/guides/writing-data)
+- [계정 및 삭제](/guides/account-lifecycle)
+- [소셜 그래프](/guides/social-graph)
+- [Record Key 명세](/specs/record-key)
+- [URI 스킴](/specs/at-uri-scheme)

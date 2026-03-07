@@ -1,0 +1,78 @@
+import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
+
+export const header = {
+  title: 'OAuth Patterns',
+  description: 'OAuth 구현 예제',
+}
+
+## TypeScript
+
+- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - 프론트엔드 전용 애플리케이션(예: SPA)에 적합합니다.
+- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Electron 데스크톱 앱 또는 서버 사이드 배포에 적합합니다.
+- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - React Native 프로젝트(예: 모바일 앱)에서 사용합니다.
+- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (위 세 라이브러리가 의존하는 핵심 구현체입니다)
+- [@fujocoded/authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) ([npmjs](https://www.npmjs.com/package/@fujocoded/authproto)) - Astro 앱을 위한 커뮤니티 구현체
+
+## Go
+
+- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([온라인 API 문서](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - 네이티브 앱 또는 서버 사이드 배포에 적합합니다
+
+## Atproto OAuth 예제 앱
+
+다음의 간단한 예제 앱들은 각각의 SDK 사용법을 보여줍니다.
+
+<ResponsiveTable
+  columns={[{label: '예제 앱'}, {label: '언어'}, {label: 'SDK'}, {label: '아키텍처'}, {label: '기밀 클라이언트 여부'}, {label: 'localhost 개발 클라이언트 ID 지원 여부', href: '/specs/oauth#localhost-client-development'}]}
+  rows={[
+    [{label: 'cookbook/react-native-oauth', href:' https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-expo'}, {label: '모바일 앱 (백엔드 없음)'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
+    [{label: 'cookbook/vanillajs-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme' }, {label: 'JavaScript'}, {label: '@atproto/oauth-client-browser'}, {label: '웹 SPA (백엔드 없음)'}, {label: '아니오'}, {label: '선택적'},],
+    [{label: 'cookbook/nextjs-oauth', href:' https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-node'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
+    [{label: 'cookbook/go-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
+    [{label: 'cookbook/go-oauth-cli-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '네이티브 CLI'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
+    [{label: 'cookbook/python-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme' }, {label: 'Python'}, {label: '없음'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},]
+  ]}
+/>
+
+<Note>
+Python 예제는 SDK를 사용하지 않습니다! 고급 [OAuth 클라이언트 구현 가이드](https://docs.bsky.app/docs/advanced-guides/oauth-client)와 함께 OAuth SDK를 처음부터 구축할 때 참고 자료로 유용할 수 있습니다.
+</Note>
+
+## 앱 유형
+
+*가장 단순한* 유형의 앱은 [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) 예제에서 보여주는 것처럼, OAuth 세션이 사용자 기기와 PDS 사이에서 직접 수립되는 방식입니다. 별도의 백엔드 서비스 없이 정적 리소스만 호스팅하면 되므로 단순합니다.
+
+앱에 장기 세션이 필요하지 않다면 이 방식으로도 충분합니다. 하지만 다른 사용 사례의 경우, 앱이 "기밀 클라이언트(confidential client)"가 아닌 "공개 클라이언트(public client)"이기 때문에 세션 수명이 제한됩니다. 기밀 클라이언트가 되려면 클라이언트 ID에 바인딩된 비밀 키를 설정해야 합니다. 클라이언트가 공개적으로 접근 가능하고 사용자 기기에서 실행되는 경우, 클라이언트 비밀을 보호할 수 없습니다. 따라서 기밀 클라이언트를 구현하려면 백엔드 인프라 호스팅이 필요하며, 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예제에서 보여줍니다(둘 다 "BFF" 패턴 사용, 아래 참조).
+
+기밀 클라이언트 대 공개 클라이언트에 대한 기술적 세부 사항은 [클라이언트 유형](/specs/oauth#types-of-clients)을 참조하세요.
+
+공개 클라이언트를 기밀 클라이언트로 "업그레이드"하는 데 사용할 수 있는 몇 가지 설계 전략이 있습니다:
+
+- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): OAuth 세션이 앱 백엔드 서버와 PDS 사이에 수립됩니다. 이 서버 사이드 세션은 세션 쿠키 등의 메커니즘을 통해 사용자의 프론트엔드 세션과 연결됩니다. 프론트엔드는 백엔드를 통해 요청을 프록시하여 PDS에 요청을 보내며, 백엔드가 OAuth 인가를 처리합니다.
+- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): BFF 패턴과 유사하지만, 세션이 수립된 후 백엔드가 OAuth 액세스 토큰을 프론트엔드에 전달하여 프론트엔드가 PDS에 직접 요청할 수 있도록 합니다.
+- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): 서버 사이드 로직이 단순화된 TMB 패턴의 대안으로 제안된 방식입니다.
+
+이 세 가지 중 BFF 패턴이 현재 기밀 클라이언트 애플리케이션 구축을 위한 권장 방식입니다. 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예제에서 보여줍니다.
+
+## DPoP 이해하기
+
+[DPoP (Demonstrating Proof of Possession)](https://datatracker.ietf.org/doc/html/rfc9449)은 OAuth 토큰을 클라이언트가 보유한 키에 암호학적으로 바인딩합니다. 공격자가 액세스 토큰을 탈취하더라도 개인 키 없이는 사용할 수 없습니다. 이는 특히 장기 세션(최대 2년)을 가진 기밀 클라이언트에게 중요합니다.
+
+DPoP는 atproto OAuth에서 필수입니다. **SDK를 사용하는 경우** 자동으로 처리됩니다. OAuth를 수동으로 구현하는 경우(예: 레코드를 작성하는 사이드카), 알아야 할 핵심 사항은 다음과 같습니다:
+
+- 세션당 ES256 키 쌍을 한 번 생성하고 모든 요청에 재사용합니다
+- 모든 요청에는 `DPoP` 헤더에 새로운 DPoP proof JWT가 필요하며, `Authorization: DPoP {access_token}` 형식을 사용합니다
+- 인가 서버와 PDS의 nonce를 별도로 추적합니다 — 서로 다를 수 있습니다
+- `error="use_dpop_nonce"`와 함께 401을 받으면 `DPoP-Nonce` 응답 헤더의 nonce로 재시도합니다
+- PDS 요청에는 액세스 토큰의 SHA-256 해시가 포함된 `ath` 클레임을 포함합니다
+
+[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app)의 `atproto_oauth.py`에 완전한 수동 DPoP 구현이 포함되어 있습니다. 전체 명세는 [OAuth 명세의 DPoP](/specs/oauth#demonstrating-proof-of-possession-d-po-p)를 참조하세요.
+
+## 추가 자료
+
+- [Auth](/guides/auth)
+- [SDK 인증](/guides/sdk-auth)
+- [Scopes](/guides/scopes)
+- [권한 요청](/guides/permission-sets)
+- [OAuth 명세](/specs/oauth)
+- [권한 명세](/specs/permission)

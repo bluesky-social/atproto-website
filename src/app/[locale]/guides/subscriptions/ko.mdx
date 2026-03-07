@@ -1,0 +1,83 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'Subscriptions',
+  description: '레이블러 서비스 구독하기',
+}
+
+## 레이블러 구독
+
+레이블러 서비스는 각각 서비스 신원, 즉 DID 문서를 가집니다. 이 DID는 레이블 출처(**`src`**) 필드에 표시되는 DID입니다.
+
+특정 레이블러의 레이블을 포함하려면, XRPC 요청의 `atproto-accept-labelers` 헤더에 포함하려는 레이블러의 DID를 쉼표로 구분한 목록으로 설정하세요:
+
+```bash
+curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
+```
+
+TypeScript SDK를 사용하여 레이블러를 추가할 수도 있습니다:
+
+```tsx
+import { Client } from '@atproto/lex'
+
+// Global app-level labelers
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// Client-specific labelers
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// Add labelers dynamically
+client.addLabelers(['did:plc:labeler4'])
+
+// Replace all labelers
+client.setLabelers(['did:plc:labeler5'])
+
+// Clear labelers
+client.clearLabelers()
+```
+
+## 앱에서 레이블 사용하기
+
+레이블은 계정 또는 레코드에 적용할 수 있습니다. 앱은 대상에 따라 다르게 해석할 수 있습니다:
+
+- 계정에 적용: 계정 전체에 영향을 줍니다
+- 프로필에 적용: 프로필 레코드(예: 사용자 아바타)에만 영향을 주며, 목록에서 계정을 포함한 어떤 콘텐츠도 숨기지 않습니다.
+- 콘텐츠에 적용: 특정 콘텐츠(게시물 레코드, 목록, 피드 등)에 영향을 줍니다
+
+## 신고하기
+
+레이블러에 신고를 보내려면 `com.atproto.moderation.createReport` 프로시저를 사용하세요. 사용자는 구독 중인 레이블러 중 어디에든 신고를 보낼 수 있습니다.
+
+신고를 받을 레이블러를 지정하려면, `atproto-proxy` 헤더에 레이블러의 DID와 서비스 키 `atproto_labeler`를 설정하세요. TypeScript SDK에서는 다음과 같이 사용합니다:
+
+```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```
+
+## 추가 자료
+
+- [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
+- [레이블러 만들기](/guides/creating-a-labeler)
+- [Label 명세](/specs/label)
+- [Ozone 사용하기](/guides/using-ozone)

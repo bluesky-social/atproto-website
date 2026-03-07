@@ -1,0 +1,46 @@
+export const header = {
+  title: 'Video Handling',
+  description: 'Handling video uploads and processing',
+}
+
+## 동영상 업로드
+
+동영상 업로드는 일반적으로 파일 크기가 훨씬 크고 처리 시간이 상당히 길기 때문에, 이미지 업로드와 약간 다르게 처리됩니다. 개별 Atmosphere 앱이나 CDN은 동영상 업로드에 추가적인 제한을 부과할 수 있습니다.
+
+이러한 이유로, 동영상 업로드는 최종 파일을 PDS에 blob으로 업로드하기 전에 보통 사이드카 서비스에서 처리됩니다. 예를 들어, Bluesky는 동영상을 PDS에 blob으로 기록하기 전에 업로드 및 트랜스코딩을 처리하는 `https://video.bsky.app` 서비스를 운영합니다.
+
+## 화면 비율
+
+애플리케이션의 요구 사항에 따라 동영상 업로드와 함께 화면 비율을 제공해야 할 수 있습니다. 이 메타데이터는 계산이 까다로울 수 있습니다. 브라우저에서 개발하는 경우, 동영상을 `<video>` 요소에 로드하고 로드 시 크기를 관찰할 수 있습니다. 네이티브 앱의 경우 미디어 피커 API를 통해 대부분 얻을 수 있습니다. 또는 `ffprobe`와 같은 도구를 사용할 수 있습니다:
+
+```jsx
+import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
+
+export async function getAspectRatio(fileName: string) {
+  const { streams } = await ffprobe(fileName, {});
+  const videoSteam = streams.find((stream) => stream.codec_type === "video");
+  return {
+    width: videoSteam.width,
+    height: videoSteam.height,
+  };
+}
+```
+
+## 트랜스코딩
+
+동영상은 파이어호스에서 사용 가능해지기 전에 서버 측에서 `ffmpeg`와 같은 도구를 사용하여 트랜스코딩하는 시간이 필요합니다. 이는 UX 공백을 유발할 수 있습니다. 동영상 blob이 새 게시물과 함께 있을 때, 동영상 서비스는 게시물이 파이어호스에 나타나야만 해당 동영상을 인식합니다. 이는 처리가 완료되기 전에 사람들이 게시물을 볼 수 있게 되어, 몇 초간 동영상이 표시되지 않는 상황을 초래합니다.
+
+게시물을 생성하기 전에 처리를 위해 별도의 마이크로서비스에 동영상을 제출할 수 있는 애플리케이션 엔드포인트를 설계하는 것이 가능합니다. 이 방법은 처리 상태를 사용자에게 표시하고 처리 작업이 실패할 경우 알릴 수 있어 더 나은 UX를 제공합니다.
+
+두 방법 모두에 대한 클라이언트 측 코드 샘플은 아래에서 확인할 수 있습니다:
+
+- [간단한 방법](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw74be4dr422)
+- [동영상 서비스](https://tangled.sh/strings/did:plc:p2cp5gopk7mgjegy6wadk3ep/3lw743ejno722)
+
+## 추가 읽기 자료
+
+- [이미지 및 동영상](/guides/images-and-video)
+- [Blob 생명주기](/guides/blob-lifecycle)
+- [Blob 보안](/guides/blob-security)
+- [Blob 명세](/specs/blob)
+- [Streamplace](https://stream.place/docs/)는 atproto에서의 동영상 스트리밍을 위한 구현체와 관련 Lexicon을 제공합니다.

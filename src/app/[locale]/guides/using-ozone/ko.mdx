@@ -1,0 +1,137 @@
+import {Container} from "@/components/Container"
+import acknowledged from "./acknowledged.png"
+import confirm from "./confirm.png"
+import credentials from "./credentials.png"
+import eventstream from "./event-stream.png"
+import labeler from "./labeler-account-view.png"
+import login from "./login.png"
+import actions from "./moderation-actions.png"
+import reported from "./ozone-post-reported.png"
+import report from "./report-post.png"
+import reporting from "./reporting-interface.png"
+import repositories from "./search-repositories.png"
+import welcome from "./welcome.png"
+import plc from "./plc-update.png"
+
+export const header = {
+  title: 'Using Ozone',
+  description: 'Ozone 모더레이션 인터페이스 사용하기',
+}
+
+## 시작하기
+
+Ozone은 웹 기반 모더레이션 인터페이스로, 자체 레이블러 서비스를 운영하고 콘텐츠 신고를 효율적으로 검토 및 처리할 수 있게 해줍니다. 이 가이드에서는 Ozone의 설치 및 사용 방법을 안내합니다.
+
+## Ozone 설치하기
+
+Ozone은 [OVHcloud](https://us.ovhcloud.com/vps/), [DigitalOcean](https://digitalocean.com/), [Vultr](https://vultr.com/) 등의 클라우드 제공업체에서 제공하는 전용 VPS에서 실행해야 합니다. 시작하기 위한 최소 사양은 메모리 1-2GB, CPU 코어 1-2개입니다.
+
+**Ozone을 설치하려면** [Ozone GitHub 저장소](https://github.com/bluesky-social/ozone)의 [HOSTING.md](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)를 참조하세요.
+
+<Note>
+Ozone 서비스를 설정하기 전에 네트워크에서 메인 계정과 별도의 새 계정을 만들어야 합니다. 이 계정이 레이블러 구독자들이 상호작용하는 계정입니다. 레이블러 계정은 Bluesky에서 일반 계정과 다르게 표시됩니다.
+</Note>
+
+서버 사이드 설치를 완료한 후, 웹 브라우저에서 서버의 IP 주소 또는 도메인 이름으로 이동하여 Ozone 웹 인터페이스에 접근할 수 있습니다:
+
+<Container>
+  <Image src={login} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+여기서부터 레이블러 서비스 설정을 시작할 수 있습니다.
+
+## Ozone 설정하기
+
+먼저, 레이블러 서비스용으로 만든 계정의 인증 정보를 입력하세요:
+
+<Container>
+  <Image src={credentials} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+`.bsky.social` 접미사(또는 해당하는 경우 커스텀 도메인)를 포함한 전체 핸들을 입력해야 합니다.
+
+다음으로, 이 계정을 모더레이션 서비스로 표시하기 위해 [PLC](https://web.plc.directory/)에서 계정 등록을 업데이트하라는 안내가 나옵니다. 이 과정에서 이메일 인증이 발생합니다. 올바른 계정과 도메인 이름을 사용하고 있는지 확인한 후 인증 코드를 입력하세요:
+
+<Container>
+  <Image src={plc} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+마지막으로, 이 계정을 레이블러 서비스로 사용하겠다는 것을 확인하세요. 이렇게 하면 계정에 `app.bsky.labeler.service` 유형의 [AT Record](https://atproto.at/viewer?uri=did:plc:wwjhjtgw5ksxrzdswtvnsnjs/app.bsky.labeler.service/self)가 게시됩니다.
+
+<Container>
+  <Image src={confirm} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+이제 Ozone 인스턴스가 설정되어 사용 준비가 되었습니다!
+
+<Container>
+  <Image src={welcome} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+## 신고 제출 및 관리
+
+이제 예시 모더레이션 신고를 생성하고 처리해보겠습니다. Bluesky 또는 다른 애플리케이션에서 일반(비레이블러) 계정으로 다시 로그인하세요. 그런 다음 레이블러 서비스의 계정 페이지로 이동하세요.
+
+<Container>
+  <Image src={labeler} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+"레이블러 구독" 버튼을 클릭하여 계정을 레이블러 서비스에 구독하세요. 이렇게 하면 계정이 해당 레이블러에 신고를 제출하고 레이블을 받을 수 있게 됩니다.
+
+다음으로, 신고하려는 게시물로 이동하여 "게시물 신고"를 선택하세요:
+
+<Container>
+  <Image src={report} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+이것은 튜토리얼이므로, Bluesky 팀의 게시물을 지나치게 열정적이라는 이유로 신고해보겠습니다. 실제로는 이것이 신고 이유가 되지 않지만, 예제로는 충분합니다!
+
+<Container>
+  <Image src={reporting} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+신고 인터페이스를 원하는 대로 작성하세요. 신고를 보낼 모더레이션 서비스로 레이블러를 선택해야 합니다. 그런 다음 신고를 제출하세요.
+
+이제 Ozone 인터페이스로 돌아오세요. *신고(Reports)* 섹션에 새 신고가 목록에 표시되어야 합니다:
+
+<Container>
+  <Image src={reported} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+신고를 클릭하여 세부 정보를 확인하세요. 여기서 신고된 콘텐츠를 검토하고 적절한 모더레이션 조치를 취할 수 있습니다.
+
+<Container>
+  <Image src={actions} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+이 경우 가장 간단한 조치는 추가 조치 없이 신고를 확인(acknowledge)하는 것입니다. 드롭다운에서 "확인(Acknowledge)"을 선택하고 메모를 작성한 후 조치를 제출하세요. 모더레이션 조치를 빠르게 처리하기 위해 키보드 단축키를 사용할 수 있습니다. 예를 들어 제출(Submit)은 `S` 키입니다.
+
+<Container>
+  <Image src={acknowledged} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+레이블러 구독자에게 사용자를 뮤트하고 싶었다면, 조치 드롭다운에서 "뮤트(Mute)"를 선택했을 것입니다. 각 조치에 대한 설명은 [Ozone Concepts](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md#concepts)를 참조하세요.
+
+*이벤트(Events)* 섹션에서 신고 및 조치의 이벤트 스트림을 확인할 수 있습니다:
+
+<Container>
+  <Image src={eventstream} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+또는 *저장소(Repositories)* 섹션을 사용하여 사용자, 콘텐츠 또는 조치별로 신고를 검색할 수 있습니다:
+
+<Container>
+  <Image src={repositories} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+## 다음 단계
+
+이제 Ozone 모더레이션 흐름에 대해 이해했습니다. Ozone에서는 모더레이션 작업량을 관리하기 위해 다양한 권한을 가진 추가 사용자 계정을 만들 수도 있습니다. Ozone 인스턴스의 데이터를 집계하려면 [#OzoneInsights](https://bsky.app/search?q=%23ozoneinsights) 피드에서 솔루션을 확인하세요.
+
+## 추가 자료
+
+- [Moderation](/guides/moderation)
+- [Labels](/guides/labels)
+- [레이블러 만들기](/guides/creating-a-labeler)
+- [Subscriptions](/guides/subscriptions)
+- [Label 명세](/specs/label)
