@@ -516,7 +516,8 @@ Now, in another terminal, install and run `tap` from its source repository:
 
 ```bash
 go install github.com/bluesky-social/indigo/cmd/tap
-tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
+# Replace with your own TAP_ADMIN_PASSWORD below
+tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status --admin-password="TAP_ADMIN_PASSWORD"
 ```
 
 Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
@@ -712,10 +713,12 @@ You can stop and restart your app with `pnpm dev` again.
 One last thing — remember, you only added a single data source to `tap` earlier. To see statuses from across the entire network, stop and re-run `tap` with the `--signal-collection` flag:
 
 ```bash
+# Replace with your own TAP_ADMIN_PASSWORD below
 tap run \
   --webhook-url=http://localhost:3000/api/webhook \
   --collection-filters=xyz.statusphere.status \
-  --signal-collection=xyz.statusphere.status
+  --signal-collection=xyz.statusphere.status \
+  --admin-password="TAP_ADMIN_PASSWORD"
 ```
 
 ... and you'll start seeing statuses from other users on the network!
