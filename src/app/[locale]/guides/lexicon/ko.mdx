@@ -1,10 +1,10 @@
 export const header = {
-  title: 'Lexicons',
-  description: 'A schema-driven interoperability framework',
+  title: 'Lexicon',
+  description: '스키마 기반 상호운용성 프레임워크',
 }
 
-## 렉시콘에 관하여
-렉시콘은 RPC 메서드와 레코드 타입을 정의하는 데 사용되는 스키마 시스템입니다. 모든 렉시콘 스키마는 제약 조건을 정의하기 위한 [JSON - Schema](https://json-schema.org/) 와 유사한 형식의 JSON으로 작성됩니다.
+## Lexicon에 관하여
+Lexicon은 RPC 메서드와 레코드 타입을 정의하는 데 사용되는 스키마 시스템입니다. 모든 Lexicon 스키마는 제약 조건을 정의하기 위한 [JSON - Schema](https://json-schema.org/) 와 유사한 형식의 JSON으로 작성됩니다.
 
 **사전집은 상호운용성을 제공합니다.** AT 애플리케이션은 자체 동작과 의미를 선언할 방법이 필요합니다. 사전집은 이 문제를 해결하면서 개발자가 새로운 스키마를 쉽게 도입할 수 있도록 합니다.
 
@@ -22,7 +22,7 @@ app.bsky.feed.like
 app.bsky.actor.profile
 app.bsky.graph.follow
 ```
-스키마 유형, 정의 언어 및 유효성 제약 조건은 [Lexicon 사양](/specs/lexicon) 에 설명되어 있으며, JSON 및 CBOR 표현은[데이터 모델 사양](/specs/data - model)에 설명되어 있습니다.
+스키마 유형, 정의 언어 및 유효성 제약 조건은 [Lexicon 사양](/specs/lexicon) 에 설명되어 있으며, JSON 및 CBOR 표현은[데이터 모델 사양](/specs/data-model)에 설명되어 있습니다.
 ## HTTP API 메서드
 Atproto HTTP API 메서드는 각각 특정 범위의 어휘 집합을 구현합니다. AT 프로토콜의 API 시스템인 [XRPC](/specs/xrpc) 는 본질적으로 HTTPS를 감싸는 얇은 래퍼입니다. 예를 들어, 다음 호출은:
   ```tsx

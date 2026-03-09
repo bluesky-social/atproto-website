@@ -1,0 +1,27 @@
+export const header = {
+  title: '소셜 그래프',
+  description: 'AT Protocol 소셜 그래프 다루기',
+}
+
+## 소셜 그래프 쿼리하기
+
+AT Protocol을 기반으로 구축된 새로운 애플리케이션은 기존 소셜 그래프 데이터를 활용할 수 있습니다 — 예를 들어, `app.bsky.graph.getFollows` Lexicon RPC 엔드포인트의 데이터를 — 새로운 사용 사례를 구축하고 기존 사용자 기반으로 부트스트랩하는 데 사용할 수 있습니다. 이는 결국 [A Social Filesystem](https://overreacted.io/a-social-filesystem/)과 같은 네이티브 atproto 개념으로 이어집니다.
+
+이 접근법의 또 다른 예시로 [Python으로 AT Protocol 탐색하기](https://davidgasquez.com/exploring-atproto-python/)를 참조하세요.
+
+## 백링크
+
+AT Protocol에서 소셜 그래프 데이터를 얻는 가장 강력한 방법 중 하나는 **백링크** 사용입니다. 백링크 쿼리를 통해 특정 레코드나 ID에 *연결되는* 모든 레코드를 해석할 수 있습니다.
+
+[Microcosm](https://constellation.microcosm.blue)은 백링크 작업을 위한 리소스 세트를 제공합니다. 모든 AT Protocol 레코드는 공개적으로 사용 가능하며 `at://` URI를 통해 주소 지정이 가능하기 때문에, 개별 URL에 중첩된 API 쿼리를 인코딩하는 것이 가능합니다. Microcosm은 [이를 수행합니다](https://constellation.microcosm.blue/xrpc/blue.microcosm.links.getBacklinks?subject=at%3A%2F%2Fdid%3Aplc%3Aa4pqq234yw7fqbddawjo7y35%2Fapp.bsky.feed.post%2F3m237ilwc372e&source=app.bsky.feed.like%3Asubject.uri&limit=16), 예를 들어.
+
+백링크를 구현하는 Claude 코드 플러그인은 [protopack](https://tangled.org/zzstoatzz.io/protopack.git)을 참조하세요.
+
+## 추가 자료
+
+- [읽기와 쓰기](/guides/reads-and-writes)
+- [데이터 읽기](/guides/reading-data)
+- [데이터 쓰기](/guides/writing-data)
+- [계정 및 삭제](/guides/account-lifecycle)
+- [레코드 키 명세](/specs/record-key)
+- [URI 체계](/specs/at-uri-scheme)
