@@ -2,14 +2,14 @@ import {Container} from "@/components/Container"
 import moderation from "./moderation.png"
 
 export const header = {
-  title: 'Moderation',
-  description: 'Moderation in the Atmosphere',
+  title: '모더레이션',
+  description: 'Atmosphere의 모더레이션',
 }
 
 ## 모더레이션에 관하여
 Atproto 모델은 *발화* 와 *도달* 이 서로 협력하도록 설계된 별개의 두 계층이어야 한다는 것입니다. “발화” 계층은 허용적이어야 하며, 권한을 분산하고 모든 사람이 목소리를 낼 수 있도록 보장하도록 설계되어야 합니다. “도달” 계층은 그 위에 위치하며, 유연성을 위해 구축되고 확장성을 위해 설계됩니다. Atproto의 모더레이션은 [라벨](/guides/labels) 을 사용하여 구현됩니다.
 <Container>
-  <Image src={ moderation } alt = "" className = "w-full max-w-md mx-auto" />
+  <Image src={moderation} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 우리의 검토 아키텍처는 두 서비스로 구성됩니다: 자동 조사 및 조치를 위한 이벤트 스트림 결정 엔진 및 분석 UI인 [*Osprey*](#algorithmic-moderation) 와 검토 결정을 위한 라벨링 서비스 및 웹 프론트엔드인 [*Ozone*](#using-ozone) 입니다.
 
