@@ -4,9 +4,9 @@ import did from "./did.png"
 import feeds from "./feeds.png"
 
 export const header = {
-  title: 'The AT Stack',
+  title: 'AT 스택',
   description:
-    'Components of the AT Protocol Stack',
+    'AT 프로토콜 스택의 구성 요소',
 }
 
 ## 인증 전송 프로토콜
@@ -45,6 +45,23 @@ PDS가 처리하는 사항:
 - https://pdsmoover.com/: PDS 마이그레이션을 위한 도구 모음
 - https://boat.kelinci.net/: 저장소 가져오기 및 내보내기를 위한 인터페이스 세트
 - https://github.com/bluesky-social/goat: Go AT 명령줄 도구
+## 릴레이
+
+**릴레이**는 모든 이벤트를 실시간으로 처리합니다. 릴레이는 또한 네트워크 전반에서 가용성을 보장하기 위해 개별 PDS의 속도 제한 및 네트워크 남용을 관리합니다. 중요한 점은, 릴레이 자체는 저장소의 레코드를 해석하지 않는다는 것입니다. 단순히 레코드를 임시로 저장하고 소비자에게 전달합니다. 릴레이는 이벤트의 [**파이어호스**](/guides/streaming-data)를 생성하며, 이는 여러 저장소와 PDS의 [이벤트 스트림](/specs/event-stream)을 결합합니다.
+
+릴레이는 다양한 규모로 운영될 수 있습니다. 전체 네트워크 릴레이는 전체 네트워크의 모든 저장소를 추적하여 완전한 커버리지를 제공합니다. 부분 네트워크 릴레이는 특정 커뮤니티, 애플리케이션, 지역에 집중하여 리소스 요구 사항을 줄일 수 있습니다. 특수 릴레이는 학술 연구, 브랜드 모니터링, 아카이브 보존 등 특정 사용 사례를 위해 제공될 수 있습니다.
+
+전체 네트워크 릴레이는 운영하는 데 특별히 비용이 많이 들지 않으며, 특수 하드웨어도 필요하지 않습니다. 다만 상당한 수신/송신 네트워크 대역폭이 필요하며, 이것이 릴레이 운영의 주요 비용입니다.
+
+여러 릴레이가 있으며, 각각 고유한 속도 제한과 네트워크 정책이 있을 수 있습니다. 사용 가능한 릴레이 중 일부는 다음과 같습니다:
+- [microcosm](https://www.microcosm.blue/)의 `relay.fire.hose.cam`과 `relay3.fr.hose.cam`
+- [Blacksky](https://blackskyweb.xyz/)의 `atproto.africa`
+- [Upcloud](https://upcloud.com/)의 `relay.upcloud.world`
+- [Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose)의 두 개
+- [firehose.network](https://firehose.network)의 세 개
+
+[Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose)가 운영하는 릴레이는 많은 PDS 호스트가 사용하는 참조 PDS 서버 구현의 기본 릴레이이므로 가장 일반적으로 사용됩니다. 해당 [속도 제한](https://docs.bsky.app/docs/advanced-guides/rate-limits)은 웹사이트에 문서화되어 있습니다.
+
 ## Tap
 Tap은 AT 네트워크의 기존 레코드를 동기화한 후 파이어호스에서 새로운 레코드를 계속 수신하는 데 사용됩니다.
 Tap은 파이어호스 연결, 검증, 백필, 필터링을 처리하여 AT 동기화를 간소화합니다. 애플리케이션은 Tap에 연결하여 관심 있는 저장소 및 컬렉션에 대한 간단한 JSON 이벤트만 수신하므로, 암호화 서명 검증을 위한 이진 형식에 대해 걱정할 필요가 없습니다. Tap 주요 기능:
