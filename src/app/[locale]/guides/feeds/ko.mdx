@@ -1,0 +1,120 @@
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@/components/mdx'
+export const header = {
+  title: '피드',
+  description: '커스텀 피드 생성기 만들기 및 사용하기',
+}
+
+## 커스텀 피드
+
+커스텀 피드(또는 피드 생성기)는 AT Protocol을 통해 사용자에게 커스텀 알고리즘을 제공하는 서비스입니다. 이를 통해 사용자는 자신만의 타임라인을 선택할 수 있으며, 피드 개발자는 AT 레코드의 [전용 뷰를 만들고 임베드](https://graze.leaflet.pub/3m4yjmbnyec2c)할 수 있습니다.
+
+커스텀 피드의 작동 방식은 간단합니다: 서버는 사용자의 서버로부터 요청을 받고, 일부 선택적 메타데이터가 첨부된 게시물 URI 목록을 반환합니다. 그런 다음 해당 게시물들은 요청한 서버에 의해 완전한 뷰로 수화(hydrate)되어 클라이언트에 전송됩니다.
+
+피드는 자체 XRPC 엔드포인트를 제공하므로 서버 SDK를 사용해야 합니다:
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+      [lex-server](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server) 패키지를 사용하세요:
+
+      ```bash
+      npm install @atproto/lex-server
+      lex install app.bsky.feed.getFeed ...
+      lex build
+      ```
+
+      ```ts
+      import { LexRouter, LexError } from '@atproto/lex-server'
+      import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
+      import * as app from './lexicons/app.js'
+
+      const router = new LexRouter({ upgradeWebSocket })
+
+      // Add handlers here
+
+      const server = await serve(router, { port: 3000 })
+      console.log('Server listening on port 3000')
+      ```
+    </TabPanel>
+    <TabPanel value="go">
+      Go에서는 HTTP 엔드포인트를 직접 구현할 수 있습니다:
+
+      ```go
+      type Feed interface {
+          GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
+              feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
+          Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
+      }
+
+      ...
+
+      router.GET("/.well-known/did.json", GetWellKnownDID)
+      router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
+      router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
+      ```
+
+      커뮤니티 예시는 [https://github.com/jazware/go-bsky-feed-generator](https://github.com/jazware/go-bsky-feed-generator)를 참고하세요.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+피드 생성기 서비스는 하나 이상의 알고리즘을 호스팅할 수 있습니다. 서비스 자체는 DID로 식별되며, 호스팅하는 각 알고리즘은 해당 알고리즘을 만든 계정의 저장소에 있는 레코드로 선언됩니다. 예를 들어, Bluesky에서 제공하는 피드는 `@bsky.app`의 저장소에 선언될 가능성이 높습니다. 따라서 특정 알고리즘은 선언 레코드의 at-uri로 식별됩니다. 이 선언 레코드에는 서비스의 DID에 대한 포인터와 피드에 대한 일부 프로필 정보가 포함됩니다.
+
+사용자에게 커스텀 알고리즘을 제공하는 일반적인 흐름은 다음과 같습니다:
+
+- 사용자가 선언된 피드의 at-uri를 사용하여 AppView에 피드를 요청합니다
+- AppView가 at-uri를 확인하고 피드 생성기의 DID 문서를 찾습니다
+- AppView가 피드 생성기의 DID 문서에 선언된 서비스 엔드포인트로 getFeedSkeleton 요청을 전송합니다
+  - 이 요청은 사용자의 저장소 서명 키로 서명된 JWT로 인증됩니다
+- 피드 생성기가 AppView에 피드의 스켈레톤을 반환합니다
+- AppView가 피드를 수화합니다(사용자 정보, 게시물 내용, 집계 등)
+- AppView가 수화된 피드를 사용자에게 반환합니다
+
+사용자 입장에서 이는 앱의 페이지를 방문하는 것처럼 느껴져야 합니다. 커스텀 알고리즘을 구독하면 사용 가능한 피드 중 하나로 홈 인터페이스에 나타납니다.
+
+## 피드 생성기 템플릿
+
+TypeScript로 된 피드 생성기 예시를 유지관리하고 있습니다. 시작하려면 [튜토리얼](/guides/custom-feed-tutorial)을 참고하세요.
+
+[Python](https://github.com/MarshalX/bluesky-feed-generator)과 [Ruby](https://github.com/mackuba/bluesky-feeds-rb)로 된 커뮤니티 유지관리 구현도 있습니다.
+
+피드 알고리즘을 더욱 맞춤화하기 위해 머신러닝 기능을 추가할 수도 있습니다 — 예시는 [tri-bsky-feed](https://tangled.org/cuducos.me/tri-bsky-feed)를 참고하세요.
+
+## 피드 구현
+
+피드 생성기가 `getFeedSkeleton` 요청을 처리하는 방식은 전적으로 피드 생성기의 재량에 달려 있습니다. 가장 단순한 경우, 피드 생성기는 하드코딩된 게시물만 포함하는 "피드"를 제공할 수 있습니다.
+
+대부분의 사용 사례에서는 `com.atproto.sync.subscribeRepos`에서 [파이어호스를 구독](/guides/streaming-data)하는 것을 권장합니다. 이 웹소켓은 네트워크에 게시된 모든 레코드를 전송합니다. 피드 생성기는 수화된 게시물을 제공할 필요가 없으므로, 필요한 만큼만 파이어호스를 인덱싱할 수 있습니다. 이것은 중요한 점입니다 — 피드를 제공하기 위해 파이어호스와 동기화*해야* 하는 것이 리소스 집약적일 수 있지만, 반드시 그럴 필요는 없습니다. 자세한 내용은 이 가이드에서 링크된 예시를 참고하세요.
+
+피드의 알고리즘에 따라 게시물을 오랫동안 보관할 필요가 없을 수 있습니다. 피드가 "놓친 게시물" 등을 제공하려는 게 아니라면, 48시간보다 오래된 데이터를 가비지 컬렉션할 수 있습니다.
+
+## 언어 처리
+
+`getFeedSkeleton` 요청 시, 클라이언트는 `Accept-Language` HTTP 헤더에 쉼표로 구분된 BCP-47 언어 코드(예: `en`, `pt-BR`)를 채우도록 권장됩니다. 피드 생성기는 이 언어 컨텍스트를 사용하여 게시물을 필터링하거나 순위를 매길 수 있습니다. 언어 필터링이 적용된 경우, 피드 생성기는 파싱된 언어 코드를 나타내는 `Content-Language` 응답 헤더를 사용해야 합니다.
+
+## 피드 피드백
+
+피드 생성기는 사용자로부터 입력을 받기 위해 `app.bsky.feed.sendInteractions` 엔드포인트를 구현할 수도 있습니다. 여기에는 좋아요, 리포스트, 공유 및 기타 상호작용이 포함됩니다. 전체 목록은 [app.bsky.feed Lexicon](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/defs.json#L247)을 참고하세요.
+
+피드 피드백 구현은 선택 사항이지만, 사용자 경험 개선에 도움이 될 수 있습니다.
+
+## 피드 예시
+
+- 커뮤니티 피드: 해당 커뮤니티 내의 DID 목록을 컴파일하고 목록 내 사용자의 모든 게시물을 위해 파이어호스를 필터링합니다.
+- 주제별 피드: 게시물에 대한 알고리즘을 필터링하고 게시물 텍스트를 선택한 주제로 필터링하는 일부 필터링 메커니즘(LLM, 키워드 매처 등)을 통해 처리합니다.
+- [graze.social](https://www.graze.social/)은 atproto 피드를 위한 애플리케이션 모델을 제공합니다.
+- 커뮤니티가 만든 다른 피드 예시는 [https://bsky.app/feeds](https://bsky.app/feeds)에서 찾을 수 있습니다.
+
+## 추가 자료
+
+- [동기화](/guides/sync)
+- [백필링](/guides/backfilling)
+- [스트리밍 데이터](/guides/streaming-data)
+- [저장소 명세](/specs/repository)
+- [이벤트 스트림 명세](/specs/event-stream)
+- [동기화 명세](/specs/sync)
+- [Microcosm](https://www.microcosm.blue/) 커뮤니티 프로젝트는 로컬 미러링 없이 대규모 AT 레코드 작업을 위한 도구를 유지관리합니다.

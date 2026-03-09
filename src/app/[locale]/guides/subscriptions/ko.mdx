@@ -1,0 +1,83 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: '구독',
+  description: '라벨러 서비스 구독하기',
+}
+
+## 라벨러 구독
+
+라벨러 서비스는 각각 서비스 신원, 즉 DID 문서를 가지고 있습니다. 이것이 라벨 소스(**`src`**) 필드에 나타나는 DID입니다.
+
+특정 라벨러의 라벨을 포함시키려면, XRPC 요청의 `atproto-accept-labelers` 헤더에 포함할 라벨러들의 DID를 쉼표로 구분하여 다음과 같이 설정하세요:
+
+```bash
+curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
+```
+
+TypeScript SDK를 사용하여 라벨러를 추가할 수도 있습니다:
+
+```tsx
+import { Client } from '@atproto/lex'
+
+// 앱 전역 라벨러
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// 클라이언트별 라벨러
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// 라벨러 동적 추가
+client.addLabelers(['did:plc:labeler4'])
+
+// 모든 라벨러 교체
+client.setLabelers(['did:plc:labeler5'])
+
+// 라벨러 초기화
+client.clearLabelers()
+```
+
+## 앱에서 라벨 활용하기
+
+라벨은 계정 또는 레코드에 부여될 수 있습니다. 앱은 대상에 따라 다르게 해석할 수 있습니다:
+
+- 계정에 부여된 경우: 계정 전체에 영향을 미침
+- 프로필에 부여된 경우: 프로필 레코드(예: 사용자 아바타)에만 영향을 미치며, 목록에서 계정을 포함한 어떤 콘텐츠도 숨기지 않음
+- 콘텐츠에 부여된 경우: 특정 콘텐츠(게시물 레코드, 목록, 피드 등)에만 영향을 미침
+
+## 신고
+
+라벨러에 신고를 보내려면 `com.atproto.moderation.createReport` 프로시저를 사용하세요. 사용자는 자신이 구독한 라벨러 중 어느 곳에든 신고를 보낼 수 있습니다.
+
+신고를 받을 라벨러를 지정하려면, `atproto-proxy` 헤더에 라벨러의 DID와 서비스 키 `atproto_labeler`를 설정하세요. TypeScript SDK에서는 다음과 같습니다:
+
+```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```
+
+## 더 읽어보기 및 참고 자료
+
+- [모더레이션](/guides/moderation)
+- [라벨](/guides/labels)
+- [라벨러 만들기](/guides/creating-a-labeler)
+- [라벨 명세](/specs/label)
+- [Ozone 사용하기](/guides/using-ozone)

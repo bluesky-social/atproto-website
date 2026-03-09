@@ -1,0 +1,202 @@
+export const header = {
+  title: 'Node OAuth 튜토리얼',
+  description: 'Node.js에서 atproto OAuth로 인증하기',
+}
+
+이 튜토리얼에서는 [atproto OAuth](/guides/auth)로 사용자를 인증하고 프로필을 가져오는 최소한의 Node.js 도구를 만들어 봅니다. 전체 앱은 단일 TypeScript 파일에 담깁니다.
+
+이것은 AT Protocol에서 OAuth가 어떻게 동작하는지 이해하기 위한 좋은 출발점입니다. 프로덕션 웹 앱 개발은 전체 [NextJS OAuth 튜토리얼](/guides/oauth-tutorial)을 참고하세요.
+
+## 사전 준비
+
+이 튜토리얼은 처음부터 TypeScript 애플리케이션을 만드는 과정을 다룹니다. TypeScript와 Node.js에 대한 기본적인 이해가 필요합니다.
+
+다음이 설치되어 있어야 합니다:
+- Node.js 18+
+
+[homebrew](https://brew.sh/)를 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
+
+```bash
+brew install node
+```
+
+테스트에 사용할 atproto 핸들도 필요합니다.
+
+## 1부: 프로젝트 설정
+
+새 프로젝트 디렉토리를 만들고 [SDK](https://www.npmjs.com/package/@atproto/lex)와 기타 프로젝트 의존성을 설치합니다:
+
+```bash
+mkdir oauth-cli
+cd oauth-cli
+npm init -y
+npm i -D typescript @types/node @atproto/oauth-client-node @atproto/lex open
+npx tsc --init --target ES2022 --module NodeNext --moduleResolution NodeNext --types node --strict --esModuleInterop --skipLibCheck --verbatimModuleSyntax false
+```
+
+또한 `lex` CLI 도구를 전역으로 설치하고, 사용자 프로필을 가져오기 위해 이 프로젝트에 `app.bsky.actor.profile` Lexicon을 설치해야 합니다:
+
+```bash
+npm i -g @atproto/lex
+lex install app.bsky.actor.profile
+lex build
+```
+
+이를 통해 프로젝트에서 Lexicon에 대한 TypeScript 타입이 생성되며, 나중에 인증된 사용자의 프로필을 읽는 데 사용합니다.
+
+## 2부: OAuth 클라이언트 구축
+
+`src/index.ts`에 새 파일을 만듭니다. 이 파일에는 CLI 도구의 모든 코드가 포함됩니다.
+
+필요한 패키지를 import하고 OAuth 클라이언트를 설정하는 것으로 시작합니다:
+
+```ts
+import http from 'node:http'
+import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
+import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
+import { Client } from '@atproto/lex'
+import open from 'open'
+import * as app from './lexicons/app.js'
+
+const stateStore = new Map<string, NodeSavedState>()
+const sessionStore = new Map<string, NodeSavedSession>()
+
+const oauthClient = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope: 'atproto',
+    redirect_uris: ['http://127.0.0.1:3000/callback'],
+  }),
+  stateStore: {
+    async get(key: string) { return stateStore.get(key) },
+    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
+    async del(key: string) { stateStore.delete(key) },
+  },
+  sessionStore: {
+    async get(key: string) { return sessionStore.get(key) },
+    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
+    async del(key: string) { sessionStore.delete(key) },
+  },
+})
+```
+
+`NodeOAuthClient`는 OAuth 흐름을 관리합니다. `buildAtprotoLoopbackClientMetadata`는 루프백을 사용하여 로컬 개발에 맞게 구성합니다.
+
+<Note>
+OAuth 루프백은 특수한 리다이렉트 URI(예: `http://127.0.0.1:PORT/callback`)를 사용하여 인증 코드를 앱으로 직접 전송합니다. 앱은 로컬 포트에서 수신 대기하며, 브라우저 기반 콜백을 피하고 토큰 교환을 위한 안전하고 직접적인 통신을 가능하게 합니다. 웹 리다이렉트 대신 앱이 로컬 리스너를 열고, 브라우저에서 인증한 후 서버가 앱의 로컬 URI로 리다이렉트하여 앱이 코드를 받아 토큰으로 교환할 수 있습니다. 개발 환경에서 특히 유용합니다.
+</Note>
+
+`stateStore`와 `sessionStore`는 인메모리 Map입니다. 상태 저장소는 OAuth 핸드셰이크 중 임시 데이터를 보관하고, 세션 저장소는 DID로 키가 지정된 인증된 세션을 보관합니다. 프로덕션 앱에서는 데이터베이스를 사용해야 합니다.
+
+## 3부: 로그인 흐름
+
+이제 로그인 흐름을 추가합니다. OAuth 콜백을 받기 위한 임시 HTTP 서버를 시작한 다음, 사용자의 브라우저를 열어 앱을 인증합니다:
+
+```ts
+async function login(handle: string) {
+  // Start the OAuth flow — this resolves the handle, finds their auth
+  // server (PDS), and returns a URL to redirect the user to
+  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
+
+  // Wait for the callback from the authorization server
+  const params = await new Promise<URLSearchParams>((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      const url = new URL(req.url!, 'http://127.0.0.1:3000')
+      if (url.pathname === '/callback') {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end('<h1>Authorized! You can close this tab.</h1>')
+        resolve(url.searchParams)
+        server.close()
+      }
+    })
+    server.listen(3000, '127.0.0.1', () => {
+      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
+      open(authUrl.toString())
+    })
+    server.on('error', reject)
+  })
+
+  // Exchange the authorization code for a session
+  const { session } = await oauthClient.callback(params)
+  return session
+}
+```
+
+흐름은 다음과 같이 동작합니다:
+
+1. `oauthClient.authorize(handle)`은 사용자의 핸들을 확인하고, PDS를 탐색하고, 인증 URL을 반환합니다.
+2. `open` 패키지가 해당 URL을 사용자의 브라우저에서 열면 동의 화면이 표시됩니다.
+3. 사용자가 승인하면 PDS가 인증 코드와 함께 `http://127.0.0.1:3000/callback`으로 리다이렉트합니다.
+4. `oauthClient.callback(params)`가 해당 코드를 인증된 세션으로 교환합니다.
+
+## 4부: 세션 사용
+
+세션을 사용하여 AT Protocol과 상호작용할 lex `Client`를 만들 수 있습니다. 모든 것을 연결하는 `main()` 함수를 추가합니다:
+
+```ts
+async function main() {
+  const handle = process.argv[2]
+  if (!handle) {
+    console.error('Usage: npx tsx src/index.ts <your-handle>')
+    process.exit(1)
+  }
+
+  console.log(`Logging in as ${handle}...`)
+  const session = await login(handle)
+  console.log(`Logged in! DID: ${session.did}`)
+
+  // Create a lex Client with the authenticated session
+  const client = new Client(session)
+
+  // Fetch the user's profile
+  const profile = await client.get(app.bsky.actor.profile, {
+    repo: session.did,
+  })
+
+  console.log('\nProfile:')
+  console.log(`  Handle: ${handle}`)
+  console.log(`  DID: ${session.did}`)
+  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
+  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+```
+
+`@atproto/lex`의 `Client`는 OAuth 세션을 직접 받습니다 — [봇 만들기 튜토리얼](/guides/bot-tutorial)에서 `PasswordSession`을 받는 것과 동일한 방식입니다. 여기서 설치된 Lexicon에 대해 `.get()`, `.list()`, `.create()`, `.call()`을 사용할 수 있습니다.
+
+## 5부: 실행하기
+
+핸들을 인수로 전달하여 `npx tsx`로 CLI 도구를 실행합니다:
+
+```bash
+npx tsx src/index.ts your-handle.bsky.social
+```
+
+브라우저에서 동의 화면이 열려야 합니다. 승인하면 CLI가 프로필을 출력합니다:
+
+```
+Logging in as your-handle.bsky.social...
+Listening on http://127.0.0.1:3000/callback for OAuth redirect...
+Logged in! DID: did:plc:xxxxx
+
+Profile:
+  Handle: your-handle.bsky.social
+  DID: did:plc:xxxxx
+  Display name: Your Name
+  Description: Your bio here
+```
+
+## 마무리
+
+AT Protocol과 인증하는 최소한의 OAuth CLI 도구를 만들었습니다. 전체 소스 코드는 약 80줄입니다.
+
+몇 가지 유의사항:
+
+- **로컬 개발용입니다.** 루프백 클라이언트는 프로덕션에서 동작하지 않습니다 — 실제 앱 배포는 [NextJS OAuth 튜토리얼](/guides/oauth-tutorial)을 참고하세요.
+- **세션은 인메모리입니다.** 실행할 때마다 재인증이 필요합니다. 영속적인 세션을 위해서는 [NextJS 튜토리얼](/guides/oauth-tutorial#part-3-adding-database-persistence)에서 보여주는 것처럼 데이터베이스를 사용하세요.
+- **스코프.** 이 튜토리얼은 기본 `atproto` 스코프만 요청합니다. 사용자를 대신하여 데이터를 읽거나 쓰려면 추가 [스코프](/guides/scopes)가 필요합니다.
+
+[문서](/guides)에서 더 많은 가이드와 튜토리얼을 찾아보고, [Cookbook](https://github.com/bluesky-social/cookbook/) 저장소에서 더 많은 예제 앱을 확인하세요. 즐거운 개발 되세요!

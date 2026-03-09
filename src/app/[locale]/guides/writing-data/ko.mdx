@@ -1,0 +1,187 @@
+export const header = {
+  title: '데이터 쓰기',
+  description: 'AT Protocol 레코드 쓰기',
+}
+
+## 데이터 쓰기
+
+데이터 쓰기 — 예를 들어 Bluesky 피드에 게시하는 것 — 는 [데이터 읽기](/guides/reading-data)와 유사하게 동작하지만, 다른 메서드를 사용합니다.
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+새 레코드를 생성하려면, 가져온 Lexicon과 필수 필드와 함께 `client.create()`를 호출하세요:
+
+```tsx
+import * as app from './lexicons/app.js'
+
+const result = await client.create(app.bsky.feed.post, {
+  text: 'Hello, world!',
+  createdAt: new Date().toISOString(),
+})
+```
+
+`text`와 `createdAt`은 [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)에서 필수 값입니다.
+
+<Note>
+이 명령은 현재 인증된 사용자 세션으로 게시됩니다. 다른 사용자로 게시하려면, [`agent.login()`](/guides/reads-and-writes#creating-a-client)을 재사용하여 새 사용자 세션을 얻으세요.
+</Note>
+
+API는 게시물의 `at://` URI와 게시물의 콘텐츠 해시인 `cid`를 응답으로 반환합니다:
+
+```tsx
+console.log(result.uri) // at://did:plc:...
+console.log(result.cid)
+```
+    </TabPanel>
+    <TabPanel value="go">
+새 레코드를 생성하려면, 대상 Lexicon과 필수 필드와 함께 `RepoCreateRecord()`를 호출하세요:
+
+```go
+now := time.Now().UTC().Format(time.RFC3339)
+
+post := &appbsky.FeedPost{
+    Text:      "Hello from Go!",
+    CreatedAt: now,
+}
+
+resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
+    Record:     &lexutil.LexiconTypeDecoder{Val: post},
+})
+```
+`Text`와 `CreatedAt`은 [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)에서 필수 값입니다.
+
+<Note>
+이 명령은 현재 인증된 사용자 세션으로 게시됩니다. 다른 사용자로 게시하려면, [`ServerCreateSession()`](/guides/sdk-auth#creating-a-client)을 재사용하여 새 사용자 세션을 얻으세요.
+</Note>
+
+API는 게시물의 `at://` URI와 게시물의 콘텐츠 해시인 `cid`를 응답으로 반환합니다:
+
+```go
+fmt.Printf("Created post: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+```
+{
+  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
+  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
+}
+```
+
+클라이언트 또는 데이터를 읽고 쓰는 다른 인터페이스를 구축하는 경우, 이 응답을 사용하여 자신의 쓰기 내용을 올바르게 읽는 것이 중요합니다.
+
+## 쓰기 후 읽기
+
+AT 앱 프론트엔드가 어떻게 설계되었느냐에 따라, 사용자가 어떤 조치(예: 프로필 업데이트)를 취하고 빠르게 화면을 새로 고침했을 때 최근 변경 사항이 업데이트된 응답에 즉시 반영되지 않을 수 있습니다.
+
+이는 App View 같은 서비스가 사용자 PDS로부터 트랜잭션 방식의 쓰기를 받지 않기 때문입니다. 따라서 해당 서비스가 계산하는 뷰는 결과적으로 일관성을 가집니다. 즉, 사용자가 PDS에 레코드를 생성했더라도 App View가 제공하는 API 응답에 아직 반영되지 않을 수 있습니다.
+
+애플리케이션의 모든 요청이 사용자의 PDS를 통해 전송되므로, PDS는 이러한 동작을 보정할 수 있는 위치에 있습니다. [당사의 PDS 배포판](https://github.com/bluesky-social/pds)은 App View의 응답 헤더를 확인하고, 응답에 없는 새 레코드가 있는지 파악한 후, 해당 새 레코드를 반영하도록 응답을 수정함으로써 기본적인 쓰기 후 읽기 동작을 제공합니다.
+
+App View는 `Atproto-Repo-Rev` 응답 헤더를 설정하여 인덱스의 현재 상태를 전달합니다. 이 헤더는 요청한 사용자의 저장소에서 가장 최근에 인덱싱된 커밋의 `rev`로 설정됩니다. PDS가 응답에서 이 헤더를 발견하면, 제공된 rev보다 최신인 로컬 레코드를 검색하고, 그것이 App View의 응답에 영향을 미치는지 판단합니다.
+
+이 쓰기 후 읽기 동작은 *요청을 보낸 사용자의 레코드에만* 적용됩니다. 같은 PDS에 있는 다른 사용자의 레코드는 요청한 사용자의 응답에 영향을 미치지 않습니다.
+
+## 레코드 업데이트
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+사용자 프로필 같은 기존 레코드를 업데이트하려면 `client.put()`을 사용하세요:
+
+```bash
+lex install app.bsky.actor.profile
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.put(app.bsky.actor.profile, {
+  displayName: 'New Name',
+  description: 'Updated bio',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+사용자 프로필 같은 기존 레코드를 업데이트하려면 `RepoPutRecord()`를 사용하세요:
+
+```go
+newProfile := &appbsky.ActorProfile{
+  DisplayName: ptrString("New Display Name"),
+  Description: ptrString("Updated bio"),
+}
+
+resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
+  Repo:       client.AccountDID.String(),     // handle or DID
+  Collection: "app.bsky.actor.profile",       // lexicon
+  Rkey:       "self",                         // rkey
+  Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
+})
+
+fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```
+
+`RepoPutRecord`는 멱등적입니다 — 레코드가 없으면 생성하고, 있으면 덮어씁니다.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## 레코드 삭제
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+개별 게시물 같은 레코드를 삭제하려면 `client.delete()`를 사용하세요:
+
+```bash
+lex install app.bsky.actor.post
+lex build
+```
+
+```tsx
+import * as app from './lexicons/app.js'
+
+await client.delete(app.bsky.feed.post, {
+  rkey: '3jxf7z2k3q2',
+})
+```
+    </TabPanel>
+    <TabPanel value="go">
+    개별 게시물 같은 레코드를 삭제하려면 `RepoDeleteRecord()`를 사용하세요:
+```go
+comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
+    Rkey:       "3mbl5xdw4yk2r",             // rkey
+})
+```
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## 더 읽어보기 및 참고 자료
+
+- [읽기 및 쓰기](/guides/reads-and-writes)
+- [데이터 읽기](/guides/reading-data)
+- [계정 및 삭제](/guides/account-lifecycle)
+- [소셜 그래프](/guides/social-graph)
+- [레코드 키 명세](/specs/record-key)
+- [URI 체계](/specs/at-uri-scheme)
