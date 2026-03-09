@@ -33,23 +33,24 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     Both methods will produce the same authenticated `session`.
     </TabPanel>
     <TabPanel value="go">
-    Start by importing the `atclient` library and calling `LoginWithPasswordHost()`:
+    Start by importing the `atclient` library and calling `LoginWithPassword()`:
 
     ```go
     import (
       "context"
       "github.com/bluesky-social/indigo/atproto/atclient"
+      "github.com/bluesky-social/indigo/atproto/identity"
     )
 
     func main() {
       ctx := context.Background()
 
-      client, _ := atclient.LoginWithPasswordHost(ctx,
-        "https://bsky.social",       // or your PDS host
-        "your-handle.bsky.social",   // identifier
-        "your-app-password",         // password
-        "",                          // authToken (optional 2FA token)
-        nil,                         // refresh callback (optional)
+      client, _ := atclient.LoginWithPassword(ctx,
+        identity.DefaultDirectory(),   // handles PDS lookup automatically
+        "your-handle.bsky.social",     // identifier
+        "your-app-password",           // password
+        "",                            // authToken (optional 2FA token)
+        nil,                           // refresh callback (optional)
       )
     }
     ```
@@ -79,7 +80,7 @@ If you are using password auth, you should generate an [app password](/specs/xrp
     ```
     </TabPanel>
     <TabPanel value="go">
-    The `client` returned by `LoginWithPasswordHost()` is authenticated and ready to make API calls.
+    The `client` returned by `LoginWithPassword()` is authenticated and ready to make API calls.
     </TabPanel>
   </TabPanels>
 </TabGroup>
