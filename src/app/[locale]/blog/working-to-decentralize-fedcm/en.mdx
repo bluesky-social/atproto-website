@@ -1,0 +1,71 @@
+export const header = {
+  title: 'Working to Decentralize FedCM',
+  description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
+  date: 'March 9, 2026',
+  author: 'Emelia Smith'
+}
+
+# Working to Decentralize FedCM
+
+_This is a guest post from [Emelia Smith](https://bsky.app/profile/did:plc:5w4eqcxzw5jv5qfnmzxcakfy), [originally published on the Decentralizing FedCM blog](https://decentralizing-fedcm.leaflet.pub/). Emelia is a familiar face not just in the atproto ecosystem but across the decentralized social web and has worked particularly hard at making authentication work on atproto. We're excited to sponsor Emelia's work on FedCM for the entire open social web!_
+
+Over the past few months, there's been growing interest from the open social web community in [FedCM](https://w3c-fedid.github.io/FedCM/), a new standard from the [FedID Working Group](https://www.w3.org/groups/wg/fedid) at the W3C.
+
+FedCM, or Federated Credential Management API, is a new web API that allows for federated identity, such as when you “Sign in with an Identity Provider”, where the browser mediates the entire process between an authorization server and the web application. That means the browser remembers your logins, and you don't need to do OAuth/OIDC redirects.
+
+An early implementation is available in Google Chrome ([video demo](https://developer.chrome.com/docs/identity/fedcm/overview#fedcm_ui_modes)). Essentially, you ask the browser, “Hey, can you give me a credential for an account at this Provider?” and as long as you've authenticated at that Provider's authorization servers, you'll be presented a list of your accounts to choose from by the browser, without leaving the page, and then you're authenticated!
+
+## But, FedCM doesn't really work for the open social web…
+
+Why? Because it was designed for a web application that has relationships to a known set of authorization servers. In the open social web, there are countless authorization servers and countless applications: anyone can host their own!
+
+Usually, authorization servers in the open social web are for use with one or more protocols, e.g., AT Protocol, ActivityPub, Solid, or IndieAuth. So rather than asking the browser, “Hey, can you give me a credential for an account at this Provider?”, we instead want to say, “Hey, browser, can you give me a credential for an account that supports this protocol?”
+
+Work was started in the [FedID Community Group](https://www.w3.org/community/fed-id/) (not the FedID Working Group) on [Identity Provider Registration](https://github.com/w3c-fedid/idp-registration/issues/1) which would allow us to answer this question. It's currently a [Stage 1 proposal](https://github.com/w3c-fedid/Administration/blob/main/proposals-CG-WG.md), which means it's in incubation, and competing proposals may happen.
+
+However, as this proposal was from the Community Group rather than the Working Group, we needed someone to act as the Working Group's champion to advocate with browser implementers to actually implement this new proposal.
+
+## The Grant
+
+Over the past few months, I realized that for FedCM to really benefit the open social web, we needed someone on the Working Group dedicated to pushing for the needs of the decentralized web.
+
+In January, I applied for [Invited Expert](https://www.w3.org/invited-experts/) status at the FedID Working Group. I also started a conversation with [Bryan Newbold](https://bsky.app/profile/bnewbold.net) at [Bluesky Social PBC](https://blueskyweb.xyz), suggesting that I was well-positioned to be that advocate. But, in order to do that work, I'd need funding.
+
+Bluesky is one of the few organizations that could actually fund this work, since most other decentralized web projects don't have much funding.
+
+In the past, I've worked on both [ActivityPub](https://activitypub.rocks/) and [Solid](https://solidproject.org/) and contributed to [IndieAuth](https://indieauth.spec.indieweb.org/) (by way of co-authoring the [Client ID Metadata Document internet](https://www.ietf.org/archive/id/draft-ietf-oauth-client-id-metadata-document-01.html) draft with [Aaron Parecki](https://aaronparecki.com/), which was adopted by IndieAuth). I've worked a lot with OAuth and OIDC throughout my professional career as a software engineer and know the problem space really well.
+
+After a week or two, my application to be an Invited Expert was approved by the W3C, allowing me to work directly with the FedID Working Group, even though I'm not a W3C member.
+
+After some back-and-forth and some calls with [Devin Ivy](https://bsky.app/profile/divy.zone) at Bluesky, we reached an agreement on a grant from Bluesky Social PBC to fund my work on FedCM and related standards. The grant is for $39,000 over 12 months, paid out monthly.
+
+The grant ensures my independence from Bluesky, and specifically requires me to liaise with communities working on IndieAuth, Solid, and AT Protocol, as well as other groups whose work intersects with federated and decentralized identity. All my technical contributions, positions, and votes within the FedID WG are my own and are not influenced or directed by Bluesky.
+
+## Early Progress
+
+I've already started advocating for the needs of federated and decentralized communities, first with a call for participation on the [mailing list](https://lists.w3.org/Archives/Public/public-fed-id/2026Feb/0003.html), although, unfortunately, due to a scheduling conflict, I wasn't able to make the [meeting](https://github.com/w3c-fedid/meetings/blob/main/2026/2026-02-24-FedCM-notes.md). The concerns raised so far are:
+
+*   We shouldn't use silent registration, as there was some blowback on creating passkeys without a prompt.
+*   How do we solve revocation?
+*   Preventing abuse of Identity Provider Registration.
+*   _“We've not had anybody use it yet. That is the biggest blocker”_.
+*   Adoption is a chicken and egg problem between Authorization Servers and Relying Parties (web apps).
+
+
+When that meeting happened, we hadn't yet signed the grant, so attendees didn't know how serious the Bluesky team are about making FedCM work for decentralized web.
+
+## Next Steps
+
+This [leaflet publication](https://decentralizing-fedcm.leaflet.pub) is going to be updated roughly every two months with reports on the progress we're making with:
+
+*   A summary of key topics discussed, decisions made, and milestones reached.
+*   A description of my contributions and activities within the working group.
+*   An account of any cross-community coordination efforts undertaken.
+*   Identification of open questions, emerging issues, areas of concern, or other standardization efforts relevant to the broader federated and decentralized identity ecosystem.
+
+
+Sometimes the report may contain topics related to additional specifications that enable the FedCM ecosystem and decentralized authorization.
+
+The next FedID WG/CG Meeting is on [March 10th, 2026](https://www.w3.org/events/meetings/b2f840e0-5593-4164-908e-dfaf26e8b3b7/20260310T080000/), if you're interested in this work, please do attend!
+
+So stay tuned!

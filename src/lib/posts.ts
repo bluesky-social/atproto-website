@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'working-to-decentralize-fedcm',
+    title: 'Working to Decentralize FedCM',
+    description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
+    date: 'March 9, 2026',
+    author: 'Emelia Smith',
+  },
+  {
     slug: 'npmx-alpha-launch',
     title: 'Supporting the npmx Alpha Launch',
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
@@ -36,7 +43,7 @@ export const posts: BlogPost[] = [
     title: 'Upcoming Relay Transition',
     description: 'What the new relay rollout means for consumers of the firehose.',
     date: 'January 24, 2026',
-    author: 'AT Protocol Team',
+    author: 'Bryan Newbold',
   },
   {
     slug: 'introducing-tap',
