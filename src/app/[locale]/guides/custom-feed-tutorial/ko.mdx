@@ -2,8 +2,8 @@ import {Container} from "@/components/Container"
 import bsky from "./feeds-bsky.png"
 
 export const header = {
-  title: 'Write a Custom Feed',
-  description: 'Host an algorithm that\'s accessible from apps like Bluesky.',
+  title: '커스텀 피드 만들기',
+  description: 'Bluesky 같은 앱에서 접근할 수 있는 알고리즘을 호스팅합니다.',
 }
 
 사용자 지정 피드 또는 피드 생성기는 사용자에게 알고리즘을 제공하는 서비스입니다. 이를 통해 타임라인 보기를 자유롭게 선택하거나 [다른 사용자를 위한 임베드 가능한 피드를 생성](https://graze.leaflet.pub/3m4yjmbnyec2c)할 수 있는 등 다양한 자유를 누릴 수 있습니다.
@@ -150,8 +150,19 @@ indexer.identity(async (evt) => {
     // 비활성화/삭제된 아이덴티티에서 게시물 제거
     const removed = postIndex.filter(p => p.uri.includes(evt.did)).length
     if (removed > 0) {
-        
-postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))        console.log(`Identity ${evt.did} (${evt.status}): removed ${removed} posts`)    }})indexer.error((err) => console.error('Indexer error:', err))const channel = tap.channel(indexer)```여기서 `tap`에 연결하고, `@atproto/tap` 라이브러리가 제공하는 `SimpleIndexer` 함수를 사용하여 `app.bsky.feed.post` 렉시콘(즉, Bluesky 게시물)에서 들어오는 레코드를 처리합니다.새로운 게시물이 발견되면, 그 텍스트가 검색어와 일치하는지 확인합니다. 일치하는 경우 `postIndex` 배열에 추가합니다. 인덱스의 정확성을 유지하기 위해 삭제 및 계정 상태 변경도 처리합니다.
+        postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))
+        console.log(`Identity ${evt.did} (${evt.status}): removed ${removed} posts`)
+    }
+})
+
+indexer.error((err) => console.error('Indexer error:', err))
+
+const channel = tap.channel(indexer)
+```
+
+여기서 `tap`에 연결하고, `@atproto/tap` 라이브러리가 제공하는 `SimpleIndexer` 함수를 사용하여 `app.bsky.feed.post` Lexicon(즉, Bluesky 게시물)에서 들어오는 레코드를 처리합니다.
+
+새로운 게시물이 발견되면, 그 텍스트가 검색어와 일치하는지 확인합니다. 일치하는 경우 `postIndex` 배열에 추가합니다. 인덱스의 정확성을 유지하기 위해 삭제 및 계정 상태 변경도 처리합니다.
 본질적으로, 특정 기준에 부합하는 게시물의 인메모리 검색 인덱스를 구축하는 것입니다. 이후 이 인덱스를 피드로 제공하게 됩니다.
 ## 파트 4: 피드 제공
 이제 피드를 제공하기 위해 [XRPC](/guides/lexicon#http-api-methods) 경로를 추가합니다. 서버는 두 종류의 요청을 처리하게 됩니다:

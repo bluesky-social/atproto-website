@@ -1,0 +1,56 @@
+export const header = {
+  title: 'Lexicon 게시하기',
+  description: '여러분의 Lexicon을 세상과 공유하세요',
+}
+
+## goat 사용하기
+
+Lexicon은 기계가 읽을 수 있고 네트워크에서 접근 가능하도록 설계되었습니다. 현재 Lexicon이 네트워크에서 반드시 *사용 가능해야 하는* 것은 아니지만, 메서드 사용자들이 단일하고 정규적이며 권위 있는 표현을 사용할 수 있도록 Lexicon을 게시하는 것이 강력히 권장됩니다.
+
+Lexicon을 생성하고 게시하기 위해 저희의 커맨드라인 도구인 [`goat`](https://github.com/bluesky-social/goat)를 사용할 수 있습니다. Lexicon 관련 기능은 [`goat lex`](https://github.com/bluesky-social/goat?tab=readme-ov-file#lexicon-development) 에서 사용 가능합니다:
+
+- AT 네트워크에 스키마 게시 및 동기화
+- 스키마 진화 규칙에 대한 diff, 린팅, 검증
+
+`goat`는 macOS 및 Linux의 [Homebrew](https://formulae.brew.sh/formula/goat)에서 설치할 수 있습니다:
+
+```shell
+brew install goat
+```
+
+프로젝트 디렉토리에서 기존 Lexicon을 다운로드할 수 있으며, `./lexicons/`에 JSON 파일로 저장됩니다:
+
+```markdown
+$ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile
+ 🟢 com.atproto.repo.strongRef
+ 🟢 com.atproto.moderation.defs
+ 🟢 com.atproto.moderation.createReport
+ 🟢 app.bsky.actor.profile
+```
+
+`goat lex new record`로 새 Lexicon 레코드를 생성할 수도 있습니다:
+
+```markdown
+$ goat lex new record dev.project.thing
+
+$ open ./lexicons/dev/project/thing.json
+```
+
+그리고 최종적으로 `goat lex publish`로 게시할 수 있습니다:
+
+```markdown
+$ goat lex publish
+ 🟢 dev.project.thing
+```
+
+<Note>
+Lexicon은 다른 레코드와 마찬가지로 *여러분 자신의 저장소*에 게시됩니다. 즉, 게시할 때 `goat`로 로그인해야 합니다! 이를 위해 `goat account login`을 사용하거나 `GOAT_USERNAME` 및 `GOAT_PASSWORD` 환경 변수를 설정하세요.
+</Note>
+
+새 Lexicon 생성에 대한 지침은 [Lexicon 스타일 가이드](/guides/lexicon-style-guide)를 참조하세요.
+
+## 추가 자료
+
+- [Lexicon](/guides/lexicon)
+- [Lexicon 스타일 가이드](/guides/lexicon-style-guide)
+- [Lexicon 명세](/specs/lexicon)

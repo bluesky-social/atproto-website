@@ -1,0 +1,104 @@
+import {Container} from "@/components/Container"
+
+export const header = {
+  title: 'SDK 인증',
+  description: 'SDK로 인증하기',
+}
+
+## 비밀번호 인증
+
+비밀번호 인증을 사용하는 경우, 메인 계정 비밀번호 대신 계정에 대한 [앱 비밀번호](/specs/xrpc#app-passwords)를 생성해야 합니다. Bluesky를 사용하는 경우, [계정 설정](https://bsky.app/settings/app-passwords)에서 앱 비밀번호를 생성할 수 있습니다.
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    `PasswordSession`을 가져오고, `PasswordSession.login()`에 자격 증명을 제공하여 `session`을 생성하는 것으로 시작합니다:
+
+    ```tsx
+    import { PasswordSession } from '@atproto/lex-password-session'
+
+    const session = await PasswordSession.login({
+      service: 'https://bsky.social', // or your PDS host
+      identifier: 'your-handle.bsky.social',
+      password: 'your-app-password',
+    })
+    ```
+
+    최종 사용자 로그인 플로우가 있는 애플리케이션은 앱 비밀번호 세션 대신 [OAuth](/guides/oauth-cli-tutorial) 인증을 사용해야 합니다. 비밀번호 인증은 봇과 커맨드라인 도구에 적합합니다.
+
+    두 방법 모두 동일한 인증된 `session`을 생성합니다.
+    </TabPanel>
+    <TabPanel value="go">
+    `atclient` 라이브러리를 가져오고 `LoginWithPasswordHost()`를 호출하는 것으로 시작합니다:
+
+    ```go
+    import (
+      "context"
+      "github.com/bluesky-social/indigo/atproto/atclient"
+    )
+
+    func main() {
+      ctx := context.Background()
+
+      client, _ := atclient.LoginWithPasswordHost(ctx,
+        "https://bsky.social",       // or your PDS host
+        "your-handle.bsky.social",   // identifier
+        "your-app-password",         // password
+        "",                          // authToken (optional 2FA token)
+        nil,                         // refresh callback (optional)
+      )
+    }
+    ```
+
+    최종 사용자 로그인 플로우가 있는 애플리케이션은 앱 비밀번호 세션 대신 [OAuth](/guides/go-oauth-cli-tutorial) 인증을 사용해야 합니다. 비밀번호 인증은 봇과 커맨드라인 도구에 적합합니다.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+## 클라이언트 세션
+
+<TabGroup defaultValue="ts">
+  <TabList>
+    <Tab value="ts">TypeScript</Tab>
+    <Tab value="go">Go</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel value="ts">
+    로그인된 `session`을 얻으면, 데이터를 읽고 쓰기 위한 `Client` 인스턴스를 생성할 수 있습니다:
+
+    ```tsx
+    import { Client } from '@atproto/lex'
+    const client = new Client(session)
+
+    // Make authenticated API calls
+    console.log('Logged in as:', session.did)
+    ```
+    </TabPanel>
+    <TabPanel value="go">
+    `LoginWithPasswordHost()`가 반환하는 `client`는 인증되어 있으며 API 호출을 바로 할 수 있습니다.
+    </TabPanel>
+  </TabPanels>
+</TabGroup>
+
+여기서 바로 [API 요청 만들기](/guides/reads-and-writes)로 이동할 수 있습니다.
+
+## API 토큰
+
+로그인 속도 제한은 일반적으로 다른 API 작업보다 낮습니다. 짧은 시간 내에 로그인 메서드를 여러 번 호출하면 속도 제한이 발생할 수 있습니다. 인증하려면 세션당 로그인 메서드를 한 번만 호출하면 됩니다.
+
+로그인 메서드가 호출하는 `com.atproto.server.createSession` API 엔드포인트는 두 개의 API 토큰이 포함된 세션 객체를 반환합니다:
+* `accessJwt`: 요청 인증에 사용되지만 몇 분 후에 만료되는 액세스 토큰
+* `refreshJwt`: 더 오래 지속되며 새 액세스 토큰으로 세션을 업데이트하는 데만 사용되는 갱신 토큰
+
+## 추가 자료
+
+- [인증](/guides/auth)
+- [OAuth 패턴](/guides/oauth-patterns)
+- [스코프](/guides/scopes)
+- [권한 요청](/guides/permission-sets)
+- [OAuth 명세](/specs/oauth)
+- [권한 명세](/specs/permission)

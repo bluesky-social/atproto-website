@@ -136,14 +136,12 @@ Some API endpoints can be accessed without authentication. You can create an una
     import (
         "context"
         appbsky "github.com/bluesky-social/indigo/api/bsky"
-        "github.com/bluesky-social/indigo/xrpc"
+        "github.com/bluesky-social/indigo/atproto/atclient"
     )
 
     ctx := context.Background()
 
-    client := &xrpc.Client{
-        Host: "https://public.api.bsky.app", // public API endpoint
-    }
+    client := atclient.NewAPIClient("https://public.api.bsky.app")
     ```
 
     As with an authenticated client, you can `.get()` any public records, like a user's profile:

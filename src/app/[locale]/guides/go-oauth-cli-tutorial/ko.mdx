@@ -1,0 +1,250 @@
+export const header = {
+  title: 'Go OAuth 튜토리얼',
+  description: 'Go 앱에서 atproto OAuth로 인증하기',
+}
+
+이 튜토리얼에서는 [atproto OAuth](/guides/auth)로 사용자를 인증하고 세션 정보를 가져오는 최소한의 Go 도구를 만들어 봅니다. 전체 앱은 단일 파일에 담깁니다.
+
+이것은 AT Protocol에서 OAuth가 어떻게 동작하는지 이해하기 위한 좋은 출발점입니다. TypeScript 버전은 [Node OAuth 튜토리얼](/guides/oauth-cli-tutorial)을 참고하세요. 프로덕션 웹 앱 개발은 [NextJS OAuth 튜토리얼](/guides/oauth-tutorial)을 참고하세요.
+
+## 사전 준비
+
+Go에 대한 기본적인 이해가 필요합니다.
+
+다음이 설치되어 있어야 합니다:
+- Go 1.24+
+
+[homebrew](https://brew.sh/)를 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
+
+```bash
+brew install go
+```
+
+테스트에 사용할 atproto 핸들도 필요합니다.
+
+## 1부: 프로젝트 설정
+
+새 Go 모듈을 만들고 [Go SDK](https://github.com/bluesky-social/indigo)를 설치합니다:
+
+```bash
+mkdir go-oauth-cli
+cd go-oauth-cli
+go mod init go-oauth-cli
+go get github.com/bluesky-social/indigo/atproto/auth/oauth
+```
+
+이것으로 충분합니다 — Go SDK에는 개발용 인메모리 세션 저장소를 포함하여 OAuth에 필요한 모든 것이 포함되어 있습니다.
+
+## 2부: OAuth 클라이언트 구축
+
+`main.go`를 만듭니다. import 구문과 OAuth 클라이언트 설정으로 시작합니다:
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"net/url"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
+
+	"github.com/bluesky-social/indigo/atproto/auth/oauth"
+)
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "Usage: go run main.go <your-handle>")
+		os.Exit(1)
+	}
+	handle := os.Args[1]
+
+	if err := run(context.Background(), handle); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+이제 `run` 함수를 추가합니다. 먼저 무작위 포트에서 콜백 서버를 설정한 다음 OAuth 클라이언트를 구성합니다:
+
+```go
+func run(ctx context.Context, handle string) error {
+	// Start the callback server on a random available port
+	callbackCh := make(chan url.Values, 1)
+	port, server, err := listenForCallback(ctx, callbackCh)
+	if err != nil {
+		return err
+	}
+	defer server.Close()
+
+	callbackURL := fmt.Sprintf("http://127.0.0.1:%d/callback", port)
+
+	// Create an OAuth client with localhost config and in-memory storage
+	config := oauth.NewLocalhostConfig(callbackURL, []string{"atproto"})
+	store := oauth.NewMemStore()
+	oauthClient := oauth.NewClientApp(&config, store)
+```
+
+`NewLocalhostConfig`는 루프백 클라이언트를 설정합니다.
+
+<Note>
+OAuth 루프백은 특수한 리다이렉트 URI(예: `http://127.0.0.1:PORT/callback`)를 사용하여 인증 코드를 앱으로 직접 전송합니다. 앱은 로컬 포트에서 수신 대기하며, 브라우저 기반 콜백을 피하고 토큰 교환을 위한 안전하고 직접적인 통신을 가능하게 합니다. 웹 리다이렉트 대신 앱이 로컬 리스너를 열고, 브라우저에서 인증한 후 서버가 앱의 로컬 URI로 리다이렉트하여 앱이 코드를 받아 토큰으로 교환할 수 있습니다. 개발 환경에서 특히 유용합니다.
+</Note>
+
+`NewMemStore`는 개발용 인메모리 세션 저장소를 제공합니다.
+
+## 3부: 로그인 흐름
+
+`run` 함수에 로그인 흐름을 계속 추가합니다. 핸들을 확인하고, 브라우저를 열고, 콜백을 기다립니다:
+
+```go
+	// Start the OAuth flow
+	fmt.Printf("Logging in as %s...\n", handle)
+	authURL, err := oauthClient.StartAuthFlow(ctx, handle)
+	if err != nil {
+		return fmt.Errorf("starting auth flow: %w", err)
+	}
+
+	// Open the browser to the authorization URL
+	fmt.Printf("Opening browser...\n")
+	if !strings.HasPrefix(authURL, "https://") {
+		return fmt.Errorf("unexpected non-https auth URL")
+	}
+	if err := openBrowser(authURL); err != nil {
+		fmt.Printf("Could not open browser automatically.\nPlease visit: %s\n", authURL)
+	}
+
+	// Wait for the OAuth callback
+	fmt.Println("Waiting for authorization...")
+	params := <-callbackCh
+```
+
+흐름은 다음과 같이 동작합니다:
+
+1. `StartAuthFlow`는 사용자의 핸들을 확인하고, PDS를 탐색하고, [Pushed Authorization Request (PAR)](/guides/permission-sets#requesting-permissions)를 전송한 후 인증 URL을 반환합니다.
+2. 사용자의 브라우저가 동의 화면으로 열립니다.
+3. 사용자가 승인하면 PDS가 인증 코드와 함께 `http://127.0.0.1:<port>/callback`으로 리다이렉트합니다.
+
+## 4부: 세션 사용
+
+콜백을 세션으로 교환하고 인증된 API 호출을 만들어 `run` 함수를 완성합니다:
+
+```go
+	// Exchange the authorization code for a session
+	sessData, err := oauthClient.ProcessCallback(ctx, params)
+	if err != nil {
+		return fmt.Errorf("processing callback: %w", err)
+	}
+	fmt.Printf("Logged in! DID: %s\n", sessData.AccountDID)
+
+	// Resume the session to get an API client
+	session, err := oauthClient.ResumeSession(ctx, sessData.AccountDID, sessData.SessionID)
+	if err != nil {
+		return fmt.Errorf("resuming session: %w", err)
+	}
+
+	// Fetch the user's session info to prove it works
+	client := session.APIClient()
+	var resp struct {
+		DID    string `json:"did"`
+		Handle string `json:"handle"`
+	}
+	if err := client.Get(ctx, "com.atproto.server.getSession", nil, &resp); err != nil {
+		return fmt.Errorf("fetching session: %w", err)
+	}
+
+	fmt.Printf("\nSession:\n")
+	fmt.Printf("  Handle: %s\n", resp.Handle)
+	fmt.Printf("  DID:    %s\n", resp.DID)
+	fmt.Printf("  Host:   %s\n", sessData.HostURL)
+
+	return nil
+}
+```
+
+`ProcessCallback`은 인증 코드를 토큰으로 교환합니다. `ResumeSession`은 해당 토큰을 DPoP 서명과 토큰 갱신을 자동으로 처리하는 세션으로 래핑합니다. `APIClient()`는 사용자의 자격 증명으로 미리 구성된 HTTP 클라이언트를 반환합니다 — 이를 사용하여 모든 [XRPC](/specs/xrpc) 호출을 만들 수 있습니다.
+
+## 5부: 헬퍼 함수
+
+콜백 서버와 브라우저 실행 헬퍼를 추가합니다:
+
+```go
+func listenForCallback(ctx context.Context, res chan url.Values) (int, *http.Server, error) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, nil, err
+	}
+
+	mux := http.NewServeMux()
+	server := &http.Server{Handler: mux}
+
+	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		res <- r.URL.Query()
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(200)
+		w.Write([]byte("<h1>Authorized! You can close this tab.</h1>"))
+		go server.Shutdown(ctx)
+	})
+
+	go func() {
+		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	return listener.Addr().(*net.TCPAddr).Port, server, nil
+}
+
+func openBrowser(url string) error {
+	switch runtime.GOOS {
+	case "darwin":
+		return exec.Command("open", url).Run()
+	case "windows":
+		return exec.Command("cmd", "/c", "start", url).Run()
+	default:
+		return exec.Command("xdg-open", url).Run()
+	}
+}
+```
+
+콜백 서버는 `127.0.0.1:0`에서 수신 대기하며, 이는 OS에 사용 가능한 포트를 할당하도록 지시합니다. 콜백이 도착하면 채널을 통해 쿼리 파라미터를 메인 흐름으로 전송하고 자체적으로 종료합니다.
+
+## 6부: 실행하기
+
+핸들을 인수로 전달하여 CLI 도구를 실행합니다:
+
+```bash
+go run main.go your-handle.bsky.social
+```
+
+브라우저에서 동의 화면이 열려야 합니다. 승인하면 CLI가 세션 정보를 출력합니다:
+
+```
+Logging in as your-handle.bsky.social...
+Opening browser...
+Waiting for authorization...
+Logged in! DID: did:plc:xxxxx
+
+Session:
+  Handle: your-handle.bsky.social
+  DID:    did:plc:xxxxx
+  Host:   https://shimeji.us-east.host.bsky.network
+```
+
+## 마무리
+
+Go로 AT Protocol과 인증하는 최소한의 OAuth CLI 도구를 만들었습니다. 전체 소스 코드는 약 120줄입니다.
+
+몇 가지 유의사항:
+
+- **로컬 개발용입니다.** localhost 클라이언트는 프로덕션에서 동작하지 않습니다. SQLite 영속성과 여러 명령어를 갖춘 프로덕션 준비된 Go 예시는 Cookbook의 [go-oauth-cli-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app)을 참고하세요.
+- **세션은 인메모리입니다.** 실행할 때마다 재인증이 필요합니다. Cookbook 예시에서는 SQLite로 세션을 영속화하는 방법을 보여줍니다.
+- **스코프.** 이 튜토리얼은 기본 `atproto` 스코프만 요청합니다. 사용자를 대신하여 데이터를 읽거나 쓰려면 추가 [스코프](/guides/scopes)가 필요합니다.
+
+[문서](/guides)에서 더 많은 가이드와 튜토리얼을 찾아보고, [Cookbook](https://github.com/bluesky-social/cookbook/) 저장소에서 더 많은 예제 앱을 확인하세요. 즐거운 개발 되세요!
