@@ -1,0 +1,61 @@
+import {Container} from "@/components/Container"
+import ozone from "./ozone.png"
+
+export const header = {
+  title: '라벨러 만들기',
+  description: '자체 모듈식 모더레이션 서비스 운영하기',
+}
+
+## 라벨러 선언
+
+라벨러는 `/app.bsky.labeler.service/self` 레코드를 게시하여 자신이 라벨러임을 선언하고 정책을 공개합니다. 해당 레코드는 다음과 같습니다:
+
+```json
+{
+  "$type": "app.bsky.labeler.service",
+  "policies": {
+    "labelValues": ["porn", "spider"],
+    "labelValueDefinitions": [
+      {
+        "identifier": "spider",
+        "severity": "alert",
+        "blurs": "media",
+        "defaultSetting": "warn",
+        "locales": [
+          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
+        ]
+      }
+    ]
+  },
+  "subjectTypes": ["record"],
+  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
+  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
+  "createdAt": "2024-03-03T05:31:08.938Z"
+}
+```
+
+`labelValues`는 라벨러에서 기대할 수 있는 것을 선언합니다. 전역 및 커스텀 라벨 값을 포함할 수 있습니다.
+
+`labelValueDefinitions`는 커스텀 라벨을 정의합니다. 다양한 언어로 사람이 읽을 수 있는 텍스트를 지정하기 위한 `locales` 필드가 포함됩니다. 사용자의 언어를 찾을 수 없는 경우, 배열의 첫 번째 문자열 세트가 사용됩니다.
+
+`subjectTypes`, `subjectCollections`, `reasonTypes`는 라벨러가 검토하는 모더레이션 신고의 유형을 선언합니다. `subjectTypes`는 개별 콘텐츠에 대한 `record`와 전체 계정에 대한 `account`를 포함할 수 있습니다. `subjectCollections`는 레코드 유형의 NSID 목록이며, 정의되지 않은 경우 모든 레코드 유형이 허용됩니다. `reasonTypes`는 신고 사유 코드(Lexicon 참조)의 목록입니다.
+
+## Ozone
+
+[Ozone](https://github.com/bluesky-social/ozone)은 Atmosphere 앱을 위한 참조 라벨링 서비스로, 모더레이션 신고를 분류하고 조치하기 위한 웹 인터페이스가 포함되어 있습니다.
+
+<Container>
+  <Image src={ozone} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Ozone을 자체 호스팅하면 AT 스택의 모더레이션 아키텍처에서 라벨러로 참여할 수 있습니다. Ozone 서비스는 웹 UI, 백엔드, Postgres 데이터베이스로 구성됩니다.
+
+Ozone 서비스를 설정하기 전에, 메인 계정과 별개로 네트워크에서 *새* 계정을 생성해야 합니다. 이 계정이 라벨러 구독자들이 상호작용하게 될 계정입니다: 라벨러 계정은 앱 인터페이스에서 일반 계정과 다르게 표시됩니다. 자세한 내용은 [Ozone 사용자 가이드](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md)를 참고하세요.
+
+## 추가 자료
+
+- [모더레이션](/guides/moderation)
+- [라벨](/guides/labels)
+- [구독](/guides/subscriptions)
+- [Ozone 사용하기](/guides/using-ozone)
+- [라벨 명세](/specs/label)

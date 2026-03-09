@@ -8,11 +8,19 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'working-to-decentralize-fedcm',
+    title: 'Working to Decentralize FedCM',
+    description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
+    date: 'March 9, 2026',
+    author: 'Emelia Smith',
+  },
+  {
     slug: 'npmx-alpha-launch',
     title: 'Supporting the npmx Alpha Launch',
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
     date: 'March 3, 2026',
     author: 'Jim Ray',
+
   },
   {
     slug: 'plc-replicas',
@@ -20,6 +28,7 @@ export const posts: BlogPost[] = [
     description: 'Introducing a self-hostable did:plc read-replica service.',
     date: 'February 18, 2026',
     author: 'David Buchanan',
+
   },
   {
     slug: 'new-site-2026',
@@ -27,13 +36,14 @@ export const posts: BlogPost[] = [
     description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 17, 2026',
     author: 'Alex Garnett',
+
   },
   {
     slug: 'relay-rollout',
     title: 'Upcoming Relay Transition',
     description: 'What the new relay rollout means for consumers of the firehose.',
     date: 'January 24, 2026',
-    author: 'AT Protocol Team',
+    author: 'Bryan Newbold',
   },
   {
     slug: 'introducing-tap',
@@ -42,6 +52,7 @@ export const posts: BlogPost[] = [
       'We recently released Tap, a tool designed to handle the hard parts of repo synchronization, so you can focus on building your application.',
     date: 'December 12, 2025',
     author: 'Jim Ray',
+
   },
   {
     slug: 'protocol-check-in-fall-2025',

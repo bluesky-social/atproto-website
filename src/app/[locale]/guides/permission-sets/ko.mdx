@@ -1,0 +1,220 @@
+import {Container} from "@/components/Container"
+import oauth from "./oauth-only.png"
+import skyblur from "./skyblur-oauth.png"
+import granular from "./skyblur-granular.png"
+import lexicon from "./skyblur-lexicon.png"
+
+export const header = {
+  title: '권한 요청',
+  description: '앱 개발자와 Lexicon 설계자를 위한 권한 가이드',
+}
+
+## 앱 개발자를 위한 안내
+
+이 가이드는 atproto 애플리케이션에 대한 권한 요청 방법을 설명합니다. [OAuth](/guides/auth)는 서드파티 애플리케이션이 사용자의 소셜 그래프에 접근할 수 있도록 인증하는 데 사용되며, 여기서 설명하는 개념의 전제 조건입니다.
+
+atproto 리소스에 대한 제어는 [권한](/specs/permission)을 사용하여 설명되고 부여됩니다. 특정 Lexicon 네임스페이스(레코드 유형 및 API 엔드포인트)와 관련된 권한 그룹은 "권한 집합"으로 묶을 수 있습니다. 두 가지 모두 [OAuth](/specs/auth) 맥락에서 클라이언트 소프트웨어에 PDS의 계정 리소스 접근을 부여하는 데 사용됩니다: 예를 들어, 사용자의 공개 저장소에 특정 유형의 레코드를 쓰거나, 원격 서비스에 인증된 API 요청을 만드는 기능이 있습니다. 개발자는 앱이 기능하기 위해 필요한 권한을 선언하고, 최종 사용자는 앱 접근 권한을 부여할 때 해당 권한을 확인합니다.
+
+일반적으로 더 깔끔한 UI를 위해 기존 권한 집합을 사용하는 것이 가장 좋지만, 필요에 따라 개별 권한을 요청하거나 자체 권한 집합을 정의할 수도 있습니다. 이러한 요청이 OAuth 흐름에서 어떻게 나타나는지는 [OAuth 흐름 예시](#oauth-flow-examples) 섹션을 참고하세요.
+
+## 권한 요청하기
+
+앱이 atproto 아이덴티티 제공자와 OAuth 흐름을 시작할 때, 인증 요청의 `scope` 파라미터에 특정 권한 집합을 포함하여 요청할 수 있습니다. 이는 OAuth 클라이언트를 등록할 때 [`oauth-client-metadata.json` 파일](/specs/oauth#clients)에서 *공백으로 구분된 목록*으로 제공되어야 합니다:
+
+```
+{
+scope: "atproto rpc:app.bsky.feed.searchPosts?aud=* blob:*/*",
+...
+}
+```
+
+AT의 OAuth는 [Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/) (PAR)을 사용합니다. 클라이언트 메타데이터 파일은 세션 생명주기 동안 동적으로 가져오며, `oauth-client-metadata.json`의 `scope` 파라미터는 앱이 실제로 만드는 인증 HTTP 요청과 *일치해야* 합니다:
+
+```
+https://your-authorization-server.com/authorize?
+    client_id=1234567890&
+    redirect_uri=https://your-app/callback&
+    scope=atproto rpc:app.bsky.feed.searchPosts?aud=* blob:*/*
+    response_type=code&
+    audience=https://myapi&
+    state=1234567890
+```
+
+앱에 필요한 기능을 커버할 만큼의 권한만 요청하도록 노력해야 합니다. [전환 스코프](/specs/oauth#authorization-scopes)는 다른 애플리케이션의 게시물을 포함하여 사용자의 AT 레코드를 생성, 업데이트 또는 삭제하는 권한을 부여하는 것처럼 보입니다. 일반적으로 이러한 광범위한 권한 요청은 피해야 합니다. 이는 사용자의 신뢰를 쌓고 인증 과정에서의 마찰을 최소화하는 데 도움이 됩니다.
+
+사용자 경험 관점에서 요청하는 권한 집합의 수를 낮게 유지하는 것이 좋습니다. 권한 집합이 추가될수록 인증 대화 상자에 더 많은 정보가 표시되어 결정 피로로 이어질 수 있습니다. 사용자가 요청된 권한의 일부만 부여하도록 허용할 수 있지만, 이는 엣지 케이스로 이어질 수 있습니다.
+
+## 권한 유형
+
+PDS 인스턴스의 사용자 소유 리소스와 관련된 권한은 다섯 가지 유형으로 표현됩니다:
+
+- `repo`: 공개 저장소 (레코드 및 컬렉션)
+- `rpc`: 서비스 인증 (외부 서비스에 대한 API 호출)
+- `blob`: 업로드된 미디어 파일
+- `identity`: DID 및 핸들
+- `account`: 호스팅 상태, 이메일 주소
+
+와일드카드(*)는 스코프 문자열 구문에서 허용되며 모든 레코드에 대한 접근을 부여합니다 — 가장 일반적인 예는 이미지와 비디오 작업을 위한 `blob:*/*`입니다. 부분 와일드카드는 *지원되지 않습니다* — 예를 들어, `app.bsky.*`는 유효한 스코프 문자열이 아닙니다. 특정 네임스페이스나 Lexicon의 여러 권한을 요청하려면 개별적으로 나열하거나 [권한 집합](#for-lexicon-designers)을 사용해야 합니다. 이는 과도하게 광범위한 권한 요청을 방지하기 위한 의도적인 설계입니다.
+
+권한 집합은 자체적으로 Lexicon 스키마이며 다른 Lexicon과 마찬가지로 네임스페이스로 구분됩니다. 다른 Lexicon과 달리 권한 집합은 스코프 문자열에서 `include:` 접두사로 시작하며 동적으로 업데이트될 수 있습니다.
+
+## 변경 사항 롤아웃
+
+새 권한 집합을 사용하도록 앱을 업데이트할 때 소프트웨어 릴리스와 권한 집합 업데이트를 조율하는 것이 중요합니다. 사용자 승인이 필요한 새 권한 집합을 추가하면 사용자가 이러한 새 권한을 부여하기 위해 앱을 다시 인증해야 합니다.
+
+[클라이언트 메타데이터 문서](/specs/oauth#clients)의 릴리스 및 배포 프로세스는 앱의 코드 배포 프로세스와 별개일 수 있습니다. 그에 맞게 계획하세요 — 새 권한을 요청하는 업데이트된 `oauth-client-metadata.json`은 해당 권한이 필요한 앱 버전보다 먼저 배포되어야 합니다.
+
+## Lexicon 설계자를 위한 안내
+
+Lexicon은 JSON으로 작성됩니다 — [Lexicon 가이드](/guides/lexicon)에서 예시를 찾을 수 있습니다. Atmosphere HTTP API 메서드는 각각 특정 Lexicon 집합을 스코프로 하고 구현하므로, Lexicon에는 적절한 쿼리 파라미터, 요청 본문, 응답 본문이 포함되어야 합니다. 각 Lexicon은 차례로 권한 스코프가 됩니다 — 즉, `app.bsky.feed.post`는 AT 레코드 형식이자 웹 엔드포인트이며 세분화된 권한 모두입니다.
+
+Lexicon 스키마는 atproto Lexicon 저장소의 레코드로 공개적으로 게시됩니다. 기술적인 세부 사항은 [Lexicon 게시 및 확인](/specs/lexicon#lexicon-publication-and-resolution)을 참고하세요.
+
+## 권한 집합 설계
+
+완전한 기능을 갖춘 클라이언트 앱은 동작하기 위해 많은 수의 세분화된 권한이 필요합니다: 수십 또는 수백 개의 개별 권한이 필요할 수 있습니다. 권한 관리를 단순화하기 위해 Lexicon 설계자는 게시하는 스키마의 일부로 권한 "집합"을 정의할 수 있습니다. 이러한 권한 집합은 자체적으로 Lexicon 스키마이며 `com.example.authBasicFeatures`와 같이 네임스페이스 ID로 참조됩니다.
+
+예를 들어, 애플리케이션은 `include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`와 같은 권한 집합을 요청할 수 있습니다. 이는 앱이 동작하는 데 필요한 권한 집합을 정의하는 Lexicon으로 확인됩니다:
+
+```
+{
+  "lexicon": 1,
+  "id": "com.example.authBasicFeatures",
+  "defs": {
+    "main": {
+      "type": "permission-set",
+      "title": "Basic App Functionality",
+      "detail": "Creation of posts and interactions",
+      "permissions": [
+        {
+          "type": "permission",
+          "resource": "repo",
+          "collection": ["app.example.post"]
+        },
+        {
+          "type": "permission",
+          "resource": "rpc",
+          "inheritAud": true,
+          "lxm": [
+            "app.example.getFeed"
+            "app.example.getProfile",
+            ...
+          ]
+        },
+      ]
+    }
+  }
+}
+```
+
+`app.example.feed.authOnlyPost` 및 `com.example.authBasicFeatures` 예시에서 `auth` 접두사를 참고하세요. 이는 Lexicon이 권한 집합으로 사용하도록 설계되었음을 나타내는 명명 규칙입니다.
+
+권한 집합은 집합 자체와 동일한 NSID 네임스페이스 아래의 리소스를 참조하는 권한만 표현할 수 있습니다. 예를 들어, 집합 `app.example.feed.authOnlyPost`는 `app.example.feed.post` 레코드에 대한 권한과 원격 서비스에 `app.example.feed.getPostThread` API 엔드포인트 요청을 만드는 권한을 포함할 수 있습니다. 하지만 `app.example.actor.profile`에 대한 권한은 부여할 수 없습니다. 계층 구조에서 한 단계 위인 권한 집합 `app.example.authFull`은 이러한 모든 리소스에 대한 권한을 포함할 수 있습니다.
+
+`title`과 `details` 필드는 설명적이며 OAuth 흐름의 일부로 표시됩니다. 예시는 [OAuth 흐름 예시](#oauth-flow-examples) 섹션을 참고하세요. 이러한 설명 필드의 국제화가 지원됩니다 — [권한 집합 명세](/specs/permission#permission-sets)를 참고하세요.
+
+`rpc` 권한에서 `inheritAud`를 사용하면 [상속 동작을 제어](/specs/permission#rpc)할 수 있습니다.
+
+이미지/동영상 처리를 위한 `blob:*/*` 권한은 권한 집합에 포함할 수 없으며 항상 별도로 요청해야 합니다.
+
+## 린팅 및 유효성 검사
+
+[`goat`](https://github.com/bluesky-social/goat)를 사용하여 Lexicon을 만들고 게시할 수 있습니다. 게시하기 전에 `goat`를 사용하여 Lexicon을 린트하고 유효성을 검사할 수도 있습니다. 예를 들어, `app.bsky.feed.post`를 가져와 린트하기:
+
+```bash
+$ goat lex pull app.bsky.feed.post
+ 🟢 app.bsky.feed.post
+
+$ goat lex lint lexicons/app/bsky/feed/post.json
+ 🟡 lexicons/app/bsky/feed/post.json
+    [unlimited-string]: no max length
+    [unlimited-string]: no max length
+error: linting issues detected
+```
+
+Nobody's perfect 😊
+
+`goat lex new record`로 새 Lexicon 레코드를 만들 수 있습니다:
+
+```bash
+$ goat lex new record dev.project.thing
+```
+
+[스타일 가이드](/guides/lexicon-style-guide)를 따라 Lexicon을 개발하고, 최종적으로 `goat lex publish`로 게시합니다:
+
+```bash
+$ goat lex publish
+ 🟢 dev.project.thing
+```
+
+새 Lexicon을 게시한 후 `goat lex resolve`로 활성화된 것을 확인할 수 있습니다:
+
+```bash
+$ goat lex resolve app.bsky.feed.post
+
+{
+  "$type": "com.atproto.lexicon.schema",
+  "defs": {
+    "entity": {
+      "description": "Deprecated: use facets instead.",
+      "properties": {
+        "index": {
+          "ref": "#textSlice",
+          "type": "ref"
+        },
+        "type": {
+          "description": "Expected values are 'mention' and 'link'.",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+...
+```
+
+## 권한 집합 개정
+
+권한 집합은 개정될 수 있지만 제거하거나 파괴적인 변경을 하면 기존 애플리케이션이 중단될 수 있습니다. 일반적으로 권한 집합은 설계된 애플리케이션과 밀접하게 연관되어야 하지만, 반드시 1:1 관계일 필요는 없습니다. atproto 애플리케이션은 여러 다른 Lexicon을 활용할 수 있다는 점을 기억하세요.
+
+## OAuth 흐름 예시
+
+atproto 아이덴티티 제공자를 *오직* 인증 목적으로만 사용하는 앱은 [`atproto` 권한만 요청하면 됩니다](/guides/scopes). 이는 다른 아이덴티티 제공자에서 기대할 수 있는 것과 동일한 OAuth 흐름을 제공합니다. Atmosphere 소셜 그래프의 기능은 사용되지 않으며 추가 권한이 필요하지 않습니다:
+
+<Container>
+  <Image src={oauth} alt="" className="w-full max-w-md mx-auto"/>
+</Container>
+
+이것은 완전히 사용 가능한 Atmosphere 통합이며 많은 애플리케이션이 이것을 시작점으로 사용합니다. 간단하고 읽기 쉬운 "Authorize" 흐름을 생성한다는 점에 주목하세요. 요청하는 앱의 URL이 명확하게 표시되고, 권한 대화 상자에는 앱이 "당신을 고유하게 식별하려고 합니다"라고 명시되어 있지만 그 외에는 아무것도 없습니다.
+
+다음으로 추가 권한을 요청하는 더 복잡한 통합을 생각해 보겠습니다. 기본적으로 요약 뷰로 표시됩니다:
+
+<Container>
+  <Image src={skyblur} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+이 이미지에서 두 가지 다른 Lexicon 그룹이 있음을 주목하세요: *Bluesky* 권한과 *Skyblur* 권한. 각 Lexicon은 자체 권한 집합과 해당 권한의 그룹화 및 표시 방식을 정의합니다.
+
+**?** 아이콘을 클릭하여 각 권한 집합의 세부 사항을 확인할 수 있습니다:
+
+<Container>
+  <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+확장된 atproto 및 Bluesky 권한에서 `atproto`(OAuth 로그인용), `blob:*/*`(이미지 및 동영상 처리용), 그리고 프로필과 소셜 그래프 상호작용을 위한 여러 `app.bsky.*` 권한을 확인할 수 있습니다.
+
+*Skyblur* Lexicon 권한은 다르게 정의되고 요약됩니다:
+
+<Container>
+  <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+이 모든 것은 앱 개발자와 Lexicon 설계자의 재량에 달려 있습니다. 우리는 서로 다른 Lexicon을 나란히 사용하고, 각 Lexicon이 자체 권한 집합과 표시 방식을 정의하는 모델을 제공합니다.
+
+## 추가 읽을거리 및 자료
+
+- [인증](/guides/auth)
+- [SDK 인증](/guides/sdk-auth)
+- [OAuth 패턴](/guides/oauth-patterns)
+- [스코프](/guides/scopes)
+- [OAuth 명세](/specs/oauth)
+- [권한 명세](/specs/permission)
