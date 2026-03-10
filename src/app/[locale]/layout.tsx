@@ -5,6 +5,7 @@ import { Layout } from '@/components/Layout'
 import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
+  icons: { icon: '/favicon.ico' },
   title: {
     template: '%s - AT Protocol',
     default: 'AT Protocol',
