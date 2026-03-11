@@ -497,3 +497,32 @@ export function MobileSearch() {
     </div>
   )
 }
+
+declare global {
+  interface Window {
+    Kapa?: {
+      open: (options?: { query?: string; submit?: boolean }) => void
+    }
+  }
+}
+
+export function AskAIButton({ className }: { className?: string }) {
+  const handleClick = useCallback(() => {
+    if (window.Kapa) {
+      window.Kapa.open()
+    }
+  }, [])
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={clsx(
+        'flex h-6 items-center justify-center rounded-md px-1.5 text-sm leading-5 text-slate-700 transition hover:bg-zinc-900/5 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/5 dark:hover:text-white',
+        className,
+      )}
+    >
+      AI
+    </button>
+  )
+}
