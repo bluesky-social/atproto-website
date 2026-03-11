@@ -1,0 +1,55 @@
+```typescript
+import { getDb } from "../db";
+
+...
+
+stateStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_state")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedState) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_state")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_state").where("key", "=", key).execute();
+  },
+},
+
+sessionStore: {
+  async get(key: string) {
+    const db = getDb();
+    const row = await db
+      .selectFrom("auth_session")
+      .select("value")
+      .where("key", "=", key)
+      .executeTakeFirst();
+    return row ? JSON.parse(row.value) : undefined;
+  },
+  async set(key: string, value: NodeSavedSession) {
+    const db = getDb();
+    const valueJson = JSON.stringify(value);
+    await db
+      .insertInto("auth_session")
+      .values({ key, value: valueJson })
+      .onConflict((oc) => oc.column("key").doUpdateSet({ value: valueJson }))
+      .execute();
+  },
+  async del(key: string) {
+    const db = getDb();
+    await db.deleteFrom("auth_session").where("key", "=", key).execute();
+  },
+}
+```

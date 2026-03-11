@@ -1,0 +1,12 @@
+```json
+{
+  "scripts": {
+    "dev": "pnpm migrate && next dev",
+    "build": "next build",
+    "start": "pnpm migrate && next start",
+    "lint": "eslint",
+    // Add this line:
+    "migrate": "tsx scripts/migrate.ts",
+  }
+}
+```

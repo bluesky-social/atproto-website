@@ -1,0 +1,18 @@
+```ts
+// Posting logic
+async function makePost(session: PasswordSession) {
+    const client = new Client(session)
+    await client.create(app.bsky.feed.post, {
+        text: '🙂',
+        createdAt: new Date().toISOString(),
+    })
+    console.log('Just posted!')
+}
+
+async function main() {
+    const session = await login()
+    await makePost(session)
+}
+
+main().catch(console.error)
+```

@@ -1,0 +1,28 @@
+```ts
+import http from 'node:http'
+import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
+import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
+import { Client } from '@atproto/lex'
+import open from 'open'
+import * as app from './lexicons/app.js'
+
+const stateStore = new Map<string, NodeSavedState>()
+const sessionStore = new Map<string, NodeSavedSession>()
+
+const oauthClient = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope: 'atproto',
+    redirect_uris: ['http://127.0.0.1:3000/callback'],
+  }),
+  stateStore: {
+    async get(key: string) { return stateStore.get(key) },
+    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
+    async del(key: string) { stateStore.delete(key) },
+  },
+  sessionStore: {
+    async get(key: string) { return sessionStore.get(key) },
+    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
+    async del(key: string) { sessionStore.delete(key) },
+  },
+})
+```

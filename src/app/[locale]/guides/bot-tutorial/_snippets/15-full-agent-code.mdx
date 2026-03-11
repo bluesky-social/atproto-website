@@ -1,0 +1,53 @@
+```ts
+async function generateReply(mentionText: string): Promise<string> {
+  const { text } = await generateText({
+    model: 'anthropic/claude-sonnet-4-5',
+    system: 'You are a mystical fortune teller bot on Bluesky named "The Oracle". Speak in a dramatic, mysterious tone with occasional emoji (🔮 ✨ 🌙 ⭐). If someone asks a yes/no question, give a cryptic but leaning answer. If they ask for general guidance, offer a brief horoscope-style prediction. Keep responses under 280 characters. Never break character.',
+    prompt: mentionText,
+  })
+  return text
+}
+
+// Check for new mentions and reply
+async function checkMentions(session: PasswordSession) {
+  const client = new Client(session)
+  const notifications = await client.call(app.bsky.notification.listNotifications, {
+    limit: 20,
+  })
+
+  for (const notif of notifications.notifications) {
+    // Only process unread mentions
+    if (notif.reason !== 'mention' || notif.isRead) continue
+
+    // Get the post that mentioned us
+    const post = await client.call(app.bsky.feed.getPostThread, {
+      uri: notif.uri,
+    })
+
+    const mentionText = post.thread.post.record.text
+    const reply = await generateReply(mentionText)
+
+    // Reply to the post
+    await client.create(app.bsky.feed.post, {
+      text: reply,
+      createdAt: new Date().toISOString(),
+      reply: {
+        root: { uri: notif.uri, cid: post.thread.post.cid },
+        parent: { uri: notif.uri, cid: post.thread.post.cid },
+      },
+    })
+
+    console.log(`Replied to mention: ${mentionText}`)
+  }
+}
+
+async function main() {
+    const session = await login()
+    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
+    job.start()
+
+    console.log('Agent is running...')
+}
+
+main().catch(console.error)
+```

@@ -1,0 +1,43 @@
+```typescript
+export async function getAccountHandle(did: string): Promise<string | null> {
+  const db = getDb();
+  // if we've tracked to the account through Tap and gotten their account info, we'll load from there
+  const account = await db
+    .selectFrom("account")
+    .select("handle")
+    .where("did", "=", did)
+    .executeTakeFirst();
+  if (account) return account.handle;
+  // otherwise we'll resolve the accounts DID through Tap which provides identity caching
+  try {
+    const didDoc = await getTap().resolveDid(did);
+    if (!didDoc) return null;
+    return getHandle(didDoc) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getRecentStatuses(limit = 5) {
+  const db = getDb();
+  return db
+    .selectFrom("status")
+    .innerJoin("account", "status.authorDid", "account.did")
+    .selectAll()
+    .orderBy("createdAt", "desc")
+    .limit(limit)
+    .execute();
+}
+
+export async function getTopStatuses(limit = 10) {
+  const db = getDb();
+  return db
+    .selectFrom("status")
+    .select(["status", db.fn.count("uri").as("count")])
+    .where("current", "=", 1)
+    .groupBy("status")
+    .orderBy("count", "desc")
+    .limit(limit)
+    .execute();
+}
+```

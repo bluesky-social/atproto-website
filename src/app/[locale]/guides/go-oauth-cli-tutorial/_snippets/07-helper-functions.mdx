@@ -1,0 +1,38 @@
+```go
+func listenForCallback(ctx context.Context, res chan url.Values) (int, *http.Server, error) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, nil, err
+	}
+
+	mux := http.NewServeMux()
+	server := &http.Server{Handler: mux}
+
+	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		res <- r.URL.Query()
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(200)
+		w.Write([]byte("<h1>Authorized! You can close this tab.</h1>"))
+		go server.Shutdown(ctx)
+	})
+
+	go func() {
+		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
+		}
+	}()
+
+	return listener.Addr().(*net.TCPAddr).Port, server, nil
+}
+
+func openBrowser(url string) error {
+	switch runtime.GOOS {
+	case "darwin":
+		return exec.Command("open", url).Run()
+	case "windows":
+		return exec.Command("cmd", "/c", "start", url).Run()
+	default:
+		return exec.Command("xdg-open", url).Run()
+	}
+}
+```

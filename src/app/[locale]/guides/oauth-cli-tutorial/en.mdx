@@ -1,3 +1,12 @@
+import S01 from './_snippets/01-install-node.mdx'
+import S02 from './_snippets/02-project-setup.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-oauth-client-setup.mdx'
+import S05 from './_snippets/05-login-function.mdx'
+import S06 from './_snippets/06-main-function.mdx'
+import S07 from './_snippets/07-run-cli.mdx'
+import S08 from './_snippets/08-output-example.mdx'
+
 export const header = {
   title: 'OAuth with Node Tutorial',
   description: 'Authenticate with atproto OAuth from Node.js',
@@ -16,9 +25,7 @@ You should have installed:
 
 On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 
-```bash
-brew install node
-```
+<S01 />
 
 You should also have an atproto handle to test with.
 
@@ -26,21 +33,11 @@ You should also have an atproto handle to test with.
 
 Create a new project directory and install the [SDK](https://www.npmjs.com/package/@atproto/lex) and other project dependencies:
 
-```bash
-mkdir oauth-cli
-cd oauth-cli
-npm init -y
-npm i -D typescript @types/node @atproto/oauth-client-node @atproto/lex open
-npx tsc --init --target ES2022 --module NodeNext --moduleResolution NodeNext --types node --strict --esModuleInterop --skipLibCheck --verbatimModuleSyntax false
-```
+<S02 />
 
 You'll also need the `lex` CLI tool installed globally, and the `app.bsky.actor.profile` Lexicon installed in this project to fetch the user's profile:
 
-```bash
-npm i -g @atproto/lex
-lex install app.bsky.actor.profile
-lex build
-```
+<S03 />
 
 This generates TypeScript types for the Lexicon in your project, which you'll use later to read the authenticated user's profile.
 
@@ -50,34 +47,7 @@ Create a new file at `src/index.ts`. This file will contain all of the code for 
 
 Start by importing the packages you'll need, and setting up the OAuth client:
 
-```ts
-import http from 'node:http'
-import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
-import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
-import { Client } from '@atproto/lex'
-import open from 'open'
-import * as app from './lexicons/app.js'
-
-const stateStore = new Map<string, NodeSavedState>()
-const sessionStore = new Map<string, NodeSavedSession>()
-
-const oauthClient = new NodeOAuthClient({
-  clientMetadata: buildAtprotoLoopbackClientMetadata({
-    scope: 'atproto',
-    redirect_uris: ['http://127.0.0.1:3000/callback'],
-  }),
-  stateStore: {
-    async get(key: string) { return stateStore.get(key) },
-    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
-    async del(key: string) { stateStore.delete(key) },
-  },
-  sessionStore: {
-    async get(key: string) { return sessionStore.get(key) },
-    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
-    async del(key: string) { sessionStore.delete(key) },
-  },
-})
-```
+<S04 />
 
 The `NodeOAuthClient` manages the OAuth flow. `buildAtprotoLoopbackClientMetadata` configures it for local development using loopback.
 
@@ -91,35 +61,7 @@ The `stateStore` and `sessionStore` are in-memory Maps. The state store holds te
 
 Now add the login flow. You'll start a temporary HTTP server to receive the OAuth callback, then open the user's browser to authorize the app:
 
-```ts
-async function login(handle: string) {
-  // Start the OAuth flow — this resolves the handle, finds their auth
-  // server (PDS), and returns a URL to redirect the user to
-  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
-
-  // Wait for the callback from the authorization server
-  const params = await new Promise<URLSearchParams>((resolve, reject) => {
-    const server = http.createServer((req, res) => {
-      const url = new URL(req.url!, 'http://127.0.0.1:3000')
-      if (url.pathname === '/callback') {
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end('<h1>Authorized! You can close this tab.</h1>')
-        resolve(url.searchParams)
-        server.close()
-      }
-    })
-    server.listen(3000, '127.0.0.1', () => {
-      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
-      open(authUrl.toString())
-    })
-    server.on('error', reject)
-  })
-
-  // Exchange the authorization code for a session
-  const { session } = await oauthClient.callback(params)
-  return session
-}
-```
+<S05 />
 
 The flow works like this:
 
@@ -132,38 +74,7 @@ The flow works like this:
 
 With the session in hand, you can create a lex `Client` to interact with the AT Protocol. Add a `main()` function that ties it all together:
 
-```ts
-async function main() {
-  const handle = process.argv[2]
-  if (!handle) {
-    console.error('Usage: npx tsx src/index.ts <your-handle>')
-    process.exit(1)
-  }
-
-  console.log(`Logging in as ${handle}...`)
-  const session = await login(handle)
-  console.log(`Logged in! DID: ${session.did}`)
-
-  // Create a lex Client with the authenticated session
-  const client = new Client(session)
-
-  // Fetch the user's profile
-  const profile = await client.get(app.bsky.actor.profile, {
-    repo: session.did,
-  })
-
-  console.log('\nProfile:')
-  console.log(`  Handle: ${handle}`)
-  console.log(`  DID: ${session.did}`)
-  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
-  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
-}
-
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
-```
+<S06 />
 
 The `Client` from `@atproto/lex` accepts the OAuth session directly — the same way it accepts a `PasswordSession` in the [Build an Agent tutorial](/guides/bot-tutorial). From here you can `.get()`, `.list()`, `.create()`, and `.call()` any installed Lexicon.
 
@@ -171,23 +82,11 @@ The `Client` from `@atproto/lex` accepts the OAuth session directly — the same
 
 Run your CLI tool with `npx tsx`, passing your handle as an argument:
 
-```bash
-npx tsx src/index.ts your-handle.bsky.social
-```
+<S07 />
 
 Your browser should open to a consent screen. After you approve, the CLI will print your profile:
 
-```
-Logging in as your-handle.bsky.social...
-Listening on http://127.0.0.1:3000/callback for OAuth redirect...
-Logged in! DID: did:plc:xxxxx
-
-Profile:
-  Handle: your-handle.bsky.social
-  DID: did:plc:xxxxx
-  Display name: Your Name
-  Description: Your bio here
-```
+<S08 />
 
 ## Conclusion
 

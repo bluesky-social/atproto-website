@@ -1,0 +1,17 @@
+```go
+func run(ctx context.Context, handle string) error {
+	// Start the callback server on a random available port
+	callbackCh := make(chan url.Values, 1)
+	port, server, err := listenForCallback(ctx, callbackCh)
+	if err != nil {
+		return err
+	}
+	defer server.Close()
+
+	callbackURL := fmt.Sprintf("http://127.0.0.1:%d/callback", port)
+
+	// Create an OAuth client with localhost config and in-memory storage
+	config := oauth.NewLocalhostConfig(callbackURL, []string{"atproto"})
+	store := oauth.NewMemStore()
+	oauthClient := oauth.NewClientApp(&config, store)
+```

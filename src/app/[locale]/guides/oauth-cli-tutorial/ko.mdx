@@ -1,3 +1,12 @@
+import S01 from './_snippets/01-install-node.mdx'
+import S02 from './_snippets/02-project-setup.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-oauth-client-setup.mdx'
+import S05 from './_snippets/05-login-function.mdx'
+import S06 from './_snippets/06-main-function.mdx'
+import S07 from './_snippets/07-run-cli.mdx'
+import S08 from './_snippets/08-output-example.mdx'
+
 export const header = {
   title: 'Node OAuth 튜토리얼',
   description: 'Node.js에서 atproto OAuth로 인증하기',
@@ -16,9 +25,7 @@ export const header = {
 
 [homebrew](https://brew.sh/)를 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
 
-```bash
-brew install node
-```
+<S01 />
 
 테스트에 사용할 atproto 핸들도 필요합니다.
 
@@ -26,21 +33,11 @@ brew install node
 
 새 프로젝트 디렉토리를 만들고 [SDK](https://www.npmjs.com/package/@atproto/lex)와 기타 프로젝트 의존성을 설치합니다:
 
-```bash
-mkdir oauth-cli
-cd oauth-cli
-npm init -y
-npm i -D typescript @types/node @atproto/oauth-client-node @atproto/lex open
-npx tsc --init --target ES2022 --module NodeNext --moduleResolution NodeNext --types node --strict --esModuleInterop --skipLibCheck --verbatimModuleSyntax false
-```
+<S02 />
 
 또한 `lex` CLI 도구를 전역으로 설치하고, 사용자 프로필을 가져오기 위해 이 프로젝트에 `app.bsky.actor.profile` Lexicon을 설치해야 합니다:
 
-```bash
-npm i -g @atproto/lex
-lex install app.bsky.actor.profile
-lex build
-```
+<S03 />
 
 이를 통해 프로젝트에서 Lexicon에 대한 TypeScript 타입이 생성되며, 나중에 인증된 사용자의 프로필을 읽는 데 사용합니다.
 
@@ -50,34 +47,7 @@ lex build
 
 필요한 패키지를 import하고 OAuth 클라이언트를 설정하는 것으로 시작합니다:
 
-```ts
-import http from 'node:http'
-import { NodeOAuthClient, buildAtprotoLoopbackClientMetadata } from '@atproto/oauth-client-node'
-import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
-import { Client } from '@atproto/lex'
-import open from 'open'
-import * as app from './lexicons/app.js'
-
-const stateStore = new Map<string, NodeSavedState>()
-const sessionStore = new Map<string, NodeSavedSession>()
-
-const oauthClient = new NodeOAuthClient({
-  clientMetadata: buildAtprotoLoopbackClientMetadata({
-    scope: 'atproto',
-    redirect_uris: ['http://127.0.0.1:3000/callback'],
-  }),
-  stateStore: {
-    async get(key: string) { return stateStore.get(key) },
-    async set(key: string, value: NodeSavedState) { stateStore.set(key, value) },
-    async del(key: string) { stateStore.delete(key) },
-  },
-  sessionStore: {
-    async get(key: string) { return sessionStore.get(key) },
-    async set(key: string, value: NodeSavedSession) { sessionStore.set(key, value) },
-    async del(key: string) { sessionStore.delete(key) },
-  },
-})
-```
+<S04 />
 
 `NodeOAuthClient`는 OAuth 흐름을 관리합니다. `buildAtprotoLoopbackClientMetadata`는 루프백을 사용하여 로컬 개발에 맞게 구성합니다.
 
@@ -91,35 +61,7 @@ OAuth 루프백은 특수한 리다이렉트 URI(예: `http://127.0.0.1:PORT/cal
 
 이제 로그인 흐름을 추가합니다. OAuth 콜백을 받기 위한 임시 HTTP 서버를 시작한 다음, 사용자의 브라우저를 열어 앱을 인증합니다:
 
-```ts
-async function login(handle: string) {
-  // Start the OAuth flow — this resolves the handle, finds their auth
-  // server (PDS), and returns a URL to redirect the user to
-  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
-
-  // Wait for the callback from the authorization server
-  const params = await new Promise<URLSearchParams>((resolve, reject) => {
-    const server = http.createServer((req, res) => {
-      const url = new URL(req.url!, 'http://127.0.0.1:3000')
-      if (url.pathname === '/callback') {
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end('<h1>Authorized! You can close this tab.</h1>')
-        resolve(url.searchParams)
-        server.close()
-      }
-    })
-    server.listen(3000, '127.0.0.1', () => {
-      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
-      open(authUrl.toString())
-    })
-    server.on('error', reject)
-  })
-
-  // Exchange the authorization code for a session
-  const { session } = await oauthClient.callback(params)
-  return session
-}
-```
+<S05 />
 
 흐름은 다음과 같이 동작합니다:
 
@@ -132,38 +74,7 @@ async function login(handle: string) {
 
 세션을 사용하여 AT Protocol과 상호작용할 lex `Client`를 만들 수 있습니다. 모든 것을 연결하는 `main()` 함수를 추가합니다:
 
-```ts
-async function main() {
-  const handle = process.argv[2]
-  if (!handle) {
-    console.error('Usage: npx tsx src/index.ts <your-handle>')
-    process.exit(1)
-  }
-
-  console.log(`Logging in as ${handle}...`)
-  const session = await login(handle)
-  console.log(`Logged in! DID: ${session.did}`)
-
-  // Create a lex Client with the authenticated session
-  const client = new Client(session)
-
-  // Fetch the user's profile
-  const profile = await client.get(app.bsky.actor.profile, {
-    repo: session.did,
-  })
-
-  console.log('\nProfile:')
-  console.log(`  Handle: ${handle}`)
-  console.log(`  DID: ${session.did}`)
-  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
-  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
-}
-
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
-```
+<S06 />
 
 `@atproto/lex`의 `Client`는 OAuth 세션을 직접 받습니다 — [봇 만들기 튜토리얼](/guides/bot-tutorial)에서 `PasswordSession`을 받는 것과 동일한 방식입니다. 여기서 설치된 Lexicon에 대해 `.get()`, `.list()`, `.create()`, `.call()`을 사용할 수 있습니다.
 
@@ -171,23 +82,11 @@ main().catch((err) => {
 
 핸들을 인수로 전달하여 `npx tsx`로 CLI 도구를 실행합니다:
 
-```bash
-npx tsx src/index.ts your-handle.bsky.social
-```
+<S07 />
 
 브라우저에서 동의 화면이 열려야 합니다. 승인하면 CLI가 프로필을 출력합니다:
 
-```
-Logging in as your-handle.bsky.social...
-Listening on http://127.0.0.1:3000/callback for OAuth redirect...
-Logged in! DID: did:plc:xxxxx
-
-Profile:
-  Handle: your-handle.bsky.social
-  DID: did:plc:xxxxx
-  Display name: Your Name
-  Description: Your bio here
-```
+<S08 />
 
 ## 마무리
 

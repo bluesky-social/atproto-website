@@ -1,0 +1,32 @@
+```go
+	// Exchange the authorization code for a session
+	sessData, err := oauthClient.ProcessCallback(ctx, params)
+	if err != nil {
+		return fmt.Errorf("processing callback: %w", err)
+	}
+	fmt.Printf("Logged in! DID: %s\n", sessData.AccountDID)
+
+	// Resume the session to get an API client
+	session, err := oauthClient.ResumeSession(ctx, sessData.AccountDID, sessData.SessionID)
+	if err != nil {
+		return fmt.Errorf("resuming session: %w", err)
+	}
+
+	// Fetch the user's session info to prove it works
+	client := session.APIClient()
+	var resp struct {
+		DID    string `json:"did"`
+		Handle string `json:"handle"`
+	}
+	if err := client.Get(ctx, "com.atproto.server.getSession", nil, &resp); err != nil {
+		return fmt.Errorf("fetching session: %w", err)
+	}
+
+	fmt.Printf("\nSession:\n")
+	fmt.Printf("  Handle: %s\n", resp.Handle)
+	fmt.Printf("  DID:    %s\n", resp.DID)
+	fmt.Printf("  Host:   %s\n", sessData.HostURL)
+
+	return nil
+}
+```

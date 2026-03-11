@@ -1,3 +1,19 @@
+import S01 from './_snippets/01-install-node.mdx'
+import S02 from './_snippets/02-install-lex.mdx'
+import S03 from './_snippets/03-init-project.mdx'
+import S04 from './_snippets/04-lex-install-post.mdx'
+import S05 from './_snippets/05-lex-build.mdx'
+import S06 from './_snippets/06-login-function.mdx'
+import S07 from './_snippets/07-make-post.mdx'
+import S08 from './_snippets/08-cron-main.mdx'
+import S09 from './_snippets/09-env-file.mdx'
+import S10 from './_snippets/10-run-bot.mdx'
+import S11 from './_snippets/11-install-ai.mdx'
+import S12 from './_snippets/12-env-with-ai-key.mdx'
+import S13 from './_snippets/13-lex-install-notifications.mdx'
+import S14 from './_snippets/14-import-generate-text.mdx'
+import S15 from './_snippets/15-full-agent-code.mdx'
+
 export const header = {
   title: 'Build an Agent',
   description: 'Create a bot that automatically posts on Bluesky',
@@ -16,41 +32,27 @@ You should have installed:
 
 On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 
-```bash
-brew install node
-```
+<S01 />
 
 You should also have our `lex` CLI tool installed globally:
 
-```bash
-npm install -g @atproto/lex
-```
+<S02 />
 
 Now, create a new TypeScript project directory and initialize your project:
 
-```bash
-mkdir my-agent
-cd my-agent
-npm init -y
-npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-password-session
-npx tsc --init --verbatimModuleSyntax false
-```
+<S03 />
 
 If you aren't using an existing account to post from, you should [create a new account](https://bsky.app/) for your bot. You should also generate an [app password](/guides/sdk-auth) for that account.
 
-## Part 1: Lexicons 
+## Part 1: Lexicons
 
 [Lexicons](/guides/lexicon) define atproto records. Your bot will create Bluesky posts, using the [app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post) Lexicon. You can use `lex` to download and build this Lexicon into your project:
 
-```bash
-lex install app.bsky.feed.post
-```
+<S04 />
 
 If you want, you can view the downloaded Lexicon file at `lib/lexicons/app.bsky.post.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
 
-```bash
-lex build
-```
+<S05 />
 
 The generated code will live in `src/lexicons`. Now you can create your bot script.
 
@@ -60,64 +62,15 @@ Create a new file at `src/index.ts`. This file will contain the code for your bo
 
 First, add the imports that you'll need, and a call to `PasswordSession.create()` to authenticate your bot using an app password:
 
-```ts
-import { Client } from '@atproto/lex'
-import { PasswordSession } from '@atproto/lex-password-session'
-import * as dotenv from 'dotenv'
-import { CronJob } from 'cron'
-import * as process from 'process'
-import * as app from './lexicons/app.js'
-
-dotenv.config()
-
-// Create a session
-async function login() {
-    const service = process.env.BOT_PDS!
-    const identifier = process.env.BOT_HANDLE!
-    const password = process.env.BOT_PASSWORD!
-    const session = await PasswordSession.login({
-        service, // eg 'https://bsky.social'
-        identifier, // eg 'alice.bsky.social'
-        password,
-    })
-
-    return session
-}
-```
+<S06 />
 
 Next, add a function that posts. This will instantiate a new `Client` using the authenticated session, and use it to create a post. The `app.bsky.feed.post` Lexicon requires two parameters: the text of a post — you'll use "🙂" — and a timestamp.
 
-```ts
-// Posting logic
-async function makePost(session: PasswordSession) {
-    const client = new Client(session)
-    await client.create(app.bsky.feed.post, {
-        text: '🙂',
-        createdAt: new Date().toISOString(),
-    })
-    console.log('Just posted!')
-}
-
-async function main() {
-    const session = await login()
-    await makePost(session)
-}
-
-main().catch(console.error)
-```
+<S07 />
 
 Finally, add another code block inside of `main()` using the `cron` package to schedule your bot to post every three hours:
 
-```ts
-async function main() {
-    const session = await login()
-    await makePost(session)
-    // Run this on a cron job
-    const scheduleExpression = '0 */3 * * *'
-    const job = new CronJob(scheduleExpression, () => makePost(session))
-    job.start()
-}
-```
+<S08 />
 
 That's all the code you need for your bot! Next, you'll test it out.
 
@@ -125,21 +78,15 @@ That's all the code you need for your bot! Next, you'll test it out.
 
 Save your bot's host (PDS), username, and password to an `.env` file.
 
-```bash
-BOT_PDS= # eg 'https://bsky.social' if you aren't self-hosting your PDS
-BOT_HANDLE= # eg 'alice.bsky.social'
-BOT_PASSWORD=
-```
+<S09 />
 
 Now you can test the bot using `ts-node`.
 
-```bash
-ts-node src/index.ts
-```
+<S10 />
 
 You can run this bot on your own machine, or deploy it on a platform like [Fly.io](http://fly.io/).
 
-Keep in mind that bots should respect the network's rate limits. For instance, [Bluesky has its own set of rate limits](https://docs.bsky.app/docs/advanced-guides/rate-limits). 
+Keep in mind that bots should respect the network's rate limits. For instance, [Bluesky has its own set of rate limits](https://docs.bsky.app/docs/advanced-guides/rate-limits).
 
 ## Part 4: From Bot to Agent
 
@@ -149,87 +96,23 @@ In this section, you'll use the [Vercel AI SDK](https://www.npmjs.com/package/ai
 
 Once you've got an API key, add the AI SDK to your project:
 
-```bash
-npm i ai
-```
+<S11 />
 
 Then, add another environment variable to your `.env` file:
 
-```bash
-BOT_PDS=
-BOT_HANDLE=
-BOT_PASSWORD=
-AI_GATEWAY_API_KEY=xxxxxxxxx
-```
+<S12 />
 
 Finally, you'll need to install some additional Lexicons to get mentions. Run the following command to install and build the necessary Lexicons:
 
-```bash
-lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
-lex build --override
-```
+<S13 />
 
 Almost there. Add the `ai` import to your `src/index.ts` file:
 
-```ts
-import { generateText } from 'ai'
-```
+<S14 />
 
 Now you can replace everything after the `login` function in your script with new logic that uses the AI SDK to generate replies:
 
-```ts
-async function generateReply(mentionText: string): Promise<string> {
-  const { text } = await generateText({
-    model: 'anthropic/claude-sonnet-4-5',
-    system: 'You are a mystical fortune teller bot on Bluesky named "The Oracle". Speak in a dramatic, mysterious tone with occasional emoji (🔮 ✨ 🌙 ⭐). If someone asks a yes/no question, give a cryptic but leaning answer. If they ask for general guidance, offer a brief horoscope-style prediction. Keep responses under 280 characters. Never break character.',
-    prompt: mentionText,
-  })
-  return text
-}
-
-// Check for new mentions and reply
-async function checkMentions(session: PasswordSession) {
-  const client = new Client(session)
-  const notifications = await client.call(app.bsky.notification.listNotifications, {
-    limit: 20,
-  })
-
-  for (const notif of notifications.notifications) {
-    // Only process unread mentions
-    if (notif.reason !== 'mention' || notif.isRead) continue
-
-    // Get the post that mentioned us
-    const post = await client.call(app.bsky.feed.getPostThread, {
-      uri: notif.uri,
-    })
-
-    const mentionText = post.thread.post.record.text
-    const reply = await generateReply(mentionText)
-
-    // Reply to the post
-    await client.create(app.bsky.feed.post, {
-      text: reply,
-      createdAt: new Date().toISOString(),
-      reply: {
-        root: { uri: notif.uri, cid: post.thread.post.cid },
-        parent: { uri: notif.uri, cid: post.thread.post.cid },
-      },
-    })
-
-    console.log(`Replied to mention: ${mentionText}`)
-  }
-}
-
-async function main() {
-    const session = await login()
-    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
-    job.start()
-
-    console.log('Agent is running...')
-}
-
-main().catch(console.error)
-```
+<S15 />
 
 There are a few new concepts here. You'll recognize the `app.bsky.feed.post` logic, and now you'll also implement `app.bsky.notification.listNotifications` and `app.bsky.feed.getPostThread`. The first Lexicon is used to get a list of notifications for, and the second fetches the full thread for a given post URI.
 

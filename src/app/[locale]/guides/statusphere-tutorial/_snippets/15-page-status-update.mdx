@@ -1,0 +1,9 @@
+```tsx
+import { getAccountStatus } from "@/lib/db/queries";
+
+// In Home function:
+const accountStatus = session ? await getAccountStatus(session.did) : null;
+
+// Add to the StatusPicker element:
+<StatusPicker currentStatus={accountStatus?.status} />
+```

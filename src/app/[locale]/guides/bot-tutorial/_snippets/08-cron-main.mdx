@@ -1,0 +1,10 @@
+```ts
+async function main() {
+    const session = await login()
+    await makePost(session)
+    // Run this on a cron job
+    const scheduleExpression = '0 */3 * * *'
+    const job = new CronJob(scheduleExpression, () => makePost(session))
+    job.start()
+}
+```
