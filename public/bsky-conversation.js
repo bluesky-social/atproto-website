@@ -145,8 +145,9 @@ function renderFooter(uri, timestamp) {
 
 /**
  * Render a reply and its nested replies recursively.
+ * Stops at maxDepth and shows a link to continue on Bluesky.
  */
-function renderReply(threadView) {
+function renderReply(threadView, depth, maxDepth) {
   const post = threadView.post
   const record = post.record
   const nested = (threadView.replies || [])
@@ -158,10 +159,15 @@ function renderReply(threadView) {
 
   let nestedHtml = ''
   if (nested.length > 0) {
-    nestedHtml = `
+    if (depth >= maxDepth) {
+      nestedHtml = `
+      <p class="depth-cutoff"><a href="${postUrl(post.uri)}">More of the conversation on Bluesky &rarr;</a></p>`
+    } else {
+      nestedHtml = `
       <ol class="thread">
-        ${nested.map((r) => renderReply(r)).join('')}
+        ${nested.map((r) => renderReply(r, depth + 1, maxDepth)).join('')}
       </ol>`
+    }
   }
 
   return `
@@ -320,6 +326,8 @@ class BskyConversation extends HTMLElement {
       return
     }
 
+    const maxDepth = parseInt(this.getAttribute('max-depth'), 10) || 3
+
     this.innerHTML = '<div class="bsky-conversation"><p class="loading">Loading conversation…</p></div>'
 
     try {
@@ -330,18 +338,18 @@ class BskyConversation extends HTMLElement {
 
       const encodedUri = encodeURIComponent(atUri)
       const [thread, quotesRes, repostsRes] = await Promise.all([
-        fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=6&_t=${Date.now()}`),
+        fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=${maxDepth}&_t=${Date.now()}`),
         fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
         fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
       ])
-      this.render(url, thread, quotesRes, repostsRes)
+      this.render(url, thread, quotesRes, repostsRes, maxDepth)
     } catch (err) {
       console.error('bsky-conversation: failed to load', err)
       this.innerHTML = ''
     }
   }
 
-  render(originalUrl, threadRes, quotesRes, repostsRes) {
+  render(originalUrl, threadRes, quotesRes, repostsRes, maxDepth) {
     const threadView = threadRes.thread
     if (!threadView || threadView.$type !== 'app.bsky.feed.defs#threadViewPost') {
       this.innerHTML = ''
@@ -409,7 +417,7 @@ class BskyConversation extends HTMLElement {
     for (const reply of directReplies) {
       timelineItems.push({
         timestamp: new Date(reply.post.record.createdAt),
-        html: renderReply(reply),
+        html: renderReply(reply, 0, maxDepth),
       })
     }
 
@@ -541,6 +549,18 @@ class BskyConversation extends HTMLElement {
         .bsky-conversation .thread .reply {
           border-top: none;
           padding: 0.5em 0;
+        }
+
+        .bsky-conversation .depth-cutoff {
+          margin: 0.5em 0 0;
+          font-size: smaller;
+        }
+        .bsky-conversation .depth-cutoff a {
+          color: var(--bsky-accent-color);
+          text-decoration: none;
+        }
+        .bsky-conversation .depth-cutoff a:hover {
+          text-decoration: underline;
         }
 
         .bsky-conversation .continue {
