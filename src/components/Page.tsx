@@ -8,12 +8,11 @@ import { AtprotoDocumentLink } from './AtprotoDocumentLink'
 import { SubpageLinks } from './SubpageLinks'
 import { BlueskyConversation } from './BlueskyConversation'
 
-const BSKY_HEADER_TEMPLATE = "This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}. <a href='{postUrl}'>Add your thoughts on Bluesky.</a>"
-const BSKY_FOOTER_TEMPLATE = "<a href='{postUrl}'>Add your thoughts on Bluesky</a>"
+const BSKY_CONVERSATION_HEADER = "This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string; blueskyFooterTemplate?: string }
+  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string }
   sections?: PageSectionProp[]
 }
 
@@ -31,7 +30,7 @@ export function Page(page: PageProps) {
       <div className="flex flex-wrap items-start">
         <page.default />
         {navSections.length > 0 && <PageSectionsNavigation sections={navSections} />}
-        {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_HEADER_TEMPLATE} footerTemplate={page.header.blueskyFooterTemplate ?? BSKY_FOOTER_TEMPLATE} />}
+        {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER} />}
       </div>
     </SectionProvider>
   )

@@ -146,14 +146,14 @@ The web component at `public/bsky-conversation.js` has zero dependencies and can
 | Attribute | Default | Description |
 |-----------|---------|-------------|
 | `uri` | (required) | The bsky.app post URL. Use DID-based URLs for reliability. |
+| `max-depth` | `3` | How many levels of nested replies to show. Also controls how deep the API fetches. At the cutoff, a "More of the conversation on Bluesky" link appears. |
 | `show-original-post` | `false` | Set to `"true"` to include the root post in the timeline. |
-| `engage-text` | `"Add your thoughts"` | CTA link text in the default header. Set to `""` to hide. |
+| `engage-text` | `"Add your thoughts on Bluesky"` | CTA link text shown in the header and at the bottom of the conversation. Set to `""` to hide both. |
 | `header-template` | (none) | Custom header template string. Overrides the default `<ul>` header format. |
-| `footer-template` | (none) | Custom footer template string. Default: link to post with "Add your thoughts on Bluesky". |
 
 #### Template syntax
 
-The `header-template` and `footer-template` attributes support a mini template language for interpolating conversation data.
+The `header-template` attribute supports a mini template language for interpolating conversation data.
 
 **Simple tokens** — replaced with their value:
 
@@ -184,7 +184,7 @@ The `header-template` and `footer-template` attributes support a mini template l
 ```html
 <bsky-conversation
   uri="https://bsky.app/profile/did:plc:.../post/..."
-  header-template="This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}. <a href='{postUrl}'>Add your thoughts on Bluesky.</a>"
+  header-template="This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
 />
 ```
 
@@ -192,13 +192,12 @@ When no template is provided, the component falls back to its default `<ul>`-bas
 
 #### Site-wide defaults
 
-Header and footer templates for this site are configured as constants in `src/components/Page.tsx`. Per-page overrides are possible via the MDX header:
+The header template for this site is configured as a constant in `src/components/Page.tsx`. Per-page overrides are possible via the MDX header:
 
 ```js
 export const header = {
   // ...
   blueskyHeaderTemplate: "...",
-  blueskyFooterTemplate: "...",
 }
 ```
 
@@ -210,12 +209,15 @@ The component defines design tokens with sensible defaults, overridable from the
 |----------|--------------|-------------|----------|
 | `--bsky-border-color` | `#e5e7eb` | `#374151` | Separators, thread lines |
 | `--bsky-muted-color` | `#6b7280` | `#9ca3af` | Handles, timestamps, secondary text |
-| `--bsky-accent-color` | `#2563eb` | `#60a5fa` | Action links (engage, continue) |
+| `--bsky-link-color` | `black` | `#60a5fa` | Link text color |
+| `--bsky-link-hover` | `#2563eb` | `#3b82f6` | Link hover color |
+| `--bsky-link-underline` | `rgba(82,82,91,0.5)` | `rgba(59,130,246,0.3)` | Link underline color |
+| `--bsky-link-underline-hover` | `rgba(59,130,246,0.3)` | `rgba(59,130,246,0.3)` | Link underline hover color |
 
 Override example:
 ```css
 bsky-conversation {
-  --bsky-accent-color: #0066cc;
+  --bsky-link-color: #333;
   --bsky-muted-color: #888;
 }
 ```
@@ -225,6 +227,8 @@ The component inherits all typography (font-family, font-size, line-height, colo
 #### Behavior notes
 
 - The root post author's direct replies are filtered out (they're extensions of the original post, not conversation). The author's replies to *other people's* comments are shown.
+- **Hidden replies are filtered out.** If you hide a reply on bsky.app (click the `···` menu on a reply → "Hide reply for everyone"), it won't appear in the conversation component. This works at all nesting levels. Note: "Hide reply for me" is a personal mute and won't affect what the component shows — you need "Hide reply for everyone" to write to the public threadgate record.
+- Reply threads are capped at 3 levels deep by default (configurable via `max-depth`). A "More of the conversation on Bluesky" link appears at the cutoff.
 - Reply threads stay grouped — nested replies are not flattened into the timeline.
 - Quote posts are interleaved chronologically with top-level reply threads.
 - Reposts appear only in the header summary, not as timeline items.

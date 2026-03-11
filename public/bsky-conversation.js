@@ -121,11 +121,11 @@ function formatDate(iso) {
  */
 function renderAuthor(author) {
   const avatar = author.avatar
-    ? `<img class="avatar" src="${author.avatar}" alt="" loading="lazy" />`
+    ? `<img class="avatar" src="${escapeHtml(author.avatar)}" alt="" loading="lazy" />`
     : ''
   const name = author.displayName || author.handle
   return `
-    <a class="author" href="${profileUrl(author.did)}">
+    <a class="author" href="${escapeHtml(profileUrl(author.did))}" target="_blank" rel="noopener noreferrer">
       ${avatar}
       <strong class="displayname">${escapeHtml(name)}</strong>
       <span class="handle">@${escapeHtml(author.handle)}</span>
@@ -138,8 +138,7 @@ function renderAuthor(author) {
 function renderFooter(uri, timestamp) {
   return `
     <footer>
-      <time datetime="${timestamp}">${formatDate(timestamp)}</time>
-      <a href="${postUrl(uri)}">view on Bluesky</a>
+      <a href="${escapeHtml(postUrl(uri))}" title="View on Bluesky" target="_blank" rel="noopener noreferrer"><time datetime="${timestamp}">${formatDate(timestamp)}</time></a>
     </footer>`
 }
 
@@ -147,11 +146,12 @@ function renderFooter(uri, timestamp) {
  * Render a reply and its nested replies recursively.
  * Stops at maxDepth and shows a link to continue on Bluesky.
  */
-function renderReply(threadView, depth, maxDepth) {
+function renderReply(threadView, depth, maxDepth, hiddenReplies) {
   const post = threadView.post
   const record = post.record
   const nested = (threadView.replies || [])
     .filter((r) => r.$type === 'app.bsky.feed.defs#threadViewPost')
+    .filter((r) => !hiddenReplies.has(r.post.uri))
     .sort(
       (a, b) =>
         new Date(a.post.record.createdAt) - new Date(b.post.record.createdAt)
@@ -161,11 +161,11 @@ function renderReply(threadView, depth, maxDepth) {
   if (nested.length > 0) {
     if (depth >= maxDepth) {
       nestedHtml = `
-      <p class="depth-cutoff"><a href="${postUrl(post.uri)}">More of the conversation on Bluesky &rarr;</a></p>`
+      <p class="depth-cutoff"><a href="${escapeHtml(postUrl(post.uri))}" target="_blank" rel="noopener noreferrer">More of the conversation on Bluesky &rarr;</a></p>`
     } else {
       nestedHtml = `
       <ol class="thread">
-        ${nested.map((r) => renderReply(r, depth + 1, maxDepth)).join('')}
+        ${nested.map((r) => renderReply(r, depth + 1, maxDepth, hiddenReplies)).join('')}
       </ol>`
     }
   }
@@ -254,11 +254,11 @@ function renderTemplate(template, stats, repostedBy, url) {
 function formatRepostedBy(repostedBy, repostCount, url) {
   if (repostCount === 0) return ''
   const names = repostedBy.slice(0, 3).map((a) => {
-    return `<a href="${profileUrl(a.did)}">@${escapeHtml(a.handle)}</a>`
+    return `<a href="${escapeHtml(profileUrl(a.did))}" target="_blank" rel="noopener noreferrer">@${escapeHtml(a.handle)}</a>`
   })
   const remaining = repostCount - names.length
   if (remaining > 0) {
-    const suffix = `and <a href="${url}/reposted-by">${intword(remaining)} other${pluralize(remaining)}</a>`
+    const suffix = `and <a href="${url}/reposted-by" target="_blank" rel="noopener noreferrer">${intword(remaining)} other${pluralize(remaining)}</a>`
     return oxfordComma(names, names.length, suffix)
   }
   return oxfordComma(names)
@@ -271,8 +271,13 @@ function formatRepostedBy(repostedBy, repostCount, url) {
 function renderHeader(stats, repostedBy, { engageText, postUrl: url, headerTemplate }) {
   if (headerTemplate) {
     const html = renderTemplate(headerTemplate, stats, repostedBy, url)
-    if (!html) return ''
-    return `<header><p>${html}</p></header>`
+    const items = []
+    if (html) items.push(`<li class="stats">${html}</li>`)
+    if (engageText && url) {
+      items.push(`<li class="engage"><a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(engageText)}</a></li>`)
+    }
+    if (items.length === 0) return ''
+    return `<header><ul>${items.join('')}</ul></header>`
   }
 
   const items = []
@@ -285,7 +290,7 @@ function renderHeader(stats, repostedBy, { engageText, postUrl: url, headerTempl
 
   if (stats.quoteCount > 0) {
     items.push(
-      `<li class="quotes"><a href="${url}/quotes">${intword(stats.quoteCount)} ${pluralize(stats.quoteCount, 'quote,quotes')}</a></li>`
+      `<li class="quotes"><a href="${url}/quotes" target="_blank" rel="noopener noreferrer">${intword(stats.quoteCount)} ${pluralize(stats.quoteCount, 'quote,quotes')}</a></li>`
     )
   }
 
@@ -294,7 +299,7 @@ function renderHeader(stats, repostedBy, { engageText, postUrl: url, headerTempl
   }
 
   if (engageText && url) {
-    items.push(`<li class="engage"><a href="${url}">${escapeHtml(engageText)}</a></li>`)
+    items.push(`<li class="engage"><a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(engageText)}</a></li>`)
   }
 
   if (items.length === 0) return ''
@@ -359,36 +364,26 @@ class BskyConversation extends HTMLElement {
     // Read configurable attributes
     const showOriginalPost = this.getAttribute('show-original-post') === 'true'
     const headerTemplate = this.getAttribute('header-template')
-    const footerTemplate = this.getAttribute('footer-template')
     const engageAttr = this.getAttribute('engage-text')
     // Default to showing engage link; only hide if explicitly set to empty string
-    const engageText = engageAttr === '' ? null : (engageAttr || 'Add your thoughts')
+    const engageText = engageAttr === '' ? null : (engageAttr || 'Add your thoughts on Bluesky')
+
+    // Build a set of reply URIs the post author has hidden
+    const hiddenReplies = new Set(threadRes.threadgate?.record?.hiddenReplies || [])
 
     // Direct replies (top-level threads)
     // Filter out the original author's direct replies to their own post —
     // those are extensions of the original post, not conversation.
     // The author's replies deeper in the tree (replying to others) are kept.
+    // Also filter out replies hidden by the post author.
     const rootAuthorDid = threadView.post.author.did
     const directReplies = (threadView.replies || [])
       .filter((r) => r.$type === 'app.bsky.feed.defs#threadViewPost')
       .filter((r) => r.post.author.did !== rootAuthorDid)
+      .filter((r) => !hiddenReplies.has(r.post.uri))
 
     const quotes = quotesRes.posts || []
     const repostedBy = repostsRes.repostedBy || []
-
-    // Count total replies recursively, excluding the root author's
-    // direct replies to the root post (same filter as directReplies above)
-    function countReplies(replies, isTopLevel) {
-      let count = 0
-      for (const r of replies) {
-        if (r.$type !== 'app.bsky.feed.defs#threadViewPost') continue
-        if (isTopLevel && r.post.author.did === rootAuthorDid) continue
-        count += 1
-        if (r.replies) count += countReplies(r.replies, false)
-      }
-      return count
-    }
-    const totalReplies = countReplies(threadView.replies || [], true)
 
     // Nothing to show (unless we have engage text to display)
     const rootPost = threadView.post
@@ -417,7 +412,7 @@ class BskyConversation extends HTMLElement {
     for (const reply of directReplies) {
       timelineItems.push({
         timestamp: new Date(reply.post.record.createdAt),
-        html: renderReply(reply, 0, maxDepth),
+        html: renderReply(reply, 0, maxDepth, hiddenReplies),
       })
     }
 
@@ -452,30 +447,49 @@ class BskyConversation extends HTMLElement {
         .bsky-conversation {
           --bsky-border-color: #e5e7eb;
           --bsky-muted-color: #6b7280;
-          --bsky-accent-color: #2563eb;
+          --bsky-link-color: black;
+          --bsky-link-underline: rgba(82, 82, 91, 0.5);
+          --bsky-link-hover: #2563eb;
+          --bsky-link-underline-hover: rgba(59, 130, 246, 0.3);
         }
         .dark .bsky-conversation {
           --bsky-border-color: #374151;
           --bsky-muted-color: #9ca3af;
-          --bsky-accent-color: #60a5fa;
+          --bsky-link-color: #60a5fa;
+          --bsky-link-underline: rgba(59, 130, 246, 0.3);
+          --bsky-link-hover: #3b82f6;
+          --bsky-link-underline-hover: rgba(59, 130, 246, 0.3);
+        }
+
+        .bsky-conversation a {
+          color: var(--bsky-link-color);
+          text-decoration: underline;
+          text-decoration-color: var(--bsky-link-underline);
+          font-weight: 400;
+          transition: color 150ms, text-decoration-color 150ms;
+        }
+        .bsky-conversation a:hover {
+          color: var(--bsky-link-hover);
+          text-decoration-color: var(--bsky-link-underline-hover);
+        }
+
+        .bsky-conversation header {
+          margin-bottom: 1em;
         }
 
         .bsky-conversation header ul {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5em 1em;
+          gap: 0.25em 1em;
           list-style: none;
           padding: 0;
-          margin: 0 0 1.5em;
+          margin: 0;
           font-size: smaller;
         }
 
-        .bsky-conversation header .engage a {
-          color: var(--bsky-accent-color);
-          text-decoration: none;
-        }
-        .bsky-conversation header .engage a:hover {
-          text-decoration: underline;
+        .bsky-conversation header .engage {
+          flex-basis: 100%;
+          margin-top: 0.25em;
         }
 
         .bsky-conversation .timeline {
@@ -487,17 +501,19 @@ class BskyConversation extends HTMLElement {
         .bsky-conversation .reply,
         .bsky-conversation .quote,
         .bsky-conversation .original {
-          padding: 0.75em 0;
-          border-top: 1px solid var(--bsky-border-color);
+          padding: 1.25em 0;
         }
 
         .bsky-conversation .author {
           display: inline-flex;
           align-items: center;
           gap: 0.5em;
-          text-decoration: none;
           color: inherit;
+          text-decoration-line: none;
           margin-bottom: 0.25em;
+        }
+        .bsky-conversation .author:hover {
+          text-decoration-line: none;
         }
         .bsky-conversation .author:hover .displayname {
           text-decoration: underline;
@@ -531,18 +547,11 @@ class BskyConversation extends HTMLElement {
           font-size: smaller;
           color: var(--bsky-muted-color);
         }
-        .bsky-conversation footer a {
-          color: var(--bsky-muted-color);
-          text-decoration: none;
-        }
-        .bsky-conversation footer a:hover {
-          text-decoration: underline;
-        }
 
         .bsky-conversation .thread {
           list-style: none;
           padding: 0 0 0 1.5em;
-          margin: 0;
+          margin: 0.5em 0 0;
           border-left: 2px solid var(--bsky-border-color);
         }
 
@@ -555,13 +564,6 @@ class BskyConversation extends HTMLElement {
           margin: 0.5em 0 0;
           font-size: smaller;
         }
-        .bsky-conversation .depth-cutoff a {
-          color: var(--bsky-accent-color);
-          text-decoration: none;
-        }
-        .bsky-conversation .depth-cutoff a:hover {
-          text-decoration: underline;
-        }
 
         .bsky-conversation .continue {
           text-align: center;
@@ -569,18 +571,11 @@ class BskyConversation extends HTMLElement {
           border-top: 1px solid var(--bsky-border-color);
           font-size: smaller;
         }
-        .bsky-conversation .continue a {
-          color: var(--bsky-accent-color);
-          text-decoration: none;
-        }
-        .bsky-conversation .continue a:hover {
-          text-decoration: underline;
-        }
       </style>
       <div class="bsky-conversation">
         ${header}
         ${timeline}
-        ${timeline ? `<footer class="continue">${renderTemplate(footerTemplate || "<a href='{postUrl}'>Add your thoughts on Bluesky</a>", stats, repostedBy, originalUrl)}</footer>` : ''}
+        ${timeline && engageText ? `<footer class="continue"><a href="${originalUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(engageText)}</a></footer>` : ''}
       </div>`
   }
 }
