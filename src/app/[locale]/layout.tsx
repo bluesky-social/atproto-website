@@ -55,9 +55,8 @@ export default async function RootLayout({
           data-project-name="atproto"
           data-project-color="#000000"
           data-project-logo="https://atproto.com/favicon.ico"
-          data-button-text="AI"
-          data-button-text-font-family="Consolas, SF Mono, monospace"
           data-modal-ask-ai-input-placeholder="Find solutions from the docs, Github, forums, and more..."
+          data-button-hide="true"
           async
         />
       </head>
