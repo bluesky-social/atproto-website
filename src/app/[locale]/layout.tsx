@@ -1,6 +1,7 @@
 import { type Metadata } from 'next'
 import { Providers } from '@/app/[locale]/providers'
 import { Layout } from '@/components/Layout'
+import Script from "next/script";
 
 import '@/styles/tailwind.css'
 
@@ -47,6 +48,19 @@ export default async function RootLayout({
 }) {
   return (
     <html lang={params.locale} className="h-full" suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://widget.kapa.ai/kapa-widget.bundle.js"
+          data-website-id="918051fd-2626-4b70-b124-e12c71999dea"
+          data-project-name="atproto"
+          data-project-color="#000000"
+          data-project-logo="https://atproto.com/favicon.ico"
+          data-button-text="AI"
+          data-button-text-font-family="Consolas, SF Mono, monospace"
+          data-modal-ask-ai-input-placeholder="Find solutions from the docs, Github, forums, and more..."
+          async
+        />
+      </head>
       <body className="flex min-h-full bg-white antialiased dark:bg-zinc-900">
         <Providers>
           <div className="w-full">
