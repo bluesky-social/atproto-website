@@ -268,9 +268,10 @@ function formatRepostedBy(repostedBy, repostCount, url) {
   })
   const remaining = repostCount - names.length
   if (remaining > 0) {
-    const suffix = `and <a href="${url}/reposted-by" target="_blank" rel="noopener noreferrer">${intword(remaining)} other people</a>`
-    names.push(suffix)
-    return oxfordComma(names)
+    const othersLink = `<a href="${escapeHtml(url)}/reposted-by" target="_blank" rel="noopener noreferrer">${intword(remaining)} other people</a>`
+    if (names.length === 0) return othersLink
+    if (names.length === 1) return `${names[0]} and ${othersLink}`
+    return `${names.join(', ')}, and ${othersLink}`
   }
   return oxfordComma(names)
 }
