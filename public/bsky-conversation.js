@@ -173,7 +173,7 @@ function renderReply(threadView, depth, maxDepth, hiddenReplies) {
   return `
     <li class="reply">
       ${renderAuthor(post.author)}
-      <p>${escapeHtml(record.text || '')}</p>
+      <p>${renderText(record.text, record.facets)}</p>
       ${renderFooter(post.uri, record.createdAt)}
       ${nestedHtml}
     </li>`
@@ -187,7 +187,7 @@ function renderQuote(post) {
   return `
     <li class="quote">
       ${renderAuthor(post.author)}
-      <p>${escapeHtml(record.text || '')}</p>
+      <p>${renderText(record.text, record.facets)}</p>
       ${renderFooter(post.uri, record.createdAt)}
     </li>`
 }
@@ -328,6 +328,59 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
 }
 
+/**
+ * Render post text with facets (links, mentions, tags) and newline handling.
+ * Facets use byte offsets into UTF-8, so we encode to bytes for slicing.
+ */
+function renderText(text, facets) {
+  if (!text) return ''
+
+  const encoder = new TextEncoder()
+  const decoder = new TextDecoder()
+  const bytes = encoder.encode(text)
+
+  // Sort facets by start index
+  const sorted = (facets || [])
+    .filter((f) => f.index && f.features?.length)
+    .sort((a, b) => a.index.byteStart - b.index.byteStart)
+
+  let result = ''
+  let cursor = 0
+
+  for (const facet of sorted) {
+    const start = facet.index.byteStart
+    const end = facet.index.byteEnd
+
+    // Add plain text before this facet
+    if (start > cursor) {
+      result += escapeHtml(decoder.decode(bytes.slice(cursor, start)))
+    }
+
+    const facetText = escapeHtml(decoder.decode(bytes.slice(start, end)))
+    const feature = facet.features[0]
+
+    if (feature.$type === 'app.bsky.richtext.facet#link') {
+      result += `<a href="${escapeHtml(feature.uri)}" target="_blank" rel="noopener noreferrer">${facetText}</a>`
+    } else if (feature.$type === 'app.bsky.richtext.facet#mention') {
+      result += `<a href="${escapeHtml(profileUrl(feature.did))}" target="_blank" rel="noopener noreferrer">${facetText}</a>`
+    } else if (feature.$type === 'app.bsky.richtext.facet#tag') {
+      result += `<a href="https://bsky.app/hashtag/${encodeURIComponent(feature.tag)}" target="_blank" rel="noopener noreferrer">${facetText}</a>`
+    } else {
+      result += facetText
+    }
+
+    cursor = end
+  }
+
+  // Add remaining text
+  if (cursor < bytes.length) {
+    result += escapeHtml(decoder.decode(bytes.slice(cursor)))
+  }
+
+  // Convert newlines to <br>
+  return result.replace(/\n/g, '<br>')
+}
+
 class BskyConversation extends HTMLElement {
   async connectedCallback() {
     const url = this.getAttribute('uri')
@@ -423,7 +476,7 @@ class BskyConversation extends HTMLElement {
         html: `
           <li class="original">
             ${renderAuthor(origPost.author)}
-            <p>${escapeHtml(origPost.record.text || '')}</p>
+            <p>${renderText(origPost.record.text, origPost.record.facets)}</p>
             ${renderFooter(origPost.uri, origPost.record.createdAt)}
           </li>`,
       })
