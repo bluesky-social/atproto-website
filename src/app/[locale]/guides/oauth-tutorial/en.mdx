@@ -328,10 +328,11 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+        <label htmlFor="handle" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
           Handle
         </label>
         <input
+          id="handle"
           type="text"
           value={handle}
           onChange={(e) => setHandle(e.target.value)}

@@ -519,6 +519,11 @@ go install github.com/bluesky-social/indigo/cmd/tap
 tap run --webhook-url=http://localhost:3000/api/webhook --collection-filters=xyz.statusphere.status
 ```
 
+<Note>
+If you set the `TAP_ADMIN_PASSWORD` environment variable, pass the same value to the tap command with `--admin-password="<your-password>"`.
+</Note>
+
+
 Ctrl+C your running app. Then add your data repository to Tap for tracking (you'll add other data sources later):
 
 ```bash
