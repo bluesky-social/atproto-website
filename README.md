@@ -230,9 +230,27 @@ The component inherits all typography (font-family, font-size, line-height, colo
 - **Hidden replies are filtered out.** If you hide a reply on bsky.app (click the `···` menu on a reply → "Hide reply for everyone"), it won't appear in the conversation component. This works at all nesting levels. Note: "Hide reply for me" is a personal mute and won't affect what the component shows — you need "Hide reply for everyone" to write to the public threadgate record.
 - Reply threads are capped at 3 levels deep by default (configurable via `max-depth`). A "More of the conversation on Bluesky" link appears at the cutoff.
 - Reply threads stay grouped — nested replies are not flattened into the timeline.
+- **Detached quote posts are filtered out.** If you detach a quote on bsky.app (or via the script below), it won't appear in the conversation component.
 - Quote posts are interleaved chronologically with top-level reply threads.
 - Reposts appear only in the header summary, not as timeline items.
 - API failures (e.g., `getRepostedBy` returning 500) degrade gracefully — the rest of the conversation still renders.
+
+#### Moderation script
+
+The `hide-reply` script lets you hide replies or detach quote posts from the conversation component via the command line. It auto-detects the post type:
+
+```bash
+# Hide a reply (adds to threadgate hiddenReplies)
+npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+
+# Detach a quote post (adds to postgate detachedEmbeddingUris)
+npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+```
+
+Requires `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` in `.env`. The authenticated user must own the root post being replied to or quoted.
+
+- **Replies**: The script walks up the thread to find the root post and adds the reply URI to the root post's `app.bsky.feed.threadgate` record. This is equivalent to "Hide reply for everyone" on bsky.app.
+- **Quote posts**: The script detects the embedded post and adds the quote URI to the root post's `app.bsky.feed.postgate` record. This is equivalent to "Detach quote" on bsky.app.
 
 #### TODO
 - handle newlines in replies

@@ -251,15 +251,26 @@ function renderTemplate(template, stats, repostedBy, url) {
 /**
  * Format repostedBy names as linked HTML.
  */
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 function formatRepostedBy(repostedBy, repostCount, url) {
   if (repostCount === 0) return ''
-  const names = repostedBy.slice(0, 3).map((a) => {
+  const showCount = repostCount <= 4 ? 1 : 3
+  const names = shuffle(repostedBy).slice(0, showCount).map((a) => {
     return `<a href="${escapeHtml(profileUrl(a.did))}" target="_blank" rel="noopener noreferrer">@${escapeHtml(a.handle)}</a>`
   })
   const remaining = repostCount - names.length
   if (remaining > 0) {
-    const suffix = `and <a href="${url}/reposted-by" target="_blank" rel="noopener noreferrer">${intword(remaining)} other${pluralize(remaining)}</a>`
-    return oxfordComma(names, names.length, suffix)
+    const suffix = `and <a href="${url}/reposted-by" target="_blank" rel="noopener noreferrer">${intword(remaining)} other people</a>`
+    names.push(suffix)
+    return oxfordComma(names)
   }
   return oxfordComma(names)
 }
@@ -382,7 +393,16 @@ class BskyConversation extends HTMLElement {
       .filter((r) => r.post.author.did !== rootAuthorDid)
       .filter((r) => !hiddenReplies.has(r.post.uri))
 
-    const quotes = quotesRes.posts || []
+    // Filter out detached quote posts (quotes the original author has disassociated from).
+    // The detached indicator can be on embed.record (plain quote) or embed.record.record (quote with media).
+    const isDetached = (q) => {
+      const rec = q.embed?.record
+      if (!rec) return false
+      if (rec.$type === 'app.bsky.embed.record#viewDetached') return true
+      if (rec.record?.$type === 'app.bsky.embed.record#viewDetached') return true
+      return false
+    }
+    const quotes = (quotesRes.posts || []).filter((q) => !isDetached(q))
     const repostedBy = repostsRes.repostedBy || []
 
     // Nothing to show (unless we have engage text to display)
@@ -568,7 +588,6 @@ class BskyConversation extends HTMLElement {
         .bsky-conversation .continue {
           text-align: center;
           padding: 1em 0 0.5em;
-          border-top: 1px solid var(--bsky-border-color);
           font-size: smaller;
         }
       </style>
