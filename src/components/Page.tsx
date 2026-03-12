@@ -6,22 +6,31 @@ import {
 import { SectionProvider } from './SectionProvider'
 import { AtprotoDocumentLink } from './AtprotoDocumentLink'
 import { SubpageLinks } from './SubpageLinks'
+import { BlueskyConversation } from './BlueskyConversation'
+
+const BSKY_CONVERSATION_HEADER = "This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { atUri?: string }
+  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string }
   sections?: PageSectionProp[]
 }
 
 export function Page(page: PageProps) {
+  const sections = page.sections ?? []
+  const navSections = page.header?.blueskyPostUrl
+    ? [...sections, { id: 'discuss', title: 'Discussion' }]
+    : sections
+
   return (
-    <SectionProvider sections={page.sections ?? []}>
-      {page.header?.atUri && <AtprotoDocumentLink uri={page.header.atUri} />}
+    <SectionProvider sections={navSections}>
+      {page.header?.standardSiteUri && <AtprotoDocumentLink uri={page.header.standardSiteUri} />}
       {page.header && <PageHeader {...page.header} />}
       <SubpageLinks />
-      <div className="flex items-start">
+      <div className="flex flex-wrap items-start">
         <page.default />
-        {page.sections && <PageSectionsNavigation sections={page.sections} />}
+        {navSections.length > 0 && <PageSectionsNavigation sections={navSections} />}
+        {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER} />}
       </div>
     </SectionProvider>
   )

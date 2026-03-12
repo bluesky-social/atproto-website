@@ -11,6 +11,7 @@
     "rmblog": "node scripts/remove-blog-post.mjs",
     "create-publication": "tsx --env-file=.env scripts/create-publication.mjs",
     "publish-post": "tsx --env-file=.env scripts/publish-post.mjs",
+    "hide-reply": "tsx --env-file=.env scripts/hide-reply.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy"

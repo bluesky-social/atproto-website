@@ -116,6 +116,152 @@ For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
 
 ---
 
+### Bluesky Discussion Component
+
+Blog posts can display a conversation section powered by Bluesky. The `<bsky-conversation>` web component fetches replies, quote posts, and reposts for a given Bluesky post and renders them as a threaded timeline.
+
+#### How it works
+
+1. Post the blog link from the account on Bluesky
+2. Add the post URL (using the DID, not the handle) to the blog post's MDX header:
+   ```js
+   export const header = {
+     // ...
+     blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mf2y35apvc2i'
+   }
+   ```
+3. The conversation section renders automatically below the post content
+
+#### Standalone usage
+
+The web component at `public/bsky-conversation.js` has zero dependencies and can be used on any site:
+
+```html
+<script src="/bsky-conversation.js"></script>
+<bsky-conversation uri="https://bsky.app/profile/did:plc:.../post/..."></bsky-conversation>
+```
+
+#### Attributes
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `uri` | (required) | The bsky.app post URL. Use DID-based URLs for reliability. |
+| `max-depth` | `3` | How many levels of nested replies to show. Also controls how deep the API fetches. At the cutoff, a "More of the conversation on Bluesky" link appears. |
+| `show-original-post` | `false` | Set to `"true"` to include the root post in the timeline. |
+| `engage-text` | `"Add your thoughts on Bluesky"` | CTA link text shown in the header and at the bottom of the conversation. Set to `""` to hide both. |
+| `header-template` | (none) | Custom header template string. Overrides the default `<ul>` header format. |
+
+#### Template syntax
+
+The `header-template` attribute supports a mini template language for interpolating conversation data.
+
+**Simple tokens** — replaced with their value:
+
+| Token | Value |
+|-------|-------|
+| `{replies}` | Raw reply count |
+| `{quotes}` | Raw quote count |
+| `{reposts}` | Raw repost count |
+| `{repostedBy}` | Linked names, e.g. `@alice, @bob, and 3 others` |
+| `{postUrl}` | The bsky.app post URL |
+
+**Pluralization** — `{name|singular|plural}` outputs nothing when the count is 0, `"1 singular"` when 1, `"N plural"` when 2+:
+
+```
+{replies|reply|replies}        → "" or "1 reply" or "17 replies"
+{quotes|quote|quotes}          → "" or "1 quote" or "5 quotes"
+```
+
+**Conditional blocks** — `{name?content}` renders content only if the value is truthy (non-zero, non-empty). Use this to wrap text around tokens that might be absent:
+
+```
+{repostedBy?Reposted by {repostedBy}.}    → "" or "Reposted by @alice, @bob."
+{replies?{replies|reply|replies} so far}   → "" or "17 replies so far"
+```
+
+**Full example:**
+
+```html
+<bsky-conversation
+  uri="https://bsky.app/profile/did:plc:.../post/..."
+  header-template="This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
+/>
+```
+
+When no template is provided, the component falls back to its default `<ul>`-based header with individual stats items.
+
+#### Site-wide defaults
+
+The header template for this site is configured as a constant in `src/components/Page.tsx`. Per-page overrides are possible via the MDX header:
+
+```js
+export const header = {
+  // ...
+  blueskyHeaderTemplate: "...",
+}
+```
+
+#### CSS custom properties
+
+The component defines design tokens with sensible defaults, overridable from the host page. More to come!
+
+| Property | Light default | Dark default | Controls |
+|----------|--------------|-------------|----------|
+| `--bsky-border-color` | `#e5e7eb` | `#374151` | Separators, thread lines |
+| `--bsky-muted-color` | `#6b7280` | `#9ca3af` | Handles, timestamps, secondary text |
+| `--bsky-link-color` | `black` | `#60a5fa` | Link text color |
+| `--bsky-link-hover` | `#2563eb` | `#3b82f6` | Link hover color |
+| `--bsky-link-underline` | `rgba(82,82,91,0.5)` | `rgba(59,130,246,0.3)` | Link underline color |
+| `--bsky-link-underline-hover` | `rgba(59,130,246,0.3)` | `rgba(59,130,246,0.3)` | Link underline hover color |
+
+Override example:
+```css
+bsky-conversation {
+  --bsky-link-color: #333;
+  --bsky-muted-color: #888;
+}
+```
+
+The component inherits all typography (font-family, font-size, line-height, color) from its parent. All internal sizing uses `em` units so it scales with the inherited font size.
+
+#### Behavior notes
+
+- The root post author's direct replies are filtered out (they're extensions of the original post, not conversation). The author's replies to *other people's* comments are shown.
+- **Hidden replies are filtered out.** If you hide a reply on bsky.app (click the `···` menu on a reply → "Hide reply for everyone"), it won't appear in the conversation component. This works at all nesting levels. Note: "Hide reply for me" is a personal mute and won't affect what the component shows — you need "Hide reply for everyone" to write to the public threadgate record.
+- Reply threads are capped at 3 levels deep by default (configurable via `max-depth`). A "More of the conversation on Bluesky" link appears at the cutoff.
+- Reply threads stay grouped — nested replies are not flattened into the timeline.
+- **Detached quote posts are filtered out.** If you detach a quote on bsky.app (or via the script below), it won't appear in the conversation component.
+- Quote posts are interleaved chronologically with top-level reply threads.
+- Reposts appear only in the header summary, not as timeline items.
+- API failures (e.g., `getRepostedBy` returning 500) degrade gracefully — the rest of the conversation still renders.
+
+#### Moderation script
+
+The `hide-reply` script lets you hide replies or detach quote posts from the conversation component via the command line. It auto-detects the post type:
+
+```bash
+# Hide a reply (adds to threadgate hiddenReplies)
+npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+
+# Detach a quote post (adds to postgate detachedEmbeddingUris)
+npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+```
+
+Requires `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` in `.env`. The authenticated user must own the root post being replied to or quoted.
+
+- **Replies**: The script walks up the thread to find the root post and adds the reply URI to the root post's `app.bsky.feed.threadgate` record. This is equivalent to "Hide reply for everyone" on bsky.app.
+- **Quote posts**: The script detects the embedded post and adds the quote URI to the root post's `app.bsky.feed.postgate` record. This is equivalent to "Detach quote" on bsky.app.
+
+#### TODO
+- handle newlines in replies
+- handle images in replies (or don't!)
+- lots of styling
+- more templating
+- how should quote posts appear differently from replies?
+- extract into standalone project(?)
+
+---
+
 ### Are you a developer interested in building on atproto?
 
 Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
