@@ -1,0 +1,22 @@
+```tsx
+import { Client } from '@atproto/lex'
+
+// Global app-level labelers
+Client.configure({
+  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
+})
+
+// Client-specific labelers
+const client = new Client(session, {
+  labelers: ['did:plc:labeler3'],
+})
+
+// Add labelers dynamically
+client.addLabelers(['did:plc:labeler4'])
+
+// Replace all labelers
+client.setLabelers(['did:plc:labeler5'])
+
+// Clear labelers
+client.clearLabelers()
+```

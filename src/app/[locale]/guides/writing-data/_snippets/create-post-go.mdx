@@ -1,0 +1,14 @@
+```go
+now := time.Now().UTC().Format(time.RFC3339)
+
+post := &appbsky.FeedPost{
+    Text:      "Hello from Go!",
+    CreatedAt: now,
+}
+
+resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
+    Record:     &lexutil.LexiconTypeDecoder{Val: post},
+})
+```

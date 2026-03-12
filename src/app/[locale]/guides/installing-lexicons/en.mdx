@@ -1,3 +1,8 @@
+import NpmInstall from './_snippets/npm-install.mdx'
+import LexInstallLexicons from './_snippets/lex-install-lexicons.mdx'
+import LexBuild from './_snippets/lex-build.mdx'
+import ClientUsageTs from './_snippets/client-usage-ts.mdx'
+
 export const header = {
   title: 'Installing Lexicons',
   description: 'Using Lexicons in your dev environment',
@@ -11,15 +16,11 @@ Lexicon schemas enable code generation with types and validation. Our SDKs each 
 
 First, install the `@atproto/lex` package:
 
-```bash
-npm install -g @atproto/lex
-```
+<NpmInstall />
 
 This provides the `lex` command, which you can use to install Lexicons into a local project:
 
-```bash
-lex install app.bsky.feed.post app.bsky.feed.like
-```
+<LexInstallLexicons />
 
 This creates:
 
@@ -28,24 +29,11 @@ This creates:
 
 Finally, generate TypeScript schemas from the installed Lexicons:
 
-```bash
-lex build
-```
+<LexBuild />
 
 This generates TypeScript files in `./src/lexicons`. Now, you'll have these functions available to use in your code:
 
-```tsx
-import { Client } from '@atproto/lex'
-import * as app from './lexicons/app.js'
-
-// Create an unauthenticated client instance
-const client = new Client('https://public.api.bsky.app')
-
-// Start making requests using generated schemas
-const response = await client.call(app.bsky.actor.getProfile, {
-  actor: 'pfrazee.com',
-})
-```
+<ClientUsageTs />
 
 For more guidance on working with `lex`, refer to the [readme](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex#lexicon-schemas).
 

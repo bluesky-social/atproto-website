@@ -1,0 +1,24 @@
+```go
+post := &bsky.FeedPost{
+    Text:      "Using a previously uploaded image",
+    CreatedAt: time.Now().UTC().Format(time.RFC3339),
+    Embed: &bsky.FeedPost_Embed{
+      EmbedImages: &bsky.EmbedImages{
+        Images: []*bsky.EmbedImages_Image{
+          {
+            Alt: "A photo uploaded earlier",
+            Image: &lexutil.LexBlob{
+              Ref:      uploadResp.Blob.Ref,
+              MimeType: http.DetectContentType(imgBytes),
+              Size:     uploadResp.Blob.Size,
+            },
+            AspectRatio: &bsky.EmbedDefs_AspectRatio{
+              Width:  1200,
+              Height: 800,
+            },
+          },
+        },
+      },
+    },
+  }
+```

@@ -1,0 +1,11 @@
+```typescript
+const imageBytes = fs.readFileSync('./photo.jpg')
+
+const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
+  encoding: 'image/jpeg',
+  data: imageBytes,
+})
+
+const blob = uploadRes.data.blob
+console.log(JSON.stringify(blob, null, 2))
+```

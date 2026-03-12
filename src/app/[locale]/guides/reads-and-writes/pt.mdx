@@ -1,3 +1,8 @@
+import NpmLexInstall from './_snippets/npm-lex-install.mdx'
+import LexImportTs from './_snippets/lex-import-ts.mdx'
+import GoImports from './_snippets/go-imports.mdx'
+import GoBlankImports from './_snippets/go-blank-imports.mdx'
+
 export const header = {
   title: 'Reads and Writes',
   description: 'Read and Write from the Atmosphere',
@@ -21,39 +26,20 @@ Após [autenticar - se](/guides/sdk-auth#creating-a-client), você poderá fazer
         Para fazer solicitações de API, você precisará especificar um [Lexicon](/guides/lexicon)  específico. Por exemplo, as publicações do Bluesky estão disponíveis no léxico `app.bsky.feed.post`.
 
           Use `lex` para instalar os léxicos `app.bsky.feed.post` e `app.bsky.actor.profile`, conforme descrito em [Instalando léxicos](/guides/installing-lexicons):
-```bash
-npm install -g @atproto/lex
-    
-lex install app.bsky.feed.post app.bsky.actor.profile
-lex build
-```
+<NpmLexInstall />
 Isso irá gerar tipos TypeScript para os Lexicons em seu projeto. Você pode usar esta instrução `import` para acessar todos os Lexicons instalados:
-```tsx
-import * as app from './lexicons/app.js'
-```
+<LexImportTs />
     
 Isso lhe dará acesso aos métodos da API para seus Lexicons. Agora você está pronto para começar a [fazer solicitações](/guides/reading-data)!
   </TabPanel>
   <TabPanel value = "go" >
-```go
-import (
-  “context”
-  appbsky “github.com/bluesky-social/indigo/api/bsky”
-  comatproto “github.com/bluesky-social/indigo/api/atproto”
-  lexutil “github.com/bluesky-social/indigo/lex/util”
-  “github.com/bluesky-social/indigo/xrpc”
-)
-ctx := context.Background()
-```
+<GoImports />
 Importe as bibliotecas SDK e vá diretamente para [fazer solicitações](/guides/reading-data)!
 
   <Note>
 Observe que você precisará [importar em branco](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html) as bibliotecas `bsky` e `util` se não estiver usando-as diretamente, devido à forma como as importações do Go funcionam:
 
-    ```go
-    _ “github.com/bluesky-social/indigo/api/bsky”
-    _ “github.com/bluesky-social/indigo/lex/util”
-    ```
+    <GoBlankImports />
 </Note>
   </TabPanel>
   </TabPanels>

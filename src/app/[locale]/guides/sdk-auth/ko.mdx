@@ -1,4 +1,7 @@
 import {Container} from "@/components/Container"
+import PasswordSessionTs from './_snippets/password-session-ts.mdx'
+import LoginWithPasswordGo from './_snippets/login-with-password-go.mdx'
+import ClientSessionTs from './_snippets/client-session-ts.mdx'
 
 export const header = {
   title: 'SDK 인증',
@@ -18,15 +21,7 @@ export const header = {
     <TabPanel value="ts">
     `PasswordSession`을 가져오고, `PasswordSession.login()`에 자격 증명을 제공하여 `session`을 생성하는 것으로 시작합니다:
 
-    ```tsx
-    import { PasswordSession } from '@atproto/lex-password-session'
-
-    const session = await PasswordSession.login({
-      service: 'https://bsky.social', // or your PDS host
-      identifier: 'your-handle.bsky.social',
-      password: 'your-app-password',
-    })
-    ```
+    <PasswordSessionTs />
 
     최종 사용자 로그인 플로우가 있는 애플리케이션은 앱 비밀번호 세션 대신 [OAuth](/guides/oauth-cli-tutorial) 인증을 사용해야 합니다. 비밀번호 인증은 봇과 커맨드라인 도구에 적합합니다.
 
@@ -35,24 +30,7 @@ export const header = {
     <TabPanel value="go">
     `atclient` 라이브러리를 가져오고 `LoginWithPasswordHost()`를 호출하는 것으로 시작합니다:
 
-    ```go
-    import (
-      "context"
-      "github.com/bluesky-social/indigo/atproto/atclient"
-    )
-
-    func main() {
-      ctx := context.Background()
-
-      client, _ := atclient.LoginWithPasswordHost(ctx,
-        "https://bsky.social",       // or your PDS host
-        "your-handle.bsky.social",   // identifier
-        "your-app-password",         // password
-        "",                          // authToken (optional 2FA token)
-        nil,                         // refresh callback (optional)
-      )
-    }
-    ```
+    <LoginWithPasswordGo />
 
     최종 사용자 로그인 플로우가 있는 애플리케이션은 앱 비밀번호 세션 대신 [OAuth](/guides/go-oauth-cli-tutorial) 인증을 사용해야 합니다. 비밀번호 인증은 봇과 커맨드라인 도구에 적합합니다.
     </TabPanel>
@@ -70,13 +48,7 @@ export const header = {
     <TabPanel value="ts">
     로그인된 `session`을 얻으면, 데이터를 읽고 쓰기 위한 `Client` 인스턴스를 생성할 수 있습니다:
 
-    ```tsx
-    import { Client } from '@atproto/lex'
-    const client = new Client(session)
-
-    // Make authenticated API calls
-    console.log('Logged in as:', session.did)
-    ```
+    <ClientSessionTs />
     </TabPanel>
     <TabPanel value="go">
     `LoginWithPasswordHost()`가 반환하는 `client`는 인증되어 있으며 API 호출을 바로 할 수 있습니다.

@@ -1,0 +1,46 @@
+```ts
+// =============================================================================
+// Start
+// =============================================================================
+
+channel.start()
+console.log('Indexer connected to Tap server')
+
+if (config.initialRepos.length > 0) {
+    tap.addRepos(config.initialRepos).then(() => {
+        console.log(`Added ${config.initialRepos.length} repo(s) to follow\n`)
+    })
+}
+
+serve(router, { port: config.port }).then((server) => {
+    const feedParam = encodeURIComponent(FEED_URI)
+
+    console.log(`
+Feed Generator Running
+
+Server: http://localhost:${config.port}
+Feed: ${config.feedName}
+Terms: ${config.searchTerms.join(', ')}
+Tap: ${config.tapUrl}
+Repos: ${config.initialRepos.length}
+
+To test (generate a JWT with goat):
+goat account service-auth --aud ${config.publisherDid}
+
+Then:
+curl -H "Authorization: Bearer <jwt>" "http://localhost:${config.port}/xrpc/app.bsky.feed.getFeedSkeleton?feed=${feedParam}"
+
+Listening for posts matching: ${config.searchTerms.join(', ')}
+`)
+
+    const shutdown = async () => {
+        console.log('Shutting down...')
+        await channel.destroy()
+        await server.terminate()
+        process.exit(0)
+    }
+
+    process.on('SIGINT', shutdown)
+    process.on('SIGTERM', shutdown)
+})
+```

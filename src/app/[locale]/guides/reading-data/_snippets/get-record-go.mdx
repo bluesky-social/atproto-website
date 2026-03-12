@@ -1,0 +1,11 @@
+```go
+resp, _ := comatproto.RepoGetRecord(ctx, client,
+    "",                    // cid (empty for latest)
+    "app.bsky.feed.post",  // lexicon
+    "alex.bsky.team",      // handle or DID
+    "3mbl5xdw4yk2r",       // rkey
+)
+
+fmt.Printf("URI: %s\n", resp.Uri)
+// resp.Value contains the record data
+```

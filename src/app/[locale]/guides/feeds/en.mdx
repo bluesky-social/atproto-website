@@ -1,4 +1,8 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@/components/mdx'
+import InstallLexServer from './_snippets/install-lex-server.mdx'
+import LexRouterTs from './_snippets/lex-router-ts.mdx'
+import FeedInterfaceGo from './_snippets/feed-interface-go.mdx'
+
 export const header = {
   title: 'Feeds',
   description: 'Creating and consuming custom feed generators',
@@ -21,41 +25,14 @@ Because Feeds will provide their own XRPC endpoints, they should use the server 
     <TabPanel value="ts">
       Use the [lex-server](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server) package:
 
-      ```bash
-      npm install @atproto/lex-server
-      lex install app.bsky.feed.getFeed ...
-      lex build
-      ```
+      <InstallLexServer />
 
-      ```ts
-      import { LexRouter, LexError } from '@atproto/lex-server'
-      import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
-      import * as app from './lexicons/app.js'
-
-      const router = new LexRouter({ upgradeWebSocket })
-
-      // Add handlers here
-
-      const server = await serve(router, { port: 3000 })
-      console.log('Server listening on port 3000')
-      ```
+      <LexRouterTs />
     </TabPanel>
     <TabPanel value="go">
       In Go, you can implement HTTP endpoints manually:
 
-      ```go
-      type Feed interface {
-          GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
-              feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
-          Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
-      }
-
-      ...
-
-      router.GET("/.well-known/did.json", GetWellKnownDID)
-      router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
-      router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
-      ```
+      <FeedInterfaceGo />
 
       Refer to [https://github.com/jazware/go-bsky-feed-generator](https://github.com/jazware/go-bsky-feed-generator) for a community example.
     </TabPanel>
@@ -78,7 +55,7 @@ For users, this should feel like visiting a page in the app. Once they subscribe
 
 ## Feed Generator Templates
 
-We maintain a Feed Generator example in TypeScript. Refer to the [tutorial](/guides/custom-feed-tutorial) to get started. 
+We maintain a Feed Generator example in TypeScript. Refer to the [tutorial](/guides/custom-feed-tutorial) to get started.
 
 There are also community-maintained implementations in [Python](https://github.com/MarshalX/bluesky-feed-generator) and [Ruby](https://github.com/mackuba/bluesky-feeds-rb).
 

@@ -1,6 +1,7 @@
 import {Container} from "@/components/Container"
 import {Heading} from "@/components/Heading"
 import ozone from "./ozone.png"
+import LabelerServiceRecord from './_snippets/labeler-service-record.mdx'
 
 export const header = {
   title: 'ラベラーの作成',
@@ -11,29 +12,7 @@ export const header = {
 
 ラベラーは、自身がラベラーであることを宣言し、ポリシーを公開するために、`/app.bsky.labeler.service/self`レコードを公開します。そのレコードは次のようになります。
 
-```json
-{
-  "$type": "app.bsky.labeler.service",
-  "policies": {
-    "labelValues": ["porn", "spider"],
-    "labelValueDefinitions": [
-      {
-        "identifier": "spider",
-        "severity": "alert",
-        "blurs": "media",
-        "defaultSetting": "warn",
-        "locales": [
-          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
-        ]
-      }
-    ]
-  },
-  "subjectTypes": ["record"],
-  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
-  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
-  "createdAt": "2024-03-03T05:31:08.938Z"
-}
-```
+<LabelerServiceRecord />
 
 `labelValues`はラベラーから何が期待できるかを宣言します。グローバルまたはカスタムラベル値が含まれます。
 

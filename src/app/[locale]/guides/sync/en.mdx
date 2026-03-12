@@ -1,3 +1,6 @@
+import AtUriExample from './_snippets/at-uri-example.mdx'
+import WriteResponse from './_snippets/write-response.mdx'
+
 export const header = {
   title: 'Sync',
   description: 'Synchronizing AT Protocol data',
@@ -24,20 +27,13 @@ Multiple types of identifiers are used within a data repository:
 
 Take, for example, a single AT record:
 
-```
-at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
-```
+<AtUriExample />
 
 This can be broken down as `at://DID/NSID/rkey` , or `at://repository/collection/record`. It has a corresponding CID of `bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`.
 
 When making a write request to an AT API endpoint — such as when creating a new post — this full repository path will be returned as a response:
 
-```json
-{
-  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
-  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
-}
-```
+<WriteResponse />
 
 This is how individual records are uniquely identified and stored within AT data repositories.
 

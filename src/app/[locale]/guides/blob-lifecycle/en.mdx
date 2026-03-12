@@ -1,3 +1,5 @@
+import UploadBlobTs from './_snippets/upload-blob-ts.mdx'
+
 export const header = {
   title: 'Blob Lifecycle',
   description: 'How blobs are uploaded, referenced, and deleted',
@@ -9,12 +11,7 @@ Blobs must be uploaded to the PDS before a record can be created referencing tha
 
 Clients use the **`com.atproto.repo.uploadBlob`** endpoint on their PDS, which will return verified metadata in the form of a Lexicon blob object. Clients should set the HTTP **`Content-Type`** header and should set the **`Content-Length`** headers on the upload request. SDKs can handle this automatically:
 
-```typescript
-const image = 'data:image/png;base64,...'
-const { data } = await agent.uploadBlob(convertDataURIToUint8Array(image), {
-  encoding,
-})
-```
+<UploadBlobTs />
 
 This `data` object could then be referenced in another record, e.g. as an `embed`.
 

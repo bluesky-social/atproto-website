@@ -1,3 +1,12 @@
+import NsidApiExamples from './_snippets/nsid-api-examples.mdx'
+import NsidRecordExamples from './_snippets/nsid-record-examples.mdx'
+import SdkCallTs from './_snippets/sdk-call-ts.mdx'
+import HttpGetExample from './_snippets/http-get-example.mdx'
+import SchemaQueryExample from './_snippets/schema-query-example.mdx'
+import FollowRecordExample from './_snippets/follow-record-example.mdx'
+import FollowUrlExample from './_snippets/follow-url-example.mdx'
+import FollowSchemaExample from './_snippets/follow-schema-example.mdx'
+
 export const header = {
   title: 'Lexicons',
   description: 'A schema-driven interoperability framework',
@@ -11,21 +20,11 @@ Lexicon is a schema system used to define RPC methods and record types. Every Le
 
 The schemas are identified using [NSIDs](/specs/nsid), a reverse-DNS format. Here are some example API endpoints:
 
-```
-com.atproto.repo.getRecord
-com.atproto.identity.resolveHandle
-app.bsky.feed.getPostThread
-app.bsky.notification.listNotifications
-```
+<NsidApiExamples />
 
 And here are some example record types:
 
-```
-app.bsky.feed.post
-app.bsky.feed.like
-app.bsky.actor.profile
-app.bsky.graph.follow
-```
+<NsidRecordExamples />
 
 The schema types, definition language, and validation constraints are described in the [Lexicon specification](/specs/lexicon), and representations in JSON and CBOR are described in the [Data Model specification](/specs/data-model).
 
@@ -33,90 +32,31 @@ The schema types, definition language, and validation constraints are described 
 
 Atproto HTTP API methods each scope and implement a particular set of Lexicons. The AT Protocol's API system, [XRPC](/specs/xrpc), is essentially a thin wrapper around HTTPS. For example, a call to:
 
-```tsx
-client.call(app.bsky.actor.getProfile, {})
-```
+<SdkCallTs />
 
 is actually just an HTTP request:
 
-```
-GET /xrpc/com.example.getProfile
-```
+<HttpGetExample />
 
 The schemas establish valid query parameters, request bodies, and response bodies.
 
-```json
-{
-  "lexicon": 1,
-  "id": "com.example.getProfile",
-  "defs": {
-    "main": {
-      "type": "query",
-      "parameters": {
-        "type": "params",
-        "required": ["user"],
-        "properties": { "user": { "type": "string" } }
-      },
-      "output": {
-        "encoding": "application/json",
-        "schema": {
-          "type": "object",
-          "required": ["did", "name"],
-          "properties": {
-            "did": { "type": "string" },
-            "name": { "type": "string" },
-            "displayName": { "type": "string", "maxLength": 64 },
-            "description": { "type": "string", "maxLength": 256 }
-          }
-        }
-      }
-    }
-  }
-}
-```
+<SchemaQueryExample />
 
 ## Record types
 
-Schemas define the possible values of a record. Every record has a “type” which maps to a schema and also establishes the URL of a record.
+Schemas define the possible values of a record. Every record has a "type" which maps to a schema and also establishes the URL of a record.
 
-For instance, this “follow” record:
+For instance, this "follow" record:
 
-```json
-{
-  "$type": "com.example.follow",
-  "subject": "at://did:plc:12345",
-  "createdAt": "2022-10-09T17:51:55.043Z"
-}
-```
+<FollowRecordExample />
 
 …would have a URL like:
 
-```
-at://bob.com/com.example.follow/12345
-```
+<FollowUrlExample />
 
 …and a schema like:
 
-```json
-{
-  "lexicon": 1,
-  "id": "com.example.follow",
-  "defs": {
-    "main": {
-      "type": "record",
-      "description": "A social follow",
-      "record": {
-        "type": "object",
-        "required": ["subject", "createdAt"],
-        "properties": {
-          "subject": { "type": "string" },
-          "createdAt": { "type": "string", "format": "datetime" }
-        }
-      }
-    }
-  }
-}
-```
+<FollowSchemaExample />
 
 ## Versioning
 

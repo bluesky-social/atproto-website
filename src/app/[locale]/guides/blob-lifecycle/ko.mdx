@@ -1,3 +1,5 @@
+import UploadBlobTs from './_snippets/upload-blob-ts.mdx'
+
 export const header = {
   title: '블롭 생애주기',
   description: '블롭이 업로드, 참조, 삭제되는 방식',
@@ -9,12 +11,7 @@ export const header = {
 
 클라이언트는 PDS의 **`com.atproto.repo.uploadBlob`** 엔드포인트를 사용하며, 이 엔드포인트는 Lexicon 블롭 객체 형태로 검증된 메타데이터를 반환합니다. 클라이언트는 업로드 요청에 HTTP **`Content-Type`** 헤더와 **`Content-Length`** 헤더를 설정해야 합니다. SDK를 통해 이를 자동으로 처리할 수 있습니다:
 
-```typescript
-const image = 'data:image/png;base64,...'
-const { data } = await agent.uploadBlob(convertDataURIToUint8Array(image), {
-  encoding,
-})
-```
+<UploadBlobTs />
 
 이 `data` 객체는 다른 레코드에서, 예를 들어 `embed`로 참조될 수 있습니다.
 

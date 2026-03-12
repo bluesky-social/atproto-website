@@ -1,4 +1,15 @@
 import {Heading} from '@/components/Heading'
+import ListRecordsTs from './_snippets/list-records-ts.mdx'
+import ListRecordsGo from './_snippets/list-records-go.mdx'
+import GetRecordTs from './_snippets/get-record-ts.mdx'
+import GetRecordGo from './_snippets/get-record-go.mdx'
+import ResolveHandleUrl from './_snippets/resolve-handle-url.mdx'
+import ResolveHandleResponse from './_snippets/resolve-handle-response.mdx'
+import ClientDidTs from './_snippets/client-did-ts.mdx'
+import UnauthenticatedClientTs from './_snippets/unauthenticated-client-ts.mdx'
+import GetProfileTs from './_snippets/get-profile-ts.mdx'
+import UnauthenticatedClientGo from './_snippets/unauthenticated-client-go.mdx'
+import GetProfileGo from './_snippets/get-profile-go.mdx'
 
 export const header = {
   title: 'データ読み取り',
@@ -16,31 +27,14 @@ export const header = {
     <TabPanel value="ts">
     `client.list()`を使用してユーザーのテータリポジトリからレコードを読み取ることができます。
 
-    ```tsx
-    const posts = await client.list(app.bsky.feed.post, {
-      limit: 10,
-      repo: 'alex.bsky.team',
-    })
-    ```
+    <ListRecordsTs />
 
     各Lexiconには独自のパラメータがあります。`app.bsky.feed.post`では、`repo`（ユーザーのハンドルまたは[DID](#did-resolution)）と、返す投稿数の上限を表す`limit`を指定できます。
     </TabPanel>
     <TabPanel value="go">
     `RepoListRecords()`を使用してユーザーのデータリポジトリから投稿を読み取ることができます。
 
-    ```go
-    resp, _ := comatproto.RepoListRecords(ctx, client,
-        "app.bsky.feed.post",  // lexicon
-        "",                    // cursor
-        10,                    // limit
-        "alex.bsky.team",      // handle or DID
-        false,                 // reverse
-    )
-
-    for _, record := range resp.Records {
-        fmt.Printf("Record: %s\n", record.Uri)
-    }
-    ```
+    <ListRecordsGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -58,26 +52,12 @@ export const header = {
     <TabPanel value="ts">
     `client.get()`を使用して、[`rkey`](/specs/record-key)で個別レコードを読み取ることができます。
 
-    ```tsx
-    const post = await client.get(app.bsky.feed.post, {
-      rkey: '3jxf7z2k3q2',
-    })
-    ```
+    <GetRecordTs />
     </TabPanel>
     <TabPanel value="go">
     `RepoGetRecord()`を使用して、[`rkey`](/specs/record-key)で個別レコードを読み取ることができます。
-    
-    ```go
-    resp, _ := comatproto.RepoGetRecord(ctx, client, 
-        "",                    // cid (empty for latest)
-        "app.bsky.feed.post",  // lexicon
-        "alex.bsky.team",      // handle or DID
-        "3mbl5xdw4yk2r",       // rkey
-    )
 
-    fmt.Printf("URI: %s\n", resp.Uri)
-    // resp.Valueにレコードデータが含まれています
-    ```
+    <GetRecordGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -89,21 +69,13 @@ atprotoでは、ユーザーデータは[DID](/guides/sync#data-repositories)（
 
 `com.atproto.identity.resolveHandle`エンドポイントを使用して、既知のユーザー名をDIDに解決できます。これは、ブラウザで`handle=`引数を使用してこのアドレスにアクセスしてDIDを調べられることを意味します。
 
-```
-https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=youraccount.bsky.social
-```
+<ResolveHandleUrl />
 
-```
-{
-did: "did:plc:3vekukmab2djjeengw2o3wln"
-}
-```
+<ResolveHandleResponse />
 
 TypeScript SDKは、現在認証されているユーザーのDIDを`client.did`として提供します。
 
-```tsx
-const your_did = client.did
-```
+<ClientDidTs />
 
 <Heading level={2} id="unauthenticated-reads">認証無しの読み取り</Heading>
 
@@ -116,45 +88,20 @@ const your_did = client.did
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    ```tsx
-    import { Client } from '@atproto/lex'
-    import * as app from './lexicons/app.js'
-
-    const client = new Client('https://public.api.bsky.app')
-    ```
+    <UnauthenticatedClientTs />
 
     認証済みクライアントと同様に、ユーザープロフィールなどの公開レコードを`.get()`できます。
 
-    ```tsx
-    const profile = await client.get(app.bsky.actor.profile)
-    ```
+    <GetProfileTs />
 
     同様のSDKクライアントパターンを使用して、任意のLexiconにAPI呼び出しを行うことができます。その他の例については、[SDKドキュメント](https://www.npmjs.com/package/@atproto/lex)を参照してください。
     </TabPanel>
     <TabPanel value="go">
-    ```go
-    import (
-        "context"
-        appbsky "github.com/bluesky-social/indigo/api/bsky"
-        "github.com/bluesky-social/indigo/xrpc"
-    )
-
-    ctx := context.Background()
-
-    client := &xrpc.Client{
-        Host: "https://public.api.bsky.app", // public API endpoint
-    }
-    ```
+    <UnauthenticatedClientGo />
 
     認証済みクライアントと同様に、ユーザープロフィールなどの公開レコードを`.get()`できます。
 
-    ```go
-    profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
-
-    fmt.Printf("Handle: %s\n", profile.Handle)
-    fmt.Printf("Display Name: %s\n", *profile.DisplayName)
-    fmt.Printf("Followers: %d\n", *profile.FollowersCount)
-    ```
+    <GetProfileGo />
 
     同様のSDKクライアントパターンを使用して、任意のLexiconにAPI呼び出しを行うことができます。その他の例については、[Go SDKライブラリ](https://pkg.go.dev/github.com/bluesky-social/indigo)を参照してください。
     </TabPanel>

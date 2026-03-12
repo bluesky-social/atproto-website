@@ -1,5 +1,7 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
 import {Heading} from '@/components/Heading'
+import RepoLayout from './_snippets/repo-layout.mdx'
+import AtUriStructure from './_snippets/at-uri-structure.mdx'
 
 export const header = {
   title: '개인 데이터 레포지토리',
@@ -16,29 +18,13 @@ export const header = {
 
 레포지토리의 내용은 [Merkle Search Tree (MST)](https://hal.inria.fr/hal-02303490/document)를 사용하여 단일 루트 해시로 상태를 축소합니다. 이는 다음과 같은 레이아웃으로 시각화할 수 있습니다:
 
-```
-┌────────────────┐
-│     Commit     │  (Signed Root)
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│   Tree Nodes   │
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│     Record     │
-└────────────────┘
-```
+<RepoLayout />
 
 모든 노드는 [IPLD](https://ipld.io/) 객체 ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/))로, [CID](https://github.com/multiformats/cid) 해시를 통해 참조됩니다. 위 다이어그램의 화살표는 CID 참조를 나타냅니다.
 
 이 레이아웃은 [AT URI](/specs/at-uri-scheme)에 반영되어 있습니다:
 
-```
-루트       | at://alice.com
-컬렉션     | at://alice.com/app.bsky.feed.post
-레코드     | at://alice.com/app.bsky.feed.post/1234
-```
+<AtUriStructure />
 
 데이터 레포지토리에 대한 “커밋”은 단순히 루트 노드의 CID에 대해 키페어로 서명한 것입니다. 레포지토리의 각 변경은 새로운 커밋 노드를 생성합니다.
 

@@ -1,0 +1,13 @@
+```go
+imgBytes, err := os.ReadFile("./photo.jpg")
+if err != nil {
+  panic(err)
+}
+
+uploadResp, err := comatproto.RepoUploadBlob(ctx, xrpcc, bytes.NewReader(imgBytes))
+if err != nil {
+  panic(err)
+}
+
+fmt.Println(string(json.MarshalIndent(uploadResp, "", "  ")))
+```

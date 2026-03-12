@@ -1,4 +1,11 @@
 import {Heading} from '@/components/Heading'
+import UploadBlobTs from './_snippets/upload-blob-ts.mdx'
+import UploadBlobResponseTs from './_snippets/upload-blob-response-ts.mdx'
+import PostWithEmbedTs from './_snippets/post-with-embed-ts.mdx'
+import UploadBlobGo from './_snippets/upload-blob-go.mdx'
+import UploadBlobResponseGo from './_snippets/upload-blob-response-go.mdx'
+import PostWithEmbedGo from './_snippets/post-with-embed-go.mdx'
+import CdnUrlExample from './_snippets/cdn-url-example.mdx'
 
 export const header = {
   title: '画像と動画',
@@ -16,102 +23,22 @@ export const header = {
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    ```typescript
-    const imageBytes = fs.readFileSync('./photo.jpg')
+    <UploadBlobTs />
 
-    const uploadRes = await client.call(com.atproto.repo.uploadBlob, {
-      encoding: 'image/jpeg',
-      data: imageBytes,
-    })
-
-    const blob = uploadRes.data.blob
-    console.log(JSON.stringify(blob, null, 2))
-    ```
-
-    ```
-    {
-      "$type": "blob",
-      "ref": {
-        "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
-      },
-      "mimeType": "image/jpeg",
-      "size": 354028
-    }
-    ```
+    <UploadBlobResponseTs />
 
     blobファイルのアップロードや配信はレコードとは別で行います。
 
-    ```typescript
-    await client.create(app.bsky.feed.post, {
-      text: 'Using a previously uploaded image',
-      createdAt: new Date().toISOString(),
-      embed: {
-        $type: 'app.bsky.embed.images',
-        images: [
-          {
-            alt: 'A photo uploaded earlier',
-            image: blobRef,
-            aspectRatio: { width: 1200, height: 800 },
-          },
-        ],
-      },
-    })
-    ```
+    <PostWithEmbedTs />
     </TabPanel>
     <TabPanel value="go">
-    ```go
-    imgBytes, err := os.ReadFile("./photo.jpg")
-    if err != nil {
-      panic(err)
-    }
+    <UploadBlobGo />
 
-    uploadResp, err := comatproto.RepoUploadBlob(ctx, xrpcc, bytes.NewReader(imgBytes))
-    if err != nil {
-      panic(err)
-    }
-
-    fmt.Println(string(json.MarshalIndent(uploadResp, "", "  ")))
-    ```
-
-    ```
-    {
-      "blob": {
-        "$type": "blob",
-        "ref": {
-          "$link": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku"
-        },
-        "mimeType": "image/jpeg",
-        "size": 354028
-      }
-    }
-    ```
+    <UploadBlobResponseGo />
 
     blobファイルのアップロードや配信はレコードとは別で行います。
 
-    ```go
-    post := &bsky.FeedPost{
-        Text:      "Using a previously uploaded image",
-        CreatedAt: time.Now().UTC().Format(time.RFC3339),
-        Embed: &bsky.FeedPost_Embed{
-          EmbedImages: &bsky.EmbedImages{
-            Images: []*bsky.EmbedImages_Image{
-              {
-                Alt: "A photo uploaded earlier",
-                Image: &lexutil.LexBlob{
-                  Ref:      uploadResp.Blob.Ref,
-                  MimeType: http.DetectContentType(imgBytes),
-                  Size:     uploadResp.Blob.Size,
-                },
-                AspectRatio: &bsky.EmbedDefs_AspectRatio{
-                  Width:  1200,
-                  Height: 800,
-                },
-              },
-            },
-          },
-        },
-      }
-    ```
+    <PostWithEmbedGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -122,9 +49,7 @@ export const header = {
 
 CDNから提供される場合、この美しいblobのURLは次のようになります。
 
-```
-https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:ewvi7nxzyoun6zhxrhs64oiz/bafkreiebtvblnu4jwu66y57kakido7uhiigenznxdlh6r6wiswblv5m4py
-```
+<CdnUrlExample />
 
 URLをよく見てください。blobはCDNから提供されていますが、パスにはblobのCIDだけでなく、アップロードしたアカウントのDIDが含まれています。
 

@@ -1,0 +1,60 @@
+```ts
+// =============================================================================
+// Feed Generator Server
+// =============================================================================
+
+// Auth is optional for this demo since we only log the requester's DID.
+// In production, you may want to use credentials to personalize the feed.
+const auth = serviceAuth({
+    audience: config.publisherDid,
+    unique: async () => true,
+})
+
+const router = new LexRouter()
+
+router.add(app.bsky.feed.describeFeedGenerator, {
+    auth,
+    handler: (ctx) => {
+        console.log('describeFeedGenerator from', ctx.credentials?.did)
+        return {
+            body: {
+                did: config.publisherDid,
+                feeds: [app.bsky.feed.describeFeedGenerator.feed.$build({ uri: FEED_URI })],
+                links: {
+                    privacyPolicy: 'https://example.com/privacy',
+                    termsOfService: 'https://example.com/tos',
+                },
+            },
+        }
+    },
+})
+
+router.add(app.bsky.feed.getFeedSkeleton, {
+    auth,
+    handler: (ctx) => {
+        if (ctx.params.feed !== FEED_URI) {
+            throw new LexError('InvalidRequest', 'Feed not found')
+        }
+        console.log('getFeedSkeleton from', ctx.credentials?.did)
+
+        const limit = Math.min(ctx.params.limit ?? 50, 100)
+        const cursor = ctx.params.cursor as string | undefined
+
+        let startIdx = 0
+        if (cursor) {
+            const cursorTime = parseInt(cursor, 10)
+            startIdx = postIndex.findIndex(p => p.indexedAt < cursorTime)
+            if (startIdx === -1) startIdx = postIndex.length
+        }
+
+        const slice = postIndex.slice(startIdx, startIdx + limit)
+        const feed = slice.map(p => app.bsky.feed.defs.skeletonFeedPost.$build({ post: p.uri }))
+        const lastPost = slice.at(-1)
+        const nextCursor = lastPost && slice.length === limit && startIdx + limit < postIndex.length
+            ? lastPost.indexedAt.toString()
+            : undefined
+
+        return { body: { feed, cursor: nextCursor } }
+    },
+})
+```

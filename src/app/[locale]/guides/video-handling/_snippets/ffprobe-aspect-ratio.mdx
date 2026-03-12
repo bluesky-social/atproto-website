@@ -1,0 +1,12 @@
+```jsx
+import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
+
+export async function getAspectRatio(fileName: string) {
+  const { streams } = await ffprobe(fileName, {});
+  const videoSteam = streams.find((stream) => stream.codec_type === "video");
+  return {
+    width: videoSteam.width,
+    height: videoSteam.height,
+  };
+}
+```

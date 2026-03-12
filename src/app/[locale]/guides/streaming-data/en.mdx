@@ -1,3 +1,6 @@
+import FirehoseConnect from './_snippets/firehose-connect.mdx'
+import JetstreamPython from './_snippets/jetstream-python.mdx'
+
 export const header = {
   title: 'Streaming Data',
   description: 'Working with the Firehose and Jetstream',
@@ -13,9 +16,7 @@ Many AT applications that need to stream incoming data will utilize the firehose
 
 Anyone can connect to the firehose without authentication — this is a core feature of the protocol. To get started, open a WebSocket connection to any provider of the `com.atproto.sync.subscribeRepos` endpoint:
 
-```shell 
-$ websocat wss://bsky.network/xrpc/com.atproto.sync.subscribeRepos
-```
+<FirehoseConnect />
 
 From here, you would need to read each message as it comes in, and decode the associated data. Our [Go](https://github.com/bluesky-social/indigo) SDK is currently the most feature-complete for interacting with the firehose directly.
 
@@ -35,26 +36,7 @@ You can work with Jetstream like any other websocket. Just provide a Jetstream e
 
 Here is a Python example:
 
-```python
-import asyncio
-import websockets
-
-uri = "wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post"
-
-async def listen_to_websocket():
-  async with websockets.connect(uri) as websocket:
-    while True:
-      try:
-        message = await websocket.recv()
-        print(message)
-      except websockets.ConnectionClosed as e:
-        print(f"Connection closed: {e}")
-        break
-      except Exception as e:
-        print(f"Error: {e}")
-
-asyncio.get_event_loop().run_until_complete(listen_to_websocket())
-```
+<JetstreamPython />
 
 ## Further Reading and Resources
 

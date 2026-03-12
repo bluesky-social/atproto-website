@@ -1,5 +1,8 @@
 import {Container} from "@/components/Container"
 import {Heading} from "@/components/Heading"
+import PasswordSessionTs from './_snippets/password-session-ts.mdx'
+import LoginWithPasswordGo from './_snippets/login-with-password-go.mdx'
+import ClientSessionTs from './_snippets/client-session-ts.mdx'
 
 export const header = {
   title: 'SDK認証',
@@ -19,19 +22,7 @@ export const header = {
     <TabPanel value="ts">
     まずは`PasswordSession`をインポートし、`PasswordSession.login()`に資格情報を与えて`session`を生成します。
 
-    ```tsx
-    import { PasswordSession } from '@atproto/lex-password-session'
-
-    const result = await PasswordSession.login({
-      service: 'https://bsky.social', // or your PDS host
-      identifier: 'your-handle.bsky.social',
-      password: 'your-app-password',
-    })
-
-    if (result.success) {
-        const session = result.value
-    }
-    ```
+    <PasswordSessionTs />
 
     エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/oauth-cli-tutorial)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。
     
@@ -40,26 +31,7 @@ export const header = {
     <TabPanel value="go">
     まずは`atproto`と`xrpc`ライブラリをインポートし、`&xrpc.Client{}`を作って`ServerCreateSession()`に資格情報を与えます。
 
-    ```go
-    import (
-      "context"
-      comatproto "github.com/bluesky-social/indigo/api/atproto"
-      "github.com/bluesky-social/indigo/xrpc"
-    )
-
-    func main() {
-      ctx := context.Background()
-
-      client := &xrpc.Client{
-        Host: "https://bsky.social", // or your PDS host
-      }
-
-      session, _ := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
-        Identifier: "your-handle.bsky.social",
-        Password:   "your-app-password",
-      })
-    }
-    ```
+    <LoginWithPasswordGo />
 
     エンドユーザーログインフローを備えるアプリケーションは、アプリパスワードセッションではなく[OAuth](/guides/go-oauth-cli-tutorial)認証を使用しましょう。パスワード認証はボットやコマンドラインツールに適しています。
     </TabPanel>
@@ -77,13 +49,7 @@ export const header = {
     <TabPanel value="ts">
     ログインした`session`が取得できたら、`Client`インスタンスを作成してデータの読み書きができます。
 
-    ```tsx
-    import { Client } from '@atproto/lex'
-    const client = new Client(session)
-
-    // 認証付きでAPIを呼び出す
-    console.log('Logged in as:', session.did)
-    ```
+    <ClientSessionTs />
     </TabPanel>
     <TabPanel value="go">
     ログインした`client`が取得できたら、認証情報を入力してAPIを呼び出します。

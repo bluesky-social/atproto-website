@@ -1,3 +1,15 @@
+import CreatePostTs from './_snippets/create-post-ts.mdx'
+import CreatePostResultTs from './_snippets/create-post-result-ts.mdx'
+import CreatePostGo from './_snippets/create-post-go.mdx'
+import CreatePostResultGo from './_snippets/create-post-result-go.mdx'
+import CreateResponse from './_snippets/create-response.mdx'
+import InstallProfileLexicon from './_snippets/install-profile-lexicon.mdx'
+import UpdateProfileTs from './_snippets/update-profile-ts.mdx'
+import UpdateProfileGo from './_snippets/update-profile-go.mdx'
+import InstallPostLexicon from './_snippets/install-post-lexicon.mdx'
+import DeletePostTs from './_snippets/delete-post-ts.mdx'
+import DeletePostGo from './_snippets/delete-post-go.mdx'
+
 export const header = {
   title: '데이터 쓰기',
   description: 'AT Protocol 레코드 쓰기',
@@ -16,14 +28,7 @@ export const header = {
     <TabPanel value="ts">
 새 레코드를 생성하려면, 가져온 Lexicon과 필수 필드와 함께 `client.create()`를 호출하세요:
 
-```tsx
-import * as app from './lexicons/app.js'
-
-const result = await client.create(app.bsky.feed.post, {
-  text: 'Hello, world!',
-  createdAt: new Date().toISOString(),
-})
-```
+<CreatePostTs />
 
 `text`와 `createdAt`은 [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)에서 필수 값입니다.
 
@@ -33,28 +38,13 @@ const result = await client.create(app.bsky.feed.post, {
 
 API는 게시물의 `at://` URI와 게시물의 콘텐츠 해시인 `cid`를 응답으로 반환합니다:
 
-```tsx
-console.log(result.uri) // at://did:plc:...
-console.log(result.cid)
-```
+<CreatePostResultTs />
     </TabPanel>
     <TabPanel value="go">
 새 레코드를 생성하려면, 대상 Lexicon과 필수 필드와 함께 `RepoCreateRecord()`를 호출하세요:
 
-```go
-now := time.Now().UTC().Format(time.RFC3339)
+<CreatePostGo />
 
-post := &appbsky.FeedPost{
-    Text:      "Hello from Go!",
-    CreatedAt: now,
-}
-
-resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord_Input{
-    Repo:       client.AccountDID.String(), // handle or DID
-    Collection: "app.bsky.feed.post",       // lexicon
-    Record:     &lexutil.LexiconTypeDecoder{Val: post},
-})
-```
 `Text`와 `CreatedAt`은 [`app.bsky.feed.post` Lexicon](https://atproto.blue/en/latest/atproto/atproto_client.models.app.bsky.feed.post.html)에서 필수 값입니다.
 
 <Note>
@@ -63,19 +53,12 @@ resp, _ := comatproto.RepoCreateRecord(ctx, client, &comatproto.RepoCreateRecord
 
 API는 게시물의 `at://` URI와 게시물의 콘텐츠 해시인 `cid`를 응답으로 반환합니다:
 
-```go
-fmt.Printf("Created post: %s (CID: %s)\n", resp.Uri, resp.Cid)
-```
+<CreatePostResultGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
 
-```
-{
-  "uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
-  "cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
-}
-```
+<CreateResponse />
 
 클라이언트 또는 데이터를 읽고 쓰는 다른 인터페이스를 구축하는 경우, 이 응답을 사용하여 자신의 쓰기 내용을 올바르게 읽는 것이 중요합니다.
 
@@ -102,38 +85,14 @@ App View는 `Atproto-Repo-Rev` 응답 헤더를 설정하여 인덱스의 현재
     <TabPanel value="ts">
 사용자 프로필 같은 기존 레코드를 업데이트하려면 `client.put()`을 사용하세요:
 
-```bash
-lex install app.bsky.actor.profile
-lex build
-```
+<InstallProfileLexicon />
 
-```tsx
-import * as app from './lexicons/app.js'
-
-await client.put(app.bsky.actor.profile, {
-  displayName: 'New Name',
-  description: 'Updated bio',
-})
-```
+<UpdateProfileTs />
     </TabPanel>
     <TabPanel value="go">
 사용자 프로필 같은 기존 레코드를 업데이트하려면 `RepoPutRecord()`를 사용하세요:
 
-```go
-newProfile := &appbsky.ActorProfile{
-  DisplayName: ptrString("New Display Name"),
-  Description: ptrString("Updated bio"),
-}
-
-resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
-  Repo:       client.AccountDID.String(),     // handle or DID
-  Collection: "app.bsky.actor.profile",       // lexicon
-  Rkey:       "self",                         // rkey
-  Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
-})
-
-fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
-```
+<UpdateProfileGo />
 
 `RepoPutRecord`는 멱등적입니다 — 레코드가 없으면 생성하고, 있으면 덮어씁니다.
     </TabPanel>
@@ -151,28 +110,14 @@ fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
     <TabPanel value="ts">
 개별 게시물 같은 레코드를 삭제하려면 `client.delete()`를 사용하세요:
 
-```bash
-lex install app.bsky.actor.post
-lex build
-```
+<InstallPostLexicon />
 
-```tsx
-import * as app from './lexicons/app.js'
-
-await client.delete(app.bsky.feed.post, {
-  rkey: '3jxf7z2k3q2',
-})
-```
+<DeletePostTs />
     </TabPanel>
     <TabPanel value="go">
     개별 게시물 같은 레코드를 삭제하려면 `RepoDeleteRecord()`를 사용하세요:
-```go
-comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
-    Repo:       client.AccountDID.String(), // handle or DID
-    Collection: "app.bsky.feed.post",       // lexicon
-    Rkey:       "3mbl5xdw4yk2r",             // rkey
-})
-```
+
+<DeletePostGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>

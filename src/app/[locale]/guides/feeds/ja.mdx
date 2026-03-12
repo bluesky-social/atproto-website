@@ -1,5 +1,8 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@/components/mdx'
 import {Heading} from '@/components/Heading'
+import InstallLexServer from './_snippets/install-lex-server.mdx'
+import LexRouterTs from './_snippets/lex-router-ts.mdx'
+import FeedInterfaceGo from './_snippets/feed-interface-go.mdx'
 
 export const header = {
   title: 'フィード',
@@ -23,41 +26,14 @@ export const header = {
     <TabPanel value="ts">
       [lex-server](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-server)パッケージを使います。
 
-      ```bash
-      npm install @atproto/lex-server
-      lex install app.bsky.feed.getFeed ...
-      lex build
-      ```
+      <InstallLexServer />
 
-      ```ts
-      import { LexRouter, LexError } from '@atproto/lex-server'
-      import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
-      import * as app from './lexicons/app.js'
-
-      const router = new LexRouter({ upgradeWebSocket })
-
-      // ここにハンドラーを追加
-
-      const server = await serve(router, { port: 3000 })
-      console.log('Server listening on port 3000')
-      ```
+      <LexRouterTs />
     </TabPanel>
     <TabPanel value="go">
       GoではHTTPエンドポイントを手動で実装できます。
 
-      ```go
-      type Feed interface {
-          GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
-              feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
-          Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
-      }
-
-      ...
-
-      router.GET("/.well-known/did.json", GetWellKnownDID)
-      router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
-      router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
-      ```
+      <FeedInterfaceGo />
 
       コミュニティによる[https://github.com/jazware/go-bsky-feed-generator](https://github.com/jazware/go-bsky-feed-generator)も参照してください。
     </TabPanel>

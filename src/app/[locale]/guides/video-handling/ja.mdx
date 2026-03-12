@@ -1,4 +1,5 @@
 import {Heading} from '@/components/Heading'
+import FfprobeAspectRatio from './_snippets/ffprobe-aspect-ratio.mdx'
 
 export const header = {
   title: '動画の取り扱い',
@@ -15,18 +16,7 @@ export const header = {
 
 アプリケーションの要件に応じて、動画のアップロード時にアスペクト比の提供が必要な場合があります。このメタデータは計算が厄介かもしれません。ブラウザで開発している場合は、動画を`<video>`に読み込み、読み込まれたときの寸法を観察できます。ネイティブアプリの場合は、メディアピッカーAPIを介して取得できる可能性が高いです。代わりに、`ffprobe`のようなツールを使用することもできます。
 
-```jsx
-import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
-
-export async function getAspectRatio(fileName: string) {
-  const { streams } = await ffprobe(fileName, {});
-  const videoSteam = streams.find((stream) => stream.codec_type === "video");
-  return {
-    width: videoSteam.width,
-    height: videoSteam.height,
-  };
-}
-```
+<FfprobeAspectRatio />
 
 <Heading level={2} id="transcoding">トランスコーディング</Heading>
 

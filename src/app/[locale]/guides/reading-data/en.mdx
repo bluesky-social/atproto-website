@@ -1,3 +1,15 @@
+import ListRecordsTs from './_snippets/list-records-ts.mdx'
+import ListRecordsGo from './_snippets/list-records-go.mdx'
+import GetRecordTs from './_snippets/get-record-ts.mdx'
+import GetRecordGo from './_snippets/get-record-go.mdx'
+import ResolveHandleUrl from './_snippets/resolve-handle-url.mdx'
+import ResolveHandleResponse from './_snippets/resolve-handle-response.mdx'
+import ClientDidTs from './_snippets/client-did-ts.mdx'
+import UnauthenticatedClientTs from './_snippets/unauthenticated-client-ts.mdx'
+import GetProfileTs from './_snippets/get-profile-ts.mdx'
+import UnauthenticatedClientGo from './_snippets/unauthenticated-client-go.mdx'
+import GetProfileGo from './_snippets/get-profile-go.mdx'
+
 export const header = {
   title: 'Reading Data',
   description: 'Read AT Protocol Records',
@@ -14,31 +26,14 @@ export const header = {
     <TabPanel value="ts">
     You can read records from a user's data repository with `client.list()`:
 
-    ```tsx
-    const posts = await client.list(app.bsky.feed.post, {
-      limit: 10,
-      repo: 'alex.bsky.team',
-    })
-    ```
+    <ListRecordsTs />
 
-    Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return. 
+    Each Lexicon will have its own parameters; for `app.bsky.feed.post`, you can specify the `repo` (a user's handle or [DID](#did-resolution)) and a `limit` on the number of posts to return.
     </TabPanel>
     <TabPanel value="go">
     You can read posts from a user's data repository with `RepoListRecords()`:
 
-    ```go
-    resp, _ := comatproto.RepoListRecords(ctx, client,
-        "app.bsky.feed.post",  // lexicon
-        "",                    // cursor
-        10,                    // limit
-        "alex.bsky.team",      // handle or DID
-        false,                 // reverse
-    )
-
-    for _, record := range resp.Records {
-        fmt.Printf("Record: %s\n", record.Uri)
-    }
-    ```
+    <ListRecordsGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -56,26 +51,12 @@ Refer to [`app.bsky.feed.post`](https://lexicon.garden/lexicon/did:plc:4v4y5r3lw
     <TabPanel value="ts">
     You can use `client.get()` to read an individual record by its [`rkey`](/specs/record-key):
 
-    ```tsx
-    const post = await client.get(app.bsky.feed.post, {
-      rkey: '3jxf7z2k3q2',
-    })
-    ```
+    <GetRecordTs />
     </TabPanel>
     <TabPanel value="go">
     You can use `RepoGetRecord()` to read an individual record by its [`rkey`](/specs/record-key):
-    
-    ```go
-    resp, _ := comatproto.RepoGetRecord(ctx, client, 
-        "",                    // cid (empty for latest)
-        "app.bsky.feed.post",  // lexicon
-        "alex.bsky.team",      // handle or DID
-        "3mbl5xdw4yk2r",       // rkey
-    )
 
-    fmt.Printf("URI: %s\n", resp.Uri)
-    // resp.Value contains the record data
-    ```
+    <GetRecordGo />
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -87,21 +68,13 @@ In atproto, user data is resolved through [DIDs](/guides/sync#data-repositories)
 
 You can resolve a known username to a DID using the `com.atproto.identity.resolveHandle` endpoint. This means that you can just visit this address in a browser with a `handle=` arugment to look up your DID:
 
-```
-https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=youraccount.bsky.social
-```
+<ResolveHandleUrl />
 
-```
-{
-did: "did:plc:3vekukmab2djjeengw2o3wln"
-}
-```
+<ResolveHandleResponse />
 
 The TypeScript SDK also provides the DID of the currently-authenticated as `client.did`:
 
-```tsx
-const your_did = client.did
-```
+<ClientDidTs />
 
 ## Unauthenticated Reads
 
@@ -114,45 +87,20 @@ Some API endpoints can be accessed without authentication. You can create an una
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    ```tsx
-    import { Client } from '@atproto/lex'
-    import * as app from './lexicons/app.js'
-
-    const client = new Client('https://public.api.bsky.app')
-    ```
+    <UnauthenticatedClientTs />
 
     As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
-    ```tsx
-    const profile = await client.call(app.bsky.actor.getProfile, {
-      actor: 'alex.bsky.team',
-    })
-    ```
+    <GetProfileTs />
 
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the SDK documentation](https://www.npmjs.com/package/@atproto/lex).
     </TabPanel>
     <TabPanel value="go">
-    ```go
-    import (
-        "context"
-        appbsky "github.com/bluesky-social/indigo/api/bsky"
-        "github.com/bluesky-social/indigo/atproto/atclient"
-    )
-
-    ctx := context.Background()
-
-    client := atclient.NewAPIClient("https://public.api.bsky.app")
-    ```
+    <UnauthenticatedClientGo />
 
     As with an authenticated client, you can `.get()` any public records, like a user's profile:
 
-    ```go
-    profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
-
-    fmt.Printf("Handle: %s\n", profile.Handle)
-    fmt.Printf("Display Name: %s\n", *profile.DisplayName)
-    fmt.Printf("Followers: %d\n", *profile.FollowersCount)
-    ```
+    <GetProfileGo />
 
     You can make API calls to any Lexicon using the same SDK client pattern. For more examples, refer to [the Go SDK libraries](https://pkg.go.dev/github.com/bluesky-social/indigo).
     </TabPanel>

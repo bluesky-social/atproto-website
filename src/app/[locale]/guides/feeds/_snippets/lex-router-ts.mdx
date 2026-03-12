@@ -1,0 +1,12 @@
+```ts
+import { LexRouter, LexError } from '@atproto/lex-server'
+import { serve, upgradeWebSocket } from '@atproto/lex-server/nodejs'
+import * as app from './lexicons/app.js'
+
+const router = new LexRouter({ upgradeWebSocket })
+
+// Add handlers here
+
+const server = await serve(router, { port: 3000 })
+console.log('Server listening on port 3000')
+```

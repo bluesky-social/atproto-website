@@ -1,0 +1,7 @@
+```go
+comatproto.RepoDeleteRecord(ctx, client, &comatproto.RepoDeleteRecord_Input{
+    Repo:       client.AccountDID.String(), // handle or DID
+    Collection: "app.bsky.feed.post",       // lexicon
+    Rkey:       "3mbl5xdw4yk2r",             // rkey
+})
+```

@@ -1,0 +1,65 @@
+```ts
+// =============================================================================
+// Post Index
+// =============================================================================
+
+interface IndexedPost {
+    uri: AtUriString
+    indexedAt: number
+}
+
+const postIndex: IndexedPost[] = []
+
+// =============================================================================
+// Tap Indexer
+// =============================================================================
+
+const tap = new Tap(config.tapUrl, { adminPassword: config.tapPassword })
+const indexer = new SimpleIndexer()
+
+const searchPattern = new RegExp(
+    `\\b(${config.searchTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    'i'
+)
+
+indexer.record(async (evt) => {
+    if (evt.collection !== 'app.bsky.feed.post') return
+
+    const uri = `at://${evt.did}/${evt.collection}/${evt.rkey}` as AtUriString
+
+    if (evt.action === 'delete') {
+        const idx = postIndex.findIndex(p => p.uri === uri)
+        if (idx !== -1) {
+            postIndex.splice(idx, 1)
+            console.log(`DELETE ${uri}`)
+        }
+        return
+    }
+
+    const text = (evt.record?.text as string) || ''
+    if (!searchPattern.test(text)) return
+    if (postIndex.some(p => p.uri === uri)) return
+
+    postIndex.unshift({ uri, indexedAt: Date.now() })
+    if (postIndex.length > config.maxPosts) postIndex.pop()
+
+    const preview = text.substring(0, 60).replace(/\n/g, ' ')
+    console.log(`${evt.action.toUpperCase()} ${uri}`)
+    console.log(`  "${preview}${text.length > 60 ? '...' : ''}"`)
+    console.log(`  ⭐ Added to index (${postIndex.length} total)`)
+})
+
+indexer.identity(async (evt) => {
+    if (evt.status === 'active') return
+    // Remove posts from disabled/deleted identities
+    const removed = postIndex.filter(p => p.uri.includes(evt.did)).length
+    if (removed > 0) {
+        postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))
+        console.log(`Identity ${evt.did} (${evt.status}): removed ${removed} posts`)
+    }
+})
+
+indexer.error((err) => console.error('Indexer error:', err))
+
+const channel = tap.channel(indexer)
+```
