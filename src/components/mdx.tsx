@@ -98,7 +98,7 @@ export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
 const MDXWrapperContext = createContext(false)
 
-export function wrapper({ children }: { children: React.ReactNode }) {
+export const wrapper = function Wrapper({ children }: { children: React.ReactNode }) {
   const isNested = useContext(MDXWrapperContext)
 
   if (isNested) {
