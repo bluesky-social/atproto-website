@@ -1,0 +1,24 @@
+```ts
+import { Client } from '@atproto/lex'
+import { PasswordSession } from '@atproto/lex-password-session'
+import * as dotenv from 'dotenv'
+import { CronJob } from 'cron'
+import * as process from 'process'
+import * as app from './lexicons/app.js'
+
+dotenv.config()
+
+// Create a session
+async function login() {
+    const service = process.env.BOT_PDS!
+    const identifier = process.env.BOT_HANDLE!
+    const password = process.env.BOT_PASSWORD!
+    const session = await PasswordSession.login({
+        service, // eg 'https://bsky.social'
+        identifier, // eg 'alice.bsky.social'
+        password,
+    })
+
+    return session
+}
+```

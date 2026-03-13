@@ -1,0 +1,15 @@
+```go
+newProfile := &appbsky.ActorProfile{
+  DisplayName: ptrString("New Display Name"),
+  Description: ptrString("Updated bio"),
+}
+
+resp, _ := comatproto.RepoPutRecord(ctx, client, &comatproto.RepoPutRecord_Input{
+  Repo:       client.AccountDID.String(),     // handle or DID
+  Collection: "app.bsky.actor.profile",       // lexicon
+  Rkey:       "self",                         // rkey
+  Record:     &lexutil.LexiconTypeDecoder{Val: newProfile},
+})
+
+fmt.Printf("Updated: %s (CID: %s)\n", resp.Uri, resp.Cid)
+```

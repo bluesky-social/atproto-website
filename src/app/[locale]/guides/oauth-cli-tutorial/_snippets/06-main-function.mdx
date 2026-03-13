@@ -1,0 +1,32 @@
+```ts
+async function main() {
+  const handle = process.argv[2]
+  if (!handle) {
+    console.error('Usage: npx tsx src/index.ts <your-handle>')
+    process.exit(1)
+  }
+
+  console.log(`Logging in as ${handle}...`)
+  const session = await login(handle)
+  console.log(`Logged in! DID: ${session.did}`)
+
+  // Create a lex Client with the authenticated session
+  const client = new Client(session)
+
+  // Fetch the user's profile
+  const profile = await client.get(app.bsky.actor.profile, {
+    repo: session.did,
+  })
+
+  console.log('\nProfile:')
+  console.log(`  Handle: ${handle}`)
+  console.log(`  DID: ${session.did}`)
+  console.log(`  Display name: ${profile.value?.displayName ?? '(not set)'}`)
+  console.log(`  Description: ${profile.value?.description ?? '(not set)'}`)
+}
+
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+```

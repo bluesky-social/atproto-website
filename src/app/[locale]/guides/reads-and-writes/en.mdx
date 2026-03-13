@@ -1,3 +1,8 @@
+import NpmLexInstall from './_snippets/npm-lex-install.mdx'
+import LexImportTs from './_snippets/lex-import-ts.mdx'
+import GoImports from './_snippets/go-imports.mdx'
+import GoBlankImports from './_snippets/go-blank-imports.mdx'
+
 export const header = {
   title: 'Reads and Writes',
   description: 'Read and Write from the Atmosphere',
@@ -28,41 +33,23 @@ After [authenticating](/guides/sdk-auth#creating-a-client), you'll be able to ma
 
     Use `lex` to install the `app.bsky.feed.post` and `app.bsky.actor.profile` Lexicons as described in [Installing Lexicons](/guides/installing-lexicons):
 
-    ```bash
-    npm install -g @atproto/lex
-    lex install app.bsky.feed.post app.bsky.actor.profile
-    lex build
-    ```
+    <NpmLexInstall />
 
     This will generate TypeScript types for the Lexicons in your project. You can use this `import` statement to access all installed Lexicons:
 
-    ```tsx
-    import * as app from './lexicons/app.js'
-    ```
+    <LexImportTs />
 
     This will give you access to the API methods for your Lexicons. Now you are ready to start [making requests](/guides/reading-data)!
     </TabPanel>
     <TabPanel value="go">
-    ```go
-    import (
-      "context"
-      appbsky "github.com/bluesky-social/indigo/api/bsky"
-      comatproto "github.com/bluesky-social/indigo/api/atproto"
-      "github.com/bluesky-social/indigo/atproto/atclient"
-      lexutil "github.com/bluesky-social/indigo/lex/util"
-    )
+    <GoImports />
 
-    ctx := context.Background()
-    ```
     Import the SDK libraries and go directly to [making requests](/guides/reading-data)!
 
     <Note>
     Note that you'll need to [blank import](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html) the `bsky` and `util` libraries if you aren't using them directly, due to the way Go imports work:
 
-    ```go
-    _ "github.com/bluesky-social/indigo/api/bsky"
-    _ "github.com/bluesky-social/indigo/lex/util"
-    ```
+    <GoBlankImports />
     </Note>
 
     </TabPanel>

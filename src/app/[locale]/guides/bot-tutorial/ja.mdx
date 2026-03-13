@@ -1,4 +1,19 @@
 import {Heading} from '@/components/Heading'
+import S01 from './_snippets/01-install-node.mdx'
+import S02 from './_snippets/02-install-lex.mdx'
+import S03 from './_snippets/03-init-project.mdx'
+import S04 from './_snippets/04-lex-install-post.mdx'
+import S05 from './_snippets/05-lex-build.mdx'
+import S06 from './_snippets/06-login-function.mdx'
+import S07 from './_snippets/07-make-post.mdx'
+import S08 from './_snippets/08-cron-main.mdx'
+import S09 from './_snippets/09-env-file.mdx'
+import S10 from './_snippets/10-run-bot.mdx'
+import S11 from './_snippets/11-install-ai.mdx'
+import S12 from './_snippets/12-env-with-ai-key.mdx'
+import S13 from './_snippets/13-lex-install-notifications.mdx'
+import S14 from './_snippets/14-import-generate-text.mdx'
+import S15 from './_snippets/15-full-agent-code.mdx'
 
 export const header = {
   title: 'エージェント作成',
@@ -18,41 +33,27 @@ export const header = {
 
 [homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
 
-```bash
-brew install node
-```
+<S01 />
 
 さらに、`lex` CLIツールをグローバルにインストールしておく必要があります。
 
-```bash
-npm install -g @atproto/lex
-```
+<S02 />
 
 次に、新しいTypeScriptプロジェクトディレクトリを作成し、プロジェクトを初期化します。
 
-```bash
-mkdir my-agent
-cd my-agent
-npm init -y
-npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-password-session
-npx tsc --init --verbatimModuleSyntax false
-```
+<S03 />
 
 既存アカウントから投稿するつもりでなければ、ボット用に[新しいアカウントを作成](https://bsky.app/)してください。また、そのアカウント用の[アプリパスワード](/guides/sdk-auth)も生成してください。
 
-<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading> 
+<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading>
 
 [Lexicon](/guides/lexicon)はatprotoのレコードを定義します。ボットは[app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post) Lexiconを使ってBluesky投稿を作成します。`lex`を使えば、このLexiconをダウンロードしてプロジェクトに組み込めます。
 
-```bash
-lex install app.bsky.feed.post
-```
+<S04 />
 
 必要であれば、ダウンロードしたLexiconファイルを`lib/lexicons/app.bsky.post.json`で確認できます。ここから`lex build`を実行すると、インストール済みLexiconすべてに対してTypeScriptの型を生成できます。
 
-```bash
-lex build
-```
+<S05 />
 
 生成されたコードは`src/lexicons`に配置されます。これでボットスクリプトを作成できます。
 
@@ -62,64 +63,15 @@ lex build
 
 まず必要なimportを追加し、`PasswordSession.create()`を呼び出してアプリパスワードでボットを認証します。
 
-```ts
-import { Client } from '@atproto/lex'
-import { PasswordSession } from '@atproto/lex-password-session'
-import * as dotenv from 'dotenv'
-import { CronJob } from 'cron'
-import * as process from 'process'
-import * as app from './lexicons/app.js'
-
-dotenv.config()
-
-// セッション生成
-async function login() {
-    const service = process.env.BOT_PDS!
-    const identifier = process.env.BOT_HANDLE!
-    const password = process.env.BOT_PASSWORD!
-    const session = await PasswordSession.login({
-        service, // eg 'https://bsky.social'
-        identifier, // eg 'alice.bsky.social'
-        password,
-    })
-
-    return session
-}
-```
+<S06 />
 
 次に、投稿する関数を追加します。認証済みセッションを使って新しい`Client`を生成し、投稿を作成します。`app.bsky.feed.post` Lexiconには2つのパラメータが必要です。投稿本文（ここでは"🙂"）とタイムスタンプです。
 
-```ts
-// 投稿ロジック
-async function makePost(session: PasswordSession) {
-    const client = new Client(session)
-    await client.create(app.bsky.feed.post, {
-        text: '🙂',
-        createdAt: new Date().toISOString(),
-    })
-    console.log('Just posted!')
-}
-
-async function main() {
-    const session = await login()
-    await makePost(session)
-}
-
-main().catch(console.error)
-```
+<S07 />
 
 最後に、`cron`パッケージを使って、3時間ごとに投稿するコードを`main()`に追加します。
 
-```ts
-async function main() {
-    const session = await login()
-    await makePost(session)
-    // cronジョブで実行
-    const scheduleExpression = '0 */3 * * *'
-    const job = new CronJob(scheduleExpression, () => makePost(session))
-    job.start()
-}
-```
+<S08 />
 
 これでボットに必要なコードはすべて揃いました。次は動作確認です。
 
@@ -127,21 +79,15 @@ async function main() {
 
 ボットのホスト（PDS）、ユーザー名、パスワードを`.env`ファイルに保存します。
 
-```bash
-BOT_PDS= # eg 'https://bsky.social' （セルフホストPDSの場合はそのURLを使用）
-BOT_HANDLE= # eg 'alice.bsky.social'
-BOT_PASSWORD=
-```
+<S09 />
 
 これで`ts-node`を使ってボットをテストできます。
 
-```bash
-ts-node src/index.ts
-```
+<S10 />
 
 このボットは手元のマシンで実行することも、[Fly.io](http://fly.io/) のようなプラットフォームにデプロイすることもできます。
 
-ボットはネットワークのレート制限を守る必要がある点に注意してください。例えば、[Blueskyには独自のレート制限があります](https://docs.bsky.app/docs/advanced-guides/rate-limits)。 
+ボットはネットワークのレート制限を守る必要がある点に注意してください。例えば、[Blueskyには独自のレート制限があります](https://docs.bsky.app/docs/advanced-guides/rate-limits)。
 
 <Heading level={2} id="part-4-from-bot-to-agent">パート4：ボットからエージェントへ</Heading>
 
@@ -151,87 +97,23 @@ ts-node src/index.ts
 
 APIキーを取得したら、プロジェクトにAI SDKを追加します。
 
-```bash
-npm i ai
-```
+<S11 />
 
 次に、`.env`ファイルへ環境変数を1つ追加します。
 
-```bash
-BOT_PDS=
-BOT_HANDLE=
-BOT_PASSWORD=
-AI_GATEWAY_API_KEY=xxxxxxxxx
-```
+<S12 />
 
 最後に、メンション取得のため追加のLexiconをインストールする必要があります。次のコマンドで必要なLexiconのインストールとビルドを行います。
 
-```bash
-lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
-lex build --override
-```
+<S13 />
 
 あと少しです。`src/index.ts`に`ai`のimportを追加します。
 
-```ts
-import { generateText } from 'ai'
-```
+<S14 />
 
 これで、スクリプト内の`login`関数以降を、AI SDKを使ってリプライを生成する新しいロジックに置き換えられます。
 
-```ts
-async function generateReply(mentionText: string): Promise<string> {
-  const { text } = await generateText({
-    model: 'anthropic/claude-sonnet-4-5',
-    system: 'You are a mystical fortune teller bot on Bluesky named "The Oracle". Speak in a dramatic, mysterious tone with occasional emoji (🔮 ✨ 🌙 ⭐). If someone asks a yes/no question, give a cryptic but leaning answer. If they ask for general guidance, offer a brief horoscope-style prediction. Keep responses under 280 characters. Never break character.',
-    prompt: mentionText,
-  })
-  return text
-}
-
-// 新着メンションとリプライを確認
-async function checkMentions(session: PasswordSession) {
-  const client = new Client(session)
-  const notifications = await client.call(app.bsky.notification.listNotifications, {
-    limit: 20,
-  })
-
-  for (const notif of notifications.notifications) {
-    // 未読メンションのみを処理
-    if (notif.reason !== 'mention' || notif.isRead) continue
-
-    // メンション元の投稿を取得
-    const post = await client.call(app.bsky.feed.getPostThread, {
-      uri: notif.uri,
-    })
-
-    const mentionText = post.thread.post.record.text
-    const reply = await generateReply(mentionText)
-
-    // 投稿にリプライ
-    await client.create(app.bsky.feed.post, {
-      text: reply,
-      createdAt: new Date().toISOString(),
-      reply: {
-        root: { uri: notif.uri, cid: post.thread.post.cid },
-        parent: { uri: notif.uri, cid: post.thread.post.cid },
-      },
-    })
-
-    console.log(`Replied to mention: ${mentionText}`)
-  }
-}
-
-async function main() {
-    const session = await login()
-    const job = new CronJob('*/1 * * * *', () => checkMentions(session))
-    job.start()
-
-    console.log('Agent is running...')
-}
-
-main().catch(console.error)
-```
+<S15 />
 
 ここではいくつか新しい概念が出てきます。`app.bsky.feed.post`のロジックは見覚えがあるはずですが、ここではさらに`app.bsky.notification.listNotifications`と`app.bsky.feed.getPostThread`も使用します。前者は通知一覧の取得に使い、後者は指定した投稿URIのスレッド全体を取得するために使います。
 

@@ -1,3 +1,8 @@
+import BrewInstallGoat from './_snippets/brew-install-goat.mdx'
+import GoatLexPull from './_snippets/goat-lex-pull.mdx'
+import GoatLexNew from './_snippets/goat-lex-new.mdx'
+import GoatLexPublish from './_snippets/goat-lex-publish.mdx'
+
 export const header = {
   title: 'Publishing Lexicons',
   description: 'Sharing your lexicons with the world',
@@ -14,34 +19,19 @@ You can use [`goat`](https://github.com/bluesky-social/goat), our command line t
 
 `goat` can be installed from [Homebrew](https://formulae.brew.sh/formula/goat) on macOS and Linux:
 
-```shell
-brew install goat
-```
+<BrewInstallGoat />
 
 In a project directory, you can download some existing Lexicons, which will get saved as JSON files in `./lexicons/`:
 
-```markdown
-$ goat lex pull com.atproto.repo.strongRef com.atproto.moderation. app.bsky.actor.profile
- 🟢 com.atproto.repo.strongRef
- 🟢 com.atproto.moderation.defs
- 🟢 com.atproto.moderation.createReport
- 🟢 app.bsky.actor.profile
-```
+<GoatLexPull />
 
 You can also create a new Lexicon record with `goat lex new record`:
 
-```markdown
-$ goat lex new record dev.project.thing
-
-$ open ./lexicons/dev/project/thing.json
-```
+<GoatLexNew />
 
 And eventually publish it with `goat lex publish`:
 
-```markdown
-$ goat lex publish
- 🟢 dev.project.thing
-```
+<GoatLexPublish />
 
 <Note>
 Lexicons are published into *your own repository* like any other record. This means that you'll need to log in with `goat` when publishing! To do this, use `goat account login` or set the `GOAT_USERNAME` and `GOAT_PASSWORD` environment variables.

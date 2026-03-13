@@ -1,4 +1,4 @@
-import {Container} from "@/components/Container"
+import LabelObject from './_snippets/label-object.mdx'
 
 export const header = {
   title: '라벨',
@@ -19,23 +19,7 @@ atproto의 모더레이션은 다음을 포함한 여러 계층형 시스템으�
 
 라벨은 다음 정보와 함께 게시됩니다:
 
-```markdown
-{
-  /** DID of the actor who created this label. */
-  src: string
-  /** AT URI of the record, repository (account), or other resource that this label applies to. */
-  uri: string
-  /** Optionally, CID specifying the specific version of 'uri' resource this label applies to. */
-  cid?: string
-  /** The short string name of the value or type of this label. */
-  val: string
-  /** If true, this is a negation label, overwriting a previous label. */
-  neg?: boolean
-  /** Timestamp when this label was created. */
-  cts: string
-}
-
-```
+<LabelObject />
 
 ## **라벨 값**
 

@@ -1,0 +1,29 @@
+```ts
+async function login(handle: string) {
+  // Start the OAuth flow — this resolves the handle, finds their auth
+  // server (PDS), and returns a URL to redirect the user to
+  const authUrl = await oauthClient.authorize(handle, { scope: 'atproto' })
+
+  // Wait for the callback from the authorization server
+  const params = await new Promise<URLSearchParams>((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      const url = new URL(req.url!, 'http://127.0.0.1:3000')
+      if (url.pathname === '/callback') {
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end('<h1>Authorized! You can close this tab.</h1>')
+        resolve(url.searchParams)
+        server.close()
+      }
+    })
+    server.listen(3000, '127.0.0.1', () => {
+      console.log('Listening on http://127.0.0.1:3000/callback for OAuth redirect...')
+      open(authUrl.toString())
+    })
+    server.on('error', reject)
+  })
+
+  // Exchange the authorization code for a session
+  const { session } = await oauthClient.callback(params)
+  return session
+}
+```

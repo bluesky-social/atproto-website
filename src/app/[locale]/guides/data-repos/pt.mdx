@@ -1,4 +1,6 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import RepoLayout from './_snippets/repo-layout.mdx'
+import AtUriStructure from './_snippets/at-uri-structure.mdx'
 
 export const header = {
   title: 'Repositórios de Dados Pessoais',
@@ -16,29 +18,13 @@ Eles são descritos em mais detalhes na [especificação do repositório](/specs
 
 O conteúdo de um repositório é disposto em uma [Árvore de pesquisa Merkle (MST)](https://hal.inria.fr/hal-02303490/document) que reduz o estado a um único hash raiz. Ele pode ser visualizado como o seguinte layout:
 
-```
-┌────────────────┐
-│     Commit     │  (Signed Root)
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│   Tree Nodes   │
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│     Record     │
-└────────────────┘
-```
+<RepoLayout />
 
 Cada nó é um objeto [IPLD](https://ipld.io/) ([dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)) que é referenciado por um hash [CID](https://github.com/multiformats/cid). As setas no diagrama acima representam uma referência CID.
 
 Este layout é refletido nos [AT URIs](/specs/at-uri-scheme):
 
-```
-Raiz       | at://alice.com
-Coleção    | at://alice.com/app.bsky.feed.post
-Registro   | at://alice.com/app.bsky.feed.post/1234
-```
+<AtUriStructure />
 
 Um “commit” para um repositório de dados é simplesmente uma assinatura de par de chaves sobre o CID de um nó Root. Cada mutação para o repositório produz um novo nó Commit.
 

@@ -1,3 +1,5 @@
+import CspHeaders from './_snippets/csp-headers.mdx'
+
 export const header = {
   title: '블롭 보안',
   description: '블롭을 제공할 때의 보안 고려사항',
@@ -9,10 +11,7 @@ export const header = {
 
 이 엔드포인트의 콘텐츠 보안 헤더 예시는 다음과 같습니다:
 
-```jsx
-Content-Security-Policy: default-src 'none'; sandbox
-X-Content-Type-Options: nosniff
-```
+<CspHeaders />
 
 ## 메타데이터
 

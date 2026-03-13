@@ -1,4 +1,8 @@
 import {Heading} from '@/components/Heading'
+import NpmLexInstall from './_snippets/npm-lex-install.mdx'
+import LexImportTs from './_snippets/lex-import-ts.mdx'
+import GoImports from './_snippets/go-imports.mdx'
+import GoBlankImports from './_snippets/go-blank-imports.mdx'
 
 export const header = {
   title: '読み取りと書き込み',
@@ -30,41 +34,22 @@ ATデータリポジトリの読み書きには認証済みのクライアント
 
     [Lexiconのインストール](/guides/installing-lexicons)に記載の通り、`lex`を使って`app.bsky.feed.post`と`app.bsky.actor.profile`のLexiconをインストールしてください。
 
-    ```bash
-    npm install -g @atproto/lex
-    lex install app.bsky.feed.post app.bsky.actor.profile
-    lex build
-    ```
+    <NpmLexInstall />
 
     これによりプロジェクト内にLexicon用のTypeScriptの型が生成されます。インストールしたLexiconには`import`文でアクセスできます。
 
-    ```tsx
-    import * as app from './lexicons/app.js'
-    ```
+    <LexImportTs />
 
     これによりLexiconのAPIメソッドにアクセスできるようになります。これで[リクエストを行う](/guides/reading-data)準備が整いました。
     </TabPanel>
     <TabPanel value="go">
-    ```go
-    import (
-      "context"
-      appbsky "github.com/bluesky-social/indigo/api/bsky"
-      comatproto "github.com/bluesky-social/indigo/api/atproto"
-      lexutil "github.com/bluesky-social/indigo/lex/util"
-      "github.com/bluesky-social/indigo/xrpc"
-    )
-
-    ctx := context.Background()
-    ```
+    <GoImports />
     SDKライブラリをインポートしたら、そのまま[リクエストの作成](/guides/reading-data)に進みましょう。
 
     <Note>
     Goインポートの仕組み上、`bsky`ライブラリと`util`ライブラリを直接使用していない場合は、これらを[空インポート](https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_100.html)する必要があることに注意してください。
 
-    ```go
-    _ "github.com/bluesky-social/indigo/api/bsky"
-    _ "github.com/bluesky-social/indigo/lex/util"
-    ```
+    <GoBlankImports />
     </Note>
 
     </TabPanel>

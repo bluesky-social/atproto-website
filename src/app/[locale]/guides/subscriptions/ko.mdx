@@ -1,4 +1,7 @@
 import {Container} from "@/components/Container"
+import AcceptLabelersCurl from './_snippets/accept-labelers-curl.mdx'
+import LabelerConfigTs from './_snippets/labeler-config-ts.mdx'
+import CreateReportTs from './_snippets/create-report-ts.mdx'
 
 export const header = {
   title: '구독',
@@ -11,34 +14,11 @@ export const header = {
 
 특정 라벨러의 라벨을 포함시키려면, XRPC 요청의 `atproto-accept-labelers` 헤더에 포함할 라벨러들의 DID를 쉼표로 구분하여 다음과 같이 설정하세요:
 
-```bash
-curl -H "atproto-accept-labelers: did:plc:vmt7o7y6titkqzzxav247zrn, did:plc:vmt7o7y6titkqzzxav247zrn"
-```
+<AcceptLabelersCurl />
 
 TypeScript SDK를 사용하여 라벨러를 추가할 수도 있습니다:
 
-```tsx
-import { Client } from '@atproto/lex'
-
-// 앱 전역 라벨러
-Client.configure({
-  appLabelers: ['did:plc:labeler1', 'did:plc:labeler2'],
-})
-
-// 클라이언트별 라벨러
-const client = new Client(session, {
-  labelers: ['did:plc:labeler3'],
-})
-
-// 라벨러 동적 추가
-client.addLabelers(['did:plc:labeler4'])
-
-// 모든 라벨러 교체
-client.setLabelers(['did:plc:labeler5'])
-
-// 라벨러 초기화
-client.clearLabelers()
-```
+<LabelerConfigTs />
 
 ## 앱에서 라벨 활용하기
 
@@ -54,25 +34,7 @@ client.clearLabelers()
 
 신고를 받을 라벨러를 지정하려면, `atproto-proxy` 헤더에 라벨러의 DID와 서비스 키 `atproto_labeler`를 설정하세요. TypeScript SDK에서는 다음과 같습니다:
 
-```typescript
-import { AtpAgent } from '@atproto/api'
-
-const agent = new AtpAgent({
-    service: 'https://bsky.social'
-})
-await agent.login({
-    identifier: 'alex.bsky.team',
-    password: 'your-app-password'
-})
-
-agent
-  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
-  .createModerationReport({
-    reasonType: 'com.atproto.moderation.defs#reasonViolation',
-    reason: 'They were being such a jerk to me!',
-    subject: { did: 'did:web:bob.com' },
-  })
-```
+<CreateReportTs />
 
 ## 더 읽어보기 및 참고 자료
 

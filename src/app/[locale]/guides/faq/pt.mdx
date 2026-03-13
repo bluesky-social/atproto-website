@@ -1,3 +1,6 @@
+import ListRecordsCallTs from './_snippets/list-records-call-ts.mdx'
+import ListRecordsHttp from './_snippets/list-records-http.mdx'
+
 export const header = {
   title: 'FAQ',
   description:
@@ -38,19 +41,10 @@ Analisamos atentamente o uso do RDF, mas não gostamos da experiência do desenv
 
 XRPC usa [Lexicon](/guides/lexicon) para descrever chamadas HTTP e mapeá-las para `/xrpc/{methodId}`. Por exemplo, esta chamada de API:
 
-```typescript
-await api.com.atproto.repo.listRecords({
-  user: 'alice.com',
-  collection: 'app.bsky.feed.post'
-})
-```
+<ListRecordsCallTs />
 
 ...maps para:
 
-```text
-GET /xrpc/com.atproto.repo.listRecords
-  ?user=alice.com
-  &collection=app.bsky.feed.post
-```
+<ListRecordsHttp />
 
 O Lexicon estabelece um id de método compartilhado (`com.atproto.repo.listRecords`) e os parâmetros de consulta esperados, corpo de entrada e corpo de saída. Ao usar o Lexicon, obtemos verificações de tempo de execução nas entradas e saídas da chamada e podemos gerar código digitado como o exemplo de chamada de API acima.

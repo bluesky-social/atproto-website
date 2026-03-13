@@ -1,3 +1,5 @@
+import CspHeaders from './_snippets/csp-headers.mdx'
+
 export const header = {
   title: 'Blob Security',
   description: 'Security considerations when serving blobs',
@@ -9,10 +11,7 @@ Serving arbitrary user-uploaded files from a web server raises many content secu
 
 An example set of content security headers for this endpoint is:
 
-```jsx
-Content-Security-Policy: default-src 'none'; sandbox
-X-Content-Type-Options: nosniff
-```
+<CspHeaders />
 
 ## Metadata
 

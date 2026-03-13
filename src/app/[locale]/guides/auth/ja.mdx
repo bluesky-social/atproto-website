@@ -1,5 +1,7 @@
 import {Container} from "@/components/Container"
 import {Heading} from "@/components/Heading"
+import NpmInstall from './_snippets/npm-install.mdx'
+import GoGet from './_snippets/go-get.mdx'
 
 export const header = {
   title: '認証',
@@ -19,18 +21,14 @@ export const header = {
 
     まずatprotoパッケージをインストールしてください。
 
-    ```bash
-    npm install @atproto/lex @atproto/lex-password-session
-    ```
+    <NpmInstall />
     </TabPanel>
     <TabPanel value="go">
     任意の[OAuth](/guides/go-oauth-cli-tutorial)プロバイダでログインすることもできますし、SDKのパスワード認証を使用することもできます。
 
     まずatprotoパッケージをインストールしてください。
 
-    ```bash
-    go get github.com/bluesky-social/indigo
-    ```
+    <GoGet />
     </TabPanel>
   </TabPanels>
 </TabGroup>

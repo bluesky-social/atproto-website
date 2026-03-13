@@ -1,5 +1,7 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
 import {Heading} from '@/components/Heading'
+import RepoLayout from './_snippets/repo-layout.mdx'
+import AtUriStructure from './_snippets/at-uri-structure.mdx'
 
 export const header = {
 title: '個人データリポジトリ',
@@ -17,29 +19,13 @@ description:
 
 リポジトリの内容は[Merkle探索木（MST）](https://hal.inria.fr/hal-02303490/document)にレイアウトされ、状態が単一のルートハッシュに縮小されます。これは次のレイアウトとして視覚化できます。
 
-```
-┌────────────────┐
-│     Commit     │  (Signed Root)
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│   Tree Nodes   │
-└───────┬────────┘
-        ↓
-┌────────────────┐
-│     Record     │
-└────────────────┘
-```
+<RepoLayout />
 
 すべてのノードは[IPLD](https://ipld.io/)オブジェクト（[dag-cbor](https://ipld.io/docs/codecs/known/dag-cbor/)）であり、[CID](https://github.com/multiformats/cid)ハッシュによって参照されます。上の図の矢印はCID参照を表します。
 
 このレイアウトは、[AT URI](/specs/at-uri-scheme)に反映されています。
 
-```
-ルート       | at://alice.com
-コレクション | at://alice.com/app.bsky.feed.post
-レコード     | at://alice.com/app.bsky.feed.post/1234
-```
+<AtUriStructure />
 
 データリポジトリへの「コミット」は、ルートノードのCIDに対する鍵ペア署名にすぎません。リポジトリが変更されるたびに、新しいコミットノードが生成されます。
 

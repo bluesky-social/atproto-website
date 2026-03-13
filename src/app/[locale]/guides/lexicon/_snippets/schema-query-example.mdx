@@ -1,0 +1,29 @@
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.getProfile",
+  "defs": {
+    "main": {
+      "type": "query",
+      "parameters": {
+        "type": "params",
+        "required": ["user"],
+        "properties": { "user": { "type": "string" } }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["did", "name"],
+          "properties": {
+            "did": { "type": "string" },
+            "name": { "type": "string" },
+            "displayName": { "type": "string", "maxLength": 64 },
+            "description": { "type": "string", "maxLength": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+```

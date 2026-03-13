@@ -1,0 +1,37 @@
+```ts
+import { AtUriString, DidString, asDidString } from '@atproto/lex'
+import { LexError, LexRouter, serviceAuth } from '@atproto/lex-server'
+import { serve } from '@atproto/lex-server/nodejs'
+import { Tap, SimpleIndexer } from '@atproto/tap'
+import * as app from './lexicons/app.js'
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+interface FeedConfig {
+    publisherDid: DidString
+    feedName: string
+    searchTerms: string[]
+    maxPosts: number
+    port: number
+    tapUrl: string
+    tapPassword: string
+    initialRepos: string[]
+}
+
+const DEFAULT_REPO = 'did:plc:ragtjsm2j2vknwkz3zp4oxrd' // pfrazee.com
+
+const config: FeedConfig = {
+    publisherDid: asDidString(process.env.FEED_PUBLISHER_DID || 'did:example:alice'),
+    feedName: process.env.FEED_NAME || 'whats-alf',
+    searchTerms: (process.env.FEED_SEARCH_TERMS || 'alf').split(',').map(s => s.trim()),
+    maxPosts: parseInt(process.env.FEED_MAX_POSTS || '1000', 10),
+    port: parseInt(process.env.FEED_PORT || '3000', 10),
+    tapUrl: process.env.TAP_URL || 'http://localhost:2480',
+    tapPassword: process.env.TAP_PASSWORD || 'secret',
+    initialRepos: (process.env.FEED_INITIAL_REPOS || DEFAULT_REPO).split(',').map(s => s.trim()),
+}
+
+const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
+```

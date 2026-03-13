@@ -1,0 +1,30 @@
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.authBasicFeatures",
+  "defs": {
+    "main": {
+      "type": "permission-set",
+      "title": "Basic App Functionality",
+      "detail": "Creation of posts and interactions",
+      "permissions": [
+        {
+          "type": "permission",
+          "resource": "repo",
+          "collection": ["app.example.post"]
+        },
+        {
+          "type": "permission",
+          "resource": "rpc",
+          "inheritAud": true,
+          "lxm": [
+            "app.example.getFeed"
+            "app.example.getProfile",
+            ...
+          ]
+        },
+      ]
+    }
+  }
+}
+```

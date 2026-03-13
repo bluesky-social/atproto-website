@@ -1,3 +1,5 @@
+import TapRun from './_snippets/tap-run.mdx'
+
 export const header = {
   title: 'Backfilling',
   description: 'Replicating the network',
@@ -17,19 +19,7 @@ When backfilling, you generally need to maintain 'up to date' replica of the dat
 
 Tap can be run from the command line:
 
-```shell
-# Run tap
-go run ./cmd/tap run --disable-acks=true
-# By default, the service uses SQLite at `./tap.db` and binds to port `:2480`.
-
-# In a separate terminal, connect to receive events:
-websocat ws://localhost:2480/channel
-
-#  Add a repo to track
-curl -X POST http://localhost:2480/repos/add \
-  -H "Content-Type: application/json" \
-  -d '{"dids": ["did:plc:ewvi7nxzyoun6zhxrhs64oiz"]}' # @atproto.com repo
-```
+<TapRun />
 
 When a repo is added, tap provides:
 

@@ -1,4 +1,6 @@
 import {Container} from "@/components/Container"
+import NpmInstall from './_snippets/npm-install.mdx'
+import GoGet from './_snippets/go-get.mdx'
 
 export const header = {
   title: 'Auth',
@@ -18,18 +20,14 @@ export const header = {
 
     Begin by installing the atproto packages:
 
-    ```bash
-    npm install @atproto/lex @atproto/lex-password-session
-    ```
+    <NpmInstall />
     </TabPanel>
     <TabPanel value="go">
     You can log in using any [OAuth](/guides/go-oauth-cli-tutorial) provider, or with password authentication from our SDK.
 
     Begin by installing the atproto packages:
 
-    ```bash
-    go get github.com/bluesky-social/indigo
-    ```
+    <GoGet />
     </TabPanel>
   </TabPanels>
 </TabGroup>

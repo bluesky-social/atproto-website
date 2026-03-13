@@ -1,4 +1,8 @@
 import {DescriptionList, Description} from '@/components/DescriptionList'
+import ValidIdentifiers from './_snippets/valid-identifiers.mdx'
+import DidResolutionDiagram from './_snippets/did-resolution-diagram.mdx'
+import ResolvePlcTs from './_snippets/resolve-plc-ts.mdx'
+import ResolveWebTs from './_snippets/resolve-web-ts.mdx'
 
 export const header = {
   title: 'Identity',
@@ -23,28 +27,11 @@ We use two interrelated forms of identifiers: _handles_ and _DIDs_. Handles are 
 
 The following are all valid user identifiers:
 
-```
-alice.host.com
-at://alice.host.com
-did:plc:bv6ggog3tya2z3vxsub7hnal
-```
+<ValidIdentifiers />
 
 The relationship between them can be visualized as:
 
-```
-┌──────────────────┐                 ┌───────────────┐
-│ DNS name         ├──resolves to──→ │ DID           │
-│ (alice.host.com) │                 │ (did:plc:...) │
-└──────────────────┘                 └─────┬─────────┘
-       ↑                                   │
-       │                               resolves to
-       │                                   │
-       │                                   ↓
-       │                            ┌───────────────┐
-       └───────────references───────┤ DID Document  │
-                                    │ {"id":"..."}  │
-                                    └───────────────┘
-```
+<DidResolutionDiagram />
 
 The DNS handle is a user-facing identifier — it should be displayed in user interfaces and promoted as a way to find users. Applications resolve handles to DIDs and then use the DID as the canonical identifier for accounts. Any DID can be rapidly resolved to a DID document which includes public keys and user services.
 
@@ -56,7 +43,7 @@ The DNS handle is a user-facing identifier — it should be displayed in user in
     <ul>
       <li>The handle associated with the DID.</li>
       <li>The signing key.</li>
-      <li>The URL of the user’s PDS.</li>
+      <li>The URL of the user's PDS.</li>
     </ul>
   </Description>
 </DescriptionList>
@@ -95,14 +82,7 @@ At first, all we know is `alice.pds.com`, so we look up the DNS TXT record `_atp
 
 Next we query the PLC directory for the DID, so that we can learn the hosting service's endpoint and the user's key material.
 
-```typescript
-await didPlc.resolve('did:plc:12345') /* => {
-  id: 'did:plc:12345',
-  alsoKnownAs: `https://alice.pds.com`,
-  verificationMethod: [...],
-  service: [{serviceEndpoint: 'https://pds.com', ...}]
-}*/
-```
+<ResolvePlcTs />
 
 We can now communicate with `https://pds.com` to access Alice's data.
 
@@ -124,11 +104,4 @@ We can resolve the handle the same way, resolving `_atproto.alice.com`, which re
 
 Which we then resolve:
 
-```typescript
-await didWeb.resolve('did:web:alice.com') /* => {
-  id: 'did:web:alice.com',
-  alsoKnownAs: `https://alice.com`,
-  verificationMethod: [...],
-  service: [{serviceEndpoint: 'https://alice.com', ...}]
-}*/
-```
+<ResolveWebTs />

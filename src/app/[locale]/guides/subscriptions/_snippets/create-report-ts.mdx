@@ -1,0 +1,19 @@
+```typescript
+import { AtpAgent } from '@atproto/api'
+
+const agent = new AtpAgent({
+    service: 'https://bsky.social'
+})
+await agent.login({
+    identifier: 'alex.bsky.team',
+    password: 'your-app-password'
+})
+
+agent
+  .withProxy('atproto_labeler', 'did:web:my-labeler.com')
+  .createModerationReport({
+    reasonType: 'com.atproto.moderation.defs#reasonViolation',
+    reason: 'They were being such a jerk to me!',
+    subject: { did: 'did:web:bob.com' },
+  })
+```

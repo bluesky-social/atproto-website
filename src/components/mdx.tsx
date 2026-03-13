@@ -96,14 +96,24 @@ export const a = function ExternalAwareLink({
 export { Button } from '@/components/Button'
 export { CodeGroup, Code as code, Pre as pre } from '@/components/Code'
 
-export function wrapper({ children }: { children: React.ReactNode }) {
+const MDXWrapperContext = createContext(false)
+
+export const wrapper = function Wrapper({ children }: { children: React.ReactNode }) {
+  const isNested = useContext(MDXWrapperContext)
+
+  if (isNested) {
+    return <>{children}</>
+  }
+
   return (
-    <article className="flex h-full flex-col pb-24 pt-8 md:pt-16">
-      <Prose className="flex-auto">{children}</Prose>
-      {/* <footer className="mx-auto mt-16 w-full max-w-2xl lg:max-w-5xl">
-        <Feedback /> TODO
-      </footer> */}
-    </article>
+    <MDXWrapperContext.Provider value={true}>
+      <article className="flex h-full flex-col pb-24 pt-8 md:pt-16">
+        <Prose className="flex-auto">{children}</Prose>
+        {/* <footer className="mx-auto mt-16 w-full max-w-2xl lg:max-w-5xl">
+          <Feedback /> TODO
+        </footer> */}
+      </article>
+    </MDXWrapperContext.Provider>
   )
 }
 

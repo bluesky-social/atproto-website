@@ -1,0 +1,21 @@
+```go
+	// Start the OAuth flow
+	fmt.Printf("Logging in as %s...\n", handle)
+	authURL, err := oauthClient.StartAuthFlow(ctx, handle)
+	if err != nil {
+		return fmt.Errorf("starting auth flow: %w", err)
+	}
+
+	// Open the browser to the authorization URL
+	fmt.Printf("Opening browser...\n")
+	if !strings.HasPrefix(authURL, "https://") {
+		return fmt.Errorf("unexpected non-https auth URL")
+	}
+	if err := openBrowser(authURL); err != nil {
+		fmt.Printf("Could not open browser automatically.\nPlease visit: %s\n", authURL)
+	}
+
+	// Wait for the OAuth callback
+	fmt.Println("Waiting for authorization...")
+	params := <-callbackCh
+```

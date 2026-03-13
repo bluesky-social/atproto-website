@@ -1,0 +1,28 @@
+```
+Indexer connected to Tap server
+
+Feed Generator Running
+
+Server: http://localhost:3000
+Feed: whats-alf
+Terms: alf
+Tap: http://localhost:2480
+Repos: 1
+
+To test (generate a JWT with goat):
+goat account service-auth --aud did:example:alice
+
+Then:
+curl -H "Authorization: Bearer <jwt>" "http://localhost:3000/xrpc/app.bsky.feed.getFeedSkeleton?feed=at%3A%2F%2Fdid%3Aexample%3Aalice%2Fapp.bsky.feed.generator%2Fwhats-alf"
+
+Listening for posts matching: alf
+
+Added 1 repo(s) to follow
+
+CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux6xlrdb42v
+  "Run?? Alf was the date I struck out with ☹️"
+  ⭐ Added to index (1 total)
+CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux7x2uvip2v
+  "god is that okay? I'm really confused right now, Alf broke m..."
+  ⭐ Added to index (2 total)
+```

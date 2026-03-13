@@ -1,0 +1,20 @@
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.follow",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A social follow",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { "type": "string" },
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
+```

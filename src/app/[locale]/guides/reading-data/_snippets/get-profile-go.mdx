@@ -1,0 +1,7 @@
+```go
+profile, _ := appbsky.ActorGetProfile(ctx, client, "alex.bsky.team")
+
+fmt.Printf("Handle: %s\n", profile.Handle)
+fmt.Printf("Display Name: %s\n", *profile.DisplayName)
+fmt.Printf("Followers: %d\n", *profile.FollowersCount)
+```

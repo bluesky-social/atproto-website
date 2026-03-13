@@ -1,0 +1,8 @@
+```tsx
+import * as app from './lexicons/app.js'
+
+const result = await client.create(app.bsky.feed.post, {
+  text: 'Hello, world!',
+  createdAt: new Date().toISOString(),
+})
+```

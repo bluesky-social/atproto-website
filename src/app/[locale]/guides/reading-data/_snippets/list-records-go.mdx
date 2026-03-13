@@ -1,0 +1,13 @@
+```go
+resp, _ := comatproto.RepoListRecords(ctx, client,
+    "app.bsky.feed.post",  // lexicon
+    "",                    // cursor
+    10,                    // limit
+    "alex.bsky.team",      // handle or DID
+    false,                 // reverse
+)
+
+for _, record := range resp.Records {
+    fmt.Printf("Record: %s\n", record.Uri)
+}
+```

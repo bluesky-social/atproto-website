@@ -1,0 +1,22 @@
+```bash
+$ goat lex resolve app.bsky.feed.post
+
+{
+  "$type": "com.atproto.lexicon.schema",
+  "defs": {
+    "entity": {
+      "description": "Deprecated: use facets instead.",
+      "properties": {
+        "index": {
+          "ref": "#textSlice",
+          "type": "ref"
+        },
+        "type": {
+          "description": "Expected values are 'mention' and 'link'.",
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+...
+```

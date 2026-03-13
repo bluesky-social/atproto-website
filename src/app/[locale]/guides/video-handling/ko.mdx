@@ -1,3 +1,5 @@
+import FfprobeAspectRatio from './_snippets/ffprobe-aspect-ratio.mdx'
+
 export const header = {
   title: '동영상 처리',
   description: '동영상 업로드 및 처리 다루기',
@@ -13,18 +15,7 @@ export const header = {
 
 애플리케이션의 요구 사항에 따라, 동영상 업로드 시 종횡비를 함께 제공해야 할 수 있습니다. 이 메타데이터는 계산하기 까다로울 수 있습니다. 브라우저에서 개발하는 경우, `<video>` 요소에 동영상을 로드하고 로드 완료 시 크기를 확인할 수 있습니다. 네이티브 앱에서는 미디어 피커 API를 통해 얻을 수 있습니다. 또는 `ffprobe` 같은 도구를 사용할 수 있습니다:
 
-```jsx
-import { ffprobe } from "https://deno.land/x/fast_forward@0.1.6/ffprobe.ts";
-
-export async function getAspectRatio(fileName: string) {
-  const { streams } = await ffprobe(fileName, {});
-  const videoSteam = streams.find((stream) => stream.codec_type === "video");
-  return {
-    width: videoSteam.width,
-    height: videoSteam.height,
-  };
-}
-```
+<FfprobeAspectRatio />
 
 ## 트랜스코딩
 

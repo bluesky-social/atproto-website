@@ -1,3 +1,19 @@
+import S01 from './_snippets/01-install-node.mdx'
+import S02 from './_snippets/02-install-lex.mdx'
+import S03 from './_snippets/03-init-project.mdx'
+import S04 from './_snippets/04-lex-install-post.mdx'
+import S05 from './_snippets/05-lex-build.mdx'
+import S06 from './_snippets/06-login-function.mdx'
+import S07 from './_snippets/07-make-post.mdx'
+import S08 from './_snippets/08-cron-main.mdx'
+import S09 from './_snippets/09-env-file.mdx'
+import S10 from './_snippets/10-run-bot.mdx'
+import S11 from './_snippets/11-install-ai.mdx'
+import S12 from './_snippets/12-env-with-ai-key.mdx'
+import S13 from './_snippets/13-lex-install-notifications.mdx'
+import S14 from './_snippets/14-import-generate-text.mdx'
+import S15 from './_snippets/15-full-agent-code.mdx'
+
 export const header = {
   title: 'Build an Agent',
   description: 'Create a bot that automatically posts on Bluesky',
@@ -10,176 +26,78 @@ Este tutorial envolve a criação de um aplicativo TypeScript do zero. Você dev
 Você deve ter instalado:
 - Node.js 18+
 Em plataformas compatíveis com [homebrew](https://brew.sh/), você pode instalá-lo com:
-```bash
-brew install node
-```
+
+<S01 />
+
 Você também deve ter nossa ferramenta CLI `lex` instalada globalmente:
-```bash
-npm install -g @atproto/lex
-```
+
+<S02 />
+
 Agora, crie um novo diretório de projeto TypeScript e inicialize seu projeto:
-```bash
-mkdir my-agent
-cd my-agent
-npm init -y
-npm i -D typescript ts-node @types/node dotenv cron @atproto/lex @atproto/lex-password-session
-npx tsc --init --verbatimModuleSyntax false
-```
+
+<S03 />
+
 Se você não estiver usando uma conta existente para postar, deve [criar uma nova conta](https://bsky.app/) para o seu bot. Você também deve gerar uma [senha de aplicativo](/guides/sdk-auth) para essa conta.
 ## Parte 1: Léxicos
 [Léxicos](/guides/lexicon) definem os registros do Atproto. Seu bot criará postagens no Bluesky usando o léxico [app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post). Você pode usar `lex` para baixar e construir este léxico em seu projeto:
-```bash
-lex install app.bsky.feed.post
-```
+
+<S04 />
+
 Se desejar, você pode visualizar o arquivo léxico baixado em `lib/lexicons/app.bsky.post.json`. A partir daqui, você pode executar `lex build` para gerar tipos TypeScript para todos os seus léxicos instalados:
-```bash
-lex build
-```
+
+<S05 />
+
 O código gerado ficará em `src/lexicons`. Agora você pode criar seu script de bot.
 ## Parte 2: Criar um bot
 Crie um novo arquivo em `src/index.ts`. Esse arquivo conterá o código do seu bot.
 Primeiro, adicione as importações necessárias e uma chamada para `PasswordSession.create()` para autenticar seu bot usando uma senha de aplicativo:
-```ts
-import { Client } from '@atproto/lex'
-import { PasswordSession } from '@atproto/lex-password-session'
-import * as dotenv from 'dotenv'
-import { CronJob } from 'cron'
-import * as process from 'process'
-import * as app from './lexicons/app.js'
-dotenv.config()
-// Criar uma sessão
-async function login() {
-    const service = process.env.BOT_PDS!
-    const identifier = process.env.BOT_HANDLE!
-    const password = process.env.BOT_PASSWORD!
-    
-const sessão = await PasswordSession.login({
-        serviço, // por exemplo, 'https://bsky.social'
-        identificador, // por exemplo, 'alice.bsky.social'
-        senha,
-    })
-    retornar sessão
-}
-```
-Em seguida, adicione uma função que publique. Isso instanciará um novo `Cliente` usando a sessão autenticada e o utilizará para criar uma publicação. O léxico `app.bsky.feed.post` requer dois parâmetros: o texto de uma postagem — você usará “🙂” — e um carimbo de data/hora.
-```ts
-// Lógica de postagem
-async function makePost(session: PasswordSession) {
-    const client = new Client(session)
-    
-await client.create(app.bsky.feed.post, {
-        text: '🙂',
-        createdAt: new Date().toISOString(),
-    })
-    console.log('Acabou de postar!')
-}
-async function main() {
-    const session = await login()
-    await makePost(session)
-}
-main().catch(console.error)
-```
+
+<S06 />
+
+Em seguida, adicione uma função que publique. Isso instanciará um novo `Cliente` usando a sessão autenticada e o utilizará para criar uma publicação. O léxico `app.bsky.feed.post` requer dois parâmetros: o texto de uma postagem — você usará "🙂" — e um carimbo de data/hora.
+
+<S07 />
+
 Por fim, adicione outro bloco de código dentro de `main()` usando o pacote `cron` para programar seu bot para postar a cada três horas:
-```ts
-função assíncrona main() {
-    const session = await login()
-    await makePost(session)
-    // Execute isso em uma tarefa cron
-    const scheduleExpression = '0 */3 * * *'
-    
-const job = new CronJob(scheduleExpression, () => makePost(session))
- 
-    job.start()
-}
-```
+
+<S08 />
+
 Esse é todo o código necessário para o seu bot! A seguir, você irá testá-lo.
 ## Parte 3: Execute o bot
 Salve o host (PDS), nome de usuário e senha do seu bot em um arquivo `.env`.
-```bash
-BOT_PDS= # por exemplo, 'https://bsky.social' se você não estiver hospedando seu próprio PDS
-BOT_HANDLE= # por exemplo, 'alice.bsky.social'
-BOT_PASSWORD=
-```
+
+<S09 />
+
 Agora você pode testar o bot usando `ts-node`.
-```bash
-ts-node src/index.ts
-```
+
+<S10 />
+
 Você pode executar este bot em sua própria máquina ou implantá-lo em uma plataforma como [Fly.io](http://fly.io/).
 Lembre-se de que os bots devem respeitar os limites de taxa da rede. Por exemplo, [o Bluesky tem seu próprio conjunto de limites de taxa](https://docs.bsky.app/docs/advanced-guides/rate-limits).
- 
+
 ## Parte 4: De bot a agente
 Até agora, você criou um bot que faz postagens em intervalos regulares. Agora, você pode expandir seu bot para um agente mais complexo que interage com outros usuários!
 Nesta seção, você usará o [Vercel AI SDK](https://www.npmjs.com/package/ai). Essa biblioteca fornece uma API unificada para interagir com provedores de modelos como o Anthropic por meio do Vercel AI Gateway. Você precisará se inscrever em um [projeto Hobby](https://vercel.com/) gratuito para obter uma chave API.
 Depois de obter uma chave API, adicione o AI SDK ao seu projeto:
-```bash
-npm i ai
-```
+
+<S11 />
+
 Em seguida, adicione outra variável de ambiente ao seu arquivo `.env`:
-```bash
-BOT_PDS=
-BOT_HANDLE=
-BOT_PASSWORD=
-AI_GATEWAY_API_KEY=xxxxxxxxx
-```
+
+<S12 />
+
 Por fim, você precisará instalar alguns léxicos adicionais para obter menções. Execute o seguinte comando para instalar e construir os léxicos necessários:
-```bash
-lex install app.bsky.notification.listNotifications app.bsky.feed.getPostThread
-lex build --override
-```
+
+<S13 />
+
 Está quase pronto. Adicione a importação `ai` ao seu arquivo `src/index.ts`:
-```ts
-import { generateText } from 'ai'
-```
+
+<S14 />
+
 Agora você pode substituir tudo após a função `login` no seu script por uma nova lógica que usa o SDK de IA para gerar respostas:
-```ts
-async function generateReply(mentionText: string): Promise<string> {
-  const { text } = await generateText({
-    model: 'anthropic/claude-sonnet-4-5',
-    system: 'Você é um bot místico que lê a sorte no Bluesky chamado “The Oracle”. Fale em um tom dramático e misterioso, usando emojis ocasionais (🔮 ✨ 🌙 ⭐). Se alguém fizer uma pergunta que possa ser respondida com sim ou não, dê uma resposta enigmática, mas sugestiva. Se pedirem orientações gerais, ofereça uma breve previsão no estilo horóscopo. Mantenha as respostas com menos de 280 caracteres. Nunca saia do personagem.',
- 
-    prompt: mentionText,
-  })
-  return text
-}
-// Verifique se há novas menções e responda
-função assíncrona checkMentions(sessão: PasswordSession) {
-const cliente = novo Cliente(sessão)
-const notificações = aguardar cliente.call(app.bsky.notification.listNotifications, {
-limite: 20,
-})
-para (const notif de notificações.notificações) {
-// Processe apenas menções não lidas
-    
-if (notif.reason !== 'mention' || notif.isRead) continue
-    // Obter a publicação que nos mencionou
-const post = await client.call(app.bsky.feed.getPostThread, {
-      uri: notif.uri,
-    })
-    const mentionText = post.thread.post.record.text
-    
-const reply = await generateReply(mentionText)
-    // Responder à publicação
-    await client.create(app.bsky.feed.post, {
-      text: reply,
-      createdAt: new Date().toISOString(),
-      reply: {
-        root: { uri: notif.uri, cid: post.thread.post.cid },
-        
-parent: { uri: notif.uri, cid: post.thread.post.cid },
-      },
-    })
-    console.log(`Respondido à menção: ${mentionText}`)
-  
-}
-}
-função assíncrona principal() {
-const sessão = aguardar login()
-const tarefa = nova CronJob('*/1 * * * *', () => verificarMenções(sessão))
-tarefa.iniciar()
-console.log('Agente em execução...')
-}
-principal().capturar(console.error)
-```
+
+<S15 />
+
 Existem alguns conceitos novos aqui. Você reconhecerá a lógica `app.bsky.feed.post` e agora também implementará `app.bsky.notification.listNotifications` e `app.bsky.feed.getPostThread`. O primeiro Lexicon é usado para obter uma lista de notificações e o segundo busca o tópico completo para um determinado URI de postagem.
 ...e fique à vontade para alterar nosso exemplo bobo de prompt.
 Reimplante seu bot e ele agora responderá às menções!

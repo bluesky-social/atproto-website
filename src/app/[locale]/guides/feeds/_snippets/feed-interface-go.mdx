@@ -1,0 +1,13 @@
+```go
+type Feed interface {
+    GetPage(ctx context.Context, feed string, userDID string, limit int64, cursor string) (
+        feedPosts []*appbsky.FeedDefs_SkeletonFeedPost, newCursor *string, err error)
+    Describe(ctx context.Context) ([]appbsky.FeedDescribeFeedGenerator_Feed, error)
+}
+
+...
+
+router.GET("/.well-known/did.json", GetWellKnownDID)
+router.GET("/xrpc/app.bsky.feed.getFeedSkeleton", GetFeedSkeleton)
+router.GET("/xrpc/app.bsky.feed.describeFeedGenerator", DescribeFeeds)
+```

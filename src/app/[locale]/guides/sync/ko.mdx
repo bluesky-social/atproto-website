@@ -1,3 +1,6 @@
+import AtUriExample from './_snippets/at-uri-example.mdx'
+import WriteResponse from './_snippets/write-response.mdx'
+
 export const header = {
   title: '동기화',
   description: 'AT 프로토콜 데이터 동기화',
@@ -17,19 +20,11 @@ Atmosphere 앱을 통해 새 계정에 가입하면, 해당 앱은 PDS와 통신
 - [**레코드 키**](/specs/record-key)("rkeys")는 특정 저장소 내 컬렉션의 개별 레코드를 식별합니다.형식은 컬렉션 어휘에 의해 지정됩니다.
 - [**콘텐츠 ID(CID)**](https://github.com/multiformats/cid)는 지문 해시를 사용하여 콘텐츠를 식별합니다. 저장소 내 객체(노드)를 참조하기 위해 저장소 전체에서 사용됩니다.
       예를 들어, 단일 AT 레코드를 살펴보겠습니다:
-```
-at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
-```
+<AtUriExample />
 이는`at://DID/NSID/rkey` 또는`at://repository/collection/record`로 분해할 수 있습니다.이에 대응하는 CID는`bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`입니다.
 
 AT API 엔드포인트에 쓰기 요청을 수행할 때(예: 새 게시물 생성 시) 이 전체 저장소 경로가 응답으로 반환됩니다:
-```json
-{
-"uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
-  
-"cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
-}
-```
+<WriteResponse />
 이것이 AT 데이터 저장소 내에서 개별 레코드를 고유하게 식별하고 저장하는 방식입니다.
 
 ## PDS

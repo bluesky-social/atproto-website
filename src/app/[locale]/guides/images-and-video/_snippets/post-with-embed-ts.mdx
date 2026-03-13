@@ -1,0 +1,16 @@
+```typescript
+await client.create(app.bsky.feed.post, {
+  text: 'Using a previously uploaded image',
+  createdAt: new Date().toISOString(),
+  embed: {
+    $type: 'app.bsky.embed.images',
+    images: [
+      {
+        alt: 'A photo uploaded earlier',
+        image: blobRef,
+        aspectRatio: { width: 1200, height: 800 },
+      },
+    ],
+  },
+})
+```

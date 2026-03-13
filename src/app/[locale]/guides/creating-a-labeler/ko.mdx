@@ -1,5 +1,6 @@
 import {Container} from "@/components/Container"
 import ozone from "./ozone.png"
+import LabelerServiceRecord from './_snippets/labeler-service-record.mdx'
 
 export const header = {
   title: '라벨러 만들기',
@@ -10,29 +11,7 @@ export const header = {
 
 라벨러는 `/app.bsky.labeler.service/self` 레코드를 게시하여 자신이 라벨러임을 선언하고 정책을 공개합니다. 해당 레코드는 다음과 같습니다:
 
-```json
-{
-  "$type": "app.bsky.labeler.service",
-  "policies": {
-    "labelValues": ["porn", "spider"],
-    "labelValueDefinitions": [
-      {
-        "identifier": "spider",
-        "severity": "alert",
-        "blurs": "media",
-        "defaultSetting": "warn",
-        "locales": [
-          {"lang": "en", "name": "Spider Warning", "description": "Spider!!!"}
-        ]
-      }
-    ]
-  },
-  "subjectTypes": ["record"],
-  "subjectCollections": ["app.bsky.feed.post", "app.bsky.actor.profile"],
-  "reasonTypes": ["com.atproto.moderation.defs#reasonOther"],
-  "createdAt": "2024-03-03T05:31:08.938Z"
-}
-```
+<LabelerServiceRecord />
 
 `labelValues`는 라벨러에서 기대할 수 있는 것을 선언합니다. 전역 및 커스텀 라벨 값을 포함할 수 있습니다.
 

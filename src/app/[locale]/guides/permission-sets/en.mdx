@@ -3,6 +3,13 @@ import oauth from "./oauth-only.png"
 import skyblur from "./skyblur-oauth.png"
 import granular from "./skyblur-granular.png"
 import lexicon from "./skyblur-lexicon.png"
+import OauthScopeMetadata from './_snippets/oauth-scope-metadata.mdx'
+import OauthAuthUrl from './_snippets/oauth-auth-url.mdx'
+import PermissionSetLexicon from './_snippets/permission-set-lexicon.mdx'
+import GoatLexLint from './_snippets/goat-lex-lint.mdx'
+import GoatLexNew from './_snippets/goat-lex-new.mdx'
+import GoatLexPublish from './_snippets/goat-lex-publish.mdx'
+import GoatLexResolve from './_snippets/goat-lex-resolve.mdx'
 
 export const header = {
   title: 'Permission Requests',
@@ -22,24 +29,11 @@ In general, it is best to use existing permission sets for cleaner UI, but you c
 
 When your app initiates an OAuth flow with an atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](/specs/oauth#clients) when registering your OAuth client:
 
-```
-{
-scope: "atproto rpc:app.bsky.feed.searchPosts?aud=* blob:*/*",
-...
-}
-```
+<OauthScopeMetadata />
 
 OAuth in AT uses [Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/) (PAR). The client metadata file will be fetched dynamically during the session lifecycle, and the `scope` parameter in `oauth-client-metadata.json` *needs to match* the actual authorization HTTP request made by your app:
 
-```
-https://your-authorization-server.com/authorize?
-    client_id=1234567890&
-    redirect_uri=https://your-app/callback&
-    scope=atproto rpc:app.bsky.feed.searchPosts?aud=* blob:*/*
-    response_type=code&
-    audience=https://myapi&
-    state=1234567890
-```
+<OauthAuthUrl />
 
 You should try to only request enough permissions to cover the features your app needs. [Transition scopes](/specs/oauth#authorization-scopes) appear to grant permissions to create, update, or delete any of a user's AT records, including posts from other applications. In general, these broad permission requests should be avoided. This helps build trust with your users, and minimizes friction during the authorization process.
 
@@ -77,36 +71,7 @@ Full-featured client apps require a large number of granular permissions to func
 
 For example, your application could request a permission set like `include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`. This would resolve to a Lexicon that defines a set of permissions required for the app to function:
 
-```
-{
-  "lexicon": 1,
-  "id": "com.example.authBasicFeatures",
-  "defs": {
-    "main": {
-      "type": "permission-set",
-      "title": "Basic App Functionality",
-      "detail": "Creation of posts and interactions",
-      "permissions": [
-        {
-          "type": "permission",
-          "resource": "repo",
-          "collection": ["app.example.post"]
-        },
-        {
-          "type": "permission",
-          "resource": "rpc",
-          "inheritAud": true,
-          "lxm": [
-            "app.example.getFeed"
-            "app.example.getProfile",
-            ...
-          ]
-        },
-      ]
-    }
-  }
-}
-```
+<PermissionSetLexicon />
 
 Note the `auth` prefix in the `app.example.feed.authOnlyPost` and `com.example.authBasicFeatures` examples. This is a naming convention to indicate that the Lexicon is designed for use as a permission set.
 
@@ -122,55 +87,21 @@ The `blob:*/*` permission for image/video handling cannot be included in permiss
 
 You can use [`goat`](https://github.com/bluesky-social/goat) to create and publish Lexicons. Before publishing, `goat` can also be used to lint and validate your Lexicon. For example, pulling and linting `app.bsky.feed.post`:
 
-```bash
-$ goat lex pull app.bsky.feed.post
- 🟢 app.bsky.feed.post
-
-$ goat lex lint lexicons/app/bsky/feed/post.json
- 🟡 lexicons/app/bsky/feed/post.json
-    [unlimited-string]: no max length
-    [unlimited-string]: no max length
-error: linting issues detected
-```
+<GoatLexLint />
 
 Nobody's perfect 😊
 
 You can create a new Lexicon record with `goat lex new record`:
 
-```bash
-$ goat lex new record dev.project.thing
-```
+<GoatLexNew />
 
 Develop your Lexicon following the [style guide](/guides/lexicon-style-guide), and then eventually publish it with `goat lex publish`:
 
-```bash
-$ goat lex publish
- 🟢 dev.project.thing
-```
+<GoatLexPublish />
 
 After publishing a new Lexicon, you can verify that it is live with `goat lex resolve`:
 
-```bash
-$ goat lex resolve app.bsky.feed.post
-
-{
-  "$type": "com.atproto.lexicon.schema",
-  "defs": {
-    "entity": {
-      "description": "Deprecated: use facets instead.",
-      "properties": {
-        "index": {
-          "ref": "#textSlice",
-          "type": "ref"
-        },
-        "type": {
-          "description": "Expected values are 'mention' and 'link'.",
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-...
-```
+<GoatLexResolve />
 
 ## Revising Permission Sets
 
@@ -208,7 +139,7 @@ The *Skyblur* Lexicon permissions are defined and summarized differently:
   <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-This is all at the discretion of app developers and Lexicon designers. We provide a model for using different Lexicons side by side, and for each Lexicon to define its own permission sets and presentation. 
+This is all at the discretion of app developers and Lexicon designers. We provide a model for using different Lexicons side by side, and for each Lexicon to define its own permission sets and presentation.
 
 ## Further Reading and Resources
 

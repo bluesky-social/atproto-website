@@ -1,0 +1,12 @@
+```tsx
+import { Client } from '@atproto/lex'
+import * as app from './lexicons/app.js'
+
+// Create an unauthenticated client instance
+const client = new Client('https://public.api.bsky.app')
+
+// Start making requests using generated schemas
+const response = await client.call(app.bsky.actor.getProfile, {
+  actor: 'pfrazee.com',
+})
+```

@@ -1,3 +1,6 @@
+import AtUriExample from './_snippets/at-uri-example.mdx'
+import WriteResponse from './_snippets/write-response.mdx'
+
 export const header = {
   title: 'Sync',
   description: 'Synchronizing AT Protocol data',
@@ -19,20 +22,12 @@ Vários tipos de identificadores são usados em um repositório de dados:
 - [**IDs de conteúdo(CIDs)**](https://github.com/multiformats/cid) identificam o conteúdo usando um hash de impressão digital. Eles são usados em todo o repositório para referenciar os objetos (nós) dentro dele.
 
 Tomemos, por exemplo, um único registro AT:
-```
-at://did:plc:vmt7o7y6titkqzzxav247zrn/app.bsky.feed.post/3m72rq2hgss2a
-```
+<AtUriExample />
 Isso pode ser dividido em`at://DID/NSID/rkey` ou `at://repository/collection/record`. Ele tem um CID correspondente de `bafyreidgbehqwweghrrddfu6jgj7lyr6fwhzgazhirnszdb5lvr7iynkiy`.
 
 Ao fazer uma solicitação de gravação para um endpoint da API AT — como ao criar uma nova postagem — esse caminho completo do repositório será retornado como resposta:
 
-```json
-{
-"uri": "at://did:plc:u5cwb2mwiv2bfq53cjufe6yn/app.bsky.feed.post/3k4duaz5vfs2b",
-  
-"cid": "bafyreibjifzpqj6o6wcq3hejh7y4z4z2vmiklkvykc57tw3pcbx3kxifpm"
-}
-```
+<WriteResponse />
 É assim que os registros individuais são identificados e armazenados de forma exclusiva nos repositórios de dados AT.
 
 ## PDS

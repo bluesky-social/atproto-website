@@ -1,0 +1,13 @@
+```shell
+# Run tap
+go run ./cmd/tap run --disable-acks=true
+# By default, the service uses SQLite at `./tap.db` and binds to port `:2480`.
+
+# In a separate terminal, connect to receive events:
+websocat ws://localhost:2480/channel
+
+#  Add a repo to track
+curl -X POST http://localhost:2480/repos/add \
+  -H "Content-Type: application/json" \
+  -d '{"dids": ["did:plc:ewvi7nxzyoun6zhxrhs64oiz"]}' # @atproto.com repo
+```
