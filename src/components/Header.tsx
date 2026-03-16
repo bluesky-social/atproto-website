@@ -101,7 +101,7 @@ export const Header = forwardRef<
       </ul>
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
       <Search />
-      <AskAIButton className="hidden lg:flex" />
+      <AskAIButton className="hidden" />
       <div className="hidden flex-1 sm:flex" />
       <div className="flex items-center gap-5">
         <nav className="hidden md:block">
@@ -122,7 +122,7 @@ export const Header = forwardRef<
         )}
         <div className="flex gap-4">
           <MobileSearch />
-          <AskAIButton className="lg:hidden" />
+          <AskAIButton className="hidden" />
           {!isHome && <ThemeToggle />}
         </div>
       </div>
