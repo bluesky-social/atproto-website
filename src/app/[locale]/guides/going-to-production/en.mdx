@@ -12,6 +12,10 @@ The [code](https://github.com/bluesky-social/atproto) to power a fully distribut
 
 We provide a [PDS install script](https://github.com/bluesky-social/pds) that is designed to get you up and running with your own PDS on a modestly resourced VPS. This will enable you to host your own data repositories, create and manage accounts, and serve your self-hosted data in the wider Atmosphere network or any other Atmosphere app. This section of the docs will help you take that PDS to production.
 
+## Hardening
+
+[PDS Gatekeeper](https://tangled.org/baileytownsend.dev/pds-gatekeeper) is a community project that adds 2FA and other security features to a self-hosted PDS.
+
 ## Domain names
 
 If you are running a non-Bluesky app in addition to a PDS deployment, **you will need separate domain names** for your PDS hosting and your app. This is because image and video blobs would otherwise be served from the same domain name as the OAuth and session management pages. This could lead to security issues such as credential theft, and means that using subdomains isn't a practical solution.
