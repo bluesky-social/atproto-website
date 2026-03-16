@@ -508,8 +508,10 @@ declare global {
 
 export function AskAIButton({ className }: { className?: string }) {
   const handleClick = useCallback(() => {
-    if (window.Kapa) {
-      window.Kapa.open()
+    const root = document.getElementById('kapa-widget-container')?.shadowRoot
+    const button = root?.querySelector('button')
+    if (button instanceof HTMLElement) {
+      button.click()
     }
   }, [])
 
