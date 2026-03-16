@@ -76,12 +76,19 @@ function extractSections() {
       sections.push([headerTitle, null, content])
     }
 
+    // Headings to exclude from search results
+    const excludedHeadings = ['Further Reading and Resources']
+
     visit(tree, (node) => {
       if (node.type === 'heading' || node.type === 'paragraph') {
         let content = toString(excludeObjectExpressions(node))
         if (node.type === 'heading' && node.depth <= 2) {
           // Skip H1s if we already have a header title (avoid duplication)
           if (node.depth === 1 && headerTitle) {
+            return SKIP
+          }
+          // Skip excluded headings
+          if (excludedHeadings.includes(content)) {
             return SKIP
           }
           let hash = node.depth === 1 ? null : slugify(content)
@@ -193,10 +200,10 @@ export default function Search(nextConfig = {}) {
                   const boost = fieldResult.field === 'title' ? 0 : 1000
                   fieldResult.result.forEach((item, idx) => {
                     const id = item.id
+                    const urlPath = id.split('#')[0]
 
                     // Filter by locale if specified
                     if (locale) {
-                      const urlPath = id.split('#')[0]
                       if (locale === 'en') {
                         // English: exclude URLs that start with other locale prefixes
                         if (nonDefaultLocales.some(l => urlPath.startsWith('/' + l + '/'))) {
@@ -210,12 +217,19 @@ export default function Search(nextConfig = {}) {
                       }
                     }
 
-                    if (!seen.has(id) || seen.get(id).score > boost + idx) {
+                    // Check if this is a blog post and apply penalty
+                    const isBlog = urlPath.includes('/blog/')
+                    const blogPenalty = isBlog ? 500 : 0
+
+                    const score = boost + idx + blogPenalty
+
+                    if (!seen.has(id) || seen.get(id).score > score) {
                       seen.set(id, {
                         url: id,
                         title: item.doc.title,
                         pageTitle: item.doc.pageTitle,
-                        score: boost + idx
+                        isBlog,
+                        score
                       })
                     }
                   })
@@ -223,7 +237,7 @@ export default function Search(nextConfig = {}) {
 
                 return [...seen.values()]
                   .sort((a, b) => a.score - b.score)
-                  .map(({ url, title, pageTitle }) => ({ url, title, pageTitle }))
+                  .map(({ url, title, pageTitle, isBlog }) => ({ url, title, pageTitle, isBlog }))
               }
             `
           }),
