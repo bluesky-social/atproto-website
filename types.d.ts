@@ -5,6 +5,7 @@ declare module '@/mdx/search.mjs' {
     url: string
     title: string
     pageTitle?: string
+    isBlog?: boolean
   }
 
   export type LocalizedSearchOptions = SearchOptions & {

@@ -197,9 +197,14 @@ function SearchResult({
       <div
         id={`${id}-title`}
         aria-hidden="true"
-        className="text-sm font-medium text-zinc-900 group-aria-selected:text-blue-500 dark:text-white"
+        className="flex items-center gap-2 text-sm font-medium text-zinc-900 group-aria-selected:text-blue-500 dark:text-white"
       >
         <HighlightQuery text={result.title} query={query} />
+        {result.isBlog && (
+          <span className="shrink-0 rounded bg-zinc-100 px-1.5 py-0.5 text-2xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+            Blog
+          </span>
+        )}
       </div>
       {hierarchy.length > 0 && (
         <div
