@@ -138,7 +138,7 @@ Clients can start an auth flow in one of two ways:
 - starting with a public account identifier, provided by the user: handle or DID
 - starting with a server hostname, provided by the user: PDS or entryway, mapping to either Resource Server and/or Authorization Server
 
-One use case for starting with a server instead of an account identifier is when the user does not remember their full account handle or only knows their account email.  Another is for authentication when a user’s handle is broken. The user will still need to know their hosting provider in these situation.
+One use case for starting with a server instead of an account identifier is when the user does not remember their full account handle or only knows their account email.  Another is for authentication when a user’s handle is broken. The user will still need to know their hosting provider in these situations.
 
 When starting with an account identifier, the client must resolve the atproto identity to a DID document. If starting with a handle, it is critical (mandatory) to bidirectionally verify the handle by checking that the DID document claims the handle (see atproto Handle specification). All handle resolution techniques and all atproto-blessed DID methods must be supported to ensure interoperability with all accounts.
 
@@ -202,7 +202,7 @@ PKCE and PAR are required for all client types and Authorization Servers. Confid
 A summary of fields relevant to authorization requests with the atproto OAuth profile:
 
 - `client_id` (string, required): identifies the client software. See "Clients" section above for details.
-- `response_type` (string, required): must be `code`
+- `response_type` (string, required): must be `code`.
 - `code_challenge` (string, required): the PKCE challenge value. See "PKCE" section.
 - `code_challenge_method` (string, required): which code challenge method is used, for example `S256`. See "PKCE" section.
 - `state` (string, required): random token used to verify the authorization request against the response. See below.
