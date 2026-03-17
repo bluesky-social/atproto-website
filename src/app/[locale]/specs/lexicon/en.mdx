@@ -343,6 +343,8 @@ The character separating "date" and "time" parts must be an upper-case `T`.
 
 Timezone specification is required. It is *strongly* preferred to use the UTC timezone, and to represent the timezone with a simple capital `Z` suffix (lower-case is not allowed). While hour/minute suffix syntax (like `+01:00` or `-10:30`) is supported, "negative zero" (`-00:00`) is specifically disallowed (by ISO 8601).
 
+Leap seconds are not supported. The seconds value must be between `00` and `59`. Datetime strings with a seconds value of `60` or higher are invalid.
+
 Whole seconds precision is required, and arbitrary fractional precision digits are allowed. Best practice is to use at least millisecond precision, and to pad with zeros to the generated precision (eg, trailing `:12.340Z` instead of `:12.34Z`). Not all datetime formatting libraries support trailing zero formatting. Both millisecond and microsecond precision have reasonable cross-language support; nanosecond precision does not.
 
 Implementations should be aware when round-tripping records containing datetimes of three ambiguities: loss-of-precision, ambiguity with trailing fractional second zeros, and timezone normalization. If de-serializing Lexicon records into native types, and then re-serializing, the string representation may not be the same, which could result in broken hash references, sanity check failures, or repository update churn. A safer thing to do is to deserialize the datetime as a simple string, which ensures round-trip re-serialization.
