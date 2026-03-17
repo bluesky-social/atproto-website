@@ -343,7 +343,7 @@ The character separating "date" and "time" parts must be an upper-case `T`.
 
 Timezone specification is required. It is *strongly* preferred to use the UTC timezone, and to represent the timezone with a simple capital `Z` suffix (lower-case is not allowed). While hour/minute suffix syntax (like `+01:00` or `-10:30`) is supported, "negative zero" (`-00:00`) is specifically disallowed (by ISO 8601).
 
-Leap seconds are not supported. The seconds value must be between `00` and `59`. Datetime strings with a seconds value of `60` or higher are invalid.
+Leap seconds are not supported. The seconds value must be between `00` and `59`. Datetime strings with a seconds value of `60` or higher are invalid. Dates with an invalid month-day combination (eg, April 31st or February 29th in a non-leap year) are also invalid, even if the datetime library being used would auto-correct them into valid datetimes.
 
 Whole seconds precision is required, and arbitrary fractional precision digits are allowed. Best practice is to use at least millisecond precision, and to pad with zeros to the generated precision (eg, trailing `:12.340Z` instead of `:12.34Z`). Not all datetime formatting libraries support trailing zero formatting. Both millisecond and microsecond precision have reasonable cross-language support; nanosecond precision does not.
 
