@@ -1,0 +1,17 @@
+project_id: "YOUR_PROJECT_ID"
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path: "."
+base_url: "https://api.crowdin.com"
+preserve_hierarchy: true
+
+files:
+  - source: /src/app/**/guides/*/en.mdx
+    translation: /src/app/**/guides/*/%two_letters_code%.mdx
+    ignore:
+      - /src/app/**/guides/**/_snippets/**
+
+  - source: /src/app/**/articles/*/en.mdx
+    translation: /src/app/**/articles/*/%two_letters_code%.mdx
+
+  - source: /src/app/**/specs/*/en.mdx
+    translation: /src/app/**/specs/*/%two_letters_code%.mdx
