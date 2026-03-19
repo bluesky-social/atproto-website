@@ -6,6 +6,7 @@ import S05 from './_snippets/05-lex-build.mdx'
 import S06 from './_snippets/06-login-function.mdx'
 import S07 from './_snippets/07-make-post.mdx'
 import S08 from './_snippets/08-cron-main.mdx'
+import S08a from './_snippets/08a-label-bot-profile.mdx'
 import S09 from './_snippets/09-env-file.mdx'
 import S10 from './_snippets/10-run-bot.mdx'
 import S11 from './_snippets/11-install-ai.mdx'
@@ -62,8 +63,17 @@ export const header = {
 
 <S08 />
 
-봇에 필요한 코드는 여기까지입니다! 다음으로 테스트해 보세요.
-## 3부: 봇 실행하기
+봇에 필요한 코드는 여기까지입니다! 다음으로 봇으로 라벨을 지정합니다.
+
+## 3부: 봇으로 라벨 지정
+
+모범 사례로서, 봇 계정은 프로필에 셀프 라벨을 추가하여 자신을 식별해야 합니다. 이를 통해 사용자와 모더레이션 도구가 자동화된 계정을 인식할 수 있습니다. `src/index.ts`에 다음 함수를 추가하세요:
+
+<S08a />
+
+봇을 처음 설정할 때 `labelAsBot(session)`을 한 번 호출하세요. 이 작업은 한 번만 수행하면 됩니다. 라벨은 프로필에 영구적으로 저장됩니다. cron 작업을 시작하기 전에 `main()`에서 호출한 다음, 첫 실행 후 해당 호출을 제거할 수 있습니다.
+
+## 4부: 봇 실행하기
 봇의 호스트(PDS), 사용자 이름, 비밀번호를 `.env` 파일에 저장하세요.
 
 <S09 />
@@ -75,7 +85,7 @@ export const header = {
 이 봇은 개인 컴퓨터에서 실행하거나 [Fly.io](http://fly.io/) 같은 플랫폼에 배포할 수 있습니다.
 봇은 네트워크의 속도 제한을 준수해야 합니다. 예를 들어, [Bluesky에는 자체 속도 제한이 적용됩니다](https://docs.bsky.app/docs/advanced-guides/rate-limits).
 
-## 파트 4: 봇에서 에이전트로
+## 파트 5: 봇에서 에이전트로
 지금까지 정기적으로 게시물을 작성하는 봇을 만들었습니다. 이제 다른 사용자와 상호작용하는 더 복잡한 에이전트로 봇을 확장해 보세요!
 이 섹션에서는 [Vercel AI SDK](https://www.npmjs.com/package/ai)를 사용합니다. 이 라이브러리는 Vercel AI Gateway를 통해 Anthropic과 같은 모델 제공자와 상호작용할 수 있는 통합 API를 제공합니다. API 키를 받으려면 무료 [Hobby 프로젝트](https://vercel.com/)에 가입해야 합니다.
 API 키를 획득한 후, 프로젝트에 AI SDK를 추가하세요:

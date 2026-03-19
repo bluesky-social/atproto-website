@@ -6,6 +6,7 @@ import S05 from './_snippets/05-lex-build.mdx'
 import S06 from './_snippets/06-login-function.mdx'
 import S07 from './_snippets/07-make-post.mdx'
 import S08 from './_snippets/08-cron-main.mdx'
+import S08a from './_snippets/08a-label-bot-profile.mdx'
 import S09 from './_snippets/09-env-file.mdx'
 import S10 from './_snippets/10-run-bot.mdx'
 import S11 from './_snippets/11-install-ai.mdx'
@@ -72,9 +73,17 @@ Finally, add another code block inside of `main()` using the `cron` package to s
 
 <S08 />
 
-That's all the code you need for your bot! Next, you'll test it out.
+That's all the code you need for your bot! Next, you'll label it as a bot.
 
-## Part 3: Run the Bot
+## Part 3: Label as a Bot
+
+As a best practice, bot accounts should identify themselves by adding a self-label to their profile. This helps users and moderation tools recognize automated accounts. Add this function to your `src/index.ts`:
+
+<S08a />
+
+Call `labelAsBot(session)` once when you first set up your bot. You only need to do this once — the label will persist on your profile. You can call it from `main()` before starting the cron job, then remove the call after the first run.
+
+## Part 4: Run the Bot
 
 Save your bot's host (PDS), username, and password to an `.env` file.
 
@@ -88,7 +97,7 @@ You can run this bot on your own machine, or deploy it on a platform like [Fly.i
 
 Keep in mind that bots should respect the network's rate limits. For instance, [Bluesky has its own set of rate limits](https://docs.bsky.app/docs/advanced-guides/rate-limits).
 
-## Part 4: From Bot to Agent
+## Part 5: From Bot to Agent
 
 So far, you've created a bot that makes posts on a regular interval. Now, you can expand your bot into a more complex agent that interacts with other users!
 

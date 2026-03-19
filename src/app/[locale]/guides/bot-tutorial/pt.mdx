@@ -6,6 +6,7 @@ import S05 from './_snippets/05-lex-build.mdx'
 import S06 from './_snippets/06-login-function.mdx'
 import S07 from './_snippets/07-make-post.mdx'
 import S08 from './_snippets/08-cron-main.mdx'
+import S08a from './_snippets/08a-label-bot-profile.mdx'
 import S09 from './_snippets/09-env-file.mdx'
 import S10 from './_snippets/10-run-bot.mdx'
 import S11 from './_snippets/11-install-ai.mdx'
@@ -62,8 +63,17 @@ Por fim, adicione outro bloco de código dentro de `main()` usando o pacote `cro
 
 <S08 />
 
-Esse é todo o código necessário para o seu bot! A seguir, você irá testá-lo.
-## Parte 3: Execute o bot
+Esse é todo o código necessário para o seu bot! A seguir, você irá rotulá-lo como bot.
+
+## Parte 3: Rotular como Bot
+
+Como prática recomendada, contas de bot devem se identificar adicionando um auto-rótulo ao perfil. Isso ajuda usuários e ferramentas de moderação a reconhecer contas automatizadas. Adicione esta função ao seu `src/index.ts`:
+
+<S08a />
+
+Chame `labelAsBot(session)` uma vez ao configurar seu bot pela primeira vez. Você só precisa fazer isso uma vez — o rótulo permanecerá no seu perfil. Você pode chamá-lo de `main()` antes de iniciar o cron job e depois remover a chamada após a primeira execução.
+
+## Parte 4: Execute o bot
 Salve o host (PDS), nome de usuário e senha do seu bot em um arquivo `.env`.
 
 <S09 />
@@ -75,7 +85,7 @@ Agora você pode testar o bot usando `ts-node`.
 Você pode executar este bot em sua própria máquina ou implantá-lo em uma plataforma como [Fly.io](http://fly.io/).
 Lembre-se de que os bots devem respeitar os limites de taxa da rede. Por exemplo, [o Bluesky tem seu próprio conjunto de limites de taxa](https://docs.bsky.app/docs/advanced-guides/rate-limits).
 
-## Parte 4: De bot a agente
+## Parte 5: De bot a agente
 Até agora, você criou um bot que faz postagens em intervalos regulares. Agora, você pode expandir seu bot para um agente mais complexo que interage com outros usuários!
 Nesta seção, você usará o [Vercel AI SDK](https://www.npmjs.com/package/ai). Essa biblioteca fornece uma API unificada para interagir com provedores de modelos como o Anthropic por meio do Vercel AI Gateway. Você precisará se inscrever em um [projeto Hobby](https://vercel.com/) gratuito para obter uma chave API.
 Depois de obter uma chave API, adicione o AI SDK ao seu projeto:
