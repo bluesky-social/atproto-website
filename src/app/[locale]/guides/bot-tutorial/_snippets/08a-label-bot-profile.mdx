@@ -1,0 +1,23 @@
+```ts
+async function labelAsBot(session: PasswordSession) {
+    const client = new Client(session)
+
+    // Get the current profile (if any) to preserve existing fields
+    let existingProfile = {}
+    try {
+        const { data } = await client.get(app.bsky.actor.profile)
+        existingProfile = data
+    } catch {
+        // Profile doesn't exist yet, that's fine
+    }
+
+    // Update profile with bot self-label
+    await client.put(app.bsky.actor.profile, {
+        ...existingProfile,
+        labels: {
+            $type: 'com.atproto.label.defs#selfLabels',
+            values: [{ val: 'bot' }],
+        },
+    })
+}
+```

@@ -7,6 +7,7 @@ import S05 from './_snippets/05-lex-build.mdx'
 import S06 from './_snippets/06-login-function.mdx'
 import S07 from './_snippets/07-make-post.mdx'
 import S08 from './_snippets/08-cron-main.mdx'
+import S08a from './_snippets/08a-label-bot-profile.mdx'
 import S09 from './_snippets/09-env-file.mdx'
 import S10 from './_snippets/10-run-bot.mdx'
 import S11 from './_snippets/11-install-ai.mdx'
@@ -73,9 +74,17 @@ export const header = {
 
 <S08 />
 
-これでボットに必要なコードはすべて揃いました。次は動作確認です。
+これでボットに必要なコードはすべて揃いました。次はボットとしてラベル付けします。
 
-<Heading level={2} id="part-3-run-the-bot">パート3：ボット実行</Heading>
+<Heading level={2} id="part-3-label-as-a-bot">パート3：ボットとしてラベル付け</Heading>
+
+ベストプラクティスとして、ボットアカウントはプロフィールにセルフラベルを追加して自身を識別するべきです。これにより、ユーザーやモデレーションツールが自動化されたアカウントを認識しやすくなります。`src/index.ts`に以下の関数を追加してください：
+
+<S08a />
+
+ボットを初めてセットアップする際に、`labelAsBot(session)`を一度呼び出してください。これは一度だけ行えば十分です。ラベルはプロフィールに永続的に保存されます。cronジョブを開始する前に`main()`から呼び出し、初回実行後にその呼び出しを削除できます。
+
+<Heading level={2} id="part-4-run-the-bot">パート4：ボット実行</Heading>
 
 ボットのホスト（PDS）、ユーザー名、パスワードを`.env`ファイルに保存します。
 
@@ -89,7 +98,7 @@ export const header = {
 
 ボットはネットワークのレート制限を守る必要がある点に注意してください。例えば、[Blueskyには独自のレート制限があります](https://docs.bsky.app/docs/advanced-guides/rate-limits)。
 
-<Heading level={2} id="part-4-from-bot-to-agent">パート4：ボットからエージェントへ</Heading>
+<Heading level={2} id="part-5-from-bot-to-agent">パート5：ボットからエージェントへ</Heading>
 
 ここまでは、一定間隔で投稿するボットを作成してきました。ここからは、他のユーザーとやり取りできる、より高度なエージェントへ拡張していきます。
 
