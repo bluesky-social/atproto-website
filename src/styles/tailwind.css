@@ -2,6 +2,10 @@ body {
   --code-container-width: calc(100vw - 2em);
 }
 
+div#kapa-widget-container {
+  position: absolute;
+}
+
 @layer base {
   .dark {
     --shiki-color-text: theme('colors.white');
