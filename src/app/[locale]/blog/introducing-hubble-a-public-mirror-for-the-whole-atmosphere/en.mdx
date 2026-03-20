@@ -1,0 +1,102 @@
+import pdsesImg from "./pdses.png"
+
+export const header = {
+  title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
+  description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
+  date: 'March 20, 2026',
+  author: 'fig',
+}
+
+# Introducing Hubble: A Public Mirror for the Whole Atmosphere
+
+Every account in the Atmosphere lives in a Personal Data Server (PDS) somewhere. Whether you run your own (like [Cory Doctorow](https://bsky.app/profile/doctorow.pluralistic.net/post/3mgdl7pj3z22q)), team up with friends to share a server, or park your account at a PDS from Bluesky, [Blacksky](https://blacksky.community/), [Northsky](https://northskysocial.com/), [Eurosky](https://www.eurosky.tech/), [npmx.social](https://npmx.dev/), [selfhosted.social](https://selfhosted.social/), [pckt.blog](https://pckt.blog), [margin.at](http://margin.at), [sprk.so](http://sprk.so), [tngl.sh](http://tngl.sh), [teal](https://teal.fm)*(deep breath)—* your app experience is the same. Your PDS logs you in, and holds your Bluesky posts, Leaflet blogs, and alllll your other public data for atproto apps.
+
+But what happens when a PDS goes offline?
+
+## \[MISSING\]: Has anyone seen this PDS?
+
+For you as a user, this is recoverable\! …*if* you’ve taken some preparations. With a [rotation key](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html#rotation-key) and a backup of your data, you can just move to another PDS. While that is a *big if* for many people, tools like [PDS MOOver](https://pdsmoover.com/)—a community-built account backup and migration tool—have made this preparation *much* easier than it used to be.
+
+For developers building in the Atmosphere, the answer is less comfortable. An offline PDS is like a hole cut out of the database. If your app has saved a copy of the data it needs from it, you might be fine. But if you need anything from it, or spin up a new app and backfill from scratch: you are simply out of luck. Your picture of the network will be a bit different from everyone else's, potentially permanently.
+
+It wasn’t always like this.
+
+## Ye olde Archival relay
+
+In the bad old days of early Atmosphere, [relays](https://atproto.com/guides/glossary#relay) stored a local copy of every user’s data repository (“repo”). This was great for apps\! Devs could backfill the entire network from a relay, no matter whether any PDS was online or not.
+
+Unfortunately this setup was less great for the relays themselves, because keeping copies of *tens of millions* of repositories is [expensive](https://whtwnd.com/bnewbold.net/3kwzl7tye6u2y) to store and run.
+
+Last year the [sync1.1](http://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) protocol update changed the game by making it possible to fully *authenticate* firehose commits without needing to keep full copies of repositories. All relays in the network now run this way, and are called *non-archival:* [cheap](https://bsky.app/profile/bad-example.com/post/3mfkrfvy3ok2u) to run, but only retaining recent events, not the full history of the network.
+
+These days, atproto apps backfill by crawling the live network themselves instead of replaying from an archival relay. Initial repository contents are downloaded direct-from-PDS. Bluesky’s [Tap](https://github.com/bluesky-social/indigo/tree/main/cmd/tap#readme) and other great tools have emerged which help developers manage the backfill process, but Tap can’t bring unreachable PDSes back from ~~the dead~~ offline.
+
+When a PDS disappears, those repos are gone.
+
+## *(dramatic voice) Until now*
+
+**Hubble** is a new open-source project to build and operate a whole-Atmosphere public data mirror, synchronizing every atproto repository in real-time, keeping public data available even if a PDS goes down.
+
+I've wanted to build this for a while\! I build and run [various](https://constellation.microcosm.blue/) [full-network](https://spacedust.microcosm.blue/#GET/subscribe) [indexes](https://ufos-api.microcosm.blue/#GET/collections), [relays](https://relay2.fire.hose.cam/), [and](https://jetstream2.fr.hose.cam/) [other](https://us-west.plc.wtf/) [atproto](https://plc.wtf/) [infrastructure](https://tangled.org/microcosm.blue/lightrail), including an identity-and-record edge cache (called [Slingshot](https://slingshot.microcosm.blue/#description/slingshot-edge-record-and-identity-cache)) which already *helps a bit* with PDS availability gaps—*if* it has already cached the data you want.
+
+A proper full-network mirror offers benefits to everyone on the network—users for account recovery, developers for availability, researchers needing a complete snapshot—but is a bigger, riskier project, with *potentially* high operating costs and no obvious direct revenue model. It's hard to take the leap without some support.
+
+That support came together as a $20,000 grant from Bluesky for Hubble’s development and one year of operation. The structure of the grant aligns incentives: operating costs come out of the total amount, so the more efficient I can make it, the better for me. (and if DRAM keeps rocketing in price, …uh oh). We set out some acceptance criteria for Hubble’s launch (and the final payout), and then I run it for 12 months.
+
+What happens after 12 months? It’s all open-source, so anyone (including me\!) will be able to keep a Hubble server running. And I plan to\! But *if* after a year it’s not sustainable for me to keep going, Bluesky will pick up the live instance to keep it online themselves. So Hubble itself won’t go down like an offline PDS\! Any big change of control like that will be announced well in advance.
+
+I think it’s a pretty neat funding arrangement\! Real support without giving up independence, while keeping a collaborative view toward long-term stability for the ecosystem.
+
+## ✨Authenticated✨ data mirror
+
+One thing to underscore: because all public data in atproto is cryptographically signed by the account it’s from, Hubble cannot tamper with it. This is the *Authenticated* in the Authenticated Transfer Protocol: copies of public data from any source can be verified, even if you can’t reach the original PDS it came from. You don’t need to trust Hubble not to modify data: it’s proven by the data itself.
+
+## What’s mirrored (and what isn’t)
+
+Hubble will mirror every public atproto data repository in the Atmosphere, like relays did before the switch to non-archival. Repositories contain almost everything you might think of as “your data” that you share publicly: your profile, all your likes, posts, replies, follows, recipes, RSVPs, …
+
+But it’s worth noting a few things that Hubble will **not** store:
+
+* **No blobs:** Images, videos, and other media live separately from repos. It takes a lot of storage to keep 43+ million repositories, and blobs take *orders of magnitude* more space than that\! (think: *petabytes*). Future work for Hubble.
+* **No private app data**: Things like mutes and bookmarks on Bluesky that aren’t part of your public data repository will not be stored by Hubble. (This isn’t just Hubble being virtuous, it literally *cannot access* any non-public data\!)
+
+Hubble will fully respect content deletion. Deleted records are deleted from the mirror, and deleting your Atmosphere account removes your entire data repository. Data from inactive accounts won't be accessible from unauthenticated public endpoints. **Hubble mirrors the current state of the network, not its history.**
+
+## How to get a repository from Hubble
+
+For personal account recovery, Hubble will launch with a public website where you can find and download your data, at [hubble.microcosm.blue](https://hubble.microcosm.blue). The archive you’ll receive is *exactly* the same as what you get when exporting your data from eg., the Bluesky app. You can import this archive when moving to a new PDS to restore all your public data.
+
+For developers, Hubble will implement standard protocol [XRPC](https://atproto.com/guides/glossary#xrpc) queries for programmatic access. The funding acceptance criteria for launch includes three:
+
+* [`com.atproto.sync.getRepo`](https://docs.bsky.app/docs/api/com-atproto-sync-get-repo)**: Download a repository archive for a provided a [DID](https://atproto.com/guides/glossary#did-decentralized-id).
+* [`com.atproto.sync.listRepos`](https://docs.bsky.app/docs/api/com-atproto-sync-list-repos)**: Enumerate every account Hubble knows about.
+* [`com.atproto.sync.getRepoStatus`](https://docs.bsky.app/docs/api/com-atproto-sync-get-repo-status)**: Get the hosting status on Hubble for a DID.
+
+You might notice that these are some of the same queries you can send a PDS or relay: that’s on purpose\! Using Hubble can be just a matter of changing where you send a request when the original host is offline.
+
+These three queries are the start—the minimum required—but not the end of what I have planned. More on this soon\!
+
+## Who's building this
+
+I’m fig (or Phil) (they/them), and I started [microcosm.blue](https://microcosm.blue) to build and run community infrastructure for the Atmosphere. In the year since its launching the first service ([Constellation](https://constellation.microcosm.blue/) universal backlinks), microcosm has grown to serve hundreds of requests per second from dozens of apps you might have heard of, like Blacksky, npmx.dev, and PDS MOOver.
+
+Microcosm already hosts other independent protocol-level infrastructure—multiple relays, PLC mirrors—along with new full-network API services like [Slingshot](https://slingshot.microcosm.blue), [UFOs](https://ufos-api.microcosm.blue/), [Spacedust](https://spacedust.microcosm.blue/), and [more](https://tangled.org/microcosm.blue/). Most of it runs on hardware that would embarrass a hyperscaler (might be [a Raspberry Pi](https://bsky.app/profile/bad-example.com/post/3mabnbs3vbs2i) or three involved), and it’s all free to use thanks to direct [community](https://ko-fi.com/bad_example) [sponsorship](http://github.com/sponsors/uniphil/) helping cover costs.
+
+Hubble fits right in with these projects\! I’m so excited to keep building and being part of the growing community of independent infrastructure developers and operators in the Atmosphere.
+
+## Network resilience
+
+More PDSes come online every week, and more people are using them\! Even the number of different PDS *implementations* seems grow by the day.
+
+<Image src={pdsesImg} alt="Chart showing the number of non-Bluesky PDSes on the Atmosphere" />
+Chart showing non-Bluesky PDS usage, courtesy of [https://blue.mackuba.eu/stats/](https://blue.mackuba.eu/stats/)
+
+This diversification is really good news for the future of atproto\!
+
+*And also*, to be realistic about it: some of these PDSes might not have robust backup plans, or the people running them might get bored, or a new implementation might have bugs, and all of this might lead to more PDSes to going offline. Maybe one day a PDS will even try to stop their users from moving away.
+
+Hubble is one small step to counter these effects, in line with the [atproto ethos](https://atproto.com/articles/atproto-ethos). It fills the gap left by relays switching to non-archival mode; it’s a new baseline for account recovery and even [adversarial PDS migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html#repo-backups); and it’s a data availability backstop for developers building apps.
+
+I’ll be publishing about the design and implementation as it takes shape, and you can subscribe to those at [updates.microcosm.blue](https://updates.microcosm.blue).
+
+Questions or high-volume access inquiries: reach out to fig at [@bad-example.com](https://bsky.app/profile/did:plc:hdhoaan3xa3jiuq4fg4mefid/).

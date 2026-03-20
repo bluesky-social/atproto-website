@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
+    title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
+    description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
+    date: 'March 20, 2026',
+    author: 'fig',
+  },
+  {
     slug: 'working-to-decentralize-fedcm',
     title: 'Working to Decentralize FedCM',
     description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
