@@ -412,7 +412,7 @@ class BskyConversation extends HTMLElement {
       const thread = await fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=${maxDepth}&_t=${Date.now()}`)
       const authorDid = thread.thread?.post?.author?.did
       const resolvedUri = authorDid
-        ? `at://${authorDid}/${atUri.split('/').slice(2).join('/')}`
+        ? `at://${authorDid}/${atUri.split('/').slice(3).join('/')}`
         : atUri
       const resolvedEncodedUri = encodeURIComponent(resolvedUri)
       const [quotesRes, repostsRes] = await Promise.all([
