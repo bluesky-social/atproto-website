@@ -32,7 +32,7 @@ Unfortunately this setup was less great for the relays themselves, because keepi
 
 Last year the [sync1.1](http://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) protocol update changed the firehose game: now you can fully authenticate repository data updates *without* keeping your own full copy for proof! Smart cryptography! All relays in the network now run this way, and are called *non-archival*: lightweight and [cheap](https://bsky.app/profile/bad-example.com/post/3mfkrfvy3ok2u) to run, but only retaining recent events, not the full history of the network.
 
-These days, atproto apps backfill by crawling the live network themselves instead of replaying from an archival relay. Initial repository contents are downloaded direct-from-PDS. Bluesky’s [Tap](https://github.com/bluesky-social/indigo/tree/main/cmd/tap#readme) and other great tools have emerged which help developers manage the backfill process, but Tap can’t bring unreachable PDSes back from ~~the dead~~ offline.
+These days, atproto apps backfill by crawling the live network themselves, instead of replaying from an archival relay. Initial repository contents are downloaded direct-from-PDS, and Bluesky’s [Tap](https://github.com/bluesky-social/indigo/tree/main/cmd/tap#readme) and other great tools have emerged which help developers manage the backfill process. But Tap can’t bring unreachable PDSes back from ~~the dead~~ offline.
 
 When a PDS disappears, those repos are gone.
 
