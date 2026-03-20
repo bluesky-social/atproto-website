@@ -407,10 +407,17 @@ class BskyConversation extends HTMLElement {
           .catch(() => ({}))
 
       const encodedUri = encodeURIComponent(atUri)
-      const [thread, quotesRes, repostsRes] = await Promise.all([
-        fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=${maxDepth}&_t=${Date.now()}`),
-        fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
-        fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${encodedUri}&limit=25&_t=${Date.now()}`),
+      // Fetch thread first to resolve the author DID — getQuotes doesn't
+      // handle handle-based AT URIs, so we need a DID-based URI for it.
+      const thread = await fetchJson(`${API}/app.bsky.feed.getPostThread?uri=${encodedUri}&depth=${maxDepth}&_t=${Date.now()}`)
+      const authorDid = thread.thread?.post?.author?.did
+      const resolvedUri = authorDid
+        ? `at://${authorDid}/${atUri.split('/').slice(3).join('/')}`
+        : atUri
+      const resolvedEncodedUri = encodeURIComponent(resolvedUri)
+      const [quotesRes, repostsRes] = await Promise.all([
+        fetchJson(`${API}/app.bsky.feed.getQuotes?uri=${resolvedEncodedUri}&limit=25&_t=${Date.now()}`),
+        fetchJson(`${API}/app.bsky.feed.getRepostedBy?uri=${resolvedEncodedUri}&limit=25&_t=${Date.now()}`),
       ])
       this.render(url, thread, quotesRes, repostsRes, maxDepth)
     } catch (err) {
