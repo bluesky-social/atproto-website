@@ -1,0 +1,66 @@
+export const header = {
+  title: 'AT Protocol Roadmap (Spring 2026)',
+  description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
+  date: 'March 24, 2026',
+  author: 'Bluesky Protocol Team',
+}
+
+# AT Protocol Roadmap (Spring 2026\)
+
+It takes years of practice to learn how to hand-knit fashionable and well-fitting wool sweaters. And then boom, what do you know, it's spring\! As we prepare for [AtmosphereConf](https://atmosphereconf.org/) in Vancouver later this week, we wanted to look back at recent progress, and put down our thoughts on protocol development for the seasons ahead.
+
+Now more than ever, atproto and the Atmosphere ecosystem surrounding it are collective endeavors. This post is written from the perspective of the team at Bluesky, which doesn't speak for everybody. Other projects, organizations, and communities have their own priorities and roadmaps. We encourage you to seek them out\!
+
+## Recent Progress
+
+We've had a busy 6 months since the last update in [October 2025](https://atproto.com/blog/protocol-check-in-fall-2025)\!
+
+**Sync Infrastructure:** in December we [released tap](https://atproto.com/blog/introducing-tap%20), a self-hosted atproto sync consumer, which serves as a reference implementation for [Sync 1.1](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration). Tap is application-agnostic, helps with reliable and correct firehose consumption, and demonstrates how to "backfill" historical data from the network. And in January, we [upgraded the popular `bsky.network` relay instance](https://atproto.com/blog/relay-rollout) to a newer relay implementation which incorporates Sync 1.1.
+
+**Lexicon Workflows**: the TypeScript reference SDK had a major refresh for [working with Lexicons](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex), including a [new `lex` tool](https://github.com/bluesky-social/atproto/tree/main/packages/lex-cli) for resolving published lexicons and generating types. The [`goat` command line tool](https://github.com/bluesky-social/goat) got new functionality for working with lexicon schemas, including publishing, resolving, and linting.
+
+**OAuth Completeness:** permissions and permission sets shipped, giving app devs flexibility in requesting access to user accounts. SDK support, cookbooks, and developer documentation for OAuth got big overhauls, making it significantly easier to integrate into client apps.
+
+**PLC Replicas:** in late October, a number of invalid test operations were [removed from the PLC directory](https://github.com/bluesky-social/atproto/discussions/4316), to bring it in compliance with the written specification. [WebSocket support for streaming updates](https://github.com/bluesky-social/atproto/discussions/4508) was added in early January, which made it easier to implement live PLC replicas, including a [new replica reference implementation](https://atproto.com/blog/plc-replicas) released in February.
+
+**Protocol Governance:** following a successful Birds of a Feather (BoF) session at IETF 124 in Montreal, the IETF and atproto developer communities [drafted a charter](https://datatracker.ietf.org/doc/charter-ietf-atp/) for formal standards work. And in late March the [creation of an ATP working group was formally approved](https://datatracker.ietf.org/wg/atp/about/)\! Expect further announcements and calls for participation soon. Progress has also been made on formation of an [independent PLC Organization](https://atproto.com/blog/plc-directory-org), with an update to be shared at AtmosphereConf later this week.
+
+**Website Refresh:** and this website itself got a fresh coat of paint in February. This included new developer guides, deployment recipes, and cleanups to the written protocol specifications.
+
+## Looking Forward
+
+The protocol components for public data are now broadly complete, with multiple implementations deployed and interoperating in the network. Work in that area is transitioning to fixing bugs, alignment on specifications, polishing the developer experience, and smaller evolutionary improvements. Any major changes to synchronizing public data are expected to take place within the IETF standards process.
+
+### Permissioned Data
+
+The original design focus of the protocol was to support public conversations in a global context. It has been clear for some time that this core functionality needs to be complemented with mechanisms for less-visible interactions within the same protocol ecosystem. This will involve new protocol concepts, sync mechanisms, and data flows. We are referring to this as "permissioned data", meaning non-public data with explicit access control.
+
+Several teams have been working in parallel to implement extensions to the protocol for non-public data, including Blacksky, Northsky, and Habitat. A [sketch design proposal](https://dholms.leaflet.pub/3mhj6bcqats2o) has been published by the Bluesky protocol team, and we expect to discuss and debate all of these architectures with the Atmosphere developer community both in-person in Vancouver, and online in coming weeks.
+
+Shipping Permissioned Data will require updates to PDS implementations, SDKs, written specifications, moderation tooling, and more. We expect there to be significant implementation and experimentation work before details are finalized. Permissioned data will probably be a major focus for the Bluesky protocol team through the summer.
+
+### Account Experience
+
+By design, folks mostly interact with the Atmosphere through client apps, which can provide a broad range of experiences. But accounts are shared across apps and hosted on the PDS. The overall "Account Experience" has been much debated but underdeveloped. We have a few projects in this area that we hope to make progress on ourselves, and some we hope to collaborate on with the ecosystem.
+
+We plan to add basic account management functionality directly to the PDS reference implementation. This includes things like changing account email and password, deactivating or deleting an account, and exporting account data. Moving this functionality into the PDS means that Atmosphere apps won't need to request these permissions or re-implement these flows. We also plan to improve account security with additional 2FA methods, to complement the existing email 2FA functionality.
+
+Another core part of account experience is login and signup flows for apps and integrations. There are active conversations happening among atproto developers around the branding and terminology used in these flows. We are interested in developing best practices and templates for app developers.
+
+### Public Data Polish
+
+We also plan to follow through on the existing public data sync parts of the protocol.
+
+There are a few remaining pieces of Sync 1.1 to implement: defined block ordering for repository CAR file exports, and exporting subsets of repositories by collection. These will improve efficiency when indexing data from large numbers of accounts.
+
+We will be active participants in the IETF ATP working group. This will include participation on the mailing list, traveling in person to IETF 125 in Vienna (in July 2026), and possibly additional online interim meetings.
+
+Work will be done to make the reference SDKs complete and consistent across language ecosystems. For example, the Go reference SDK (indigo) lexicon code generation will be improved, and example code for ingesting and hydrating labels added.
+
+With more and more PDS implementations and app frameworks emerging in the network, there is a growing need for a protocol test suite to help with reliable interoperation. Clearly written specifications and test suites are particularly helpful for developers using agents to generate software from scratch. There are some [basic existing test vectors](https://github.com/bluesky-social/atproto-interop-tests), and [experimental work by others](https://tangled.org/alice.mosphere.at/atproto-smoke), and we hope to expand on those over time. 
+
+## See You in Vancouver
+
+Many folks are traveling to AtmosphereConf in Vancouver, Canada next week. We look forward to seeing you there if you can make it, and will catch up online with those who can't.
+
+Don't forget to get outside and touch grass: Spring (or Autumn, for those in the southern hemisphere) will be over before you know it.
