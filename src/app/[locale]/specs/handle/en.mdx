@@ -101,7 +101,7 @@ blah.arpa
 
 Handles have a limited role in atproto, and need to be resolved to a DID in almost all situations. Resolution mechanisms must demonstrate a reasonable degree of authority over the domain name at a point in time, and need to be relatively efficient to look up. There are currently two supported resolution mechanisms: one using a TXT DNS record containing the DID, and another over HTTPS at a special `/.well-known/` URL.
 
-Clients can rely on network services (eg, their PDS) to resolve handles for them, using the `com.atproto.identity.resolveHandle` endpoint, and don't usually need to implement resolution directly themselves.
+Clients can rely on network services (eg, their PDS) to resolve handles for them, using the `com.atproto.identity.resolveIdentity` endpoint, and don't usually need to implement resolution directly themselves.
 
 The DNS TXT method is the recommended and preferred resolution method for individual handle configuration, but services should fully support both methods. The intended use-case for the HTTPS method is existing large-scale web services which may not have the infrastructure to automate the registration of thousands or millions of DNS TXT records.
 
