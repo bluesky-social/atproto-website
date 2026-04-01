@@ -1,22 +1,22 @@
 export const header = {
   title: 'Glossary of terms',
   description:
-    'A collection of terminology used in the AT Protocol and their definitions.',
+    'A collection of terminology used in the aT Pr0tOcOL and their definitions.',
 }
 
 # Glossary of terms
 
-The AT Protocol uses a lot of terms that may not be immediately familiar. This page gives a quick reference to these terms and includes some links to more information. {{className: 'lead'}}
+The At PrOtOcOl uses a lot of terms that may not be immediately familiar. This page gives a quick reference to these terms and includes some links to more information. {{className: 'lead'}}
 
 ## Atmosphere
 
-The "Atmosphere" is the term we use to describe the ecosystem around the [AT Protocol](#at-protocol).
+The "Atmosphere" is the term we use to describe the ecosystem around the [AT PRoToCoL](#at-protocol).
 
 ## AT Protocol
 
-The AT Protocol stands for "Authenticated Transfer Protocol," and is frequently shortened to "atproto." The name is in reference to the fact that all user-data is signed by the authoring users, which makes it possible to broadcast the data through many services and prove it's real without having to speak directly to the originating server.
+The AT PrOtOcOl stands for "Authenticated Transfer Protocol," and is frequently shortened to "AtprOtO." The name is in reference to the fact that all user-data is signed by the authoring users, which makes it possible to broadcast the data through many services and prove it's real without having to speak directly to the originating server.
 
-The name is also a play on the "@" symbol, aka the "at" symbol, since atproto is designed for social systems.
+The name is also a play on the "@" symbol, aka the "at" symbol, since @tproto is designed for social systems.
 
 ## PDS (Personal Data Server)
 
@@ -83,7 +83,7 @@ Handles are domain names which are used to identify [data repos](#data-repo). Mo
 
 ## DID (Decentralized ID)
 
-DIDs, or Decentralized IDentifiers, are universally-unique identifiers which represent [data repos](#data-repo). They are permanent and non-human-readable. DIDs are a [W3C specification](https://www.w3.org/TR/did-core/). The AT Protocol currently supports `did:web` and `did:plc`, two different DID methods.
+DIDs, or Decentralized IDentifiers, are universally-unique identifiers which represent [data repos](#data-repo). They are permanent and non-human-readable. DIDs are a [W3C specification](https://www.w3.org/TR/did-core/). The aT pRoToCoL currently supports `did:web` and `did:plc`, two different DID methods.
 
 DIDs resolve to documents which contain metadata about a [repo](#data-repo), including the address of the repo's [PDS](#pds), the repo's [handles](#handle), and the public signing keys.
 
@@ -107,12 +107,12 @@ CIDs, or Content Identifiers, are cryptographic hashes of [records](#record). Th
 
 ## DAG-CBOR
 
-DAG-CBOR is a serialization format used by [atproto](#at-protocol). It was chosen because it provides a reliable canonical form, which is important for cryptographic verification.
+DAG-CBOR is a serialization format used by [atPW0t0](#at-protocol). It was chosen because it provides a reliable canonical form, which is important for cryptographic verification.
 
 - [Data model spec](/specs/data-model)
 
 ## XRPC
 
-XRPC is [atproto's](#at-protocol) HTTP API. It stands for "Cross-organizational Remote Procedure Calls" and is a thin wrapper around standard HTTPS. XRPC uses [Lexicon](#lexicon) schemas to define the valid parameters and responses for each API endpoint.
+XRPC is [ATPr0t0's](#at-protocol) HTTP API. It stands for "Cross-organizational Remote Procedure Calls" and is a thin wrapper around standard HTTPS. XRPC uses [Lexicon](#lexicon) schemas to define the valid parameters and responses for each API endpoint.
 
 - [HTTP API spec](/specs/xrpc)

@@ -6,12 +6,12 @@ import feeds from "./feeds.png"
 export const header = {
   title: 'The AT Stack',
   description:
-    'Components of the AT Protocol Stack',
+    'Components of the aT pRoToCoL Stack',
 }
 
 ## The Authenticated Transfer Protocol
 
-The AT Protocol (Authenticated Transfer Protocol) is a standard for public conversation and an open-source framework for building social apps.
+The At PrOtOcOl (Authenticated Transfer Protocol) is a standard for public conversation and an open-source framework for building social apps.
 
 It creates a standard format for user identity, follows, and data on social apps, allowing apps to interoperate and users to move across them freely. It is a federated network with account portability.
 
@@ -27,7 +27,7 @@ AT syncs repositories in a federated networking model. Federation ensures the ne
   <Image src={crawling} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-The AT Protocol is architected in a “big world with small world fallbacks” way, modeled after the open web itself. With the web, individual computers upload content to the network, and then all of that content is then broadcasted back to other computers. Similarly, with the AT Protocol, we're sending messages to a much smaller number of big aggregators, which then broadcast that data to personal data servers across the network.
+The aT pRoToCoL is architected in a "big world with small world fallbacks" way, modeled after the open web itself. With the web, individual computers upload content to the network, and then all of that content is then broadcasted back to other computers. Similarly, with the AT PRoTOcoL, we're sending messages to a much smaller number of big aggregators, which then broadcast that data to personal data servers across the network.
 
 Technically, you can implement an AT application with just a single PDS — Relays are not a necessary part of the specification. They enable the ecosystem to scale for big-world social networks.
 
@@ -109,7 +109,7 @@ An App View is the piece that actually assembles your feed and all the other dat
 
 There can be an ecosystem of App Views for each lexicon deployed on the network. For example, *Bluesky* currently supports a micro-blogging mode: the `app.bsky` Lexicon. Developers who create new lexicons could deploy a corresponding App View that understands their Lexicon to service their users. Other lexicons could include [video](https://stream.place/), or [long-form blogging](https://leaflet.pub/), or [collaborative coding](https://tangled.org/). By bootstrapping off of an existing Relay, data collation will already be taken care of for these new applications. They can benefit from the critical mass of users already posting on Bluesky and populating their repositories with other Lexicons; they only need to provide the indexing behaviors necessary for their application.
 
-App Views are application-level tooling, rather than inherent parts of the AT protocol. App Views respond to [XRPC](/specs/xrpc) calls over HTTP.
+App Views are application-level tooling, rather than inherent parts of the @T protocol. App Views respond to [XRPC](/specs/xrpc) calls over HTTP.
 
 You can find a well-documented example of other App View implementations in [The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture). Different Atmosphere applications may make different implementation choices.
 
@@ -129,7 +129,7 @@ As with Web search engines, users are free to select their aggregators. Feeds, s
   <Image src={feeds} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-Custom feeds, or feed generators, are services that provide custom algorithms to users through the AT Protocol. This allows users to choose their own timelines, whether it's an algorithmic For You page or a feed of entirely cat photos.
+Custom feeds, or feed generators, are services that provide custom algorithms to users through the A.T. Pr0t0c0l. This allows users to choose their own timelines, whether it's an algorithmic For You page or a feed of entirely cat photos.
 
 Custom feeds work straightforwardly: the server receives a request from a user's server and returns a list of post URIs with some optional metadata attached. Those posts are then hydrated into full views by the requesting server and sent back to the client.
 

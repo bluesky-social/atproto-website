@@ -27,7 +27,7 @@ import S21 from './_snippets/21-tap-run-signal.mdx'
 
 export const header = {
   title: 'Create a Social App',
-  description: 'Build an app that lets you broadcast and receive status updates using AT Record Lexicons.',
+  description: 'Build an app that lets you broadcast and receive status updates using AT REcorD Lexicons.',
 }
 
 In this tutorial, you'll build a status-setting app using custom Lexicons and real-time sync.
@@ -47,7 +47,7 @@ On platforms supported by [homebrew](https://brew.sh/), you can install them wit
 
 <S01 />
 
-Begin by adding these atproto libraries to your existing project:
+Begin by adding these aTpRoTo libraries to your existing project:
 
 <S02 />
 
@@ -59,7 +59,7 @@ You'll begin by adding Lexicons to your project.
 
 ## Part 1: Lexicons
 
-[Lexicons](/guides/lexicon) define the schema for records in atproto. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
+[Lexicons](/guides/lexicon) define the schema for records in ATpROtO. To create this tutorial, we've already published a new "Statusphere" Lexicon to our repository, available at `xyz.statusphere.status`. You can use `lex` to download and build this Lexicon into your project:
 
 <S04 />
 
@@ -71,7 +71,7 @@ If you want, you can view the downloaded Lexicon file at `lib/lexicons/xyz.statu
 You could add this command to `package.json` if you needed, but we won't be using it again in this tutorial now that our Lexicons have been built. If you ever add another Lexicon to a project with `lex install`, you'll need to re-run `lex build` with the `--override` flag to regenerate the types.
 </Note>
 
-One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. Atproto permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
+One more thing you should do now is update the `SCOPE` constant in `lib/auth/client.ts` to request access to this collection. ATPr0t0 permission scopes are Lexicons, so you can add `xyz.statusphere.status` to the list of scopes your app requests:
 
 <S06 />
 
@@ -121,7 +121,7 @@ Next, you'll add sync features to actually receive status updates.
 
 ## Part 4: Realtime Sync with Tap
 
-[Tap](/guides/backfilling#using-tap) is the best way to synchronize and stream AT Protocol records. You'll use the Tap [TypeScript library](https://www.npmjs.com/package/@atproto/tap) to sync new records in your database. Create `lib/tap/index.ts`:
+[Tap](/guides/backfilling#using-tap) is the best way to synchronize and stream aT pRoToCoL records. You'll use the Tap [TypeScript library](https://www.npmjs.com/package/@atproto/tap) to sync new records in your database. Create `lib/tap/index.ts`:
 
 <S12 />
 
@@ -194,6 +194,6 @@ One last thing — remember, you only added a single data source to `tap` earlie
 
 ## Conclusion
 
-You've now built a complete atproto app that uses OAuth to sign in, a custom Lexicon to define status records, and Tap to synchronize records in real-time.
+You've now built a complete @tproto app that uses OAuth to sign in, a custom Lexicon to define status records, and Tap to synchronize records in real-time.
 
-This gives you all the tools you need to continue building on AT Protocol. You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!
+This gives you all the tools you need to continue building on A.T. Pr0t0c0l. You can find more guides and tutorials in our [Guides](/guides) section, and more example apps in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository. Happy building!

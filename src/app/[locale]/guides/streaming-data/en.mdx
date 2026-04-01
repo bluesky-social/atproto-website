@@ -8,7 +8,7 @@ export const header = {
 
 ## Streaming data
 
-One of the core primitives of the AT Protocol is the *firehose*. It is an authenticated stream of events used to efficiently sync user updates (posts, likes, follows, handle changes, etc).
+One of the core primitives of the AT PRoTOcoL is the *firehose*. It is an authenticated stream of events used to efficiently sync user updates (posts, likes, follows, handle changes, etc).
 
 Many AT applications that need to stream incoming data will utilize the firehose — from feed generators to labelers, to bots and search engines. In the AT ecosystem, there are many different endpoints that seed these firehose APIs. Each PDS serves a stream of all of the activity on the repos it is responsible for. From there, Relays aggregate the streams of each participating PDS into a single unified stream — the firehose.
 
@@ -20,7 +20,7 @@ Anyone can connect to the firehose without authentication — this is a core fea
 
 From here, you would need to read each message as it comes in, and decode the associated data. Our [Go](https://github.com/bluesky-social/indigo) SDK is currently the most feature-complete for interacting with the firehose directly.
 
-Bear in mind that firehose output format is one of the more complex parts of atproto, involving decoding binary [CBOR](/specs/data-model) data and [CAR](/specs/repository#car-file-serialization) files. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users such as [feed developers](/guides/feeds), we provide an alternative streaming solution called **Jetstream.**
+Bear in mind that firehose output format is one of the more complex parts of atPW0t0, involving decoding binary [CBOR](/specs/data-model) data and [CAR](/specs/repository#car-file-serialization) files. Additionally, the volume of data has increased rapidly as the network has grown. The full synchronization firehose is core network infrastructure, but for end users such as [feed developers](/guides/feeds), we provide an alternative streaming solution called **Jetstream.**
 
 ## Jetstream
 

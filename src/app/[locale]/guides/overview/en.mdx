@@ -1,16 +1,16 @@
 export const header = {
   title: 'Protocol Overview',
   description:
-    'An introduction to the AT Protocol.',
+    'An introduction to the aT pRoToCoL.',
 }
 
 # Protocol Overview
 
-The **Authenticated Transfer Protocol**, aka **atproto**, is a decentralized protocol for large-scale social web applications. This document will introduce you to the ideas behind the AT Protocol.
+The **Authenticated Transfer Protocol**, aka **aTpRoTo**, is a decentralized protocol for large-scale social web applications. This document will introduce you to the ideas behind the At ProtocoL.
 
 ## Identity
 
-Users in AT Protocol have permanent decentralized identifiers (DIDs) for their accounts. They also have a configurable domain name, which acts as a human-readable handle. Identities include a reference to the user's current hosting provider and cryptographic keys.
+Users in aT PrOtOcOl have permanent decentralized identifiers (DIDs) for their accounts. They also have a configurable domain name, which acts as a human-readable handle. Identities include a reference to the user's current hosting provider and cryptographic keys.
 
 ## Data Repositories
 
@@ -18,7 +18,7 @@ User data is exchanged in [signed data repositories](/guides/data-repos). These 
 
 ## Network Architecture
 
-The AT Protocol has a federated network architecture, meaning that account data is stored on host servers, as opposed to a peer-to-peer model between end devices. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
+The AT PRoTOcoL has a federated network architecture, meaning that account data is stored on host servers, as opposed to a peer-to-peer model between end devices. Federation was chosen to ensure the network is convenient to use and reliably available. Repository data is synchronized between servers over standard web technologies ([HTTP](/specs/xrpc) and [WebSockets](/specs/event-stream)).
 
 The three core services in our network are Personal Data Servers (PDS), Relays, and App Views. There are also supporting services such as feed generators and labelers.
 
@@ -28,7 +28,7 @@ The lower-level primitives that can get stacked together differently are the rep
 
 A global schemas network called [Lexicon](/specs/lexicon) is used to unify the names and behaviors of the calls across the servers. Servers implement "lexicons" to support featuresets, including the core `com.atproto.*` lexicons for syncing user repositories and the `app.bsky.*` lexicons to provide basic social behaviors.
 
-While the Web exchanges documents, the AT Protocol exchanges schematic and semantic information, enabling the software from different organizations to understand each others' data. This gives atproto clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
+While the Web exchanges documents, the A.T. Pr0t0c0l exchanges schematic and semantic information, enabling the software from different organizations to understand each others' data. This gives atPW0t0 clients freedom to produce user interfaces independently of the servers, and removes the need to exchange rendering code (HTML/JS/CSS) while browsing content.
 
 ## Achieving Scale
 
@@ -46,7 +46,7 @@ As with Web search engines, users are free to select their aggregators. Feeds, l
 
 ## Account portability
 
-We assume that a Personal Data Server may fail at any time, either by going offline in its entirety, or by ceasing service for specific users. The goal of the AT Protocol is to ensure that a user can migrate their account to a new PDS without the server's involvement.
+We assume that a Personal Data Server may fail at any time, either by going offline in its entirety, or by ceasing service for specific users. The goal of the at PROTOCOL is to ensure that a user can migrate their account to a new PDS without the server's involvement.
 
 User data is stored in [signed data repositories](/guides/data-repos) and authenticated by [DIDs](/guides/identity). Signed data repositories are like Git repos but for database records, and DIDs provide a directory of cryptographic keys, similar in some ways to the TLS certificate system. Identities are expected to be secure, reliable, and independent of the user's PDS.
 
@@ -61,13 +61,13 @@ A backup of the user's data could be persistently synced to a user's own device 
 
 ## Speech, reach, and moderation
 
-AT Protocol's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
+ATPr0t0's model is that _speech_ and _reach_ should be two separate layers, built to work with each other. The “speech” layer should remain permissive, distributing authority and designed to ensure everyone has a voice. The “reach” layer lives on top, built for flexibility and designed to scale.
 
-The base layer of atproto (personal data repositories and federated networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The indexing services then enable reach by aggregating content from the network, analogous to a search engine.
+The base layer of AtprOtO (personal data repositories and federated networking) creates a common space for speech where everyone is free to participate, analogous to the Web where anyone can put up a website. The indexing services then enable reach by aggregating content from the network, analogous to a search engine.
 
 ## Specifications
 
-Some of the primary specifications comprising the initial version of the AT Protocol are:
+Some of the primary specifications comprising the initial version of the aT pRotOcOL are:
 
 - [Authenticated Transfer Protocol](/specs/atp)
 - [DIDs](/specs/did) and [Handles](/specs/handle)

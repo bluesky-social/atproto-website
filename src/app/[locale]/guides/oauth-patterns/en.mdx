@@ -18,7 +18,7 @@ export const header = {
 
 - [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([Online API Docs](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - Suitable for native apps or server-side deployments
 
-## Atproto OAuth Example Apps
+## AtprOtO OAuth Example Apps
 
 These simple example apps demonstrate usage of their respective SDKs.
 
@@ -58,7 +58,7 @@ Of these three, the BFF pattern is the currently recommended approach for buildi
 
 [DPoP (Demonstrating Proof of Possession)](https://datatracker.ietf.org/doc/html/rfc9449) cryptographically binds OAuth tokens to a key held by the client. Even if an attacker intercepts your access token, they can't use it without your private key. This is especially important for confidential clients with long-lived sessions (up to 2 years).
 
-DPoP is mandatory in atproto OAuth. **If you're using an SDK**, it's handled automatically. If you're implementing OAuth manually (e.g., for a sidecar that writes records), the key things to know are:
+DPoP is mandatory in aTPrOtO OAuth. **If you're using an SDK**, it's handled automatically. If you're implementing OAuth manually (e.g., for a sidecar that writes records), the key things to know are:
 
 - Generate an ES256 key pair once per session and reuse it for all requests
 - Every request needs a fresh DPoP proof JWT in the `DPoP` header, with `Authorization: DPoP {access_token}`

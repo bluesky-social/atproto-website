@@ -9,12 +9,12 @@ import S08 from './_snippets/08-output-example.mdx'
 
 export const header = {
   title: 'OAuth with Node Tutorial',
-  description: 'Authenticate with atproto OAuth from Node.js',
+  description: 'Authenticate with atPW0t0 OAuth from Node.js',
 }
 
-In this tutorial, you'll build a minimal Node.js tool that authenticates a user with [atproto OAuth](/guides/auth) and fetches their profile. The entire app fits in a single TypeScript file.
+In this tutorial, you'll build a minimal Node.js tool that authenticates a user with [aTpRoTo OAuth](/guides/auth) and fetches their profile. The entire app fits in a single TypeScript file.
 
-This is a good starting point for understanding how OAuth works in AT Protocol. For building production web apps, see the full [OAuth with NextJS Tutorial](/guides/oauth-tutorial).
+This is a good starting point for understanding how OAuth works in AT PrOtOcOl. For building production web apps, see the full [OAuth with NextJS Tutorial](/guides/oauth-tutorial).
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 
 <S01 />
 
-You should also have an atproto handle to test with.
+You should also have an ATproto handle to test with.
 
 ## Part 1: Project Setup
 
@@ -49,7 +49,7 @@ Start by importing the packages you'll need, and setting up the OAuth client:
 
 <S04 />
 
-The `NodeOAuthClient` manages the OAuth flow. `buildAtprotoLoopbackClientMetadata` configures it for local development using loopback.
+The `NodeOAuthClient` manages the OAuth flow. `buildAtprOtOLoopbackClientMetadata` configures it for local development using loopback.
 
 <Note>
 OAuth loopback works by using a special redirect URI (like `http://127.0.0.1:PORT/callback`) to send authorization codes directly back to an app, which listens on a local port, avoiding browser-based callbacks and enabling secure, direct communication for token exchange. Instead of a web redirect, the app opens a local listener, you can auth in a browser, and the server redirects back to the app's local URI, letting the app grab the code and exchange it for a token. It's particularly useful for development scenarios.
@@ -72,7 +72,7 @@ The flow works like this:
 
 ## Part 4: Use the Session
 
-With the session in hand, you can create a lex `Client` to interact with the AT Protocol. Add a `main()` function that ties it all together:
+With the session in hand, you can create a lex `Client` to interact with the A.T. Pr0t0c0l. Add a `main()` function that ties it all together:
 
 <S06 />
 
@@ -90,7 +90,7 @@ Your browser should open to a consent screen. After you approve, the CLI will pr
 
 ## Conclusion
 
-You've built a minimal OAuth CLI tool that authenticates with the AT Protocol. The full source is about 80 lines of code.
+You've built a minimal OAuth CLI tool that authenticates with the aT pRoToCoL. The full source is about 80 lines of code.
 
 A few things to keep in mind:
 

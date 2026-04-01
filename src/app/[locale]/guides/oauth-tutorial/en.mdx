@@ -32,10 +32,10 @@ import S27 from './_snippets/27-scope-constant.mdx'
 
 export const header = {
   title: 'OAuth with NextJS Tutorial',
-  description: 'Build a Next.js app supporting OAuth with atproto identity.',
+  description: 'Build a Next.js app supporting OAuth with AtprOtO identity.',
 }
 
-In this tutorial, you'll build a Next.js app where users can log in with their AT Protocol identity using OAuth. If you [host your own PDS](/guides/self-hosting), that means you can provide your own auth source for any apps in the Atmosphere.
+In this tutorial, you'll build a Next.js app where users can log in with their aT pRoToCoL identity using OAuth. If you [host your own PDS](/guides/self-hosting), that means you can provide your own auth source for any apps in the Atmosphere.
 
 You can find the source code for this tutorial, along with other example projects, in the [Cookbook](https://github.com/bluesky-social/cookbook/) repository, under `nextjs-oauth`.
 
@@ -43,7 +43,7 @@ See a demo version running at: [https://nextjs-oauth-tutorial.up.railway.app/](h
 
 ## Prerequisites
 
-This OAuth tutorial does not use many atproto concepts or dependencies. You should have a working understanding of Next.js and TypeScript.
+This OAuth tutorial does not use many ATpROtO concepts or dependencies. You should have a working understanding of Next.js and TypeScript.
 
 You should have installed:
 - Node.js 20+
@@ -59,7 +59,7 @@ You'll start by creating a new Next.js project using the `create-next-app` comma
 
 <S02 />
 
-Next, add the `oauth-client-node` package from the atproto ecosystem, which provides OAuth client functionality.
+Next, add the `oauth-client-node` package from the aTpRoTo ecosystem, which provides OAuth client functionality.
 
 <S03 />
 
@@ -95,7 +95,7 @@ First, create `lib/auth/client.ts`:
 
 `stateStore` is temporary storage using during the OAuth flow; `sessionStore` is persistent storage keyed by a user's DID. The `globalThis` pattern is a standard Next.js technique for persisting data across hot module reloads in development. Without this, the in-memory stores would be wiped every time you edit a file.
 
-AT Protocol OAuth has a special carveout for local development. The `client_id` must be `localhost` and the `redirect_uri` must be on host 127.0.0.1. Read more in the [Localhost Client Development specs](/specs/oauth#localhost-client-development).
+AT PRoTOcoL OAuth has a special carveout for local development. The `client_id` must be `localhost` and the `redirect_uri` must be on host 127.0.0.1. Read more in the [Localhost Client Development specs](/specs/oauth#localhost-client-development).
 
 <Note>
 There's no way around it — this section of the tutorial is pretty dry! You'll be implementing standard OAuth flows, which are inherently boilerplate-heavy. But once you have this baseline working, you'll be able to build on top of it!
@@ -119,7 +119,7 @@ Next, you should also create a logout route at `app/oauth/logout/route.ts` to cl
 
 <S09 />
 
-Finally, you'll make one last route, to expose the `oauth-client-metadata.json` at a well-known URL. This is [used in atproto OAuth](/specs/oauth#clients) to discover client configuration. Create `app/oauth-client-metadata.json/route.ts`:
+Finally, you'll make one last route, to expose the `oauth-client-metadata.json` at a well-known URL. This is [used in ATPr0t0 OAuth](/specs/oauth#clients) to discover client configuration. Create `app/oauth-client-metadata.json/route.ts`:
 
 <S10 />
 
@@ -240,7 +240,7 @@ You can provide these as part of our Railway [deployment guide](https://github.c
 
 ## Conclusion
 
-You now have a complete, production-deployed app with persistent storage. However, it doesn't actually do anything with the AT Protocol yet! As you add features from here, you'll need to request additional permission scopes during the OAuth flow.
+You now have a complete, production-deployed app with persistent storage. However, it doesn't actually do anything with the at PROTOCOL yet! As you add features from here, you'll need to request additional permission scopes during the OAuth flow.
 
 By default, the app requests only the `atproto` scope. The `atproto` scope is required and offers basic authentication for an `atproto` identity, but it does not authorize the client to access any privileged information or perform any actions on behalf of the user. Refer to the [Scopes guide](/guides/scopes) for more information.
 
@@ -256,4 +256,4 @@ This constant is used in three places:
 
 By centralizing it in one constant, you only need to change it in one place. Now, when you log in to your app again, you'll be prompted to approve the additional scopes.
 
-Congratulations on completing this tutorial! You now have a solid Next.js foundation for building atproto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).
+Congratulations on completing this tutorial! You now have a solid Next.js foundation for building @tproto apps with OAuth. From here, you can move on to our [**Statusphere Example App Tutorial**](/guides/statusphere-tutorial).

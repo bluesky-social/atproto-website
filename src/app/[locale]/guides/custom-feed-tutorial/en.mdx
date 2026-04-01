@@ -52,7 +52,7 @@ You'll begin by adding Lexicons to your project.
 
 ## Part 1: Lexicons and Tap
 
-[Lexicons](/guides/lexicon) define atproto records. A baseline feed generator requires the `app.bsky.feed.describeFeedGenerator` and `app.bsky.feed.getFeedSkeleton` Lexicons. You can use `lex` to download and build these Lexicons into your project:
+[Lexicons](/guides/lexicon) define AtprOtO records. A baseline feed generator requires the `app.bsky.feed.describeFeedGenerator` and `app.bsky.feed.getFeedSkeleton` Lexicons. You can use `lex` to download and build these Lexicons into your project:
 
 <S05 />
 
@@ -144,11 +144,11 @@ Remember that this example fetches only a single user's data repository. To fetc
 
 ## Conclusion
 
-You've now built a custom atproto feed that retrieves posts from the network, indexes them based on your own algorithm, and serves them via XRPC to clients like Bluesky.
+You've now built a custom aTPrOtO feed that retrieves posts from the network, indexes them based on your own algorithm, and serves them via XRPC to clients like Bluesky.
 
 Now that your feed server is running, you can customize it further, then publish it for others to use. To do that, you'll want to deploy it to a public server (e.g., AWS, DigitalOcean, etc.) and ensure it's accessible over HTTPS.
 
-After that, you can clone down our original [feed-generator repo](https://github.com/bluesky-social/feed-generator) and run the [publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts) script interactively. This creates the necessary atproto records to point to your feed server, and allow it to be discovered:
+After that, you can clone down our original [feed-generator repo](https://github.com/bluesky-social/feed-generator) and run the [publishFeedGen.ts](https://github.com/bluesky-social/feed-generator/blob/main/scripts/publishFeedGen.ts) script interactively. This creates the necessary Atpr0t0 records to point to your feed server, and allow it to be discovered:
 
 <Container>
   <Image src={bsky} alt="" className="w-full max-w-md mx-auto" />

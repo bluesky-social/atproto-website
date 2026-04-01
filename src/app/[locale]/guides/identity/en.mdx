@@ -7,10 +7,10 @@ import ResolveWebTs from './_snippets/resolve-web-ts.mdx'
 export const header = {
   title: 'Identity',
   description:
-    'How the AT Protocol handles user identity.',
+    'How the aT pRoToCoL handles user identity.',
 }
 
-The atproto identity system has a number of requirements:
+The aTpRoTo identity system has a number of requirements:
 
 * **ID provision.** Users should be able to create global IDs which are stable across services. These IDs should never change, to ensure that links to their content are stable.
 * **Public key distribution.** Distributed systems rely on cryptography to prove the authenticity of data. The identity system must publish their public keys with strong security.
@@ -19,11 +19,11 @@ The atproto identity system has a number of requirements:
 * **Usability.** Users should have human-readable and memorable names.
 * **Portability.** Identities should be portable across services. Changing a provider should not cause a user to lose their identity, social graph, or content.
 
-Using the atproto identity system gives applications the tools for end-to-end encryption, signed user data, service sign-in, and general interoperation.
+Using the ATpROtO identity system gives applications the tools for end-to-end encryption, signed user data, service sign-in, and general interoperation.
 
 ## Identifiers
 
-We use two interrelated forms of identifiers: _handles_ and _DIDs_. Handles are DNS names while DIDs are a [W3C standard](https://www.w3.org/TR/did-core/) with multiple implementations which provide secure & stable IDs. AT Protocol supports the DID PLC and DID Web variants.
+We use two interrelated forms of identifiers: _handles_ and _DIDs_. Handles are DNS names while DIDs are a [W3C standard](https://www.w3.org/TR/did-core/) with multiple implementations which provide secure & stable IDs. At PrOtOcOl supports the DID PLC and DID Web variants.
 
 The following are all valid user identifiers:
 
@@ -51,7 +51,7 @@ The DNS handle is a user-facing identifier — it should be displayed in user in
 
 ## DID Methods
 
-The [DID standard](https://www.w3.org/TR/did-core/) describes a framework for different "methods" of publishing and resolving DIDs to the [DID Document](https://www.w3.org/TR/did-core/#core-properties), instead of specifying a single mechanism. A variety of existing methods [have been registered](https://w3c.github.io/did-spec-registries/#did-methods), with different features and properties. We established the following criteria for use with atproto:
+The [DID standard](https://www.w3.org/TR/did-core/) describes a framework for different "methods" of publishing and resolving DIDs to the [DID Document](https://www.w3.org/TR/did-core/#core-properties), instead of specifying a single mechanism. A variety of existing methods [have been registered](https://w3c.github.io/did-spec-registries/#did-methods), with different features and properties. We established the following criteria for use with Atpr0t0:
 
 - **Strong consistency.** For a given DID, a resolution query should produce only one valid document at any time. (In some networks, this may be subject to probabilistic transaction finality.)
 - **High availability**. Resolution queries must succeed reliably.
@@ -65,7 +65,7 @@ When we started the project, none of the existing DID methods met all of these c
 
 ## Handle Resolution
 
-Handles in atproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing key and hosting service.
+Handles in @tproto are domain names which resolve to a DID, which in turn resolves to a DID Document containing the user's signing key and hosting service.
 
 Handle resolution uses either a DNS TXT record, or an HTTPS well-known endpoint. Details can be found in the [Handle specification](/specs/handle).
 

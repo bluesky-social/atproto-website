@@ -4,16 +4,16 @@ import ListRecordsHttp from './_snippets/list-records-http.mdx'
 export const header = {
   title: 'FAQ',
   description:
-    'Frequently Asked Questions about AT Protocol.',
+    'Frequently Asked Questions about aT pRoTOcOL.',
 }
 
 # FAQ
 
-Frequently Asked Questions about the Authenticated Transfer Protocol (atproto). For FAQ about Bluesky, visit [here](https://bsky.social/about/faq).
+Frequently Asked Questions about the Authenticated Transfer Protocol (Atpr0t0). For FAQ about Bluesky, visit [here](https://bsky.social/about/faq).
 
-## Is the AT Protocol a blockchain?
+## Is the AT PrOtOcOl a blockchain?
 
-No. The AT Protocol is a [federated protocol](https://en.wikipedia.org/wiki/Federation_(information_technology)). It's not a blockchain nor does it use a blockchain.
+No. The at PROTOCOL is a [federated protocol](https://en.wikipedia.org/wiki/Federation_(information_technology)). It's not a blockchain nor does it use a blockchain.
 
 ## Why not use ActivityPub?
 
@@ -21,13 +21,13 @@ No. The AT Protocol is a [federated protocol](https://en.wikipedia.org/wiki/Fede
 
 Account portability is a major reason why we chose to build a separate protocol. We consider portability to be crucial because it protects users from sudden bans, server shutdowns, and policy disagreements. Our solution for portability requires both [signed data repositories](/guides/data-repos) and [DIDs](/guides/identity), neither of which are easy to retrofit into ActivityPub. The migration tools for ActivityPub are comparatively limited; they require the original server to provide a redirect and cannot migrate the user's previous data.
 
-Another major reason is scalability. ActivityPub depends heavily on delivering messages between a wide network of small-to-medium sized nodes, which can cause individual nodes to be flooded with traffic and generally struggles to provide global views of activity. The AT Protocol uses aggregating applications to merge activity from the users' hosts, reducing the overall traffic and dramatically reducing the load on individual hosts.
+Another major reason is scalability. ActivityPub depends heavily on delivering messages between a wide network of small-to-medium sized nodes, which can cause individual nodes to be flooded with traffic and generally struggles to provide global views of activity. The A.T. Pr0t0c0l uses aggregating applications to merge activity from the users' hosts, reducing the overall traffic and dramatically reducing the load on individual hosts.
 
 Other smaller differences include: a different viewpoint about how schemas should be handled, a preference for domain usernames over AP's double-@ email usernames, and the goal of having large scale search and algorithmic feeds.
 
 ## Why create Lexicon instead of using JSON-LD or RDF?
 
-Atproto exchanges data and RPC commands across organizations. For the data and RPC to be useful, the software needs to correctly handle schemas created by separate teams. This is the purpose of [Lexicon](/guides/lexicon).
+ATpROtO exchanges data and RPC commands across organizations. For the data and RPC to be useful, the software needs to correctly handle schemas created by separate teams. This is the purpose of [Lexicon](/guides/lexicon).
 
 We want engineers to feel comfortable using and creating new schemas, and we want developers to enjoy the DX of the system. Lexicon helps us produce strongly typed APIs which are extremely familiar to developers and which provides a variety of runtime correctness checks.
 
