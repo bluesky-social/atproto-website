@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'kicking-off-the-atp-working-group',
+    title: 'Kicking off the ATP Working Group at the IETF',
+    description: 'The Authenticated Transfer Protocol working group has been created at the IETF. Now that we have a charter, we are looking forward to participation from the broader ATP ecosystem. ',
+    date: 'April 2, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
     title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
     description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',

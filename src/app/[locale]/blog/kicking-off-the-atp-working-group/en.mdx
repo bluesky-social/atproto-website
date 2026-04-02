@@ -1,0 +1,42 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mik3bpclle25',
+  title: 'Kicking off the ATP Working Group at the IETF',
+  description: 'The Authenticated Transfer Protocol (ATP) working group has been created at the IETF, and we are seeking participation from the broader Atmosphere ecosystem.',
+  date: 'April 2, 2026',
+  author: 'AT Protocol Team',
+}
+
+We are pleased to announce that an [Authenticated Transfer Protocol (ATP) working group](https://datatracker.ietf.org/wg/atp/about/) has been created at the IETF\!
+
+This is the cumulation of months of online and in-person discussion between participants in the ATP ecosystem and members of the IETF community. Most folks contribute in a volunteer capacity, and we are grateful for their time, patience, and expertise. We particularly want to thank the chairs of the Montreal Birds-of-a-Feather (BoF) session ([Justin Richer](https://datatracker.ietf.org/person/ietf@justin.richer.org) and [Richard Barnes](https://datatracker.ietf.org/person/rlb@ipv.sx)), and the Area Director who shepherded most of the chartering process ([Orie Steele](https://datatracker.ietf.org/person/orie@or13.io)).
+
+The group has a defined scope of work ([charter](https://datatracker.ietf.org/doc/charter-ietf-atp/)), and we expect discussions to kick off on the [atp@ietf.org mailing list](https://mailman3.ietf.org/mailman3/lists/atp.ietf.org/) in coming weeks.
+
+## How This Works
+
+The Internet Engineering Task Force (IETF) is a standards development organization deeply involved with the development of the network protocols that power email, the web, and the internet generally. It provides a neutral venue where anybody with time and interest can participate in the standardization process for ATP. There is a wealth of background information about the IETF and how the process works [on their website](https://www.ietf.org/about/introduction/).
+
+In November 2025, several projects building on ATP came to the IETF 124 meeting in Montreal and participated in a "Birds of a Feather" (BoF) session about whether and how to standardize ATP at the IETF. That session was recorded ([Youtube](https://www.youtube.com/watch?v=x9tTY6lTdXg), [slides PDF](https://datatracker.ietf.org/meeting/124/materials/slides-124-atp-authenticated-transfer-00.pdf)), and gives good background on the scope and motivations of what protocol components make sense to standardize first.
+
+Following the BoF, a [charter](https://datatracker.ietf.org/doc/charter-ietf-atp/) was developed over the mailing list, and that working group charter was then reviewed and approved in recent weeks. The charter sets out the initial scope of work for writing standards documents:
+
+- the public repository data structure
+- mechanism for synchronizing public repositories (e.g., the firehose)
+- the AT URI scheme
+- requirements for account identifier resolution systems, and a registry of recommended systems (e.g., PLC and `did:web`)
+
+Note that this initial charter does *not* include non-public data, application-specific data schemas or APIs, lexicon publication, the labeling moderation system, etc. If the initial work goes smoothly, the charter could be extended to cover more components.
+
+The working group has been assigned two experienced chairs: [Mallory Knodel](https://datatracker.ietf.org/person/mallory.knodel@nyu.edu) and [Shuping Peng](https://datatracker.ietf.org/person/pengshuping@huawei.com). They are familiar with the IETF standards processes, will facilitate group meetings, and help us collectively reach consensus on protocol details. Along with our Area Director ([Andy Newton](https://datatracker.ietf.org/person/andy@hxr.us)), we thank them for getting involved, and look forward to working together.
+
+For folks building in the Atmosphere ecosystem, and who care about how services interoperate and share data, this working group is a big opportunity to work out any ambiguities and unresolved issues. As noted in the charter, we hope to minimize disruption to existing implementations and deployments as much as possible. But this is a good time to address reasonable deprecations, errata, flexibility, and security/privacy issues.
+
+## Next Steps
+
+Discussions will take place on the [atp@ietf.org mailing list](https://mailman3.ietf.org/mailman3/lists/atp.ietf.org/), and the best way to get involved is to subscribe and participate in email threads. Anybody can participate, though please do keep in mind [IETF-wide policies](https://www.ietf.org/policies/), including the "[Note Well](https://www.ietf.org/about/note-well/)" and [Code of Conduct](https://www.ietf.org/policies/#:~:text=Privacy%20Statement.-,Conduct,-Anti%2DHarassment%20Policy).
+
+As a starting point, [Daniel Holmgren](https://datatracker.ietf.org/person/daniel@blueskyweb.xyz) and [Bryan Newbold](https://datatracker.ietf.org/person/bryan@blueskyweb.xyz) are expecting to split up the existing [`draft-holmgren-at-repository`](https://datatracker.ietf.org/doc/draft-holmgren-at-repository/) text into two separate draft documents: one for the repository data structure (MST), and another for synchronization mechanisms (firehose). Document text will be developed in the new [`ietf-wg-atp`](https://github.com/ietf-wg-atp) Github organization, which is controlled by the IETF.
+
+The next major IETF meetings in 2026 will be July 18-24 in Vienna, Austria ([IETF 126](https://www.ietf.org/meeting/126/)) and November 14-20 in San Francisco, USA ([IETF 127](https://www.ietf.org/meeting/127/)). The in-person meetings are a good opportunity to work though larger open questions, but any major decisions do come back to the mailing list for review. There are also solid remote/hybrid participation options for all group meetings, in case travel time and registration costs are barriers to participation. If more focused meeting time is needed, it is also possible to schedule online interim meetings between the major IETF-wide events. It may also be possible to schedule in-person/hybrid interim meetings adjacent to major ecosystem events, e.g. future iterations of AtmosphereConf.
+
+We are grateful to the IETF community for welcoming us in, and proud that the core protocol will have a home outside of and independent from Bluesky PBC. This is a big confetti-drop milestone for the Atmosphere ecosystem, and would not have been possible without many projects choosing to build and interoperate in the open network already. Hope to see you around at events and on the mailing list.
