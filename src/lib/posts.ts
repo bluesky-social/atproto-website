@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'kicking-off-the-atp-working-group',
+    title: 'Kicking off the ATP Working Group at the IETF',
+    description: 'The Authenticated Transfer Protocol working group has been created at the IETF. Now that we have a charter, we are looking forward to participation from the broader ATP ecosystem. ',
+    date: 'April 2, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: '2026-spring-roadmap',
     title: 'AT Protocol Roadmap (Spring 2026)',
     description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
