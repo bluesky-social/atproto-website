@@ -57,6 +57,9 @@ export default async function RootLayout({
           data-project-logo="https://atproto.com/favicon.ico"
           data-modal-ask-ai-input-placeholder="Find solutions from the docs, Github, forums, and more..."
           data-button-hide="true"
+          data-mcp-enabled="true"
+          data-mcp-server-url="https://atproto.mcp.kapa.ai"
+          data-mcp-dropdown-description="Use atproto via [MCP](https://modelcontextprotocol.io/introduction)"
           async
         />
       </head>

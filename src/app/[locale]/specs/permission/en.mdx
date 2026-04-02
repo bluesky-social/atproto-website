@@ -106,7 +106,7 @@ rpc:app.example.moderation.createReport?aud=*
 rpc?lxm=*&aud=did:web:api.example.com%23svc_appview
 ```
 
-## `blob`
+### `blob`
 
 Ability to upload media files (blobs) to PDS.
 
@@ -126,7 +126,7 @@ blob:*/*
 blob?accept=video/*&accept=text/html
 ```
 
-## `account`
+### `account`
 
 Control of PDS account hosting details, such as (private) account email.
 
@@ -152,7 +152,7 @@ account:email
 account:repo?action=manage
 ```
 
-## `identity`
+### `identity`
 
 Control over network identity, meaning the account DID document and handle. Note that the PDS might not be able to facilitate identity changes if it does not have control over the DID document (for example, when the account uses `did:web`).
 

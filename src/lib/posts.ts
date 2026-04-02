@@ -15,6 +15,13 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: '2026-spring-roadmap',
+    title: 'AT Protocol Roadmap (Spring 2026)',
+    description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
+    date: 'March 24, 2026',
+    author: 'Bluesky Protocol Team',
+  },
+  {
     slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
     title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
     description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
