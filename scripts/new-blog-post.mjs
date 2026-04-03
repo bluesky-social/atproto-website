@@ -38,7 +38,7 @@ function formatDate(date) {
   })
 }
 
-function checkCleanWorkingTree() {
+async function checkGitStatus() {
   try {
     const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim()
     if (status) {
@@ -50,6 +50,9 @@ function checkCleanWorkingTree() {
     console.error('Error: Failed to check git status. Are you in a git repository?')
     process.exit(1)
   }
+
+  const answer = await question('Create a new branch from origin/main? (Y/n): ')
+  return answer.trim().toLowerCase() !== 'n'
 }
 
 function createBranch(slug) {
@@ -68,7 +71,7 @@ function createBranch(slug) {
 async function main() {
   console.log('\n📝 Create a new blog post\n')
 
-  checkCleanWorkingTree()
+  const shouldCreateBranch = await checkGitStatus()
 
   const title = await question('Title: ')
   if (!title.trim()) {
@@ -80,7 +83,9 @@ async function main() {
   const slugInput = await question(`Slug (${suggestedSlug}): `)
   const slug = slugInput.trim() || suggestedSlug
 
-  createBranch(slug)
+  if (shouldCreateBranch) {
+    createBranch(slug)
+  }
 
   const description = await question('Description: ')
   if (!description.trim()) {
@@ -179,9 +184,7 @@ Start writing your post here...
 Files created:
   - src/app/[locale]/blog/${slug}/page.tsx
   - src/app/[locale]/blog/${slug}/en.mdx
-
-Branch: blog-${slug} (from origin/main)
-
+${shouldCreateBranch ? `\nBranch: blog-${slug} (from origin/main)` : ''}
 Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
   2. Run 'npm run dev' to preview at http://localhost:3000/blog/${slug}
