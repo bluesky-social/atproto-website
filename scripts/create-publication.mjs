@@ -21,7 +21,7 @@ const PUBLICATION_NAME = 'AT Protocol'
 const PUBLICATION_DESCRIPTION =
   'Documentation, guides, and updates for the AT Protocol - the decentralized foundation for social networking.'
 
-async function main() {
+export async function main() {
   const { ATPROTO_HANDLE, ATPROTO_APP_PASSWORD, ATPROTO_PDS_URL } = process.env
 
   if (!ATPROTO_HANDLE || !ATPROTO_APP_PASSWORD) {
@@ -88,7 +88,3 @@ async function main() {
   console.log(`\n   Add this to your .env file.`)
 }
 
-main().catch((err) => {
-  console.error('Unexpected error:', err)
-  process.exit(1)
-})

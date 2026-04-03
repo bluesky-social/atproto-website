@@ -20,12 +20,28 @@ The page auto-updates as you edit the file.
 
 ---
 
-### Creating a new blog post
+### Blog tools
 
-Run the blog post generator:
+All blog-related commands are available through a single entry point:
 
 ```bash
-npm run blog
+npm run blog <command>
+```
+
+| Command | Description |
+|---------|-------------|
+| `npm run blog create` | Create a new blog post |
+| `npm run blog remove` | Remove a blog post |
+| `npm run blog ssite <slug>` | Publish a post as a standard-site record |
+| `npm run blog hide-reply <url>` | Hide a reply or detach a quote post |
+| `npm run blog create-publication` | Create the publication record (one-time setup) |
+
+Run `npm run blog` with no arguments to see this list.
+
+### Creating a new blog post
+
+```bash
+npm run blog create
 ```
 
 This will prompt you for:
@@ -48,7 +64,7 @@ When creating a new post, if the author name isn't found in the registry, the sc
 ### Removing a blog post
 
 ```bash
-npm run rmblog
+npm run blog remove
 ```
 
 This displays a paginated list of blog posts (10 at a time, most recent first). Select a post by number to remove it. The script will:
@@ -82,23 +98,23 @@ Blog posts can be published to the AT Protocol using the [site.standard](https:/
 
 2. **Create the publication record:**
    ```bash
-   npm run create-publication
+   npm run blog create-publication
    ```
    Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
 
 #### Publishing a post
 
 ```bash
-npm run publish-post <slug>
+npm run blog ssite <slug>
 ```
 
 For example:
 ```bash
-npm run publish-post welcome-to-the-blog
+npm run blog ssite welcome-to-the-blog
 ```
 
 This will:
-- Create a `site.standard.document` record on your PDS
+- Create a `standard.site` document record on your PDS
 - Save the AT-URI back to the post's MDX file for verification
 - Update the record if it already exists
 
@@ -241,10 +257,10 @@ The `hide-reply` script lets you hide replies or detach quote posts from the con
 
 ```bash
 # Hide a reply (adds to threadgate hiddenReplies)
-npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+npm run blog hide-reply https://bsky.app/profile/did:plc:.../post/...
 
 # Detach a quote post (adds to postgate detachedEmbeddingUris)
-npm run hide-reply https://bsky.app/profile/did:plc:.../post/...
+npm run blog hide-reply https://bsky.app/profile/did:plc:.../post/...
 ```
 
 Requires `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` in `.env`. The authenticated user must own the root post being replied to or quoted.
