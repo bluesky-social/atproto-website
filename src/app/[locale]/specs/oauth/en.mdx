@@ -265,7 +265,7 @@ Additional requirements:
 
 ## Tokens and Session Lifetime
 
-Access tokens are used to authorize client requests to the account's PDS ("Resource Server"). From the standpoint of the client they are opaque, but they are often signed JWTs including an expiration time. Depending on the PDS implementation, it may or may not be possible to revoke individual access tokens in the event of a compromise, so they must be restricted to a relatively short lifetime.
+Access tokens are used to authorize client requests to the account's PDS ("Resource Server"). From the standpoint of the client they are opaque tokens. Depending on the PDS implementation, it may or may not be possible to revoke individual access tokens in the event of a compromise, so they must be restricted to a relatively short lifetime.
 
 Refresh tokens are used to request new tokens (of both types) from the Authorization Server (PDS or entryway). They are also opaque from the standpoint of clients. Auth sessions can be revoked - invalidating the refresh tokens - so they may have a longer lifetime. In the atproto OAuth profile, refresh tokens are generally single-use, with the "new" refresh token replacing that used in the token request. This means client implementations may need locking primitives to prevent concurrent token refresh requests.
 
