@@ -3,6 +3,7 @@
 import * as readline from 'readline'
 import * as fs from 'fs'
 import * as path from 'path'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -37,8 +38,40 @@ function formatDate(date) {
   })
 }
 
+async function checkGitStatus() {
+  try {
+    const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim()
+    if (status) {
+      const branch = execSync('git branch --show-current', { encoding: 'utf-8' }).trim()
+      console.error(`⚠️ You have uncommitted changes on ${branch}. Please commit or stash your work and then get back to blogging.`)
+      process.exit(1)
+    }
+  } catch {
+    console.error('Error: Failed to check git status. Are you in a git repository?')
+    process.exit(1)
+  }
+
+  const answer = await question('Create a new branch from origin/main? (Y/n): ')
+  return answer.trim().toLowerCase() !== 'n'
+}
+
+function createBranch(slug) {
+  const branch = `blog-${slug}`
+  try {
+    console.log(`\nFetching latest from origin/main...`)
+    execSync('git fetch origin main', { encoding: 'utf-8', stdio: 'inherit' })
+    console.log(`Creating branch ${branch} from origin/main...`)
+    execSync(`git checkout -b ${branch} origin/main`, { encoding: 'utf-8', stdio: 'inherit' })
+  } catch {
+    console.error(`Error: Failed to create branch "${branch}". Does it already exist?`)
+    process.exit(1)
+  }
+}
+
 async function main() {
   console.log('\n📝 Create a new blog post\n')
+
+  const shouldCreateBranch = await checkGitStatus()
 
   const title = await question('Title: ')
   if (!title.trim()) {
@@ -78,6 +111,10 @@ async function main() {
   const date = dateInput.trim() || defaultDate
 
   rl.close()
+
+  if (shouldCreateBranch) {
+    createBranch(slug)
+  }
 
   // Create directory
   const postDir = path.join(BLOG_DIR, slug)
@@ -147,7 +184,7 @@ Start writing your post here...
 Files created:
   - src/app/[locale]/blog/${slug}/page.tsx
   - src/app/[locale]/blog/${slug}/en.mdx
-
+${shouldCreateBranch ? `\nBranch: blog-${slug} (from origin/main)` : ''}
 Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
   2. Run 'npm run dev' to preview at http://localhost:3000/blog/${slug}
