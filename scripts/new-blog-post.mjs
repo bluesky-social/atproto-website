@@ -83,10 +83,6 @@ async function main() {
   const slugInput = await question(`Slug (${suggestedSlug}): `)
   const slug = slugInput.trim() || suggestedSlug
 
-  if (shouldCreateBranch) {
-    createBranch(slug)
-  }
-
   const description = await question('Description: ')
   if (!description.trim()) {
     console.error('Error: Description is required')
@@ -115,6 +111,10 @@ async function main() {
   const date = dateInput.trim() || defaultDate
 
   rl.close()
+
+  if (shouldCreateBranch) {
+    createBranch(slug)
+  }
 
   // Create directory
   const postDir = path.join(BLOG_DIR, slug)
