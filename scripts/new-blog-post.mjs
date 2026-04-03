@@ -3,6 +3,7 @@
 import * as readline from 'readline'
 import * as fs from 'fs'
 import * as path from 'path'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -37,8 +38,37 @@ function formatDate(date) {
   })
 }
 
+function checkCleanWorkingTree() {
+  try {
+    const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim()
+    if (status) {
+      const branch = execSync('git branch --show-current', { encoding: 'utf-8' }).trim()
+      console.error(`⚠️ You have uncommitted changes on ${branch}. Please commit or stash your work and then get back to blogging.`)
+      process.exit(1)
+    }
+  } catch {
+    console.error('Error: Failed to check git status. Are you in a git repository?')
+    process.exit(1)
+  }
+}
+
+function createBranch(slug) {
+  const branch = `blog-${slug}`
+  try {
+    console.log(`\nFetching latest from origin/main...`)
+    execSync('git fetch origin main', { encoding: 'utf-8', stdio: 'inherit' })
+    console.log(`Creating branch ${branch} from origin/main...`)
+    execSync(`git checkout -b ${branch} origin/main`, { encoding: 'utf-8', stdio: 'inherit' })
+  } catch {
+    console.error(`Error: Failed to create branch "${branch}". Does it already exist?`)
+    process.exit(1)
+  }
+}
+
 async function main() {
   console.log('\n📝 Create a new blog post\n')
+
+  checkCleanWorkingTree()
 
   const title = await question('Title: ')
   if (!title.trim()) {
@@ -49,6 +79,8 @@ async function main() {
   const suggestedSlug = slugify(title)
   const slugInput = await question(`Slug (${suggestedSlug}): `)
   const slug = slugInput.trim() || suggestedSlug
+
+  createBranch(slug)
 
   const description = await question('Description: ')
   if (!description.trim()) {
@@ -147,6 +179,8 @@ Start writing your post here...
 Files created:
   - src/app/[locale]/blog/${slug}/page.tsx
   - src/app/[locale]/blog/${slug}/en.mdx
+
+Branch: blog-${slug} (from origin/main)
 
 Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
