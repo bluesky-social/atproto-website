@@ -230,7 +230,7 @@ const community: LibraryGroupProp[] = [
           identifiers: 'full',
           bskyHelpers: 'full',
           lexicon: 'partial',
-          identity: 'partial',
+          identity: 'full',
           streaming: 'none',
           serviceAuth: 'partial',
           crypto: 'full',
