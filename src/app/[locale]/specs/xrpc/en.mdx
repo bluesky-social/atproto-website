@@ -93,21 +93,15 @@ The JWT parameters are:
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
 - `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value.
-- `iss` body field (string, required): account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
+- `iss` body field (string, required): account DID that the request is being sent on behalf of. Should not include a fragment.
+- `iss_key` body field (string, optional): indicates the public key ("verification method") associated with the issuer (`iss` DID) used to sign this JWT. Corresponds to the `verificationMethod` `id` suffix in the DID document (the part after the `#`). If not provided, the value `atproto` should be assumed.
 - `aud` body field (string, required): service DID associated with the service that the request is being sent to
+- `aud_svc` body field (string, optional): endpoint id, as registered in the service DID document, that this request is being sent to. Corresponds to the `service` `id` suffix in the DID document (the part after `#`). If not provided, the request is JWT is valid for any endpoint associated with `aud`.
 - `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
 - `iat` body field (number, required): token creation time, as a UNIX timestamp with seconds precision.
-- `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. Servers must always validate this field if included, and should require it for security-sensitive operations. May become required in the future.
+- `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. This field is required for all authenticated XRPC endpoint requests.
 - `jti` body field (string, required): unique random string nonce. May be used by receiving services to prevent reuse of token and replay attacks.
 - JWT signature (string, required): base64url-encoded signature using the account DID's signing key.
-
-When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
-
-- service identifier `atproto_labeler` maps to key identifier `atproto_label`
-
-If the service identifier is not included, the scope is general purpose and the `atproto` key identifier should be used.
-
-The receiving service may require or prohibit specific service identifiers for access to specific resources or endpoints.
 
 The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As TypeScript pseudo-code, this looks like:
 
