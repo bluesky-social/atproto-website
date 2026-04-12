@@ -93,21 +93,21 @@ The JWT parameters are:
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
 - `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value.
-- `iss` body field (string, required): account DID that the request is being sent on behalf of. This may include a suffix service identifier; see below
-- `aud` body field (string, required): service DID associated with the service that the request is being sent to
+- `iss` body field (string, required): account DID ("issuer") that the request is being sent on behalf of. May optionally include a fragment name identifying the key ("verification method") used to sign the JWT, which defaults to `#atproto`. See [DID syntax specification](/specs/did) for syntax details, and below for semantics.
+- `aud` body field (string, required): service DID associated with the service that the request is being sent to ("audience"). May include an optional fragment name identifying the specific service type and endpoint. See [DID syntax specification](/specs/did) for syntax details, and below for semantics. New software should always include the service fragment name.
 - `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
 - `iat` body field (number, required): token creation time, as a UNIX timestamp with seconds precision.
-- `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. Servers must always validate this field if included, and should require it for security-sensitive operations. May become required in the future.
+- `lxm` body field (string, optional): short for "lexicon method". NSID syntax. Indicates the endpoint that this token authorizes. This field is required for all authenticated XRPC endpoint requests.
 - `jti` body field (string, required): unique random string nonce. May be used by receiving services to prevent reuse of token and replay attacks.
 - JWT signature (string, required): base64url-encoded signature using the account DID's signing key.
 
-When the token is generated in the context of a specific service in the issuer's DID document, the issuer field may have the corresponding *service* identifier in the `iss` field, separated by a `#` character. For example, `did:web:label.example.com#atproto_labeler` for a labeler service. When this is included the appropriate signing key is determined based on a fixed mapping of service identifiers to key identifiers:
+The issuer field (`iss`) is the DID of the account sending the request. If a fragment name is provided, it indicates a specific public key from the account's DID document in the `verificationMethod` array. If no fragment is provided, the default atproto signing key (`#atproto`) is used. This field authenticates the sender of the request. Receiving services must only accept specific verification method types, to maintain security separation between registered keys. This usually means accepting only `#atproto`, unless there is a specific application-specific or service-specific additional key type expected.
 
-- service identifier `atproto_labeler` maps to key identifier `atproto_label`
+<Note>
+Until Spring 2026, the issuer (`iss`) optional fragment identified a service endpoint, not a public key (verification method). This feature was not frequently used, and the specification has been changed.
+</Note>
 
-If the service identifier is not included, the scope is general purpose and the `atproto` key identifier should be used.
-
-The receiving service may require or prohibit specific service identifiers for access to specific resources or endpoints.
+The audience field (`aud`) is the DID and service endpoint identifier (as a fragment) of the expected recipient of the request. If a fragment name is provided, it corresponds to an entry in the receiving service's DID document, in the `service` array. For legacy compatibility reasons, the `aud` field may be a bare DID with no service identifier fragment, which is interpreted as the service name being undefined. Receiving services must verify that the audience field matches their own DID and service type, to prevent reuse or forwarding of tokens. Services may be configured to accept bare DIDs in `aud` for backwards compatibility, but are not required to do so, and an undefined service type is not the same as a wildcard, nor valid for "any service type".
 
 The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As TypeScript pseudo-code, this looks like:
 
@@ -122,6 +122,12 @@ const jwt = headerPayload + '.' + bytesToBase64Url(signature)
 The PDS acts as a generic proxy between clients and other atproto services. Clients can use an HTTP header to specify which service in the network they want the request forwarded to (eg, a specific AppView or Labeler service). The PDS will do some safety checks, then forward the request on with an inter-service authentication token (JWT, described above) issued and signed by the user's identity.
 
 The HTTP header is `atproto-proxy`, and the value is a DID (identifying a service), followed by a service endpoint identifier, joined by a `#` character. The PDS resolves the service DID, extracts a service endpoint URL from the DID document, and proxies the request on to the identified server.
+
+<Note>
+Until Spring 2026, the reference PDS implementation did not pass through the full service reference to the `aud` field of the JWT auth header when proxying requests. It would strip the service endpoint identifier, and only include the bare DID.
+
+This is in the process of being updated to include both the DID and service identifier fragment.
+</Note>
 
 An example request header, to proxy to a labeling service, is:
 
