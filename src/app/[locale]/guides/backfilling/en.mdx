@@ -1,4 +1,5 @@
 import TapRun from './_snippets/tap-run.mdx'
+import TapInstall from './_snippets/tap-install.mdx'
 
 export const header = {
   title: 'Backfilling',
@@ -17,7 +18,11 @@ When backfilling, you generally need to maintain 'up to date' replica of the dat
 
 `tap` simplifies AT sync by handling the firehose connection, verification, backfill, and filtering. Your application connects to a Tap and receives simple JSON events for only the repos and collections you care about, no need to worry about binary formats for validating cryptographic signatures.
 
-Tap can be run from the command line:
+Install `tap` from the [indigo](https://github.com/bluesky-social/indigo) repo after installing Go:
+
+<TapInstall />
+
+Then, run `tap` from the command line:
 
 <TapRun />
 
