@@ -11,8 +11,10 @@ import {
 import { DotPatternBackground } from '../DotPattern'
 import { ButtonArrowIcon } from '../Button'
 import Link from 'next/link'
+import { homeT } from '@/lib/home-translations'
 
-export function Firehose() {
+export function Firehose({ locale }: { locale?: string }) {
+  const t = (key: string) => homeT(locale ?? 'en', key)
   const [jetstream] = useState(() => new Jetstream())
   const [active, setActive] = useState(false)
   const [hasRun, setHasRun] = useState(false)
@@ -55,12 +57,10 @@ export function Firehose() {
         <div className="flex justify-center py-8">
           <div className="max-md:px-6 md:w-[420px]">
             <h2 className="pb-1 text-center text-2xl font-medium md:text-4xl">
-              Public Firehose
+              {t('Public Firehose')}
             </h2>
             <p className="text-center text-lg text-zinc-400">
-              Tap into the event stream for all public activity. Build feeds,
-              bots, search engines, and applications using live activity. No API
-              key required.
+              {t('Tap into the event stream for all public activity. Build feeds, bots, search engines, and applications using live activity. No API key required.')}
             </p>
           </div>
         </div>
@@ -92,7 +92,7 @@ export function Firehose() {
               )}
             >
               {active ? <StopIcon /> : <PlayIcon />}
-              <span>{active ? 'Stop stream' : 'Start stream'}</span>
+              <span>{active ? t('Stop stream') : t('Start stream')}</span>
             </div>
           </div>
           <div className="overflow-x-scroll">
@@ -102,7 +102,7 @@ export function Firehose() {
           </div>
         </div>
         <Link className="border-t border-zinc-900/20 dark:border-zinc-100/15 flex flex-row items-center justify-center font-medium py-4" href="/guides/sync">
-          <div>LEARN MORE</div>
+          <div>{t('LEARN MORE')}</div>
           <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
         </Link>
       </div>

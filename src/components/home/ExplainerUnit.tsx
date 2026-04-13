@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { ButtonArrowIcon } from '../Button'
 import Link from 'next/link'
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { homeT } from '@/lib/home-translations'
 
 const NavContext = createContext('json')
 const SyntaxHighlightContext = createContext(true)
@@ -39,11 +40,21 @@ const NAV_ITEMS: NavItem[] = [
   },
 ]
 
+function translatedNavItems(locale: string): NavItem[] {
+  return NAV_ITEMS.map((item) => ({
+    ...item,
+    title: homeT(locale, item.title),
+    description: homeT(locale, item.description),
+  }))
+}
+
 const AUTO_ROTATE_INTERVAL = 4000
 
-export function ExplainerUnit() {
+export function ExplainerUnit({ locale }: { locale?: string }) {
   const [current, setCurrent] = useState('json')
   const [hasInteracted, setHasInteracted] = useState(false)
+  const t = (key: string) => homeT(locale ?? 'en', key)
+  const navItems = translatedNavItems(locale ?? 'en')
 
   useEffect(() => {
     if (hasInteracted) return
@@ -63,7 +74,7 @@ export function ExplainerUnit() {
   return (
     <div className="relative [overflow-x:clip]">
       <ExplainerMobileNav>
-        {NAV_ITEMS.map(({ id, title, description }) => (
+        {navItems.map(({ id, title, description }) => (
           <ExplainerMobileNavItem
             key={id}
             id={id}
@@ -72,6 +83,7 @@ export function ExplainerUnit() {
             current={current}
             setCurrent={handleSetCurrent}
             isAutoRotating={!hasInteracted}
+            nextLabel={t('Next')}
           />
         ))}
       </ExplainerMobileNav>
@@ -146,7 +158,7 @@ export function ExplainerUnit() {
           </SyntaxHighlightContext.Provider>
         </NavContext.Provider>
         <ExplainerDesktopNav>
-          {NAV_ITEMS.map(({ id, title, description }) => (
+          {navItems.map(({ id, title, description }) => (
             <ExplainerDesktopNavItem
               key={id}
               id={id}
@@ -157,7 +169,7 @@ export function ExplainerUnit() {
               isAutoRotating={!hasInteracted}
             />
           ))}
-          <ExplainerUnitCTA href="/guides/understanding-atproto">LEARN MORE</ExplainerUnitCTA>
+          <ExplainerUnitCTA href="/guides/understanding-atproto">{t('LEARN MORE')}</ExplainerUnitCTA>
         </ExplainerDesktopNav>
       </div>
     </div>
@@ -342,6 +354,7 @@ export function ExplainerMobileNavItem({
   current,
   setCurrent,
   isAutoRotating,
+  nextLabel,
 }: {
   id: string
   title: string
@@ -349,6 +362,7 @@ export function ExplainerMobileNavItem({
   current: string
   setCurrent: React.Dispatch<string>
   isAutoRotating: boolean
+  nextLabel?: string
 }) {
   const i = NAV_ITEMS.findIndex((item) => item.id === id)
   const isActive = id === current
@@ -364,7 +378,7 @@ export function ExplainerMobileNavItem({
         <div className={clsx('pb-4 text-zinc-700 dark:text-zinc-400')}>
           {description}
         </div>
-        <Progress total={4} current={i} />
+        <Progress total={4} current={i} nextLabel={nextLabel} />
         {isActive && isAutoRotating && (
           <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-700">
             <div
@@ -397,14 +411,14 @@ export function ExplainerUnitCTA({
   )
 }
 
-function Progress({ current, total }: { current: number; total: number }) {
+function Progress({ current, total, nextLabel }: { current: number; total: number; nextLabel?: string }) {
   return (
     <div className="flex justify-center gap-2 text-xs">
       {[...Array(total)].map((_, i) => (
         <div key={i}>{i === current ? '●' : '○'}</div>
       ))}
       <div className={clsx('flex items-center pl-2 font-medium')}>
-        <div>Next</div>
+        <div>{nextLabel ?? 'Next'}</div>
         <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />
       </div>
     </div>

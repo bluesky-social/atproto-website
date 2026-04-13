@@ -6,8 +6,11 @@ import { ExplainerUnit } from '@/components/home/ExplainerUnit'
 import { Firehose } from '@/components/home/Firehose'
 import { BentoNav } from '@/components/home/BentoNav'
 import { Usecases } from '@/components/home/Usecases'
+import { homeT } from '@/lib/home-translations'
 
 export default async function HomePage({ params }: any) {
+  const locale = params.locale as string
+  const t = (key: string) => homeT(locale, key)
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 px-2 md:gap-12 md:px-8 lg:max-w-7xl">
       <div className="flex flex-col-reverse items-center md:py-12 xl:flex-row">
@@ -16,7 +19,7 @@ export default async function HomePage({ params }: any) {
             AT PROTOCOL
           </h1>
           <div className="hyphens-none text-center font-mono text-xl text-zinc-700 xl:pr-40 xl:text-left dark:text-zinc-400">
-            Building the Social Internet.
+            {t('Building the Social Internet.')}
           </div>
           <div className="py-4 text-center sm:py-12 xl:text-left">
             <Button
@@ -27,13 +30,13 @@ export default async function HomePage({ params }: any) {
               href="/docs"
               className="max-sm:flex max-sm:py-3"
             >
-              GET STARTED
+              {t('GET STARTED')}
             </Button>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 sm:text-center xl:text-left">
-            <Stat value="40M+" desc="Users" first />
-            <Stat value="2.4B+" desc="Totally normal posts" />
-            <Stat value="100%" desc="Open data" />
+            <Stat value="40M+" desc={t('Users')} first />
+            <Stat value="2.4B+" desc={t('Totally normal posts')} />
+            <Stat value="100%" desc={t('Open data')} />
           </div>
         </div>
         <div className="pb-12 pt-4 sm:py-8 xl:flex-1 xl:py-0">
@@ -41,10 +44,10 @@ export default async function HomePage({ params }: any) {
         </div>
       </div>
 
-      <Usecases wide />
-      <ExplainerUnit />
-      <Firehose />
-      <BentoNav />
+      <Usecases wide locale={locale} />
+      <ExplainerUnit locale={locale} />
+      <Firehose locale={locale} />
+      <BentoNav locale={locale} />
     </div>
   )
 }
