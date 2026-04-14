@@ -39,7 +39,7 @@ The problem that eventually killed it was bandwidth. What I hadn't fully account
 
 ## What worked: Jetstream \+ Cloudflare
 
-The fix was switching data sources rather than rearchitecing aroudn Tap. [Jetstream](https://docs.bsky.app/blog/jetstream) is a lighter WEbSocket service that does the collecting filtering upstream — it delivers only the collections you subscribe to — no local filtering of the full firehose. The tradeoff is there's no built-in database, and no backfilling but for docs.surf, which only needs the latest 100 posts, that's fine.
+The fix was switching data sources rather than rearchitecing aroudn Tap. [Jetstream](https://docs.bsky.app/blog/jetstream) is a lighter WebSocket service that does the collecting filtering upstream — it delivers only the collections you subscribe to — no local filtering of the full firehose. The tradeoff is there's no built-in database and no backfill but for docs.surf, which only needs the latest 100 posts, that's fine.
 
 The architecture that's been stable and cheap:
 
