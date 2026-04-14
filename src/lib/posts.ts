@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'indexing-standard-site',
+    title: 'Indexing Standard Site',
+    description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',
+    date: 'April 14, 2026',
+    author: 'Steve Simkins',
+  },
+  {
     slug: 'kicking-off-the-atp-working-group',
     title: 'Kicking off the ATP Working Group at the IETF',
     description: 'The Authenticated Transfer Protocol working group has been created at the IETF. Now that we have a charter, we are looking forward to participation from the broader ATP ecosystem. ',
