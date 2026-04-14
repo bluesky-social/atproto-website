@@ -1,0 +1,68 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mji7laev2i2v',
+  title: 'Indexing Standard Site',
+  description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',
+  date: 'April 14, 2026',
+  author: 'Steve Simkins',
+}
+
+*We’re excited to publish another guest post highlighting development in the atproto ecosystem. Steve Simkins is one of the more prolific developers building on the Standard Site lexicon, as the builder behind the [Sequoia CLI tool](https://sequoia.pub/) and the delightful [docs.surf](https://docs.surf) reader app. In this post, Steve lays out his approach to indexing standard.site records in a way that is both efficient and cost effective. Be sure to check out Steve’s [original post](https://stevedylan.dev/posts/indexing-standard-site/) on his personal blog, complete with zoomable diagrams, and [standard.site records](https://pdsls.dev/at://did:plc:ia2zdnhjaokf5lazhxrmj6eu/site.standard.document), of course.*
+
+[Standard.site](https://standard.site) is a set of atproto lexicons for content publishing in the Atmosphere that give hope to solving the content distribution problem. When a blog or site publishes using these lexicons, anyone can index that content and build distribution mechanisms on top of it without any central gatekeeper.
+
+Blogs have always had a distribution and discovery problem — RSS helped with syndication, but discovery still depends on  word of mouth or algorithms controlled by someone else. In much the same way that posts on Bluesky are discoverable via search and custom feeds in the Bluesky app, blogs that publish with Standard.site are now discoverable in the Atmosphere. I built [docs.surf](https://docs.surf), a fun app with a feed that indexes every Standard.site record as it’s published.
+
+Getting the indexer right turned out to be more involved than I expected. Here's what I learned.
+
+## The indexing challenge
+
+Standard.site documents don't contain their own canonical URL. A `site.standard.document` record has a path, but to construct a full link you need the `url` from the associated `site.standard.publication` record — a separate lookup. On top of that, Standard.site has a verification model: a publication record served from `/.well-known/site.standard.publication` on the author's site, and a `<link>` tag in the post HTML pointing back to the atproto record.
+
+In practice, fully resolving a single document requires up to four network requests:
+
+1. Fetch the `site.standard.document` record
+2. Fetch the referenced `site.standard.publication` record to get the site URL
+3. Verify via `/.well-known/site.standard.publication`
+4. Optionally verify the document `<link>` tag in the post HTML
+
+That's manageable for a single record, but at firehose scale, it's a serious engineering challenge.
+
+## What didn't work
+
+[Tap](https://github.com/bluesky-social/indigo/tree/main/cmd/tap) is the straightforward starting point for filtered firehose indexing. It subscribes to specific record collections, backfills from a cursor, and stores events in a local database. I spun it up quickly and was soon collecting `site.standard.document` events without much trouble.
+
+The first problem showed up when I tried to do the multi-step resolution client-side. Every document requires at minimum two API calls — one for the document record, one for the publication record — plus verification requests on top of that. At any real volume, doing that work synchronously in the client is too slow to be useful.
+
+Queuing the resolution work via Cloudflare helped. Tap's webhook support made this straightforward: when a valid event comes in, Tap posts a payload to a Cloudflare Worker, which drops it onto a queue for async processing. That worked well enough that docs.surf launched on this architecture.
+
+The problem that eventually killed it was bandwidth. What I hadn't fully accounted for is that Tap consumes the entire firehose and filters locally — it's receiving every event on the network, not just the collection you care about. Running it on Railway, egress costs climbed whenever Standard.site adoption ticked up. I briefly moved the instance to a home server to cut costs, and promptly got throttled by my ISP from the incoming bandwidth alone. The firehose is not a small stream.
+
+## What worked: Jetstream \+ Cloudflare
+
+[Jetstream](https://docs.bsky.app/blog/jetstream) solved the bandwidth problem. Unlike Tap, it delivers only the collections you subscribe to — no local filtering of the full firehose. The tradeoff: no built-in database, and no backfilling. For docs.surf, which only needs the latest 100 posts, that's fine.
+
+The architecture that's been stable and cheap:
+
+* A **Cloudflare Durable Object** maintains the Jetstream WebSocket connection, keeping all traffic within Cloudflare's network
+* Incoming records are batched and sent to a **Cloudflare Queue** for async processing
+* The queue worker handles the multi-step resolution and verification, with retry logic for the verification timing issue (more on that below)
+* Resolved documents land in **Cloudflare D1**
+* A cron job re-checks records that initially failed verification
+
+Total cost: $5/month.
+
+One thing to know about publishing `standard.site` records: there's a race condition baked into the publishing flow. To publish a post, you create the atproto record first, get the AT URI, then deploy your site with the appropriate `<link>` tag. There's an inevitable gap between record creation and site deployment — so if your indexer tries to verify immediately after seeing the record, it will get a false negative. The cron-based re-verification pass is the fix; don't try to handle this synchronously.
+
+## When to use what
+
+**Jetstream** is the right choice if you're building a partial index, don't need backfill, and want to minimize infrastructure costs. The Cloudflare Durable Object pattern keeps the WebSocket connection alive without a persistent server.
+
+**Tap** makes sense if you need backfill or want an integrated database. Just budget for the bandwidth — it's not a small number if you're running it continuously.
+
+One thing I do want to make clear is that this setup will probably not work for everyone; I had a very specific goal in mind that only requires a partial index. However I hope it does shed some light on the tools out there and the challenges you may face with them.
+
+There are several other tools that I have not had a chance to try yet, including [quickslice](https://tangled.org/slices.network/quickslice) which uses Jetstream to build a GraphQL API.
+
+At the very least I hope this post piques your interest into atproto and how it can fix a lot of the problems created by closed platforms. We have a long way to go, but we have a fantastic community that is doing the hard work and making it happen.
+
+All the code is open source on [Tangled](https://tangled.org/stevedylan.dev/docs.surf).
