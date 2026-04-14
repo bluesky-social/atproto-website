@@ -41,6 +41,62 @@ The auth flow page will display all the relevent permissions being granted. This
 
 Client Apps should be sure to check which auth scopes were actually approved during the auth flow. In particular, when requesting permission to read an account email address (`account:email`), the user might decline that permission while granting others. In theory, any individual permission might be denied while the overall request is granted.
 
+## Requesting scopes progressively
+
+An application does not always need all of its permissions at sign-in. Using broad scopes like `transition:generic` is the quickest way to get a prototype working, but it grants the app access to nearly everything in the user's account — and the authorization dialog reflects that, which can discourage people from trying it.
+
+The `scope` parameter in the [client metadata document](/specs/oauth#client-id-metadata-document) declares the maximum set of scopes the application may ever request, but individual authorization flows can request a subset. This makes it possible to start with minimal scopes and request more later, as the user opts into features that need them.
+
+### Selecting scopes before authorization
+
+For client-side applications where different users have different needs, one approach is to let users choose which [permissions](/specs/permission) to grant before the OAuth redirect. The application builds the [scope string](/specs/permission#scope-string-syntax) from the user's selections and passes it to [`authorize()`](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme):
+
+```typescript
+const BASE_SCOPES = ["atproto"];
+
+const OPTIONAL_SCOPES = [
+  { id: "create", scope: "repo:*?action=create", label: "Create records" },
+  { id: "update", scope: "repo:*?action=update", label: "Update records" },
+  { id: "delete", scope: "repo:*?action=delete", label: "Delete records" },
+  { id: "blob",   scope: "blob:*/*",             label: "Upload blobs" },
+];
+
+function buildScopeString(selected: Set<string>): string {
+  const granular = OPTIONAL_SCOPES
+    .filter((s) => selected.has(s.id))
+    .map((s) => s.scope);
+  return [...BASE_SCOPES, ...granular].join(" ");
+}
+
+// pass the built scope string to the authorization flow
+const url = await oauthClient.authorize(handle, {
+  scope: buildScopeString(userSelections),
+});
+```
+
+After the callback, the application tracks which scopes were granted for the session, so that features can be shown or hidden accordingly.
+
+### Upgrading scopes for an existing session
+
+For applications using the [BFF pattern](/guides/oauth-patterns#types-of-app) with optional integrations — features that require scopes outside the application's primary [namespace authority](/specs/permission#namespace-authority) — scope upgrades can happen after the user is already signed in. The application stores the user's preference, initiates a new OAuth flow with the expanded scope set, and replaces the old session on callback:
+
+```typescript
+const BASE_SCOPE =
+  "atproto blob:*/* repo:com.example.post repo:com.example.like";
+
+const EXTENDED_SCOPE =
+  `${BASE_SCOPE} repo:com.other.feed.play repo:com.other.actor.status`;
+
+// start a new OAuth flow with the expanded scope
+const url = await oauthClient.authorize(handle, {
+  scope: wantsIntegration ? EXTENDED_SCOPE : BASE_SCOPE,
+});
+```
+
+The server stores the old session identifier alongside the OAuth state so the callback handler knows to replace it. On subsequent logins, the server can look up the user's stored preferences and include the expanded scopes automatically.
+
+Note that [permission sets](/specs/permission#permission-sets) can reduce the need for explicit scope upgrades: when a client refreshes its tokens, the computed permissions may be updated to reflect changes to the resolved sets. If a new capability falls within an existing permission set's [namespace authority](/specs/permission#namespace-authority), updating the published set is sufficient — no re-authorization required. Cross-namespace integrations will still require an explicit upgrade. See [Rolling out changes](/guides/permission-sets#rolling-out-changes) for guidance on coordinating scope changes with application releases.
+
 ## Further Reading and Resources
 
 - [Auth](/guides/auth)
