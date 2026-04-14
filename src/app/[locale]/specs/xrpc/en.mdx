@@ -93,8 +93,8 @@ The JWT parameters are:
     - use `ES256K` for `k256` keys
     - use `ES256` for `p256` keys
 - `typ` header field (string, required): currently `JWT`, but intend to update to a more specific value.
+- `kid` header field (string, optional): issuer key identifier, used to specify which public key was used to sign the JWT. Corresponds to identifier fragment in DID document, specifying which "verification method" was used. This field should not include the DID or the hash separator (`#`). Defaults to `atproto`. Note that this field is in the (unsigned) JWT header, not the body. See below for semantics and verification guidance.
 - `iss` body field (string, required): account DID ("issuer") that the request is being sent on behalf of.
-- `kid` body field (string, optional): issuer key identifier, used to specify which public key was used to sign the JWT. Corresponds to identifier fragment in DID document, specifying which "verification method" was used. This field should not include the DID or the hash separator (`#`). Defaults to `atproto`. See below for semantics and verification guidance.
 - `aud` body field (string, required): service DID associated with the service that the request is being sent to ("audience"). May include an optional fragment name identifying the specific service type and endpoint. See [DID syntax specification](/specs/did) for syntax details, and below for semantics. New software should always include the service fragment name when generating JWTs.
 - `exp` body field (number, required): token expiration time, as a UNIX timestamp with seconds precision. Should be a short time window, as revocation is not implemented. 60 seconds is a good token lifetime.
 - `iat` body field (number, required): token creation time, as a UNIX timestamp with seconds precision.
@@ -102,7 +102,7 @@ The JWT parameters are:
 - `jti` body field (string, required): unique random string nonce. May be used by receiving services to prevent reuse of token and replay attacks.
 - JWT signature (string, required): base64url-encoded signature using the account DID's signing key.
 
-The issuer field (`iss`) is the DID of the account sending the request. If an issuer key identifier (`kid`) field is provided, it indicates a specific public key from the account's DID document in the `verificationMethod` array, defaulting to `atproto`. This field authenticates the sender of the request. Receiving services must only accept specific key types (verification method identifiers), to maintain security separation between registered keys. This usually means accepting only `atproto`, unless there is a specific application-specific or service-specific additional key type expected (eg, `atproto_label`).
+The issuer field (`iss`) is the DID of the account sending the request. If an issuer key identifier (`kid`) field is provided, it indicates a specific public key from the account's DID document in the `verificationMethod` array, defaulting to `atproto`. Note that `iss` is a JWT body field, while `kid` is a JWT header field. Receiving services must only accept specific key types (verification method identifiers), to maintain security separation between registered keys. This usually means accepting only `atproto`, unless there is a specific application-specific or service-specific additional key type expected (eg, `atproto_label`).
 
 <Note>
 Until Spring 2026, the issuer (`iss`) could include an optional fragment identifying a service endpoint (not a public key). This syntax was not frequently used, and the specification has been changed to use `kid` instead (which identifies a public key).
