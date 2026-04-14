@@ -8,9 +8,26 @@ export const header = {
   description: 'Sharing your lexicons with the world',
 }
 
-## Using goat
+## Lexicon lifecycle
 
 Lexicons are designed to be machine-readable and network-accessible. While it is not currently *required* that a lexicon is available on the network, it is strongly advised to publish lexicon so that a single canonical & authoritative representation is available to consumers of the method.
+
+Lexicons are published to a PDS like any other AT record. They are resolved using DNS TXT records to link [NSID namespaces](/specs/nsid) to PDS repositories, so that when you address a Lexicon like `com.atproto.example,` atproto SDKs will know to [look for an identity at `atproto.com`](https://pds.ls/at://did:plc:6msi3pj7krzih5qxqtryxlzw/com.atproto.lexicon.schema) and retrieve the Lexicon from there.
+
+For an NSID like `app.toy.record`:
+
+- The final segment `record` is the record/method name
+- The authority is `app.toy`; reversed, this becomes the domain `toy.app`
+- The DNS TXT record goes at `_lexicon.toy.app`
+
+Each unique namespace prefix requires its own DNS TXT record, pointing to your DID. For example:
+
+```
+_lexicon.toy.app      TXT "did=did:plc:abc123..."
+_lexicon.like.toy.app TXT "did=did:plc:abc123..."
+```
+
+## Using goat
 
 You can use [`goat`](https://github.com/bluesky-social/goat), our command line tool, for creating and publishing Lexicons. The Lexicon-related features are available under [`goat lex`](https://github.com/bluesky-social/goat?tab=readme-ov-file#lexicon-development) :
 
@@ -34,7 +51,7 @@ And eventually publish it with `goat lex publish`:
 <GoatLexPublish />
 
 <Note>
-Lexicons are published into *your own repository* like any other record. This means that you'll need to log in with `goat` when publishing! To do this, use `goat account login` or set the `GOAT_USERNAME` and `GOAT_PASSWORD` environment variables.
+You'll need to log in with `goat` to publish to your PDS! To do this, use `goat account login` or set the `GOAT_USERNAME` and `GOAT_PASSWORD` environment variables.
 </Note>
 
 Refer to the [Lexicon Style Guide](/guides/lexicon-style-guide) for guidance on creating new Lexicons.
