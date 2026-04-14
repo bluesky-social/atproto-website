@@ -137,12 +137,10 @@ function parseDate(dateStr) {
   return date.toISOString()
 }
 
-async function main() {
-  const slug = process.argv[2]
-
+export async function main(slug) {
   if (!slug) {
-    console.error('Usage: npm run publish-post <slug>')
-    console.error('Example: npm run publish-post welcome-to-the-blog')
+    console.error('Usage: npm run blog ssite <slug>')
+    console.error('Example: npm run blog ssite welcome-to-the-blog')
     process.exit(1)
   }
 
@@ -276,7 +274,3 @@ async function main() {
   console.log(`\n📎 Saved AT-URI to ${path.basename(mdxPath)}`)
 }
 
-main().catch((err) => {
-  console.error('Unexpected error:', err)
-  process.exit(1)
-})
