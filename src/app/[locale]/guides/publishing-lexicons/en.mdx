@@ -12,7 +12,7 @@ export const header = {
 
 Lexicons are designed to be machine-readable and network-accessible. While it is not currently *required* that a lexicon is available on the network, it is strongly advised to publish lexicon so that a single canonical & authoritative representation is available to consumers of the method.
 
-Lexicons are published to a PDS like any other AT record. They are resolved using DNS TXT records to link [NSID namespaces](/specs/nsid) to repositories, so that when you address a Lexicon like `com.atproto.example,` atproto SDKs will know to [look for an identity at `atproto.com`](https://pds.ls/at://did:plc:6msi3pj7krzih5qxqtryxlzw/com.atproto.lexicon.schema) and retrieve the Lexicon from there.
+Lexicons are published to a PDS like any other AT record. They are resolved using DNS TXT records to link [NSID namespaces](/specs/nsid) to PDS repositories, so that when you address a Lexicon like `com.atproto.example,` atproto SDKs will know to [look for an identity at `atproto.com`](https://pds.ls/at://did:plc:6msi3pj7krzih5qxqtryxlzw/com.atproto.lexicon.schema) and retrieve the Lexicon from there.
 
 For an NSID like `app.toy.record`:
 
