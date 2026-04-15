@@ -280,9 +280,10 @@ export const navigation: Array<NavGroup> = [
         href: '/guides/auth',
         links: [
           { title: 'SDK authentication', href: '/guides/sdk-auth' },
-          { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
-          { title: 'Scopes', href: '/guides/scopes' },
+          { title: 'About OAuth', href: '/guides/oauth-patterns' },
           { title: 'Permission Requests', href: '/guides/permission-sets' },
+          { title: 'Permission Sets', href: '/guides/scopes' },
+          { title: 'OAuth Patterns', href: '/guides/oauth-advanced' },
         ],
       },
       {
