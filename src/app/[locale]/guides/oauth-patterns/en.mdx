@@ -17,7 +17,7 @@ There are a few details that might catch you off guard if you're used to using o
 
 - **Migration**: Atproto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this atproto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
 
-- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so atproto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
+- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers). In atproto, the client ID is a URL, which is fetched at auth time to determine OAuth features like redirect URI and scopes. See [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
 ## Understanding DPoP
 
@@ -32,6 +32,16 @@ DPoP is mandatory in atproto OAuth. **If you're using an SDK**, it's handled aut
 - For PDS requests, include an `ath` claim containing the SHA-256 hash of the access token
 
 The [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app) contains a complete manual DPoP implementation in `atproto_oauth.py`. For the full specification, see [DPoP in the OAuth spec](/specs/oauth#demonstrating-proof-of-possession-d-po-p).
+
+## PKCE and PAR
+
+Two other security mechanisms are mandatory in atproto OAuth:
+
+- **[PKCE (Proof Key for Code Exchange)](/specs/oauth#proof-key-for-code-exchange-pkce)** prevents authorization code interception attacks. The client generates a random secret for each authorization request and proves possession of it when exchanging the code for tokens.
+
+- **[PAR (Pushed Authorization Requests)](/specs/oauth#pushed-authorization-requests-par)** sends authorization parameters directly to the server before redirecting the user, reducing URL exposure and enabling better request validation.
+
+Like DPoP, both are handled automatically by the SDKs. If implementing OAuth manually, see the [OAuth spec](/specs/oauth) for requirements.
 
 ## Token Refresh
 
