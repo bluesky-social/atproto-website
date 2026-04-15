@@ -5,7 +5,19 @@ export const header = {
 
 This page covers advanced OAuth implementation details that most developers won't need to handle directly. If you're using one of the [official SDKs](/guides/oauth-patterns#typescript), these details are handled automatically.
 
-For getting started with OAuth, see [About OAuth](/guides/oauth-patterns). For understanding permission scopes, see [Permission Sets](/guides/scopes). For the full specification, see the [OAuth spec](/specs/oauth).
+For getting started with OAuth, see [About OAuth](/guides/oauth-patterns). For understanding permission scopes, see [Permission Sets](/guides/permission-sets). For the full specification, see the [OAuth spec](/specs/oauth).
+
+## How is OAuth Different in AT Protocol?
+
+Atproto [specifies](/specs/oauth) a particular "profile" of the OAuth standards, using [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html) as the foundation.
+
+There are a few details that might catch you off guard if you're used to using other OAuth systems.
+
+- **Atproto is distributed**: Usually, when an app has a "sign in with..." button, it provides a choice of which authorities it allows to authenticate users (usually one of a few big corporations). With atproto OAuth, the app has no prior relationship with the authentication provider: a user's [PDS](/guides/the-at-stack#pds). This is also the reason why atproto OAuth is not compatible with OIDC, which requires a pre-established relationship.
+
+- **Migration**: Atproto users can migrate their accounts between servers ([PDSes](/guides/glossary#pds-personal-data-server)) over time. To facilitate this atproto has a flexible [Identity](/guides/identity) layer, which allows usernames ([handles](/specs/handle)) to be resolved to a static user ID ([DID](/specs/did)), which in turn can be resolved to locate the user's PDS. When a user logs in to an app, the OAuth client dynamically resolves these relationships.
+
+- **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers), so atproto addresses this using [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
 ## Understanding DPoP
 
@@ -97,13 +109,13 @@ const url = await oauthClient.authorize(handle, {
 
 The server stores the old session identifier alongside the OAuth state so the callback handler knows to replace it. On subsequent logins, the server can look up the user's stored preferences and include the expanded scopes automatically.
 
-Note that [permission sets](/specs/permission#permission-sets) can reduce the need for explicit scope upgrades: when a client refreshes its tokens, the computed permissions may be updated to reflect changes to the resolved sets. If a new capability falls within an existing permission set's [namespace authority](/specs/permission#namespace-authority), updating the published set is sufficient — no re-authorization required. Cross-namespace integrations will still require an explicit upgrade. See [Rolling out changes](/guides/permission-sets#rolling-out-changes) for guidance on coordinating scope changes with application releases.
+Note that [permission sets](/specs/permission#permission-sets) can reduce the need for explicit scope upgrades: when a client refreshes its tokens, the computed permissions may be updated to reflect changes to the resolved sets. If a new capability falls within an existing permission set's [namespace authority](/specs/permission#namespace-authority), updating the published set is sufficient — no re-authorization required. Cross-namespace integrations will still require an explicit upgrade. See [Rolling out changes](/guides/permission-requests#rolling-out-changes) for guidance on coordinating scope changes with application releases.
 
 ## Further Reading and Resources
 
 - [Auth](/guides/auth)
 - [About OAuth](/guides/oauth-patterns)
-- [Permission Requests](/guides/permission-sets)
-- [Permission Sets](/guides/scopes)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
 - [OAuth spec](/specs/oauth)
 - [Permissions spec](/specs/permission)

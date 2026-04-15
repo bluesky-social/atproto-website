@@ -1,0 +1,127 @@
+import {Container} from "@/components/Container"
+import oauth from "./oauth-only.png"
+import skyblur from "./skyblur-oauth.png"
+import granular from "./skyblur-granular.png"
+import lexicon from "./skyblur-lexicon.png"
+import OauthScopeMetadata from './_snippets/oauth-scope-metadata.mdx'
+import OauthAuthUrl from './_snippets/oauth-auth-url.mdx'
+import oauthdomain from "./oauth-domain.jpg"
+
+export const header = {
+  title: 'Permission Requests',
+  description:
+    'A permissions guide for app developers and Lexicon designers',
+}
+
+This page explains how to **use** permission scopes in your OAuth flow. If you're building an app with custom Lexicons and want to **define and publish** your own permission sets, see [Permission Sets](/guides/permission-sets).
+
+## Overview
+
+This guide describes how to request and define permissions for your atproto application. [OAuth](/guides/auth) handles authorization, and this page covers how to specify *what* your app can access.
+
+Control over atproto resources is granted using [permissions](/specs/permission). Individual permissions like `repo:com.example.post` grant access to specific record types or API endpoints. Related permissions can be bundled into a **permission set** with a human-readable title and description — these are what users see in the authorization dialog.
+
+If you're building an app with **custom Lexicons**, you should define permission sets for them. This gives users clear descriptions of what your app can do, rather than a list of opaque namespace IDs. See [Permission Set design](/guides/permission-sets#permission-set-design) for the structure.
+
+If you're building an app that only uses **existing Lexicons** (like Bluesky's `app.bsky.*`), you can reference their published permission sets, or request individual granular permissions. Refer to the [OAuth flow examples](#oauth-flow-examples) section to see how these appear to users.
+
+## Requesting permissions
+
+When your app initiates an OAuth flow with an atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](/specs/oauth#clients) when registering your OAuth client:
+
+<OauthScopeMetadata />
+
+OAuth in AT uses [Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/) (PAR). The client metadata file will be fetched dynamically during the session lifecycle, and the `scope` parameter in `oauth-client-metadata.json` *needs to match* the actual authorization HTTP request made by your app:
+
+<OauthAuthUrl />
+
+You should try to only request enough permissions to cover the features your app needs. We provide [transition scopes](/specs/oauth#authorization-scopes) that grant broad permissions to create, update, or delete any of a user's AT records, including posts from other applications — but in general, these broad permission requests should be avoided. Granular permissions help build trust with your users and minimize friction during the authorization process.
+
+From a user experience perspective, it's best to keep the number of requested permission sets low. Each additional permission set adds more information to the authorization dialog, which can lead to decision fatigue. It is possible to allow users to grant only a subset of requested permissions, but this can lead to edge cases.
+
+## Permission types
+
+Permissions relate to user owned resources on PDS instances are are represented by five types:
+
+- `repo`: Public Repository (records and collections)
+- `rpc`: Service Authentication (API calls to external services)
+- `blob`: uploaded media files
+- `identity`: DID and handle
+- `account`: hosting status, email address
+
+Wildcards (*) are allowed in scope string syntax, and grants access to all records — the most common example being `blob:*/*`, for working with images and video. Partial wildcards are *not* supported — for example, `app.bsky.*` is not a valid scope string. If you wanted to request multiple permissions from a particular namespace or Lexicon, you would need to list them out individually, or use a [permission set](/guides/permission-sets). This is intentional, to avoid overbroad permission requests.
+
+Permission sets are themselves Lexicon schemas and are namespaced like other Lexicons. Unlike other Lexicons, permission sets are prefixed with `include:` in the scope string, and are dynamic; they can be updated.
+
+## Clients
+
+OAuth client software is identified by a globally unique `client_id`. Distinct variants of client software may have distinct `client_id` values; for example the browser app and Android (mobile OS) variants of the same software might have different `client_id` values. The `client_id` must be a fully-qualified web URL from which the client-metadata JSON document can be fetched. For example, `https://app.example.com/oauth-client-metadata.json`. Some more about the `client_id`:
+
+- it must be a well-formed URL, following the W3C URL specification
+- the schema must be `https://`, and there must not be a port number included. Note that there is a [special exception](/specs/oauth#localhost-client-development) for `http://localhost` `client_id` values for development.
+- the path does not need to include `oauth-client-metadata.json`, but it is helpful convention.
+
+<Note>
+If you have been using `client-metadata.json` rather than `oauth-client-metadata.json`, you can make this change to have your domain display on the auth flow page, rather than a URL string.
+</Note>
+
+<Container>
+  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+The auth flow page will display all the relevant permissions being granted. This is true both for apps using [granular permissions](/specs/permission), and for those using the [transitional](/specs/oauth#authorization-scopes) OAuth scopes.
+
+Client Apps should be sure to check which auth scopes were actually approved during the auth flow. In particular, when requesting permission to read an account email address (`account:email`), the user might decline that permission while granting others. In theory, any individual permission might be denied while the overall request is granted.
+
+## Rolling out changes
+
+When you update your app to use new permission sets, it's important to coordinate the software release with the permission-set updates. If you add new permission sets that require user approval, users will need to re-authorize your app to grant these new permissions.
+
+Your release and deployment process for the [client metadata document](/specs/oauth#clients) may be separate from your app's code deployment process. Make sure to plan accordingly — an updated `oauth-client-metadata.json` that requests new permissions must be live before a version of your app that requires those permissions.
+
+Permission sets can be revised, but removing them or making destructive changes can break existing applications. In general, permission sets should be closely tied to the applications they are designed for, but not necessarily 1:1. Remember that atproto applications can utilize multiple different Lexicons.
+
+## OAuth flow examples
+
+Apps that are using atproto identity providers *solely* for authentication [only need to request the `atproto` permission](/guides/permission-sets). This provides the same OAuth flow that you might expect from other identity providers; no features of the Atmosphere social graph are used, and no additional permissions are required:
+
+<Container>
+  <Image src={oauth} alt="" className="w-full max-w-md mx-auto"/>
+</Container>
+
+This is a fully usable Atmosphere integration, and many applications will use this as a starting point. Note that it produces a straightforward, readable "Authorize" flow. The URL of the requesting app is clearly visible, and the permissions dialog states that the app "wants to uniquely identify you," but nothing else.
+
+Next, consider a more complex integration, that requests additional permissions. By default, these will be presented in a summarized view:
+
+<Container>
+  <Image src={skyblur} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+In this image, note that there are two different Lexicon groupings: *Bluesky* permissions, and *Skyblur* permissions. Each Lexicon defines its own permission sets, as well as its own grouping and presentation of those permissions.
+
+You can click through on the **?** icons to see the details of each permission set:
+
+<Container>
+  <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+From the expanded atproto and Bluesky permissions, you might recognize `atproto` (for OAuth login), `blob:*/*` (for image and video handling), and several other `app.bsky.*` permissions for profile and social graph interactions.
+
+The *Skyblur* Lexicon permissions are defined and summarized differently:
+
+<Container>
+  <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+This is all at the discretion of app developers and Lexicon designers. We provide a model for using different Lexicons side by side, and for each Lexicon to define its own permission sets and presentation.
+
+## Further Reading and Resources
+
+- [Auth](/guides/auth)
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/oauth-patterns)
+- [Permission Sets](/guides/permission-sets)
+- [OAuth Patterns](/guides/oauth-advanced) (advanced topics)
+- [Publishing Lexicons](/guides/publishing-lexicons)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
