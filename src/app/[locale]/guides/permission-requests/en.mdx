@@ -28,7 +28,7 @@ If you're building an app that only uses **existing Lexicons** (like Bluesky's `
 
 ## Requesting permissions
 
-When your app initiates an OAuth flow with an atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](/specs/oauth#clients) when registering your OAuth client:
+When your app initiates an OAuth flow with an atproto identity provider, it can request specific permission sets by including them in the `scope` parameter of the authorization request. This should be supplied as a *space-separated list* in the [`oauth-client-metadata.json` file](specs/oauth#client-id-metadata-document) when registering your OAuth client:
 
 <OauthScopeMetadata />
 
@@ -36,7 +36,7 @@ OAuth in AT uses [Pushed Authorization Requests](https://auth0.com/blog/what-are
 
 <OauthAuthUrl />
 
-You should try to only request enough permissions to cover the features your app needs. We provide [transition scopes](/specs/oauth#authorization-scopes) that grant broad permissions to create, update, or delete any of a user's AT records, including posts from other applications — but in general, these broad permission requests should be avoided. Granular permissions help build trust with your users and minimize friction during the authorization process.
+You should try to only request enough permissions to cover the features your app needs. We provide [transition scopes](/specs/oauth#transitional-scopes) that grant broad permissions to create, update, or delete any of a user's AT records, including posts from other applications — but in general, these broad permission requests should be avoided. Granular permissions help build trust with your users and minimize friction during the authorization process.
 
 From a user experience perspective, it's best to keep the number of requested permission sets low. Each additional permission set adds more information to the authorization dialog, which can lead to decision fatigue. It is possible to allow users to grant only a subset of requested permissions, but this can lead to edge cases.
 
