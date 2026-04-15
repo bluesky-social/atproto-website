@@ -1,58 +1,23 @@
-import {Container} from "@/components/Container"
-import {ResponsiveTable} from '@/components/ResponsiveTable'
-
 export const header = {
   title: 'OAuth 패턴',
-  description: 'OAuth 구현 예시',
+  description: 'atproto 애플리케이션을 위한 고급 OAuth 구현 패턴',
 }
 
-## TypeScript
+이 페이지에서는 대부분의 개발자가 직접 다룰 필요가 없는 고급 OAuth 구현 세부 사항을 설명합니다. [레퍼런스 SDK](/guides/about-oauth#typescript) 중 하나를 사용하는 경우, 이러한 세부 사항은 자동으로 처리됩니다.
 
-- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - 프론트엔드 전용 애플리케이션(예: SPA)에 적합합니다.
-- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Electron 데스크톱 앱 또는 서버 사이드 배포에 적합합니다.
-- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - React Native 프로젝트(예: 모바일 앱)에서 사용합니다.
-- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (위 세 라이브러리가 의존하는 핵심 구현입니다)
-- [@fujocoded/authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) ([npmjs](https://www.npmjs.com/package/@fujocoded/authproto)) - Astro 앱을 위한 커뮤니티 구현
+OAuth 시작하기는 [OAuth에 대하여](/guides/about-oauth)를 참고하세요. 권한 스코프 이해는 [권한 세트](/guides/permission-sets)를 참고하세요. 전체 명세는 [OAuth 명세](/specs/oauth)를 참고하세요.
 
-## Go
+## AT Protocol에서 OAuth는 어떻게 다른가?
 
-- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([온라인 API 문서](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - 네이티브 앱 또는 서버 사이드 배포에 적합합니다
+Atproto는 [OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)을 기반으로 OAuth 표준의 특정 "프로파일"을 [명세로 정의합니다](/specs/oauth).
 
-## Atproto OAuth 예제 앱
+다른 OAuth 시스템에 익숙한 경우 의외로 느낄 수 있는 몇 가지 세부 사항이 있습니다.
 
-이 간단한 예제 앱들은 각각의 SDK 사용법을 보여줍니다.
+- **Atproto는 분산형입니다**: 일반적으로 앱에 "...으로 로그인" 버튼이 있을 때, 사용자를 인증할 수 있는 기관(보통 몇몇 대형 기업 중 하나)의 선택지가 제공됩니다. atproto OAuth에서는 앱이 인증 제공자인 사용자의 [PDS](/guides/the-at-stack#pds)와 사전 관계를 맺지 않습니다. 이는 사전 확립된 관계를 요구하는 OIDC와 atproto OAuth가 호환되지 않는 이유이기도 합니다.
 
-<ResponsiveTable
-  columns={[{label: '예제 앱'}, {label: '언어'}, {label: 'SDK'}, {label: '아키텍처'}, {label: '기밀 클라이언트?'}, {label: 'Localhost 개발 클라이언트 ID?', href: '/specs/oauth#localhost-client-development'}]}
-  rows={[
-    [{label: 'cookbook/react-native-oauth', href:' https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-expo'}, {label: '모바일 앱 (백엔드 없음)'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
-    [{label: 'cookbook/vanillajs-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme' }, {label: 'JavaScript'}, {label: '@atproto/oauth-client-browser'}, {label: '웹 SPA (백엔드 없음)'}, {label: '아니오'}, {label: '선택적'},],
-    [{label: 'cookbook/nextjs-oauth', href:' https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-node'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
-    [{label: 'cookbook/go-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
-    [{label: 'cookbook/go-oauth-cli-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '네이티브 CLI'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
-    [{label: 'cookbook/python-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme' }, {label: 'Python'}, {label: '없음'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},]
-  ]}
-/>
+- **마이그레이션**: Atproto 사용자는 시간이 지나면서 서버([PDS](/guides/glossary#pds-personal-data-server)) 간에 계정을 이동할 수 있습니다. 이를 용이하게 하기 위해 atproto는 유연한 [아이덴티티](/guides/identity) 레이어를 갖추고 있으며, 이를 통해 사용자명([핸들](/specs/handle))을 정적 사용자 ID([DID](/specs/did))로 확인하고, 이를 통해 사용자의 PDS를 찾을 수 있습니다. 사용자가 앱에 로그인할 때, OAuth 클라이언트는 이러한 관계를 동적으로 확인합니다.
 
-<Note>
-Python 예제는 SDK를 사용하지 않습니다! [OAuth 클라이언트 구현 고급 가이드](https://docs.bsky.app/docs/advanced-guides/oauth-client)와 함께 처음부터 OAuth SDK를 구축할 때 참고 자료로 유용할 수 있습니다.
-</Note>
-
-## 앱 유형
-
-*가장 단순한* 유형의 앱은 [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) 예시에서 보여주는 것처럼 OAuth 세션이 사용자 기기와 PDS 사이에서 직접 설정되는 것입니다. 전용 백엔드 서비스 없이 정적 리소스 호스팅만으로 가능하기 때문에 간단합니다.
-
-앱에 장기 세션이 필요하지 않다면 이 방법으로 충분합니다. 하지만 다른 사용 사례에서는 앱이 "공개 클라이언트"이기 때문에 세션 수명이 제한됩니다. 이는 "기밀 클라이언트"와 대비되는 개념입니다. 기밀 클라이언트가 되려면 클라이언트 ID에 바인딩된 비밀 키를 설정해야 합니다. 클라이언트가 공개적으로 사용 가능하고 사용자 기기에서 실행된다면 클라이언트 비밀을 보호할 수 없습니다. 따라서 기밀 클라이언트를 구현하려면 백엔드 인프라 호스팅이 필요하며, 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예시("BFF" 패턴 사용, 아래 참조)에서 보여줍니다.
-
-기밀 클라이언트 대 공개 클라이언트에 대한 자세한 기술적 내용은 [클라이언트 유형](/specs/oauth#types-of-clients)을 참고하세요.
-
-공개 클라이언트를 기밀 클라이언트로 "업그레이드"하는 데 사용할 수 있는 여러 설계 전략이 있습니다:
-
-- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): OAuth 세션이 앱 백엔드 서버와 PDS 사이에서 설정됩니다. 이 서버 사이드 세션은 세션 쿠키와 같은 메커니즘을 통해 사용자의 프론트엔드 세션과 연결됩니다. 프론트엔드는 백엔드를 통해 요청을 프록시하여 PDS에 요청을 보내며, 백엔드가 OAuth 인증을 처리합니다.
-- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): BFF 패턴과 유사하지만, 세션이 설정된 후 백엔드가 OAuth 액세스 토큰을 프론트엔드에 전달하여 프론트엔드가 PDS에 직접 요청을 보낼 수 있게 합니다.
-- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): 단순화된 서버 사이드 로직을 갖춘 TMB 패턴의 대안으로 제안된 방식입니다.
-
-이 세 가지 중 BFF 패턴이 현재 기밀 클라이언트 애플리케이션 구축에 권장되는 방법입니다. 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예시에서 시연됩니다.
+- **클라이언트 ID**: 다른 OAuth 생태계에서는 클라이언트 앱이 리소스 서버에 사전 등록해야 하는 경우가 많습니다. 분산형 시스템(많은 클라이언트와 많은 리소스 서버가 존재)에서는 이것이 실용적이지 않으므로, atproto는 [클라이언트 ID 메타데이터 문서](/specs/oauth#client-id-metadata-document)를 사용하여 이 문제를 해결합니다.
 
 ## DPoP 이해하기
 
@@ -61,18 +26,96 @@ Python 예제는 SDK를 사용하지 않습니다! [OAuth 클라이언트 구현
 DPoP은 atproto OAuth에서 필수입니다. **SDK를 사용하는 경우** 자동으로 처리됩니다. OAuth를 수동으로 구현하는 경우(예: 레코드를 쓰는 사이드카), 알아야 할 핵심 사항은 다음과 같습니다:
 
 - 세션당 ES256 키 쌍을 한 번 생성하고 모든 요청에 재사용합니다
-- 모든 요청에는 `DPoP` 헤더에 새로운 DPoP 증명 JWT가 필요하며, `Authorization: DPoP {access_token}` 형식을 사용합니다
-- 인증 서버와 PDS에 대한 논스를 별도로 추적합니다 — 다를 수 있습니다
-- `error="use_dpop_nonce"`와 함께 401을 받으면 `DPoP-Nonce` 응답 헤더의 논스로 재시도합니다
+- 모든 요청에는 `DPoP` 헤더에 새로운 DPoP 증명 JWT가 필요하며, `Authorization: DPoP {access_token}`과 함께 사용합니다
+- 인증 서버와 PDS용 nonce를 별도로 추적합니다 — 다를 수 있습니다
+- `error="use_dpop_nonce"`와 함께 401을 받으면 `DPoP-Nonce` 응답 헤더의 nonce로 재시도합니다
 - PDS 요청에는 액세스 토큰의 SHA-256 해시를 포함하는 `ath` 클레임을 포함합니다
 
 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app)에는 `atproto_oauth.py`에 완전한 수동 DPoP 구현이 포함되어 있습니다. 전체 명세는 [OAuth 명세의 DPoP](/specs/oauth#demonstrating-proof-of-possession-d-po-p)을 참고하세요.
 
+## 토큰 갱신
+
+atproto의 OAuth 액세스 토큰은 유효 기간이 제한되어 있습니다. 토큰이 만료되면 리프레시 토큰을 사용하여 새 액세스 토큰을 얻어야 합니다. SDK는 이를 자동으로 처리하지만, OAuth를 수동으로 구현하는 경우:
+
+- 리프레시 토큰을 액세스 토큰과 함께 안전하게 저장합니다
+- API 호출이 401로 실패하면 재시도 전에 토큰 갱신을 시도합니다
+- 새 액세스 토큰은 동일한 DPoP 키 쌍에 바인딩됩니다
+
+## 세션 저장
+
+BFF 패턴을 사용하는 웹 애플리케이션의 경우, OAuth 세션을 사용자 세션과 연결해야 합니다. 일반적인 접근 방식은 다음과 같습니다:
+
+- **쿠키 기반 세션**: OAuth 토큰을 서버 사이드에 저장하고, HTTP 전용 쿠키에 저장된 세션 ID를 키로 사용합니다
+- **데이터베이스 기반 세션**: 사용자 계정과 함께 토큰을 데이터베이스에 저장하여 멀티 디바이스 세션을 가능하게 합니다
+
+아키텍처 패턴은 [앱 유형](/guides/about-oauth#types-of-app)을 참고하세요.
+
+## 점진적 스코프 요청
+
+애플리케이션은 항상 로그인 시 모든 권한을 필요로 하지는 않습니다. [클라이언트 메타데이터 문서](/specs/oauth#client-id-metadata-document)의 `scope` 파라미터는 애플리케이션이 요청할 수 있는 최대 스코프 세트를 선언하지만, 개별 인증 흐름은 그 일부만 요청할 수 있습니다. 이를 통해 최소한의 스코프로 시작하고, 사용자가 해당 기능이 필요한 기능에 동의하면 나중에 더 많은 스코프를 요청하는 것이 가능합니다.
+
+### 인증 전 스코프 선택
+
+사용자마다 다른 요구사항을 가진 클라이언트 사이드 애플리케이션의 경우, OAuth 리다이렉트 전에 사용자가 부여할 [권한](/specs/permission)을 선택하게 하는 방법이 있습니다. 애플리케이션은 사용자의 선택으로부터 [스코프 문자열](/specs/permission#scope-string-syntax)을 구성하고 [`authorize()`](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme)에 전달합니다:
+
+```typescript
+const BASE_SCOPES = ["atproto"];
+
+// Request specific record collection access instead of broad permissions
+const OPTIONAL_SCOPES = [
+  // Access to your app's Lexicon records
+  { id: "posts", scope: "repo:com.example.post", label: "Create posts" },
+  { id: "likes", scope: "repo:com.example.like", label: "Like content" },
+  // Or access to Bluesky profile data
+  { id: "profile", scope: "rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview", label: "Read profile" },
+  { id: "blob",  scope: "blob:*/*", label: "Upload images/video" },
+];
+
+function buildScopeString(selected: Set<string>): string {
+  const granular = OPTIONAL_SCOPES
+    .filter((s) => selected.has(s.id))
+    .map((s) => s.scope);
+  return [...BASE_SCOPES, ...granular].join(" ");
+}
+
+// pass the built scope string to the authorization flow
+const url = await oauthClient.authorize(handle, {
+  scope: buildScopeString(userSelections),
+});
+```
+
+`repo:com.example.post`는 해당 컬렉션에 대한 완전한 생성/수정/삭제 접근을 부여한다는 점에 유의하세요. 쿼리 파라미터로 특정 액션으로 제한할 수 있습니다: `repo:com.example.post?action=create&action=update`. 전체 구문은 [권한 명세](/specs/permission#resource-types)를 참고하세요.
+
+콜백 후 애플리케이션은 세션에 대해 부여된 스코프를 추적하여 그에 따라 기능을 표시하거나 숨길 수 있습니다.
+
+### 기존 세션의 스코프 업그레이드
+
+선택적 통합 기능(애플리케이션의 주요 [네임스페이스 권한](/specs/permission#namespace-authority) 외부의 스코프가 필요한 기능)을 갖춘 [BFF 패턴](/guides/about-oauth#types-of-app)을 사용하는 애플리케이션의 경우, 사용자가 이미 로그인한 후에 스코프 업그레이드가 가능합니다. 애플리케이션은 사용자의 설정을 저장하고, 확장된 스코프 세트로 새 OAuth 흐름을 시작하며, 콜백에서 이전 세션을 교체합니다:
+
+```typescript
+// Your app's core permissions
+const BASE_SCOPE =
+  "atproto blob:*/* repo:com.example.post repo:com.example.like";
+
+// Add permissions for another app's Lexicon (cross-namespace integration)
+const EXTENDED_SCOPE =
+  `${BASE_SCOPE} repo:social.othernet.feed.play repo:social.othernet.actor.status`;
+
+// start a new OAuth flow with the expanded scope
+const url = await oauthClient.authorize(handle, {
+  scope: wantsIntegration ? EXTENDED_SCOPE : BASE_SCOPE,
+});
+```
+
+서버는 콜백 핸들러가 교체할 세션을 알 수 있도록 OAuth 상태와 함께 이전 세션 식별자를 저장합니다. 이후 로그인 시 서버는 사용자의 저장된 설정을 조회하여 확장된 스코프를 자동으로 포함할 수 있습니다.
+
+[권한 세트](/specs/permission#permission-sets)는 명시적인 스코프 업그레이드의 필요성을 줄일 수 있다는 점에 유의하세요: 클라이언트가 토큰을 갱신할 때, 계산된 권한이 해결된 세트의 변경 사항을 반영하여 업데이트될 수 있습니다. 새 기능이 기존 권한 세트의 [네임스페이스 권한](/specs/permission#namespace-authority) 내에 포함된다면, 게시된 세트를 업데이트하는 것만으로 충분하며 재인증이 필요하지 않습니다. 네임스페이스를 넘나드는 통합은 여전히 명시적인 업그레이드가 필요합니다. 스코프 변경을 애플리케이션 릴리스와 조율하는 방법에 대한 안내는 [변경 사항 롤아웃](/guides/permission-requests#rolling-out-changes)을 참고하세요.
+
 ## 추가 읽을거리 및 자료
 
 - [인증](/guides/auth)
-- [SDK 인증](/guides/sdk-auth)
-- [스코프](/guides/scopes)
-- [권한 요청](/guides/permission-sets)
+- [OAuth에 대하여](/guides/about-oauth)
+- [권한 요청](/guides/permission-requests)
+- [권한 세트](/guides/permission-sets)
 - [OAuth 명세](/specs/oauth)
 - [권한 명세](/specs/permission)

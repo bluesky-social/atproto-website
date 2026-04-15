@@ -40,14 +40,14 @@ Here's a minimal `oauth-client-metadata.json` for an app that creates its own re
 }
 ```
 
-This requests identity (`atproto`), write access to two record collections, and media upload. For a complete setup guide, see [About OAuth](/guides/oauth-patterns).
+This requests identity (`atproto`), write access to two record collections, and media upload. For a complete setup guide, see [About OAuth](/guides/about-oauth).
 
 ### Minimal permissions
 
 The absolute minimum for an app using atproto OAuth (identity-only, no data access):
 - `atproto`
 
-If you also need Bluesky profile data:
+If you also need to request Bluesky profile data:
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
 If you need to upload images or videos:
@@ -77,14 +77,14 @@ Permission sets are Lexicons too, and are published using the same tooling. See 
 
 ## Progressive scope requests
 
-Your app doesn't need to request all permissions at sign-in. You can start with minimal scopes and request more later as users opt into features. For implementation patterns including dynamic scope selection and upgrading existing sessions, see [OAuth Patterns](/guides/oauth-advanced#progressive-scope-requests).
+Your app doesn't need to request all permissions at sign-in. You can start with minimal scopes and request more later as users opt into features. For implementation patterns including dynamic scope selection and upgrading existing sessions, see [OAuth Patterns](/guides/oauth-patterns#progressive-scope-requests).
 
 ## Further Reading and Resources
 
 - [Auth](/guides/auth)
 - [SDK authentication](/guides/sdk-auth)
-- [About OAuth](/guides/oauth-patterns)
+- [About OAuth](/guides/about-oauth)
 - [Permission Requests](/guides/permission-requests)
-- [OAuth Patterns](/guides/oauth-advanced) (advanced topics)
+- [OAuth Patterns](/guides/oauth-patterns)
 - [OAuth spec](/specs/oauth)
 - [Permissions spec](/specs/permission)

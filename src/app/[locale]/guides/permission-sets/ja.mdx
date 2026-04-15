@@ -1,52 +1,90 @@
 import {Container} from "@/components/Container"
-import {Heading} from "@/components/Heading"
-import oauthdomain from "./oauth-domain.jpg"
+import PermissionSetLexicon from '../permission-requests/_snippets/permission-set-lexicon.mdx'
 
 export const header = {
-  title: 'スコープ',
-  description: 'OAuthの権限と権限セット',
+  title: 'パーミッションセット',
+  description: 'OAuthパーミッションスコープとセット',
 }
 
-<Heading level={2} id="implementing-oauth-scopes">OAuthスコープの実装</Heading>
+このページでは、カスタムLexiconのためのパーミッションセットを**定義・公開**する方法を説明します。OAuthフローで既存のパーミッションスコープを**使用**したいだけの場合は、[パーミッションリクエスト](/guides/permission-requests)を参照してください。
 
-OAuthフローはセッションで付与されるアクセスのレベルを表す「スコープ」を必要とします。現時点では、権限の粒度は`bsky.social`ホスティングサービスや[セルフホスト型PDSディストリビューション](/guides/self-hosting)上に実装されています。権限セットに関する作業（レキシコン解決を含む）は進行中です。開発者はより細かい権限（例えば特定のレコード種別やAPIエンドポイントの権限のみを要求するアプリ）を実装できるようになるでしょう。多くのアプリは、利用できるようになったら、より分かりやすい言語で権限を示す高レベルの「権限セット」を使用すると予想されます。
+## パーミッションセットについて
 
-BlueskyでサインインするためにサードパーティのATアプリが要求すべき最小限のOAuth権限は次のとおりです。
+OAuthフローはセッションで付与されるアクセスのレベルを表すパーミッション「スコープ」を使用します。ユーザーのアカウントへの広範なアクセスをリクエストするのではなく、atprotoアプリは特定のレコードタイプやAPIエンドポイントに対して細かいパーミッションをリクエストする必要があります。
+
+コアとなるパターンはシンプルです：**アプリが必要とするコレクションへのアクセスのみをリクエストする**。例えば、アプリが独自のLexiconを使って投稿といいねを作成する場合：
+
+```
+repo:com.example.post repo:com.example.like blob:*/*
+```
+
+これにより、アプリは`com.example.post`と`com.example.like`コレクションのレコードを作成・更新・削除するパーミッション、およびメディアをアップロードするパーミッションを取得します。ユーザーの認可ダイアログには、`transition:generic`のような広範なスコープが生み出す不安を感じさせる「ほぼすべてへのアクセス」ではなく、これらの特定のパーミッションが明確に表示されます。
+
+より整理された認可UIのために、関連するパーミッションを人間が読める説明付きの**パーミッションセット**にまとめることができます。以下の[パーミッションセットの設計](#permission-set-design)を参照してください。
+
+### クイックスタート
+
+独自のレコードタイプを作成するアプリのための最小限の`oauth-client-metadata.json`の例：
+
+```json
+{
+  "client_id": "https://example.com/oauth-client-metadata.json",
+  "client_name": "My Example App",
+  "client_uri": "https://example.com",
+  "redirect_uris": ["https://example.com/oauth/callback"],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "scope": "atproto repo:com.example.post repo:com.example.like blob:*/*",
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}
+```
+
+これはアイデンティティ（`atproto`）、2つのレコードコレクションへの書き込みアクセス、およびメディアアップロードをリクエストします。完全なセットアップガイドについては、[About OAuth](/guides/about-oauth)を参照してください。
+
+### 最小限のパーミッション
+
+atproto OAuthを使用するアプリ（アイデンティティのみ、データアクセスなし）の絶対最小値：
 - `atproto`
 
-Blueskyのプロフィール情報を利用したいなら、以下も必要になることがあります。
+Blueskyのプロフィールデータも必要な場合：
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
-アップロードした画像や動画を作成するレコード（投稿）に紐づける必要がある場合、以下も必要です。
+画像や動画のアップロードが必要な場合：
 - `blob:*/*`
 
-atprotoにおけるOAuthスコープの使い心地はまだ発展途上です。この最小セットは、不要な権限を与えずにアプリ開発者が使える出発点を提供するよう設計されています。詳細な権限スコープを最終決定するまで、暫定的な粗い粒度のスコープ（「移行スコープ」）もサポートしています。現時点では、移行スコープまたはアプリパスワードの使用を廃止する計画はありません。これら移行スコープの概要やOAuthの詳細については[認可スコープ](/specs/oauth#authorization-scopes)を、細かな権限スコープについては[権限](/specs/permission)を参照してください。
+`transition:generic`のような粗い粒度の「トランジションスコープ」は引き続きサポートされていますが、細かいパーミッションの採用を推奨します。トランジションスコープの概要については、[Authorization Scopes](/specs/oauth#authorization-scopes)を参照してください。完全な細かいパーミッション仕様については、[Permissions](/specs/permission)を参照してください。
 
-<Heading level={2} id="clients">クライアント</Heading>
+## パーミッションセットの設計
 
-OAuthクライアントソフトウェアはグローバルに一意な`client_id`で識別されます。クライアントソフトウェアの各バリアントは異なる`client_id`を持つことがあります。例えば同じソフトウェアのブラウザ版とAndroid（モバイル）版は異なる`client_id`を持つかもしれません。`client_id`は、クライアントメタデータJSONドキュメントが取得できる完全修飾のウェブURLでなければなりません。例えば`https://app.example.com/oauth-client-metadata.json`のようなものです。`client_id`に関する追加情報：
+フル機能のクライアントアプリは動作するために多数の細かいパーミッションを必要とします：数十、場合によっては数百の個別のパーミッションが必要です。パーミッション管理を簡素化するために、Lexiconデザイナーは公開するスキーマの一部としてパーミッションの「セット」を定義できます。これらのパーミッションセット自体もLexiconスキーマであり、`com.example.authBasicFeatures`のようなネームスペースIDで参照されます。
 
-- W3CのURL仕様に従った正しい形式のURLである必要があります
-- スキーマは`https://`でなければならず、ポート番号を含めてはいけません。開発用には`http://localhost`の`client_id`に対する[特別な例外](/specs/oauth#localhost-client-development)がある点に注意してください。
-- パスに`oauth-client-metadata.json`を含める必要はありませんが、慣例としては役立ちます。
+例えば、アプリケーションは`include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`のようなパーミッションセットをリクエストできます。これはアプリが動作するために必要なパーミッションのセットを定義するLexiconに解決されます：
 
-<Note>
-もし`oauth-client-metadata.json`の代わりに`client-metadata.json`を使用している場合、この変更により認可フローのページでURL文字列ではなくドメインを表示させることができます。
-</Note>
+<PermissionSetLexicon />
 
-<Container>
-  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
-</Container>
+`app.example.feed.authOnlyPost`と`com.example.authBasicFeatures`の例にある`auth`プレフィックスに注目してください。これはLexiconがパーミッションセットとして使用するよう設計されていることを示す命名規則です。
 
-認可フローのページは付与される関連権限をすべて表示します。これは[細分化されたスコープ](/specs/permission)を使うアプリでも、[移行スコープ](/specs/oauth#authorization-scopes)を使うものでも同様です。
+パーミッションセットは、セット自体と同じNSIDネームスペース下のリソースを参照するパーミッションのみを表現できます。例えば、セット`app.example.feed.authOnlyPost`は`app.example.feed.post`レコードへのパーミッションと、リモートサービスへの`app.example.feed.getPostThread` APIエンドポイントリクエストのパーミッションを含めることができます。しかし、`app.example.actor.profile`へのパーミッションは付与できません。階層で一段上の`app.example.authFull`のようなパーミッションセットは、これらすべてのリソースへのパーミッションを含めることができます。
 
-クライアントアプリは認可フロー中に実際に承認された認可スコープを必ず確認してください。特にアカウントのメールアドレス読み取り権限（`account:email`）を要求した場合、ユーザーはその権限だけを拒否して他の権限を承認する可能性があります。理論上は個別の権限が拒否された上で、リクエスト全体としては承認されることがあり得ます。
+`title`と`details`フィールドは説明的であり、OAuthフローの一部として表示されます。これらの説明フィールドの国際化がサポートされています。詳細は[パーミッションセット仕様](/specs/permission#permission-sets)を参照してください。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+`rpc`パーミッションにおける`inheritAud`の使用により、[継承の動作を制御](/specs/permission#rpc)できます。
 
-- [認証](/guides/auth)
-- [SDKによる認証](/guides/sdk-auth)
-- [OAuthパターン](/guides/oauth-patterns)
-- [権限リクエスト](/guides/permission-sets)
-- [OAuth仕様](/specs/oauth)
-- [権限仕様](/specs/permission)
+画像・動画の処理のための`blob:*/*`パーミッションはパーミッションセットに含めることができず、常に個別にリクエストする必要があります。
+
+パーミッションセットもLexiconであり、同じツールを使って公開されます。`goat`を使ってLexiconを作成、リント、公開する方法については、[Lexiconの公開](/guides/publishing-lexicons)を参照してください。
+
+## プログレッシブスコープリクエスト
+
+アプリはサインイン時にすべてのパーミッションをリクエストする必要はありません。最小限のスコープから始めて、ユーザーが機能にオプトインするにつれて後からさらにリクエストすることができます。動的なスコープ選択や既存セッションのアップグレードを含む実装パターンについては、[OAuth Patterns](/guides/oauth-patterns#progressive-scope-requests)を参照してください。
+
+## 参考資料とリソース
+
+- [Auth](/guides/auth)
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/about-oauth)
+- [パーミッションリクエスト](/guides/permission-requests)
+- [OAuth Patterns](/guides/oauth-patterns)（上級トピック）
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

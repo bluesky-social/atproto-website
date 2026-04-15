@@ -1,4 +1,5 @@
 import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
 import oauth from "./oauth-only.png"
 import skyblur from "./skyblur-oauth.png"
 import granular from "./skyblur-granular.png"
@@ -19,7 +20,7 @@ This page explains how to **use** permission scopes in your OAuth flow. If you'r
 
 This guide describes how to request and define permissions for your atproto application. [OAuth](/guides/auth) handles authorization, and this page covers how to specify *what* your app can access.
 
-Control over atproto resources is granted using [permissions](/specs/permission). Individual permissions like `repo:com.example.post` grant access to specific record types or API endpoints. Related permissions can be bundled into a **permission set** with a human-readable title and description — these are what users see in the authorization dialog.
+Control over atproto resources is granted using [permissions](/specs/permission). Individual permissions like `repo:com.example.post` grant access to writing specific record types or API endpoints. Related permissions can be bundled into a **permission set** with a human-readable title and description — these are what users see in the authorization dialog.
 
 If you're building an app with **custom Lexicons**, you should define permission sets for them. This gives users clear descriptions of what your app can do, rather than a list of opaque namespace IDs. See [Permission Set design](/guides/permission-sets#permission-set-design) for the structure.
 
@@ -41,17 +42,22 @@ From a user experience perspective, it's best to keep the number of requested pe
 
 ## Permission types
 
-Permissions relate to user owned resources on PDS instances are are represented by five types:
+Permissions relate to user-owned resources on PDS instances and are represented by five types:
 
-- `repo`: Public Repository (records and collections)
-- `rpc`: Service Authentication (API calls to external services)
-- `blob`: uploaded media files
-- `identity`: DID and handle
-- `account`: hosting status, email address
+<ResponsiveTable
+  columns={[{label: 'Type'}, {label: 'Description'}, {label: 'Examples'}]}
+  rows={[
+    [{label: 'repo'}, {label: 'Write access to records in the user\'s repository'}, {label: 'repo:com.example.post, repo:com.example.post?action=create'}],
+    [{label: 'rpc'}, {label: 'Authenticated calls to remote API endpoints'}, {label: 'rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview, rpc:app.example.moderation.createReport?aud=*'}],
+    [{label: 'blob'}, {label: 'Media file uploads to the PDS. Cannot be included in permission sets.'}, {label: 'blob:*/* (any type), blob:image/* (images only)'}],
+    [{label: 'identity'}, {label: 'DID document and handle'}, {label: 'identity:handle, identity:*'}],
+    [{label: 'account'}, {label: 'Account hosting details. Cannot be included in permission sets.'}, {label: 'account:email, account:email?action=manage'}],
+  ]}
+/>
 
-Wildcards (*) are allowed in scope string syntax, and grants access to all records — the most common example being `blob:*/*`, for working with images and video. Partial wildcards are *not* supported — for example, `app.bsky.*` is not a valid scope string. If you wanted to request multiple permissions from a particular namespace or Lexicon, you would need to list them out individually, or use a [permission set](/guides/permission-sets). This is intentional, to avoid overbroad permission requests.
+Wildcards (*) are allowed in scope string syntax, and grants access to all records — the most common example being `blob:*/*`, for working with images and video. Partial wildcards are *not* supported — for example, `repo: app.bsky.*` is not a valid scope string. If you wanted to request multiple permissions from a particular namespace or Lexicon, you would need to list them out individually, or use a [permission set](/guides/permission-sets). This is intentional, to avoid overbroad permission requests.
 
-Permission sets are themselves Lexicon schemas and are namespaced like other Lexicons. Unlike other Lexicons, permission sets are prefixed with `include:` in the scope string, and are dynamic; they can be updated.
+Permission sets are themselves Lexicon schemas and are namespaced like other Lexicons. Permission sets are prefixed with `include:` in the scope string. Unlike other Lexicons, they can be updated in [most contexts](#rolling-out-changes).
 
 ## Clients
 
@@ -119,9 +125,9 @@ This is all at the discretion of app developers and Lexicon designers. We provid
 
 - [Auth](/guides/auth)
 - [SDK authentication](/guides/sdk-auth)
-- [About OAuth](/guides/oauth-patterns)
+- [About OAuth](/guides/about-oauth)
 - [Permission Sets](/guides/permission-sets)
-- [OAuth Patterns](/guides/oauth-advanced) (advanced topics)
+- [OAuth Patterns](/guides/oauth-patterns)
 - [Publishing Lexicons](/guides/publishing-lexicons)
 - [OAuth spec](/specs/oauth)
 - [Permissions spec](/specs/permission)

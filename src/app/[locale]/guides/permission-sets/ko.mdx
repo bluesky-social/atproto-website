@@ -1,51 +1,90 @@
 import {Container} from "@/components/Container"
-import oauthdomain from "./oauth-domain.jpg"
+import PermissionSetLexicon from '../permission-requests/_snippets/permission-set-lexicon.mdx'
 
 export const header = {
-  title: '스코프',
-  description: 'OAuth 권한 스코프 및 세트',
+  title: '권한 집합',
+  description: 'OAuth 권한 스코프 및 집합',
 }
 
-## OAuth 스코프 구현하기
+이 페이지는 커스텀 Lexicon을 위한 권한 집합을 **정의하고 게시하는** 방법을 설명합니다. OAuth 플로우에서 기존 권한 스코프를 **사용**하기만 원한다면, [권한 요청](/guides/permission-requests)을 참조하세요.
 
-OAuth 플로우는 세션에서 부여된 접근 수준을 설명하는 권한 "스코프"를 요구합니다. 현재 세분화된 권한은 `bsky.social` 호스팅 서비스와 [자체 호스팅 PDS 배포판](/guides/self-hosting)에 구현되어 있습니다. 권한 세트(Lexicon 해석 포함)에 대한 작업이 진행 중입니다. 개발자는 더 세분화된 권한을 구현하기 시작할 수 있습니다 — 예를 들어, 앱이 특정 레코드 유형이나 API 엔드포인트에 대한 권한만 요청하는 경우입니다. 대부분의 앱은 사용 가능해질 때 더 높은 수준의 "권한 세트"를 사용할 것으로 예상되며, 이는 부여되는 권한에 대해 더 이해하기 쉬운 언어를 제공할 것입니다.
+## 권한 집합 이해하기
 
-Bluesky로 로그인하기 위해 서드파티 AT 애플리케이션이 요청해야 하는 최소한의 OAuth 권한 세트는 다음과 같습니다:
+OAuth 플로우는 세션에서 부여된 접근 수준을 설명하는 권한 "스코프"를 사용합니다. 사용자의 계정에 광범위한 접근을 요청하는 대신, atproto 앱은 특정 레코드 유형이나 API 엔드포인트에 대해 세분화된 권한을 요청해야 합니다.
+
+핵심 패턴은 간단합니다: **앱이 필요로 하는 컬렉션에만 접근을 요청하세요**. 예를 들어, 앱이 자체 Lexicon을 사용하여 게시물과 좋아요를 생성하는 경우:
+
+```
+repo:com.example.post repo:com.example.like blob:*/*
+```
+
+이렇게 하면 앱이 `com.example.post`와 `com.example.like` 컬렉션의 레코드를 생성/업데이트/삭제하는 권한과 미디어를 업로드하는 권한을 갖게 됩니다. 사용자의 인가 대화 상자에는 `transition:generic`과 같은 광범위한 스코프가 생성하는 불안감을 주는 "거의 모든 것에 접근" 대신, 이러한 특정 권한이 명확하게 표시됩니다.
+
+더 깔끔한 인가 UI를 위해, 관련 권한들을 사람이 읽을 수 있는 설명을 가진 **권한 집합**으로 묶을 수 있습니다. 아래의 [권한 집합 설계](#permission-set-design)를 참조하세요.
+
+### 빠른 시작
+
+자체 레코드 유형을 생성하는 앱을 위한 최소한의 `oauth-client-metadata.json` 예시:
+
+```json
+{
+  "client_id": "https://example.com/oauth-client-metadata.json",
+  "client_name": "My Example App",
+  "client_uri": "https://example.com",
+  "redirect_uris": ["https://example.com/oauth/callback"],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "scope": "atproto repo:com.example.post repo:com.example.like blob:*/*",
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}
+```
+
+이것은 아이덴티티(`atproto`), 두 레코드 컬렉션에 대한 쓰기 접근, 미디어 업로드를 요청합니다. 완전한 설정 가이드는 [About OAuth](/guides/about-oauth)를 참조하세요.
+
+### 최소한의 권한
+
+atproto OAuth를 사용하는 앱(아이덴티티 전용, 데이터 접근 없음)의 절대 최소값:
 - `atproto`
 
-Bluesky 프로필 정보를 사용하는 경우, 다음도 필요할 수 있습니다:
+Bluesky 프로필 데이터도 필요한 경우:
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
-업로드한 이미지나 동영상을 생성하는 레코드(게시물)에 연결해야 하는 경우, 다음도 필요합니다:
+이미지나 동영상을 업로드해야 하는 경우:
 - `blob:*/*`
 
-atproto에서 OAuth 스코프의 사용성은 아직 발전 중입니다. 이 최소 세트는 불필요한 권한을 부여하지 않는 앱 개발자를 위한 검증된 시작점을 제공하도록 설계되었습니다. 세분화된 권한 스코프를 완성하는 동안, "전환 스코프"라고 하는 임시 조대 권한 스코프 세트도 지원하고 있습니다. 현재 전환 스코프나 앱 비밀번호 사용 중단 계획은 없습니다. 이러한 전환 스코프에 대한 개요와 OAuth에 대한 심층적인 정보는 [인증 스코프](/specs/oauth#authorization-scopes)를 참조하세요. 세분화된 권한 스코프에 대해서는 [권한](/specs/permission)을 참조하세요.
+`transition:generic`과 같은 조대 "전환 스코프"는 여전히 지원되지만, 세분화된 권한 채택을 권장합니다. 전환 스코프 개요는 [Authorization Scopes](/specs/oauth#authorization-scopes)를 참조하세요. 완전한 세분화된 권한 명세는 [Permissions](/specs/permission)를 참조하세요.
 
-## 클라이언트
+## 권한 집합 설계
 
-OAuth 클라이언트 소프트웨어는 전역적으로 고유한 `client_id`로 식별됩니다. 동일한 소프트웨어의 서로 다른 변형은 서로 다른 `client_id` 값을 가질 수 있습니다. 예를 들어, 동일한 소프트웨어의 브라우저 앱과 Android(모바일 OS) 변형은 서로 다른 `client_id` 값을 가질 수 있습니다. `client_id`는 클라이언트 메타데이터 JSON 문서를 가져올 수 있는 완전히 정규화된 웹 URL이어야 합니다. 예를 들어, `https://app.example.com/oauth-client-metadata.json`. `client_id`에 대한 추가 정보:
+완전한 기능을 갖춘 클라이언트 앱은 동작하기 위해 많은 수의 세분화된 권한이 필요합니다: 수십 또는 수백 개의 개별 권한이 필요할 수 있습니다. 권한 관리를 단순화하기 위해 Lexicon 설계자는 게시하는 스키마의 일부로 권한 "집합"을 정의할 수 있습니다. 이러한 권한 집합은 자체적으로 Lexicon 스키마이며 `com.example.authBasicFeatures`와 같이 네임스페이스 ID로 참조됩니다.
 
-- W3C URL 명세를 따르는 올바른 형식의 URL이어야 합니다
-- 스키마는 `https://`이어야 하며 포트 번호가 포함되어서는 안 됩니다. 개발을 위한 `http://localhost` `client_id` 값에 대한 [특별 예외](/specs/oauth#localhost-client-development)가 있습니다.
-- 경로에 `oauth-client-metadata.json`을 포함할 필요는 없지만 유용한 관례입니다.
+예를 들어, 애플리케이션은 `include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`와 같은 권한 집합을 요청할 수 있습니다. 이는 앱이 동작하는 데 필요한 권한 집합을 정의하는 Lexicon으로 확인됩니다:
 
-<Note>
-`oauth-client-metadata.json` 대신 `client-metadata.json`을 사용하고 있었다면, URL 문자열 대신 도메인이 인증 플로우 페이지에 표시되도록 이 변경을 적용할 수 있습니다.
-</Note>
+<PermissionSetLexicon />
 
-<Container>
-  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
-</Container>
+`app.example.feed.authOnlyPost` 및 `com.example.authBasicFeatures` 예시에서 `auth` 접두사를 참고하세요. 이는 Lexicon이 권한 집합으로 사용하도록 설계되었음을 나타내는 명명 규칙입니다.
 
-인증 플로우 페이지에는 부여되는 모든 관련 권한이 표시됩니다. 이는 [세분화된 권한](/specs/permission)을 사용하는 앱과 [전환용](/specs/oauth#authorization-scopes) OAuth 스코프를 사용하는 앱 모두에 해당됩니다.
+권한 집합은 집합 자체와 동일한 NSID 네임스페이스 아래의 리소스를 참조하는 권한만 표현할 수 있습니다. 예를 들어, 집합 `app.example.feed.authOnlyPost`는 `app.example.feed.post` 레코드에 대한 권한과 원격 서비스에 `app.example.feed.getPostThread` API 엔드포인트 요청을 만드는 권한을 포함할 수 있습니다. 하지만 `app.example.actor.profile`에 대한 권한은 부여할 수 없습니다. 계층 구조에서 한 단계 위인 권한 집합 `app.example.authFull`은 이러한 모든 리소스에 대한 권한을 포함할 수 있습니다.
 
-클라이언트 앱은 인증 플로우 중에 실제로 승인된 인증 스코프를 반드시 확인해야 합니다. 특히, 계정 이메일 주소 읽기 권한(`account:email`)을 요청할 때, 사용자가 다른 권한을 부여하면서 해당 권한을 거부할 수 있습니다. 이론적으로, 전체 요청이 승인되는 동안 개별 권한이 거부될 수 있습니다.
+`title`과 `details` 필드는 설명적이며 OAuth 플로우의 일부로 표시됩니다. 이러한 설명 필드의 국제화가 지원됩니다. 자세한 내용은 [권한 집합 명세](/specs/permission#permission-sets)를 참조하세요.
 
-## 추가 자료
+`rpc` 권한에서 `inheritAud`를 사용하면 [상속 동작을 제어](/specs/permission#rpc)할 수 있습니다.
 
-- [인증](/guides/auth)
-- [SDK 인증](/guides/sdk-auth)
-- [OAuth 패턴](/guides/oauth-patterns)
-- [권한 요청](/guides/permission-sets)
-- [OAuth 명세](/specs/oauth)
-- [권한 명세](/specs/permission)
+이미지/동영상 처리를 위한 `blob:*/*` 권한은 권한 집합에 포함할 수 없으며 항상 별도로 요청해야 합니다.
+
+권한 집합도 Lexicon이며, 동일한 도구를 사용하여 게시됩니다. `goat`를 사용하여 Lexicon을 만들고, 린트하고, 게시하는 방법은 [Lexicon 게시하기](/guides/publishing-lexicons)를 참조하세요.
+
+## 점진적 스코프 요청
+
+앱은 로그인 시 모든 권한을 요청할 필요가 없습니다. 최소한의 스코프로 시작하고 사용자가 기능에 참여함에 따라 나중에 더 요청할 수 있습니다. 동적 스코프 선택 및 기존 세션 업그레이드를 포함한 구현 패턴은 [OAuth Patterns](/guides/oauth-patterns#progressive-scope-requests)를 참조하세요.
+
+## 추가 읽을거리 및 자료
+
+- [Auth](/guides/auth)
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/about-oauth)
+- [권한 요청](/guides/permission-requests)
+- [OAuth Patterns](/guides/oauth-patterns) (고급 주제)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

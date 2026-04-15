@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'OAuth Patterns - AT Protocol Docs',
-  description: 'Advanced OAuth patterns for AT Protocol applications.',
+  title: 'About OAuth - AT Protocol Docs',
+  description: 'OAuth implementation patterns for atproto applications.',
 }
 
 export default async function HomePage({ params }: any) {
