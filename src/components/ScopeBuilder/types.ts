@@ -1,6 +1,16 @@
 export type ResourceType = 'repo' | 'rpc' | 'blob' | 'account' | 'identity'
 export type ScopeResourceType = ResourceType | 'include' | 'atproto' | 'transition'
 
+export interface RepoPermission {
+  collection: string // NSID
+  actions: Array<'create' | 'update' | 'delete'>
+}
+
+export interface ExpandedPermissions {
+  repo?: RepoPermission[]
+  rpc?: string[] // endpoint NSIDs (lxm values); inheritAud is implicit in the set's scope string
+}
+
 export interface Permission {
   id: string
   resource: ResourceType
@@ -21,7 +31,7 @@ export interface CuratedScope {
   scopeString: string
   kind: 'permission-set' | 'individual'
   resourceType: ScopeResourceType
-  expandedPermissions?: string[]
+  expandedPermissions?: ExpandedPermissions
   replacesTransition?: 'transition:generic' | 'transition:chat.bsky' | 'transition:email'
   specLink: string
   explanation: string
