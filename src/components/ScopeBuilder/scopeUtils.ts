@@ -44,3 +44,14 @@ export function buildScopeString(p: Permission): string {
     }
   }
 }
+
+export function assembleScopeString(scopes: string[]): string {
+  const seen = new Set<string>()
+  const ordered: string[] = []
+  for (const s of scopes) {
+    if (s === 'atproto' || seen.has(s)) continue
+    seen.add(s)
+    ordered.push(s)
+  }
+  return ['atproto', ...ordered].join(' ')
+}

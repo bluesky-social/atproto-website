@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString } from './scopeUtils'
+import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString, assembleScopeString } from './scopeUtils'
 import type { Permission } from './types'
 
 describe('encodeAudDid', () => {
@@ -102,5 +102,23 @@ describe('buildScopeString', () => {
   it('builds an identity:* scope', () => {
     const p: Permission = { id: '1', resource: 'identity', attr: '*' }
     expect(buildScopeString(p)).toBe('identity:*')
+  })
+})
+
+describe('assembleScopeString', () => {
+  it('always prefixes atproto', () => {
+    expect(assembleScopeString([])).toBe('atproto')
+  })
+  it('joins multiple scopes with spaces', () => {
+    expect(assembleScopeString(['repo:app.bsky.feed.post', 'blob:*/*'])).toBe('atproto repo:app.bsky.feed.post blob:*/*')
+  })
+  it('deduplicates identical scopes', () => {
+    expect(assembleScopeString(['blob:*/*', 'blob:*/*', 'repo:app.bsky.feed.post'])).toBe('atproto blob:*/* repo:app.bsky.feed.post')
+  })
+  it('does not re-add atproto if caller included it', () => {
+    expect(assembleScopeString(['atproto', 'repo:app.bsky.feed.post'])).toBe('atproto repo:app.bsky.feed.post')
+  })
+  it('preserves the caller-provided order (besides atproto always first)', () => {
+    expect(assembleScopeString(['blob:*/*', 'repo:app.bsky.feed.post'])).toBe('atproto blob:*/* repo:app.bsky.feed.post')
   })
 })
