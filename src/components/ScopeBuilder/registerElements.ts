@@ -1,2 +1,7 @@
-import './scope-builder'
-import './permission-author'
+export function registerScopeBuilder() {
+  return import('./scope-builder')
+}
+
+export function registerPermissionAuthor() {
+  return import('./permission-author')
+}
