@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString, assembleScopeString } from './scopeUtils'
-import type { Permission } from './types'
+import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString, assembleScopeString, buildIncludeScopeString, buildPermissionSetLexicon, isInSetNamespace } from './scopeUtils'
+import type { Permission, PermissionSetMeta } from './types'
 
 describe('encodeAudDid', () => {
   it('percent-encodes # as %23 in service fragment', () => {
@@ -120,5 +120,68 @@ describe('assembleScopeString', () => {
   })
   it('preserves the caller-provided order (besides atproto always first)', () => {
     expect(assembleScopeString(['blob:*/*', 'repo:app.bsky.feed.post'])).toBe('atproto blob:*/* repo:app.bsky.feed.post')
+  })
+})
+
+describe('buildIncludeScopeString', () => {
+  it('builds an include: string with encoded aud', () => {
+    expect(buildIncludeScopeString('com.example.authBasic', 'did:web:api.example.com#svc_appview')).toBe('include:com.example.authBasic?aud=did:web:api.example.com%23svc_appview')
+  })
+  it('omits the ?aud= suffix when no aud given', () => {
+    expect(buildIncludeScopeString('com.example.authBasic', '')).toBe('include:com.example.authBasic')
+  })
+})
+
+describe('isInSetNamespace', () => {
+  it('accepts a child NSID', () => {
+    expect(isInSetNamespace('com.example.authBasic', 'com.example.post')).toBe(true)
+  })
+  it('accepts a grandchild NSID', () => {
+    expect(isInSetNamespace('com.example.authBasic', 'com.example.feed.post')).toBe(true)
+  })
+  it('rejects a sibling NSID in a different subnamespace', () => {
+    expect(isInSetNamespace('com.example.feed.authBasic', 'com.example.actor.profile')).toBe(false)
+  })
+  it('accepts a wildcard collection', () => {
+    expect(isInSetNamespace('com.example.authBasic', '*')).toBe(true)
+  })
+})
+
+describe('buildPermissionSetLexicon', () => {
+  it('builds a complete Lexicon document from meta and permissions', () => {
+    const meta: PermissionSetMeta = { nsid: 'com.example.authBasic', title: 'Basic', detail: 'Basic app access' }
+    const permissions: Permission[] = [
+      { id: '1', resource: 'repo', collection: 'com.example.post' },
+      { id: '2', resource: 'rpc', lxm: 'com.example.getFeed', aud: '', inheritAud: true },
+    ]
+    expect(buildPermissionSetLexicon(meta, permissions)).toEqual({
+      lexicon: 1,
+      id: 'com.example.authBasic',
+      defs: {
+        main: {
+          type: 'permission-set',
+          title: 'Basic',
+          detail: 'Basic app access',
+          permissions: [
+            { type: 'permission', resource: 'repo', collection: ['com.example.post'] },
+            { type: 'permission', resource: 'rpc', lxm: ['com.example.getFeed'], inheritAud: true },
+          ],
+        },
+      },
+    })
+  })
+  it('omits action field when not provided on repo', () => {
+    const meta: PermissionSetMeta = { nsid: 'com.example.x', title: 't', detail: 'd' }
+    const result = buildPermissionSetLexicon(meta, [{ id: '1', resource: 'repo', collection: 'com.example.post' }])
+    expect(result.defs.main.permissions[0]).not.toHaveProperty('action')
+  })
+  it('skips permissions with unsupported resource types (blob/account/identity)', () => {
+    const meta: PermissionSetMeta = { nsid: 'com.example.x', title: 't', detail: 'd' }
+    const result = buildPermissionSetLexicon(meta, [
+      { id: '1', resource: 'repo', collection: 'com.example.post' },
+      { id: '2', resource: 'blob', accept: ['*/*'] },
+      { id: '3', resource: 'account', attr: 'email' },
+    ])
+    expect(result.defs.main.permissions).toHaveLength(1)
   })
 })

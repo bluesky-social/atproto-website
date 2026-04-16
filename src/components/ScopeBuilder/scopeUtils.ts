@@ -1,4 +1,4 @@
-import type { Permission } from './types'
+import type { Permission, PermissionSetMeta, PermissionSetLexicon, PermissionJsonForm } from './types'
 
 /**
  * Percent-encodes the `#` in a DID service reference (e.g. did:web:x#type → did:web:x%23type).
@@ -54,4 +54,46 @@ export function assembleScopeString(scopes: string[]): string {
     ordered.push(s)
   }
   return ['atproto', ...ordered].join(' ')
+}
+
+export function buildIncludeScopeString(setNsid: string, aud: string): string {
+  if (!aud) return `include:${setNsid}`
+  return `include:${setNsid}?aud=${encodeAudDid(aud)}`
+}
+
+export function isInSetNamespace(setNsid: string, candidateNsid: string): boolean {
+  if (candidateNsid === '*') return true
+  const setParts = setNsid.split('.')
+  const setNamespace = setParts.slice(0, -1).join('.')
+  if (!setNamespace) return false
+  return candidateNsid === setNamespace || candidateNsid.startsWith(setNamespace + '.')
+}
+
+export function buildPermissionSetLexicon(meta: PermissionSetMeta, permissions: Permission[]): PermissionSetLexicon {
+  const jsonPermissions: PermissionJsonForm[] = permissions
+    .filter((p) => p.resource === 'repo' || p.resource === 'rpc')
+    .map((p) => {
+      if (p.resource === 'repo') {
+        const out: PermissionJsonForm = { type: 'permission', resource: 'repo', collection: [p.collection ?? '*'] }
+        if (p.actions && p.actions.length > 0) out.action = [...p.actions]
+        return out
+      }
+      const out: PermissionJsonForm = { type: 'permission', resource: 'rpc', lxm: [p.lxm ?? '*'] }
+      if (p.inheritAud) out.inheritAud = true
+      else if (p.aud) out.aud = p.aud
+      return out
+    })
+
+  return {
+    lexicon: 1,
+    id: meta.nsid,
+    defs: {
+      main: {
+        type: 'permission-set',
+        title: meta.title,
+        detail: meta.detail,
+        permissions: jsonPermissions,
+      },
+    },
+  }
 }
