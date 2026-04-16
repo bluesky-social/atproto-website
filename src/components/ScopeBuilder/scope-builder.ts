@@ -207,7 +207,7 @@ class ScopeBuilderElement extends HTMLElement {
           <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 px-3">
             Bluesky Permission Sets
           </h3>
-          <div class="divide-y divide-gray-100 dark:divide-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>label]:border-t [&>label]:border-t-gray-100 dark:[&>label]:border-t-gray-700 [&>label:first-child]:border-t-0">
             ${permissionSets.map((s) => this._renderScopeItem(s)).join('')}
           </div>
         </section>
@@ -217,7 +217,7 @@ class ScopeBuilderElement extends HTMLElement {
           <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 px-3">
             Individual Scopes
           </h3>
-          <div class="divide-y divide-gray-100 dark:divide-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>label]:border-t [&>label]:border-t-gray-100 dark:[&>label]:border-t-gray-700 [&>label:first-child]:border-t-0">
             ${individualScopes.map((s) => this._renderScopeItem(s)).join('')}
           </div>
         </section>

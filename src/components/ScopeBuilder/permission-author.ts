@@ -4,7 +4,6 @@ import {
   buildIncludeScopeString,
   isValidNsid,
   isPartialWildcard,
-  isInSetNamespace,
 } from './scopeUtils'
 import type { Permission, PermissionSetMeta } from './types'
 
@@ -432,18 +431,6 @@ class PermissionAuthorElement extends HTMLElement {
     const metaFilled = !!(meta.nsid || meta.title)
     const showSetPrompt = permissions.length >= 2 && !metaFilled
 
-    // Namespace mismatch warning: any permission NSID outside set namespace
-    let namespaceMismatch = false
-    if (meta.nsid) {
-      for (const p of permissions) {
-        const nsidToCheck = p.resource === 'repo' ? p.collection : p.resource === 'rpc' ? p.lxm : null
-        if (nsidToCheck && nsidToCheck !== '*' && !isInSetNamespace(meta.nsid, nsidToCheck)) {
-          namespaceMismatch = true
-          break
-        }
-      }
-    }
-
     const permissionsListHtml =
       permissions.length === 0
         ? `<p class="text-sm text-gray-500 dark:text-gray-400 py-2">No permissions added yet.</p>`
@@ -474,14 +461,8 @@ class PermissionAuthorElement extends HTMLElement {
         </div>`
       : ''
 
-    const namespaceMismatchHtml = namespaceMismatch
-      ? `<div class="mb-6 rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-3 py-2 text-xs text-amber-700 dark:text-amber-400 break-words">
-          Warning: one or more permission NSIDs fall outside the namespace of <code class="font-mono break-all">${escapeHtml(meta.nsid)}</code>. Make sure your set NSID covers all permissions.
-        </div>`
-      : ''
-
     this.innerHTML = `
-      <div class="not-prose font-sans">
+      <div class="not-prose font-sans max-w-full">
         <!-- Row 1: Add Permission + Permission Set Metadata side by side -->
         <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 items-start mb-6">
 
@@ -560,9 +541,6 @@ class PermissionAuthorElement extends HTMLElement {
           </section>
 
         </div>
-
-        <!-- Namespace mismatch warning (full width, between Row 1 and Permissions) -->
-        ${namespaceMismatchHtml}
 
         <!-- Row 2: Permissions list (full width) -->
         <section class="mb-6">
