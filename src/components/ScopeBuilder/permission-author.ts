@@ -6,16 +6,20 @@ import {
   isPartialWildcard,
   isInSetNamespace,
 } from './scopeUtils'
-import type { Permission, PermissionSetMeta, ResourceType } from './types'
+import type { Permission, PermissionSetMeta } from './types'
 
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
 
+// Only repo and rpc can be bundled in permission sets (per the permission spec).
+// blob, account, and identity must always be requested directly as scopes.
+type SetResource = 'repo' | 'rpc'
+
 interface PermissionAuthorState {
   permissions: Permission[]
   meta: PermissionSetMeta
-  draftResource: ResourceType
+  draftResource: SetResource
   draft: Partial<Permission>
   draftError: string | null
 }
@@ -92,7 +96,7 @@ class PermissionAuthorElement extends HTMLElement {
 
     // Resource type dropdown
     if (target instanceof HTMLSelectElement && target.dataset.field === 'draftResource') {
-      this.state.draftResource = target.value as ResourceType
+      this.state.draftResource = target.value as SetResource
       this.state.draft = {}
       this.state.draftError = null
       this.render()
@@ -336,77 +340,6 @@ class PermissionAuthorElement extends HTMLElement {
         </div>`
     }
 
-    if (draftResource === 'blob') {
-      const acceptDisplay = Array.isArray(draft.accept) ? draft.accept.join(', ') : ''
-      return `
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Accepted MIME types</label>
-          <input
-            type="text"
-            data-field="draft-accept"
-            value="${escapeAttr(acceptDisplay)}"
-            placeholder="image/jpeg, image/png (leave blank for */*)"
-            class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Comma-separated. Leave blank to allow all types (*/*)</p>
-        </div>`
-    }
-
-    if (draftResource === 'account') {
-      const currentAttr = draft.attr ?? 'email'
-      const currentAction = draft.action ?? 'read'
-      return `
-        <div class="space-y-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Attribute</label>
-            <select
-              data-field="attr"
-              class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              ${['email', 'repo']
-                .map(
-                  (v) =>
-                    `<option value="${v}" ${currentAttr === v ? 'selected' : ''}>${v}</option>`,
-                )
-                .join('')}
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Action</label>
-            <select
-              data-field="action"
-              class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              ${['read', 'manage']
-                .map(
-                  (v) =>
-                    `<option value="${v}" ${currentAction === v ? 'selected' : ''}>${v}</option>`,
-                )
-                .join('')}
-            </select>
-          </div>
-        </div>`
-    }
-
-    if (draftResource === 'identity') {
-      const currentAttr = draft.attr ?? 'handle'
-      return `
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Attribute</label>
-          <select
-            data-field="attr"
-            class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            ${['handle', '*']
-              .map(
-                (v) =>
-                  `<option value="${v}" ${currentAttr === v ? 'selected' : ''}>${v === '*' ? '* (all identity attributes)' : v}</option>`,
-              )
-              .join('')}
-          </select>
-        </div>`
-    }
-
     return ''
   }
 
@@ -479,6 +412,22 @@ class PermissionAuthorElement extends HTMLElement {
   // -------------------------------------------------------------------------
 
   private render() {
+    // Capture focus + cursor position before we blow away the DOM.
+    // Without this, typing in any input that triggers a re-render (e.g. meta-nsid,
+    // which updates the namespace warning) loses focus on every keystroke.
+    const active = document.activeElement as HTMLElement | null
+    const focusField =
+      active && this.contains(active) ? active.dataset.field ?? null : null
+    let selectionStart: number | null = null
+    let selectionEnd: number | null = null
+    if (
+      focusField &&
+      (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement)
+    ) {
+      selectionStart = active.selectionStart
+      selectionEnd = active.selectionEnd
+    }
+
     const { permissions, meta, draftResource, draftError } = this.state
     const metaFilled = !!(meta.nsid || meta.title)
     const showSetPrompt = permissions.length >= 2 && !metaFilled
@@ -526,116 +475,134 @@ class PermissionAuthorElement extends HTMLElement {
       : ''
 
     const namespaceMismatchHtml = namespaceMismatch
-      ? `<div class="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
-          Warning: one or more permission NSIDs fall outside the namespace of <code class="font-mono">${escapeHtml(meta.nsid)}</code>. Make sure your set NSID covers all permissions.
+      ? `<div class="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-3 py-2 text-xs text-amber-700 dark:text-amber-400 break-words">
+          Warning: one or more permission NSIDs fall outside the namespace of <code class="font-mono break-all">${escapeHtml(meta.nsid)}</code>. Make sure your set NSID covers all permissions.
         </div>`
       : ''
 
     this.innerHTML = `
       <div class="not-prose font-sans">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <!-- Row 1: Add Permission + Permission Set Metadata side by side -->
+        <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 items-start mb-6">
 
-          <!-- LEFT PANEL -->
-          <div class="space-y-6">
-
-            <!-- Section 1: Permissions list -->
-            <section>
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-                Permissions
-              </h3>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 min-h-[3rem]">
-                ${permissionsListHtml}
-              </div>
-            </section>
-
-            <!-- Section 2: Add permission form -->
-            <section>
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-                Add Permission
-              </h3>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Resource type</label>
-                  <select
-                    data-field="draftResource"
-                    class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    ${(['repo', 'rpc', 'blob', 'account', 'identity'] as ResourceType[])
-                      .map(
-                        (r) =>
-                          `<option value="${r}" ${draftResource === r ? 'selected' : ''}>${r}</option>`,
-                      )
-                      .join('')}
-                  </select>
-                </div>
-
-                ${this.renderDraftFields()}
-
-                ${errorHtml}
-
-                <button
-                  data-action="add-permission"
-                  class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 active:bg-blue-800 transition-colors"
-                >
-                  + Add permission
-                </button>
-              </div>
-            </section>
-
-            <!-- Section 3: Permission set metadata -->
-            <section>
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-                Permission Set Metadata
-              </h3>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4">
-                ${setPromptHtml}
-
-                <div>
-                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Set NSID</label>
-                  <input
-                    type="text"
-                    data-field="meta-nsid"
-                    value="${escapeAttr(meta.nsid)}"
-                    placeholder="com.example.myApp.permissions"
-                    class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-                  <input
-                    type="text"
-                    data-field="meta-title"
-                    value="${escapeAttr(meta.title)}"
-                    placeholder="My App Permissions"
-                    class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                  <textarea
-                    data-field="meta-detail"
-                    rows="2"
-                    placeholder="Allows My App to read your posts and profile."
-                    class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  >${escapeHtml(meta.detail)}</textarea>
-                </div>
-
-                ${namespaceMismatchHtml}
-              </div>
-            </section>
-
-          </div>
-
-          <!-- RIGHT PANEL -->
-          <div class="space-y-4 md:sticky md:top-6">
+          <!-- Add Permission -->
+          <section class="min-w-0">
             <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-              Output
+              Add Permission
             </h3>
-            ${this.renderOutput()}
-          </div>
+            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Resource type</label>
+                <select
+                  data-field="draftResource"
+                  class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  ${(['repo', 'rpc'] as SetResource[])
+                    .map(
+                      (r) =>
+                        `<option value="${r}" ${draftResource === r ? 'selected' : ''}>${r}</option>`,
+                    )
+                    .join('')}
+                </select>
+              </div>
+
+              ${this.renderDraftFields()}
+
+              ${errorHtml}
+
+              <button
+                data-action="add-permission"
+                class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 active:bg-blue-800 transition-colors"
+              >
+                + Add permission
+              </button>
+            </div>
+          </section>
+
+          <!-- Permission Set Metadata -->
+          <section class="min-w-0">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+              Permission Set Metadata
+            </h3>
+            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4">
+              ${setPromptHtml}
+
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Set NSID</label>
+                <input
+                  type="text"
+                  data-field="meta-nsid"
+                  value="${escapeAttr(meta.nsid)}"
+                  placeholder="com.example.myApp.permissions"
+                  class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                <input
+                  type="text"
+                  data-field="meta-title"
+                  value="${escapeAttr(meta.title)}"
+                  placeholder="My App Permissions"
+                  class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                <textarea
+                  data-field="meta-detail"
+                  rows="2"
+                  placeholder="Allows My App to read your posts and profile."
+                  class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                >${escapeHtml(meta.detail)}</textarea>
+              </div>
+
+              ${namespaceMismatchHtml}
+            </div>
+          </section>
 
         </div>
+
+        <!-- Row 2: Permissions list (full width) -->
+        <section class="mb-6">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+            Permissions
+          </h3>
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 min-h-[3rem]">
+            ${permissionsListHtml}
+          </div>
+        </section>
+
+        <!-- Row 3: Output (full width) -->
+        <section>
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+            Output
+          </h3>
+          ${this.renderOutput()}
+        </section>
       </div>`
+
+    // Restore focus + cursor position on the same logical field.
+    if (focusField) {
+      const restored = this.querySelector(`[data-field="${focusField}"]`) as
+        | HTMLInputElement
+        | HTMLTextAreaElement
+        | null
+      if (restored) {
+        restored.focus()
+        if (
+          selectionStart !== null &&
+          selectionEnd !== null &&
+          (restored instanceof HTMLInputElement || restored instanceof HTMLTextAreaElement)
+        ) {
+          try {
+            restored.setSelectionRange(selectionStart, selectionEnd)
+          } catch {
+            // setSelectionRange can throw on some input types — ignore.
+          }
+        }
+      }
+    }
   }
 }
 
