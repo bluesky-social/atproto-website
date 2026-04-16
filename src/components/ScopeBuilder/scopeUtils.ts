@@ -1,3 +1,5 @@
+import type { Permission } from './types'
+
 /**
  * Percent-encodes the `#` in a DID service reference (e.g. did:web:x#type → did:web:x%23type).
  */
@@ -14,4 +16,31 @@ export function isValidNsid(nsid: string): boolean {
 export function isPartialWildcard(value: string): boolean {
   if (value === '*') return false
   return value.includes('*')
+}
+
+export function buildScopeString(p: Permission): string {
+  switch (p.resource) {
+    case 'repo': {
+      const base = `repo:${p.collection ?? '*'}`
+      if (!p.actions || p.actions.length === 0) return base
+      return `${base}?${p.actions.map((a) => `action=${a}`).join('&')}`
+    }
+    case 'rpc': {
+      const audEncoded = encodeAudDid(p.aud ?? '')
+      return `rpc:${p.lxm ?? '*'}?aud=${audEncoded}`
+    }
+    case 'blob': {
+      const accepts = p.accept && p.accept.length > 0 ? p.accept : ['*/*']
+      if (accepts.length === 1) return `blob:${accepts[0]}`
+      return `blob?${accepts.map((a) => `accept=${a}`).join('&')}`
+    }
+    case 'account': {
+      const base = `account:${p.attr ?? ''}`
+      if (p.action && p.action !== 'read') return `${base}?action=${p.action}`
+      return base
+    }
+    case 'identity': {
+      return `identity:${p.attr ?? '*'}`
+    }
+  }
 }

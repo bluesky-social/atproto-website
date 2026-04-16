@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { encodeAudDid, isValidNsid, isPartialWildcard } from './scopeUtils'
+import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString } from './scopeUtils'
+import type { Permission } from './types'
 
 describe('encodeAudDid', () => {
   it('percent-encodes # as %23 in service fragment', () => {
@@ -54,5 +55,52 @@ describe('isPartialWildcard', () => {
   })
   it('does NOT flag a valid NSID', () => {
     expect(isPartialWildcard('app.bsky.feed.post')).toBe(false)
+  })
+})
+
+describe('buildScopeString', () => {
+  it('builds a repo scope with a single collection', () => {
+    const p: Permission = { id: '1', resource: 'repo', collection: 'app.bsky.feed.post' }
+    expect(buildScopeString(p)).toBe('repo:app.bsky.feed.post')
+  })
+  it('builds a repo scope with actions', () => {
+    const p: Permission = { id: '1', resource: 'repo', collection: 'app.bsky.feed.post', actions: ['create', 'update'] }
+    expect(buildScopeString(p)).toBe('repo:app.bsky.feed.post?action=create&action=update')
+  })
+  it('builds a repo wildcard scope', () => {
+    const p: Permission = { id: '1', resource: 'repo', collection: '*' }
+    expect(buildScopeString(p)).toBe('repo:*')
+  })
+  it('builds an rpc scope with encoded aud', () => {
+    const p: Permission = { id: '1', resource: 'rpc', lxm: 'app.bsky.feed.searchPosts', aud: 'did:web:api.bsky.app#bsky_appview' }
+    expect(buildScopeString(p)).toBe('rpc:app.bsky.feed.searchPosts?aud=did:web:api.bsky.app%23bsky_appview')
+  })
+  it('builds an rpc scope with wildcard aud', () => {
+    const p: Permission = { id: '1', resource: 'rpc', lxm: 'app.bsky.feed.searchPosts', aud: '*' }
+    expect(buildScopeString(p)).toBe('rpc:app.bsky.feed.searchPosts?aud=*')
+  })
+  it('builds a blob scope with default accept', () => {
+    const p: Permission = { id: '1', resource: 'blob', accept: ['*/*'] }
+    expect(buildScopeString(p)).toBe('blob:*/*')
+  })
+  it('builds a blob scope with multiple accepts', () => {
+    const p: Permission = { id: '1', resource: 'blob', accept: ['video/*', 'text/html'] }
+    expect(buildScopeString(p)).toBe('blob?accept=video/*&accept=text/html')
+  })
+  it('builds an account:email scope with default read action', () => {
+    const p: Permission = { id: '1', resource: 'account', attr: 'email' }
+    expect(buildScopeString(p)).toBe('account:email')
+  })
+  it('builds an account:repo?action=manage scope', () => {
+    const p: Permission = { id: '1', resource: 'account', attr: 'repo', action: 'manage' }
+    expect(buildScopeString(p)).toBe('account:repo?action=manage')
+  })
+  it('builds an identity:handle scope', () => {
+    const p: Permission = { id: '1', resource: 'identity', attr: 'handle' }
+    expect(buildScopeString(p)).toBe('identity:handle')
+  })
+  it('builds an identity:* scope', () => {
+    const p: Permission = { id: '1', resource: 'identity', attr: '*' }
+    expect(buildScopeString(p)).toBe('identity:*')
   })
 })
