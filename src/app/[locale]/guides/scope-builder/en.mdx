@@ -1,0 +1,28 @@
+import { ScopeBuilderLoader } from '@/components/ScopeBuilder'
+
+export const header = {
+  title: 'Scope Builder',
+  description: 'Build OAuth scope strings and permission sets interactively',
+}
+
+## From transition scopes to granular permissions
+
+The atproto OAuth system supports both coarse-grained "transition scopes" (like `transition:generic`) and granular permissions. Transition scopes were defined for compatibility with app-password workflows and request broad access — users see them as a single "grant full access" prompt.
+
+Granular permissions let you request only the specific capabilities your app needs. **Permission sets** bundle related permissions together so users see a meaningful, grouped authorization dialog. This is the recommended approach for new apps.
+
+This page provides two tools to help you build scope strings:
+
+1. **Scope Builder** — compose a scope string from existing Bluesky permission sets and individual scopes
+2. **Permission Author** — define a scope string or permission set for your own lexicon
+
+<ScopeBuilderLoader />
+
+## Further Reading and Resources
+
+- [Scopes](/guides/scopes)
+- [Permission Requests](/guides/permission-sets)
+- [Auth](/guides/auth)
+- [OAuth patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
