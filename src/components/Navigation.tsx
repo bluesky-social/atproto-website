@@ -283,6 +283,7 @@ export const navigation: Array<NavGroup> = [
           { title: 'OAuth patterns', href: '/guides/oauth-patterns' },
           { title: 'Scopes', href: '/guides/scopes' },
           { title: 'Permission Requests', href: '/guides/permission-sets' },
+          { title: 'Scope Builder', href: '/guides/scope-builder' },
         ],
       },
       {
