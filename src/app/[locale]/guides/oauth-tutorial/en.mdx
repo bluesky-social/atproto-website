@@ -242,7 +242,7 @@ You can provide these as part of our Railway [deployment guide](https://github.c
 
 You now have a complete, production-deployed app with persistent storage. However, it doesn't actually do anything with the AT Protocol yet! As you add features from here, you'll need to request additional permission scopes during the OAuth flow.
 
-By default, the app requests only the `atproto` scope. The `atproto` scope is required and offers basic authentication for an `atproto` identity, but it does not authorize the client to access any privileged information or perform any actions on behalf of the user. Refer to the [Scopes guide](/guides/scopes) for more information.
+By default, the app requests only the `atproto` scope. The `atproto` scope is required and offers basic authentication for an `atproto` identity, but it does not authorize the client to access any privileged information or perform any actions on behalf of the user. Refer to the [Permission Sets guide](/guides/permission-sets) for more information.
 
 To change the requested scope, update the SCOPE constant in `lib/auth/client.ts`. It should be a space-delimited string:
 

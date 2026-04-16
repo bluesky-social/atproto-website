@@ -1,0 +1,87 @@
+import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
+
+export const header = {
+  title: 'OAuthについて',
+  description: 'atprotoアプリケーション向けのOAuth実装パターン',
+}
+
+このページでは、atprotoアプリケーションで利用できるOAuthライブラリと実装パターンについて説明します。atproto OAuthを初めて使う場合は、ハンズオンチュートリアルから始めることをお勧めします：
+
+- [Node.jsでのOAuth](/guides/oauth-cli-tutorial) - 最小限のCLIアプリ。atproto OAuthの仕組みを理解するのに最適です
+- [GoでのOAuth](/guides/go-oauth-cli-tutorial) - Go CLIアプリからのOAuth
+- [Next.jsでのOAuth](/guides/oauth-tutorial) - AT Protocolログインを備えたウェブアプリの構築
+
+atprotoにおけるOAuthの仕組みの概念的な概要（他のOAuthシステムとの違いを含む）については、[認証の概要](/guides/auth#what-is-o-auth)をご覧ください。
+
+## SDKライブラリ
+
+以下のライブラリは、[DPoP](/guides/oauth-patterns#understanding-d-po-p)、トークンリフレッシュ、セッション管理を含むOAuthフローを処理します。
+
+### TypeScript
+
+- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - フロントエンドのみのアプリケーション（例：SPA）に適しています。
+- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Electronデスクトップアプリまたはサーバーサイドデプロイメントに適しています。
+- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - React Nativeプロジェクト（例：モバイルアプリ）での使用向け
+- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) （これは上記3つのライブラリが依存するコア実装です）
+- [@fujocoded/authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) ([npmjs](https://www.npmjs.com/package/@fujocoded/authproto)) - Astroアプリ向けのコミュニティ実装
+
+### Go
+
+- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([オンラインAPIドキュメント](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - ネイティブアプリまたはサーバーサイドデプロイメントに適しています
+
+## Atproto OAuthサンプルアプリ
+
+これらのシンプルなサンプルアプリは、それぞれのSDKの使用方法を示しています。
+
+<ResponsiveTable
+  columns={[{label: 'サンプルアプリ'}, {label: '言語'}, {label: 'SDK'}, {label: 'アーキテクチャ'}, {label: '機密クライアント？'}, {label: 'localhostの開発クライアントID？', href: '/specs/oauth#localhost-client-development'}]}
+  rows={[
+    [{label: 'cookbook/react-native-oauth', href:' https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-expo'}, {label: 'モバイルアプリ（バックエンドなし）'}, {label: 'いいえ'}, {label: 'いいえ（ホスト型クライアントメタデータが必要）'},],
+    [{label: 'cookbook/vanillajs-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme' }, {label: 'JavaScript'}, {label: '@atproto/oauth-client-browser'}, {label: 'ウェブSPA（バックエンドなし）'}, {label: 'いいえ'}, {label: '任意'},],
+    [{label: 'cookbook/nextjs-oauth', href:' https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-node'}, {label: 'ウェブ BFF'}, {label: '任意'}, {label: '任意'},],
+    [{label: 'cookbook/go-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: 'ウェブ BFF'}, {label: '任意'}, {label: '任意'},],
+    [{label: 'cookbook/go-oauth-cli-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: 'ネイティブ CLI'}, {label: 'いいえ'}, {label: 'いいえ（ホスト型クライアントメタデータが必要）'},],
+    [{label: 'cookbook/python-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme' }, {label: 'Python'}, {label: 'なし'}, {label: 'ウェブ BFF'}, {label: '任意'}, {label: '任意'},]
+  ]}
+/>
+
+<Note>
+Pythonのサンプルは SDK を使用していません！ゼロからOAuth SDKを構築する際の参考として、高度な[OAuthクライアント実装ガイド](https://docs.bsky.app/docs/advanced-guides/oauth-client)と合わせて活用できます
+</Note>
+
+## OAuthフローの仕組み
+
+1. アプリは、要求するスコープとともにユーザーをPDSの認可エンドポイントにリダイレクトします
+2. ユーザーは権限を確認し、アクセスを承認（または拒否）します
+3. PDSは認可コードとともに`redirect_uri`にリダイレクトします
+4. アプリ（またはSDK）がコードをアクセストークンとリフレッシュトークンに交換します
+5. アクセストークンを使用して認証済みのAPIリクエストを行います
+
+SDKはステップ3〜5を自動的に処理します。コールバックエンドポイントはSDKのコールバックハンドラーを呼び出すだけでよく、それによってトークン交換が完了し、認証済みセッションが返されます。そこから、APIコールを行うことができます。詳しくは[読み取りと書き込み](/guides/reads-and-writes)をご覧ください。
+
+## アプリの種類
+
+最も*シンプル*な種類のアプリは、[cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme)の例で示されているように、OAuthセッションがユーザーのデバイスとPDSの間で直接確立されるものです。専用のバックエンドサービスを必要とせず、静的リソースのホスティングのみで済むためシンプルです。
+
+アプリが長期間のセッションを必要としない場合、このアプローチは完全に問題ありません。しかし、他のユースケースでは、アプリが「機密クライアント」ではなく「公開クライアント」であるため、セッションの存続期間が制限されます。機密クライアントになるには、クライアントIDに紐付けられた秘密鍵を確立する必要があります。クライアントが公開されており、ユーザー自身のデバイスで実行される場合、クライアントシークレットを保護することはできません。そのため、機密クライアントの実装にはバックエンドインフラのホスティングが必要となります。これを[cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)と[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme)のサンプルが示しています（どちらも以下で説明する「BFF」パターンを使用）。
+
+機密クライアントと公開クライアントの技術的な詳細については、[クライアントの種類](/specs/oauth#types-of-clients)をご覧ください。
+
+公開クライアントを機密クライアントに「アップグレード」するために使用できる設計戦略がいくつかあります：
+
+- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): OAuthセッションはアプリのバックエンドサーバーとPDSの間で確立されます。このサーバーサイドセッションは、セッションCookieなどのメカニズムを通じてユーザーのフロントエンドセッションと関連付けられます。フロントエンドはバックエンドを経由してPDSへのリクエストをプロキシし、バックエンドがOAuth認可を処理します。
+- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): BFFパターンに似ていますが、セッション確立後にバックエンドがOAuthアクセストークンをフロントエンドに渡し、フロントエンドがPDSへ直接リクエストを行えるようにします。
+- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): サーバーサイドロジックを簡略化したTMBパターンの代替として提案されているもの。
+
+これら3つの中で、BFFパターンが現在、機密クライアントアプリケーションを構築するための推奨アプローチです。これは[cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)と[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme)のサンプルで示されています。
+
+## 参考資料
+
+- [認証](/guides/auth)
+- [SDK認証](/guides/sdk-auth)
+- [権限リクエスト](/guides/permission-requests)
+- [権限セット](/guides/permission-sets)
+- [OAuthパターン](/guides/oauth-patterns)（DPoPなどの高度なトピック）
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)

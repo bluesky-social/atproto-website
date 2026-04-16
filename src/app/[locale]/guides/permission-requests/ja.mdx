@@ -1,0 +1,127 @@
+import {Container} from "@/components/Container"
+import oauth from "./oauth-only.png"
+import skyblur from "./skyblur-oauth.png"
+import granular from "./skyblur-granular.png"
+import lexicon from "./skyblur-lexicon.png"
+import OauthScopeMetadata from './_snippets/oauth-scope-metadata.mdx'
+import OauthAuthUrl from './_snippets/oauth-auth-url.mdx'
+import oauthdomain from "./oauth-domain.jpg"
+
+export const header = {
+  title: 'パーミッションリクエスト',
+  description:
+    'アプリ開発者とLexiconデザイナーのためのパーミッションガイド',
+}
+
+このページでは、OAuthフローにおけるパーミッションスコープの**使い方**について説明します。カスタムLexiconを構築していて、独自のパーミッションセットを**定義・公開**したい場合は、[パーミッションセット](/guides/permission-sets)を参照してください。
+
+## 概要
+
+このガイドでは、atprotoアプリケーションのパーミッションをリクエストおよび定義する方法を説明します。[OAuth](/guides/auth)が認可を処理し、このページではアプリが*何に*アクセスできるかを指定する方法を説明します。
+
+atprotoリソースへのアクセス制御は[パーミッション](/specs/permission)を使って付与されます。`repo:com.example.post`のような個別のパーミッションは、特定のレコードタイプやAPIエンドポイントへのアクセスを許可します。関連するパーミッションは、人間が読める形のタイトルと説明を持つ**パーミッションセット**にまとめることができます。これがユーザーに認可ダイアログで表示されるものです。
+
+**カスタムLexicon**を使ったアプリを構築している場合は、それらのパーミッションセットを定義する必要があります。これにより、不透明なネームスペースIDの羅列ではなく、アプリが何をできるかについて明確な説明をユーザーに提供できます。構造については[パーミッションセットの設計](/guides/permission-sets#permission-set-design)を参照してください。
+
+**既存のLexicon**（Blueskyの`app.bsky.*`など）のみを使ったアプリを構築している場合は、公開されているパーミッションセットを参照するか、個別の細かいパーミッションをリクエストすることができます。ユーザーへの表示方法については[OAuthフローの例](#o-auth-flow-examples)のセクションを参照してください。
+
+## パーミッションのリクエスト
+
+アプリがatprotoのIDプロバイダーとOAuthフローを開始する際、認可リクエストの`scope`パラメーターに含めることで特定のパーミッションセットをリクエストできます。OAuthクライアントを登録する際に[`oauth-client-metadata.json`ファイル](/specs/oauth#clients)内で*スペース区切りのリスト*として指定する必要があります：
+
+<OauthScopeMetadata />
+
+AT Protocol のOAuthでは[Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/)（PAR）が使用されます。クライアントメタデータファイルはセッションのライフサイクル中に動的に取得され、`oauth-client-metadata.json`の`scope`パラメーターはアプリが行う実際の認可HTTPリクエストと*一致する必要があります*：
+
+<OauthAuthUrl />
+
+アプリが必要とする機能をカバーするのに十分なパーミッションのみをリクエストするようにしてください。ユーザーのATレコード（他のアプリケーションからの投稿を含む）の作成、更新、削除に広範なパーミッションを付与する[トランジションスコープ](/specs/oauth#authorization-scopes)も提供していますが、一般的にこのような広範なパーミッションリクエストは避けるべきです。細かいパーミッションはユーザーとの信頼を構築し、認可プロセス中の摩擦を最小限に抑えます。
+
+ユーザーエクスペリエンスの観点からは、リクエストするパーミッションセットの数を少なく保つのが最善です。パーミッションセットが増えるほど認可ダイアログに表示される情報が多くなり、決定疲れを引き起こす可能性があります。ユーザーがリクエストされたパーミッションの一部のみを承認できるようにすることも可能ですが、エッジケースが発生する可能性があります。
+
+## パーミッションの種類
+
+PDSインスタンス上のユーザー所有リソースに関するパーミッションは、5つの種類で表されます：
+
+- `repo`: パブリックリポジトリ（レコードとコレクション）
+- `rpc`: サービス認証（外部サービスへのAPI呼び出し）
+- `blob`: アップロードされたメディアファイル
+- `identity`: DIDとハンドル
+- `account`: ホスティングステータス、メールアドレス
+
+スコープ文字列の構文ではワイルドカード（*）が使用でき、すべてのレコードへのアクセスを許可します。最も一般的な例は画像や動画を扱うための`blob:*/*`です。部分的なワイルドカードは*サポートされていません*。例えば、`app.bsky.*`は有効なスコープ文字列ではありません。特定のネームスペースやLexiconから複数のパーミッションをリクエストする場合は、それぞれを個別にリストするか、[パーミッションセット](/guides/permission-sets)を使用する必要があります。これは過度に広範なパーミッションリクエストを避けるための意図的な設計です。
+
+パーミッションセット自体もLexiconスキーマであり、他のLexiconと同様にネームスペースが付けられます。他のLexiconとは異なり、パーミッションセットはスコープ文字列内で`include:`というプレフィックスが付き、動的に更新可能です。
+
+## クライアント
+
+OAuthクライアントソフトウェアはグローバルに一意な`client_id`で識別されます。クライアントソフトウェアの異なるバリアントは異なる`client_id`値を持つ場合があります。例えば、同じソフトウェアのブラウザアプリ版とAndroid（モバイルOS）版では異なる`client_id`値を持つ場合があります。`client_id`はクライアントメタデータJSONドキュメントを取得できる完全修飾のWebURLでなければなりません。例えば、`https://app.example.com/oauth-client-metadata.json`のようになります。`client_id`についての詳細：
+
+- W3C URLの仕様に従った正しい形式のURLでなければなりません
+- スキーマは`https://`でなければならず、ポート番号を含めてはいけません。開発用の`http://localhost`の`client_id`値には[特別な例外](/specs/oauth#localhost-client-development)があることに注意してください。
+- パスに`oauth-client-metadata.json`を含める必要はありませんが、役に立つ慣例です。
+
+<Note>
+`oauth-client-metadata.json`ではなく`client-metadata.json`を使用していた場合、この変更を行うことでURL文字列ではなくドメインが認証フローページに表示されるようになります。
+</Note>
+
+<Container>
+  <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+認証フローページには付与されるすべての関連パーミッションが表示されます。これは[細かいパーミッション](/specs/permission)を使用するアプリと[トランジション](/specs/oauth#authorization-scopes)OAuthスコープを使用するアプリの両方に当てはまります。
+
+クライアントアプリは、認証フロー中に実際に承認された認証スコープを必ず確認する必要があります。特に、アカウントのメールアドレスの読み取りパーミッション（`account:email`）をリクエストする場合、ユーザーが他のパーミッションを付与しながらそのパーミッションを拒否する可能性があります。理論的には、全体のリクエストが承認されても、個別のパーミッションが拒否される場合があります。
+
+## 変更のロールアウト
+
+新しいパーミッションセットを使用するようにアプリを更新する際は、ソフトウェアのリリースとパーミッションセットの更新を連携させることが重要です。ユーザーの承認が必要な新しいパーミッションセットを追加する場合、ユーザーはアプリを再認可してこれらの新しいパーミッションを付与する必要があります。
+
+[クライアントメタデータドキュメント](/specs/oauth#clients)のリリースおよびデプロイプロセスは、アプリのコードデプロイプロセスとは別になる場合があります。新しいパーミッションをリクエストする更新された`oauth-client-metadata.json`は、それらのパーミッションを必要とするアプリのバージョンよりも前に公開されている必要があるため、それに応じた計画を立てるようにしてください。
+
+パーミッションセットは改訂できますが、削除や破壊的な変更は既存のアプリケーションを壊す可能性があります。一般的に、パーミッションセットは設計対象のアプリケーションと密接に結びついているべきですが、必ずしも1対1である必要はありません。atprotoアプリケーションは複数の異なるLexiconを利用できることを覚えておいてください。
+
+## OAuthフローの例
+
+atproto IDプロバイダーを*認証のみ*に使用しているアプリは、[`atproto`パーミッションのみをリクエストする必要があります](/guides/permission-sets)。これは他のIDプロバイダーから期待されるものと同じOAuthフローを提供します。Atmosphereソーシャルグラフの機能は使用されず、追加のパーミッションは不要です：
+
+<Container>
+  <Image src={oauth} alt="" className="w-full max-w-md mx-auto"/>
+</Container>
+
+これは完全に使用可能なAtmosphere統合であり、多くのアプリケーションはこれを出発点として使用します。シンプルで読みやすい「Authorize」フローが生成されることに注目してください。リクエストしているアプリのURLが明確に表示され、パーミッションダイアログにはアプリが「あなたを一意に識別したい」と記載されていますが、それ以外は何もありません。
+
+次に、追加のパーミッションをリクエストする、より複雑な統合を考えてみましょう。デフォルトでは、これらはサマリービューで表示されます：
+
+<Container>
+  <Image src={skyblur} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+この画像では、2つの異なるLexiconグループがあることに注目してください：*Bluesky*パーミッションと*Skyblur*パーミッションです。各Lexiconは独自のパーミッションセット、およびそれらのパーミッションのグループ化と表示方法を定義します。
+
+**?**アイコンをクリックすると、各パーミッションセットの詳細が表示されます：
+
+<Container>
+  <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+展開されたatprotoとBlueskyのパーミッションから、`atproto`（OAuthログイン用）、`blob:*/*`（画像と動画の処理用）、およびプロフィールとソーシャルグラフの操作のための`app.bsky.*`パーミッションなどを認識できるかもしれません。
+
+*Skyblur* LexiconのパーミッションはLexiconによって異なる方法で定義・要約されています：
+
+<Container>
+  <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+これはすべてアプリ開発者とLexiconデザイナーの裁量に委ねられています。異なるLexiconを並列で使用するためのモデルを提供し、各Lexiconが独自のパーミッションセットと表示方法を定義できるようにしています。
+
+## 参考資料とリソース
+
+- [Auth](/guides/auth)
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/about-oauth)
+- [パーミッションセット](/guides/permission-sets)
+- [OAuth Patterns](/guides/oauth-patterns)（上級トピック）
+- [Lexiconの公開](/guides/publishing-lexicons)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
