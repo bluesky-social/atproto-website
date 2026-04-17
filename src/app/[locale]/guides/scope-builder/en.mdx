@@ -1,0 +1,35 @@
+import { ScopeBuilderLoader, PermissionAuthorLoader } from '@/components/ScopeBuilder'
+
+export const header = {
+  title: 'Scope Builder',
+  description: 'Build OAuth scope strings and permission sets interactively',
+}
+
+This page provides two tools to help you build scope strings:
+
+1. **Permission Set Builder** — define a scope string or permission set for your own lexicon
+1. **Scope Builder** — compose a scope string from existing Bluesky permission sets and individual scopes
+
+## Permission Set Builder
+
+Use the Permission Set Builder to define permission sets for your own Lexicons. Add the permissions to generate a scope string, then include the metadata to build a permission set.
+
+<PermissionAuthorLoader />
+
+## OAuth Scopes Requester
+
+OAuth scopes are how you grant an app permission to create, update, and delete records from a repo, or to call XRPC methods. If you are building an app that wants to request access to Bluesky records, you can use the builder below to request the right scopes instead of using `transition:generic`.
+
+
+<ScopeBuilderLoader />
+
+
+## Further Reading and Resources
+
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [Auth](/guides/auth)
+- [OAuth Patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
