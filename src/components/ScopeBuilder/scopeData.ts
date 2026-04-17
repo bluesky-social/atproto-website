@@ -7,8 +7,8 @@ const BSKY_CHAT_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_chat'
 
 // DID of the repo that publishes the official Bluesky lexicon schemas.
 const BSKY_LEXICON_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
-const pdsLsLink = (nsid: string) =>
-  `https://pds.ls/at://${BSKY_LEXICON_DID}/com.atproto.lexicon.schema/${nsid}`
+const lexiconGardenLink = (nsid: string) =>
+  `https://lexicon.garden/lexicon/${BSKY_LEXICON_DID}/${nsid}`
 
 const ALL_WRITE_ACTIONS = ['create', 'update', 'delete'] as const
 
@@ -134,7 +134,7 @@ export const permissionSets: CuratedScope[] = [
       ],
     },
     replacesTransition: 'transition:generic',
-    specLink: pdsLsLink('app.bsky.authFullApp'),
+    specLink: lexiconGardenLink('app.bsky.authFullApp'),
     explanation:
       'The broadest Bluesky permission set. Grants full control of all public content and interactions, private preferences and subscriptions, and other Bluesky-specific app features. Equivalent to what transition:generic granted, but scoped to app.bsky Lexicons only.',
   },
@@ -216,7 +216,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.video.getUploadLimits',
       ],
     },
-    specLink: pdsLsLink('app.bsky.authViewAll'),
+    specLink: lexiconGardenLink('app.bsky.authViewAll'),
     explanation:
       'Read-only access to all Bluesky network content from the account\'s perspective, including notifications and preferences. No ability to create, update, or delete any records.',
   },
@@ -239,7 +239,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.video.getUploadLimits',
       ],
     },
-    specLink: pdsLsLink('app.bsky.authCreatePosts'),
+    specLink: lexiconGardenLink('app.bsky.authCreatePosts'),
     explanation:
       'Create new posts, postgates, and threadgates. Includes video upload endpoints. Cannot update or delete existing posts.',
   },
@@ -259,7 +259,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.feed.threadgate',
       ].map((collection) => ({ collection, actions: ['delete'] as Array<'delete'> })),
     },
-    specLink: pdsLsLink('app.bsky.authDeleteContent'),
+    specLink: lexiconGardenLink('app.bsky.authDeleteContent'),
     explanation:
       'Delete posts, reposts, likes, postgates, and threadgates. Useful for cleanup tools. Cannot create or update content.',
   },
@@ -277,7 +277,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.notification.declaration',
       ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
     },
-    specLink: pdsLsLink('app.bsky.authManageProfile'),
+    specLink: lexiconGardenLink('app.bsky.authManageProfile'),
     explanation:
       'Update the user\'s profile data, status, and public chat visibility declaration.',
   },
@@ -302,7 +302,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.notification.updateSeen',
       ],
     },
-    specLink: pdsLsLink('app.bsky.authManageNotifications'),
+    specLink: lexiconGardenLink('app.bsky.authManageNotifications'),
     explanation:
       'Full control over Bluesky notification preferences, activity subscriptions, push registration, and read state.',
   },
@@ -329,7 +329,7 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.graph.unmuteThread',
       ],
     },
-    specLink: pdsLsLink('app.bsky.authManageModeration'),
+    specLink: lexiconGardenLink('app.bsky.authManageModeration'),
     explanation:
       'Control over personal moderation features: blocking, muting (actors, lists, and threads), moderation list management, and preferences.',
   },
@@ -345,7 +345,7 @@ export const permissionSets: CuratedScope[] = [
         { collection: 'app.bsky.feed.generator', actions: [...ALL_WRITE_ACTIONS] },
       ],
     },
-    specLink: pdsLsLink('app.bsky.authManageFeedDeclarations'),
+    specLink: lexiconGardenLink('app.bsky.authManageFeedDeclarations'),
     explanation:
       'Create, update, and delete feed generator declaration records. For developers hosting custom feed generators.',
   },
@@ -361,7 +361,7 @@ export const permissionSets: CuratedScope[] = [
         { collection: 'app.bsky.labeler.service', actions: [...ALL_WRITE_ACTIONS] },
       ],
     },
-    specLink: pdsLsLink('app.bsky.authManageLabelerService'),
+    specLink: lexiconGardenLink('app.bsky.authManageLabelerService'),
     explanation:
       'Create, update, and delete labeler service declaration records. For developers hosting labeling services.',
   },
@@ -399,7 +399,7 @@ export const permissionSets: CuratedScope[] = [
       ],
     },
     replacesTransition: 'transition:chat.bsky',
-    specLink: pdsLsLink('chat.bsky.authFullChatClient'),
+    specLink: lexiconGardenLink('chat.bsky.authFullChatClient'),
     explanation:
       'Full control of all chat conversations: reading, sending, reacting, muting, and configuration management. Uses the chat.bsky namespace with its own audience DID.',
   },
