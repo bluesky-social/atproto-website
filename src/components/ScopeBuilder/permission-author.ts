@@ -514,9 +514,18 @@ class PermissionAuthorElement extends HTMLElement {
                   type="text"
                   data-field="meta-nsid"
                   value="${escapeAttr(meta.nsid)}"
-                  placeholder="com.example.myApp.permissions"
+                  placeholder="com.acme.myapp.authBasic"
                   class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Use your app's reverse-domain namespace (e.g. <code class="font-mono">com.yourapp.authFeatureName</code>).
+                  <a
+                    href="https://pdsls.dev/at://did:plc:j5ttxzdb5kwo4mcqkmzgvt33/com.atproto.lexicon.schema/app.beaconbits.authSavedPlaces"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                  >See an example</a>.
+                </p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
