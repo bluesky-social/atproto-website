@@ -115,40 +115,41 @@ class ScopeBuilderElement extends HTMLElement {
           </div>`
         : ''
 
-    const expandedHtml =
-      totalCount > 0
-        ? `<details class="mt-2">
-            <summary class="cursor-pointer text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-              Bundled permissions (${totalCount})
-            </summary>
-            ${repoListHtml}
-            ${rpcListHtml}
-          </details>`
-        : ''
-
     const specHtml = scope.specLink
       ? `<a href="${escapeHtml(scope.specLink)}" class="mt-2 inline-block text-xs text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">${scope.kind === 'permission-set' ? 'View Lexicon' : 'Spec'} &rarr;</a>`
       : ''
 
+    const detailsHtml = `<details class="px-3 pb-3">
+            <summary class="cursor-pointer inline-block text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 pl-7">
+              Learn more${totalCount > 0 ? ` — ${totalCount} bundled permissions` : ''}
+            </summary>
+            <div class="pl-7 mt-2">
+              <p class="text-xs text-gray-600 dark:text-gray-400">${escapeHtml(scope.explanation)}</p>
+              ${repoListHtml}
+              ${rpcListHtml}
+              ${specHtml}
+            </div>
+          </details>`
+
     return `
-      <label class="flex gap-3 py-3 px-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${border}">
-        <input
-          type="checkbox"
-          class="mt-0.5 h-4 w-4 flex-shrink-0 accent-blue-600"
-          data-scope-id="${scope.id}"
-          ${checked}
-        />
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${escapeHtml(scope.label)}</span>
-            ${badgeHtml}
+      <div class="${border}">
+        <label class="flex gap-3 py-3 px-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+          <input
+            type="checkbox"
+            class="mt-0.5 h-4 w-4 flex-shrink-0 accent-blue-600"
+            data-scope-id="${scope.id}"
+            ${checked}
+          />
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${escapeHtml(scope.label)}</span>
+              ${badgeHtml}
+            </div>
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(scope.description)}</p>
           </div>
-          <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(scope.description)}</p>
-          <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">${escapeHtml(scope.explanation)}</p>
-          ${expandedHtml}
-          ${specHtml}
-        </div>
-      </label>`
+        </label>
+        ${detailsHtml}
+      </div>`
   }
 
   private _render() {
@@ -198,7 +199,7 @@ class ScopeBuilderElement extends HTMLElement {
                 Copy
               </button>
             </div>
-            <pre class="px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all rounded-b-xl">${escapeHtml(assembled)}</pre>
+            <pre class="px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all rounded-b-xl">${escapeHtml(assembled.replace(/ /g, '\n'))}</pre>
           </div>
         </div>
 
@@ -207,7 +208,7 @@ class ScopeBuilderElement extends HTMLElement {
           <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 px-3">
             Bluesky Permission Sets
           </h3>
-          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>label]:border-t [&>label]:border-t-gray-100 dark:[&>label]:border-t-gray-700 [&>label:first-child]:border-t-0">
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>*]:border-t [&>*]:border-t-gray-100 dark:[&>*]:border-t-gray-700 [&>*:first-child]:border-t-0">
             ${permissionSets.map((s) => this._renderScopeItem(s)).join('')}
           </div>
         </section>
@@ -217,7 +218,7 @@ class ScopeBuilderElement extends HTMLElement {
           <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 px-3">
             Individual Scopes
           </h3>
-          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>label]:border-t [&>label]:border-t-gray-100 dark:[&>label]:border-t-gray-700 [&>label:first-child]:border-t-0">
+          <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden [&>*]:border-t [&>*]:border-t-gray-100 dark:[&>*]:border-t-gray-700 [&>*:first-child]:border-t-0">
             ${individualScopes.map((s) => this._renderScopeItem(s)).join('')}
           </div>
         </section>
