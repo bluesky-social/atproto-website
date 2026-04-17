@@ -68,7 +68,7 @@ function createBranch(slug) {
   }
 }
 
-async function main() {
+export async function main() {
   console.log('\n📝 Create a new blog post\n')
 
   const shouldCreateBranch = await checkGitStatus()
@@ -191,7 +191,3 @@ Next steps:
 `)
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})

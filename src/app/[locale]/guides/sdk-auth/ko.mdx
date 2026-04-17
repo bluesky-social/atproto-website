@@ -4,7 +4,7 @@ import LoginWithPasswordGo from './_snippets/login-with-password-go.mdx'
 import ClientSessionTs from './_snippets/client-session-ts.mdx'
 
 export const header = {
-  title: 'SDK 인증',
+  title: 'SDK authentication',
   description: 'SDK로 인증하기',
 }
 
@@ -19,7 +19,7 @@ export const header = {
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    `PasswordSession`을 가져오고, `PasswordSession.login()`에 자격 증명을 제공하여 `session`을 생성하는 것으로 시작합니다:
+    먼저 `PasswordSession`을 가져오고, `PasswordSession.login()`에 자격 증명을 제공하여 `session`을 생성합니다:
 
     <PasswordSessionTs />
 
@@ -28,7 +28,7 @@ export const header = {
     두 방법 모두 동일한 인증된 `session`을 생성합니다.
     </TabPanel>
     <TabPanel value="go">
-    `atclient` 라이브러리를 가져오고 `LoginWithPasswordHost()`를 호출하는 것으로 시작합니다:
+    먼저 `atclient` 라이브러리를 가져오고 `LoginWithPassword()`를 호출합니다:
 
     <LoginWithPasswordGo />
 
@@ -51,7 +51,7 @@ export const header = {
     <ClientSessionTs />
     </TabPanel>
     <TabPanel value="go">
-    `LoginWithPasswordHost()`가 반환하는 `client`는 인증되어 있으며 API 호출을 바로 할 수 있습니다.
+    `LoginWithPassword()`가 반환하는 `client`는 인증되어 있으며 API 호출을 바로 할 수 있습니다.
     </TabPanel>
   </TabPanels>
 </TabGroup>
@@ -66,11 +66,12 @@ export const header = {
 * `accessJwt`: 요청 인증에 사용되지만 몇 분 후에 만료되는 액세스 토큰
 * `refreshJwt`: 더 오래 지속되며 새 액세스 토큰으로 세션을 업데이트하는 데만 사용되는 갱신 토큰
 
-## 추가 자료
+## 추가 자료 및 리소스
 
-- [인증](/guides/auth)
-- [OAuth 패턴](/guides/oauth-patterns)
-- [스코프](/guides/scopes)
-- [권한 요청](/guides/permission-sets)
-- [OAuth 명세](/specs/oauth)
-- [권한 명세](/specs/permission)
+- [Auth](/guides/auth)
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [OAuth Patterns](/guides/oauth-patterns) (고급 주제)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

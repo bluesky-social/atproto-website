@@ -68,7 +68,7 @@ function removePostDirectory(slug) {
   return false
 }
 
-async function main() {
+export async function main() {
   const posts = parsePosts()
 
   if (posts.length === 0) {
@@ -139,7 +139,3 @@ async function main() {
   rl.close()
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})

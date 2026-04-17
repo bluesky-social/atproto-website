@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Scopes - AT Protocol Docs',
-  description: 'Auth for AT Protocol application developers.',
+  title: 'About OAuth - AT Protocol Docs',
+  description: 'OAuth implementation patterns for atproto applications.',
 }
 
 export default async function HomePage({ params }: any) {

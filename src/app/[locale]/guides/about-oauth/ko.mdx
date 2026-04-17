@@ -1,0 +1,87 @@
+import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
+
+export const header = {
+  title: 'OAuth에 대하여',
+  description: 'atproto 애플리케이션을 위한 OAuth 구현 패턴',
+}
+
+이 페이지에서는 atproto 애플리케이션에서 사용할 수 있는 OAuth 라이브러리와 구현 패턴을 설명합니다. atproto OAuth를 처음 접한다면 실습형 튜토리얼 중 하나부터 시작하는 것을 권장합니다:
+
+- [Node.js로 OAuth 구현하기](/guides/oauth-cli-tutorial) - 최소한의 CLI 앱으로, atproto OAuth의 동작 방식을 이해하는 데 적합합니다
+- [Go로 OAuth 구현하기](/guides/go-oauth-cli-tutorial) - Go CLI 앱에서의 OAuth
+- [Next.js로 OAuth 구현하기](/guides/oauth-tutorial) - AT Protocol 로그인을 갖춘 웹 앱 구축
+
+atproto에서 OAuth가 어떻게 작동하는지에 대한 개념적 개요(다른 OAuth 시스템과의 차이점 포함)는 [인증 개요](/guides/auth#what-is-o-auth)를 참고하세요.
+
+## SDK 라이브러리
+
+다음 라이브러리들은 [DPoP](/guides/oauth-patterns#understanding-d-po-p), 토큰 갱신, 세션 관리를 포함한 OAuth 흐름을 처리합니다.
+
+### TypeScript
+
+- [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-browser)) - 프론트엔드 전용 애플리케이션(예: SPA)에 적합합니다.
+- [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-node)) - Electron 데스크톱 앱 또는 서버 사이드 배포에 적합합니다.
+- [@atproto/oauth-client-expo](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-expo#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client-expo)) - React Native 프로젝트(예: 모바일 앱)에서 사용
+- [@atproto/oauth-client](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme) ([npmjs](https://www.npmjs.com/package/@atproto/oauth-client)) (위 세 라이브러리가 의존하는 핵심 구현입니다)
+- [@fujocoded/authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) ([npmjs](https://www.npmjs.com/package/@fujocoded/authproto)) - Astro 앱을 위한 커뮤니티 구현
+
+### Go
+
+- [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth) ([온라인 API 문서](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)) - 네이티브 앱 또는 서버 사이드 배포에 적합합니다
+
+## Atproto OAuth 예제 앱
+
+이 간단한 예제 앱들은 각 SDK의 사용 방법을 보여줍니다.
+
+<ResponsiveTable
+  columns={[{label: '예제 앱'}, {label: '언어'}, {label: 'SDK'}, {label: '아키텍처'}, {label: '기밀 클라이언트?'}, {label: 'Localhost 개발 클라이언트 ID?', href: '/specs/oauth#localhost-client-development'}]}
+  rows={[
+    [{label: 'cookbook/react-native-oauth', href:' https://github.com/bluesky-social/cookbook/tree/main/react-native-oauth#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-expo'}, {label: '모바일 앱 (백엔드 없음)'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
+    [{label: 'cookbook/vanillajs-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme' }, {label: 'JavaScript'}, {label: '@atproto/oauth-client-browser'}, {label: '웹 SPA (백엔드 없음)'}, {label: '아니오'}, {label: '선택적'},],
+    [{label: 'cookbook/nextjs-oauth', href:' https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559#readme' }, {label: 'TypeScript'}, {label: '@atproto/oauth-client-node'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
+    [{label: 'cookbook/go-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},],
+    [{label: 'cookbook/go-oauth-cli-app', href:' https://github.com/bluesky-social/cookbook/tree/main/go-oauth-cli-app#readme' }, {label: 'Go'}, {label: 'indigo'}, {label: '네이티브 CLI'}, {label: '아니오'}, {label: '아니오 (호스팅된 클라이언트 메타데이터 필요)'},],
+    [{label: 'cookbook/python-oauth-web-app', href:' https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme' }, {label: 'Python'}, {label: '없음'}, {label: '웹 BFF'}, {label: '선택적'}, {label: '선택적'},]
+  ]}
+/>
+
+<Note>
+Python 예제는 SDK를 사용하지 않습니다! 처음부터 OAuth SDK를 구축할 때 고급 [OAuth 클라이언트 구현 가이드](https://docs.bsky.app/docs/advanced-guides/oauth-client)와 함께 참고 자료로 유용하게 활용할 수 있습니다
+</Note>
+
+## OAuth 흐름의 동작 방식
+
+1. 앱이 요청하는 스코프와 함께 사용자를 PDS의 인증 엔드포인트로 리다이렉트합니다
+2. 사용자가 권한을 검토하고 접근을 승인(또는 거부)합니다
+3. PDS가 인증 코드와 함께 `redirect_uri`로 리다이렉트합니다
+4. 앱(또는 SDK)이 코드를 액세스 토큰과 리프레시 토큰으로 교환합니다
+5. 액세스 토큰을 사용하여 인증된 API 요청을 수행합니다
+
+SDK는 3~5단계를 자동으로 처리합니다. 콜백 엔드포인트에서는 SDK의 콜백 핸들러를 호출하기만 하면 되며, 이를 통해 토큰 교환이 완료되고 인증된 세션이 반환됩니다. 이후 API 호출을 수행할 수 있습니다. 자세한 내용은 [읽기 및 쓰기](/guides/reads-and-writes)를 참고하세요.
+
+## 앱 유형
+
+*가장 단순한* 유형의 앱은 [cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme) 예시에서 보여주는 것처럼, OAuth 세션이 사용자 기기와 PDS 사이에서 직접 설정되는 것입니다. 전용 백엔드 서비스 없이 정적 리소스 호스팅만으로 가능하기 때문에 간단합니다.
+
+앱에 장기 세션이 필요하지 않다면 이 방법으로 충분합니다. 하지만 다른 사용 사례에서는 앱이 "기밀 클라이언트"가 아닌 "공개 클라이언트"이기 때문에 세션 수명이 제한됩니다. 기밀 클라이언트가 되려면 클라이언트 ID에 바인딩된 비밀 키를 설정해야 합니다. 클라이언트가 공개적으로 사용 가능하고 사용자 기기에서 실행되는 경우, 클라이언트 비밀을 보호할 수 없습니다. 따라서 기밀 클라이언트를 구현하려면 백엔드 인프라 호스팅이 필요하며, 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예시(둘 다 아래에서 설명하는 "BFF" 패턴 사용)에서 보여줍니다.
+
+기밀 클라이언트 대 공개 클라이언트에 대한 자세한 기술적 내용은 [클라이언트 유형](/specs/oauth#types-of-clients)을 참고하세요.
+
+공개 클라이언트를 기밀 클라이언트로 "업그레이드"하는 데 사용할 수 있는 여러 설계 전략이 있습니다:
+
+- [Backend For Frontend (BFF)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-backend-for-frontend-bff): OAuth 세션이 앱 백엔드 서버와 PDS 사이에서 설정됩니다. 이 서버 사이드 세션은 세션 쿠키와 같은 메커니즘을 통해 사용자의 프론트엔드 세션과 연결됩니다. 프론트엔드는 백엔드를 통해 요청을 프록시하여 PDS에 요청을 보내며, 백엔드가 OAuth 인증을 처리합니다.
+- [Token-Mediating Backend (TMB)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#name-token-mediating-backend): BFF 패턴과 유사하지만, 세션이 설정된 후 백엔드가 OAuth 액세스 토큰을 프론트엔드에 전달하여 프론트엔드가 PDS에 직접 요청을 보낼 수 있게 합니다.
+- [Client Assertion Backend](https://github.com/bluesky-social/proposals/tree/main/0010-client-assertion-backend): 단순화된 서버 사이드 로직을 갖춘 TMB 패턴의 대안으로 제안된 방식입니다.
+
+이 세 가지 중 BFF 패턴이 현재 기밀 클라이언트 애플리케이션 구축에 권장되는 방법입니다. 이는 [cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)과 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme) 예시에서 시연됩니다.
+
+## 추가 읽을거리 및 자료
+
+- [인증](/guides/auth)
+- [SDK 인증](/guides/sdk-auth)
+- [권한 요청](/guides/permission-requests)
+- [권한 세트](/guides/permission-sets)
+- [OAuth 패턴](/guides/oauth-patterns) (DPoP 등 고급 주제)
+- [OAuth 명세](/specs/oauth)
+- [권한 명세](/specs/permission)

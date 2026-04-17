@@ -65,12 +65,10 @@ function findQuotedUri(post, ownerDid) {
   return null
 }
 
-async function main() {
-  const postUrl = process.argv[2]
-
+export async function main(postUrl) {
   if (!postUrl) {
-    console.error('Usage: npm run hide-reply <post-url>')
-    console.error('Example: npm run hide-reply https://bsky.app/profile/did:plc:.../post/...')
+    console.error('Usage: npm run blog hide-reply <post-url>')
+    console.error('Example: npm run blog hide-reply https://bsky.app/profile/did:plc:.../post/...')
     process.exit(1)
   }
 
@@ -249,7 +247,3 @@ async function detachQuote(client, session, quotedUri, quoteUri) {
   console.log(`   Detached quotes: ${record.detachedEmbeddingUris.length}`)
 }
 
-main().catch((err) => {
-  console.error('Unexpected error:', err)
-  process.exit(1)
-})
