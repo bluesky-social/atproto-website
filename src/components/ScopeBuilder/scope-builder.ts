@@ -119,9 +119,10 @@ class ScopeBuilderElement extends HTMLElement {
       ? `<a href="${escapeHtml(scope.specLink)}" class="mt-2 inline-block text-xs text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">${scope.kind === 'permission-set' ? 'View Lexicon' : 'Spec'} &rarr;</a>`
       : ''
 
+    const summaryText = totalCount > 0 ? `Bundled permissions (${totalCount})` : 'Details'
     const detailsHtml = `<details class="px-3 pb-3">
             <summary class="cursor-pointer inline-block text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 pl-7">
-              Learn more${totalCount > 0 ? ` — ${totalCount} bundled permissions` : ''}
+              ${summaryText}
             </summary>
             <div class="pl-7 mt-2">
               <p class="text-xs text-gray-600 dark:text-gray-400">${escapeHtml(scope.explanation)}</p>
