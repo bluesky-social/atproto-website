@@ -35,6 +35,20 @@ export interface CuratedScope {
   replacesTransition?: 'transition:generic' | 'transition:chat.bsky' | 'transition:email'
   specLink: string
   explanation: string
+  // For permission-set entries: which app "owns" this set. Used to group
+  // sets under app pills in the UI. Individual scopes leave this undefined.
+  appId?: string
+  // Optional warning badge for high-sensitivity scopes (e.g. identity:*).
+  // When set, renders a small amber badge next to the label.
+  warning?: string
+}
+
+// An atproto application that publishes one or more permission-set Lexicons.
+// Surfaced in the scope builder as a pill selector.
+export interface ScopeApp {
+  id: string
+  name: string
+  did: string
 }
 
 export interface PermissionSetMeta {

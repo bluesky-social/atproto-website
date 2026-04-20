@@ -1,20 +1,46 @@
-import type { CuratedScope } from './types'
+import type { CuratedScope, ScopeApp } from './types'
 
 // Bluesky appview audience DID, used in include: scope strings.
 // The # must be percent-encoded as %23 in scope strings.
 const BSKY_APPVIEW_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_appview'
 const BSKY_CHAT_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_chat'
 
-// DID of the repo that publishes the official Bluesky lexicon schemas.
-const BSKY_LEXICON_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
-const lexiconGardenLink = (nsid: string) =>
-  `https://lexicon.garden/lexicon/${BSKY_LEXICON_DID}/${nsid}`
+// Lexicon Garden link helper. Takes a DID and NSID because different apps
+// publish their schemas from different repos.
+const lexiconGardenLink = (did: string, nsid: string) =>
+  `https://lexicon.garden/lexicon/${did}/${nsid}`
 
 const ALL_WRITE_ACTIONS = ['create', 'update', 'delete'] as const
 
+// ----------------------------------------------------------------------------
+// Apps: atproto applications that publish one or more permission-set Lexicons.
+// Each app becomes a pill in the scope builder; clicking the pill reveals that
+// app's permission sets below.
+//
+// To add a new app: add an entry here, then add one or more CuratedScope
+// entries in permissionSets below with a matching `appId`.
+// ----------------------------------------------------------------------------
+const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
+const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
+const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
+const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
+const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
+
+export const apps: ScopeApp[] = [
+  { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
+  { id: 'beaconbits', name: 'Beacon Bits', did: BEACONBITS_DID },
+  { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
+  { id: 'margin', name: 'Margin', did: MARGIN_DID },
+  { id: 'pckt', name: 'Pckt', did: PCKT_DID },
+  { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
+]
+
 export const permissionSets: CuratedScope[] = [
+  // ---- Bluesky ------------------------------------------------------------
   {
     id: 'app.bsky.authFullApp',
+    appId: 'bluesky',
     label: 'Full Bluesky Social App',
     description: 'All public content, interactions, preferences, and app features.',
     kind: 'permission-set',
@@ -134,12 +160,13 @@ export const permissionSets: CuratedScope[] = [
       ],
     },
     replacesTransition: 'transition:generic',
-    specLink: lexiconGardenLink('app.bsky.authFullApp'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authFullApp'),
     explanation:
       'The broadest Bluesky permission set. Grants full control of all public content and interactions, private preferences and subscriptions, and other Bluesky-specific app features. Equivalent to what transition:generic granted, but scoped to app.bsky Lexicons only.',
   },
   {
     id: 'app.bsky.authViewAll',
+    appId: 'bluesky',
     label: 'Read-only access to all content',
     description: 'View Bluesky content from the account\'s perspective. No write access.',
     kind: 'permission-set',
@@ -216,12 +243,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.video.getUploadLimits',
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authViewAll'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authViewAll'),
     explanation:
       'Read-only access to all Bluesky network content from the account\'s perspective, including notifications and preferences. No ability to create, update, or delete any records.',
   },
   {
     id: 'app.bsky.authCreatePosts',
+    appId: 'bluesky',
     label: 'Create Bluesky Posts',
     description: 'Create new posts (cannot update or delete).',
     kind: 'permission-set',
@@ -239,12 +267,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.video.getUploadLimits',
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authCreatePosts'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authCreatePosts'),
     explanation:
       'Create new posts, postgates, and threadgates. Includes video upload endpoints. Cannot update or delete existing posts.',
   },
   {
     id: 'app.bsky.authDeleteContent',
+    appId: 'bluesky',
     label: 'Delete Bluesky Content',
     description: 'Clean up posts, reposts, and likes. Cannot create or update.',
     kind: 'permission-set',
@@ -259,12 +288,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.feed.threadgate',
       ].map((collection) => ({ collection, actions: ['delete'] as Array<'delete'> })),
     },
-    specLink: lexiconGardenLink('app.bsky.authDeleteContent'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authDeleteContent'),
     explanation:
       'Delete posts, reposts, likes, postgates, and threadgates. Useful for cleanup tools. Cannot create or update content.',
   },
   {
     id: 'app.bsky.authManageProfile',
+    appId: 'bluesky',
     label: 'Manage Bluesky Profile',
     description: 'Update profile, status, and chat visibility declaration.',
     kind: 'permission-set',
@@ -277,12 +307,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.notification.declaration',
       ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
     },
-    specLink: lexiconGardenLink('app.bsky.authManageProfile'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageProfile'),
     explanation:
       'Update the user\'s profile data, status, and public chat visibility declaration.',
   },
   {
     id: 'app.bsky.authManageNotifications',
+    appId: 'bluesky',
     label: 'Manage Bluesky Notifications',
     description: 'View and configure notifications and push subscriptions.',
     kind: 'permission-set',
@@ -302,12 +333,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.notification.updateSeen',
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authManageNotifications'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageNotifications'),
     explanation:
       'Full control over Bluesky notification preferences, activity subscriptions, push registration, and read state.',
   },
   {
     id: 'app.bsky.authManageModeration',
+    appId: 'bluesky',
     label: 'Manage Personal Moderation',
     description: 'Control blocks, mutes, moderation lists, and preferences.',
     kind: 'permission-set',
@@ -329,12 +361,13 @@ export const permissionSets: CuratedScope[] = [
         'app.bsky.graph.unmuteThread',
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authManageModeration'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageModeration'),
     explanation:
       'Control over personal moderation features: blocking, muting (actors, lists, and threads), moderation list management, and preferences.',
   },
   {
     id: 'app.bsky.authManageFeedDeclarations',
+    appId: 'bluesky',
     label: 'Manage Hosted Feeds',
     description: 'Configure feed generator declaration records.',
     kind: 'permission-set',
@@ -345,12 +378,13 @@ export const permissionSets: CuratedScope[] = [
         { collection: 'app.bsky.feed.generator', actions: [...ALL_WRITE_ACTIONS] },
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authManageFeedDeclarations'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageFeedDeclarations'),
     explanation:
       'Create, update, and delete feed generator declaration records. For developers hosting custom feed generators.',
   },
   {
     id: 'app.bsky.authManageLabelerService',
+    appId: 'bluesky',
     label: 'Manage Hosted Labeling Service',
     description: 'Configure labeler declaration records.',
     kind: 'permission-set',
@@ -361,12 +395,13 @@ export const permissionSets: CuratedScope[] = [
         { collection: 'app.bsky.labeler.service', actions: [...ALL_WRITE_ACTIONS] },
       ],
     },
-    specLink: lexiconGardenLink('app.bsky.authManageLabelerService'),
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageLabelerService'),
     explanation:
       'Create, update, and delete labeler service declaration records. For developers hosting labeling services.',
   },
   {
     id: 'chat.bsky.authFullChatClient',
+    appId: 'bluesky',
     label: 'Full Chat Client',
     description: 'All chat conversations, reactions, and configuration.',
     kind: 'permission-set',
@@ -399,9 +434,167 @@ export const permissionSets: CuratedScope[] = [
       ],
     },
     replacesTransition: 'transition:chat.bsky',
-    specLink: lexiconGardenLink('chat.bsky.authFullChatClient'),
+    specLink: lexiconGardenLink(BSKY_DID, 'chat.bsky.authFullChatClient'),
     explanation:
       'Full control of all chat conversations: reading, sending, reacting, muting, and configuration management. Uses the chat.bsky namespace with its own audience DID.',
+  },
+
+  // ---- Beacon Bits --------------------------------------------------------
+  {
+    id: 'app.beaconbits.authCore',
+    appId: 'beaconbits',
+    label: 'Core Beacon Bits access',
+    description: 'Create and manage check-ins, profile settings, favorites, and beacon likes.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authCore`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.beacon', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.profile', actions: ['create', 'update'] },
+        { collection: 'app.beaconbits.favorite', actions: ['create', 'delete'] },
+        { collection: 'app.beaconbits.beacon.like', actions: ['create', 'delete'] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authCore'),
+    explanation:
+      'Core access to Beacon Bits: create and manage beacon check-ins, profile, favorites, and likes.',
+  },
+  {
+    id: 'app.beaconbits.authEvents',
+    appId: 'beaconbits',
+    label: 'Beacon Bits event progress',
+    description: 'Store event passes and collected event fragments.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authEvents`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.pass', actions: ['create', 'update'] },
+        { collection: 'app.beaconbits.fragment', actions: ['create'] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authEvents'),
+    explanation:
+      'Event participation in Beacon Bits: save event passes and collect event fragments.',
+  },
+  {
+    id: 'app.beaconbits.authSavedPlaces',
+    appId: 'beaconbits',
+    label: 'Saved places and custom venues',
+    description: 'Manage saved places, saved lists, and custom venues.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authSavedPlaces`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.bookmark.item', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.bookmark.folder', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.venue', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authSavedPlaces'),
+    explanation:
+      'Manage bookmarked places, bookmark folders, and user-defined venues in Beacon Bits.',
+  },
+
+  // ---- Checkmate ----------------------------------------------------------
+  {
+    id: 'blue.checkmate.authFullAccess',
+    appId: 'checkmate',
+    label: 'Full checkmate.blue Access',
+    description: 'Create and manage chess games and challenges on checkmate.blue.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:blue.checkmate.authFullAccess`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'blue.checkmate.game', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'blue.checkmate.challenge', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(CHECKMATE_DID, 'blue.checkmate.authFullAccess'),
+    explanation:
+      'Full access to Checkmate: create and manage chess games and challenge records.',
+  },
+
+  // ---- Margin -------------------------------------------------------------
+  {
+    id: 'at.margin.authFull',
+    appId: 'margin',
+    label: 'Margin',
+    description: 'Full access to Margin features including notes, replies, likes, and collections.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:at.margin.authFull`,
+    expandedPermissions: {
+      repo: [
+        'at.margin.note',
+        'at.margin.reply',
+        'at.margin.like',
+        'at.margin.collection',
+        'at.margin.collectionItem',
+        'at.margin.profile',
+        'at.margin.apikey',
+        'at.margin.preferences',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(MARGIN_DID, 'at.margin.authFull'),
+    explanation:
+      'Full access to Margin: manage notes, replies, likes, collections, profile, API keys, and preferences.',
+  },
+
+  // ---- Pckt ---------------------------------------------------------------
+  {
+    id: 'blog.pckt.authFull',
+    appId: 'pckt',
+    label: 'pckt.blog',
+    description: 'Manage your publication, document, and gallery references.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:blog.pckt.authFull`,
+    expandedPermissions: {
+      repo: [
+        'blog.pckt.publication',
+        'blog.pckt.document',
+        'blog.pckt.gallery',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(PCKT_DID, 'blog.pckt.authFull'),
+    explanation:
+      'Full access to pckt.blog: manage publications, documents, and galleries.',
+  },
+
+  // ---- Streamplace --------------------------------------------------------
+  {
+    id: 'place.stream.authFull',
+    appId: 'streamplace',
+    label: 'Full Streamplace Access',
+    description: 'Full access to all Streamplace features and data.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:place.stream.authFull`,
+    expandedPermissions: {
+      repo: [
+        'place.stream.broadcast.origin',
+        'place.stream.broadcast.syndication',
+        'place.stream.chat.gate',
+        'place.stream.chat.message',
+        'place.stream.chat.profile',
+        'place.stream.key',
+        'place.stream.live.recommendations',
+        'place.stream.live.teleport',
+        'place.stream.livestream',
+        'place.stream.metadata.configuration',
+        'place.stream.moderation.permission',
+        'place.stream.multistream.target',
+        'place.stream.segment',
+        'place.stream.server.settings',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STREAMPLACE_DID, 'place.stream.authFull'),
+    explanation:
+      'Full access to Streamplace: manage broadcasts, chat, keys, livestreams, metadata, moderation, multistream, segments, and server settings.',
   },
 ]
 
@@ -448,6 +641,7 @@ export const individualScopes: CuratedScope[] = [
     resourceType: 'identity',
     scopeString: 'identity:handle',
     specLink: '/specs/permission#identity',
+    warning: 'Warning',
     explanation:
       'Allows updating the account\'s handle. The PDS may not be able to facilitate this for did:web accounts.',
   },
@@ -459,6 +653,7 @@ export const individualScopes: CuratedScope[] = [
     resourceType: 'identity',
     scopeString: 'identity:*',
     specLink: '/specs/permission#identity',
+    warning: 'Warning',
     explanation:
       'Full control of the DID document and handle. This is a high-sensitivity scope and should only be requested by tools specifically designed for identity management.',
   },
