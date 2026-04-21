@@ -361,6 +361,9 @@ export const navigation: Array<NavGroup> = [
         title: 'Account migration',
         href: '/guides/account-migration',
         icon: 'paper-airplane',
+        links: [
+          { title: 'Account Recovery', href: '/guides/account-recovery' },
+        ]
       },
       {
         title: 'Deploy recipes',

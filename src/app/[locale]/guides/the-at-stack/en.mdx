@@ -115,7 +115,9 @@ You can find a well-documented example of other App View implementations in [The
 
 ## DID PLC
 
-[DID PLC](https://web.plc.directory/) is a self-authenticating DID which is strongly-consistent, recoverable, and allows for key rotation. Each identity is made up of a series of signed operations that each reference the preceding operation in a chain back to the genesis operation. Any observer can verify the chain of operations in order to verify the current state of the identity.
+By default, new atproto identities are created with as `did:plc` documents.
+
+[did:plc](https://web.plc.directory/) is a self-authenticating [Decentralized Identifier](https://en.wikipedia.org/wiki/Decentralized_identifier) which is strongly-consistent, recoverable, and allows for key rotation. Each identity is made up of a series of signed operations that each reference the preceding operation in a chain back to the genesis operation. Any observer can verify the chain of operations in order to verify the current state of the identity.
 
 PLC operations are stored in a directory (currently run at [plc.directory](http://plc.directory)) which is a centralized service that validates operations, stores them, and serves those operations as well as computed views of the identities derived from the operations. The trust model for the directory is fairly limited as it is unable to modify identities without a signed operation on their behalf.
 

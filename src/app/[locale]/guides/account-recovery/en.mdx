@@ -1,0 +1,136 @@
+export const header = {
+  title: 'Account Recovery',
+  description:
+    'Self-custodying your AT Protocol identity with rotation keys',
+}
+
+This guide explains how to pre-register your own cryptographic rotation key with your `did:plc` identity, enabling you to recover your account even if your PDS becomes uncooperative or goes offline.
+
+## Do You Need This?
+
+**Most users don't need to do this.** If you're using a reputable PDS provider like Bluesky's official hosting, your account is already protected by security measures including email-based recovery.
+
+Consider self-custodying a rotation key if:
+
+- You want maximum control over your identity, independent of any service provider
+- You're technically comfortable managing cryptographic keys securely
+- You understand that losing your key means losing this recovery option
+
+If your PDS goes offline and you *don't* have a self-custodied rotation key, you may still be able to recover your account via your PDS operator or by working with the [PLC directory](/guides/the-at-stack#did-plc) during the [72-hour recovery window](#recovery-keys). Pre-registering a rotation key is an additional safeguard, not a replacement for trusting your PDS provider.
+
+## How Identity Works
+
+AT Protocol accounts have two identifiers: a human-readable **handle** (like `@alice.bsky.social`) and a permanent **DID** (like `did:plc:ewvi7nxzyoun6zhxrhs64oiz`). The DID is your true identity — handles can change, but your DID stays the same.
+
+Most atproto accounts use `did:plc`, a DID method that relies on **rotation keys** to authorize identity updates. These keys are arranged in priority order: earlier keys in the list can override changes made by later keys. By default, your PDS holds the only rotation key for your identity.
+
+By adding your own rotation key with higher priority than your PDS's key, you gain the ability to update your identity independently, including pointing it to a new PDS if needed.
+
+## Recovery Keys
+
+Each DID document publishes two public keys: a signing key and a recovery key.
+
+- **Signing key**: Asserts changes to the DID Document and to the user's data repository.
+- **Recovery key**: Asserts changes to the DID Document; may override the signing key within a **72-hour window**.
+
+The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+
+## Pre-registering a Key
+
+You'll need:
+
+- A secure place to store your private key (a password manager is recommended)
+- Access to the email address associated with your account
+- The [`goat`](https://github.com/bluesky-social/indigo/tree/main/cmd/goat) command-line tool:
+
+```bash
+brew install goat
+```
+
+Use `goat` to generate a new cryptographic key pair:
+
+```bash
+goat key generate
+```
+
+This outputs both a **secret key** (private) and a **public key**. The output looks like:
+
+```
+Secret Key: ...
+Public Key: did:key:z...
+```
+
+**Store the secret key securely.** Put it in a password manager, encrypted file, or other secure storage. If you lose this key, you lose this recovery option. If someone else obtains it, they could take control of your identity.
+
+The public key (starting with `did:key:`) is safe to share and will be registered with the PLC directory.
+
+Next, authenticate to your account using `goat`:
+
+```bash
+goat account login
+```
+
+Follow the prompts to enter your PDS host, handle, and app password. Then, request a token:
+
+```bash
+goat account plc request-token
+```
+
+You'll receive a verification code via email. Finally, use `goat account plc` to add your public key to your identity:
+
+```bash
+goat account plc add-rotation-key --token YOUR_TOKEN did:key:YOUR_PUBLIC_KEY
+```
+
+Replace `YOUR_TOKEN` with the email verification code, and `did:key:YOUR_PUBLIC_KEY` with the public key from `goat key generate`.
+
+This adds your key to the rotation key list with higher priority than your PDS's key.
+
+## Verifying Your Setup
+
+Confirm your rotation key was added:
+
+```bash
+goat account plc show
+```
+
+You should see your `did:key:...` listed among the rotation keys.
+
+You can also check the public PLC audit log for your DID at:
+
+```
+https://plc.directory/{your-did}/log/audit
+```
+
+## Using Your Key for Recovery
+
+If you ever need to recover your account (because your PDS is uncooperative or offline), you can use your rotation key to:
+
+- Update your DID document to point to a new PDS
+- Add a new atproto signing key
+- Remove the old PDS's rotation key
+
+This process is documented in detail in [Adversarial PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html). The general steps are:
+
+1. [**Prepare a new PDS**](/guides/self-hosting#pds) with an invite code
+2. **Update your DID document** using `goat` with your rotation key to point to the new PDS and add a temporary signing key
+3. **Create the account** on the new PDS using a service auth token
+4. **Import your data** from backups (repository CAR file, blobs, preferences)
+5. **Finalize** by updating credentials and activating the account
+
+For this to work, you'll also need **backups of your data**. Consider periodically exporting your repository:
+
+```bash
+goat repo export $ACCOUNT_DID        # export your public data (bluesky posts, etc.)
+goat blob export $ACCOUNT_DID        # export blobs (e.g. images, videos)
+goat bsky prefs export > prefs.json  # export your private bluesky preferences
+```
+
+You can register multiple rotation keys for redundancy, storing them in different secure locations.
+
+## Further Reading
+
+- [Self-Custody of PLC Rotation Keys](https://whtwnd.com/bnewbold.net/3lj7jmt2ct72r) — the original guide this document draws from
+- [Adversarial PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html) — detailed walkthrough of worst-case recovery
+- [Account Hosting Specification](/specs/account) — technical specification for account management
+- [DID Specification](/specs/did) — details on `did:plc` and rotation keys
