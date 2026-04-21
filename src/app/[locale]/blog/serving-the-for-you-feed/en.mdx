@@ -11,7 +11,7 @@ export const header = {
 
 # Serving the For You Feed
 
-In the spirit of [the post](https://graze.leaflet.pub/3m7ecmjmhps23) on how [Graze.social](https://www.graze.social/) serves their feeds, here is how I run [💖For You](https://bsky.app/profile/spacecowboy17.bsky.social/feed/for-you).
+In the spirit of [the post](https://graze.leaflet.pub/3m7ecmjmhps23) on how [Graze.social](https://www.graze.social/) serves their feeds, here is how I run [💖For You](https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/feed/for-you).
 
 The logic of the feed is super simple: "It finds people who liked the same posts as you, and shows you what else they've liked recently"
 
@@ -88,11 +88,11 @@ I use duckdb to query these parquet files and build graphs like this:
 
 and to generate A/B test reports:
 
-<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3miu2xzs54k27" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3miu2xzs54k27" />
 
 and to build the user stats dashboard: 
 
-<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mevupnpkrk2a" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mevupnpkrk2a" />
 
 ## Caching
 
@@ -106,8 +106,8 @@ The feed runs in my living room on my "gaming" PC attached to the TV. Some specs
 
 - CPU: AMD 9950X3D - a 16-core processor with extra L3 cache
   - upgraded from 12-core 7900 in Dec 2025:
-    - <BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mb2r5qei322a" />
-  - The 3D cache gives [~25% performance boost](https://bsky.app/profile/spacecowboy17.bsky.social/post/3md7ast3iru2b) to the CCD with the cache
+    - <BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mb2r5qei322a" />
+  - The 3D cache gives [~25% performance boost](https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3md7ast3iru2b) to the CCD with the cache
 - RAM: 96GB DDR5 6000MT/s
   - upgraded from 32GB back in June 2025 before the price crunch
 - Storage:
@@ -129,7 +129,7 @@ Being CPU bound, this setup should be able to accommodate 3x more users.
 
 What if we get >3x more traffic? In that case, the feed notices that requests are taking longer to process and switches to a set of algorithm parameters that make the calculations significantly (>10x) cheaper with minimal quality degradation:
 
-<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mavsiffa3s2d" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mavsiffa3s2d" />
 
 It means we could be serving 30x more users which would be 72K*30=2.1M. The best available proxy for active Bluesky users is the daily count of users who've liked something. This metric has been stable at ~1M ([https://bsky.jazco.dev/stats](https://bsky.jazco.dev/stats)). Which means that the current setup could theoretically support all active users!
 
@@ -147,7 +147,7 @@ I use Nginx to handle the incoming requests to `/xrpc/app.bsky.feed.getFeedSkele
 
 When the PC is down for maintenance, I can tell dispatch to return a canned post for all feed requests. Example:
 
-<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mfwo27kqg22x" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mfwo27kqg22x" />
 
 All VPS services are run through docker-compose.
 
@@ -167,13 +167,13 @@ If I were to rent a similar server, it would cost $245/month. But what fun is th
 
 I'm totally fine to cover the costs:
 
-<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mawcu6otf22a" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mawcu6otf22a" />
 
 If you can, consider supporting other feed service maintainers who need it much more:
 
-<BlueskyPost url="https://bsky.app/profile/graze.social/post/3mih3t7jcjo2t" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:i6y3jdklpvkjvynvsrnqfdoq/post/3mih3t7jcjo2t" />
 
-<BlueskyPost url="https://bsky.app/profile/redsolver.dev/post/3mgq76goqes2v" />
+<BlueskyPost url="https://bsky.app/profile/did:plc:odo2zkpujsgcxtz7ph24djkj/post/3mgq76goqes2v" />
 
 I think this provides a great example of how you can run a service on local infrastructure, and use a VPS as a proxy to expose it to the internet. It's a cost-effective way to serve a feed to a large number of users without needing to invest in expensive cloud infrastructure.
 
