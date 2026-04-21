@@ -1,6 +1,6 @@
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
-import { Client } from "@atproto/lex";
+import { Client, type DatetimeString } from "@atproto/lex";
 import { getSession } from "@/lib/auth/session";
 import { getOAuthClient } from "@/lib/auth/client";
 import * as xyz from "@/src/lexicons/xyz";
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const oauthSession = await client.restore(session.did);
   const lexClient = new Client(oauthSession);
 
-  const createdAt = new Date().toISOString();
+  const createdAt = new Date().toISOString() as DatetimeString;
   const res = await lexClient.create(xyz.statusphere.status, {
     status,
     createdAt,
