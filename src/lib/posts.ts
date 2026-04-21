@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'serving-the-for-you-feed',
+    title: 'Serving the For You Feed',
+    description: 'How the maintainer of the popular For You feed serves it from their living room!',
+    date: 'April 21, 2026',
+    author: 'spacecowboy',
+  },
+  {
     slug: 'indexing-standard-site',
     title: 'Indexing Standard Site',
     description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',

@@ -1,0 +1,180 @@
+import { BlueskyPost } from '@/components/BlueskyPost'
+import dailyActiveUsers from "./daily-active-users.webp"
+import vpsArchitecture from "./vps-architecture.webp"
+
+export const header = {
+  title: 'Serving the For You Feed',
+  description: 'How the maintainer of the popular For You feed serves it from their living room!',
+  date: 'April 21, 2026',
+  author: 'spacecowboy',
+}
+
+# Serving the For You Feed
+
+In the spirit of [the post](https://graze.leaflet.pub/3m7ecmjmhps23) on how [Graze.social](https://www.graze.social/) serves their feeds, here is how I run [💖For You](https://bsky.app/profile/spacecowboy17.bsky.social/feed/for-you).
+
+The logic of the feed is super simple: "It finds people who liked the same posts as you, and shows you what else they've liked recently"
+
+For You is a single Go binary that does most things:
+
+- consumes the firehose (Jetstream) of posts, likes, reposts and saves them into a sqlite database
+- serves the feed
+- serves the playground page [https://foryou.club/playground](https://foryou.club/playground)
+
+Being a single process makes it easy to manage.
+
+## Database
+
+I store all data in sqlite. A key advantage of sqlite for me is testability - I can create the database in memory for unit testing purposes. I don't need to mock or fake my storage layer. The setup/teardown is instant.
+
+For querying the data, I use the excellent [sqlc.dev](https://sqlc.dev/). It is a tool that gives me full control of the queries I want to run and takes care of the boilerplate through code generation.
+
+To keep likes data memory-efficient (both on disk and in in-memory caches), I give each post AT URI an integer id: 
+
+```shell
+sqlite> select \* from items order by id limit 10;
+id uid metadata
+7 at://did:plc:x5qqhu6n6jrwp3vulwia6eee/app.bsky.feed.post/3lmn2andjik2x
+10 at://did:plc:hn2uy22exqcvxsh7mnikeevz/app.bsky.feed.post/3lmmj3x2oos2i
+11 at://did:plc:4wep2s4udx4bqv774cq5wlsk/app.bsky.feed.post/3llh66exc2c2r
+12 at://did:plc:kydd7ppawtffeqfvek5omiz4/app.bsky.feed.post/3lmn6tijcgk2z
+```
+
+Similarly for the users stored in the raters table:
+
+```shell
+sqlite> select * from raters order by id limit 10;
+id uid
+1 did:plc:xmxy5pcqjbbjmyl2kfrmhswb
+2 did:plc:nznmwgfiz7wnmzajxffpirmc
+3 did:plc:6mn4v5ao2fggfbyeuysrmshq
+4 did:plc:zreixrmbrxrpky6k6yi4yilq
+5 did:plc:dlbzlumnyv2dabsinhacqyxu
+```
+
+The posts, likes, reposts are stored as an entry in the ratings table:
+
+```shell
+sqlite> select * from ratings limit 10;
+
+id item_id rater_id created_timestamp
+5981931671 747239155 556296 1768688218
+5981931672 747111170 3677445 1768688218
+5981931673 747226521 114350 1768688218
+5981931674 745813473 1751615 1768688218
+5981931675 718027268 2796254 1768688218
+5981931676 747220721 2526 1768688218
+```
+
+I open the sqlite database with multiple connections (5) to allow concurrent reads. To avoid the dreaded "busy" error on writes, I enforce that only one thread can perform a write using a Go mutex. If you search online the most common suggestion for solving the "busy" error is `db.SetMaxOpenConns(1)`, but that makes reads sequential too.
+
+To put a limit on db size I store only the last 90 days of data. Every 24 hours a cleanup goroutine kicks in that deletes all ratings older than 90 days and then deletes all items that have no ratings pointing at them. The sqlite db file is still hefty at 419GB. I never run vacuum on it because it would be too slow (maybe a couple of hours) and would make the feed unavailable.
+
+## Logging
+
+There is one more sqlite db - 200GB file storing response logs. It keeps track of which posts have been returned. When the user likes a post that was shown in For You, I notice this in the firehose and update the log entry. Same with "show more" and "show less" interactions. These logs are useful for analyzing how the feed is performing. And when I run an A/B test I can compare the performance of control vs treatment arms. I dump the logs from sqlite periodically into per-day parquet files like this:
+
+`2.6G Apr 18 08:16 logs-2026-04-17.parquet`
+
+(as these parquet files accumulate I should probably move them to HDD)
+
+I use duckdb to query these parquet files and build graphs like this: 
+
+<Image src={dailyActiveUsers} alt="Daily Active Users" />
+
+(as these parquet files accumulate I should probably move them to HDD)
+
+I use duckdb to query these parquet files and build graphs like this:
+
+and to generate A/B test reports:
+
+<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3miu2xzs54k27" />
+
+and to build the user stats dashboard: 
+
+<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mevupnpkrk2a" />
+
+## Caching
+
+For You makes very heavy use of in-process caches (https://github.com/hashicorp/golang-lru). I don't need a separate service like Redis because all writers and readers of this cache are in a single process. Such caching is fast - no interprocess communication or serialization/deserialization overhead. Almost 100% of the data that is necessary to generate recommendations comes from the cache and not from the database.
+
+The downside of in-process caches is that whenever I restart the feed process it becomes super slow until the caches are sufficiently warmed up.
+
+## Hardware
+
+The feed runs in my living room on my "gaming" PC attached to the TV. Some specs:
+
+- CPU: AMD 9950X3D - a 16-core processor with extra L3 cache
+  - upgraded from 12-core 7900 in Dec 2025:
+    - <BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mb2r5qei322a" />
+  - The 3D cache gives [~25% performance boost](https://bsky.app/profile/spacecowboy17.bsky.social/post/3md7ast3iru2b) to the CCD with the cache
+- RAM: 96GB DDR5 6000MT/s
+  - upgraded from 32GB back in June 2025 before the price crunch
+- Storage:
+  - 2TB NVMe for the database
+  - 2TB NVMe for the rest of the system
+- Power backup: the PC, the Internet modem and the router are hooked up to an Ecoflow Delta 3, which would provide ~4-5 hours of runtime in case of a power outage
+
+## The load
+
+Every day ~72K users load the feed at least once. On average, a user generates ~22 requests per day.
+
+The traffic varies from 15 QPS to 25 QPS. At 25 QPS, the CPU is ~37% loaded (12 out of 32 threads).
+
+The process consumes ~50GB of RAM - 99% of it is the caches.
+
+Being CPU bound, this setup should be able to accommodate 3x more users.
+
+## Future growth
+
+What if we get >3x more traffic? In that case, the feed notices that requests are taking longer to process and switches to a set of algorithm parameters that make the calculations significantly (>10x) cheaper with minimal quality degradation:
+
+<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mavsiffa3s2d" />
+
+It means we could be serving 30x more users which would be 72K*30=2.1M. The best available proxy for active Bluesky users is the daily count of users who've liked something. This metric has been stable at ~1M ([https://bsky.jazco.dev/stats](https://bsky.jazco.dev/stats)). Which means that the current setup could theoretically support all active users!
+
+
+## Exposing the feed to the internet
+
+The local process serves `http://localhost:8090` but you can't access it from outside. To be publicly visible, I rent a small VPS on OVH.
+
+<Image src={vpsArchitecture} alt="VPS Architecture" />
+
+I use Nginx to handle the incoming requests to `/xrpc/app.bsky.feed.getFeedSkeleton` and `/xrpc/app.bsky.feed.sendInteractions`. Nginx then proxies the request to a small Go process I call "dispatch". Dispatch does a few things:
+
+- It validates the JWT tokens. This process involves fetching the DID document. The host address of the document is controlled by the caller. I don't want to make these requests from my home PC and reveal my IP address.
+- I run multiple feeds - they run on different ports on my local machine, but they all have to share the same external endpoint: `/xrpc/app.bsky.feed.getFeedSkeleton`. Dispatch proxies the request to the correct address. Both my home PC and the VPS are on the same Tailscale network, so dispatch makes requests to my PC as `http://gaming:8090` for For You or `http://gaming:8093` for Videos For You.
+
+When the PC is down for maintenance, I can tell dispatch to return a canned post for all feed requests. Example:
+
+<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mfwo27kqg22x" />
+
+All VPS services are run through docker-compose.
+
+## Monitoring
+
+After a few outages, I've set up free uptime monitoring using [https://hetrixtools.com/](https://hetrixtools.com/). They try to access [https://foryou.club/playground](https://foryou.club/playground) every minute, and if it becomes unavailable for >5 minutes, they send me an email, a phone call and a text. It's a great service.
+
+The uptime since January has been 99.77%.
+
+## Running costs
+
+- ~$20/month for the electricity - ~200W 24/7
+- ~$7/month for the VPS
+- ~$3/month for two domain names
+
+If I were to rent a similar server, it would cost $245/month. But what fun is that?
+
+I'm totally fine to cover the costs:
+
+<BlueskyPost url="https://bsky.app/profile/spacecowboy17.bsky.social/post/3mawcu6otf22a" />
+
+If you can, consider supporting other feed service maintainers who need it much more:
+
+<BlueskyPost url="https://bsky.app/profile/graze.social/post/3mih3t7jcjo2t" />
+
+<BlueskyPost url="https://bsky.app/profile/redsolver.dev/post/3mgq76goqes2v" />
+
+I think this provides a great example of how you can run a service on local infrastructure, and use a VPS as a proxy to expose it to the internet. It's a cost-effective way to serve a feed to a large number of users without needing to invest in expensive cloud infrastructure.
+
+Thanks for reading! And look forward to more posts featuring feed builders.
