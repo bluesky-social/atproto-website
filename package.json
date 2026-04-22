@@ -15,7 +15,7 @@
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
     "@algolia/autocomplete-core": "^1.7.3",
-    "@atproto/lex": "^0.0.11",
+    "@atproto/lex": "^0.0.25",
     "@atproto/lex-password-session": "^0.0.2",
     "@headlessui/react": "^2.1.0",
     "@headlessui/tailwindcss": "^0.2.0",

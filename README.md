@@ -38,6 +38,13 @@ npm run blog <command>
 
 Run `npm run blog` with no arguments to see this list.
 
+#### Configure credentials (one-time)
+
+```bash
+cp .env.example .env
+```
+Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+
 ### Creating a new blog post
 
 ```bash
@@ -88,19 +95,19 @@ Each feed includes the 50 most recent posts. Post data is shared from `src/lib/p
 
 Blog posts can be published to the AT Protocol using the [site.standard](https://standard.site/) lexicon. This enables decentralized discovery and verification of content.
 
-#### Setup (one-time)
+#### Install and build Lexicons
 
-1. **Configure credentials:**
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+```bash
+lex install site.standard.document
+lex build
+```
 
-2. **Create the publication record:**
-   ```bash
-   npm run blog create-publication
-   ```
-   Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
+#### Create the publication record
+
+```bash
+npm run blog create-publication
+```
+Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
 
 #### Publishing a post
 
