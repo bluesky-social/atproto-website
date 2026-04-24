@@ -374,7 +374,15 @@ class PermissionAuthorElement extends HTMLElement {
     // Permission-set mode: 2+ permissions or meta filled
     const lexicon = buildPermissionSetLexicon(meta, permissions)
     const jsonStr = JSON.stringify(lexicon, null, 2)
-    const includeScope = buildIncludeScopeString(meta.nsid || 'your.set.nsid', '{aud}')
+
+    // aud is only meaningful when the set contains rpc permissions (the only
+    // kind that can inherit an audience). For pure repo sets, emit a plain
+    // include: without any ?aud= suffix.
+    const hasRpc = permissions.some((p) => p.resource === 'rpc')
+    const includeScope = buildIncludeScopeString(
+      meta.nsid || 'your.set.nsid',
+      hasRpc ? '{aud}' : '',
+    )
 
     return `
       <div class="space-y-4">
@@ -391,17 +399,13 @@ class PermissionAuthorElement extends HTMLElement {
 
         <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
           <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">include: scope reference</span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Scope reference</span>
             <button
               data-action="copy"
               class="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50"
             >Copy</button>
           </div>
           <pre class="px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all">${escapeHtml(includeScope)}</pre>
-        </div>
-
-        <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 px-4 py-3 text-xs text-gray-600 dark:text-gray-400">
-          Publish this Lexicon with <code class="font-mono bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">goat lex publish</code>
         </div>
       </div>`
   }
