@@ -1,4 +1,10 @@
-import type { Permission, PermissionSetMeta, PermissionSetLexicon, PermissionJsonForm } from './types'
+import type {
+  CuratedScope,
+  Permission,
+  PermissionSetMeta,
+  PermissionSetLexicon,
+  PermissionJsonForm,
+} from './types'
 
 /**
  * Percent-encodes the `#` in a DID service reference (e.g. did:web:x#type → did:web:x%23type).
@@ -63,6 +69,27 @@ export function assembleScopeString(scopes: string[]): string {
 export function buildIncludeScopeString(setNsid: string, aud: string): string {
   if (!aud) return `include:${setNsid}`
   return `include:${setNsid}?aud=${encodeAudDid(aud)}`
+}
+
+/**
+ * Emits the final scope string for a curated entry, respecting an optional
+ * user-provided audience override.
+ *
+ * - For scopes without `defaultAud`, returns `scope.scopeString` unchanged.
+ * - For scopes with `defaultAud`, rebuilds the string using `audOverride` if
+ *   defined (including `''`, which means "user cleared the field → omit aud"),
+ *   or `scope.defaultAud` otherwise. Percent-encodes the `#` in the result.
+ *
+ * `audOverride === undefined` means "no override, use default." An empty
+ * string explicitly means "the user wants no aud suffix."
+ */
+export function emitCuratedScopeString(
+  scope: CuratedScope,
+  audOverride: string | undefined,
+): string {
+  if (!scope.defaultAud) return scope.scopeString
+  const aud = audOverride !== undefined ? audOverride : scope.defaultAud
+  return buildIncludeScopeString(scope.id, aud)
 }
 
 export function isInSetNamespace(setNsid: string, candidateNsid: string): boolean {

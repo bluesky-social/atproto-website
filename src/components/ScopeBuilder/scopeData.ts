@@ -1,8 +1,10 @@
 import type { CuratedScope, ScopeApp } from './types'
 
-// Bluesky appview audience DID, used in include: scope strings.
-// The # must be percent-encoded as %23 in scope strings.
+// Bluesky appview audience DID. Two forms — unencoded (for human-readable
+// editable fields) and percent-encoded (for direct use in scope strings).
+const BSKY_APPVIEW_AUD = 'did:web:api.bsky.app#bsky_appview'
 const BSKY_APPVIEW_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_appview'
+const BSKY_CHAT_AUD = 'did:web:api.bsky.app#bsky_chat'
 const BSKY_CHAT_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_chat'
 
 // Lexicon Garden link helper. Takes a DID and NSID because different apps
@@ -46,6 +48,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authFullApp?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         'app.bsky.actor.profile',
@@ -172,6 +175,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authViewAll?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       rpc: [
         'app.bsky.actor.getPreferences',
@@ -255,6 +259,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authCreatePosts?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         { collection: 'app.bsky.feed.post', actions: ['create'] },
@@ -279,6 +284,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authDeleteContent?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         'app.bsky.feed.like',
@@ -300,6 +306,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authManageProfile?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         'app.bsky.actor.profile',
@@ -319,6 +326,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authManageNotifications?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       rpc: [
         'app.bsky.notification.getPreferences',
@@ -345,6 +353,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authManageModeration?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         'app.bsky.graph.block',
@@ -373,6 +382,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authManageFeedDeclarations?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         { collection: 'app.bsky.feed.generator', actions: [...ALL_WRITE_ACTIONS] },
@@ -390,6 +400,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:app.bsky.authManageLabelerService?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
     expandedPermissions: {
       repo: [
         { collection: 'app.bsky.labeler.service', actions: [...ALL_WRITE_ACTIONS] },
@@ -407,6 +418,7 @@ export const permissionSets: CuratedScope[] = [
     kind: 'permission-set',
     resourceType: 'include',
     scopeString: `include:chat.bsky.authFullChatClient?aud=${BSKY_CHAT_AUD_ENCODED}`,
+    defaultAud: BSKY_CHAT_AUD,
     expandedPermissions: {
       repo: [
         { collection: 'chat.bsky.actor.declaration', actions: [...ALL_WRITE_ACTIONS] },
@@ -618,6 +630,7 @@ export const individualScopes: CuratedScope[] = [
     resourceType: 'account',
     scopeString: 'account:email',
     replacesTransition: 'transition:email',
+    supersededBy: 'account-email-manage',
     specLink: '/specs/permission#account',
     explanation:
       'Makes the account\'s email address and verification status visible via com.atproto.server.getSession. Replaces transition:email.',
@@ -640,6 +653,7 @@ export const individualScopes: CuratedScope[] = [
     kind: 'individual',
     resourceType: 'identity',
     scopeString: 'identity:handle',
+    supersededBy: 'identity-wildcard',
     specLink: '/specs/permission#identity',
     warning: 'Warning',
     explanation:

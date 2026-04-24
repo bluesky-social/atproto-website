@@ -41,6 +41,16 @@ export interface CuratedScope {
   // Optional warning badge for high-sensitivity scopes (e.g. identity:*).
   // When set, renders a small amber badge next to the label.
   warning?: string
+  // Default audience for curated permission sets whose scope string carries
+  // an ?aud=... suffix. Stored in unencoded form (with raw `#`, not `%23`)
+  // so the UI can display it editable. When set, the widget exposes a text
+  // input that lets the user override the audience per request.
+  defaultAud?: string
+  // Id of another curated scope whose selection semantically subsumes this
+  // one (e.g. account:email is subsumed by account:email?action=manage). When
+  // the superset is selected, this scope's checkbox is auto-unchecked and
+  // disabled with an inline "Included via ..." note.
+  supersededBy?: string
 }
 
 // An atproto application that publishes one or more permission-set Lexicons.

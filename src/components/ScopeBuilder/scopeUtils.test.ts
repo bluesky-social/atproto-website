@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { encodeAudDid, isValidNsid, isPartialWildcard, buildScopeString, assembleScopeString, buildIncludeScopeString, buildPermissionSetLexicon, isInSetNamespace } from './scopeUtils'
-import type { Permission, PermissionSetMeta } from './types'
+import {
+  encodeAudDid,
+  isValidNsid,
+  isPartialWildcard,
+  buildScopeString,
+  assembleScopeString,
+  buildIncludeScopeString,
+  buildPermissionSetLexicon,
+  isInSetNamespace,
+  emitCuratedScopeString,
+} from './scopeUtils'
+import type { CuratedScope, Permission, PermissionSetMeta } from './types'
 
 describe('encodeAudDid', () => {
   it('percent-encodes # as %23 in service fragment', () => {
@@ -190,5 +200,50 @@ describe('buildPermissionSetLexicon', () => {
       { id: '3', resource: 'account', attr: 'email' },
     ])
     expect(result.defs.main.permissions).toHaveLength(1)
+  })
+})
+
+describe('emitCuratedScopeString', () => {
+  const baseScope: CuratedScope = {
+    id: 'app.bsky.authFullApp',
+    label: 'Full Bluesky Social App',
+    description: 'desc',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: 'include:app.bsky.authFullApp?aud=did:web:api.bsky.app%23bsky_appview',
+    specLink: 'https://example.test',
+    explanation: 'exp',
+  }
+
+  it('returns scopeString unchanged for entries without defaultAud', () => {
+    const individual: CuratedScope = {
+      ...baseScope,
+      id: 'blob-any',
+      kind: 'individual',
+      resourceType: 'blob',
+      scopeString: 'blob:*/*',
+    }
+    expect(emitCuratedScopeString(individual, undefined)).toBe('blob:*/*')
+    // An override on a scope without defaultAud should still be ignored.
+    expect(emitCuratedScopeString(individual, 'did:web:other#svc')).toBe('blob:*/*')
+  })
+
+  it('uses the default aud when no override is provided', () => {
+    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    expect(emitCuratedScopeString(scope, undefined)).toBe(
+      'include:app.bsky.authFullApp?aud=did:web:api.bsky.app%23bsky_appview',
+    )
+  })
+
+  it('uses the override aud when provided, percent-encoding the #', () => {
+    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    expect(emitCuratedScopeString(scope, 'did:web:staging.example#svc_appview')).toBe(
+      'include:app.bsky.authFullApp?aud=did:web:staging.example%23svc_appview',
+    )
+  })
+
+  it('omits the aud suffix when override is the empty string', () => {
+    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    expect(emitCuratedScopeString(scope, '')).toBe('include:app.bsky.authFullApp')
   })
 })

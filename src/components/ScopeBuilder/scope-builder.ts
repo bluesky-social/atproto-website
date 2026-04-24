@@ -1,20 +1,27 @@
 import { apps, permissionSets, individualScopes } from './scopeData'
-import { assembleScopeString } from './scopeUtils'
+import { assembleScopeString, emitCuratedScopeString } from './scopeUtils'
 import type { CuratedScope } from './types'
 
 const ALL_SCOPES: CuratedScope[] = [...permissionSets, ...individualScopes]
+const SCOPES_BY_ID = new Map(ALL_SCOPES.map((s) => [s.id, s]))
 
 class ScopeBuilderElement extends HTMLElement {
   private selectedIds = new Set<string>()
+  // Per-scope audience overrides for curated permission sets whose
+  // `defaultAud` is editable. Keyed by scope id. Preserved across
+  // un-check/re-check so a user can tweak without losing their edit.
+  private audOverrides = new Map<string, string>()
   // Default to Bluesky on load regardless of where it falls in the
   // alphabetical pill order — it's the most likely starting point.
   private activeAppId: string =
     apps.find((a) => a.id === 'bluesky')?.id ?? apps[0]?.id ?? 'bluesky'
   private _handleChange: (e: Event) => void
+  private _handleInput: (e: Event) => void
   private _handleClick: (e: Event) => void
 
   constructor() {
     super()
+
     this._handleChange = (e: Event) => {
       const target = e.target as HTMLElement
       if (target instanceof HTMLInputElement && target.type === 'checkbox') {
@@ -22,12 +29,30 @@ class ScopeBuilderElement extends HTMLElement {
         if (!id) return
         if (target.checked) {
           this.selectedIds.add(id)
+          // Cascade: uncheck any scopes that this one supersedes, since
+          // they're now implied by the broader selection.
+          for (const s of ALL_SCOPES) {
+            if (s.supersededBy === id) this.selectedIds.delete(s.id)
+          }
         } else {
           this.selectedIds.delete(id)
         }
         this._render()
       }
     }
+
+    this._handleInput = (e: Event) => {
+      const target = e.target as HTMLElement
+      if (target instanceof HTMLInputElement && target.dataset.audFor) {
+        const id = target.dataset.audFor
+        this.audOverrides.set(id, target.value)
+        // Targeted update only — don't re-render the list (would steal focus
+        // from the input). The only thing that depends on aud is the
+        // generated scope string at the top.
+        this._updateOutput()
+      }
+    }
+
     this._handleClick = (e: Event) => {
       const target = e.target as HTMLElement
 
@@ -60,13 +85,40 @@ class ScopeBuilderElement extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener('change', this._handleChange)
+    this.addEventListener('input', this._handleInput)
     this.addEventListener('click', this._handleClick)
     this._render()
   }
 
   disconnectedCallback() {
     this.removeEventListener('change', this._handleChange)
+    this.removeEventListener('input', this._handleInput)
     this.removeEventListener('click', this._handleClick)
+  }
+
+  // -------------------------------------------------------------------------
+  // Derived values
+  // -------------------------------------------------------------------------
+
+  // Computes the final space-separated scope string for the current selection,
+  // honoring per-scope audience overrides. Used by both the initial render
+  // and the targeted output updates triggered by aud input typing.
+  private _computeAssembled(): string {
+    const scopeStrings = ALL_SCOPES.filter((s) => this.selectedIds.has(s.id)).map((s) =>
+      emitCuratedScopeString(s, this.audOverrides.get(s.id)),
+    )
+    return assembleScopeString(scopeStrings)
+  }
+
+  // Targeted refresh of only the sticky output box. Used when the user types
+  // in an aud input — we can't re-render the full widget because that would
+  // blow away the input element and steal focus mid-keystroke.
+  private _updateOutput() {
+    const assembled = this._computeAssembled()
+    const pre = this.querySelector('[data-scope-string-pre]')
+    if (pre) pre.textContent = assembled.replace(/ /g, '\n')
+    const btn = this.querySelector('[data-scope-string-copy]') as HTMLButtonElement | null
+    if (btn) btn.dataset.copyText = assembled
   }
 
   // -------------------------------------------------------------------------
@@ -124,11 +176,63 @@ class ScopeBuilderElement extends HTMLElement {
   }
 
   private _renderScopeItem(scope: CuratedScope): string {
-    const checked = this.selectedIds.has(scope.id) ? 'checked' : ''
+    const isChecked = this.selectedIds.has(scope.id)
+    const checkedAttr = isChecked ? 'checked' : ''
+
+    // Disable-on-conflict: if this scope is superseded by another scope that's
+    // currently selected, render disabled + dim + show an "Included via"
+    // inline note. The superset covers this one, so selecting both would
+    // produce a redundant scope string.
+    const supersederId = scope.supersededBy
+    const superseder = supersederId ? SCOPES_BY_ID.get(supersederId) : undefined
+    const isSuperseded = !!(supersederId && this.selectedIds.has(supersederId))
+    const disabledAttr = isSuperseded ? 'disabled' : ''
+
+    const labelCls = isSuperseded
+      ? 'flex gap-3 py-3 px-3 opacity-60 cursor-not-allowed'
+      : 'flex gap-3 py-3 px-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors'
+
+    const supersededTooltip =
+      isSuperseded && superseder
+        ? `Included via ${escapeAttr(superseder.label)}`
+        : ''
+
+    const includedViaHtml =
+      isSuperseded && superseder
+        ? `<p class="mt-0.5 text-xs italic text-gray-500 dark:text-gray-400">
+             Included via <span class="not-italic font-medium">${escapeHtml(superseder.label)}</span>.
+           </p>`
+        : ''
 
     const warningHtml = scope.warning
       ? `<span class="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300">${escapeHtml(scope.warning)}</span>`
       : ''
+
+    // Editable audience — only rendered when the scope has a defaultAud
+    // AND the user has selected this scope. Bare keystrokes update the
+    // generated scope string live via _updateOutput (targeted DOM update).
+    const audInputHtml =
+      scope.defaultAud && isChecked
+        ? (() => {
+            const currentAud = this.audOverrides.get(scope.id) ?? scope.defaultAud
+            return `
+            <div class="mt-2">
+              <label class="block text-2xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">
+                Audience
+              </label>
+              <input
+                type="text"
+                data-aud-for="${escapeAttr(scope.id)}"
+                value="${escapeAttr(currentAud)}"
+                placeholder="did:web:your.service#svc_type (leave blank to omit aud)"
+                class="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs font-mono text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <p class="mt-1 text-2xs text-gray-500 dark:text-gray-400">
+                The <code class="font-mono">#</code> will be percent-encoded in the final scope string.
+              </p>
+            </div>`
+          })()
+        : ''
 
     const expanded = scope.expandedPermissions
     const repoCount = expanded?.repo?.length ?? 0
@@ -183,19 +287,25 @@ class ScopeBuilderElement extends HTMLElement {
 
     return `
       <div>
-        <label class="flex gap-3 py-3 px-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+        <label
+          class="${labelCls}"
+          ${supersededTooltip ? `title="${supersededTooltip}"` : ''}
+        >
           <input
             type="checkbox"
-            class="mt-0.5 h-4 w-4 flex-shrink-0 accent-blue-600"
+            class="mt-0.5 h-4 w-4 flex-shrink-0 accent-blue-600 disabled:cursor-not-allowed"
             data-scope-id="${scope.id}"
-            ${checked}
+            ${checkedAttr}
+            ${disabledAttr}
           />
-          <div class="min-w-0">
+          <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${escapeHtml(scope.label)}</span>
               ${warningHtml}
             </div>
             <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">${escapeHtml(scope.description)}</p>
+            ${includedViaHtml}
+            ${audInputHtml}
           </div>
         </label>
         ${detailsHtml}
@@ -203,9 +313,7 @@ class ScopeBuilderElement extends HTMLElement {
   }
 
   private _render() {
-    const selectedScopes = ALL_SCOPES.filter((s) => this.selectedIds.has(s.id))
-    const scopeStrings = selectedScopes.map((s) => s.scopeString)
-    const assembled = assembleScopeString(scopeStrings)
+    const assembled = this._computeAssembled()
 
     this.innerHTML = `
       <div class="not-prose font-sans max-w-2xl">
@@ -216,13 +324,14 @@ class ScopeBuilderElement extends HTMLElement {
               <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Generated scope string</span>
               <button
                 data-action="copy"
+                data-scope-string-copy
                 data-copy-text="${escapeAttr(assembled)}"
                 class="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50"
               >
                 Copy
               </button>
             </div>
-            <pre class="px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all rounded-b-xl">${escapeHtml(assembled.replace(/ /g, '\n'))}</pre>
+            <pre data-scope-string-pre class="px-4 py-3 text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all rounded-b-xl">${escapeHtml(assembled.replace(/ /g, '\n'))}</pre>
           </div>
         </div>
 
