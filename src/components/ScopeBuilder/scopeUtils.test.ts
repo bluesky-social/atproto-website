@@ -26,16 +26,23 @@ describe('isValidNsid', () => {
   it('accepts a canonical reverse-domain NSID', () => {
     expect(isValidNsid('app.bsky.feed.post')).toBe(true)
   })
+  it('accepts camelCase in the final name segment', () => {
+    expect(isValidNsid('app.bsky.feed.getTimeline')).toBe(true)
+    expect(isValidNsid('at.margin.collectionItem')).toBe(true)
+  })
   it('accepts NSID with numbers in segments', () => {
     expect(isValidNsid('com.example.v2.post')).toBe(true)
   })
   it('rejects single-segment strings', () => {
     expect(isValidNsid('post')).toBe(false)
   })
+  it('rejects two-segment strings', () => {
+    expect(isValidNsid('app.bsky')).toBe(false)
+  })
   it('rejects trailing dot', () => {
     expect(isValidNsid('app.bsky.')).toBe(false)
   })
-  it('rejects uppercase segments', () => {
+  it('rejects uppercase in authority segments', () => {
     expect(isValidNsid('App.Bsky.Feed.Post')).toBe(false)
   })
   it('rejects empty string', () => {

@@ -8,9 +8,13 @@ export function encodeAudDid(aud: string): string {
   return aud.replace('#', '%23')
 }
 
+// Per the atproto NSID spec, authority segments must be lowercase alphanumeric
+// (minimum two segments), and the final name segment allows mixed case and
+// digits but must start with a letter — this matches the camelCase
+// convention used for most lexicon names (e.g. `app.bsky.feed.getTimeline`).
 export function isValidNsid(nsid: string): boolean {
   if (!nsid) return false
-  return /^[a-z0-9]+(\.[a-z0-9]+){2,}$/.test(nsid)
+  return /^[a-z0-9]+(\.[a-z0-9]+)+\.[A-Za-z][A-Za-z0-9]*$/.test(nsid)
 }
 
 export function isPartialWildcard(value: string): boolean {
