@@ -28,8 +28,8 @@ const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
 
 export const apps: ScopeApp[] = [
-  { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
   { id: 'beaconbits', name: 'Beacon Bits', did: BEACONBITS_DID },
+  { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
   { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },

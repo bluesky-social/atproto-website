@@ -6,7 +6,10 @@ const ALL_SCOPES: CuratedScope[] = [...permissionSets, ...individualScopes]
 
 class ScopeBuilderElement extends HTMLElement {
   private selectedIds = new Set<string>()
-  private activeAppId: string = apps[0]?.id ?? 'bluesky'
+  // Default to Bluesky on load regardless of where it falls in the
+  // alphabetical pill order — it's the most likely starting point.
+  private activeAppId: string =
+    apps.find((a) => a.id === 'bluesky')?.id ?? apps[0]?.id ?? 'bluesky'
   private _handleChange: (e: Event) => void
   private _handleClick: (e: Event) => void
 
