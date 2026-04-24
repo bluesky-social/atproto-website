@@ -27,6 +27,16 @@ class ScopeBuilderElement extends HTMLElement {
       if (target instanceof HTMLInputElement && target.type === 'checkbox') {
         const id = target.dataset.scopeId
         if (!id) return
+
+        // Anchor the clicked checkbox's viewport position across the
+        // re-render. Without this, the sticky scope string grows (each
+        // token adds a line), the item itself may gain an aud input,
+        // and the item's "Included via" note may appear — any of which
+        // shifts the checkbox out from under the user's cursor. After
+        // the re-render we scroll by the delta so the clicked element
+        // stays at the same Y.
+        const anchorBefore = target.getBoundingClientRect().top
+
         if (target.checked) {
           this.selectedIds.add(id)
           // Cascade: uncheck any scopes that this one supersedes, since
@@ -38,6 +48,14 @@ class ScopeBuilderElement extends HTMLElement {
           this.selectedIds.delete(id)
         }
         this._render()
+
+        const after = this.querySelector<HTMLInputElement>(
+          `input[data-scope-id="${id}"]`,
+        )
+        if (after) {
+          const delta = after.getBoundingClientRect().top - anchorBefore
+          if (delta !== 0) window.scrollBy(0, delta)
+        }
       }
     }
 
