@@ -1,0 +1,24 @@
+import { PermissionAuthorLoader } from '@/components/ScopeBuilder'
+
+export const header = {
+  title: 'Permission Set Builder',
+  description: 'Define a permission set for your own Lexicon',
+}
+
+[Permission sets](https://atproto.com/specs/lexicon#permission-set) are a way to bundle similar OAuth scopes together into a single group to make them easier for people to understand when authorizing your app. For example, if you wanted to build an app that can post to, but not update the permissions of, your Bluesky account you might request `include:app.bsky.authCreatePosts?aud=did:web:api.bsky.app`. Permission sets let you request access to someone's repository as well as the XRPC endpoints their app might define.
+
+If your application defines custom Lexicons or endpoints, it's a best practice to also define a permission set instead of requesting the much broader `transition:generic` scope. This tool outputs a Lexicon that you can publish with a tool like goat via `goat lex publish`.
+
+<PermissionAuthorLoader />
+
+If you just want to compose a scope string for an OAuth client that uses existing permission sets, see the [Scope Builder](/guides/scope-builder).
+
+## Further Reading and Resources
+
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [Auth](/guides/auth)
+- [OAuth Patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

@@ -1,28 +1,17 @@
-import { ScopeBuilderLoader, PermissionAuthorLoader } from '@/components/ScopeBuilder'
+import { ScopeBuilderLoader } from '@/components/ScopeBuilder'
 
 export const header = {
   title: 'Scope Builder',
-  description: 'Build OAuth scope strings and permission sets interactively',
+  description: 'Compose an OAuth scope string for your app',
 }
 
-This page provides two tools to help you build scope strings:
+OAuth scopes are how you request permission to create, update, and delete records from a repo, call XRPC methods, or perform certain account management functions. Individual scopes tend to correspond to specific Lexicons, XRPC methods, or management actions, and many scopes can be bundled together into permission sets, while some scopes must be requested individually.
 
-1. **Permission Set Builder** — define a scope string or permission set for your own lexicon
-1. **Scope Builder** — compose a scope string from existing Bluesky permission sets and individual scopes
-
-## Permission Set Builder
-
-Use the Permission Set Builder to define permission sets for your own Lexicons. Add the permissions to generate a scope string, then include the metadata to build a permission set.
-
-<PermissionAuthorLoader />
-
-## OAuth Scopes Requester
-
-OAuth scopes are how you grant an app permission to create, update, and delete records from a repo, or to call XRPC methods. If you are building an app that wants to request access to Bluesky records, you can use the builder below to request the right scopes instead of using `transition:generic`.
-
+This tool lets you interactively select the scopes your app might want to request, such as uploading images or videos to a person's PDS (the `blob:*/*` scope), the full chat client permission set (`include:chat.bsky.authFullChatClient`) if you are building a fully featured Bluesky client, as well as permission sets from a few other apps.
 
 <ScopeBuilderLoader />
 
+If you're building an app with custom Lexicons and want to define your own permission set, see the [Permission Set Builder](/guides/permission-set-builder).
 
 ## Further Reading and Resources
 
