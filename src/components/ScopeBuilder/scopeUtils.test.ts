@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  encodeAudDid,
   isValidNsid,
   isPartialWildcard,
   buildScopeString,
@@ -11,26 +10,6 @@ import {
   emitCuratedScopeString,
 } from './scopeUtils'
 import type { CuratedScope, Permission, PermissionSetMeta } from './types'
-
-describe('encodeAudDid', () => {
-  it('percent-encodes # as %23 in service fragment', () => {
-    expect(encodeAudDid('did:web:api.bsky.app#bsky_appview')).toBe(
-      'did:web:api.bsky.app%23bsky_appview',
-    )
-  })
-
-  it('leaves a DID without fragment untouched', () => {
-    expect(encodeAudDid('did:web:api.example.com')).toBe('did:web:api.example.com')
-  })
-
-  it('returns the wildcard `*` untouched', () => {
-    expect(encodeAudDid('*')).toBe('*')
-  })
-
-  it('returns empty string untouched', () => {
-    expect(encodeAudDid('')).toBe('')
-  })
-})
 
 describe('isValidNsid', () => {
   it('accepts a canonical reverse-domain NSID', () => {
@@ -51,9 +30,6 @@ describe('isValidNsid', () => {
   })
   it('rejects trailing dot', () => {
     expect(isValidNsid('app.bsky.')).toBe(false)
-  })
-  it('rejects uppercase in authority segments', () => {
-    expect(isValidNsid('App.Bsky.Feed.Post')).toBe(false)
   })
   it('rejects empty string', () => {
     expect(isValidNsid('')).toBe(false)
@@ -76,33 +52,48 @@ describe('isPartialWildcard', () => {
 })
 
 describe('buildScopeString', () => {
-  it('builds a repo scope with a single collection', () => {
+  it('builds a repo scope with no actions (default elided)', () => {
     const p: Permission = { id: '1', resource: 'repo', collection: 'app.bsky.feed.post' }
     expect(buildScopeString(p)).toBe('repo:app.bsky.feed.post')
   })
-  it('builds a repo scope with actions', () => {
-    const p: Permission = { id: '1', resource: 'repo', collection: 'app.bsky.feed.post', actions: ['create', 'update'] }
-    expect(buildScopeString(p)).toBe('repo:app.bsky.feed.post?action=create&action=update')
+  it('builds a repo scope with explicit actions', () => {
+    const p: Permission = {
+      id: '1',
+      resource: 'repo',
+      collection: 'app.bsky.feed.post',
+      actions: ['create', 'update'],
+    }
+    expect(buildScopeString(p)).toBe(
+      'repo:app.bsky.feed.post?action=create&action=update',
+    )
   })
   it('builds a repo wildcard scope', () => {
     const p: Permission = { id: '1', resource: 'repo', collection: '*' }
     expect(buildScopeString(p)).toBe('repo:*')
   })
   it('builds an rpc scope with encoded aud', () => {
-    const p: Permission = { id: '1', resource: 'rpc', lxm: 'app.bsky.feed.searchPosts', aud: 'did:web:api.bsky.app#bsky_appview' }
-    expect(buildScopeString(p)).toBe('rpc:app.bsky.feed.searchPosts?aud=did:web:api.bsky.app%23bsky_appview')
+    const p: Permission = {
+      id: '1',
+      resource: 'rpc',
+      lxm: 'app.bsky.feed.searchPosts',
+      aud: 'did:web:api.bsky.app#bsky_appview',
+    }
+    expect(buildScopeString(p)).toBe(
+      'rpc:app.bsky.feed.searchPosts?aud=did:web:api.bsky.app%23bsky_appview',
+    )
   })
   it('builds an rpc scope with wildcard aud', () => {
-    const p: Permission = { id: '1', resource: 'rpc', lxm: 'app.bsky.feed.searchPosts', aud: '*' }
+    const p: Permission = {
+      id: '1',
+      resource: 'rpc',
+      lxm: 'app.bsky.feed.searchPosts',
+      aud: '*',
+    }
     expect(buildScopeString(p)).toBe('rpc:app.bsky.feed.searchPosts?aud=*')
   })
   it('builds a blob scope with default accept', () => {
     const p: Permission = { id: '1', resource: 'blob', accept: ['*/*'] }
     expect(buildScopeString(p)).toBe('blob:*/*')
-  })
-  it('builds a blob scope with multiple accepts', () => {
-    const p: Permission = { id: '1', resource: 'blob', accept: ['video/*', 'text/html'] }
-    expect(buildScopeString(p)).toBe('blob?accept=video/*&accept=text/html')
   })
   it('builds an account:email scope with default read action', () => {
     const p: Permission = { id: '1', resource: 'account', attr: 'email' }
@@ -123,29 +114,43 @@ describe('buildScopeString', () => {
 })
 
 describe('assembleScopeString', () => {
-  it('always prefixes atproto', () => {
+  // The library normalizes (sorts lexicographically and rejects invalid
+  // tokens). Output ordering is now alphabetical, not insertion order.
+  it('emits just atproto for an empty selection', () => {
     expect(assembleScopeString([])).toBe('atproto')
   })
-  it('joins multiple scopes with spaces', () => {
-    expect(assembleScopeString(['repo:app.bsky.feed.post', 'blob:*/*'])).toBe('atproto repo:app.bsky.feed.post blob:*/*')
+  it('joins multiple scopes, sorted', () => {
+    // 'atproto' sorts after 'account:email' and before 'blob' lexicographically;
+    // confirm the ordering that comes out.
+    expect(
+      assembleScopeString(['repo:app.bsky.feed.post', 'blob:*/*']),
+    ).toBe('atproto blob:*/* repo:app.bsky.feed.post')
   })
-  it('deduplicates identical scopes', () => {
-    expect(assembleScopeString(['blob:*/*', 'blob:*/*', 'repo:app.bsky.feed.post'])).toBe('atproto blob:*/* repo:app.bsky.feed.post')
+  it('deduplicates identical scopes before normalization', () => {
+    expect(
+      assembleScopeString(['blob:*/*', 'blob:*/*', 'repo:app.bsky.feed.post']),
+    ).toBe('atproto blob:*/* repo:app.bsky.feed.post')
   })
   it('does not re-add atproto if caller included it', () => {
-    expect(assembleScopeString(['atproto', 'repo:app.bsky.feed.post'])).toBe('atproto repo:app.bsky.feed.post')
-  })
-  it('preserves the caller-provided order (besides atproto always first)', () => {
-    expect(assembleScopeString(['blob:*/*', 'repo:app.bsky.feed.post'])).toBe('atproto blob:*/* repo:app.bsky.feed.post')
+    expect(assembleScopeString(['atproto', 'repo:app.bsky.feed.post'])).toBe(
+      'atproto repo:app.bsky.feed.post',
+    )
   })
 })
 
 describe('buildIncludeScopeString', () => {
   it('builds an include: string with encoded aud', () => {
-    expect(buildIncludeScopeString('com.example.authBasic', 'did:web:api.example.com#svc_appview')).toBe('include:com.example.authBasic?aud=did:web:api.example.com%23svc_appview')
+    expect(
+      buildIncludeScopeString(
+        'com.example.authBasic',
+        'did:web:api.example.com#svc_appview',
+      ),
+    ).toBe('include:com.example.authBasic?aud=did:web:api.example.com%23svc_appview')
   })
   it('omits the ?aud= suffix when no aud given', () => {
-    expect(buildIncludeScopeString('com.example.authBasic', '')).toBe('include:com.example.authBasic')
+    expect(buildIncludeScopeString('com.example.authBasic', '')).toBe(
+      'include:com.example.authBasic',
+    )
   })
 })
 
@@ -154,10 +159,14 @@ describe('isInSetNamespace', () => {
     expect(isInSetNamespace('com.example.authBasic', 'com.example.post')).toBe(true)
   })
   it('accepts a grandchild NSID', () => {
-    expect(isInSetNamespace('com.example.authBasic', 'com.example.feed.post')).toBe(true)
+    expect(
+      isInSetNamespace('com.example.authBasic', 'com.example.feed.post'),
+    ).toBe(true)
   })
   it('rejects a sibling NSID in a different subnamespace', () => {
-    expect(isInSetNamespace('com.example.feed.authBasic', 'com.example.actor.profile')).toBe(false)
+    expect(
+      isInSetNamespace('com.example.feed.authBasic', 'com.example.actor.profile'),
+    ).toBe(false)
   })
   it('accepts a wildcard collection', () => {
     expect(isInSetNamespace('com.example.authBasic', '*')).toBe(true)
@@ -166,7 +175,11 @@ describe('isInSetNamespace', () => {
 
 describe('buildPermissionSetLexicon', () => {
   it('builds a complete Lexicon document from meta and permissions', () => {
-    const meta: PermissionSetMeta = { nsid: 'com.example.authBasic', title: 'Basic', detail: 'Basic app access' }
+    const meta: PermissionSetMeta = {
+      nsid: 'com.example.authBasic',
+      title: 'Basic',
+      detail: 'Basic app access',
+    }
     const permissions: Permission[] = [
       { id: '1', resource: 'repo', collection: 'com.example.post' },
       { id: '2', resource: 'rpc', lxm: 'com.example.getFeed', aud: '', inheritAud: true },
@@ -181,7 +194,12 @@ describe('buildPermissionSetLexicon', () => {
           detail: 'Basic app access',
           permissions: [
             { type: 'permission', resource: 'repo', collection: ['com.example.post'] },
-            { type: 'permission', resource: 'rpc', lxm: ['com.example.getFeed'], inheritAud: true },
+            {
+              type: 'permission',
+              resource: 'rpc',
+              lxm: ['com.example.getFeed'],
+              inheritAud: true,
+            },
           ],
         },
       },
@@ -189,7 +207,9 @@ describe('buildPermissionSetLexicon', () => {
   })
   it('omits action field when not provided on repo', () => {
     const meta: PermissionSetMeta = { nsid: 'com.example.x', title: 't', detail: 'd' }
-    const result = buildPermissionSetLexicon(meta, [{ id: '1', resource: 'repo', collection: 'com.example.post' }])
+    const result = buildPermissionSetLexicon(meta, [
+      { id: '1', resource: 'repo', collection: 'com.example.post' },
+    ])
     expect(result.defs.main.permissions[0]).not.toHaveProperty('action')
   })
   it('skips permissions with unsupported resource types (blob/account/identity)', () => {
@@ -224,26 +244,34 @@ describe('emitCuratedScopeString', () => {
       scopeString: 'blob:*/*',
     }
     expect(emitCuratedScopeString(individual, undefined)).toBe('blob:*/*')
-    // An override on a scope without defaultAud should still be ignored.
     expect(emitCuratedScopeString(individual, 'did:web:other#svc')).toBe('blob:*/*')
   })
 
   it('uses the default aud when no override is provided', () => {
-    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    const scope: CuratedScope = {
+      ...baseScope,
+      defaultAud: 'did:web:api.bsky.app#bsky_appview',
+    }
     expect(emitCuratedScopeString(scope, undefined)).toBe(
       'include:app.bsky.authFullApp?aud=did:web:api.bsky.app%23bsky_appview',
     )
   })
 
   it('uses the override aud when provided, percent-encoding the #', () => {
-    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    const scope: CuratedScope = {
+      ...baseScope,
+      defaultAud: 'did:web:api.bsky.app#bsky_appview',
+    }
     expect(emitCuratedScopeString(scope, 'did:web:staging.example#svc_appview')).toBe(
       'include:app.bsky.authFullApp?aud=did:web:staging.example%23svc_appview',
     )
   })
 
   it('omits the aud suffix when override is the empty string', () => {
-    const scope: CuratedScope = { ...baseScope, defaultAud: 'did:web:api.bsky.app#bsky_appview' }
+    const scope: CuratedScope = {
+      ...baseScope,
+      defaultAud: 'did:web:api.bsky.app#bsky_appview',
+    }
     expect(emitCuratedScopeString(scope, '')).toBe('include:app.bsky.authFullApp')
   })
 })

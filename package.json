@@ -19,6 +19,7 @@
     "@algolia/autocomplete-core": "^1.7.3",
     "@atproto/lex": "^0.0.11",
     "@atproto/lex-password-session": "^0.0.2",
+    "@atproto/oauth-scopes": "^0.3.2",
     "@headlessui/react": "^2.1.0",
     "@headlessui/tailwindcss": "^0.2.0",
     "@mdx-js/loader": "^3.0.0",
