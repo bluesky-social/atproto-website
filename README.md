@@ -278,6 +278,88 @@ Requires `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` in `.env`. The authenticate
 
 ---
 
+### Scope Builder widgets
+
+Two interactive web components live at `src/components/ScopeBuilder/` and are embedded as the only content of two guide pages:
+
+- **`<scope-builder>`** at [`/guides/scope-builder`](https://atproto.com/guides/scope-builder) — picks scopes from a curated catalog (apps + their permission sets, plus standalone individual scopes) and assembles a complete OAuth scope string ready to paste into `oauth-client-metadata.json`.
+- **`<permission-author>`** at [`/guides/permission-set-builder`](https://atproto.com/guides/permission-set-builder) — composes individual permissions into a permission-set Lexicon JSON document for lexicon authors who want to publish their own.
+
+Both are vanilla JS custom elements; thin React loaders (`ScopeBuilderLoader.tsx`, `PermissionAuthorLoader.tsx`) handle client-side registration. See [`src/components/ScopeBuilder/README.md`](src/components/ScopeBuilder/README.md) for architecture details and how to add a new app to the curated catalog.
+
+#### `@atproto/oauth-scopes` dependency
+
+Scope-string serialization uses the official [`@atproto/oauth-scopes`](https://www.npmjs.com/package/@atproto/oauth-scopes) package as the canonical implementation. Our wrappers in `scopeUtils.ts` adapt the library's strict types to the looser shapes our forms produce, but the actual scope-string formatting flows through the library at runtime.
+
+To keep it current:
+
+```bash
+npm update @atproto/oauth-scopes
+npm test
+npm run dev   # spot-check both guide pages
+```
+
+The unit tests cover the format expectations end-to-end. If the library's output format ever changes, the test suite is the first place you'll see it. After upgrades, also visit `/guides/scope-builder` and `/guides/permission-set-builder` to verify the generated strings still look right; the assembled scope string is sorted alphabetically by the library, so any visual regression there is the first signal.
+
+The curated permission-set catalog in `scopeData.ts` is hand-maintained — adding a new app or a new permission set means appending a few lines there, not running a generator. The library does not author Lexicons, only parse them.
+
+#### Adding a permission set to the catalog
+
+When a third-party app publishes a permission-set Lexicon and we want it to appear in the Scope Builder's pill row, edit `src/components/ScopeBuilder/scopeData.ts`. Both the app and the set live in this one file.
+
+You'll need:
+
+- The publishing repo's **DID** (e.g., `did:plc:...`). Find it on the app's profile or via [Lexicon Garden](https://lexicon.garden).
+- The permission set's **NSID** (e.g., `app.acme.authFull`).
+- The set's **title** and **detail** (copy from the Lexicon record's `defs.main.title` and `defs.main.detail`, easiest to grab from `https://lexicon.garden/lexicon/<did>/<nsid>/llms.txt`).
+- The list of **permissions** the set bundles (also in the same Lexicon record, under `defs.main.permissions`).
+- The set's **audience DID** if it contains rpc permissions with `inheritAud: true`. Most third-party sets are repo-only and don't need this.
+
+The recipe:
+
+1. **Add a DID constant** near the top of `scopeData.ts`, alongside the existing `BSKY_DID`, `BEACONBITS_DID`, etc:
+
+   ```ts
+   const ACME_DID = 'did:plc:...'
+   ```
+
+2. **Append to the `apps[]` array**, keeping it alphabetical:
+
+   ```ts
+   { id: 'acme', name: 'Acme', did: ACME_DID },
+   ```
+
+3. **Append one entry per permission set** to `permissionSets[]`, with `appId` matching what you used in step 2:
+
+   ```ts
+   {
+     id: 'app.acme.authFull',                   // same as the NSID
+     appId: 'acme',
+     label: 'Full Acme Access',                 // from the Lexicon's title
+     description: 'One-line summary for the checkbox.',
+     kind: 'permission-set',
+     resourceType: 'include',
+     scopeString: 'include:app.acme.authFull',  // add `?aud=...%23...` only if defaultAud is set
+     // defaultAud: 'did:web:api.acme.app#api', // ONLY for sets with rpc inheritAud permissions
+     expandedPermissions: {
+       repo: [
+         { collection: 'app.acme.thing', actions: [...ALL_WRITE_ACTIONS] },
+       ],
+       rpc: ['app.acme.getThings'],             // omit if the set has no rpc permissions
+     },
+     specLink: lexiconGardenLink(ACME_DID, 'app.acme.authFull'),
+     explanation: 'Longer prose shown when the user expands the checkbox.',
+   }
+   ```
+
+   The `defaultAud` field is in **unencoded** form (raw `#`); the library handles `%23` encoding when emitting scope strings. Only include it if the underlying Lexicon contains `rpc` permissions with `inheritAud: true` — for repo-only sets, omit it and the include-scope string drops the `?aud=` suffix.
+
+4. **Run the test suite** (`npm test`) to confirm the data shape is valid. Then `npm run dev` and visit `/guides/scope-builder` to verify the new pill appears alphabetically and the set's bundled permissions render under "Bundled permissions (N)."
+
+For adding individual (non-set) scopes, scopes with subset relationships, warning badges, or the deeper rendering details, see [`src/components/ScopeBuilder/README.md`](src/components/ScopeBuilder/README.md#adding-to-the-catalog).
+
+---
+
 ### Are you a developer interested in building on atproto?
 
 Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
