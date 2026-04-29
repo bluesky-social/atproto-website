@@ -1,8 +1,6 @@
 import { Container } from "@/components/Container"
-import {
-  AtmosphereLoginWidget,
-  AtmosphereLoginButton,
-} from "@/components/AtmosphereLoginMockup"
+import { AtmosphereLoginWidget } from "@/components/AtmosphereLoginMockup"
+import { AtmosphereLoginEmbed } from "@/components/AtmosphereLoginEmbed"
 import atmosphereLogo from "./atmosphere-login.png"
 import S00 from './_snippets/00-npm-install.mdx'
 import S01 from './_snippets/01-import-widget.mdx'
@@ -40,7 +38,7 @@ The simplest integration is to embed the login button on your page:
 <S06 />
 
 <Container>
-  <AtmosphereLoginButton logoSrc={atmosphereLogo} />
+  <AtmosphereLoginEmbed logoSrc={atmosphereLogo} />
 </Container>
 
 When the user clicks the button, it opens the account picker in an iframe overlay. The user can select an existing identity or create a new one:

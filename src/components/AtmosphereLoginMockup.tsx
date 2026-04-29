@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image, { StaticImageData } from 'next/image'
 
 // Mock identity data for demonstration
@@ -35,9 +35,62 @@ export function AtmosphereLoginWidget({
   appName?: string
   logoSrc?: string | StaticImageData
 }) {
-  const [view, setView] = useState<'choose' | 'create'>('choose')
+  const [view, setView] = useState<'choose' | 'create' | 'lookup'>('choose')
   const [handle, setHandle] = useState('')
   const [selectedDid, setSelectedDid] = useState<string | null>(null)
+  const [lookupQuery, setLookupQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Array<{ did: string; handle: string; displayName?: string; avatar?: string }>>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [accounts, setAccounts] = useState(mockIdentities)
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Debounced actor search
+  useEffect(() => {
+    const query = lookupQuery.startsWith('@') ? lookupQuery.slice(1) : lookupQuery
+
+    if (query.length < 2) {
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
+
+    setIsSearching(true)
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://public.api.bsky.app/xrpc/app.bsky.actor.searchActors?q=${encodeURIComponent(query)}&limit=8`
+        )
+        if (res.ok) {
+          const data = await res.json()
+          setSearchResults(
+            data.actors?.map((actor: { did: string; handle: string; displayName?: string; avatar?: string }) => ({
+              did: actor.did,
+              handle: actor.handle,
+              displayName: actor.displayName,
+              avatar: actor.avatar,
+            })) || []
+          )
+        } else {
+          setSearchResults([])
+        }
+      } catch {
+        setSearchResults([])
+      } finally {
+        setIsSearching(false)
+      }
+    }, 200)
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+    }
+  }, [lookupQuery])
 
   return (
     // Force light mode with explicit background and text colors
@@ -60,7 +113,7 @@ export function AtmosphereLoginWidget({
           </div>
         )}
         <h2 className="text-lg font-semibold text-zinc-800">
-          {view === 'choose' ? 'Choose an account' : 'Create an account'}
+          {view === 'choose' ? 'Choose an account' : view === 'lookup' ? 'Use another account' : 'Create an account'}
         </h2>
         <p className="text-sm text-zinc-500 mt-1">
           to continue to <span className="font-medium text-zinc-700">{appName}</span>
@@ -72,8 +125,8 @@ export function AtmosphereLoginWidget({
         {view === 'choose' ? (
           <>
             {/* Identity List */}
-            <div className="flex-1 py-2">
-              {mockIdentities.map((identity) => (
+            <div className="flex-1 py-2 overflow-y-auto">
+              {accounts.map((identity) => (
                 <button
                   key={identity.did}
                   type="button"
@@ -102,6 +155,7 @@ export function AtmosphereLoginWidget({
               {/* Use another account */}
               <button
                 type="button"
+                onClick={() => setView('lookup')}
                 className="w-full px-6 py-3 flex items-center gap-3 hover:bg-sky-50 transition-colors text-left"
               >
                 <div className="w-10 h-10 rounded-full border-2 border-dashed border-sky-300 flex items-center justify-center">
@@ -123,6 +177,96 @@ export function AtmosphereLoginWidget({
                 className="w-full text-center text-sm text-sky-600 hover:text-sky-700 font-medium"
               >
                 Create a new account
+              </button>
+            </div>
+          </>
+        ) : view === 'lookup' ? (
+          <>
+            {/* Lookup account form */}
+            <div className="flex-1 p-6 flex flex-col">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">@</span>
+                <input
+                  type="text"
+                  value={lookupQuery}
+                  onChange={(e) => setLookupQuery(e.target.value)}
+                  placeholder="yourhandle"
+                  className="w-full pl-8 pr-4 py-2.5 border border-sky-200 rounded-lg bg-white text-zinc-800 placeholder-zinc-400 focus:ring-2 focus:ring-sky-300 focus:border-sky-300 outline-none disabled:bg-zinc-50"
+                  autoFocus
+                />
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="not-prose mt-2 max-h-40 overflow-y-auto border border-sky-100 rounded-lg bg-white shadow-sm">
+                  {searchResults.map((result) => (
+                    <button
+                      key={result.did}
+                      type="button"
+                      onClick={() => {
+                        // Add account if not already in list
+                        if (!accounts.some(a => a.did === result.did)) {
+                          setAccounts(prev => [...prev, {
+                            did: result.did,
+                            handle: result.handle,
+                            displayName: result.displayName,
+                          }])
+                        }
+                        setSelectedDid(result.did)
+                        setLookupQuery('')
+                        setSearchResults([])
+                        setView('choose')
+                      }}
+                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-sky-50 transition-colors text-left"
+                    >
+                      {result.avatar ? (
+                        <img
+                          alt={result.displayName || result.handle}
+                          className="w-8 h-8 text-xs rounded-full object-cover border border-zinc-300"
+                          src={result.avatar}
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-200 via-sky-300 to-blue-400 flex items-center justify-center text-white font-medium text-xs border border-zinc-300">
+                          {(result.displayName || result.handle).charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm leading-5 font-medium text-zinc-800 truncate">
+                          {result.displayName || result.handle}
+                        </div>
+                        <div className="text-xs leading-4 text-zinc-500 truncate">
+                          @{result.handle}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {isSearching && (
+                <p className="text-xs text-zinc-500 mt-2">Searching...</p>
+              )}
+
+              {lookupQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+                <p className="text-xs text-zinc-500 mt-2">No results found</p>
+              )}
+
+              <p className="text-xs text-zinc-500 mt-auto pt-4">
+                Your handle is your identity across the Atmosphere.
+              </p>
+            </div>
+
+            {/* Back link */}
+            <div className="px-6 py-4 border-t border-sky-50">
+              <button
+                type="button"
+                onClick={() => {
+                  setView('choose')
+                  setLookupQuery('')
+                  setSearchResults([])
+                }}
+                className="w-full text-center text-sm text-sky-600 hover:text-sky-700 font-medium"
+              >
+                Back to accounts
               </button>
             </div>
           </>
