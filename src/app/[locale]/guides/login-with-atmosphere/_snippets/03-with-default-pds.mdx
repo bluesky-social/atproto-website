@@ -1,0 +1,10 @@
+```typescript
+import { AtmosphereLogin } from '@atproto/atmosphere-login'
+
+// Provide a default PDS for new account signups
+const session = await AtmosphereLogin.prompt({
+  clientId: 'https://example.com/client-metadata.json',
+  scope: 'atproto transition:generic',
+  defaultPds: 'https://pds.example.com',
+})
+```

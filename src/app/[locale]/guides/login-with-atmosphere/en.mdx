@@ -1,0 +1,72 @@
+import { Container } from "@/components/Container"
+import {
+  AtmosphereLoginWidget,
+  AtmosphereLoginButton,
+} from "@/components/AtmosphereLoginMockup"
+import atmosphereLogo from "./atmosphere-login.png"
+import S01 from './_snippets/01-import-widget.mdx'
+import S02 from './_snippets/02-did-only.mdx'
+import S03 from './_snippets/03-with-default-pds.mdx'
+
+export const header = {
+  title: 'Login with Atmosphere',
+  description: 'Embedding an Atmosphere login widget into your app',
+}
+
+## Overview
+
+AT Protocol identities can be used across applications with [OAuth](/guides/about-oauth). Instead of implementing your own OAuth flow, you can embed the Atmosphere login widget into your app. This provides a straightforward, consistent login experience.
+
+This provides an interface to pick from any of the atproto identities you've used locally, similar to the [Sign in with Google](https://developers.google.com/identity/gsi/web/guides/overview) auth flow.
+
+As in other atproto auth flows, your PDS is the actual identity provider, and your app is the OAuth client. The user will authenticate with their PDS, which will return an access token to your app.
+
+In addition to logging in with existing identities, this interface can also be used for sign up flows — allowing users to create a new identity and immediately use it to log in.
+
+## FedCM support
+
+Eventually, we plan to support [FedCM](/blog/working-to-decentralize-fedcm), which will provide native browser support for decentralized login flows. This widget provides a similar experience to FedCM, and can be embedded into any web app as-is.
+
+## Using the Widget
+
+Import the package...
+
+<Container>
+  <AtmosphereLoginWidget appName="Your App" logoSrc={atmosphereLogo} />
+</Container>
+
+The widget will load an iframe with the login UI. When the user completes the login flow, the widget will return a session object containing the user's DID and an access token for your app to use when making authenticated requests to AT Protocol APIs.
+
+<S01 />
+
+## Running the Login Server
+
+This package also provides a backend component. This can be used to provide your own server for the widget to communicate with, supporting a totally decentralized login flow.
+
+If you want new users to be able to sign up directly through the widget, you can provide a default PDS that will host their accounts:
+
+<S03 />
+
+## Returning a Session
+
+By default, the widget will return a session object.
+
+## DID Resolution Only
+
+The widget can also be used for DID resolution only, without returning a session. This allows you to  use the account picker UI in combination with an external authentication flow.
+
+For example, if you're already using the [authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) Astro package, you can use this widget to provide a familiar interface, then return the DID to your authproto server for authentication.
+
+To do this...
+
+<S02 />
+
+## Further Reading and Resources
+
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [OAuth Patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

@@ -1,0 +1,16 @@
+```typescript
+import { AtmosphereLogin } from '@atproto/atmosphere-login'
+
+// Returns a full authenticated session
+const session = await AtmosphereLogin.prompt({
+  clientId: 'https://example.com/client-metadata.json',
+  scope: 'atproto transition:generic',
+})
+
+console.log(session.did)    // 'did:plc:...'
+console.log(session.handle) // 'alice.bsky.social'
+
+// Use the session for API calls
+const agent = new Agent(session)
+await agent.post({ text: 'Hello from Atmosphere!' })
+```
