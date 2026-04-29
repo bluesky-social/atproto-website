@@ -208,7 +208,7 @@ export function AtmosphereLoginWidget({
                           setAccounts(prev => [...prev, {
                             did: result.did,
                             handle: result.handle,
-                            displayName: result.displayName,
+                            displayName: result.displayName ?? result.handle,
                           }])
                         }
                         setSelectedDid(result.did)
