@@ -1,9 +1,9 @@
 ```typescript
 import { AtmosphereLogin } from '@atproto/atmosphere-login'
+import { Agent } from '@atproto/lex'
 
 // Returns a full authenticated session
 const session = await AtmosphereLogin.prompt({
-  clientId: 'https://example.com/client-metadata.json',
   scope: 'atproto transition:generic',
 })
 

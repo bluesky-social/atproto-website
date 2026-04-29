@@ -1,0 +1,13 @@
+```tsx
+import { AtmosphereLoginButton } from '@atproto/atmosphere-login/react'
+
+function LoginPage() {
+  return (
+    <AtmosphereLoginButton
+      onLogin={(session) => {
+        console.log('Logged in as:', session.handle)
+      }}
+    />
+  )
+}
+```
