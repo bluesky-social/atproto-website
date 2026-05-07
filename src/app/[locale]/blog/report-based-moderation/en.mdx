@@ -1,0 +1,106 @@
+import reportQueueList from "./image1.png"
+import reportDetail from "./image2.png"
+import queueManager from "./image3.png"
+import analyticsOverview from "./image4.png"
+import analyticsDetail from "./image5.png"
+
+export const header = {
+  title: 'Report-Based Moderation in Ozone',
+  description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
+  date: 'May 12, 2026',
+  author: 'AT Protocol Team',
+}
+
+## Improving Ozone
+
+Ozone has historically been a **subject-centric** moderation tool: moderators take actions directly on accounts or records, which reports are attached to. This makes it hard for a team to divide a queue, see who's working on what, or audit the path from "report came in" to "decision made."
+
+We're rolling out a new **report-centric** workflow in Ozone. Reports are now first-class entities with their own lifecycle. They can be routed to specific queues, assigned to a moderator, escalated, annotated, and resolved, with a full activity log on each one. The familiar quick-action panel for taking actions on a subject is unchanged. Everything described here is additive and lives behind `/reports/beta` for now.
+
+This post walks through what's new along four axes: report queues, report assignment, real-time collaboration, and activity history.
+
+## Report Queues
+
+Incoming reports are routed into queues based on deterministic rules instead of randomized assignment. Admins or moderation leads create queues at `/queues`, choosing which report reasons and subject types each queue handles — for example, a "Spam Accounts" queue that only catches spam reports against accounts, or a "Spam Posts" queue scoped to `app.bsky.feed.post`.
+
+A report routes to a queue when its report type matches one of the queue's report types **and** its subject type matches one of the queue's subject types, with the optional collection filter applied for record subjects. Report types can overlap, and are currently capped at 25 per queue.
+
+Here's a walkthrough of creating a new queue:
+
+<video src="/blog/report-based-moderation/queue-create-flow.mp4" controls muted playsInline className="rounded-lg" />
+
+Moderators can also be assigned to specific queues to indicate ownership. Queue assignments update in near real-time, polling every 5 seconds.
+
+The queue manager surfaces relevant data on each queue card — pending, escalated, and actioned counts, last-updated timestamp, enabled/disabled status, and the list of assigned moderators:
+
+<Image src={queueManager} alt="Queue manager view showing three queues — Harassment Accounts (disabled), Spam Accounts (enabled), and Spam Posts (enabled) — each with subject and report type filters, inbound/escalated/actioned/pending counts, a creator, and an assignee list." />
+
+The queue list view at `/reports/beta` is the primary workspace for reviewing reports. Filters cover status (all, open, closed, escalated), subject type (all, account, record), report type (multi-select), collection (when subject type is "Record"), and queue. All filters sync to the URL, so a filtered view is shareable or bookmarkable. Reports can be sorted by creation date or last-updated date, ascending or descending.
+
+Each row surfaces a lot of triage context without needing to open the report:
+
+- **Report** — type badge, reporter comment (truncated, expandable), creation date
+- **Subject** — handle, content preview, review/hosting state icons, labels and tags
+- **Summary** — priority score, strike count, suspension count, reported records count, takedown records count
+- **Last Update** — timestamp and current assignee, last action note
+- **Related** — count of other reports on the same subject
+
+Below is the queue list filtered down to a single queue:
+
+<Image src={reportQueueList} alt="Report queue list view filtered to a Spam Accounts queue, showing a table with Report, Subject, Summary, and Last Update columns. Each row has Spam and Queued badges, a reporter comment, the reported account handle, and a last-update timestamp." />
+
+For larger reorganizations, a separate **Queue Manager** tool can bulk-route unassigned reports by report ID range, processing up to 5,000 reports per operation. It auto-fills the most recent block, includes a "Shift Range" button to step backward through previous blocks, and logs every routing attempt with timestamps.
+
+## Report Assignment
+
+Opening a report (`/reports/[id]`) brings everything needed for a decision into one view. The info panel at the top shows a color-coded status badge (green for open, blue for assigned, orange for escalated, gray for closed), the report type, the reporter's full comment, the subject preview with labels, tags, and moderation state, the current assignee, and a viewers indicator (covered in the next section). Moderators can step through reports sequentially to work through a queue without returning to the list between reports.
+
+<Image src={reportDetail} alt="Report detail view for Report #4. The left side shows the reported post, moderation history, and tags. The right side shows the report metadata (Other type, Open status, reporter handle, comment), an Assign to me button, and Escalate / No-action / Action buttons." />
+
+When a moderator opens a report, they're automatically registered as a **temporary viewer**. Self-assignment is a separate explicit step: clicking "Assign to me" transitions the report to `assigned` and signals to the team that someone is actively working it. If a report you're viewing gets reassigned to someone else, a toast notification flags the change.
+
+The action bar adapts to the report's current state, only showing valid transitions:
+
+- **Close (no action)** — available when the report is assigned or escalated. Closes the report as resolved without taking any moderation action on the subject. Prompts for an optional internal or public note.
+- **Label / Takedown** — available when the report is open, assigned, or escalated. Opens the moderation form: pick action type (Label or Takedown), choose labels or configure takedown duration, select policy and severity for takedowns, and add a comment. After actioning, choose the **closure scope** — close only this report, close all reports on this subject, or close reports of specific types on this subject — with an optional note to the reporter.
+- **Escalate** — available from open, queued, or assigned states. Flags the report for senior review with an optional explanatory note.
+- **Re-open** — available when the report is closed. Returns it to open status with an optional note.
+- **Add notes** — available at any time, regardless of state. Internal notes are visible to moderators only. Public notes are shared back to the reporter.
+
+Moderation actions now resolve the reports that prompted them, rather than leaving duplicates behind in the queue. Here's a labeling action followed by a bulk close on related reports:
+
+<video src="/blog/report-based-moderation/action-report-and-bulk-close.mp4" controls muted playsInline className="rounded-lg" />
+
+Permissions are role-based. Admins and Moderators can take all actions, including labels and takedowns. Triage roles run the report workflow — assign, escalate, close, add notes — but cannot label or take down subjects. Verifiers don't have access to the report queue at all. Queue management requires the Moderator or Admin role.
+
+## Realtime Collaboration
+
+The report detail view shows a **viewers indicator** at the top: a list of every moderator currently looking at the report, with each viewer's name and avatar, role badge (Admin, Moderator, Triage, Verifier), and "viewing since" timestamp. The list is polled every 30 seconds.
+
+These don't block simultaneous work or act as any kind of lock right now — they're meant to improve awareness and collaboration, so two moderators don't unknowingly pick up the same report at the same time.
+
+## Activity History
+
+Every report has a **timeline** of its full history in reverse chronological order. Each activity entry shows:
+
+- A visual indicator of the state transition (e.g. open → escalated)
+- The moderator who performed the action, with handle and avatar
+- A timestamp
+- Any internal or public notes attached to the transition
+- An automated flag distinguishing system-generated activities from manual ones
+
+The timeline gives every report a complete audit trail. Compliance reviews, policy disputes, and internal retrospectives can reference a single source of truth, and the per-transition notes preserve context across moderator handoffs that would otherwise live in chat.
+
+The same data rolls up into team-wide analytics. The overview shows inbound, pending, escalated, and actioned counts, action rate, and average handling time, broken out across individual queues and across report categories like spam, harassment, and child safety:
+
+<Image src={analyticsOverview} alt="Analytics overview showing top-line stats (133 inbound, 384 pending, 16 escalated, 860 actioned at 86%, 34 minute average handling time), then per-queue cards for Spam Accounts, Spam Posts, and Harassment Accounts, then per-category cards for Violence & Welfare, Sexual Content, Child Safety, Harassment, Misleading, Rule Violations, Civic Issues, and Appeals." />
+
+Stats for the current day refresh every 15 minutes. Prior days are stored, so a detail page can drill into any subset of reports over a 7-day, 30-day, 90-day, or custom range, plotting inbound, pending, escalated, and actioned counts as time series:
+
+<Image src={analyticsDetail} alt="Analytics detail page filtered to the Violence & Welfare category over a 30-day range, showing four overlaid line charts for inbound, pending, escalated, and actioned counts across the date range, with a top-line summary of 183 inbound, 54 pending, 15 escalated, 126 actioned at 69% action rate, 8 minute average handling time." />
+
+Per-moderator stats are also available, covering assigned count, actioned count, and average handling time for each individual on the team.
+
+## Next steps
+
+Report-based moderation is rolling out behind `/reports/beta` and ships alongside the existing subject-centric tools, so teams can adopt it incrementally. We'd love feedback from operators running their own Ozone instances — please file issues against [bluesky-social/ozone](https://github.com/bluesky-social/ozone) or reach out via the usual channels.

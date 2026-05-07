@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'report-based-moderation',
+    title: 'Report-Based Moderation in Ozone',
+    description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
+    date: 'May 12, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'serving-the-for-you-feed',
     title: 'Serving the For You Feed',
     description: 'How the maintainer of the popular For You feed serves it from their living room!',
