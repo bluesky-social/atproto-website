@@ -1,0 +1,51 @@
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client } from "@atproto/lex";
+import { AtUri } from "@atproto/syntax";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as xyz from "@/src/lexicons/xyz";
+import * as com from "@/src/lexicons/com";
+
+const LABELER_DID = process.env.LABELER_DID!;
+
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { uri, reason } = await request.json();
+  if (!uri || typeof uri !== "string") {
+    return NextResponse.json({ error: "uri is required" }, { status: 400 });
+  }
+
+  const client = await getOAuthClient();
+  const oauthSession = await client.restore(session.did);
+  const lexClient = new Client(oauthSession);
+
+  const parsed = new AtUri(uri);
+  const record = await lexClient.get(xyz.statusphere.status, {
+    repo: parsed.host,
+    rkey: parsed.rkey,
+  });
+
+  await lexClient.call(
+    com.atproto.moderation.createReport,
+    {
+      reasonType: "com.atproto.moderation.defs#reasonOther",
+      reason: typeof reason === "string" ? reason : undefined,
+      subject: {
+        $type: "com.atproto.repo.strongRef",
+        uri: record.data.uri,
+        cid: record.data.cid,
+      },
+    },
+    {
+      service: `${LABELER_DID}#atproto_labeler`,
+    },
+  );
+
+  return NextResponse.json({ success: true });
+}
+```

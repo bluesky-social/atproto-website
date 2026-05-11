@@ -1,0 +1,50 @@
+```typescript
+const LABELER_URL = process.env.LABELER_URL!;
+
+export interface Label {
+  src: string;
+  uri: string;
+  val: string;
+  cts: string;
+  neg?: boolean;
+}
+
+export async function getLabelsForUris(
+  uris: string[],
+): Promise<Map<string, Label[]>> {
+  const byUri = new Map<string, Label[]>();
+  if (uris.length === 0) return byUri;
+
+  const params = new URLSearchParams();
+  for (const uri of uris) params.append("uriPatterns", uri);
+
+  const res = await fetch(
+    `${LABELER_URL}/xrpc/com.atproto.label.queryLabels?${params.toString()}`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return byUri;
+
+  const data = (await res.json()) as { labels: Label[] };
+  for (const label of data.labels) {
+    if (label.neg) continue;
+    const list = byUri.get(label.uri) ?? [];
+    list.push(label);
+    byUri.set(label.uri, list);
+  }
+  return byUri;
+}
+
+export function isHidden(labels: Label[] | undefined): boolean {
+  return !!labels?.some((l) => l.val === "!hide");
+}
+
+export function isWarned(labels: Label[] | undefined): boolean {
+  return !!labels?.some((l) => l.val === "!warn");
+}
+
+export function displayLabels(labels: Label[] | undefined): string[] {
+  return (labels ?? [])
+    .filter((l) => !l.val.startsWith("!"))
+    .map((l) => l.val);
+}
+```
