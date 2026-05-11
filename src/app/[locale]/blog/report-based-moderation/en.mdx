@@ -27,7 +27,7 @@ A report routes to a queue when its report type matches one of the queue's repor
 
 Here's a walkthrough of creating a new queue:
 
-<video src="/blog/report-based-moderation/queue-create-flow.mp4" controls muted playsInline className="rounded-lg" />
+<video src="/blog/report-based-moderation/queue-create-flow.mp4" controls muted playsInline className="rounded-lg w-full" />
 
 Moderators can also be assigned to specific queues to indicate ownership. Queue assignments update in near real-time, polling every 5 seconds.
 
@@ -69,7 +69,7 @@ The action bar adapts to the report's current state, only showing valid transiti
 
 Moderation actions now resolve the reports that prompted them, rather than leaving duplicates behind in the queue. Here's a labeling action followed by a bulk close on related reports:
 
-<video src="/blog/report-based-moderation/action-report-and-bulk-close.mp4" controls muted playsInline className="rounded-lg" />
+<video src="/blog/report-based-moderation/action-report-and-bulk-close.mp4" controls muted playsInline className="rounded-lg w-full" />
 
 Permissions are role-based. Admins and Moderators can take all actions, including labels and takedowns. Triage roles run the report workflow — assign, escalate, close, add notes — but cannot label or take down subjects. Verifiers don't have access to the report queue at all. Queue management requires the Moderator or Admin role.
 
