@@ -11,7 +11,7 @@ export const posts: BlogPost[] = [
     slug: 'report-based-moderation',
     title: 'Report-Based Moderation in Ozone',
     description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
-    date: 'May 12, 2026',
+    date: 'May 11, 2026',
     author: 'AT Protocol Team',
   },
   {
