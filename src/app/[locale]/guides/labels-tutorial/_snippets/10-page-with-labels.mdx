@@ -65,8 +65,8 @@ export default async function Home() {
                       {t}
                     </span>
                   ))}
-                  {session && session.did !== s.authorDid && (
-                    <ReportButton uri={s.uri} />
+                  {session && s.cid && (
+                    <ReportButton uri={s.uri} cid={s.cid} />
                   )}
                   <span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
                     {timeAgo(s.createdAt)}

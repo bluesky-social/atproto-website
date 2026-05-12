@@ -1,0 +1,13 @@
+```typescript
+"003": {
+  async up(db: Kysely<unknown>) {
+    await db.schema
+      .alterTable("status")
+      .addColumn("cid", "text", (col) => col.notNull().defaultTo(""))
+      .execute();
+  },
+  async down(db: Kysely<unknown>) {
+    await db.schema.alterTable("status").dropColumn("cid").execute();
+  },
+},
+```

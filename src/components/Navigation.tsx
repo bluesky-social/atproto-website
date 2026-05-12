@@ -248,6 +248,7 @@ export const navigation: Array<NavGroup> = [
             title: 'Create a Social App',
             href: '/guides/statusphere-tutorial',
           },
+          { title: 'Adding Labels', href: '/guides/labels-tutorial' },
         ],
       },
       {
