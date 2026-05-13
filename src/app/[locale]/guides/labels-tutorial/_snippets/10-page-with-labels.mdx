@@ -57,12 +57,13 @@ export default async function Home() {
                   <span className="text-zinc-600 dark:text-zinc-400 text-sm">
                     @{s.handle}
                   </span>
-                  {tags.map((t) => (
+                  {tags.map((l) => (
                     <span
-                      key={t}
+                      key={l.val}
+                      title={`Labeled by @${l.srcHandle ?? l.src}`}
                       className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
                     >
-                      {t}
+                      {l.val}
                     </span>
                   ))}
                   {session && s.cid && (

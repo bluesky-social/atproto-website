@@ -1,11 +1,11 @@
 import {Container} from "@/components/Container"
 import S01 from './_snippets/01-env-vars.mdx'
 import S02 from './_snippets/02-scope-update.mdx'
-import S03 from './_snippets/03-lib-labels.mdx'
-import S04 from './_snippets/04-schema-cid.mdx'
-import S05 from './_snippets/05-migration-cid.mdx'
-import S06 from './_snippets/06-webhook-cid.mdx'
-import S07 from './_snippets/07-lex-install-report.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-lib-labels.mdx'
+import S05 from './_snippets/05-schema-cid.mdx'
+import S06 from './_snippets/06-migration-cid.mdx'
+import S07 from './_snippets/07-webhook-cid.mdx'
 import S08 from './_snippets/08-report-route.mdx'
 import S09 from './_snippets/09-report-button.mdx'
 import S10 from './_snippets/10-page-with-labels.mdx'
@@ -40,7 +40,7 @@ On a fresh Ozone install, this should return `{"labels":[]}`.
 
 ## Part 1: Wiring the Labeler Into Your App
 
-Add the labeler's DID and URL to your environment:
+Add the labeler's DID to your environment:
 
 <S01 />
 
@@ -58,11 +58,19 @@ You'll need to log out and log back in for the new scope to take effect on exist
 
 Labels live on the labeler service, not in any user's repo. You'll query the labeler directly each time the feed renders.
 
-Create `lib/labels.ts`:
+You'll be making typed XRPC calls to both the labeler (to read labels) and the user's PDS (to submit reports), so install both lexicons up front:
 
 <S03 />
 
-`com.atproto.label.queryLabels` is a public endpoint — no auth is required. The `uriPatterns` parameter accepts exact URIs or glob patterns; here you pass one exact URI per visible status.
+Now create `lib/labels.ts`:
+
+<S04 />
+
+A few things worth pointing out:
+
+- The endpoint URL comes from the labeler's DID document. The DID is the trust anchor — its document is signed and tells you where the `#atproto_labeler` service actually lives. Tap caches the underlying DID resolution.
+- The lex `Client` is constructed against that resolved URL and used unauthenticated — `queryLabels` is a public endpoint.
+- Each label's `src` is the DID of the labeler that issued it. Those are resolved to handles (deduped per call) and attached to each `Label` as `srcHandle`, so the UI can show *who* labeled a status rather than just an opaque DID.
 
 The three helpers (`isHidden`, `isWarned`, `displayLabels`) interpret the values. `!hide` and `!warn` are system-level labels with prescribed UI behavior; anything else is a descriptive label like `spam` or `joke` that you can render however you want.
 
@@ -72,17 +80,17 @@ A report subject needs both the URI and the CID of the record being reported. Ta
 
 Add the `cid` column to the `StatusTable` interface in `lib/db/index.ts`:
 
-<S04 />
+<S05 />
 
 Add a new migration in `lib/db/migrations.ts`:
 
-<S05 />
+<S06 />
 
 Run `pnpm migrate` to apply it. The default empty string is for any pre-existing rows — new statuses will get the real CID from the webhook.
 
 Update the `insertStatus` call in `app/api/webhook/route.ts` to pass the CID through:
 
-<S06 />
+<S07 />
 
 <Note>
 If you started from the [statusphere-example-app](https://github.com/bluesky-social/statusphere-example-app) clone (rather than building up the previous tutorial by hand), `app/api/status/route.ts` also does an optimistic local insert after writing to the user's PDS. Pass `cid: res.cid` through that `insertStatus` call too — otherwise the user's own posts will sit in the DB with an empty `cid` until the Tap webhook catches up.
@@ -91,10 +99,6 @@ If you started from the [statusphere-example-app](https://github.com/bluesky-soc
 `getRecentStatuses` already uses `selectAll()`, so the new column flows out to the feed page without further changes.
 
 ## Part 4: Reporting Statuses
-
-Install the createReport Lexicon along with its dependencies:
-
-<S07 />
 
 Create `app/api/report/route.ts`:
 
@@ -111,6 +115,15 @@ Then add `components/ReportButton.tsx`:
 Now wire everything together. Update `app/page.tsx` to fetch labels for the visible statuses, drop any that are hidden, dim any that are warned, render the rest of the label values as badges, and surface the `ReportButton` on each row. Only the changed sections are shown below — the header, session block, and top statuses block from the previous tutorial are unchanged:
 
 <S10 />
+
+Before testing, you should still have `tap` running from the previous tutorial:
+
+```bash
+tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  --collection-filters=xyz.statusphere.status \
+  --signal-collection=xyz.statusphere.status
+```
 
 Restart `pnpm dev`. Logged-in users should see a small "report" affordance next to other users' statuses. Submitting a report sends it through their PDS to your labeler.
 
