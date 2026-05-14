@@ -11,7 +11,7 @@ export const header = {
 
 ## Account Creation
 
-Atmospheric apps should generally implement an account creation flow of their own — e.g., "Log in or sign up." They may or may not run their own PDS as a default home for new accounts. Once a user has created an account on any PDS, including a Bluesky PDS, they can log in to any atproto app using that account. This works via [DID resolution](/guides/the-at-stack#did-plc), which allows apps to find the PDS that's hosting a given account and trigger the [auth flow](/guides/permission-requests) on that PDS.
+Atmospheric apps should generally implement an account creation flow of their own — e.g., "Log in or sign up." They may or may not run their own [PDS](/guides/the-at-stack#pds) as a default home for new accounts. Once a user has created an account on any PDS, including a Bluesky PDS, they can log in to any atproto app using that account. This works via [DID resolution](/guides/the-at-stack#did-plc), which allows apps to find the PDS that's hosting a given account and trigger the [auth flow](/guides/permission-requests) on that PDS.
 
 ## Account Management
 
