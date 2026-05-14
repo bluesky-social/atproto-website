@@ -1,7 +1,76 @@
+import {Container} from "@/components/Container"
+import devices from "./pds-devices.png"
+import apps from "./pds-apps.png"
+import password from "./pds-password.png"
+
 export const header = {
   title: 'Account Management',
   description:
     'How to manage your Atmosphere account',
 }
 
-TK
+## Account Creation
+
+Atmospheric apps should generally implement an account creation flow of their own — e.g., "Log in or sign up." They may or may not run their own PDS as a default home for new accounts. Once a user has created an account on any PDS, including a Bluesky PDS, they can log in to any atproto app using that account. This works via [DID resolution](/guides/the-at-stack#did-plc), which allows apps to find the PDS that's hosting a given account and trigger the [auth flow](/guides/permission-requests) on that PDS.
+
+## Account Management
+
+Once you have an existing account, you can manage it via the host PDS. Our [reference PDS](https://github.com/bluesky-social/pds) includes a basic account management interface that is accessible at `https://pds.example.com/account`. From this interface, you can:
+
+- See a list of devices that are currently logged in to your account, and log out of any of them:
+
+<Container>
+  <Image src={devices} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+- See a list of apps that have permission to access your account, and revoke any of those permissions:
+
+<Container>
+  <Image src={apps} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+- Change your password:
+
+<Container>
+  <Image src={password} alt="" className="w-full max-w-md mx-auto" /> 
+</Container>
+
+You can also perform some account actions — including on PDSes that do not implement this interface — using `goat`, our CLI tool.
+
+```bash
+$ goat account
+NAME:
+   goat account - commands for auth session and account management
+
+USAGE:
+   goat account [command [command options]]
+
+COMMANDS:
+   login                 create session with PDS instance
+   logout                delete any current session
+   activate              (re)activate current account
+   deactivate            deactivate current account
+   status                show basic account hosting status for any account
+   update-handle         change handle for current account
+   check-auth            check session auth and current account status
+   missing-blobs         list any missing blobs for current account
+   service-auth          ask the PDS to create a service auth token
+   service-auth-offline  create service auth token via locally-held signing key
+   create                create a new account on the indicated PDS host
+   migrate               move account to a new PDS. requires full auth (not app password)
+   plc                   commands for managing PLC identity (DID) via PDS host
+```
+
+You can install `goat` via homebrew:
+
+```bash
+brew install goat
+```
+
+Refer to the [goat](https://github.com/bluesky-social/goat) repository for more details.
+
+## Account Migration
+
+To migrate your account to another PDS, see [Account Migration](/guides/account-migration).
+
+If your host PDS becomes unavailable, see [Account Recovery](/guides/account-recovery).

@@ -359,7 +359,7 @@ export const navigation: Array<NavGroup> = [
         icon: 'briefcase',
       },
       {
-        title: 'Account Management',
+        title: 'User Accounts',
         href: '/guides/account-management',
         icon: 'paper-airplane',
         links: [
