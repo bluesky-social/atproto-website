@@ -47,7 +47,7 @@ export default async function OffProtocolIndexPage() {
               <Link href={`/off-protocol/${episode.slug}`} className="block">
                 <div className="flex items-baseline gap-3 text-sm text-zinc-500 dark:text-zinc-500">
                   <span className="font-mono">Episode {episode.episodeNumber}</span>
-                  <time>{episode.date}</time>
+                  <time dateTime={episode.pubDate}>{episode.date}</time>
                   <span aria-hidden="true">·</span>
                   <span>{formatDurationForDisplay(episode.durationSeconds)}</span>
                 </div>
