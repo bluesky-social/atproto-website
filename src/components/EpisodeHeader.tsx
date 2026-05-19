@@ -101,19 +101,27 @@ export function EpisodeHeader(props: EpisodeHeaderProps) {
 
         preload="metadata" gets us the duration and seek bar without
         downloading the full episode on every page load.
-      */}
-      <section aria-label={`Audio player for ${props.title}`}>
-        <audio controls preload="metadata" className="w-full">
-          <source src={props.audioUrl} type={mimeType} />
-          Your browser does not support the audio element.{' '}
-          <a href={props.audioUrl} className="underline">
-            Download the MP3
-          </a>{' '}
-          instead.
-        </audio>
-      </section>
 
-      <SubscribeLinks />
+        Layout: stack below sm so the audio player keeps its full width on
+        small phones (Safari's audio controls don't compress comfortably
+        below ~250px); side-by-side at sm+ where there's room for both.
+      */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <section
+          className="flex-1"
+          aria-label={`Audio player for ${props.title}`}
+        >
+          <audio controls preload="metadata" className="w-full">
+            <source src={props.audioUrl} type={mimeType} />
+            Your browser does not support the audio element.{' '}
+            <a href={props.audioUrl} className="underline">
+              Download the MP3
+            </a>{' '}
+            instead.
+          </audio>
+        </section>
+        <SubscribeLinks className="sm:flex-shrink-0" />
+      </div>
     </header>
   )
 }
