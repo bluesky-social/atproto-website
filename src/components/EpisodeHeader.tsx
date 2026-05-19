@@ -49,22 +49,23 @@ export function EpisodeHeader(props: EpisodeHeaderProps) {
       </div>
 
       {/*
+        Wrapping <audio> in a labeled <section> creates a "region" landmark
+        screen readers can jump to (NVDA/JAWS announce the surrounding
+        section rather than the audio element's own aria-label).
+
         preload="metadata" gets us the duration and seek bar without
         downloading the full episode on every page load.
       */}
-      <audio
-        controls
-        preload="metadata"
-        className="w-full"
-        aria-label={`Audio player for ${props.title}`}
-      >
-        <source src={props.audioUrl} type={mimeType} />
-        Your browser does not support the audio element.{' '}
-        <a href={props.audioUrl} className="underline">
-          Download the MP3
-        </a>{' '}
-        instead.
-      </audio>
+      <section aria-label={`Audio player for ${props.title}`}>
+        <audio controls preload="metadata" className="w-full">
+          <source src={props.audioUrl} type={mimeType} />
+          Your browser does not support the audio element.{' '}
+          <a href={props.audioUrl} className="underline">
+            Download the MP3
+          </a>{' '}
+          instead.
+        </audio>
+      </section>
 
       <SubscribeLinks />
     </header>
