@@ -245,16 +245,14 @@ ${guestsField}  audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
   hasTranscript: false,
 ${blueskyField}}
 
-# ${title}
-
-Show notes go here…
+{/* Write show notes below, then flip hasShowNotes: true above. Avoid a top-level # heading — the page renders the episode title for you. */}
 `
   fs.writeFileSync(path.join(episodeDir, 'en.mdx'), enMdx)
 
-  // Empty transcript stub
+  // Transcript stub renders nothing until the author replaces the comment.
   fs.writeFileSync(
     path.join(episodeDir, 'transcript.mdx'),
-    '# Transcript\n\nReplace with the episode transcript.\n',
+    '{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}\n',
   )
 
   // Prepend new entry to episodes.ts
