@@ -1,5 +1,51 @@
+import { Fragment } from 'react'
+import knownAuthors from '@/lib/authors.json'
 import { formatDurationForDisplay, SHOW, type Episode } from '@/lib/episodes'
 import { SubscribeLinks } from './SubscribeLinks'
+
+// Renders a name as a link to bsky.app when authors.json knows its DID,
+// otherwise as plain text. Mirrors PageHeader's blog-byline pattern.
+function AuthorName({ name }: { name: string }) {
+  const did = (knownAuthors as Record<string, string>)[name]
+  if (!did) return <>{name}</>
+  return (
+    <a
+      href={`https://bsky.app/profile/${did}`}
+      className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {name}
+    </a>
+  )
+}
+
+// Render a name list with natural English joiners:
+//   1 → "A"
+//   2 → "A and B"
+//   3+ → "A, B, and C"   (Oxford comma)
+function NameList({ names }: { names: string[] }) {
+  if (names.length === 0) return null
+  if (names.length === 1) return <AuthorName name={names[0]} />
+  if (names.length === 2) {
+    return (
+      <>
+        <AuthorName name={names[0]} /> and <AuthorName name={names[1]} />
+      </>
+    )
+  }
+  const last = names[names.length - 1]
+  return (
+    <>
+      {names.slice(0, -1).map((name, i) => (
+        <Fragment key={i}>
+          <AuthorName name={name} />,{' '}
+        </Fragment>
+      ))}
+      and <AuthorName name={last} />
+    </>
+  )
+}
 
 // Picks the exact subset of Episode this header actually reads. Stating
 // what's used (rather than Omit<>ing what isn't) keeps RSS-only fields
@@ -20,7 +66,7 @@ export interface EpisodeHeaderProps
   > {}
 
 export function EpisodeHeader(props: EpisodeHeaderProps) {
-  const host = props.host ?? SHOW.defaultHost
+  const hosts = props.host ?? [SHOW.defaultHost]
   const mimeType = props.audioMimeType ?? 'audio/mpeg'
 
   return (
@@ -40,11 +86,11 @@ export function EpisodeHeader(props: EpisodeHeaderProps) {
         </p>
         {props.guests && props.guests.length > 0 && (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            With {props.guests.join(', ')}
+            With <NameList names={props.guests} />
           </p>
         )}
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Hosted by {host}
+          Hosted by <NameList names={hosts} />
         </p>
       </div>
 

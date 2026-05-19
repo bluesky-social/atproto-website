@@ -23,7 +23,7 @@ export interface Episode {
   duration: string              // "HH:MM:SS" — RSS spec format
   durationSeconds: number       // numeric, easier to format/sort
   guests?: string[]
-  host?: string                 // defaults to SHOW.defaultHost when omitted
+  host?: string[]               // defaults to [SHOW.defaultHost] when omitted
   audioUrl: string              // absolute CDN URL to the MP3
   audioSizeBytes: number        // required by RSS <enclosure length="…">
   audioMimeType?: string        // defaults to "audio/mpeg"
@@ -103,7 +103,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-05-15T12:00:00Z',
     duration: '00:33:08',
     durationSeconds: 1988,
-    host: 'Jim Ray and Alex Garnett',
+    host: ['Jim Ray', 'Alex Garnett'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260515-live/2026-05-15-off-protocol-live.mp3',
     audioSizeBytes: 63624960,
     audioMimeType: 'audio/mpeg',
