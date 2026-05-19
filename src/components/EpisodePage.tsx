@@ -2,7 +2,6 @@
 import { type Episode } from '@/lib/episodes'
 import { EpisodeHeader, type EpisodeHeaderProps } from './EpisodeHeader'
 import { EpisodeTranscript } from './EpisodeTranscript'
-import { Prose } from './Prose'
 import { BlueskyConversation } from './BlueskyConversation'
 
 const BSKY_CONVERSATION_HEADER =
@@ -31,9 +30,17 @@ export function EpisodePage({ default: Notes, header, Transcript }: EpisodePageP
           <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
             Show notes
           </h2>
-          <Prose className="mt-4">
+          {/*
+            Use the typography classes directly rather than the <Prose>
+            wrapper. <Prose> adds its own px-4 md:px-16 padding and
+            constrains children to max-w-2xl, which inside our already-
+            padded article wrapper visually centers the content and indents
+            it away from the "Show notes" eyebrow above. Plain prose +
+            max-w-none keeps the body left-aligned with the eyebrow.
+          */}
+          <div className="prose mt-4 max-w-none [&>:first-child]:!mt-0 dark:prose-invert">
             <Notes />
-          </Prose>
+          </div>
         </section>
       )}
 
