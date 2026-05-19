@@ -4,14 +4,7 @@ import { type Episode } from '@/lib/episodes'
 import { EpisodeHeader, type EpisodeHeaderProps } from './EpisodeHeader'
 import { EpisodeTranscript } from './EpisodeTranscript'
 import { BlueskyConversation } from './BlueskyConversation'
-
-// Pass-through that replaces the global MDX `wrapper` for this render only.
-// The global wrapper (src/components/mdx.tsx) adds its own <article>+<Prose>
-// chrome — fine for full-page MDX like the blog body, but we provide our own
-// section / typography here, so we want the MDX to render plain children.
-function MdxPassthrough({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
-}
+import { MdxPassthrough } from './MdxPassthrough'
 
 const BSKY_CONVERSATION_HEADER =
   "This episode has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."

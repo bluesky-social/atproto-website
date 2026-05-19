@@ -1,8 +1,9 @@
-import { Prose } from './Prose'
+import type { MDXContent } from 'mdx/types'
+import { MdxPassthrough } from './MdxPassthrough'
 
 interface EpisodeTranscriptProps {
   /** The default export of the transcript MDX module. */
-  Transcript: React.ComponentType
+  Transcript: MDXContent
 }
 
 export function EpisodeTranscript({ Transcript }: EpisodeTranscriptProps) {
@@ -13,9 +14,15 @@ export function EpisodeTranscript({ Transcript }: EpisodeTranscriptProps) {
         Transcript
       </summary>
       <div className="border-t border-zinc-200 p-6 dark:border-zinc-800">
-        <Prose className="prose-sm">
-          <Transcript />
-        </Prose>
+        {/*
+          Plain `prose prose-sm` + max-w-none mirrors the show-notes layout
+          (see EpisodePage). The MdxPassthrough wrapper suppresses the
+          global MDX wrapper that would otherwise add an outer <article>
+          plus a nested <Prose> with its own padding and max-width.
+        */}
+        <div className="prose prose-sm max-w-none [&>:first-child]:!mt-0 dark:prose-invert">
+          <Transcript components={{ wrapper: MdxPassthrough }} />
+        </div>
       </div>
     </details>
   )
