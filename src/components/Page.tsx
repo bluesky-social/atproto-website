@@ -5,6 +5,7 @@ import {
 } from './PageSectionsNavigation'
 import { SectionProvider } from './SectionProvider'
 import { AtprotoDocumentLink } from './AtprotoDocumentLink'
+import { AtprotoPublicationLink } from './AtprotoPublicationLink'
 import { SubpageLinks } from './SubpageLinks'
 import { BlueskyConversation } from './BlueskyConversation'
 
@@ -24,7 +25,12 @@ export function Page(page: PageProps) {
 
   return (
     <SectionProvider sections={navSections}>
-      {page.header?.standardSiteUri && <AtprotoDocumentLink uri={page.header.standardSiteUri} />}
+      {page.header?.standardSiteUri && (
+        <>
+          <AtprotoDocumentLink uri={page.header.standardSiteUri} />
+          <AtprotoPublicationLink />
+        </>
+      )}
       {page.header && <PageHeader {...page.header} />}
       <SubpageLinks />
       <div className="flex flex-wrap items-start">
