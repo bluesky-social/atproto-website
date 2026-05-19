@@ -130,7 +130,7 @@ export const episodes: Episode[] = [
   {
     slug: 'blacksky-as-a-service-a-first-look-at-acorn',
     episodeNumber: 3,
-    title: 'Blacksky As a Service: a First Look at Acorn',
+    title: 'Blacksky As a Service',
     description:
       "Rishi Balakrishnan joins to talk about the work that went into building Acorn, Blacksky's new platform for creating moderated communities on atproto — and why the landing page never mentions a PDS.",
     date: 'April 24, 2026',
@@ -164,7 +164,7 @@ export const episodes: Episode[] = [
   {
     slug: 'a-thousand-prs-in-two-weeks-building-npmx',
     episodeNumber: 1,
-    title: 'A Thousand PRs in Two Weeks: Building NPMX',
+    title: 'A Thousand PRs in Two Weeks',
     description:
       'Daniel Roe, Matias Capeletto, and Zeu join to discuss how their frustration with JavaScript packaging went from a Bluesky post to one of the most successful new community-led projects on the protocol.',
     date: 'February 27, 2026',
