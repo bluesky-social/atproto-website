@@ -49,12 +49,11 @@ export function formatDurationForDisplay(seconds: number): string {
 }
 
 export interface SubscribeUrls {
+  // Directory URLs populated post-launch, once each service has ingested
+  // the feed. Other dropdown options (Overcast, Pocket Casts, Castro, RSS)
+  // are derived from the feed URL at render time, no config needed.
   apple: string | null
   spotify: string | null
-  overcast: string | null
-  pocketcasts: string | null
-  rss: string | null
-  generic: string
 }
 
 export interface ShowMeta {
@@ -85,10 +84,6 @@ export const SHOW: ShowMeta = {
   subscribe: {
     apple: null,                // TODO(post-launch): fill in after Apple ingestion
     spotify: null,              // TODO(post-launch): fill in after Spotify ingestion
-    overcast: null,             // TODO(post-launch): fill in after Overcast ingestion
-    pocketcasts: null,          // TODO(post-launch): fill in after PocketCasts ingestion
-    rss: null,
-    generic: 'podcast://atproto.com/off-protocol/rss.xml',
   },
 }
 
