@@ -7,20 +7,17 @@ export const header = {
 
 ## SDK Modernization
 
-We're very happy to announce some overdue TS SDK improvements!
+We're very happy to announce some overdue TS SDK improvements! Over the last few days, nearly every package in the `@atproto` namespace has been rebuilt and republished — you can see the full freshly-updated set on [npmx](https://npmx.dev/search?q=keyword:atproto). That covers the packages most TS developers depend on directly, like [`@atproto/api`](https://npmx.dev/package/@atproto/api), [`@atproto/xrpc`](https://npmx.dev/package/@atproto/xrpc), and [`@atproto/oauth-client`](https://npmx.dev/package/@atproto/oauth-client), as well as the lower-level packages that sit underneath them, like [`@atproto/common-web`](https://npmx.dev/package/@atproto/common-web).
 
-TK TK
+The biggest user-facing change is that all of these packages are now shipped as ESM. We've also dropped support for Node 18, and going forward we'll *officially* commit to supporting Node's current LTS releases. We had been doing this on a best-effort basis for a while, but in practice we tended to run behind, so we're making it part of our published support policy instead. Depending on your bundler and how aggressive your existing workarounds were, you may be able to delete some build config (and possibly a couple of patches) when you upgrade.
 
-- modernized all of our packages, no more node 18, general modernizing pass
-- will officially support LTS versions of node
-- shipped as ESM
-- might need to bump your node version, remove some hacks from your build process
+Under the hood, we've also done a general modernization pass on our build tooling. We've adopted TypeScript 6 across the codebase, which means we'll be ready for the much faster TypeScript 7 compiler as soon as it lands. Bundle sizes for downstream consumers should be noticeably smaller as well, since the new ESM builds tree-shake far better than the old CommonJS output did. You'll likely need to bump your Node version to upgrade, but for most projects the rest of the migration should be straightforward.
 
 ## Promoting lex
 
 When we shipped these new docs, we rewrote all of our existing samples and guides to use the lex SDK. Since then, lex has officially remained in preview, with a "feature subject to change" warning on its [readme](https://npmx.dev/package/@atproto/lex). We're now *removing that warning* and recommending `lex` (and the corresponding [lex-server package](https://npmx.dev/package/@atproto/lex-server)) for all new development. We're also *adding* recommendations to use `lex` to all of our other package readmes, to ensure that everyone in our ecosystem is directed to our newest and best-supported tooling.
 
-`lex` is now tagged 0.1.0. *We officially consider it to be in a "stable preview" state*, and it will not receive any breaking changes from here. In fact, `lex` itself may not receive *any* changes on the way to 1.0. What *will* be changing is the ecosystem around it, as we polish the developer experience and build out `lex`-friendly helper packages. We are targeting a 1.0 release for `lex` this summer, but we won't ship it until we're confident that the ecosystem is ready to support it — and that might even be a smaller announcement than this one.
+`lex` is now tagged 0.1.0. **We officially consider it to be in a "stable preview" state**, and it will not receive any breaking changes from here. In fact, `lex` itself may not receive *any* changes on the way to 1.0. What *will* be changing is the ecosystem around it, as we polish the developer experience and build out `lex`-friendly helper packages. We are targeting a 1.0 release for `lex` this summer, but we won't ship it until we're confident that the ecosystem is ready to support it — and that might even be a smaller announcement than this one.
 
 ## Helper gaps
 
