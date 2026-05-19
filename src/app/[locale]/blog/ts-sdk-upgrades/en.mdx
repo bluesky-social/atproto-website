@@ -13,6 +13,8 @@ The biggest user-facing change is that all of these packages are now shipped as 
 
 Under the hood, we've also done a general modernization pass on our build tooling. We've adopted TypeScript 6 across the codebase, which means we'll be ready for the much faster TypeScript 7 compiler as soon as it lands. Bundle sizes for downstream consumers should be noticeably smaller as well, since the new ESM builds tree-shake far better than the old CommonJS output did. You'll likely need to bump your Node version to upgrade, but for most projects the rest of the migration should be straightforward.
 
+That covers our existing packages, but we also want to talk about our newer [`lex` SDK](https://npmx.dev/package/@atproto/lex/v/0.1.0).
+
 ## Promoting lex
 
 When we shipped these new docs, we rewrote all of our existing samples and guides to use the lex SDK. Since then, lex has officially remained in preview, with a "feature subject to change" warning on its [readme](https://npmx.dev/package/@atproto/lex). We're now *removing that warning* and recommending `lex` (and the corresponding [lex-server package](https://npmx.dev/package/@atproto/lex-server)) for all new development. We're also *adding* recommendations to use `lex` to all of our other package readmes, to ensure that everyone in our ecosystem is directed to our newest and best-supported tooling.
