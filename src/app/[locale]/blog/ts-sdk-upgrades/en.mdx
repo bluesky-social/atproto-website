@@ -20,23 +20,21 @@ TK TK
 
 When we shipped these new docs, we rewrote all of our existing samples and guides to use the lex SDK. Since then, lex has officially remained in preview, with a "feature subject to change" warning on its [readme](https://npmx.dev/package/@atproto/lex). We're now *removing that warning* and recommending `lex` (and the corresponding [lex-server package](https://npmx.dev/package/@atproto/lex-server)) for all new development. We're also *adding* recommendations to use `lex` to all of our other package readmes, to ensure that everyone in our ecosystem is directed to our newest and best-supported tooling.
 
-`lex` is now tagged 0.1.0.
-
-TK
+`lex` is now tagged 0.1.0. *We officially consider it to be in a "stable preview" state*, and it will not receive any breaking changes from here. In fact, `lex` itself may not receive *any* changes on the way to 1.0. What *will* be changing is the ecosystem around it, as we polish the developer experience and build out `lex`-friendly helper packages. We are targeting a 1.0 release for `lex` this summer, but we won't ship it until we're confident that the ecosystem is ready to support it — and that might even be a smaller announcement than this one.
 
 ## Helper gaps
 
 Our goal in developing `lex` was similar to our goal in building out `atproto.com` — deemphasize Bluesky helpers and promote generic Lexicon tooling with first-class code generation for all atproto TS devs. 
 
-TK
+This is great for making nice clean abstractions and good baseline assumptions. But it also means that some of the helper methods that we had in `@atproto/api` for working with Bluesky-specific features aren't (yet) in `lex`. We never want to create devex *regressions* by making ecosystem improvements, so we're planning to build out a new helper package that will implement the same functionality for the `lex` ecosystem. This will include things like:
 
 ## Prefs and labels
 
-TK TK
+The Bluesky preferences object is currently a [bit of an exception](https://bsky.app/profile/bnewbold.net/post/3lrboz23zhc2z) to our engineering principles, and will remain that way until we ship [permissioned data](https://dholms.leaflet.pub/3mhj6bcqats2o). (Let no one accuse us of making perfect an enemy of good!) Prefs are, essentially, untyped JSON on the Bluesky AppView, and we try to make working with prefs as painless as possible. For example, when updating your prefs, `@atproto/api` contains a helper to ensure that you don't accidentally overwrite prefs you don't intend to, by first fetching the existing prefs, merging in your updates, and then writing the whole thing back.
 
-For example, when updating your Bluesky prefs, `@atproto/api` contains a helper to ensure that you don't accidentally overwrite prefs you don't intend to, by first fetching the existing prefs, merging in your updates, and then writing the whole thing back. TK TK
+That's one example of a downstream helper we need to preserve. Another is how we enforce norms around how to handle certain label types. For example, when a status is labeled `!hide`, we want to make sure that all apps are hiding that status from the feed, rather than leaving it up to each app to interpret the label and potentially rendering it inconsistently across the ecosystem.
 
-You can see an example of this at the bottom of the code sample in [our new Labeler integration tutorial](/guides/labels-tutorial#part-2-querying-labels) — when using `lex`, implementers define the behavior for `!hide` and `!warn` manually. By contrast, the `@atproto/api` package has always proscribed the behavior for handling certain label types, to enforce norms around how apps should handle content moderation. We are still generally in favor of proscribed behavior here, it's just out of scope for `lex`, so we'll likely be adding this to a helper as well.
+You can see an example of this at the bottom of the code sample in [our new Labeler integration tutorial](/guides/labels-tutorial#part-2-querying-labels). With `lex`, implementers need to define the behavior for `!hide` and `!warn` manually. By contrast, the `@atproto/api` package has always proscribed the behavior for handling certain label types. We are still generally in favor of proscribed norms here, it's just out of scope for `lex`, so we'll likely be adding this to a helper as well.
 
 Notably, these are features that we might let our Bluesky app team ship and maintain, rather than the protocol team that maintains `lex`. I know, I know, no one cares about your internal org chart. But this is a salient distinction for us, and for developers building on atproto who may need Bluesky-specific affordances to move more quickly. While neither of these will actuall require further changes to `lex`, we feel good about blocking 1.0 on a better ecosystem experience.
 
