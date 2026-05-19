@@ -99,7 +99,7 @@ export const Header = forwardRef<
         </TopLevelNavItem>
         <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
         <TopLevelNavItem href="/off-protocol" className="hidden sm:block">
-          Off Protocol
+          Podcast
         </TopLevelNavItem>
       </ul>
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
