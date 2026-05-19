@@ -133,7 +133,7 @@ TODO:
 The site implements [site.standard verification](https://standard.site/):
 
 - **Publication:** `/.well-known/site.standard.publication` returns the publication AT-URI
-- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag
+- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag pointing at the document record, plus a `<link rel="site.standard.publication">` tag pointing at the shared publication record
 
 For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
 
