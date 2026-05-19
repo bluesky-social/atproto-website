@@ -1,8 +1,23 @@
 import { formatDurationForDisplay, SHOW, type Episode } from '@/lib/episodes'
 import { SubscribeLinks } from './SubscribeLinks'
 
+// Picks the exact subset of Episode this header actually reads. Stating
+// what's used (rather than Omit<>ing what isn't) keeps RSS-only fields
+// like audioSizeBytes and explicit out of the visual surface.
 export interface EpisodeHeaderProps
-  extends Omit<Episode, 'slug' | 'hasTranscript' | 'blueskyPostUrl'> {}
+  extends Pick<
+    Episode,
+    | 'episodeNumber'
+    | 'title'
+    | 'description'
+    | 'date'
+    | 'pubDate'
+    | 'durationSeconds'
+    | 'guests'
+    | 'host'
+    | 'audioUrl'
+    | 'audioMimeType'
+  > {}
 
 export function EpisodeHeader(props: EpisodeHeaderProps) {
   const host = props.host ?? SHOW.defaultHost
