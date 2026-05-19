@@ -170,7 +170,7 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   // newest first; populate via `npm run podcast create`
