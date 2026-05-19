@@ -166,6 +166,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-02-27T12:00:00Z',
     duration: '00:58:45',
     durationSeconds: 3525,
+    host: ['Jim Ray', 'Alex Garnett'],
     guests: ['Daniel Roe', 'Matias Capeletto', 'Zeu'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,
