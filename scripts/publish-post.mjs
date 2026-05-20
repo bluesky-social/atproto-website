@@ -190,6 +190,27 @@ export async function main(slug) {
 
   console.log(`✓ Authenticated as ${session.handle}`)
 
+  // Guard against publishing to the wrong account. The publication URI
+  // identifies the canonical publishing account by DID; if .env has the
+  // right URI but the wrong handle/password, refuse before touching any
+  // records. Without this check, records silently land on a personal PDS
+  // and have to be manually cleaned up from there.
+  if (ATPROTO_PUBLICATION_URI) {
+    const expectedDid = ATPROTO_PUBLICATION_URI.match(/^at:\/\/([^/]+)/)?.[1]
+    if (expectedDid && expectedDid !== session.did) {
+      console.error(
+        `\n❌ Refusing to publish: authenticated as ${session.handle} (${session.did})`,
+      )
+      console.error(
+        `   but ATPROTO_PUBLICATION_URI is owned by ${expectedDid}.`,
+      )
+      console.error(
+        '   Update your .env credentials to the publishing account before retrying.',
+      )
+      process.exit(1)
+    }
+  }
+
   // Determine the site reference
   const siteRef = ATPROTO_PUBLICATION_URI || SITE_URL
   if (!ATPROTO_PUBLICATION_URI) {
