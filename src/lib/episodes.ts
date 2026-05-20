@@ -153,7 +153,7 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260410-live/2026-04-10-live-boris-ted.mp3',
     audioSizeBytes: 127011840,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   {
