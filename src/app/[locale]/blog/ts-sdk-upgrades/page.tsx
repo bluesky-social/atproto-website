@@ -1,7 +1,7 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'TS SDK Upgrades',
+  title: 'TypeScript SDK Upgrades',
   description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
 }
 

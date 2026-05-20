@@ -9,7 +9,7 @@ export interface BlogPost {
 export const posts: BlogPost[] = [
   {
     slug: 'ts-sdk-upgrades',
-    title: 'TS SDK Upgrades',
+    title: 'TypeScript SDK Upgrades',
     description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
     date: 'May 21, 2026',
     author: 'AT Protocol Team',
