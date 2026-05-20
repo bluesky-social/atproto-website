@@ -40,10 +40,18 @@ Run `npm run blog` with no arguments to see this list.
 
 #### Configure credentials (one-time)
 
+> **Use the site's canonical publishing account, not your personal Bluesky.**
+> `npm run blog ssite` creates standard.site records on whichever PDS the
+> `.env` credentials authenticate against. For atproto.com that needs to be
+> the atproto.com Bluesky account — records published from a personal
+> account won't verify against the site, and have to be manually deleted
+> from that PDS to clean up the duplicate. Coordinate with the team if you
+> don't already have the shared credentials.
+
 ```bash
 cp .env.example .env
 ```
-Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+Fill in `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
 
 ### Creating a new blog post
 
@@ -121,7 +129,8 @@ npm run blog ssite welcome-to-the-blog
 ```
 
 This will:
-- Create a `standard.site` document record on your PDS
+- Create a `standard.site` document record on the site's PDS (see the
+  credentials note above — this is the publishing account, not yours)
 - Save the AT-URI back to the post's MDX file for verification
 - Update the record if it already exists
 
