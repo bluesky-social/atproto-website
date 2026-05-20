@@ -136,7 +136,7 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260424-live/2026-04-24-live-rishi-acorn.mp3',
     audioSizeBytes: 107389440,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   {
