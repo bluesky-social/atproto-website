@@ -107,8 +107,7 @@ lex build
 > the locally-generated `src/lexicons` directory is stale relative to the
 > current `@atproto/lex` API. Regenerate:
 > ```bash
-> rm -rf src/lexicons
-> npx ts-lex build
+> npx ts-lex build --clear
 > ```
 > `src/lexicons` is gitignored, so this is a local-only fix.
 
