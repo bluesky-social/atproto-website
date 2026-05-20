@@ -30,7 +30,7 @@ I store all data in sqlite. A key advantage of sqlite for me is testability - I 
 
 For querying the data, I use the excellent [sqlc.dev](https://sqlc.dev/). It is a tool that gives me full control of the queries I want to run and takes care of the boilerplate through code generation.
 
-To keep likes data memory-efficient (both on disk and in in-memory caches), I give each post AT URI an integer id: 
+To keep likes data memory-efficient (both on disk and in in-memory caches), I give each post AT URI an integer id:
 
 ```shell
 sqlite> select \* from items order by id limit 10;
@@ -79,7 +79,7 @@ There is one more sqlite db - 200GB file storing response logs. It keeps track o
 
 (as these parquet files accumulate I should probably move them to HDD)
 
-I use duckdb to query these parquet files and build graphs like this: 
+I use duckdb to query these parquet files and build graphs like this:
 
 <Image src={dailyActiveUsers} alt="Daily Active Users" />
 
@@ -87,7 +87,7 @@ and to generate A/B test reports:
 
 <BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3miu2xzs54k27" />
 
-and to build the user stats dashboard: 
+and to build the user stats dashboard:
 
 <BlueskyPost url="https://bsky.app/profile/did:plc:3guzzweuqraryl3rdkimjamk/post/3mevupnpkrk2a" />
 
