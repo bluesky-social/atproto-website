@@ -16,7 +16,7 @@ import { PasswordSession } from '@atproto/lex-password-session'
 import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
 
-const PUBLICATION_URL = 'https://atproto.com'
+const PUBLICATION_URL = 'https://atproto.com/blog'
 const PUBLICATION_NAME = 'AT Protocol'
 const PUBLICATION_DESCRIPTION =
   'Documentation, guides, and updates for the AT Protocol - the decentralized foundation for social networking.'

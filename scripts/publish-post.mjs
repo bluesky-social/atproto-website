@@ -28,7 +28,7 @@ const { standard } = siteModule.default ?? siteModule
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
-const SITE_URL = 'https://atproto.com'
+const SITE_URL = 'https://atproto.com/blog'
 
 /**
  * Extract value from an AST Literal node
@@ -217,8 +217,9 @@ export async function main(slug) {
     console.log(`\n⚠️  No ATPROTO_PUBLICATION_URI set, using URL: ${SITE_URL}`)
   }
 
-  // Check for existing document with same path
-  const postPath = `/blog/${slug}`
+  // Check for existing document with same path. Path is relative to the
+  // publication's url (https://atproto.com/blog), so it's just /<slug>.
+  const postPath = `/${slug}`
   console.log('\n🔍 Checking for existing document...')
 
   const existingRecords = await client.list(standard.document.main, { limit: 100 })
