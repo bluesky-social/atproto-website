@@ -110,6 +110,16 @@ lex install site.standard.document
 lex build
 ```
 
+> **Troubleshooting:** if `npm run build` fails with a type error like
+> `'…/@atproto/lex-schema/dist/external' has no exported member named 'TypedObject'`,
+> the locally-generated `src/lexicons` directory is stale relative to the
+> current `@atproto/lex` API. Regenerate with the `--clear` flag, which
+> removes the existing output before rebuilding:
+> ```bash
+> npx ts-lex build --clear
+> ```
+> `src/lexicons` is gitignored, so this is a local-only fix.
+
 #### Create the publication record
 
 ```bash

@@ -1,16 +1,17 @@
 // src/components/EpisodePage.tsx
+import type { MDXContent } from 'mdx/types'
 import { type Episode } from '@/lib/episodes'
 import { EpisodeHeader, type EpisodeHeaderProps } from './EpisodeHeader'
 import { EpisodeTranscript } from './EpisodeTranscript'
-import { Prose } from './Prose'
 import { BlueskyConversation } from './BlueskyConversation'
+import { MdxPassthrough } from './MdxPassthrough'
 
 const BSKY_CONVERSATION_HEADER =
   "This episode has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
 
 interface EpisodePageProps {
   /** Default export of the show-notes MDX module. */
-  default: React.ComponentType
+  default: MDXContent
   /**
    * Header data — same fields as Episode, minus the slug-level concerns.
    * Comes from the MDX module's `header` export.
@@ -18,7 +19,7 @@ interface EpisodePageProps {
   header: EpisodeHeaderProps &
     Pick<Episode, 'blueskyPostUrl' | 'hasShowNotes' | 'hasTranscript'>
   /** Optional default export of a transcript MDX module. */
-  Transcript?: React.ComponentType
+  Transcript?: MDXContent
 }
 
 export function EpisodePage({ default: Notes, header, Transcript }: EpisodePageProps) {
@@ -31,9 +32,9 @@ export function EpisodePage({ default: Notes, header, Transcript }: EpisodePageP
           <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
             Show notes
           </h2>
-          <Prose className="mt-4">
-            <Notes />
-          </Prose>
+          <div className="prose mt-4 max-w-none [&>:first-child]:!mt-0 dark:prose-invert">
+            <Notes components={{ wrapper: MdxPassthrough }} />
+          </div>
         </section>
       )}
 

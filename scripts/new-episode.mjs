@@ -11,6 +11,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PODCAST_DIR = path.join(__dirname, '../src/app/[locale]/off-protocol')
 const EPISODES_FILE = path.join(__dirname, '../src/lib/episodes.ts')
 
+// Anchor used to insert new episode entries at the top of the array.
+// If this regex stops matching (e.g., someone drops the explicit type
+// annotation), the prepend would no-op silently — so we validate up front
+// AND re-check after the replace.
+const EPISODES_ANCHOR = /export const episodes: Episode\[\] = \[/
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -105,6 +111,22 @@ export async function main() {
   console.log('\n🎙️  Create a new Off Protocol episode\n')
 
   await checkGitStatus()
+
+  // Fail fast if the anchor we insert against isn't where we expect it,
+  // rather than running the user through every prompt and then writing
+  // the episode dir without ever appearing in the listing or feed.
+  if (!EPISODES_ANCHOR.test(fs.readFileSync(EPISODES_FILE, 'utf-8'))) {
+    console.error(
+      `Error: could not find 'export const episodes: Episode[] = [' in ${EPISODES_FILE}.`,
+    )
+    console.error(
+      "The scaffolder uses that line as the anchor for new entries. If the",
+    )
+    console.error(
+      "file has been reformatted, update EPISODES_ANCHOR in this script first.",
+    )
+    process.exit(1)
+  }
 
   const title = (await question('Title: ')).trim()
   if (!title) {
@@ -245,16 +267,14 @@ ${guestsField}  audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
   hasTranscript: false,
 ${blueskyField}}
 
-# ${title}
-
-Show notes go here…
+{/* Write show notes below, then flip hasShowNotes: true above. Avoid a top-level # heading — the page renders the episode title for you. */}
 `
   fs.writeFileSync(path.join(episodeDir, 'en.mdx'), enMdx)
 
-  // Empty transcript stub
+  // Transcript stub renders nothing until the author replaces the comment.
   fs.writeFileSync(
     path.join(episodeDir, 'transcript.mdx'),
-    '# Transcript\n\nReplace with the episode transcript.\n',
+    '{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}\n',
   )
 
   // Prepend new entry to episodes.ts
@@ -275,11 +295,23 @@ ${guests.length ? `    guests: [${guests.map((g) => `'${g.replace(/'/g, "\\'")}'
     hasTranscript: false,
 ${blueskyPostUrl ? `    blueskyPostUrl: '${blueskyPostUrl.replace(/'/g, "\\'")}',\n` : ''}  },`
 
-  episodesFile = episodesFile.replace(
-    /export const episodes: Episode\[\] = \[/,
+  const updated = episodesFile.replace(
+    EPISODES_ANCHOR,
     `export const episodes: Episode[] = [\n${newEntry}`,
   )
-  fs.writeFileSync(EPISODES_FILE, episodesFile)
+  if (updated === episodesFile) {
+    // Pre-flight already validated the anchor, so reaching here means
+    // something raced or the regex regressed. Bail loudly so the new
+    // episode doesn't ship as an orphan dir.
+    console.error(
+      `Error: failed to insert the new entry into ${EPISODES_FILE}.`,
+    )
+    console.error(
+      'The anchor regex matched at pre-flight but the replace was a no-op.',
+    )
+    process.exit(1)
+  }
+  fs.writeFileSync(EPISODES_FILE, updated)
 
   console.log(`
 ✅ Episode created!

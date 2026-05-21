@@ -23,7 +23,7 @@ export interface Episode {
   duration: string              // "HH:MM:SS" — RSS spec format
   durationSeconds: number       // numeric, easier to format/sort
   guests?: string[]
-  host?: string                 // defaults to SHOW.defaultHost when omitted
+  host?: string[]               // defaults to [SHOW.defaultHost] when omitted
   audioUrl: string              // absolute CDN URL to the MP3
   audioSizeBytes: number        // required by RSS <enclosure length="…">
   audioMimeType?: string        // defaults to "audio/mpeg"
@@ -49,12 +49,11 @@ export function formatDurationForDisplay(seconds: number): string {
 }
 
 export interface SubscribeUrls {
+  // Directory URLs populated post-launch, once each service has ingested
+  // the feed. Other dropdown options (Overcast, Pocket Casts, Castro, RSS)
+  // are derived from the feed URL at render time, no config needed.
   apple: string | null
   spotify: string | null
-  overcast: string | null
-  pocketcasts: string | null
-  rss: string | null
-  generic: string
 }
 
 export interface ShowMeta {
@@ -85,10 +84,6 @@ export const SHOW: ShowMeta = {
   subscribe: {
     apple: null,                // TODO(post-launch): fill in after Apple ingestion
     spotify: null,              // TODO(post-launch): fill in after Spotify ingestion
-    overcast: null,             // TODO(post-launch): fill in after Overcast ingestion
-    pocketcasts: null,          // TODO(post-launch): fill in after PocketCasts ingestion
-    rss: null,
-    generic: 'podcast://atproto.com/off-protocol/rss.xml',
   },
 }
 
@@ -103,7 +98,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-05-15T12:00:00Z',
     duration: '00:33:08',
     durationSeconds: 1988,
-    host: 'Jim Ray and Alex Garnett',
+    host: ['Jim Ray', 'Alex Garnett'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260515-live/2026-05-15-off-protocol-live.mp3',
     audioSizeBytes: 63624960,
     audioMimeType: 'audio/mpeg',
@@ -130,18 +125,19 @@ export const episodes: Episode[] = [
   {
     slug: 'blacksky-as-a-service-a-first-look-at-acorn',
     episodeNumber: 3,
-    title: 'Blacksky As a Service: a First Look at Acorn',
+    title: 'Blacksky As a Service',
     description:
       "Rishi Balakrishnan joins to talk about the work that went into building Acorn, Blacksky's new platform for creating moderated communities on atproto — and why the landing page never mentions a PDS.",
     date: 'April 24, 2026',
     pubDate: '2026-04-24T12:00:00Z',
     duration: '00:55:55',
     durationSeconds: 3355,
+    host: ['Jim Ray', 'Alex Garnett'],
     guests: ['Rishi Balakrishnan'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260424-live/2026-04-24-live-rishi-acorn.mp3',
     audioSizeBytes: 107389440,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   {
@@ -158,24 +154,25 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260410-live/2026-04-10-live-boris-ted.mp3',
     audioSizeBytes: 127011840,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   {
     slug: 'a-thousand-prs-in-two-weeks-building-npmx',
     episodeNumber: 1,
-    title: 'A Thousand PRs in Two Weeks: Building NPMX',
+    title: 'A Thousand PRs in Two Weeks',
     description:
       'Daniel Roe, Matias Capeletto, and Zeu join to discuss how their frustration with JavaScript packaging went from a Bluesky post to one of the most successful new community-led projects on the protocol.',
     date: 'February 27, 2026',
     pubDate: '2026-02-27T12:00:00Z',
     duration: '00:58:45',
     durationSeconds: 3525,
+    host: ['Jim Ray', 'Alex Garnett'],
     guests: ['Daniel Roe', 'Matias Capeletto', 'Zeu'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
+    hasShowNotes: true,
     hasTranscript: false,
   },
   // newest first; populate via `npm run podcast create`
