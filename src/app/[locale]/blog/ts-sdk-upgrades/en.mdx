@@ -1,7 +1,7 @@
 export const header = {
   title: 'TypeScript SDK Upgrades',
   description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
-  date: 'May 21, 2026',
+  date: 'May 22, 2026',
   author: 'AT Protocol Team',
 }
 
@@ -66,7 +66,7 @@ There's one other potentially gnarly change for "brownfield" projects (i.e., pro
 
 The `lex` tooling brings comprehensive typings to Lexicon, and that extends all the way to distinguish different string formats.  For example, `lex` will differentiate a string representing a DID from another representing an AT URI. What this also means in practice is that if you used to pass generic `string` types into your Lexicon SDK, you now have to recast them `as DidString` or `as AtUriString` or whatever the appropriate type is, and this works best when adopted throughout your codebase. This has already helped us catch and fix bugs on our end, but we know some devs will be looking for a more incremental upgrade path to adopt the stricter types.
 
-*We haven't decided what we're doing here yet*. If you've already adopted `lex` and have opinions on this, or if you've worked on supporting both typed and untyped SDK routes before, we'd love to hear from you! We may still do something to make this cutover a little smoother.
+*We haven't decided what we're doing here yet*. If you've already adopted `lex` and have opinions on this, or if you've worked on supporting both typed and untyped SDK routes before, we'd love to [hear from you](https://bsky.app/profile/atproto.com)! We may still do something to make this cutover a little smoother.
 
 ## Next steps
 

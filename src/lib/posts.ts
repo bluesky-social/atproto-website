@@ -11,7 +11,7 @@ export const posts: BlogPost[] = [
     slug: 'ts-sdk-upgrades',
     title: 'TypeScript SDK Upgrades',
     description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
-    date: 'May 21, 2026',
+    date: 'May 22, 2026',
     author: 'AT Protocol Team',
   },
   {
