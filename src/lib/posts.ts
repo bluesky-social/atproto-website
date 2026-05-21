@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'ts-sdk-upgrades',
+    title: 'TypeScript SDK Upgrades',
+    description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
+    date: 'May 21, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'report-based-moderation',
     title: 'Report-Based Moderation in Ozone',
     description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',

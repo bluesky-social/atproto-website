@@ -1,0 +1,75 @@
+export const header = {
+  title: 'TypeScript SDK Upgrades',
+  description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
+  date: 'May 21, 2026',
+  author: 'AT Protocol Team',
+}
+
+## SDK Modernization
+
+We're very happy to announce some overdue TS SDK improvements! Over the last few days, every package in the `@atproto` namespace has been rebuilt and republished — you can see the full freshly-updated set on [npmx](https://npmx.dev/search?q=keyword:atproto). That covers the packages most TS developers depend on directly, like [`@atproto/api`](https://npmx.dev/package/@atproto/api), [`@atproto/tap`](https://npmx.dev/package/@atproto/tap), and [`@atproto/oauth-client-node`](https://npmx.dev/package/@atproto/oauth-client-node), as well as the lower-level packages that sit underneath them, like [`@atproto/crypto`](https://npmx.dev/package/@atproto/lex-data).
+
+The biggest user-facing change is that all of these packages are now shipped as ESM. We've also dropped support for Node 18 and 20, and going forward we'll *officially* commit to supporting Node's current LTS releases. We had been doing this on a best-effort basis for a while, but in practice we tended to run behind, so we're making it part of our published support policy instead. Depending on your bundler and how aggressive your existing workarounds were, you may be able to delete some build config (and possibly a couple of patches) when you upgrade.
+
+Under the hood, we've also done a general modernization pass on our build tooling. We've adopted TypeScript 6 across the codebase, which means we'll be ready for the much faster TypeScript 7 compiler. Bundle sizes for downstream consumers should be noticeably smaller as well, since the new ESM builds tree-shake far better than the CommonJS output did. If you're still on an old NodeJS version, you'll need to upgrade, but for most projects the rest of the migration should be straightforward.
+
+That covers our existing packages, but we also want to talk about our newer [`lex` SDK](https://npmx.dev/package/@atproto/lex/v/0.1.0).
+
+## Promoting lex
+
+When we shipped the [atproto.com docs](/docs), we rewrote all of our existing samples and guides to use the lex SDK. Since then, lex has officially remained in preview, with a "feature subject to change" warning on its [readme](https://npmx.dev/package/@atproto/lex). We're now *removing that warning* and recommending `lex` (and the corresponding [lex-server package](https://npmx.dev/package/@atproto/lex-server)) for all new development. We're also *adding* recommendations to use `lex` to all of our other package readmes, to ensure that everyone in our ecosystem is directed to our newest and best-supported tooling.
+
+`lex` is now tagged 0.1.0. **We officially consider it to be in a "stable preview" state**. In fact, `lex` itself may not receive *any* changes on the way to 1.0. What *will* be changing is the ecosystem around it, as we polish the developer experience and build out `lex`-friendly helper packages.
+
+## Helper gaps
+
+Our goal in developing `lex` was similar to our goal in building out `atproto.com` — deemphasize Bluesky helpers and promote generic Lexicon tooling with first-class code generation for all atproto TS devs. 
+
+This is great for making nice clean abstractions and good baseline assumptions. But it also means that some of the helper methods that we had in `@atproto/api` for working with Bluesky-specific features aren't (yet) compatible with `lex`. We never want to create devex *regressions* by making ecosystem improvements, so we're planning to build out a new helper package that will implement the same functionality for the `lex` ecosystem. This will include things like:
+
+## Prefs and labels
+
+The Bluesky preferences object is currently a [bit of an exception](https://bsky.app/profile/bnewbold.net/post/3lrboz23zhc2z) to our engineering principles, and will remain that way until we ship [permissioned data](https://dholms.leaflet.pub/3mhj6bcqats2o). (Let no one accuse us of making perfect an enemy of good!) Still, we try to make working with prefs as painless as possible. For example, when updating your prefs, `@atproto/api` contains a helper to ensure that you don't accidentally overwrite prefs you don't intend to, by first fetching the existing prefs, merging in your updates, and then writing the whole thing back:
+
+```ts
+  private async updatePreferences(
+    cb: (
+      prefs: AppBskyActorDefs.Preferences,
+    ) => AppBskyActorDefs.Preferences | false,
+  ) {
+    try {
+      await this.#prefsLock.acquireAsync()
+      const res = await this.app.bsky.actor.getPreferences({})
+      const newPrefs = cb(res.data.preferences)
+      if (newPrefs === false) {
+        return res.data.preferences
+      }
+      await this.app.bsky.actor.putPreferences({
+        preferences: newPrefs,
+      })
+      return newPrefs
+    } finally {
+      this.#prefsLock.release()
+    }
+  }
+```
+
+That's one example of a downstream helper we need to preserve. Another is how we enforce norms around how to handle certain label types. For example, when a status is labeled `!hide`, we want to make sure that all apps are hiding that status from the feed, rather than leaving it up to each app to interpret the label and potentially rendering it inconsistently across the ecosystem.
+
+You can see an example of this at the bottom of the code sample in [our new Labeler integration tutorial](/guides/labels-tutorial#part-2-querying-labels). With `lex`, implementers need to define the behavior for `!hide` and `!warn` manually. By contrast, the `@atproto/api` package has always prescribed the behavior for handling certain label types. We are still generally in favor of prescribed norms here, it's just out of scope for `lex`, so we'll likely be adding this to a helper as well.
+
+Since these features are so particular to the Bluesky app experience, our **app team** may take a more active role designing and maintaining them, rather than the protocol team that maintains `lex`. I know, I know, no one cares about your internal org chart. But this is a salient distinction for us, and for developers building on atproto who may need Bluesky-specific affordances to move more quickly. While neither of these will actually require further changes to `lex`, we feel good about blocking 1.0 on a better ecosystem experience.
+
+## String typing
+
+There's one other potentially gnarly change for "brownfield" projects (i.e., projects that will be migrating from the existing SDK rather than adopting the new one from scratch):
+
+The `lex` tooling brings comprehensive typings to Lexicon, and that extends all the way to distinguish different string formats.  For example, `lex` will differentiate a string representing a DID from another representing an AT URI. What this also means in practice is that if you used to pass generic `string` types into your Lexicon SDK, you now have to recast them `as DidString` or `as AtUriString` or whatever the appropriate type is, and this works best when adopted throughout your codebase. This has already helped us catch and fix bugs on our end, but we know some devs will be looking for a more incremental upgrade path to adopt the stricter types.
+
+*We haven't decided what we're doing here yet*. If you've already adopted `lex` and have opinions on this, or if you've worked on supporting both typed and untyped SDK routes before, we'd love to [hear from you](https://bsky.app/profile/atproto.com)! We may still do something to make this cutover a little smoother.
+
+## Next steps
+
+**There are no plans to drop support for the existing `@atproto/xrpc` and `@atproto/api` packages**. At some point after `lex` reaches 1.0, they will enter a maintenance mode where they will only receive critical bug fixes and security patches, but we will continue to support them for the foreseeable future. All new documentation and samples — including forthcoming updates to the [standalone Bluesky docs](https://docs.bsky.app/) — will be built using `lex`.
+
+As for when `lex` will hit 1.0, that depends on the community response to this announcement! If you have any feedback on the new SDK, or if you have any questions about how to migrate your existing code, please don't hesitate to reach out to us or open an issue on the [atproto repo](https://github.com/bluesky-social/atproto). For now, enjoy a hopefully much-simplified build process from our new ESM packages, and stay tuned for more updates as we continue to improve!
