@@ -1,8 +1,10 @@
 export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mmf6sql32b2n',
   title: 'TypeScript SDK Upgrades',
   description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
   date: 'May 21, 2026',
   author: 'AT Protocol Team',
+  blueskyPostUrl: 'https://atproto.com/blog/ts-sdk-upgrades'
 }
 
 ## SDK Modernization
@@ -23,7 +25,7 @@ When we shipped the [atproto.com docs](/docs), we rewrote all of our existing sa
 
 ## Helper gaps
 
-Our goal in developing `lex` was similar to our goal in building out `atproto.com` — deemphasize Bluesky helpers and promote generic Lexicon tooling with first-class code generation for all atproto TS devs. 
+Our goal in developing `lex` was similar to our goal in building out `atproto.com` — deemphasize Bluesky helpers and promote generic Lexicon tooling with first-class code generation for all atproto TS devs.
 
 This is great for making nice clean abstractions and good baseline assumptions. But it also means that some of the helper methods that we had in `@atproto/api` for working with Bluesky-specific features aren't (yet) compatible with `lex`. We never want to create devex *regressions* by making ecosystem improvements, so we're planning to build out a new helper package that will implement the same functionality for the `lex` ecosystem. This will include things like:
 
