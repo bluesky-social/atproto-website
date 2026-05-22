@@ -52,8 +52,11 @@ function listBlogPosts() {
 
 function normalizeBlueskyPostUrlInMdx(content, currentUrl, newUrl) {
   if (currentUrl === newUrl) return content
+  // Match single/double/backtick quotes around the URL; readHeaderField
+  // accepts all three so the rewriter has to as well.
+  const escaped = currentUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   return content.replace(
-    `blueskyPostUrl: '${currentUrl}'`,
+    new RegExp(`blueskyPostUrl:\\s*(['"\`])${escaped}\\1`),
     `blueskyPostUrl: '${newUrl}'`,
   )
 }
@@ -137,7 +140,6 @@ export async function main(...args) {
       ...existing.value,
       contributors,
       ...(bskyPostRef ? { bskyPostRef } : {}),
-      updatedAt: new Date().toISOString(),
     }
 
     plans.push({ post, rkey, existing: existing.value, next, normalizedUrl })
@@ -172,9 +174,11 @@ export async function main(...args) {
 
   for (const p of plans) {
     try {
-      const result = await client.put(standard.document.main, p.next, {
-        rkey: p.rkey,
-      })
+      const result = await client.put(
+        standard.document.main,
+        { ...p.next, updatedAt: new Date().toISOString() },
+        { rkey: p.rkey },
+      )
       console.log(`  ✓ record ${result.uri}`)
       updated++
     } catch (err) {
