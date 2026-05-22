@@ -32,6 +32,15 @@ const commands = {
     usage: '[--apply]',
     run: () => import('./migrate-paths.mjs').then((m) => m.main(...extraArgs)),
   },
+  'migrate-contributors-and-refs': {
+    description:
+      'Backfill contributors + bskyPostRef on existing standard-site records (one-off)',
+    usage: '[--apply]',
+    run: () =>
+      import('./migrate-contributors-and-refs.mjs').then((m) =>
+        m.main(...extraArgs),
+      ),
+  },
 }
 
 if (!command || !commands[command]) {
