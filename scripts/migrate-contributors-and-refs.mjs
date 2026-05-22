@@ -165,6 +165,40 @@ export async function main(...args) {
     return
   }
 
-  // (Apply branch implemented in Task 10.)
-  console.log('\n(--apply not yet wired; implemented in next task)')
+  console.log('\n📤 Applying changes...\n')
+  let updated = 0
+  let failed = 0
+  let mdxRewritten = 0
+
+  for (const p of plans) {
+    try {
+      const result = await client.put(standard.document.main, p.next, {
+        rkey: p.rkey,
+      })
+      console.log(`  ✓ record ${result.uri}`)
+      updated++
+    } catch (err) {
+      console.error(`  ✗ ${p.post.slug}  record put failed: ${err.message}`)
+      failed++
+      continue
+    }
+
+    if (p.normalizedUrl && p.normalizedUrl !== p.post.blueskyPostUrl) {
+      const next = normalizeBlueskyPostUrlInMdx(
+        p.post.content,
+        p.post.blueskyPostUrl,
+        p.normalizedUrl,
+      )
+      if (next !== p.post.content) {
+        fs.writeFileSync(p.post.mdxPath, next)
+        console.log(`    ✎ MDX URL normalized in ${path.basename(path.dirname(p.post.mdxPath))}/en.mdx`)
+        mdxRewritten++
+      }
+    }
+  }
+
+  console.log(
+    `\n✅ Done. Updated ${updated} record(s), rewrote ${mdxRewritten} MDX file(s), failed ${failed}.`,
+  )
+  if (failed > 0) process.exit(1)
 }
