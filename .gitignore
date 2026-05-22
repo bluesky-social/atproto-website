@@ -3,5 +3,7 @@ node_modules
 .DS_Store
 .env
 .claude
+.superpowers
+docs/superpowers
 src/lexicons
 tsconfig.tsbuildinfo
