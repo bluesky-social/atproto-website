@@ -25,6 +25,9 @@ import { PasswordSession } from '@atproto/lex-password-session'
 import * as acorn from 'acorn'
 import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
+import authors from '../src/lib/authors.json' with { type: 'json' }
+import { resolveBskyPostRef } from './lib/resolveBskyPostRef.mjs'
+import { buildContributors } from './lib/buildContributors.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -217,6 +220,22 @@ export async function main(slug) {
     console.log(`\n⚠️  No ATPROTO_PUBLICATION_URI set, using URL: ${SITE_URL}`)
   }
 
+  // Build contributors from the MDX author. Fail loud if the author
+  // string isn't in authors.json — better than silently emitting a
+  // contributor-less record.
+  if (!header.author) {
+    console.error('\n❌ Missing `author` field in MDX header.')
+    process.exit(1)
+  }
+  const contributors = buildContributors(header.author, authors)
+
+  let bskyPostRef
+  if (header.blueskyPostUrl) {
+    console.log('\n🔗 Resolving bskyPostRef...')
+    bskyPostRef = await resolveBskyPostRef(header.blueskyPostUrl)
+    console.log(`   ${bskyPostRef.uri}`)
+  }
+
   // Check for existing document with same path. Path is relative to the
   // publication's url (https://atproto.com/blog), so it's just /<slug>.
   const postPath = `/${slug}`
@@ -246,6 +265,8 @@ export async function main(slug) {
         path: postPath,
         publishedAt: parseDate(header.date),
         updatedAt: new Date().toISOString(),
+        contributors,
+        ...(bskyPostRef ? { bskyPostRef } : {}),
       },
       { rkey }
     )
@@ -264,6 +285,8 @@ export async function main(slug) {
       description: header.description,
       path: postPath,
       publishedAt: parseDate(header.date),
+      contributors,
+      ...(bskyPostRef ? { bskyPostRef } : {}),
     })
 
     documentUri = result.uri
