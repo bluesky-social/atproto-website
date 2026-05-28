@@ -89,6 +89,22 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'do-this-together-standard-site',
+    episodeNumber: 6,
+    title: 'Why Don\'t We Just Do This Together?',
+    description: 'Jim sits down with members of the core team building and governing Standard.site, the shared Lexicon for publishing longform writing on atproto. Brooke from pckt.blog, Jared from Leaflet, and Miguel from Offprint cover the design tradeoffs in creating a new shared format, tales of data migrations, strategies for shared governance, and why you shouldn\'t buy a premium domain name.',
+    date: 'May 28, 2026',
+    pubDate: '2026-05-28T17:30:10.563Z',
+    duration: '01:04:11',
+    durationSeconds: 3851,
+    guests: ['Brooke', 'Jared', 'Miguel'],
+    audioUrl: 'https://media.atproto.com/off-protocol/20260528-conversation-standard-site/2026-05-28-conversation-standard-site.mp3',
+    audioSizeBytes: 123247872,
+    audioMimeType: 'audio/mpeg',
+    hasShowNotes: false,
+    hasTranscript: false,
+  },
+  {
     slug: 'the-puppy-problem',
     episodeNumber: 5,
     title: 'The Puppy Problem',
