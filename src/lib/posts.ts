@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'standard-site-bluesky-timeline',
+    title: 'Now in your timeline: Standard.site brings richer previews from across the open web',
+    description: 'Articles published with this community-built format now receive richer treatment in the Bluesky app',
+    date: 'May 27, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'ts-sdk-upgrades',
     title: 'TypeScript SDK Upgrades',
     description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
