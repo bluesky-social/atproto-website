@@ -45,7 +45,7 @@ go run ./cmd/tap --disable-acks=true
 websocat ws://localhost:2480/channel
 
 # Add repositories to track
-curl -X POST http;//localhost:2480/repos/add \
+curl -X POST http://localhost:2480/repos/add \
   -H "Content-Type: application/json" \
   -d '{"dids": ["did:plc:ewvi7nxzyoun6zhxrhs64oiz"]}'
 ```
