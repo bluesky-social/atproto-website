@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'atmospheric-website',
+    title: 'Build an Atmospheric Website (with CodeTV)',
+    description: 'Watch the episode and follow along to build a website on AT Protocol.',
+    date: 'June 4, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'standard-site-bluesky-timeline',
     title: 'Now in your timeline: Standard.site',
     description: 'Articles from across the open web published with this community-built format now receive richer treatment in the Bluesky app',

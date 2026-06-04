@@ -1,0 +1,51 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mnikwzsitg2i',
+  title: 'Build an Atmospheric Website (with CodeTV)',
+  description: 'Watch the episode and follow along to build a website on AT Protocol.',
+  date: 'June 4, 2026',
+  author: 'Jim Ray',
+}
+
+<YouTubeEmbed id="S-XytKfGCO8" title="Rebuild your website (again) with ATproto · Web Dev Challenge S3.E4" />
+
+[The Web Dev Challenge](https://codetv.dev/series/web-dev-challenge/s3) is a fantastic mix of novel nerdery, good-natured competition, and pushing at the limits of what developers can build quickly. So when Jason from CodeTV asked if we were interested in sponsoring an episode, it felt like a perfect fit. We pulled together a mix of familiar AT Protocol ecosystem faces, and a few new friends, with the challenge of rebuilding their personal websites with Atmospheric features. I have to say, everyone completely understood the assignment, this turned out great.
+
+When you're ready to [make your own website Atmospheric](https://am.jimray.net/3mcxq7tyx522r), here are some resources to help you get going. The only thing you need is an atproto account. If you've got a Bluesky handle, that's great, but you can also sign in with [Blacksky](https://blacksky.community/), [npmx](https://npmx.dev/), [Tangled](https://tangled.org/), [witchcraft.systems](https://pds.witchcraft.systems/), [Eurosky](https://eurosky.tech/), [selfhosted.social](https://selfhosted.social/), and plenty more — including a PDS you might host yourself!
+
+## Macroblogging
+The absolute easiest way to get started building an Atmospheric website is to use one of the excellent blogging apps that are built on atproto. [Leaflet](https://leaflet.pub/), [pckt.blog](https://pckt.blog), and [Offprint](https://offprint.app) are three well known apps that publish your writing to your PDS, just like Bluesky creates records of all your posts to your PDS. And the [recently launched Standard.site integration with the Bluesky app](https://atproto.com/blog/standard-site-bluesky-timeline) will put your blogging front and center.
+
+If you're already using a CMS like WordPress, a framework like Astro, or a static-site generator like Hugo or Eleventy, there are plugins and tools that make it easy to publish Standard.site records today:
+
+* [Sequoia is a CLI tool](https://sequoia.pub/) that publishes Standard.site records and updates your site with the right verification links
+* The [wordpress-atmosphere](https://github.com/Automattic/wordpress-atmosphere) plugin will cross post from WordPress to Bluesky as well as adding Standard.site records to your PDS.
+* The [astro-standard-site package](https://www.npmjs.com/package/@bryanguffey/astro-standard-site) brings Atmospheric publishing to Astro
+* The [EmDash project](https://emdashcms.com/) is a brand new CMS built by Cloudflare that has atproto baked in, including the ability to log in with your atproto handle.
+
+## Embed atproto in your site
+The records on your PDS are just structured data (JSON to be specific), you can grab them and render them however you'd like.
+
+Grabbing lots of individual JSON files from various PDSes gets a bit tedious, though, which is why the protocol specifies endpoints for functions that do this on your behalf. [Bluesky has many, many API endpoints](https://docs.bsky.app/docs/category/http-reference) for grabbing these records in a more structured way, such as [the posts in a thread](https://docs.bsky.app/docs/api/app-bsky-feed-get-post-thread).
+
+And because Bluesky has very permissive CORS headers, this means you can wire up a component that pulls directly from Bluesky. In fact, that's exactly what the [bsky-conversation component](https://tangled.org/jimray.bsky.team/bsky-conversation) does, allowing you to create a kind of comments thread from a Bluesky post.
+
+You can embed all kinds of atproto data in your website, including [feeds](https://docs.bsky.app/docs/starter-templates/custom-feeds), links you've gathered on [Semble](https://semble.so/), or events created with [Smoke Signals](https://smokesignal.events/) or [atmo.rsvp](https://atmo.rsvp/).
+
+You can even build a website that's nothing **but** embeds thanks to [Blento](https://blento.app/).
+
+## Going all in
+Even if you've been inspired to take full ownership of your online presence with atproto, you don't have to completely jump in all at once. In fact, that's part of the practical approach to decentralization at the heart of [the atproto ethos](https://atproto.com/articles/atproto-ethos) — you can add and adapt the parts of the protocol that make the most sense for you.
+
+Hosting your own PDS is probably the simplest way to get started, since a PDS is simple to operate, costs very little to maintain, and is widely supported in the ecosystem. You can use [the same PDS that Bluesky does](https://github.com/bluesky-social/pds), or try the [rsky-pds from Blacksky](https://github.com/blacksky-algorithms/rsky/tree/main/rsky-pds), [Tranquil](https://tangled.org/tranquil.farm/tranquil-pds), [Cocoon](https://tangled.org/hailey.at/cocoon), or even spin up [Cirrus](https://github.com/ascorbic/cirrus), a single-user PDS that runs in a Cloudflare worker.
+
+Running your own PDS is gratifying but it's a lot like running your own web server. You want to keep an eye on security, make sure you've got a [strong backup plan](https://atproto.com/guides/going-to-production#backups-and-recovery), and whatever you do, don't lose your [rotation keys](https://atproto.com/guides/going-to-production#plc-key-management).
+
+One last note about running your own PDS: once you've decided to go that route, you'll want to migrate your account. You can use the venerable [goat command line tool](https://github.com/bluesky-social/goat), or a web-based service like [PDS Moover](https://pdsmoover.com/) from Bailey Townsend or the brilliantly named [EU-Haul from Eurosky](https://move.eurosky.tech/). The guides from [Blacksky](https://docs.blacksky.community/migrating-to-blacksky-pds-complete-guide) and [Eurosky](https://eurosky.tech/accounts/migrate/) will help you on your journey.
+
+Building custom applications on atproto will feel familiar if you've built web apps before. The [understanding atproto guide](https://atproto.com/guides/understanding-atproto) will help you understand what makes the protocol unique and a little different from centralized web development. And we've built some [tutorials](https://atproto.com/guides/tutorials) to help guide you.
+
+## Make it yours
+
+Filming the Web Dev Challenge was a ton of fun for me personally. I got to meet up with atproto devs (one of my favorite parts of the job) in a very cool space in one of my favorite cities. Everyone took a different approach to building a site that's uniquely theirs and now you can do the same. The best part is you don't need to completely relearn everything about how the web works, you can pull in the parts that make sense for you and layer on as you want.
+
+And if you're the type who rebuilds their website once a quarter (or once a decade), your next redesign will be more than a new stylesheet or even the shiniest new framework, it'll be one you own.
