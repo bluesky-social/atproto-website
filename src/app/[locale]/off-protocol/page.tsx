@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { episodes, formatDurationForDisplay, SHOW } from '@/lib/episodes'
 import { SubscribeLinks } from '@/components/SubscribeLinks'
+import { OffProtocolNext } from '@/components/OffProtocolNext'
 
 /**
  * Off Protocol Episode Listing
@@ -24,14 +25,20 @@ export default async function OffProtocolIndexPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
       <header className="mb-12 flex flex-col gap-4">
-        <h1 className="font-mono text-4xl font-bold uppercase tracking-tight md:text-5xl">
-          {SHOW.title}
-        </h1>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-5">
+          <h1 className="font-mono text-4xl font-bold uppercase tracking-tight md:text-5xl">
+            {SHOW.title}
+          </h1>
+          <SubscribeLinks className="shrink-0" />
+        </div>
         <p className="text-lg text-zinc-600 dark:text-zinc-400">
           {SHOW.description}
         </p>
-        <SubscribeLinks />
       </header>
+
+      <div className="mb-12">
+        <OffProtocolNext />
+      </div>
 
       {episodes.length === 0 ? (
         <p className="rounded-lg border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
