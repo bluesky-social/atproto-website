@@ -218,6 +218,14 @@ describe('fetchPermissionSetRecord', () => {
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error.code).toBe('record-not-found')
   })
+
+  it('returns not-permission-set when the record id is not a valid NSID', async () => {
+    const evil = { ...VALID_RECORD_VALUE, id: '"><script>alert(1)</script>' }
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { json: { value: evil } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('not-permission-set')
+  })
 })
 
 describe('lexiconToCuratedScope', () => {

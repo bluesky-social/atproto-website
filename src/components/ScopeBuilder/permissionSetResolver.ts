@@ -148,6 +148,11 @@ function isPermissionSetLexicon(value: unknown): value is PermissionSetLexicon {
   const main = defs?.main as Record<string, unknown> | undefined
   return (
     !!main &&
+    // The record id becomes the CuratedScope id, which is rendered into a
+    // data-scope-id DOM attribute. Requiring a valid NSID keeps attacker-
+    // controlled record data from injecting markup there.
+    typeof v.id === 'string' &&
+    isNsid(v.id) &&
     main.type === 'permission-set' &&
     Array.isArray(main.permissions) &&
     typeof main.title === 'string' &&
