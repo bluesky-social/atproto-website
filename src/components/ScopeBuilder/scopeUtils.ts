@@ -4,7 +4,7 @@
 // canonical serializer/validator for atproto OAuth scope strings — using it
 // at runtime keeps our output format aligned with the spec.
 
-import type { AtprotoAudience } from '@atproto/did'
+import type { AtprotoDidRefAbsolute } from '@atproto/oauth-scopes'
 import {
   AccountPermission,
   BlobPermission,
@@ -25,7 +25,7 @@ import type {
   PermissionJsonForm,
 } from './types'
 
-// `Nsid` and `AtprotoAudience` from the library are template-literal types
+// `Nsid` and `AtprotoDidRefAbsolute` from the library are template-literal types
 // that strict-string-narrow at compile time. Our user inputs are plain
 // strings and may be partial as the user types, so we cast at boundaries.
 // The library's internal parsers/formatters will reject syntactically
@@ -75,7 +75,7 @@ export function buildScopeString(p: Permission): string {
       // so the preview string is at least valid; the JSON output via
       // buildPermissionSetLexicon handles inheritAud separately.
       const audValue = p.inheritAud || !p.aud ? '*' : p.aud
-      return new RpcPermission(audValue as '*' | AtprotoAudience, [lxm]).toString()
+      return new RpcPermission(audValue as '*' | AtprotoDidRefAbsolute, [lxm]).toString()
     }
     case 'blob': {
       const accepts =
@@ -123,7 +123,7 @@ export function assembleScopeString(scopes: string[]): string {
 export function buildIncludeScopeString(setNsid: string, aud: string): string {
   return new IncludeScope(
     setNsid as Nsid,
-    aud ? (aud as AtprotoAudience) : undefined,
+    aud ? (aud as AtprotoDidRefAbsolute) : undefined,
   ).toString()
 }
 
@@ -166,7 +166,7 @@ export function emitCuratedScopeString(
     audOverride === undefined ? scope.defaultAud : audOverride
   return new IncludeScope(
     scope.id as Nsid,
-    audValue ? (audValue as AtprotoAudience) : undefined,
+    audValue ? (audValue as AtprotoDidRefAbsolute) : undefined,
   ).toString()
 }
 
