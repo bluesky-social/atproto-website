@@ -7,6 +7,35 @@ Two interactive web components for working with AT Protocol OAuth scopes:
 
 Both are vanilla JS custom elements. They run in the browser, share a small data layer, and have zero runtime dependencies on the React parts of the site beyond a thin loader that registers the element on mount.
 
+## Resolving permission sets by link
+
+The Scope Builder can resolve **any** published permission set at runtime, in
+addition to the hand-curated catalog in `scopeData.ts`. Logic lives in
+`permissionSetResolver.ts` (pure, DOM-free, unit-tested with a mocked `fetch`).
+
+**Accepted input forms** (both carry the DID and NSID, so no DNS lookup is
+needed):
+
+- `https://lexicon.garden/lexicon/{did}/{nsid}`
+- `at://{did}/com.atproto.lexicon.schema/{nsid}`
+
+A bare NSID (e.g. `app.acme.authFull`) is **not** supported — that would need
+DNS-over-HTTPS authority resolution. Future extension.
+
+**Pipeline** (`resolvePermissionSet`): parse the link → resolve the DID
+document (`https://plc.directory/{did}` for `did:plc`, `/.well-known/did.json`
+for `did:web`) → read the `#atproto_pds` service endpoint → fetch
+`com.atproto.repo.getRecord` for the `com.atproto.lexicon.schema` record →
+validate `defs.main.type === 'permission-set'` (and that the record `id` is a
+valid NSID) → map into the `CuratedScope` shape. Resolution is pure
+client-side and only ever contacts `plc.directory` and the pasted DID's own
+PDS — no backend, no third-party resolver.
+
+**Trust model:** resolved sets render in a separate "Added by link" section,
+badged **unverified**, and all record-derived text is escaped via the existing
+`escapeHtml`/`escapeAttr` helpers before going into the DOM. Resolved sets are
+**session-only — never written to localStorage.**
+
 ## File map
 
 ```
