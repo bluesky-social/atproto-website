@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parsePermissionSetRef } from './permissionSetResolver'
+import { parsePermissionSetRef, resolveDidToPds } from './permissionSetResolver'
 
 const DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const NSID = 'app.bsky.authFullApp'
@@ -67,5 +67,66 @@ describe('parsePermissionSetRef', () => {
 
   it('rejects empty input', () => {
     expect(parsePermissionSetRef('').ok).toBe(false)
+  })
+})
+
+function mockFetch(routes: Record<string, { status?: number; json?: unknown }>): typeof fetch {
+  return (async (input: RequestInfo | URL) => {
+    const url = typeof input === 'string' ? input : input.toString()
+    const route = routes[url]
+    if (!route) return new Response('not found', { status: 404 })
+    return new Response(route.json === undefined ? '' : JSON.stringify(route.json), {
+      status: route.status ?? 200,
+      headers: { 'content-type': 'application/json' },
+    })
+  }) as typeof fetch
+}
+
+const PLC_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
+const PLC_DOC = {
+  id: PLC_DID,
+  service: [
+    { id: '#atproto_pds', type: 'AtprotoPersonalDataServer', serviceEndpoint: 'https://pds.example.com' },
+  ],
+}
+
+describe('resolveDidToPds', () => {
+  it('resolves a did:plc via plc.directory', async () => {
+    const fetchFn = mockFetch({ [`https://plc.directory/${PLC_DID}`]: { json: PLC_DOC } })
+    const r = await resolveDidToPds(PLC_DID, fetchFn)
+    expect(r).toEqual({ ok: true, value: 'https://pds.example.com' })
+  })
+
+  it('resolves a did:web via /.well-known/did.json', async () => {
+    const webDoc = {
+      id: 'did:web:example.com',
+      service: [{ id: '#atproto_pds', type: 'AtprotoPersonalDataServer', serviceEndpoint: 'https://pds.example.com' }],
+    }
+    const fetchFn = mockFetch({ 'https://example.com/.well-known/did.json': { json: webDoc } })
+    const r = await resolveDidToPds('did:web:example.com', fetchFn)
+    expect(r).toEqual({ ok: true, value: 'https://pds.example.com' })
+  })
+
+  it('returns did-unresolvable on a 404', async () => {
+    const fetchFn = mockFetch({})
+    const r = await resolveDidToPds(PLC_DID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('did-unresolvable')
+  })
+
+  it('returns no-pds when the document has no atproto_pds service', async () => {
+    const fetchFn = mockFetch({ [`https://plc.directory/${PLC_DID}`]: { json: { id: PLC_DID, service: [] } } })
+    const r = await resolveDidToPds(PLC_DID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('no-pds')
+  })
+
+  it('returns network when fetch throws', async () => {
+    const fetchFn = (async () => {
+      throw new TypeError('network down')
+    }) as typeof fetch
+    const r = await resolveDidToPds(PLC_DID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('network')
   })
 })

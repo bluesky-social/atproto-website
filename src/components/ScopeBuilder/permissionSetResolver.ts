@@ -91,3 +91,44 @@ export function parsePermissionSetRef(input: string): Result<ParsedRef> {
 
   return ok({ did, nsid })
 }
+
+function didWebToDocUrl(did: string): string {
+  // did:web:example.com            -> https://example.com/.well-known/did.json
+  // did:web:example.com:foo:bar    -> https://example.com/foo/bar/did.json
+  const rest = did.slice('did:web:'.length)
+  const segments = rest.split(':').map(decodeURIComponent)
+  const host = segments[0]
+  if (segments.length === 1) return `https://${host}/.well-known/did.json`
+  return `https://${host}/${segments.slice(1).join('/')}/did.json`
+}
+
+interface DidDocument {
+  id?: string
+  service?: Array<{ id?: string; type?: string; serviceEndpoint?: unknown }>
+}
+
+function extractAtprotoPds(doc: DidDocument): string | undefined {
+  const svc = doc.service?.find(
+    (s) => s.id === '#atproto_pds' || s.id?.endsWith('#atproto_pds'),
+  )
+  return typeof svc?.serviceEndpoint === 'string' ? svc.serviceEndpoint : undefined
+}
+
+export async function resolveDidToPds(did: string, fetchFn: FetchFn = fetch): Promise<Result<string>> {
+  const docUrl = did.startsWith('did:web:')
+    ? didWebToDocUrl(did)
+    : `https://plc.directory/${did}`
+
+  let doc: DidDocument
+  try {
+    const res = await fetchFn(docUrl)
+    if (!res.ok) return fail('did-unresolvable', `Could not resolve ${did} (HTTP ${res.status}).`)
+    doc = (await res.json()) as DidDocument
+  } catch {
+    return fail('network', `Network error resolving ${did}.`)
+  }
+
+  const pds = extractAtprotoPds(doc)
+  if (!pds) return fail('no-pds', `No atproto PDS endpoint found in the DID document for ${did}.`)
+  return ok(pds.replace(/\/$/, ''))
+}
