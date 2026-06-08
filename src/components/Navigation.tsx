@@ -286,7 +286,6 @@ export const navigation: Array<NavGroup> = [
           { title: 'Permission Sets', href: '/guides/permission-sets' },
           { title: 'OAuth Patterns', href: '/guides/oauth-patterns' },
           { title: 'Scope Builder', href: '/guides/scope-builder' },
-          { title: 'Permission Set Builder', href: '/guides/permission-set-builder' },
         ],
       },
       {

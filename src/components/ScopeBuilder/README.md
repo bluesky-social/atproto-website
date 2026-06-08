@@ -3,7 +3,7 @@
 Two interactive web components for working with AT Protocol OAuth scopes:
 
 - **`<scope-builder>`** — embedded at `/guides/scope-builder`. Pick from a curated catalog of permission sets and individual scopes; the widget assembles the final space-separated scope string that goes into `oauth-client-metadata.json`.
-- **`<permission-author>`** — embedded at `/guides/permission-set-builder`. Compose individual permissions and emit a permission-set Lexicon JSON document suitable for `goat lex publish`.
+- **`<permission-author>`** — compose individual permissions and emit a permission-set Lexicon JSON document suitable for `goat lex publish`. The component and its `PermissionAuthorLoader` are complete but **not currently routed**: the `/guides/permission-set-builder` page was held back from launch. To re-enable it, restore the route directory at `src/app/[locale]/guides/permission-set-builder/` and re-add the sidebar entry in `Navigation.tsx`.
 
 Both are vanilla JS custom elements. They run in the browser, share a small data layer, and have zero runtime dependencies on the React parts of the site beyond a thin loader that registers the element on mount.
 
