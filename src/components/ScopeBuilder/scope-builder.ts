@@ -1,12 +1,20 @@
 import { apps, permissionSets, individualScopes } from './scopeData'
 import { assembleScopeString, emitCuratedScopeString } from './scopeUtils'
 import type { CuratedScope } from './types'
+import { resolvePermissionSet } from './permissionSetResolver'
 
 const ALL_SCOPES: CuratedScope[] = [...permissionSets, ...individualScopes]
 const SCOPES_BY_ID = new Map(ALL_SCOPES.map((s) => [s.id, s]))
 
 class ScopeBuilderElement extends HTMLElement {
   private selectedIds = new Set<string>()
+  // Permission sets the user resolved by pasting a link. Session-only:
+  // never written to localStorage. Rendered in the "Added by link" section
+  // and otherwise treated like curated sets.
+  private customSets: CuratedScope[] = []
+  // Last resolver error message, shown under the input. Cleared on success.
+  private customSetError: string = ''
+  private resolving = false
   // Per-scope audience overrides for curated permission sets whose
   // `defaultAud` is editable. Keyed by scope id. Preserved across
   // un-check/re-check so a user can tweak without losing their edit.
@@ -98,6 +106,14 @@ class ScopeBuilderElement extends HTMLElement {
           }, 1500)
         })
       }
+
+      const addBtn = target.closest('[data-action="resolve-set"]') as HTMLButtonElement | null
+      if (addBtn) {
+        const input = this.querySelector<HTMLInputElement>('[data-custom-set-input]')
+        const value = input?.value ?? ''
+        void this._resolveCustomSet(value)
+        return
+      }
     }
   }
 
@@ -122,10 +138,32 @@ class ScopeBuilderElement extends HTMLElement {
   // honoring per-scope audience overrides. Used by both the initial render
   // and the targeted output updates triggered by aud input typing.
   private _computeAssembled(): string {
-    const scopeStrings = ALL_SCOPES.filter((s) => this.selectedIds.has(s.id)).map((s) =>
-      emitCuratedScopeString(s, this.audOverrides.get(s.id)),
-    )
+    const all = [...ALL_SCOPES, ...this.customSets]
+    const scopeStrings = all
+      .filter((s) => this.selectedIds.has(s.id))
+      .map((s) => emitCuratedScopeString(s, this.audOverrides.get(s.id)))
     return assembleScopeString(scopeStrings)
+  }
+
+  private async _resolveCustomSet(input: string): Promise<void> {
+    if (this.resolving) return
+    this.resolving = true
+    this.customSetError = ''
+    this._render()
+
+    const result = await resolvePermissionSet(input)
+
+    this.resolving = false
+    if (!result.ok) {
+      this.customSetError = result.error.message
+      this._render()
+      return
+    }
+    // De-dupe: replace any existing custom set with the same id.
+    const scope = result.value
+    this.customSets = [...this.customSets.filter((s) => s.id !== scope.id), scope]
+    this.customSetError = ''
+    this._render()
   }
 
   // Targeted refresh of only the sticky output box. Used when the user types
@@ -159,6 +197,47 @@ class ScopeBuilderElement extends HTMLElement {
       .filter((s) => s.appId === this.activeAppId)
       .map((s) => this._renderScopeItem(s))
       .join('')
+  }
+
+  private _renderAddedByLinkSection(): string {
+    const listHtml =
+      this.customSets.length > 0
+        ? `<div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden [&>*]:border-t [&>*]:border-t-gray-100 dark:[&>*]:border-t-gray-700 [&>*:first-child]:border-t-0">
+             ${this.customSets.map((s) => this._renderScopeItem(s)).join('')}
+           </div>`
+        : ''
+
+    const errorHtml = this.customSetError
+      ? `<p class="mt-2 text-xs text-red-600 dark:text-red-400">${escapeHtml(this.customSetError)}</p>`
+      : ''
+
+    return `
+      <section class="mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1 px-3">
+          Added by link
+        </h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2 px-3">
+          Paste a <span class="font-mono">lexicon.garden</span> or <span class="font-mono">at://</span> link to any published permission set. Resolved sets are <span class="font-medium">unverified</span> and not saved.
+        </p>
+        <div class="flex gap-2 px-3 mb-3">
+          <input
+            type="text"
+            data-custom-set-input
+            placeholder="https://lexicon.garden/lexicon/did:plc:.../app.example.authThing"
+            class="flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs font-mono text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <button
+            type="button"
+            data-action="resolve-set"
+            class="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50"
+            ${this.resolving ? 'disabled' : ''}
+          >
+            ${this.resolving ? 'Resolving…' : 'Add'}
+          </button>
+        </div>
+        <div class="px-3">${errorHtml}</div>
+        ${listHtml}
+      </section>`
   }
 
   // Updates only the two pieces of DOM that change on a pill click.
@@ -375,6 +454,8 @@ class ScopeBuilderElement extends HTMLElement {
             ${this._renderPermissionSetsListInner()}
           </div>
         </section>
+
+        ${this._renderAddedByLinkSection()}
 
       </div>`
   }
