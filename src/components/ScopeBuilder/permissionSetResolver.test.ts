@@ -277,4 +277,21 @@ describe('lexiconToCuratedScope', () => {
       { collection: 'd.e.f', actions: ['create'] },
     ])
   })
+
+  it('returns undefined expandedPermissions for an empty permission list', () => {
+    const rec = { ...VALID_RECORD_VALUE, defs: { main: { ...VALID_RECORD_VALUE.defs.main, permissions: [] } } }
+    const s = lexiconToCuratedScope(rec as PermissionSetLexicon, PLC_DID)
+    expect(s.expandedPermissions).toBeUndefined()
+  })
+
+  it('drops unknown repo action strings, falling back to all write actions', () => {
+    const rec = {
+      ...VALID_RECORD_VALUE,
+      defs: { main: { ...VALID_RECORD_VALUE.defs.main, permissions: [
+        { type: 'permission', resource: 'repo', collection: ['a.b.c'], action: ['read', 'write'] },
+      ] } },
+    }
+    const s = lexiconToCuratedScope(rec as PermissionSetLexicon, PLC_DID)
+    expect(s.expandedPermissions?.repo).toEqual([{ collection: 'a.b.c', actions: ['create', 'update', 'delete'] }])
+  })
 })

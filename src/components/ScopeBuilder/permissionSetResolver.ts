@@ -192,18 +192,28 @@ export async function fetchPermissionSetRecord(
 }
 
 const ALL_WRITE_ACTIONS: RepoPermission['actions'] = ['create', 'update', 'delete']
+const VALID_REPO_ACTIONS = new Set(ALL_WRITE_ACTIONS)
 
-function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions {
+function isWriteAction(a: string): a is RepoPermission['actions'][number] {
+  return VALID_REPO_ACTIONS.has(a as RepoPermission['actions'][number])
+}
+
+/**
+ * Expands a record's permissions into the widget's display shape. A repo
+ * permission with no/empty collection, or an rpc permission with no lxm, is
+ * malformed and silently skipped. Unknown repo action strings are filtered
+ * out; if none remain we fall back to all write actions.
+ */
+function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions | undefined {
   const repo: RepoPermission[] = []
   const rpc: string[] = []
 
   for (const p of record.defs.main.permissions) {
     if (p.resource === 'repo' && p.collection) {
-      const actions = (p.action && p.action.length > 0
-        ? p.action
-        : ALL_WRITE_ACTIONS) as RepoPermission['actions']
+      const valid = p.action?.filter(isWriteAction)
+      const actions = valid && valid.length > 0 ? valid : ALL_WRITE_ACTIONS
       for (const collection of p.collection) {
-        repo.push({ collection, actions })
+        repo.push({ collection, actions: [...actions] })
       }
     } else if (p.resource === 'rpc' && p.lxm) {
       rpc.push(...p.lxm)
@@ -213,7 +223,7 @@ function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions {
   const out: ExpandedPermissions = {}
   if (repo.length > 0) out.repo = repo
   if (rpc.length > 0) out.rpc = rpc
-  return out
+  return out.repo || out.rpc ? out : undefined
 }
 
 /**
@@ -229,6 +239,8 @@ export function lexiconToCuratedScope(record: PermissionSetLexicon, did: string)
   return {
     id: nsid,
     label: main.title || nsid,
+    // The lexicon has a single `detail` field; we use it for both the inline
+    // description and the expanded-details explanation.
     description: main.detail || '',
     explanation: main.detail || '',
     scopeString: buildIncludeScopeString(nsid, ''),
