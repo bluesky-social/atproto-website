@@ -105,6 +105,7 @@ class ScopeBuilderElement extends HTMLElement {
             btn.disabled = false
           }, 1500)
         })
+        return
       }
 
       const addBtn = target.closest('[data-action="resolve-set"]') as HTMLButtonElement | null
@@ -162,7 +163,6 @@ class ScopeBuilderElement extends HTMLElement {
     // De-dupe: replace any existing custom set with the same id.
     const scope = result.value
     this.customSets = [...this.customSets.filter((s) => s.id !== scope.id), scope]
-    this.customSetError = ''
     this._render()
   }
 
