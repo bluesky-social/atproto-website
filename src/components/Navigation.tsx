@@ -359,10 +359,11 @@ export const navigation: Array<NavGroup> = [
         icon: 'briefcase',
       },
       {
-        title: 'Account migration',
-        href: '/guides/account-migration',
+        title: 'User Accounts',
+        href: '/guides/account-management',
         icon: 'paper-airplane',
         links: [
+          { title: 'Account Migration', href: '/guides/account-migration' },
           { title: 'Account Recovery', href: '/guides/account-recovery' },
         ]
       },
