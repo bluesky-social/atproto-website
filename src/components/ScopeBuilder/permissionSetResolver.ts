@@ -107,9 +107,9 @@ interface DidDocument {
   service?: Array<{ id?: string; type?: string; serviceEndpoint?: unknown }>
 }
 
-function extractAtprotoPds(doc: DidDocument): string | undefined {
+function extractAtprotoPds(doc: DidDocument, did: string): string | undefined {
   const svc = doc.service?.find(
-    (s) => s.id === '#atproto_pds' || s.id?.endsWith('#atproto_pds'),
+    (s) => s.id === '#atproto_pds' || s.id === `${did}#atproto_pds`,
   )
   return typeof svc?.serviceEndpoint === 'string' ? svc.serviceEndpoint : undefined
 }
@@ -119,16 +119,22 @@ export async function resolveDidToPds(did: string, fetchFn: FetchFn = fetch): Pr
     ? didWebToDocUrl(did)
     : `https://plc.directory/${did}`
 
-  let doc: DidDocument
+  let res: Response
   try {
-    const res = await fetchFn(docUrl)
-    if (!res.ok) return fail('did-unresolvable', `Could not resolve ${did} (HTTP ${res.status}).`)
-    doc = (await res.json()) as DidDocument
+    res = await fetchFn(docUrl)
   } catch {
     return fail('network', `Network error resolving ${did}.`)
   }
+  if (!res.ok) return fail('did-unresolvable', `Could not resolve ${did} (HTTP ${res.status}).`)
 
-  const pds = extractAtprotoPds(doc)
+  let doc: DidDocument
+  try {
+    doc = (await res.json()) as DidDocument
+  } catch {
+    return fail('did-unresolvable', `DID document for ${did} was not valid JSON.`)
+  }
+
+  const pds = extractAtprotoPds(doc, did)
   if (!pds) return fail('no-pds', `No atproto PDS endpoint found in the DID document for ${did}.`)
-  return ok(pds.replace(/\/$/, ''))
+  return ok(pds.replace(/\/+$/, ''))
 }

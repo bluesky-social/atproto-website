@@ -129,4 +129,24 @@ describe('resolveDidToPds', () => {
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error.code).toBe('network')
   })
+
+  it('resolves a multi-segment did:web', async () => {
+    const webDoc = {
+      id: 'did:web:example.com:u:alice',
+      service: [{ id: '#atproto_pds', type: 'AtprotoPersonalDataServer', serviceEndpoint: 'https://pds.example.com' }],
+    }
+    const fetchFn = mockFetch({ 'https://example.com/u/alice/did.json': { json: webDoc } })
+    const r = await resolveDidToPds('did:web:example.com:u:alice', fetchFn)
+    expect(r).toEqual({ ok: true, value: 'https://pds.example.com' })
+  })
+
+  it('resolves when the atproto_pds service uses an absolute id', async () => {
+    const doc = {
+      id: PLC_DID,
+      service: [{ id: `${PLC_DID}#atproto_pds`, type: 'AtprotoPersonalDataServer', serviceEndpoint: 'https://pds.example.com' }],
+    }
+    const fetchFn = mockFetch({ [`https://plc.directory/${PLC_DID}`]: { json: doc } })
+    const r = await resolveDidToPds(PLC_DID, fetchFn)
+    expect(r).toEqual({ ok: true, value: 'https://pds.example.com' })
+  })
 })
