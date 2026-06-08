@@ -51,6 +51,13 @@ describe('parsePermissionSetRef', () => {
   it('rejects a malformed DID', () => {
     const r = parsePermissionSetRef('https://lexicon.garden/lexicon/did:bogus:xyz/app.x.y')
     expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('invalid-input')
+  })
+
+  it('rejects an at:// URI with a trailing slash', () => {
+    const r = parsePermissionSetRef(`at://${DID}/com.atproto.lexicon.schema/${NSID}/`)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('invalid-input')
   })
 
   it('rejects a non-NSID record key', () => {

@@ -51,6 +51,9 @@ export function parsePermissionSetRef(input: string): Result<ParsedRef> {
   let nsid: string | undefined
 
   if (trimmed.startsWith('at://')) {
+    // Exactly 3 segments: did / collection / rkey. A trailing slash yields a
+    // 4th empty segment and is intentionally rejected here — do NOT add
+    // .filter(Boolean), which would admit at:// URIs with trailing slashes.
     const rest = trimmed.slice('at://'.length)
     const parts = rest.split('/')
     if (parts.length === 3 && parts[1] === LEXICON_COLLECTION) {
