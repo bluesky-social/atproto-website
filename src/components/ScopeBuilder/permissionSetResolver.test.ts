@@ -210,4 +210,11 @@ describe('fetchPermissionSetRecord', () => {
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error.code).toBe('network')
   })
+
+  it('returns record-not-found when the body is not JSON', async () => {
+    const fetchFn = (async () => new Response('not json', { status: 200 })) as typeof fetch
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('record-not-found')
+  })
 })

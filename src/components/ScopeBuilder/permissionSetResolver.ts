@@ -145,7 +145,13 @@ function isPermissionSetLexicon(value: unknown): value is PermissionSetLexicon {
   const v = value as Record<string, unknown>
   const defs = v.defs as Record<string, unknown> | undefined
   const main = defs?.main as Record<string, unknown> | undefined
-  return !!main && main.type === 'permission-set' && Array.isArray(main.permissions)
+  return (
+    !!main &&
+    main.type === 'permission-set' &&
+    Array.isArray(main.permissions) &&
+    typeof main.title === 'string' &&
+    typeof main.detail === 'string'
+  )
 }
 
 export async function fetchPermissionSetRecord(
@@ -154,19 +160,28 @@ export async function fetchPermissionSetRecord(
   nsid: string,
   fetchFn: FetchFn = fetch,
 ): Promise<Result<PermissionSetLexicon>> {
+  // ':' is valid unencoded in query strings (RFC 3986 §3.4) and inputs are
+  // pre-validated DIDs/NSIDs, so we don't encodeURIComponent here — doing so
+  // would double-encode percent-encoded did:web ports.
   const url =
     `${pdsUrl}/xrpc/com.atproto.repo.getRecord` +
     `?repo=${did}&collection=com.atproto.lexicon.schema&rkey=${nsid}`
 
-  let body: { value?: unknown }
+  let res: Response
   try {
-    const res = await fetchFn(url)
-    if (!res.ok) {
-      return fail('record-not-found', `No permission set "${nsid}" found in that repo (HTTP ${res.status}).`)
-    }
-    body = (await res.json()) as { value?: unknown }
+    res = await fetchFn(url)
   } catch {
     return fail('network', `Network error fetching ${nsid}.`)
+  }
+  if (!res.ok) {
+    return fail('record-not-found', `No permission set "${nsid}" found in that repo (HTTP ${res.status}).`)
+  }
+
+  let body: { value?: unknown }
+  try {
+    body = (await res.json()) as { value?: unknown }
+  } catch {
+    return fail('record-not-found', `The PDS returned an unreadable response for "${nsid}".`)
   }
 
   if (!isPermissionSetLexicon(body.value)) {
