@@ -21,6 +21,7 @@ export type Result<T> = { ok: true; value: T } | { ok: false; error: ResolveErro
 export type FetchFn = typeof fetch
 
 import { isNsid } from '@atproto/oauth-scopes'
+import type { PermissionSetLexicon } from './types'
 
 const LEXICON_COLLECTION = 'com.atproto.lexicon.schema'
 
@@ -137,4 +138,39 @@ export async function resolveDidToPds(did: string, fetchFn: FetchFn = fetch): Pr
   const pds = extractAtprotoPds(doc, did)
   if (!pds) return fail('no-pds', `No atproto PDS endpoint found in the DID document for ${did}.`)
   return ok(pds.replace(/\/+$/, ''))
+}
+
+function isPermissionSetLexicon(value: unknown): value is PermissionSetLexicon {
+  if (typeof value !== 'object' || value === null) return false
+  const v = value as Record<string, unknown>
+  const defs = v.defs as Record<string, unknown> | undefined
+  const main = defs?.main as Record<string, unknown> | undefined
+  return !!main && main.type === 'permission-set' && Array.isArray(main.permissions)
+}
+
+export async function fetchPermissionSetRecord(
+  pdsUrl: string,
+  did: string,
+  nsid: string,
+  fetchFn: FetchFn = fetch,
+): Promise<Result<PermissionSetLexicon>> {
+  const url =
+    `${pdsUrl}/xrpc/com.atproto.repo.getRecord` +
+    `?repo=${did}&collection=com.atproto.lexicon.schema&rkey=${nsid}`
+
+  let body: { value?: unknown }
+  try {
+    const res = await fetchFn(url)
+    if (!res.ok) {
+      return fail('record-not-found', `No permission set "${nsid}" found in that repo (HTTP ${res.status}).`)
+    }
+    body = (await res.json()) as { value?: unknown }
+  } catch {
+    return fail('network', `Network error fetching ${nsid}.`)
+  }
+
+  if (!isPermissionSetLexicon(body.value)) {
+    return fail('not-permission-set', `The record "${nsid}" is not a permission set.`)
+  }
+  return ok(body.value)
 }

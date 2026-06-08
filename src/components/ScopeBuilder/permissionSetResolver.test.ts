@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parsePermissionSetRef, resolveDidToPds } from './permissionSetResolver'
+import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord } from './permissionSetResolver'
 
 const DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const NSID = 'app.bsky.authFullApp'
@@ -148,5 +148,66 @@ describe('resolveDidToPds', () => {
     const fetchFn = mockFetch({ [`https://plc.directory/${PLC_DID}`]: { json: doc } })
     const r = await resolveDidToPds(PLC_DID, fetchFn)
     expect(r).toEqual({ ok: true, value: 'https://pds.example.com' })
+  })
+})
+
+const PDS = 'https://pds.example.com'
+const REC_NSID = 'app.bsky.authFullApp'
+const GET_RECORD_URL =
+  `${PDS}/xrpc/com.atproto.repo.getRecord` +
+  `?repo=${PLC_DID}&collection=com.atproto.lexicon.schema&rkey=${REC_NSID}`
+
+const VALID_RECORD_VALUE = {
+  lexicon: 1,
+  id: REC_NSID,
+  defs: {
+    main: {
+      type: 'permission-set',
+      title: 'Full Bluesky',
+      detail: 'Everything.',
+      permissions: [
+        { type: 'permission', resource: 'repo', collection: ['app.bsky.feed.post'], action: ['create', 'delete'] },
+        { type: 'permission', resource: 'rpc', lxm: ['app.bsky.feed.getTimeline'], inheritAud: true },
+      ],
+    },
+  },
+}
+
+describe('fetchPermissionSetRecord', () => {
+  it('returns the lexicon record value on success', async () => {
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { json: { uri: 'at://x', cid: 'y', value: VALID_RECORD_VALUE } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r).toEqual({ ok: true, value: VALID_RECORD_VALUE })
+  })
+
+  it('returns record-not-found on a 400/404', async () => {
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { status: 400, json: { error: 'RecordNotFound' } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('record-not-found')
+  })
+
+  it('returns not-permission-set when defs.main.type is wrong', async () => {
+    const wrong = { ...VALID_RECORD_VALUE, defs: { main: { ...VALID_RECORD_VALUE.defs.main, type: 'query' } } }
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { json: { value: wrong } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('not-permission-set')
+  })
+
+  it('returns not-permission-set when defs.main is missing', async () => {
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { json: { value: { lexicon: 1, id: REC_NSID, defs: {} } } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('not-permission-set')
+  })
+
+  it('returns network when fetch throws', async () => {
+    const fetchFn = (async () => {
+      throw new TypeError('boom')
+    }) as typeof fetch
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('network')
   })
 })
