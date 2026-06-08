@@ -233,6 +233,22 @@ function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions | 
  * curated catalog. Emits `include:{nsid}` with no audience — arbitrary sets
  * don't carry a known aud override (future extension).
  */
+export async function resolvePermissionSet(
+  input: string,
+  fetchFn: FetchFn = fetch,
+): Promise<Result<CuratedScope>> {
+  const parsed = parsePermissionSetRef(input)
+  if (!parsed.ok) return parsed
+
+  const pds = await resolveDidToPds(parsed.value.did, fetchFn)
+  if (!pds.ok) return pds
+
+  const record = await fetchPermissionSetRecord(pds.value, parsed.value.did, parsed.value.nsid, fetchFn)
+  if (!record.ok) return record
+
+  return ok(lexiconToCuratedScope(record.value, parsed.value.did))
+}
+
 export function lexiconToCuratedScope(record: PermissionSetLexicon, did: string): CuratedScope {
   const nsid = record.id
   const main = record.defs.main

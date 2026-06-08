@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord, lexiconToCuratedScope } from './permissionSetResolver'
+import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord, lexiconToCuratedScope, resolvePermissionSet } from './permissionSetResolver'
 import type { PermissionSetLexicon } from './types'
 
 const DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
@@ -293,5 +293,34 @@ describe('lexiconToCuratedScope', () => {
     }
     const s = lexiconToCuratedScope(rec as PermissionSetLexicon, PLC_DID)
     expect(s.expandedPermissions?.repo).toEqual([{ collection: 'a.b.c', actions: ['create', 'update', 'delete'] }])
+  })
+})
+
+describe('resolvePermissionSet (end to end, mocked fetch)', () => {
+  it('resolves a lexicon.garden link to a CuratedScope', async () => {
+    const fetchFn = mockFetch({
+      [`https://plc.directory/${PLC_DID}`]: { json: PLC_DOC },
+      [GET_RECORD_URL]: { json: { value: VALID_RECORD_VALUE } },
+    })
+    const r = await resolvePermissionSet(`https://lexicon.garden/lexicon/${PLC_DID}/${REC_NSID}`, fetchFn)
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(r.value.id).toBe(REC_NSID)
+      expect(r.value.warning).toBe('unverified')
+    }
+  })
+
+  it('short-circuits with the parse error on bad input', async () => {
+    const fetchFn = mockFetch({})
+    const r = await resolvePermissionSet('not a link', fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('invalid-input')
+  })
+
+  it('surfaces a DID resolution failure', async () => {
+    const fetchFn = mockFetch({}) // plc.directory 404s
+    const r = await resolvePermissionSet(`https://lexicon.garden/lexicon/${PLC_DID}/${REC_NSID}`, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('did-unresolvable')
   })
 })
