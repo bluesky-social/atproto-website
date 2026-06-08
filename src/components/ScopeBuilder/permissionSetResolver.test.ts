@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord } from './permissionSetResolver'
+import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord, lexiconToCuratedScope } from './permissionSetResolver'
+import type { PermissionSetLexicon } from './types'
 
 const DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const NSID = 'app.bsky.authFullApp'
@@ -216,5 +217,64 @@ describe('fetchPermissionSetRecord', () => {
     const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error.code).toBe('record-not-found')
+  })
+})
+
+describe('lexiconToCuratedScope', () => {
+  const scope = lexiconToCuratedScope(VALID_RECORD_VALUE as PermissionSetLexicon, PLC_DID)
+
+  it('uses the NSID as id and title as label', () => {
+    expect(scope.id).toBe(REC_NSID)
+    expect(scope.label).toBe('Full Bluesky')
+    expect(scope.description).toBe('Everything.')
+  })
+
+  it('is a permission-set marked unverified', () => {
+    expect(scope.kind).toBe('permission-set')
+    expect(scope.resourceType).toBe('include')
+    expect(scope.warning).toBe('unverified')
+  })
+
+  it('emits include:{nsid} as the scope string', () => {
+    expect(scope.scopeString).toBe(`include:${REC_NSID}`)
+  })
+
+  it('expands repo permissions, one entry per collection', () => {
+    expect(scope.expandedPermissions?.repo).toEqual([
+      { collection: 'app.bsky.feed.post', actions: ['create', 'delete'] },
+    ])
+  })
+
+  it('flattens rpc lxm values', () => {
+    expect(scope.expandedPermissions?.rpc).toEqual(['app.bsky.feed.getTimeline'])
+  })
+
+  it('builds a lexicon.garden spec link', () => {
+    expect(scope.specLink).toBe(`https://lexicon.garden/lexicon/${PLC_DID}/${REC_NSID}`)
+  })
+
+  it('defaults repo actions to all three when action is omitted', () => {
+    const rec = {
+      ...VALID_RECORD_VALUE,
+      defs: { main: { ...VALID_RECORD_VALUE.defs.main, permissions: [
+        { type: 'permission', resource: 'repo', collection: ['a.b.c'] },
+      ] } },
+    }
+    const s = lexiconToCuratedScope(rec as PermissionSetLexicon, PLC_DID)
+    expect(s.expandedPermissions?.repo).toEqual([{ collection: 'a.b.c', actions: ['create', 'update', 'delete'] }])
+  })
+
+  it('expands a multi-collection repo permission into multiple entries', () => {
+    const rec = {
+      ...VALID_RECORD_VALUE,
+      defs: { main: { ...VALID_RECORD_VALUE.defs.main, permissions: [
+        { type: 'permission', resource: 'repo', collection: ['a.b.c', 'd.e.f'], action: ['create'] },
+      ] } },
+    }
+    const s = lexiconToCuratedScope(rec as PermissionSetLexicon, PLC_DID)
+    expect(s.expandedPermissions?.repo).toEqual([
+      { collection: 'a.b.c', actions: ['create'] },
+      { collection: 'd.e.f', actions: ['create'] },
+    ])
   })
 })

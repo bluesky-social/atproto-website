@@ -21,7 +21,8 @@ export type Result<T> = { ok: true; value: T } | { ok: false; error: ResolveErro
 export type FetchFn = typeof fetch
 
 import { isNsid } from '@atproto/oauth-scopes'
-import type { PermissionSetLexicon } from './types'
+import { buildIncludeScopeString } from './scopeUtils'
+import type { PermissionSetLexicon, CuratedScope, ExpandedPermissions, RepoPermission } from './types'
 
 const LEXICON_COLLECTION = 'com.atproto.lexicon.schema'
 
@@ -188,4 +189,53 @@ export async function fetchPermissionSetRecord(
     return fail('not-permission-set', `The record "${nsid}" is not a permission set.`)
   }
   return ok(body.value)
+}
+
+const ALL_WRITE_ACTIONS: RepoPermission['actions'] = ['create', 'update', 'delete']
+
+function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions {
+  const repo: RepoPermission[] = []
+  const rpc: string[] = []
+
+  for (const p of record.defs.main.permissions) {
+    if (p.resource === 'repo' && p.collection) {
+      const actions = (p.action && p.action.length > 0
+        ? p.action
+        : ALL_WRITE_ACTIONS) as RepoPermission['actions']
+      for (const collection of p.collection) {
+        repo.push({ collection, actions })
+      }
+    } else if (p.resource === 'rpc' && p.lxm) {
+      rpc.push(...p.lxm)
+    }
+  }
+
+  const out: ExpandedPermissions = {}
+  if (repo.length > 0) out.repo = repo
+  if (rpc.length > 0) out.rpc = rpc
+  return out
+}
+
+/**
+ * Maps a resolved permission-set Lexicon record into the CuratedScope shape
+ * the widget already renders. Marked `warning: 'unverified'` and given no
+ * `appId` so it renders in the "Added by link" section, fenced off from the
+ * curated catalog. Emits `include:{nsid}` with no audience — arbitrary sets
+ * don't carry a known aud override (future extension).
+ */
+export function lexiconToCuratedScope(record: PermissionSetLexicon, did: string): CuratedScope {
+  const nsid = record.id
+  const main = record.defs.main
+  return {
+    id: nsid,
+    label: main.title || nsid,
+    description: main.detail || '',
+    explanation: main.detail || '',
+    scopeString: buildIncludeScopeString(nsid, ''),
+    kind: 'permission-set',
+    resourceType: 'include',
+    warning: 'unverified',
+    specLink: `https://lexicon.garden/lexicon/${did}/${nsid}`,
+    expandedPermissions: expandPermissions(record),
+  }
 }
