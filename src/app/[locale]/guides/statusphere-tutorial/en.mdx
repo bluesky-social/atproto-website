@@ -39,9 +39,13 @@ You can find the source code for this tutorial in the [statusphere-example-app](
 This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
 
 You should have installed:
-- Node.js 18+
+- Node.js 18-22.x
 - Go 1.25+
 - The pnpm package manager
+
+<Note>
+This tutorial currently doesn't work on Node 24.x because of a [Request bug](https://github.com/vercel/next.js/issues/90826).
+</Note>
 
 On platforms supported by [homebrew](https://brew.sh/), you can install them with:
 

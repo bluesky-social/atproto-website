@@ -1,0 +1,83 @@
+```typescript
+import { Client } from "@atproto/lex";
+import { getHandle, getServiceEndpoint } from "@atproto/common-web";
+import * as com from "@/src/lexicons/com";
+import { getTap } from "@/lib/tap";
+
+const LABELER_DID = process.env.LABELER_DID!;
+
+export interface Label {
+  src: string;
+  srcHandle?: string;
+  uri: string;
+  val: string;
+  cts: string;
+  neg?: boolean;
+}
+
+let _labelerEndpoint: Promise<string> | null = null;
+async function getLabelerEndpoint(): Promise<string> {
+  if (!_labelerEndpoint) {
+    _labelerEndpoint = (async () => {
+      const didDoc = await getTap().resolveDid(LABELER_DID);
+      if (!didDoc) throw new Error(`Could not resolve ${LABELER_DID}`);
+      const url = getServiceEndpoint(didDoc, {
+        id: "#atproto_labeler",
+        type: "AtprotoLabeler",
+      });
+      if (!url) {
+        throw new Error(`No #atproto_labeler service on ${LABELER_DID}`);
+      }
+      return url;
+    })();
+  }
+  return _labelerEndpoint;
+}
+
+async function resolveSrcHandle(did: string): Promise<string | undefined> {
+  try {
+    const didDoc = await getTap().resolveDid(did);
+    return didDoc ? getHandle(didDoc) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function getLabelsForUris(
+  uris: string[],
+): Promise<Map<string, Label[]>> {
+  const byUri = new Map<string, Label[]>();
+  if (uris.length === 0) return byUri;
+
+  const endpoint = await getLabelerEndpoint();
+  const lexClient = new Client(endpoint);
+
+  const { labels } = await lexClient.call(com.atproto.label.queryLabels, {
+    uriPatterns: uris,
+  });
+
+  const uniqueSrcs = [...new Set(labels.map((l) => l.src))];
+  const handles = await Promise.all(uniqueSrcs.map(resolveSrcHandle));
+  const srcHandles = new Map(uniqueSrcs.map((src, i) => [src, handles[i]]));
+
+  for (const label of labels) {
+    if (label.neg) continue;
+    const list = byUri.get(label.uri) ?? [];
+    list.push({ ...label, srcHandle: srcHandles.get(label.src) });
+    byUri.set(label.uri, list);
+  }
+  return byUri;
+}
+
+export function isHidden(labels: Label[] | undefined): boolean {
+  return !!labels?.some((l) => l.val === "!hide");
+}
+
+export function isWarned(labels: Label[] | undefined): boolean {
+  return !!labels?.some((l) => l.val === "!warn");
+}
+
+export function displayLabels(labels: Label[] | undefined): Label[] {
+  return (labels ?? []).filter((l) => !l.val.startsWith("!"));
+}
+```

@@ -1,0 +1,48 @@
+```tsx
+"use client";
+
+import { useState } from "react";
+
+export function ReportButton({ uri, cid }: { uri: string; cid: string }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  async function handleClick() {
+    const reason = window.prompt("Reason for report (optional)") ?? undefined;
+    setSending(true);
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uri, cid, reason }),
+      });
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Report failed (${res.status}): ${body}`);
+      }
+      setSent(true);
+    } catch (err) {
+      console.error(err);
+      window.alert("Could not submit report");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (sent) {
+    return (
+      <span className="text-xs text-zinc-400 dark:text-zinc-500">reported</span>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={sending}
+      className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 disabled:opacity-50"
+    >
+      {sending ? "..." : "report"}
+    </button>
+  );
+}
+```

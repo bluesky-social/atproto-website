@@ -4,6 +4,7 @@ export const header = {
   description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',
   date: 'April 14, 2026',
   author: 'Steve Simkins',
+  blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mjigczpd422n'
 }
 
 *We’re excited to publish another guest post highlighting development in the atproto ecosystem. Steve Simkins is one of the more prolific developers building on the Standard Site lexicon, as the builder behind the [Sequoia CLI tool](https://sequoia.pub/) and the delightful [docs.surf](https://docs.surf) reader app. In this post, Steve lays out his approach to indexing standard.site records in a way that is both efficient and cost effective. Be sure to check out Steve’s [original post](https://stevedylan.dev/posts/indexing-standard-site/) on his personal blog, complete with zoomable diagrams, and [standard.site records](https://pdsls.dev/at://did:plc:ia2zdnhjaokf5lazhxrmj6eu/site.standard.document), of course.*
@@ -39,7 +40,7 @@ The problem that eventually killed it was bandwidth. What I hadn't fully account
 
 ## What worked: Jetstream \+ Cloudflare
 
-The fix was switching data sources rather than rearchitecing aroudn Tap. [Jetstream](https://docs.bsky.app/blog/jetstream) is a lighter WebSocket service that does the collecting filtering upstream — it delivers only the collections you subscribe to — no local filtering of the full firehose. The tradeoff is there's no built-in database and no backfill but for docs.surf, which only needs the latest 100 posts, that's fine.
+The fix was switching data sources rather than rearchitecting around Tap. [Jetstream](https://docs.bsky.app/blog/jetstream) is a lighter WebSocket service that does the collecting filtering upstream — it delivers only the collections you subscribe to — no local filtering of the full firehose. The tradeoff is there's no built-in database and no backfill but for docs.surf, which only needs the latest 100 posts, that's fine.
 
 The architecture that's been stable and cheap:
 

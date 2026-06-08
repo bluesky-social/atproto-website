@@ -2,6 +2,7 @@
 
 const command = process.argv[2]
 const arg = process.argv[3]
+const extraArgs = process.argv.slice(3)
 
 const commands = {
   create: {
@@ -25,6 +26,20 @@ const commands = {
   'create-publication': {
     description: 'Create the standard-site publication record (one-time setup)',
     run: () => import('./create-publication.mjs').then((m) => m.main()),
+  },
+  'migrate-paths': {
+    description: 'Rewrite legacy /blog/<slug> document paths to /<slug> (one-off)',
+    usage: '[--apply]',
+    run: () => import('./migrate-paths.mjs').then((m) => m.main(...extraArgs)),
+  },
+  'migrate-contributors-and-refs': {
+    description:
+      'Backfill contributors + bskyPostRef on existing standard-site records (one-off)',
+    usage: '[--apply]',
+    run: () =>
+      import('./migrate-contributors-and-refs.mjs').then((m) =>
+        m.main(...extraArgs),
+      ),
   },
 }
 

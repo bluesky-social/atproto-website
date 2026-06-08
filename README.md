@@ -38,6 +38,21 @@ npm run blog <command>
 
 Run `npm run blog` with no arguments to see this list.
 
+#### Configure credentials (one-time)
+
+> **Use the site's canonical publishing account, not your personal Bluesky.**
+> `npm run blog ssite` creates standard.site records on whichever PDS the
+> `.env` credentials authenticate against. For atproto.com that needs to be
+> the atproto.com Bluesky account — records published from a personal
+> account won't verify against the site, and have to be manually deleted
+> from that PDS to clean up the duplicate. Coordinate with the team if you
+> don't already have the shared credentials.
+
+```bash
+cp .env.example .env
+```
+Fill in `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+
 ### Creating a new blog post
 
 ```bash
@@ -88,19 +103,29 @@ Each feed includes the 50 most recent posts. Post data is shared from `src/lib/p
 
 Blog posts can be published to the AT Protocol using the [site.standard](https://standard.site/) lexicon. This enables decentralized discovery and verification of content.
 
-#### Setup (one-time)
+#### Install and build Lexicons
 
-1. **Configure credentials:**
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+```bash
+lex install site.standard.document
+lex build
+```
 
-2. **Create the publication record:**
-   ```bash
-   npm run blog create-publication
-   ```
-   Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
+> **Troubleshooting:** if `npm run build` fails with a type error like
+> `'…/@atproto/lex-schema/dist/external' has no exported member named 'TypedObject'`,
+> the locally-generated `src/lexicons` directory is stale relative to the
+> current `@atproto/lex` API. Regenerate with the `--clear` flag, which
+> removes the existing output before rebuilding:
+> ```bash
+> npx ts-lex build --clear
+> ```
+> `src/lexicons` is gitignored, so this is a local-only fix.
+
+#### Create the publication record
+
+```bash
+npm run blog create-publication
+```
+Save the returned AT-URI to your `.env` as `ATPROTO_PUBLICATION_URI`.
 
 #### Publishing a post
 
@@ -114,7 +139,8 @@ npm run blog ssite welcome-to-the-blog
 ```
 
 This will:
-- Create a `standard.site` document record on your PDS
+- Create a `standard.site` document record on the site's PDS (see the
+  credentials note above — this is the publishing account, not yours)
 - Save the AT-URI back to the post's MDX file for verification
 - Update the record if it already exists
 
@@ -126,7 +152,7 @@ TODO:
 The site implements [site.standard verification](https://standard.site/):
 
 - **Publication:** `/.well-known/site.standard.publication` returns the publication AT-URI
-- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag
+- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag pointing at the document record, plus a `<link rel="site.standard.publication">` tag pointing at the shared publication record
 
 For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
 
@@ -357,6 +383,68 @@ The recipe:
 4. **Run the test suite** (`npm test`) to confirm the data shape is valid. Then `npm run dev` and visit `/guides/scope-builder` to verify the new pill appears alphabetically and the set's bundled permissions render under "Bundled permissions (N)."
 
 For adding individual (non-set) scopes, scopes with subset relationships, warning badges, or the deeper rendering details, see [`src/components/ScopeBuilder/README.md`](src/components/ScopeBuilder/README.md#adding-to-the-catalog).
+---
+
+### Off Protocol (Podcast)
+
+The site hosts the *Off Protocol* podcast at `/off-protocol`. Episodes follow the same MDX-per-directory pattern as the blog, with podcast-specific additions: native `<audio>` playback, optional transcripts, an RSS feed for podcatchers, and subscribe links.
+
+#### Add an episode
+
+```sh
+npm run podcast create
+```
+
+Prompts for title, slug, episode number, description, audio URL, guests, and an optional Bluesky discussion link. The script HEADs the audio URL (failing if unreachable) and probes its duration via `ffprobe` if installed (falling back to a manual prompt). It scaffolds:
+
+- `src/app/[locale]/off-protocol/<slug>/page.tsx`
+- `src/app/[locale]/off-protocol/<slug>/en.mdx` (show notes)
+- `src/app/[locale]/off-protocol/<slug>/transcript.mdx` (optional transcript stub)
+
+…and prepends a new entry to `src/lib/episodes.ts`.
+
+To remove an episode:
+
+```sh
+npm run podcast remove
+```
+
+This deletes local files only. Once a feed `guid` has been distributed to subscribers, you cannot retroactively unsubscribe them — be deliberate.
+
+#### Why two date fields and two duration fields
+
+`src/lib/episodes.ts` stores both `date` (`"May 7, 2026"`) and `pubDate` (ISO 8601), and both `duration` (`"HH:MM:SS"`) and `durationSeconds` (a number). This is deliberate:
+
+- Display formats and machine formats serve different consumers.
+- Deriving one from the other at render time means re-parsing on every page load and risks subtle locale bugs.
+- The RSS spec wants specific formats (`pubDate` in RFC 822, `<itunes:duration>` in `HH:MM:SS`).
+
+The `npm run podcast create` script populates both fields in sync. They cannot drift unless edited by hand.
+
+#### Pre-launch checklist
+
+Things that must happen **before** submitting the feed to Apple Podcasts or Spotify:
+
+- [ ] At least one episode added via `npm run podcast create`
+
+#### RSS feed validation
+
+Before announcing the show or submitting to directories:
+
+1. Run `npm run dev` and visit `http://localhost:3000/off-protocol/rss.xml`
+2. Validate against [validator.podcastindex.org](https://validator.podcastindex.org/) and [castfeedvalidator.com](https://castfeedvalidator.com/) — both must pass
+3. Subscribe to the local feed in Pocket Casts (it accepts arbitrary URLs) and confirm episodes appear with art, duration, and show notes
+4. Confirm audio plays from each episode page on desktop and mobile
+
+#### Post-launch: subscribe links
+
+Once Apple/Spotify/Overcast/Pocket Casts have ingested the feed (typically 24–72h after submission), populate the corresponding URLs in `SHOW.subscribe` in `src/lib/episodes.ts`. The `SubscribeLinks` component renders a button only for non-null entries — at launch only RSS and the generic `podcast://` link are populated.
+
+#### GUID stability
+
+Episode RSS GUIDs are `off-protocol-ep-<episodeNumber>` and **must never change**. Slugs may be renamed; GUIDs may not. Renaming a GUID makes every podcatcher re-download the episode as new.
+
+The feed builder validates inputs at render time — invalid `pubDate` or `audioSizeBytes` will throw rather than emit a malformed feed.
 
 ---
 

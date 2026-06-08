@@ -1,0 +1,154 @@
+import {Container} from "@/components/Container"
+import S01 from './_snippets/01-env-vars.mdx'
+import S02 from './_snippets/02-scope-update.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-lib-labels.mdx'
+import S05 from './_snippets/05-schema-cid.mdx'
+import S06 from './_snippets/06-migration-cid.mdx'
+import S07 from './_snippets/07-webhook-cid.mdx'
+import S08 from './_snippets/08-report-route.mdx'
+import S09 from './_snippets/09-report-button.mdx'
+import S10 from './_snippets/10-page-with-labels.mdx'
+import reportbutton from './report-button.png'
+import ozonereport from './ozone-report.png'
+import labelapplied from './label-applied.png'
+
+export const header = {
+  title: 'Add Labels to Your App',
+  description: 'Wire your Statusphere app to an Ozone labeler service to display and create labels.',
+}
+
+In this tutorial, you'll connect the Statusphere app from the previous tutorial to a labeler service running [Ozone](https://github.com/bluesky-social/ozone). Users will see moderator-issued labels alongside statuses in the feed, and will be able to report statuses to your labeler for review.
+
+## Prerequisites
+
+This tutorial builds on the completed [Create a Social App](/guides/statusphere-tutorial) tutorial. You should have it running before starting here.
+
+You'll also need a running Ozone instance that you can administer. Follow the [Ozone HOSTING guide](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md) to stand one up. By the end of that setup you should have:
+
+- A **labeler DID** (`did:web:...` or `did:plc:...`) with `#atproto_labeler` and `#atproto_label` entries in its DID document. This happens when you [configure an account as a labeler](/guides/using-ozone#configuring-ozone).
+- A **public service URL** that responds to `GET /xrpc/com.atproto.label.queryLabels?uriPatterns=*`. Ozone implements this endpoint.
+- An **admin login** for the Ozone UI
+
+A quick way to confirm the labeler is reachable:
+
+```bash
+curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*&limit=1"
+```
+
+On a fresh Ozone install, this should return `{"labels":[]}`.
+
+## Part 1: Wiring the Labeler Into Your App
+
+Add the labeler's DID to your environment:
+
+<S01 />
+
+Then update the OAuth `SCOPE` constant in `lib/auth/client.ts` so your app can submit reports through the user's PDS:
+
+<S02 />
+
+<Note>
+The `rpc:` scope authorizes XRPC method calls. The `?aud=<labeler-did>#atproto_labeler` suffix is what binds the scope to your specific labeler — the PDS will reject the proxied report without it.
+</Note>
+
+You'll need to log out and log back in for the new scope to take effect on existing sessions.
+
+## Part 2: Querying Labels
+
+Labels live on the labeler service, not in any user's repo. You'll query the labeler directly each time the feed renders.
+
+You'll be making typed XRPC calls to both the labeler (to read labels) and the user's PDS (to submit reports), so install both lexicons up front:
+
+<S03 />
+
+Now create `lib/labels.ts`:
+
+<S04 />
+
+A few things worth pointing out:
+
+- The endpoint URL comes from the labeler's DID document. The DID is the trust anchor — its document is signed and tells you where the `#atproto_labeler` service actually lives. Tap caches the underlying DID resolution.
+- The lex `Client` is constructed against that resolved URL and used unauthenticated — `queryLabels` is a public endpoint.
+- Each label's `src` is the DID of the labeler that issued it. Those are resolved to handles (deduped per call) and attached to each `Label` as `srcHandle`, so the UI can show *who* labeled a status rather than just an opaque DID.
+
+The three helpers (`isHidden`, `isWarned`, `displayLabels`) interpret the values. `!hide` and `!warn` are system-level labels with prescribed UI behavior; anything else is a descriptive label like `spam` or `joke` that you can render however you want.
+
+## Part 3: Capturing Record CIDs
+
+A report subject needs both the URI and the CID of the record being reported. Tap webhook events already carry the CID alongside everything else, but the existing schema drops it. You'll extend the `status` table to keep it.
+
+Add the `cid` column to the `StatusTable` interface in `lib/db/index.ts`:
+
+<S05 />
+
+Add a new migration in `lib/db/migrations.ts`:
+
+<S06 />
+
+Run `pnpm migrate` to apply it. The default empty string is for any pre-existing rows — new statuses will get the real CID from the webhook.
+
+Update the `insertStatus` call in `app/api/webhook/route.ts` to pass the CID through:
+
+<S07 />
+
+<Note>
+If you started from the [statusphere-example-app](https://github.com/bluesky-social/statusphere-example-app) clone (rather than building up the previous tutorial by hand), `app/api/status/route.ts` also does an optimistic local insert after writing to the user's PDS. Pass `cid: res.cid` through that `insertStatus` call too — otherwise the user's own posts will sit in the DB with an empty `cid` until the Tap webhook catches up.
+</Note>
+
+`getRecentStatuses` already uses `selectAll()`, so the new column flows out to the feed page without further changes.
+
+## Part 4: Reporting Statuses
+
+Create `app/api/report/route.ts`:
+
+<S08 />
+
+The route reads both `uri` and `cid` from the request body, so no record lookup is needed at report time. The `service: '${LABELER_DID}#atproto_labeler'` option tells the lex Client to set the `atproto-proxy` header on the outgoing request, so the user's PDS forwards the report to your Ozone instance.
+
+Then add `components/ReportButton.tsx`:
+
+<S09 />
+
+## Part 5: Displaying Labels in the Feed
+
+Now wire everything together. Update `app/page.tsx` to fetch labels for the visible statuses, drop any that are hidden, dim any that are warned, render the rest of the label values as badges, and surface the `ReportButton` on each row. Only the changed sections are shown below — the header, session block, and top statuses block from the previous tutorial are unchanged:
+
+<S10 />
+
+Before testing, you should still have `tap` running from the previous tutorial:
+
+```bash
+tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  --collection-filters=xyz.statusphere.status \
+  --signal-collection=xyz.statusphere.status
+```
+
+Restart `pnpm dev`. Logged-in users should see a small "report" affordance next to other users' statuses. Submitting a report sends it through their PDS to your labeler.
+
+<Container>
+  <Image src={reportbutton} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Open the Ozone UI, find the report in the queue, and apply a label — either a custom value like `spam`, or one of the system values `!warn` or `!hide`.
+
+<Container>
+  <Image src={ozonereport} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+Refresh the feed in your app and the label should appear (or hide the status entirely).
+
+<Container>
+  <Image src={labelapplied} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+A thumbs-up emoji can be considered very graphic!
+
+## Conclusion
+
+You now have an atproto app that consumes signed labels from a labeler service and lets users submit reports to it. Querying on every render works for a small app, but production-shaped consumption should use the WebSocket stream at `com.atproto.label.subscribeLabels` to keep a local cache up to date — that's the next step from here.
+
+This setup also doesn't assume anything Bluesky-specific: the same Ozone instance, the same protocol endpoints, and the same client patterns work for any atproto app that wants community moderation.
+
+Next, read more about [Labels](/guides/labels).

@@ -248,6 +248,7 @@ export const navigation: Array<NavGroup> = [
             title: 'Create a Social App',
             href: '/guides/statusphere-tutorial',
           },
+          { title: 'Adding Labels', href: '/guides/labels-tutorial' },
         ],
       },
       {
@@ -363,6 +364,9 @@ export const navigation: Array<NavGroup> = [
         title: 'Account migration',
         href: '/guides/account-migration',
         icon: 'paper-airplane',
+        links: [
+          { title: 'Account Recovery', href: '/guides/account-recovery' },
+        ]
       },
       {
         title: 'Deploy recipes',

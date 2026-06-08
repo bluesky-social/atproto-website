@@ -1,0 +1,46 @@
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { Client, type AtUriString, type CidString } from "@atproto/lex";
+import { getSession } from "@/lib/auth/session";
+import { getOAuthClient } from "@/lib/auth/client";
+import * as com from "@/src/lexicons/com";
+
+const LABELER_DID = process.env.LABELER_DID!;
+
+export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { uri, cid, reason } = await request.json();
+  if (!uri || typeof uri !== "string" || !cid || typeof cid !== "string") {
+    return NextResponse.json(
+      { error: "uri and cid are required" },
+      { status: 400 },
+    );
+  }
+
+  const client = await getOAuthClient();
+  const oauthSession = await client.restore(session.did);
+  const lexClient = new Client(oauthSession);
+
+  await lexClient.call(
+    com.atproto.moderation.createReport,
+    {
+      reasonType: "com.atproto.moderation.defs#reasonOther",
+      reason: typeof reason === "string" ? reason : undefined,
+      subject: {
+        $type: "com.atproto.repo.strongRef",
+        uri: uri as AtUriString,
+        cid: cid as CidString,
+      },
+    },
+    {
+      service: `${LABELER_DID}#atproto_labeler`,
+    },
+  );
+
+  return NextResponse.json({ success: true });
+}
+```

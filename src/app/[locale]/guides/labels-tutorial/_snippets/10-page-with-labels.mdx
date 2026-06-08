@@ -1,0 +1,86 @@
+```tsx
+import { getSession } from "@/lib/auth/session";
+import {
+  getAccountStatus,
+  getRecentStatuses,
+  getTopStatuses,
+  getAccountHandle,
+} from "@/lib/db/queries";
+import {
+  getLabelsForUris,
+  isHidden,
+  isWarned,
+  displayLabels,
+} from "@/lib/labels";
+import { LoginForm } from "@/components/LoginForm";
+import { LogoutButton } from "@/components/LogoutButton";
+import { StatusPicker } from "@/components/StatusPicker";
+import { ReportButton } from "@/components/ReportButton";
+
+export default async function Home() {
+  const session = await getSession();
+  const [statuses, topStatuses, accountStatus, accountHandle] =
+    await Promise.all([
+      getRecentStatuses(),
+      getTopStatuses(),
+      session ? getAccountStatus(session.did) : null,
+      session ? getAccountHandle(session.did) : null,
+    ]);
+
+  const labelsByUri = await getLabelsForUris(statuses.map((s) => s.uri));
+  const visibleStatuses = statuses.filter(
+    (s) => !isHidden(labelsByUri.get(s.uri)),
+  );
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <main className="w-full max-w-md mx-auto p-8">
+        {/* ... existing header / session block / top statuses unchanged ... */}
+
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-3">
+            Recent
+          </h3>
+          <ul className="space-y-3">
+            {visibleStatuses.map((s) => {
+              const labels = labelsByUri.get(s.uri);
+              const warn = isWarned(labels);
+              const tags = displayLabels(labels);
+              return (
+                <li key={s.uri} className="flex items-center gap-3">
+                  <span
+                    className={`text-2xl ${warn ? "opacity-30" : ""}`}
+                    title={warn ? "Flagged by moderator" : undefined}
+                  >
+                    {s.status}
+                  </span>
+                  <span className="text-zinc-600 dark:text-zinc-400 text-sm">
+                    @{s.handle}
+                  </span>
+                  {tags.map((l) => (
+                    <span
+                      key={l.val}
+                      title={`Labeled by @${l.srcHandle ?? l.src}`}
+                      className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                    >
+                      {l.val}
+                    </span>
+                  ))}
+                  {session && s.cid && (
+                    <ReportButton uri={s.uri} cid={s.cid} />
+                  )}
+                  <span className="text-zinc-400 dark:text-zinc-500 text-xs ml-auto">
+                    {timeAgo(s.createdAt)}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// timeAgo helper unchanged
+```

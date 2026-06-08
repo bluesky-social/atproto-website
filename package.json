@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "blog": "tsx --env-file=.env scripts/blog.mjs",
+    "podcast": "tsx --env-file=.env scripts/podcast.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy"
@@ -17,7 +18,7 @@
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
     "@algolia/autocomplete-core": "^1.7.3",
-    "@atproto/lex": "^0.0.11",
+    "@atproto/lex": "^0.0.25",
     "@atproto/lex-password-session": "^0.0.2",
     "@atproto/oauth-scopes": "^0.3.2",
     "@headlessui/react": "^2.1.0",
@@ -47,6 +48,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-highlight-words": "^0.20.0",
+    "rehype-stringify": "^10.0.1",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.0",
     "remark-mdx": "^3.0.0",

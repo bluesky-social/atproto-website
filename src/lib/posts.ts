@@ -8,6 +8,41 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'atmospheric-website',
+    title: 'Build an Atmospheric Website (with CodeTV)',
+    description: 'Watch the episode and follow along to build a website on AT Protocol.',
+    date: 'June 4, 2026',
+    author: 'Jim Ray',
+  },
+  {
+    slug: 'standard-site-bluesky-timeline',
+    title: 'Now in your timeline: Standard.site',
+    description: 'Articles from across the open web published with this community-built format now receive richer treatment in the Bluesky app',
+    date: 'May 27, 2026',
+    author: 'Jim Ray',
+  },
+  {
+    slug: 'ts-sdk-upgrades',
+    title: 'TypeScript SDK Upgrades',
+    description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
+    date: 'May 21, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'report-based-moderation',
+    title: 'Report-Based Moderation in Ozone',
+    description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
+    date: 'May 11, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'serving-the-for-you-feed',
+    title: 'Serving the For You Feed',
+    description: 'How the maintainer of the popular For You feed serves it from their living room!',
+    date: 'April 21, 2026',
+    author: 'spacecowboy',
+  },
+  {
     slug: 'indexing-standard-site',
     title: 'Indexing Standard Site',
     description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',

@@ -1,0 +1,11 @@
+```typescript
+await insertStatus({
+  uri: uri.toString(),
+  cid: evt.cid ?? "", // New
+  authorDid: evt.did,
+  status: record.status,
+  createdAt: record.createdAt,
+  indexedAt: new Date().toISOString(),
+  current: 1,
+});
+```
