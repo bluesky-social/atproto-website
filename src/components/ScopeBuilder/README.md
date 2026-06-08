@@ -32,8 +32,11 @@ client-side and only ever contacts `plc.directory` and the pasted DID's own
 PDS — no backend, no third-party resolver.
 
 **Trust model:** resolved sets render in a separate "Added by link" section,
-badged **unverified**, and all record-derived text is escaped via the existing
-`escapeHtml`/`escapeAttr` helpers before going into the DOM. Resolved sets are
+badged **unverified**. Record-derived text (title, detail, collection and lxm
+NSIDs) is escaped via the existing `escapeHtml`/`escapeAttr` helpers before
+going into the DOM, and the record `id` — which becomes the scope id rendered
+into a `data-scope-id` attribute — is constrained by NSID validation in the
+resolver (and additionally `escapeAttr`'d at the sink). Resolved sets are
 **session-only — never written to localStorage.**
 
 ## File map

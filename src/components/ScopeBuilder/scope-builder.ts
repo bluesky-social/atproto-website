@@ -391,7 +391,7 @@ class ScopeBuilderElement extends HTMLElement {
           <input
             type="checkbox"
             class="mt-0.5 h-4 w-4 flex-shrink-0 accent-blue-600 disabled:cursor-not-allowed"
-            data-scope-id="${scope.id}"
+            data-scope-id="${escapeAttr(scope.id)}"
             ${checkedAttr}
             ${disabledAttr}
           />
