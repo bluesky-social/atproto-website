@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord, lexiconToCuratedScope, resolvePermissionSet } from './permissionSetResolver'
+import { parsePermissionSetRef, resolveDidToPds, fetchPermissionSetRecord, lexiconToCuratedScope, resolvePermissionSet, findCrossNamespacePermissions } from './permissionSetResolver'
 import type { PermissionSetLexicon } from './types'
 
 const DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
@@ -330,5 +330,66 @@ describe('resolvePermissionSet (end to end, mocked fetch)', () => {
     const r = await resolvePermissionSet(`https://lexicon.garden/lexicon/${PLC_DID}/${REC_NSID}`, fetchFn)
     expect(r.ok).toBe(false)
     if (!r.ok) expect(r.error.code).toBe('did-unresolvable')
+  })
+})
+
+describe('field-name leniency', () => {
+  it('accepts a record that uses description instead of detail', async () => {
+    const rec = { lexicon: 1, id: REC_NSID, defs: { main: { type: 'permission-set', title: 'X', description: 'desc', permissions: [{ type: 'permission', resource: 'repo', action: ['create'], collection: ['app.bsky.thing'] }] } } }
+    const fetchFn = mockFetch({ [GET_RECORD_URL]: { json: { value: rec } } })
+    const r = await fetchPermissionSetRecord(PDS, PLC_DID, REC_NSID, fetchFn)
+    expect(r.ok).toBe(true)
+  })
+
+  it('maps description into the scope description when detail is absent', () => {
+    const rec = { lexicon: 1, id: REC_NSID, defs: { main: { type: 'permission-set', title: 'T', description: 'from description', permissions: [] } } }
+    const s = lexiconToCuratedScope(rec as unknown as Parameters<typeof lexiconToCuratedScope>[0], PLC_DID)
+    expect(s.description).toBe('from description')
+  })
+
+  it('maps details (plural) when detail and description are absent', () => {
+    const rec = { lexicon: 1, id: REC_NSID, defs: { main: { type: 'permission-set', title: 'T', details: 'from details', permissions: [] } } }
+    const s = lexiconToCuratedScope(rec as unknown as Parameters<typeof lexiconToCuratedScope>[0], PLC_DID)
+    expect(s.description).toBe('from details')
+  })
+
+  it('falls back to the nsid for the label when title is absent', () => {
+    const rec = { lexicon: 1, id: REC_NSID, defs: { main: { type: 'permission-set', detail: 'd', permissions: [] } } }
+    const s = lexiconToCuratedScope(rec as unknown as Parameters<typeof lexiconToCuratedScope>[0], PLC_DID)
+    expect(s.label).toBe(REC_NSID)
+  })
+})
+
+describe('findCrossNamespacePermissions', () => {
+  it('returns [] for an in-namespace set', () => {
+    expect(findCrossNamespacePermissions(VALID_RECORD_VALUE as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual([])
+  })
+
+  it('flags repo collections outside the set namespace, keeps in-namespace ones', () => {
+    const rec = { lexicon: 1, id: 'com.babesky.authManageSocial', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', action: ['create'], resource: 'repo', collection: ['app.bsky.graph.follow', 'com.babesky.thing'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual(['app.bsky.graph.follow'])
+  })
+
+  it('flags rpc lxm outside the set namespace', () => {
+    const rec = { lexicon: 1, id: 'com.acme.authThing', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', resource: 'rpc', inheritAud: true, lxm: ['app.bsky.feed.getTimeline'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual(['app.bsky.feed.getTimeline'])
+  })
+
+  it('treats a wildcard collection as a violation', () => {
+    const rec = { lexicon: 1, id: 'com.acme.authThing', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', action: ['create'], resource: 'repo', collection: ['*'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual(['*'])
+  })
+})
+
+describe('resolvePermissionSet cross-namespace rejection (babesky case)', () => {
+  it('rejects a set that declares permissions outside its namespace, even with a details typo', async () => {
+    const BABE_DID = 'did:plc:qtapiembzpxlzsiagnc7eyy3'
+    const babeDoc = { id: BABE_DID, service: [{ id: '#atproto_pds', type: 'AtprotoPersonalDataServer', serviceEndpoint: 'https://pds.babe.example' }] }
+    const evil = { lexicon: 1, id: 'com.babesky.authManageSocial', defs: { main: { type: 'permission-set', title: 'Manage Social', details: 'controls', permissions: [{ type: 'permission', action: ['create', 'update', 'delete'], resource: 'repo', collection: ['app.bsky.graph.follow', 'app.bsky.feed.repost'] }] } } }
+    const recUrl = `https://pds.babe.example/xrpc/com.atproto.repo.getRecord?repo=${BABE_DID}&collection=com.atproto.lexicon.schema&rkey=com.babesky.authManageSocial`
+    const fetchFn = mockFetch({ [`https://plc.directory/${BABE_DID}`]: { json: babeDoc }, [recUrl]: { json: { value: evil } } })
+    const r = await resolvePermissionSet(`https://lexicon.garden/lexicon/${BABE_DID}/com.babesky.authManageSocial`, fetchFn)
+    expect(r.ok).toBe(false)
+    if (!r.ok) expect(r.error.code).toBe('cross-namespace')
   })
 })

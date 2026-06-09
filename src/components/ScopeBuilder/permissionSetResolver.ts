@@ -9,6 +9,7 @@ export type ResolveErrorCode =
   | 'no-pds'
   | 'record-not-found'
   | 'not-permission-set'
+  | 'cross-namespace'
   | 'network'
 
 export interface ResolveError {
@@ -21,10 +22,18 @@ export type Result<T> = { ok: true; value: T } | { ok: false; error: ResolveErro
 export type FetchFn = typeof fetch
 
 import { isNsid } from '@atproto/oauth-scopes'
-import { buildIncludeScopeString } from './scopeUtils'
+import { buildIncludeScopeString, isInSetNamespace } from './scopeUtils'
 import type { PermissionSetLexicon, CuratedScope, ExpandedPermissions, RepoPermission } from './types'
 
 const LEXICON_COLLECTION = 'com.atproto.lexicon.schema'
+
+/** First non-empty string among the args, else ''. */
+function firstString(...vals: unknown[]): string {
+  for (const v of vals) {
+    if (typeof v === 'string' && v) return v
+  }
+  return ''
+}
 
 function isSupportedDid(did: string): boolean {
   return did.startsWith('did:plc:') || did.startsWith('did:web:')
@@ -154,9 +163,7 @@ function isPermissionSetLexicon(value: unknown): value is PermissionSetLexicon {
     typeof v.id === 'string' &&
     isNsid(v.id) &&
     main.type === 'permission-set' &&
-    Array.isArray(main.permissions) &&
-    typeof main.title === 'string' &&
-    typeof main.detail === 'string'
+    Array.isArray(main.permissions)
   )
 }
 
@@ -232,6 +239,25 @@ function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions | 
 }
 
 /**
+ * Returns the NSIDs of any permissions the set declares that fall outside its
+ * own namespace. Per the permission spec, a set may only reference resources
+ * under its own NSID namespace (its own group or children) — not siblings or
+ * parents. A wildcard ('*') is treated as a violation because it is not
+ * namespace-limited. Result is de-duplicated.
+ */
+export function findCrossNamespacePermissions(record: PermissionSetLexicon): string[] {
+  const setNsid = record.id
+  const offenders: string[] = []
+  for (const p of record.defs.main.permissions) {
+    const refs = [...(p.collection ?? []), ...(p.lxm ?? [])]
+    for (const ref of refs) {
+      if (ref === '*' || !isInSetNamespace(setNsid, ref)) offenders.push(ref)
+    }
+  }
+  return [...new Set(offenders)]
+}
+
+/**
  * Maps a resolved permission-set Lexicon record into the CuratedScope shape
  * the widget already renders. Marked `warning: 'unverified'` and given no
  * `appId` so it renders in the "Added by link" section, fenced off from the
@@ -251,19 +277,29 @@ export async function resolvePermissionSet(
   const record = await fetchPermissionSetRecord(pds.value, parsed.value.did, parsed.value.nsid, fetchFn)
   if (!record.ok) return record
 
+  const offenders = findCrossNamespacePermissions(record.value)
+  if (offenders.length > 0) {
+    return fail(
+      'cross-namespace',
+      `This set declares permissions outside its own namespace: ${offenders.join(', ')}.`,
+    )
+  }
+
   return ok(lexiconToCuratedScope(record.value, parsed.value.did))
 }
 
 export function lexiconToCuratedScope(record: PermissionSetLexicon, did: string): CuratedScope {
   const nsid = record.id
-  const main = record.defs.main
+  const m = record.defs.main as Record<string, unknown>
+  const label = firstString(m.title) || nsid
+  // Real records use detail / description / details inconsistently; we accept
+  // all three. Both description and explanation are derived from the same field.
+  const detail = firstString(m.detail, m.description, m.details)
   return {
     id: nsid,
-    label: main.title || nsid,
-    // The lexicon has a single `detail` field; we use it for both the inline
-    // description and the expanded-details explanation.
-    description: main.detail || '',
-    explanation: main.detail || '',
+    label,
+    description: detail,
+    explanation: detail,
     scopeString: buildIncludeScopeString(nsid, ''),
     kind: 'permission-set',
     resourceType: 'include',
