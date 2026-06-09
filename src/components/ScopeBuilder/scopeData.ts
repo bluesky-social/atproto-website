@@ -25,6 +25,7 @@ const ALL_WRITE_ACTIONS = ['create', 'update', 'delete'] as const
 const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
 const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
 const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
 const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
@@ -33,6 +34,7 @@ export const apps: ScopeApp[] = [
   { id: 'beaconbits', name: 'Beacon Bits', did: BEACONBITS_DID },
   { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
   { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
+  { id: 'leaflet', name: 'Leaflet', did: LEAFLET_DID },
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
   { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
@@ -528,6 +530,33 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(CHECKMATE_DID, 'blue.checkmate.authFullAccess'),
     explanation:
       'Full access to Checkmate: create and manage chess games and challenge records.',
+  },
+
+  // ---- Leaflet ------------------------------------------------------------
+  {
+    id: 'pub.leaflet.authFullPermissions',
+    appId: 'leaflet',
+    label: 'Full Leaflet Permissions',
+    description:
+      'Manage creating and updating leaflet documents and publications and all interactions on them.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:pub.leaflet.authFullPermissions`,
+    expandedPermissions: {
+      repo: [
+        'pub.leaflet.document',
+        'pub.leaflet.publication',
+        'pub.leaflet.comment',
+        'pub.leaflet.poll.definition',
+        'pub.leaflet.poll.vote',
+        'pub.leaflet.graph.subscription',
+        'pub.leaflet.interactions.recommend',
+        'pub.leaflet.publicationPage',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(LEAFLET_DID, 'pub.leaflet.authFullPermissions'),
+    explanation:
+      'Full access to Leaflet: create, update, and delete documents, publications, comments, polls, subscriptions, recommendations, and publication pages.',
   },
 
   // ---- Margin -------------------------------------------------------------
