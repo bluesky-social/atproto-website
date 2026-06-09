@@ -44,10 +44,10 @@ export default async function RootLayout({
   params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
   return (
-    <html lang={params.locale} className="h-full" suppressHydrationWarning>
+    <html lang={(await params).locale} className="h-full" suppressHydrationWarning>
       <head>
         <Script
           src="https://widget.kapa.ai/kapa-widget.bundle.js"
