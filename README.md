@@ -340,6 +340,7 @@ You'll need:
 - The set's **title** and **detail** (copy from the Lexicon record's `defs.main.title` and `defs.main.detail`, easiest to grab from `https://lexicon.garden/lexicon/<did>/<nsid>/llms.txt`).
 - The list of **permissions** the set bundles (also in the same Lexicon record, under `defs.main.permissions`).
 - The set's **audience DID** if it contains rpc permissions with `inheritAud: true`. Most third-party sets are repo-only and don't need this.
+- Claude can usually one shot adding a new permission set if you pass the llms.txt from Lexicon Garden
 
 The recipe:
 
