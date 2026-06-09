@@ -27,6 +27,7 @@ const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
 const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
 const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
 const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
+const OFFPRINT_DID = 'did:plc:pgjkomf37an4czloay5zeth6'
 const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
 
@@ -36,6 +37,7 @@ export const apps: ScopeApp[] = [
   { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
   { id: 'leaflet', name: 'Leaflet', did: LEAFLET_DID },
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
+  { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
   { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
 ]
@@ -583,6 +585,27 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(MARGIN_DID, 'at.margin.authFull'),
     explanation:
       'Full access to Margin: manage notes, replies, likes, collections, profile, API keys, and preferences.',
+  },
+
+  // ---- Offprint -----------------------------------------------------------
+  {
+    id: 'app.offprint.authFull',
+    appId: 'offprint',
+    label: 'Offprint',
+    description: 'Manage your profile, publication, and article references.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.offprint.authFull`,
+    expandedPermissions: {
+      repo: [
+        'app.offprint.actor.profile',
+        'app.offprint.publication',
+        'app.offprint.document.article',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(OFFPRINT_DID, 'app.offprint.authFull'),
+    explanation:
+      'Full access to Offprint: manage your profile, publications, and article references.',
   },
 
   // ---- Pckt ---------------------------------------------------------------
