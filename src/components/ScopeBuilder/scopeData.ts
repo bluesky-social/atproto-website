@@ -29,6 +29,7 @@ const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
 const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
 const OFFPRINT_DID = 'did:plc:pgjkomf37an4czloay5zeth6'
 const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
+const POLLEN_DID = 'did:plc:nwgfqqv7a56aicy3d3um37ch'
 const SIFA_DID = 'did:plc:2f2ahswozqy4v5lvu676375y'
 const SMOKESIGNAL_DID = 'did:plc:tgudj2fjm77pzkuawquqhsxm'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
@@ -41,6 +42,7 @@ export const apps: ScopeApp[] = [
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
   { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
+  { id: 'pollen', name: 'Pollen Place', did: POLLEN_DID },
   { id: 'sifa', name: 'Sifa', did: SIFA_DID },
   { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
   { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
@@ -631,6 +633,46 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(PCKT_DID, 'blog.pckt.authFull'),
     explanation:
       'Full access to pckt.blog: manage publications, documents, and galleries.',
+  },
+
+  // ---- Pollen Place -------------------------------------------------------
+  {
+    id: 'place.pollen.authFullAccess',
+    appId: 'pollen',
+    label: 'Pollen',
+    description: 'Create and manage posts, follow users, react to content, and customize your profile.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:place.pollen.authFullAccess`,
+    expandedPermissions: {
+      repo: [
+        'place.pollen.post.image',
+        'place.pollen.post.gif',
+        'place.pollen.post.video',
+        'place.pollen.post.text',
+        'place.pollen.post.quote',
+        'place.pollen.post.link',
+        'place.pollen.post.audio',
+        'place.pollen.post.chat',
+        'place.pollen.post.poll',
+        'place.pollen.post.todo',
+        'place.pollen.post.bskyembed',
+        'place.pollen.post.atmoembed',
+        'place.pollen.post.ama',
+        'place.pollen.post.answer',
+        'place.pollen.feed.reblog',
+        'place.pollen.feed.vote',
+        'place.pollen.feed.reaction',
+        'place.pollen.feed.note',
+        'place.pollen.graph.follow',
+        'place.pollen.graph.block',
+        'place.pollen.graph.mute',
+        'place.pollen.actor.profile',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(POLLEN_DID, 'place.pollen.authFullAccess'),
+    explanation:
+      'Full access to Pollen Place: create and manage all post types, feed interactions, social graph, and your profile.',
   },
 
   // ---- Sifa ---------------------------------------------------------------
