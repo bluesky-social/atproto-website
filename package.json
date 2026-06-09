@@ -62,13 +62,13 @@
     "zustand": "^4.3.2"
   },
   "devDependencies": {
-    "@vitest/ui": "^2.1.9",
+    "@vitest/ui": "^4.1.8",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "sharp": "^0.33.1",
     "tsx": "^4.21.0",
-    "vitest": "^2.1.9"
+    "vitest": "^4.1.8"
   }
 }
