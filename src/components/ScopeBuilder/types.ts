@@ -73,8 +73,8 @@ export interface PermissionSetLexicon {
   defs: {
     main: {
       type: 'permission-set'
-      title: string
-      detail: string
+      title?: string
+      detail?: string
       permissions: PermissionJsonForm[]
     }
   }

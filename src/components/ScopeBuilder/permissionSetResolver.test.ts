@@ -379,6 +379,21 @@ describe('findCrossNamespacePermissions', () => {
     const rec = { lexicon: 1, id: 'com.acme.authThing', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', action: ['create'], resource: 'repo', collection: ['*'] }] } } }
     expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual(['*'])
   })
+
+  it('allows an in-namespace partial wildcard (bounded to the publisher namespace)', () => {
+    const rec = { lexicon: 1, id: 'com.acme.authThing', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', action: ['create'], resource: 'repo', collection: ['com.acme.*'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual([])
+  })
+
+  it('flags a cross-namespace partial wildcard', () => {
+    const rec = { lexicon: 1, id: 'com.babesky.authManageSocial', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', action: ['create'], resource: 'repo', collection: ['app.bsky.*'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual(['app.bsky.*'])
+  })
+
+  it('allows rpc lxm within the set namespace', () => {
+    const rec = { lexicon: 1, id: 'com.acme.authThing', defs: { main: { type: 'permission-set', title: 'X', detail: 'Y', permissions: [{ type: 'permission', resource: 'rpc', inheritAud: true, lxm: ['com.acme.getThing'] }] } } }
+    expect(findCrossNamespacePermissions(rec as unknown as Parameters<typeof findCrossNamespacePermissions>[0])).toEqual([])
+  })
 })
 
 describe('resolvePermissionSet cross-namespace rejection (babesky case)', () => {

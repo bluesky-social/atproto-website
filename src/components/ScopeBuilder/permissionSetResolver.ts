@@ -242,8 +242,18 @@ function expandPermissions(record: PermissionSetLexicon): ExpandedPermissions | 
  * Returns the NSIDs of any permissions the set declares that fall outside its
  * own namespace. Per the permission spec, a set may only reference resources
  * under its own NSID namespace (its own group or children) — not siblings or
- * parents. A wildcard ('*') is treated as a violation because it is not
- * namespace-limited. Result is de-duplicated.
+ * parents. Result is de-duplicated.
+ *
+ * A bare wildcard ('*') is treated as a violation here because it is not
+ * namespace-limited. We must check `ref === '*'` explicitly: `isInSetNamespace`
+ * returns true for '*' (it's written for the trusted Permission Set Builder UI),
+ * so relying on it alone would let a bare wildcard through.
+ *
+ * Note: an IN-namespace partial wildcard (e.g. `com.acme.*` in a `com.acme.*`
+ * set) is intentionally NOT flagged — it's bounded to the publisher's own
+ * namespace, which is within our threat model (the end user still consents to
+ * the real permissions). A cross-namespace partial like `app.bsky.*` in a
+ * `com.babesky.*` set IS flagged, since it fails the prefix check.
  */
 export function findCrossNamespacePermissions(record: PermissionSetLexicon): string[] {
   const setNsid = record.id
@@ -291,7 +301,7 @@ export async function resolvePermissionSet(
 export function lexiconToCuratedScope(record: PermissionSetLexicon, did: string): CuratedScope {
   const nsid = record.id
   const m = record.defs.main as Record<string, unknown>
-  const label = firstString(m.title) || nsid
+  const label = firstString(m.title, nsid)
   // Real records use detail / description / details inconsistently; we accept
   // all three. Both description and explanation are derived from the same field.
   const detail = firstString(m.detail, m.description, m.details)
