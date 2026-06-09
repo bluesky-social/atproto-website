@@ -61,7 +61,7 @@ export const Header = forwardRef<
       ref={ref}
       className={clsx(
         className,
-        'fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-8 px-4 transition sm:px-6 lg:z-30 lg:px-8',
+        'fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-4 px-4 transition sm:gap-8 sm:px-6 lg:z-30 lg:px-8',
         !isInsideMobileNavigation && 'backdrop-blur-sm dark:backdrop-blur',
         isInsideMobileNavigation
           ? 'bg-white dark:bg-zinc-900'
@@ -105,8 +105,7 @@ export const Header = forwardRef<
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
       <Search />
       <AskAIButton className="hidden lg:flex" />
-      <div className="hidden flex-1 sm:flex" />
-      <div className="flex items-center gap-5">
+      <div className="ml-auto flex items-center gap-5">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-6">
             <TopLevelNavItem href="https://bsky.app/profile/atproto.com" label='AT Protocol on Bluesky'>
