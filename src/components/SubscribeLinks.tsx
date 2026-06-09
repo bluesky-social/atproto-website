@@ -6,8 +6,8 @@ import { headers } from 'next/headers'
 import { SHOW } from '@/lib/episodes'
 import { SubscribeMenu } from './SubscribeMenu'
 
-function deriveFeedUrl(): string {
-  const h = headers()
+async function deriveFeedUrl(): Promise<string> {
+  const h = await headers()
   const forwardedHost = h.get('x-forwarded-host')
   const host = forwardedHost ?? h.get('host')
   if (!host) return SHOW.feedUrl
@@ -15,10 +15,10 @@ function deriveFeedUrl(): string {
   return `${proto}://${host}/off-protocol/rss.xml`
 }
 
-export function SubscribeLinks({ className }: { className?: string }) {
+export async function SubscribeLinks({ className }: { className?: string }) {
   return (
     <SubscribeMenu
-      feedUrl={deriveFeedUrl()}
+      feedUrl={await deriveFeedUrl()}
       directory={SHOW.subscribe}
       className={className}
     />

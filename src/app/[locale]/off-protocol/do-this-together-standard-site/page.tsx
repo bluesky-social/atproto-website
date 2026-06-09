@@ -6,7 +6,7 @@ export const metadata = {
 }
 
 export default async function EpisodeRoute({ params }: any) {
-  const Notes = await import(`./${params.locale}.mdx`).catch(
+  const Notes = await import(`./${(await params).locale}.mdx`).catch(
     () => import(`./en.mdx`),
   )
   let Transcript = null

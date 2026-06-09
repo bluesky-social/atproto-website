@@ -9,7 +9,7 @@ export const metadata = {
 export default async function HomePage({ params }: any) {
   let Content
   try {
-    Content = await import(`./${params.locale}.tsx`)
+    Content = await import(`./${(await params).locale}.tsx`)
   } catch (error) {
     Content = await import(`./en`)
   }
