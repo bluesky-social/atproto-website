@@ -29,6 +29,8 @@ const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
 const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
 const OFFPRINT_DID = 'did:plc:pgjkomf37an4czloay5zeth6'
 const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
+const SIFA_DID = 'did:plc:2f2ahswozqy4v5lvu676375y'
+const SMOKESIGNAL_DID = 'did:plc:tgudj2fjm77pzkuawquqhsxm'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
 
 export const apps: ScopeApp[] = [
@@ -39,6 +41,8 @@ export const apps: ScopeApp[] = [
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
   { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
+  { id: 'sifa', name: 'Sifa', did: SIFA_DID },
+  { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
   { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
 ]
 
@@ -627,6 +631,108 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(PCKT_DID, 'blog.pckt.authFull'),
     explanation:
       'Full access to pckt.blog: manage publications, documents, and galleries.',
+  },
+
+  // ---- Sifa ---------------------------------------------------------------
+  {
+    id: 'id.sifa.authProject',
+    appId: 'sifa',
+    label: 'Collaborative projects',
+    description:
+      'Create and manage collaborative projects, invite team members, and accept project invitations.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProject`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.project.self',
+        'id.sifa.project.member',
+        'id.sifa.project.membership',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProject'),
+    explanation:
+      'Create and manage collaborative projects on Sifa, invite team members, and accept project invitations.',
+  },
+  {
+    id: 'id.sifa.authMeet',
+    appId: 'sifa',
+    label: 'Meeting attestation',
+    description: 'Record verified face-to-face meetings with other users.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authMeet`,
+    expandedPermissions: {
+      repo: [{ collection: 'id.sifa.meeting', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authMeet'),
+    explanation: 'Record verified face-to-face meetings with other users on Sifa.',
+  },
+  {
+    id: 'id.sifa.authConnection',
+    appId: 'sifa',
+    label: 'Professional connections',
+    description: 'Create and manage professional connections with other users.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authConnection`,
+    expandedPermissions: {
+      repo: [{ collection: 'id.sifa.graph.connection', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authConnection'),
+    explanation: 'Create and manage professional connections with other users on Sifa.',
+  },
+  {
+    id: 'id.sifa.authProfile',
+    appId: 'sifa',
+    label: 'Profile editing',
+    description:
+      'Create and update your professional profile, skills, experience, and follow others.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProfile`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.profile.self',
+        'id.sifa.profile.position',
+        'id.sifa.profile.education',
+        'id.sifa.profile.skill',
+        'id.sifa.profile.certification',
+        'id.sifa.profile.project',
+        'id.sifa.profile.volunteering',
+        'id.sifa.profile.publication',
+        'id.sifa.profile.course',
+        'id.sifa.profile.honor',
+        'id.sifa.profile.language',
+        'id.sifa.profile.externalAccount',
+        'id.sifa.graph.follow',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProfile'),
+    explanation:
+      'Create and update your professional Sifa profile — positions, education, skills, certifications, projects, publications, and more — and follow others.',
+  },
+
+  // ---- Smoke Signal -------------------------------------------------------
+  {
+    id: 'events.smokesignal.authFull',
+    appId: 'smokesignal',
+    label: 'Full Smoke Signal Permissions',
+    description: 'Create and manage events, RSVPs, calendar configuration, and your profile.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:events.smokesignal.authFull`,
+    expandedPermissions: {
+      repo: [
+        'events.smokesignal.lfg',
+        'events.smokesignal.profile',
+        'events.smokesignal.calendar.acceptance',
+        'events.smokesignal.calendar.eventConfiguration',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SMOKESIGNAL_DID, 'events.smokesignal.authFull'),
+    explanation:
+      'Full access to Smoke Signal: create, update, and delete event, RSVP, calendar configuration, and profile records.',
   },
 
   // ---- Streamplace --------------------------------------------------------
