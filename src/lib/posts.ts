@@ -9,7 +9,7 @@ export interface BlogPost {
 export const posts: BlogPost[] = [
   {
     slug: 'rpg-actor',
-    title: 'rpg.actor — What if Your RPG Character Could Log In to Any Game?',
+    title: 'What if your RPG character could log in to any game?',
     description: 'Carrying your adventures through many worlds with the AT Protocol',
     date: 'June 11, 2026',
     author: 'rpg.actor',
