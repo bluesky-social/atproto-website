@@ -23,8 +23,11 @@ const ALL_WRITE_ACTIONS = ['create', 'update', 'delete'] as const
 // entries in permissionSets below with a matching `appId`.
 // ----------------------------------------------------------------------------
 const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
+const ATSTORE_DID = 'did:plc:dvy6bdnofdfc4php4s5b457d'
 const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
 const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const FREEMIX_DID = 'did:plc:bt7c6cqevgefnvej5cmgke4g'
+const GERM_DID = 'did:plc:qyqmmncrm6qx33kpy7vqndik'
 const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
 const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
 const OFFPRINT_DID = 'did:plc:pgjkomf37an4czloay5zeth6'
@@ -32,12 +35,18 @@ const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
 const POLLEN_DID = 'did:plc:nwgfqqv7a56aicy3d3um37ch'
 const SIFA_DID = 'did:plc:2f2ahswozqy4v5lvu676375y'
 const SMOKESIGNAL_DID = 'did:plc:tgudj2fjm77pzkuawquqhsxm'
+const SPARK_DID = 'did:plc:cveom2iroj3mt747sd4qqnr2'
+const SQUIRE_DID = 'did:plc:hwrvjq2sdnwezsciqr4vtngf'
+const STANDARD_DID = 'did:plc:re3ebnp5v7ffagz6rb6xfei4'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
 
 export const apps: ScopeApp[] = [
+  { id: 'atstore', name: 'AT Store', did: ATSTORE_DID },
   { id: 'beaconbits', name: 'Beacon Bits', did: BEACONBITS_DID },
   { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
   { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
+  { id: 'freemix', name: 'FreeMix', did: FREEMIX_DID },
+  { id: 'germ', name: 'Germ', did: GERM_DID },
   { id: 'leaflet', name: 'Leaflet', did: LEAFLET_DID },
   { id: 'margin', name: 'Margin', did: MARGIN_DID },
   { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
@@ -45,6 +54,9 @@ export const apps: ScopeApp[] = [
   { id: 'pollen', name: 'Pollen Place', did: POLLEN_DID },
   { id: 'sifa', name: 'Sifa', did: SIFA_DID },
   { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
+  { id: 'spark', name: 'Spark', did: SPARK_DID },
+  { id: 'squire', name: 'Squire', did: SQUIRE_DID },
+  { id: 'standard', name: 'Standard.site', did: STANDARD_DID },
   { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
 ]
 
@@ -461,6 +473,29 @@ export const permissionSets: CuratedScope[] = [
       'Full control of all chat conversations: reading, sending, reacting, muting, and configuration management. Uses the chat.bsky namespace with its own audience DID.',
   },
 
+  // ---- AT Store -----------------------------------------------------------
+  {
+    id: 'fyi.atstore.authBasic',
+    appId: 'atstore',
+    label: 'Full AT Store Access',
+    description: 'Provides full access to AT Store profile, listings, reviews, and favorites.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:fyi.atstore.authBasic`,
+    expandedPermissions: {
+      repo: [
+        'fyi.atstore.profile',
+        'fyi.atstore.listing.detail',
+        'fyi.atstore.listing.review',
+        'fyi.atstore.listing.reviewReply',
+        'fyi.atstore.listing.favorite',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(ATSTORE_DID, 'fyi.atstore.authBasic'),
+    explanation:
+      'Full access to AT Store: manage your profile, listings, reviews, review replies, and favorites.',
+  },
+
   // ---- Beacon Bits --------------------------------------------------------
   {
     id: 'app.beaconbits.authCore',
@@ -538,6 +573,57 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(CHECKMATE_DID, 'blue.checkmate.authFullAccess'),
     explanation:
       'Full access to Checkmate: create and manage chess games and challenge records.',
+  },
+
+  // ---- FreeMix ------------------------------------------------------------
+  {
+    id: 'fm.freemix.authFullApp',
+    appId: 'freemix',
+    label: 'FreeMix Music Platform',
+    description:
+      'Upload, manage, and share music tracks, stems, licenses, remix attributions, and collections on FreeMix.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:fm.freemix.authFullApp`,
+    // Action grants vary per collection: license/attribution/download records
+    // are create-only, profile is create+update, the rest are full write.
+    expandedPermissions: {
+      repo: [
+        { collection: 'fm.freemix.release.track', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.release.stem', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.release.sample', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.license.grant', actions: ['create'] },
+        { collection: 'fm.freemix.license.def', actions: ['create'] },
+        { collection: 'fm.freemix.remix.attribution', actions: ['create'] },
+        { collection: 'fm.freemix.collection.crate', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.interaction.download', actions: ['create'] },
+        { collection: 'fm.freemix.actor.profile', actions: ['create', 'update'] },
+      ],
+    },
+    specLink: lexiconGardenLink(FREEMIX_DID, 'fm.freemix.authFullApp'),
+    explanation:
+      'Full access to FreeMix: manage tracks, stems, and samples; grant licenses and define license terms; record remix attributions; manage crates; log downloads; and edit your profile.',
+  },
+
+  // ---- Germ ---------------------------------------------------------------
+  {
+    id: 'com.germnetwork.authManageDeclaration',
+    appId: 'germ',
+    label: 'Manage your Germ DM',
+    description:
+      'Allows linking your Atmosphere account with Germ DM and controlling who can message you.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:com.germnetwork.authManageDeclaration`,
+    expandedPermissions: {
+      repo: [
+        'com.germnetwork.declaration',
+        'com.germnetwork.keypackage',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(GERM_DID, 'com.germnetwork.authManageDeclaration'),
+    explanation:
+      'Link your Atmosphere account with Germ DM and control who can message you.',
   },
 
   // ---- Leaflet ------------------------------------------------------------
@@ -775,6 +861,111 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(SMOKESIGNAL_DID, 'events.smokesignal.authFull'),
     explanation:
       'Full access to Smoke Signal: create, update, and delete event, RSVP, calendar configuration, and profile records.',
+  },
+
+  // ---- Spark --------------------------------------------------------------
+  // Only Spark's repo-only sets are curated. Its rpc/inheritAud sets
+  // (authViewAll, authFullApp, authManageNotifications, authManageModeration,
+  // authCreatePosts) need an audience DID and are intentionally omitted for now.
+  {
+    id: 'so.sprk.authManageProfile',
+    appId: 'spark',
+    label: 'Manage Spark Profile',
+    description: 'Update Spark profile data.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageProfile`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.actor.profile', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageProfile'),
+    explanation: 'Create, update, and delete your Spark profile record.',
+  },
+  {
+    id: 'so.sprk.authManageLabelerService',
+    appId: 'spark',
+    label: 'Manage Spark Labeler Service',
+    description: 'Configure Spark labeler declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageLabelerService`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.labeler.service', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageLabelerService'),
+    explanation: 'Create, update, and delete your Spark labeler service declaration.',
+  },
+  {
+    id: 'so.sprk.authManageFeedDeclarations',
+    appId: 'spark',
+    label: 'Manage Spark Feed Declarations',
+    description: 'Configure Spark feed generator declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageFeedDeclarations`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.feed.generator', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageFeedDeclarations'),
+    explanation: 'Create, update, and delete your Spark feed generator declarations.',
+  },
+
+  // ---- Squire -------------------------------------------------------------
+  {
+    id: 'guide.squire.authAccess',
+    appId: 'squire',
+    label: 'Squire account access',
+    description:
+      'Squire uses your account to identify you. Your tasks and personal data are stored privately — nothing is posted or shared on your behalf.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:guide.squire.authAccess`,
+    expandedPermissions: {
+      repo: [{ collection: 'guide.squire.v1.actor', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SQUIRE_DID, 'guide.squire.authAccess'),
+    explanation:
+      'Squire uses your account to identify you; tasks and personal data stay private and nothing is posted on your behalf.',
+  },
+
+  // ---- Standard.site ------------------------------------------------------
+  {
+    id: 'site.standard.authFull',
+    appId: 'standard',
+    label: 'Standard.site — Full',
+    description: 'Manage your publications, documents, subscriptions, and recommends.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:site.standard.authFull`,
+    expandedPermissions: {
+      repo: [
+        'site.standard.publication',
+        'site.standard.document',
+        'site.standard.graph.subscription',
+        'site.standard.graph.recommend',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STANDARD_DID, 'site.standard.authFull'),
+    explanation:
+      'Full access to Standard.site: manage publications, documents, subscriptions, and recommends.',
+  },
+  {
+    id: 'site.standard.authSocial',
+    appId: 'standard',
+    label: 'Standard.site — Social',
+    description: 'Manage your publication subscriptions and document recommendations.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:site.standard.authSocial`,
+    expandedPermissions: {
+      repo: [
+        'site.standard.graph.subscription',
+        'site.standard.graph.recommend',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STANDARD_DID, 'site.standard.authSocial'),
+    explanation:
+      'Manage your Standard.site publication subscriptions and document recommendations.',
   },
 
   // ---- Streamplace --------------------------------------------------------
