@@ -1060,6 +1060,28 @@ export const permissionSets: CuratedScope[] = [
       'Create Spark posts, replies, threadgates, and stories, plus video uploads. Cannot update or delete content.',
   },
   {
+    id: 'so.sprk.authDeleteContent',
+    appId: 'spark',
+    label: 'Delete Spark Content',
+    description: 'Clean up posts, replies, reposts, and likes. Cannot create or update.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authDeleteContent`,
+    expandedPermissions: {
+      repo: [
+        'so.sprk.feed.like',
+        'so.sprk.feed.post',
+        'so.sprk.feed.reply',
+        'so.sprk.feed.repost',
+        'so.sprk.feed.threadgate',
+        'so.sprk.story.post',
+      ].map((collection) => ({ collection, actions: ['delete'] as Array<'delete'> })),
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authDeleteContent'),
+    explanation:
+      'Delete Spark posts, replies, reposts, likes, threadgates, and stories. Useful for cleanup tools. Cannot create or update content. Repo-only — no audience scoping required.',
+  },
+  {
     id: 'so.sprk.authManageNotifications',
     appId: 'spark',
     label: 'Manage Spark Notifications',
