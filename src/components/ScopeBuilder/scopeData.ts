@@ -867,6 +867,37 @@ export const permissionSets: CuratedScope[] = [
     explanation:
       'Create and update your professional Sifa profile — positions, education, skills, certifications, projects, publications, and more — and follow others.',
   },
+  {
+    id: 'id.sifa.authProfileAccess',
+    appId: 'sifa',
+    label: 'Professional profile with endorsements',
+    description:
+      'Manage your full professional profile, including endorsements, and follow others.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProfileAccess`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.profile.self',
+        'id.sifa.profile.position',
+        'id.sifa.profile.education',
+        'id.sifa.profile.skill',
+        'id.sifa.profile.certification',
+        'id.sifa.profile.project',
+        'id.sifa.profile.volunteering',
+        'id.sifa.profile.publication',
+        'id.sifa.profile.course',
+        'id.sifa.profile.honor',
+        'id.sifa.profile.language',
+        'id.sifa.endorsement',
+        'id.sifa.endorsement.confirmation',
+        'id.sifa.graph.follow',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProfileAccess'),
+    explanation:
+      'Create, update, and delete your full professional Sifa profile, plus give and confirm endorsements and follow others. Overlaps id.sifa.authProfile but adds endorsements and omits externalAccount.',
+  },
 
   // ---- Smoke Signal -------------------------------------------------------
   {
