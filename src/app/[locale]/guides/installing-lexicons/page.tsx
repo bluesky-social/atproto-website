@@ -1,7 +1,7 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'Installing Lexicons - AT Protocol Docs',
+  title: 'Developing with Lexicons - AT Protocol Docs',
   description: 'A schema-driven interoperability framework',
 }
 
