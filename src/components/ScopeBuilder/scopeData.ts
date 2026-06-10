@@ -26,6 +26,7 @@ const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const ATSTORE_DID = 'did:plc:dvy6bdnofdfc4php4s5b457d'
 const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
 const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const COSMIK_DID = 'did:plc:b2p6rujcgpenbtcjposmjuc3'
 const FREEMIX_DID = 'did:plc:bt7c6cqevgefnvej5cmgke4g'
 const GERM_DID = 'did:plc:qyqmmncrm6qx33kpy7vqndik'
 const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
@@ -54,6 +55,8 @@ export const apps: ScopeApp[] = [
   { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
   { id: 'pollen', name: 'Pollen Place', did: POLLEN_DID },
+  // Brand is "Semble"; its Lexicons are published under the network.cosmik namespace.
+  { id: 'semble', name: 'Semble', did: COSMIK_DID },
   { id: 'sifa', name: 'Sifa', did: SIFA_DID },
   { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
   { id: 'spark', name: 'Spark', did: SPARK_DID },
@@ -761,6 +764,28 @@ export const permissionSets: CuratedScope[] = [
     specLink: lexiconGardenLink(POLLEN_DID, 'place.pollen.authFullAccess'),
     explanation:
       'Full access to Pollen Place: create and manage all post types, feed interactions, social graph, and your profile.',
+  },
+
+  // ---- Semble (network.cosmik namespace) ---------------------------------
+  {
+    id: 'network.cosmik.authFull',
+    appId: 'semble',
+    label: 'Full Semble App',
+    description: 'Create and manage Semble cards, collections, and collection links.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:network.cosmik.authFull`,
+    expandedPermissions: {
+      repo: [
+        'network.cosmik.card',
+        'network.cosmik.collection',
+        'network.cosmik.collectionLink',
+        'network.cosmik.collectionLinkRemoval',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(COSMIK_DID, 'network.cosmik.authFull'),
+    explanation:
+      'Create, update, and delete Semble cards, collections, collection links, and collection link removals. Repo-only — no API method or audience scoping required.',
   },
 
   // ---- Sifa ---------------------------------------------------------------
