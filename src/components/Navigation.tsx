@@ -285,6 +285,7 @@ export const navigation: Array<NavGroup> = [
           { title: 'Permission Requests', href: '/guides/permission-requests' },
           { title: 'Permission Sets', href: '/guides/permission-sets' },
           { title: 'OAuth Patterns', href: '/guides/oauth-patterns' },
+          { title: 'Scope Builder', href: '/guides/scope-builder' },
         ],
       },
       {
@@ -316,7 +317,7 @@ export const navigation: Array<NavGroup> = [
         icon: 'puzzle-piece',
         href: '/guides/lexicon',
         links: [
-          { title: 'Installing Lexicons', href: '/guides/installing-lexicons' },
+          { title: 'Developing with Lexicons', href: '/guides/installing-lexicons' },
           { title: 'Publishing Lexicons', href: '/guides/publishing-lexicons' },
           { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
         ],

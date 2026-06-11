@@ -1,0 +1,1076 @@
+import type { CuratedScope, ScopeApp } from './types'
+
+// Bluesky appview audience DID. Two forms — unencoded (for human-readable
+// editable fields) and percent-encoded (for direct use in scope strings).
+const BSKY_APPVIEW_AUD = 'did:web:api.bsky.app#bsky_appview'
+const BSKY_APPVIEW_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_appview'
+const BSKY_CHAT_AUD = 'did:web:api.bsky.app#bsky_chat'
+const BSKY_CHAT_AUD_ENCODED = 'did:web:api.bsky.app%23bsky_chat'
+
+// Lexicon Garden link helper. Takes a DID and NSID because different apps
+// publish their schemas from different repos.
+const lexiconGardenLink = (did: string, nsid: string) =>
+  `https://lexicon.garden/lexicon/${did}/${nsid}`
+
+const ALL_WRITE_ACTIONS = ['create', 'update', 'delete'] as const
+
+// ----------------------------------------------------------------------------
+// Apps: atproto applications that publish one or more permission-set Lexicons.
+// Each app becomes a pill in the scope builder; clicking the pill reveals that
+// app's permission sets below.
+//
+// To add a new app: add an entry here, then add one or more CuratedScope
+// entries in permissionSets below with a matching `appId`.
+// ----------------------------------------------------------------------------
+const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
+const ATSTORE_DID = 'did:plc:dvy6bdnofdfc4php4s5b457d'
+const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
+const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const FREEMIX_DID = 'did:plc:bt7c6cqevgefnvej5cmgke4g'
+const GERM_DID = 'did:plc:qyqmmncrm6qx33kpy7vqndik'
+const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
+const MARGIN_DID = 'did:plc:rjqn3agdb74cszhqcpii4sne'
+const OFFPRINT_DID = 'did:plc:pgjkomf37an4czloay5zeth6'
+const PCKT_DID = 'did:plc:revjuqmkvrw6fnkxppqtszpv'
+const POLLEN_DID = 'did:plc:nwgfqqv7a56aicy3d3um37ch'
+const SIFA_DID = 'did:plc:2f2ahswozqy4v5lvu676375y'
+const SMOKESIGNAL_DID = 'did:plc:tgudj2fjm77pzkuawquqhsxm'
+const SPARK_DID = 'did:plc:cveom2iroj3mt747sd4qqnr2'
+const SQUIRE_DID = 'did:plc:hwrvjq2sdnwezsciqr4vtngf'
+const STANDARD_DID = 'did:plc:re3ebnp5v7ffagz6rb6xfei4'
+const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
+
+export const apps: ScopeApp[] = [
+  { id: 'atstore', name: 'AT Store', did: ATSTORE_DID },
+  { id: 'beaconbits', name: 'Beacon Bits', did: BEACONBITS_DID },
+  { id: 'bluesky', name: 'Bluesky', did: BSKY_DID },
+  { id: 'checkmate', name: 'Checkmate', did: CHECKMATE_DID },
+  { id: 'freemix', name: 'FreeMix', did: FREEMIX_DID },
+  { id: 'germ', name: 'Germ', did: GERM_DID },
+  { id: 'leaflet', name: 'Leaflet', did: LEAFLET_DID },
+  { id: 'margin', name: 'Margin', did: MARGIN_DID },
+  { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
+  { id: 'pckt', name: 'Pckt', did: PCKT_DID },
+  { id: 'pollen', name: 'Pollen Place', did: POLLEN_DID },
+  { id: 'sifa', name: 'Sifa', did: SIFA_DID },
+  { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
+  { id: 'spark', name: 'Spark', did: SPARK_DID },
+  { id: 'squire', name: 'Squire', did: SQUIRE_DID },
+  { id: 'standard', name: 'Standard.site', did: STANDARD_DID },
+  { id: 'streamplace', name: 'Streamplace', did: STREAMPLACE_DID },
+]
+
+export const permissionSets: CuratedScope[] = [
+  // ---- Bluesky ------------------------------------------------------------
+  {
+    id: 'app.bsky.authFullApp',
+    appId: 'bluesky',
+    label: 'Full Bluesky Social App',
+    description: 'All public content, interactions, preferences, and app features.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authFullApp?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'app.bsky.actor.profile',
+        'app.bsky.actor.status',
+        'app.bsky.feed.like',
+        'app.bsky.feed.post',
+        'app.bsky.feed.postgate',
+        'app.bsky.feed.repost',
+        'app.bsky.feed.threadgate',
+        'app.bsky.graph.block',
+        'app.bsky.graph.follow',
+        'app.bsky.graph.list',
+        'app.bsky.graph.listblock',
+        'app.bsky.graph.listitem',
+        'app.bsky.graph.starterpack',
+        'app.bsky.notification.declaration',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+      rpc: [
+        'app.bsky.actor.getPreferences',
+        'app.bsky.actor.getProfile',
+        'app.bsky.actor.getProfiles',
+        'app.bsky.actor.getSuggestions',
+        'app.bsky.actor.putPreferences',
+        'app.bsky.actor.searchActors',
+        'app.bsky.actor.searchActorsTypeahead',
+        'app.bsky.bookmark.createBookmark',
+        'app.bsky.bookmark.deleteBookmark',
+        'app.bsky.bookmark.getBookmarks',
+        'app.bsky.contact.dismissMatch',
+        'app.bsky.contact.getMatches',
+        'app.bsky.contact.getSyncStatus',
+        'app.bsky.contact.importContacts',
+        'app.bsky.contact.removeData',
+        'app.bsky.contact.startPhoneVerification',
+        'app.bsky.contact.verifyPhone',
+        'app.bsky.feed.describeFeedGenerator',
+        'app.bsky.feed.getActorFeeds',
+        'app.bsky.feed.getActorLikes',
+        'app.bsky.feed.getAuthorFeed',
+        'app.bsky.feed.getFeed',
+        'app.bsky.feed.getFeedGenerator',
+        'app.bsky.feed.getFeedGenerators',
+        'app.bsky.feed.getFeedSkeleton',
+        'app.bsky.feed.getLikes',
+        'app.bsky.feed.getListFeed',
+        'app.bsky.feed.getPostThread',
+        'app.bsky.feed.getPosts',
+        'app.bsky.feed.getQuotes',
+        'app.bsky.feed.getRepostedBy',
+        'app.bsky.feed.getSuggestedFeeds',
+        'app.bsky.feed.getTimeline',
+        'app.bsky.feed.searchPosts',
+        'app.bsky.feed.sendInteractions',
+        'app.bsky.graph.getActorStarterPacks',
+        'app.bsky.graph.getBlocks',
+        'app.bsky.graph.getFollowers',
+        'app.bsky.graph.getFollows',
+        'app.bsky.graph.getKnownFollowers',
+        'app.bsky.graph.getList',
+        'app.bsky.graph.getListBlocks',
+        'app.bsky.graph.getListMutes',
+        'app.bsky.graph.getLists',
+        'app.bsky.graph.getListsWithMembership',
+        'app.bsky.graph.getMutes',
+        'app.bsky.graph.getRelationships',
+        'app.bsky.graph.getStarterPack',
+        'app.bsky.graph.getStarterPacks',
+        'app.bsky.graph.getStarterPacksWithMembership',
+        'app.bsky.graph.getSuggestedFollowsByActor',
+        'app.bsky.graph.muteActor',
+        'app.bsky.graph.muteActorList',
+        'app.bsky.graph.muteThread',
+        'app.bsky.graph.searchStarterPacks',
+        'app.bsky.graph.unmuteActor',
+        'app.bsky.graph.unmuteActorList',
+        'app.bsky.graph.unmuteThread',
+        'app.bsky.labeler.getServices',
+        'app.bsky.notification.getPreferences',
+        'app.bsky.notification.getUnreadCount',
+        'app.bsky.notification.listActivitySubscriptions',
+        'app.bsky.notification.listNotifications',
+        'app.bsky.notification.putActivitySubscription',
+        'app.bsky.notification.putPreferences',
+        'app.bsky.notification.putPreferencesV2',
+        'app.bsky.notification.registerPush',
+        'app.bsky.notification.unregisterPush',
+        'app.bsky.notification.updateSeen',
+        'app.bsky.unspecced.getAgeAssuranceState',
+        'app.bsky.unspecced.getConfig',
+        'app.bsky.unspecced.getOnboardingSuggestedStarterPacks',
+        'app.bsky.unspecced.getPopularFeedGenerators',
+        'app.bsky.unspecced.getPostThreadOtherV2',
+        'app.bsky.unspecced.getPostThreadV2',
+        'app.bsky.unspecced.getSuggestedFeeds',
+        'app.bsky.unspecced.getSuggestedFeedsSkeleton',
+        'app.bsky.unspecced.getSuggestedStarterPacks',
+        'app.bsky.unspecced.getSuggestedStarterPacksSkeleton',
+        'app.bsky.unspecced.getSuggestedUsers',
+        'app.bsky.unspecced.getSuggestedUsersSkeleton',
+        'app.bsky.unspecced.getSuggestionsSkeleton',
+        'app.bsky.unspecced.getTaggedSuggestions',
+        'app.bsky.unspecced.getTrendingTopics',
+        'app.bsky.unspecced.getTrends',
+        'app.bsky.unspecced.getTrendsSkeleton',
+        'app.bsky.unspecced.initAgeAssurance',
+        'app.bsky.unspecced.searchActorsSkeleton',
+        'app.bsky.unspecced.searchPostsSkeleton',
+        'app.bsky.unspecced.searchStarterPacksSkeleton',
+        'app.bsky.video.getJobStatus',
+        'app.bsky.video.getUploadLimits',
+        'app.bsky.video.uploadVideo',
+      ],
+    },
+    replacesTransition: 'transition:generic',
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authFullApp'),
+    explanation:
+      'The broadest Bluesky permission set. Grants full control of all public content and interactions, private preferences and subscriptions, and other Bluesky-specific app features. Equivalent to what transition:generic granted, but scoped to app.bsky Lexicons only.',
+  },
+  {
+    id: 'app.bsky.authViewAll',
+    appId: 'bluesky',
+    label: 'Read-only access to all content',
+    description: 'View Bluesky content from the account\'s perspective. No write access.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authViewAll?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      rpc: [
+        'app.bsky.actor.getPreferences',
+        'app.bsky.actor.getProfile',
+        'app.bsky.actor.getProfiles',
+        'app.bsky.actor.getSuggestions',
+        'app.bsky.actor.searchActors',
+        'app.bsky.actor.searchActorsTypeahead',
+        'app.bsky.bookmark.getBookmarks',
+        'app.bsky.feed.describeFeedGenerator',
+        'app.bsky.feed.getActorFeeds',
+        'app.bsky.feed.getActorLikes',
+        'app.bsky.feed.getAuthorFeed',
+        'app.bsky.feed.getFeed',
+        'app.bsky.feed.getFeedGenerator',
+        'app.bsky.feed.getFeedGenerators',
+        'app.bsky.feed.getFeedSkeleton',
+        'app.bsky.feed.getLikes',
+        'app.bsky.feed.getListFeed',
+        'app.bsky.feed.getPostThread',
+        'app.bsky.feed.getPosts',
+        'app.bsky.feed.getQuotes',
+        'app.bsky.feed.getRepostedBy',
+        'app.bsky.feed.getSuggestedFeeds',
+        'app.bsky.feed.getTimeline',
+        'app.bsky.feed.searchPosts',
+        'app.bsky.graph.getActorStarterPacks',
+        'app.bsky.graph.getBlocks',
+        'app.bsky.graph.getFollowers',
+        'app.bsky.graph.getFollows',
+        'app.bsky.graph.getKnownFollowers',
+        'app.bsky.graph.getListBlocks',
+        'app.bsky.graph.getListMutes',
+        'app.bsky.graph.getLists',
+        'app.bsky.graph.getListsWithMembership',
+        'app.bsky.graph.getMutes',
+        'app.bsky.graph.getRelationships',
+        'app.bsky.graph.getStarterPack',
+        'app.bsky.graph.getStarterPacks',
+        'app.bsky.graph.getStarterPacksWithMembership',
+        'app.bsky.graph.getSuggestedFollowsByActor',
+        'app.bsky.graph.searchStarterPacks',
+        'app.bsky.labeler.getServices',
+        'app.bsky.notification.getPreferences',
+        'app.bsky.notification.getUnreadCount',
+        'app.bsky.notification.listActivitySubscriptions',
+        'app.bsky.notification.listNotifications',
+        'app.bsky.notification.updateSeen',
+        'app.bsky.unspecced.getAgeAssuranceState',
+        'app.bsky.unspecced.getConfig',
+        'app.bsky.unspecced.getOnboardingSuggestedStarterPacks',
+        'app.bsky.unspecced.getPopularFeedGenerators',
+        'app.bsky.unspecced.getPostThreadOtherV2',
+        'app.bsky.unspecced.getPostThreadV2',
+        'app.bsky.unspecced.getSuggestedFeeds',
+        'app.bsky.unspecced.getSuggestedFeedsSkeleton',
+        'app.bsky.unspecced.getSuggestedStarterPacks',
+        'app.bsky.unspecced.getSuggestedStarterPacksSkeleton',
+        'app.bsky.unspecced.getSuggestedUsers',
+        'app.bsky.unspecced.getSuggestedUsersSkeleton',
+        'app.bsky.unspecced.getSuggestionsSkeleton',
+        'app.bsky.unspecced.getTaggedSuggestions',
+        'app.bsky.unspecced.getTrendingTopics',
+        'app.bsky.unspecced.getTrends',
+        'app.bsky.unspecced.getTrendsSkeleton',
+        'app.bsky.unspecced.searchActorsSkeleton',
+        'app.bsky.unspecced.searchPostsSkeleton',
+        'app.bsky.unspecced.searchStarterPacksSkeleton',
+        'app.bsky.video.getUploadLimits',
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authViewAll'),
+    explanation:
+      'Read-only access to all Bluesky network content from the account\'s perspective, including notifications and preferences. No ability to create, update, or delete any records.',
+  },
+  {
+    id: 'app.bsky.authCreatePosts',
+    appId: 'bluesky',
+    label: 'Create Bluesky Posts',
+    description: 'Create new posts (cannot update or delete).',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authCreatePosts?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.bsky.feed.post', actions: ['create'] },
+        { collection: 'app.bsky.feed.postgate', actions: ['create'] },
+        { collection: 'app.bsky.feed.threadgate', actions: ['create'] },
+      ],
+      rpc: [
+        'app.bsky.video.uploadVideo',
+        'app.bsky.video.getJobStatus',
+        'app.bsky.video.getUploadLimits',
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authCreatePosts'),
+    explanation:
+      'Create new posts, postgates, and threadgates. Includes video upload endpoints. Cannot update or delete existing posts.',
+  },
+  {
+    id: 'app.bsky.authDeleteContent',
+    appId: 'bluesky',
+    label: 'Delete Bluesky Content',
+    description: 'Clean up posts, reposts, and likes. Cannot create or update.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authDeleteContent?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'app.bsky.feed.like',
+        'app.bsky.feed.post',
+        'app.bsky.feed.postgate',
+        'app.bsky.feed.repost',
+        'app.bsky.feed.threadgate',
+      ].map((collection) => ({ collection, actions: ['delete'] as Array<'delete'> })),
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authDeleteContent'),
+    explanation:
+      'Delete posts, reposts, likes, postgates, and threadgates. Useful for cleanup tools. Cannot create or update content.',
+  },
+  {
+    id: 'app.bsky.authManageProfile',
+    appId: 'bluesky',
+    label: 'Manage Bluesky Profile',
+    description: 'Update profile, status, and chat visibility declaration.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authManageProfile?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'app.bsky.actor.profile',
+        'app.bsky.actor.status',
+        'app.bsky.notification.declaration',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageProfile'),
+    explanation:
+      'Update the user\'s profile data, status, and public chat visibility declaration.',
+  },
+  {
+    id: 'app.bsky.authManageNotifications',
+    appId: 'bluesky',
+    label: 'Manage Bluesky Notifications',
+    description: 'View and configure notifications and push subscriptions.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authManageNotifications?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      rpc: [
+        'app.bsky.notification.getPreferences',
+        'app.bsky.notification.getUnreadCount',
+        'app.bsky.notification.listActivitySubscriptions',
+        'app.bsky.notification.listNotifications',
+        'app.bsky.notification.putActivitySubscription',
+        'app.bsky.notification.putPreferences',
+        'app.bsky.notification.putPreferencesV2',
+        'app.bsky.notification.registerPush',
+        'app.bsky.notification.unregisterPush',
+        'app.bsky.notification.updateSeen',
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageNotifications'),
+    explanation:
+      'Full control over Bluesky notification preferences, activity subscriptions, push registration, and read state.',
+  },
+  {
+    id: 'app.bsky.authManageModeration',
+    appId: 'bluesky',
+    label: 'Manage Personal Moderation',
+    description: 'Control blocks, mutes, moderation lists, and preferences.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authManageModeration?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'app.bsky.graph.block',
+        'app.bsky.graph.listblock',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+      rpc: [
+        'app.bsky.actor.getPreferences',
+        'app.bsky.actor.putPreferences',
+        'app.bsky.graph.muteActor',
+        'app.bsky.graph.muteActorList',
+        'app.bsky.graph.muteThread',
+        'app.bsky.graph.unmuteActor',
+        'app.bsky.graph.unmuteActorList',
+        'app.bsky.graph.unmuteThread',
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageModeration'),
+    explanation:
+      'Control over personal moderation features: blocking, muting (actors, lists, and threads), moderation list management, and preferences.',
+  },
+  {
+    id: 'app.bsky.authManageFeedDeclarations',
+    appId: 'bluesky',
+    label: 'Manage Hosted Feeds',
+    description: 'Configure feed generator declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authManageFeedDeclarations?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.bsky.feed.generator', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageFeedDeclarations'),
+    explanation:
+      'Create, update, and delete feed generator declaration records. For developers hosting custom feed generators.',
+  },
+  {
+    id: 'app.bsky.authManageLabelerService',
+    appId: 'bluesky',
+    label: 'Manage Hosted Labeling Service',
+    description: 'Configure labeler declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.bsky.authManageLabelerService?aud=${BSKY_APPVIEW_AUD_ENCODED}`,
+    defaultAud: BSKY_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.bsky.labeler.service', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(BSKY_DID, 'app.bsky.authManageLabelerService'),
+    explanation:
+      'Create, update, and delete labeler service declaration records. For developers hosting labeling services.',
+  },
+  {
+    id: 'chat.bsky.authFullChatClient',
+    appId: 'bluesky',
+    label: 'Full Chat Client',
+    description: 'All chat conversations, reactions, and configuration.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:chat.bsky.authFullChatClient?aud=${BSKY_CHAT_AUD_ENCODED}`,
+    defaultAud: BSKY_CHAT_AUD,
+    expandedPermissions: {
+      repo: [
+        { collection: 'chat.bsky.actor.declaration', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+      rpc: [
+        'chat.bsky.actor.deleteAccount',
+        'chat.bsky.convo.acceptConvo',
+        'chat.bsky.convo.addReaction',
+        'chat.bsky.convo.deleteMessageForSelf',
+        'chat.bsky.convo.exportAccountData',
+        'chat.bsky.convo.getConvo',
+        'chat.bsky.convo.getConvoAvailability',
+        'chat.bsky.convo.getConvoForMembers',
+        'chat.bsky.convo.getLog',
+        'chat.bsky.convo.getMessages',
+        'chat.bsky.convo.leaveConvo',
+        'chat.bsky.convo.listConvos',
+        'chat.bsky.convo.muteConvo',
+        'chat.bsky.convo.removeReaction',
+        'chat.bsky.convo.sendMessage',
+        'chat.bsky.convo.sendMessageBatch',
+        'chat.bsky.convo.unmuteConvo',
+        'chat.bsky.convo.updateAllRead',
+        'chat.bsky.convo.updateRead',
+      ],
+    },
+    replacesTransition: 'transition:chat.bsky',
+    specLink: lexiconGardenLink(BSKY_DID, 'chat.bsky.authFullChatClient'),
+    explanation:
+      'Full control of all chat conversations: reading, sending, reacting, muting, and configuration management. Uses the chat.bsky namespace with its own audience DID.',
+  },
+
+  // ---- AT Store -----------------------------------------------------------
+  {
+    id: 'fyi.atstore.authBasic',
+    appId: 'atstore',
+    label: 'Full AT Store Access',
+    description: 'Provides full access to AT Store profile, listings, reviews, and favorites.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:fyi.atstore.authBasic`,
+    expandedPermissions: {
+      repo: [
+        'fyi.atstore.profile',
+        'fyi.atstore.listing.detail',
+        'fyi.atstore.listing.review',
+        'fyi.atstore.listing.reviewReply',
+        'fyi.atstore.listing.favorite',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(ATSTORE_DID, 'fyi.atstore.authBasic'),
+    explanation:
+      'Full access to AT Store: manage your profile, listings, reviews, review replies, and favorites.',
+  },
+
+  // ---- Beacon Bits --------------------------------------------------------
+  {
+    id: 'app.beaconbits.authCore',
+    appId: 'beaconbits',
+    label: 'Core Beacon Bits access',
+    description: 'Create and manage check-ins, profile settings, favorites, and beacon likes.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authCore`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.beacon', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.profile', actions: ['create', 'update'] },
+        { collection: 'app.beaconbits.favorite', actions: ['create', 'delete'] },
+        { collection: 'app.beaconbits.beacon.like', actions: ['create', 'delete'] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authCore'),
+    explanation:
+      'Core access to Beacon Bits: create and manage beacon check-ins, profile, favorites, and likes.',
+  },
+  {
+    id: 'app.beaconbits.authEvents',
+    appId: 'beaconbits',
+    label: 'Beacon Bits event progress',
+    description: 'Store event passes and collected event fragments.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authEvents`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.pass', actions: ['create', 'update'] },
+        { collection: 'app.beaconbits.fragment', actions: ['create'] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authEvents'),
+    explanation:
+      'Event participation in Beacon Bits: save event passes and collect event fragments.',
+  },
+  {
+    id: 'app.beaconbits.authSavedPlaces',
+    appId: 'beaconbits',
+    label: 'Saved places and custom venues',
+    description: 'Manage saved places, saved lists, and custom venues.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.beaconbits.authSavedPlaces`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'app.beaconbits.bookmark.item', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.bookmark.folder', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'app.beaconbits.venue', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(BEACONBITS_DID, 'app.beaconbits.authSavedPlaces'),
+    explanation:
+      'Manage bookmarked places, bookmark folders, and user-defined venues in Beacon Bits.',
+  },
+
+  // ---- Checkmate ----------------------------------------------------------
+  {
+    id: 'blue.checkmate.authFullAccess',
+    appId: 'checkmate',
+    label: 'Full checkmate.blue Access',
+    description: 'Create and manage chess games and challenges on checkmate.blue.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:blue.checkmate.authFullAccess`,
+    expandedPermissions: {
+      repo: [
+        { collection: 'blue.checkmate.game', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'blue.checkmate.challenge', actions: [...ALL_WRITE_ACTIONS] },
+      ],
+    },
+    specLink: lexiconGardenLink(CHECKMATE_DID, 'blue.checkmate.authFullAccess'),
+    explanation:
+      'Full access to Checkmate: create and manage chess games and challenge records.',
+  },
+
+  // ---- FreeMix ------------------------------------------------------------
+  {
+    id: 'fm.freemix.authFullApp',
+    appId: 'freemix',
+    label: 'FreeMix Music Platform',
+    description:
+      'Upload, manage, and share music tracks, stems, licenses, remix attributions, and collections on FreeMix.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:fm.freemix.authFullApp`,
+    // Action grants vary per collection: license/attribution/download records
+    // are create-only, profile is create+update, the rest are full write.
+    expandedPermissions: {
+      repo: [
+        { collection: 'fm.freemix.release.track', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.release.stem', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.release.sample', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.license.grant', actions: ['create'] },
+        { collection: 'fm.freemix.license.def', actions: ['create'] },
+        { collection: 'fm.freemix.remix.attribution', actions: ['create'] },
+        { collection: 'fm.freemix.collection.crate', actions: [...ALL_WRITE_ACTIONS] },
+        { collection: 'fm.freemix.interaction.download', actions: ['create'] },
+        { collection: 'fm.freemix.actor.profile', actions: ['create', 'update'] },
+      ],
+    },
+    specLink: lexiconGardenLink(FREEMIX_DID, 'fm.freemix.authFullApp'),
+    explanation:
+      'Full access to FreeMix: manage tracks, stems, and samples; grant licenses and define license terms; record remix attributions; manage crates; log downloads; and edit your profile.',
+  },
+
+  // ---- Germ ---------------------------------------------------------------
+  {
+    id: 'com.germnetwork.authManageDeclaration',
+    appId: 'germ',
+    label: 'Manage your Germ DM',
+    description:
+      'Allows linking your Atmosphere account with Germ DM and controlling who can message you.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:com.germnetwork.authManageDeclaration`,
+    expandedPermissions: {
+      repo: [
+        'com.germnetwork.declaration',
+        'com.germnetwork.keypackage',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(GERM_DID, 'com.germnetwork.authManageDeclaration'),
+    explanation:
+      'Link your Atmosphere account with Germ DM and control who can message you.',
+  },
+
+  // ---- Leaflet ------------------------------------------------------------
+  {
+    id: 'pub.leaflet.authFullPermissions',
+    appId: 'leaflet',
+    label: 'Full Leaflet Permissions',
+    description:
+      'Manage creating and updating leaflet documents and publications and all interactions on them.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:pub.leaflet.authFullPermissions`,
+    expandedPermissions: {
+      repo: [
+        'pub.leaflet.document',
+        'pub.leaflet.publication',
+        'pub.leaflet.comment',
+        'pub.leaflet.poll.definition',
+        'pub.leaflet.poll.vote',
+        'pub.leaflet.graph.subscription',
+        'pub.leaflet.interactions.recommend',
+        'pub.leaflet.publicationPage',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(LEAFLET_DID, 'pub.leaflet.authFullPermissions'),
+    explanation:
+      'Full access to Leaflet: create, update, and delete documents, publications, comments, polls, subscriptions, recommendations, and publication pages.',
+  },
+
+  // ---- Margin -------------------------------------------------------------
+  {
+    id: 'at.margin.authFull',
+    appId: 'margin',
+    label: 'Margin',
+    description: 'Full access to Margin features including notes, replies, likes, and collections.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:at.margin.authFull`,
+    expandedPermissions: {
+      repo: [
+        'at.margin.note',
+        'at.margin.reply',
+        'at.margin.like',
+        'at.margin.collection',
+        'at.margin.collectionItem',
+        'at.margin.profile',
+        'at.margin.apikey',
+        'at.margin.preferences',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(MARGIN_DID, 'at.margin.authFull'),
+    explanation:
+      'Full access to Margin: manage notes, replies, likes, collections, profile, API keys, and preferences.',
+  },
+
+  // ---- Offprint -----------------------------------------------------------
+  {
+    id: 'app.offprint.authFull',
+    appId: 'offprint',
+    label: 'Offprint',
+    description: 'Manage your profile, publication, and article references.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:app.offprint.authFull`,
+    expandedPermissions: {
+      repo: [
+        'app.offprint.actor.profile',
+        'app.offprint.publication',
+        'app.offprint.document.article',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(OFFPRINT_DID, 'app.offprint.authFull'),
+    explanation:
+      'Full access to Offprint: manage your profile, publications, and article references.',
+  },
+
+  // ---- Pckt ---------------------------------------------------------------
+  {
+    id: 'blog.pckt.authFull',
+    appId: 'pckt',
+    label: 'pckt.blog',
+    description: 'Manage your publication, document, and gallery references.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:blog.pckt.authFull`,
+    expandedPermissions: {
+      repo: [
+        'blog.pckt.publication',
+        'blog.pckt.document',
+        'blog.pckt.gallery',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(PCKT_DID, 'blog.pckt.authFull'),
+    explanation:
+      'Full access to pckt.blog: manage publications, documents, and galleries.',
+  },
+
+  // ---- Pollen Place -------------------------------------------------------
+  {
+    id: 'place.pollen.authFullAccess',
+    appId: 'pollen',
+    label: 'Pollen',
+    description: 'Create and manage posts, follow users, react to content, and customize your profile.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:place.pollen.authFullAccess`,
+    expandedPermissions: {
+      repo: [
+        'place.pollen.post.image',
+        'place.pollen.post.gif',
+        'place.pollen.post.video',
+        'place.pollen.post.text',
+        'place.pollen.post.quote',
+        'place.pollen.post.link',
+        'place.pollen.post.audio',
+        'place.pollen.post.chat',
+        'place.pollen.post.poll',
+        'place.pollen.post.todo',
+        'place.pollen.post.bskyembed',
+        'place.pollen.post.atmoembed',
+        'place.pollen.post.ama',
+        'place.pollen.post.answer',
+        'place.pollen.feed.reblog',
+        'place.pollen.feed.vote',
+        'place.pollen.feed.reaction',
+        'place.pollen.feed.note',
+        'place.pollen.graph.follow',
+        'place.pollen.graph.block',
+        'place.pollen.graph.mute',
+        'place.pollen.actor.profile',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(POLLEN_DID, 'place.pollen.authFullAccess'),
+    explanation:
+      'Full access to Pollen Place: create and manage all post types, feed interactions, social graph, and your profile.',
+  },
+
+  // ---- Sifa ---------------------------------------------------------------
+  {
+    id: 'id.sifa.authProject',
+    appId: 'sifa',
+    label: 'Collaborative projects',
+    description:
+      'Create and manage collaborative projects, invite team members, and accept project invitations.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProject`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.project.self',
+        'id.sifa.project.member',
+        'id.sifa.project.membership',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProject'),
+    explanation:
+      'Create and manage collaborative projects on Sifa, invite team members, and accept project invitations.',
+  },
+  {
+    id: 'id.sifa.authMeet',
+    appId: 'sifa',
+    label: 'Meeting attestation',
+    description: 'Record verified face-to-face meetings with other users.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authMeet`,
+    expandedPermissions: {
+      repo: [{ collection: 'id.sifa.meeting', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authMeet'),
+    explanation: 'Record verified face-to-face meetings with other users on Sifa.',
+  },
+  {
+    id: 'id.sifa.authConnection',
+    appId: 'sifa',
+    label: 'Professional connections',
+    description: 'Create and manage professional connections with other users.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authConnection`,
+    expandedPermissions: {
+      repo: [{ collection: 'id.sifa.graph.connection', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authConnection'),
+    explanation: 'Create and manage professional connections with other users on Sifa.',
+  },
+  {
+    id: 'id.sifa.authProfile',
+    appId: 'sifa',
+    label: 'Profile editing',
+    description:
+      'Create and update your professional profile, skills, experience, and follow others.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProfile`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.profile.self',
+        'id.sifa.profile.position',
+        'id.sifa.profile.education',
+        'id.sifa.profile.skill',
+        'id.sifa.profile.certification',
+        'id.sifa.profile.project',
+        'id.sifa.profile.volunteering',
+        'id.sifa.profile.publication',
+        'id.sifa.profile.course',
+        'id.sifa.profile.honor',
+        'id.sifa.profile.language',
+        'id.sifa.profile.externalAccount',
+        'id.sifa.graph.follow',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProfile'),
+    explanation:
+      'Create and update your professional Sifa profile — positions, education, skills, certifications, projects, publications, and more — and follow others.',
+  },
+
+  // ---- Smoke Signal -------------------------------------------------------
+  {
+    id: 'events.smokesignal.authFull',
+    appId: 'smokesignal',
+    label: 'Full Smoke Signal Permissions',
+    description: 'Create and manage events, RSVPs, calendar configuration, and your profile.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:events.smokesignal.authFull`,
+    expandedPermissions: {
+      repo: [
+        'events.smokesignal.lfg',
+        'events.smokesignal.profile',
+        'events.smokesignal.calendar.acceptance',
+        'events.smokesignal.calendar.eventConfiguration',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SMOKESIGNAL_DID, 'events.smokesignal.authFull'),
+    explanation:
+      'Full access to Smoke Signal: create, update, and delete event, RSVP, calendar configuration, and profile records.',
+  },
+
+  // ---- Spark --------------------------------------------------------------
+  // Only Spark's repo-only sets are curated. Its rpc/inheritAud sets
+  // (authViewAll, authFullApp, authManageNotifications, authManageModeration,
+  // authCreatePosts) need an audience DID and are intentionally omitted for now.
+  {
+    id: 'so.sprk.authManageProfile',
+    appId: 'spark',
+    label: 'Manage Spark Profile',
+    description: 'Update Spark profile data.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageProfile`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.actor.profile', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageProfile'),
+    explanation: 'Create, update, and delete your Spark profile record.',
+  },
+  {
+    id: 'so.sprk.authManageLabelerService',
+    appId: 'spark',
+    label: 'Manage Spark Labeler Service',
+    description: 'Configure Spark labeler declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageLabelerService`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.labeler.service', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageLabelerService'),
+    explanation: 'Create, update, and delete your Spark labeler service declaration.',
+  },
+  {
+    id: 'so.sprk.authManageFeedDeclarations',
+    appId: 'spark',
+    label: 'Manage Spark Feed Declarations',
+    description: 'Configure Spark feed generator declaration records.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageFeedDeclarations`,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.feed.generator', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageFeedDeclarations'),
+    explanation: 'Create, update, and delete your Spark feed generator declarations.',
+  },
+
+  // ---- Squire -------------------------------------------------------------
+  {
+    id: 'guide.squire.authAccess',
+    appId: 'squire',
+    label: 'Squire account access',
+    description:
+      'Squire uses your account to identify you. Your tasks and personal data are stored privately — nothing is posted or shared on your behalf.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:guide.squire.authAccess`,
+    expandedPermissions: {
+      repo: [{ collection: 'guide.squire.v1.actor', actions: [...ALL_WRITE_ACTIONS] }],
+    },
+    specLink: lexiconGardenLink(SQUIRE_DID, 'guide.squire.authAccess'),
+    explanation:
+      'Squire uses your account to identify you; tasks and personal data stay private and nothing is posted on your behalf.',
+  },
+
+  // ---- Standard.site ------------------------------------------------------
+  {
+    id: 'site.standard.authFull',
+    appId: 'standard',
+    label: 'Standard.site — Full',
+    description: 'Manage your publications, documents, subscriptions, and recommends.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:site.standard.authFull`,
+    expandedPermissions: {
+      repo: [
+        'site.standard.publication',
+        'site.standard.document',
+        'site.standard.graph.subscription',
+        'site.standard.graph.recommend',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STANDARD_DID, 'site.standard.authFull'),
+    explanation:
+      'Full access to Standard.site: manage publications, documents, subscriptions, and recommends.',
+  },
+  {
+    id: 'site.standard.authSocial',
+    appId: 'standard',
+    label: 'Standard.site — Social',
+    description: 'Manage your publication subscriptions and document recommendations.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:site.standard.authSocial`,
+    expandedPermissions: {
+      repo: [
+        'site.standard.graph.subscription',
+        'site.standard.graph.recommend',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STANDARD_DID, 'site.standard.authSocial'),
+    explanation:
+      'Manage your Standard.site publication subscriptions and document recommendations.',
+  },
+
+  // ---- Streamplace --------------------------------------------------------
+  {
+    id: 'place.stream.authFull',
+    appId: 'streamplace',
+    label: 'Full Streamplace Access',
+    description: 'Full access to all Streamplace features and data.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:place.stream.authFull`,
+    expandedPermissions: {
+      repo: [
+        'place.stream.broadcast.origin',
+        'place.stream.broadcast.syndication',
+        'place.stream.chat.gate',
+        'place.stream.chat.message',
+        'place.stream.chat.profile',
+        'place.stream.key',
+        'place.stream.live.recommendations',
+        'place.stream.live.teleport',
+        'place.stream.livestream',
+        'place.stream.metadata.configuration',
+        'place.stream.moderation.permission',
+        'place.stream.multistream.target',
+        'place.stream.segment',
+        'place.stream.server.settings',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(STREAMPLACE_DID, 'place.stream.authFull'),
+    explanation:
+      'Full access to Streamplace: manage broadcasts, chat, keys, livestreams, metadata, moderation, multistream, segments, and server settings.',
+  },
+]
+
+export const individualScopes: CuratedScope[] = [
+  {
+    id: 'blob-any',
+    label: 'Upload images & video',
+    description: 'Required separately — blobs cannot be bundled into permission sets.',
+    kind: 'individual',
+    resourceType: 'blob',
+    scopeString: 'blob:*/*',
+    specLink: '/specs/permission#blob',
+    explanation:
+      'Allows uploading media files (images, videos) of any MIME type. This scope cannot be part of a permission set and must always be requested directly.',
+  },
+  {
+    id: 'account-email-read',
+    label: 'Read account email',
+    description: 'Access the user\'s email address and verification status.',
+    kind: 'individual',
+    resourceType: 'account',
+    scopeString: 'account:email',
+    replacesTransition: 'transition:email',
+    supersededBy: 'account-email-manage',
+    specLink: '/specs/permission#account',
+    explanation:
+      'Makes the account\'s email address and verification status visible via com.atproto.server.getSession. Replaces transition:email.',
+  },
+  {
+    id: 'account-email-manage',
+    label: 'Manage account email',
+    description: 'Change the user\'s email address.',
+    kind: 'individual',
+    resourceType: 'account',
+    scopeString: 'account:email?action=manage',
+    specLink: '/specs/permission#account',
+    explanation:
+      'Allows reading AND changing the account\'s email address. Implies account:email.',
+  },
+  {
+    id: 'identity-handle',
+    label: 'Update handle',
+    description: 'Change the user\'s handle (domain registered in their DID doc).',
+    kind: 'individual',
+    resourceType: 'identity',
+    scopeString: 'identity:handle',
+    supersededBy: 'identity-wildcard',
+    specLink: '/specs/permission#identity',
+    warning: 'Warning',
+    explanation:
+      'Allows updating the account\'s handle. The PDS may not be able to facilitate this for did:web accounts.',
+  },
+  {
+    id: 'identity-wildcard',
+    label: 'Full identity control',
+    description: 'Update handle and DID document. High-sensitivity — use sparingly.',
+    kind: 'individual',
+    resourceType: 'identity',
+    scopeString: 'identity:*',
+    specLink: '/specs/permission#identity',
+    warning: 'Warning',
+    explanation:
+      'Full control of the DID document and handle. This is a high-sensitivity scope and should only be requested by tools specifically designed for identity management.',
+  },
+  {
+    id: 'account-repo-manage',
+    label: 'Import repository (CAR file)',
+    description: 'Replace the entire repository during account migration.',
+    kind: 'individual',
+    resourceType: 'account',
+    scopeString: 'account:repo?action=manage',
+    specLink: '/specs/permission#account',
+    explanation:
+      'Allows importing a CAR file to replace the entire public repository. Typically used during account migration between PDSes.',
+  },
+]

@@ -523,7 +523,7 @@ export function AskAIButton({ className }: { className?: string }) {
       type="button"
       onClick={handleClick}
       className={clsx(
-        'flex h-6 items-center justify-center rounded-md px-1.5 text-sm leading-5 text-slate-700 transition hover:bg-zinc-900/5 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/5 dark:hover:text-white',
+        'flex h-6 items-center justify-center rounded-md px-1.5 pt-0.5 text-sm leading-5 text-slate-700 transition hover:bg-zinc-900/5 hover:text-slate-900 dark:text-slate-200 dark:hover:bg-white/5 dark:hover:text-white',
         className,
       )}
     >

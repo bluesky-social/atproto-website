@@ -9,7 +9,7 @@ export const metadata = {
 export default async function AtmosphericWebsitePage({ params }: any) {
   let Content
   try {
-    Content = await import(`./${params.locale}.mdx`)
+    Content = await import(`./${(await params).locale}.mdx`)
   } catch (error) {
     Content = await import(`./en.mdx`)
   }
