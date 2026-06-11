@@ -26,6 +26,7 @@ const BSKY_DID = 'did:plc:4v4y5r3lwsbtmsxhile2ljac'
 const ATSTORE_DID = 'did:plc:dvy6bdnofdfc4php4s5b457d'
 const BEACONBITS_DID = 'did:plc:j5ttxzdb5kwo4mcqkmzgvt33'
 const CHECKMATE_DID = 'did:plc:g2dztq6aggnn3tvimpebanu3'
+const COSMIK_DID = 'did:plc:b2p6rujcgpenbtcjposmjuc3'
 const FREEMIX_DID = 'did:plc:bt7c6cqevgefnvej5cmgke4g'
 const GERM_DID = 'did:plc:qyqmmncrm6qx33kpy7vqndik'
 const LEAFLET_DID = 'did:plc:btxrwcaeyodrap5mnjw2fvmz'
@@ -36,6 +37,8 @@ const POLLEN_DID = 'did:plc:nwgfqqv7a56aicy3d3um37ch'
 const SIFA_DID = 'did:plc:2f2ahswozqy4v5lvu676375y'
 const SMOKESIGNAL_DID = 'did:plc:tgudj2fjm77pzkuawquqhsxm'
 const SPARK_DID = 'did:plc:cveom2iroj3mt747sd4qqnr2'
+const SPARK_APPVIEW_AUD = 'did:web:api.sprk.so#sprk_appview'
+const SPARK_APPVIEW_AUD_ENCODED = 'did:web:api.sprk.so%23sprk_appview'
 const SQUIRE_DID = 'did:plc:hwrvjq2sdnwezsciqr4vtngf'
 const STANDARD_DID = 'did:plc:re3ebnp5v7ffagz6rb6xfei4'
 const STREAMPLACE_DID = 'did:plc:gqtagsooi75obldmytuow57q'
@@ -52,6 +55,8 @@ export const apps: ScopeApp[] = [
   { id: 'offprint', name: 'Offprint', did: OFFPRINT_DID },
   { id: 'pckt', name: 'Pckt', did: PCKT_DID },
   { id: 'pollen', name: 'Pollen Place', did: POLLEN_DID },
+  // Brand is "Semble"; its Lexicons are published under the network.cosmik namespace.
+  { id: 'semble', name: 'Semble', did: COSMIK_DID },
   { id: 'sifa', name: 'Sifa', did: SIFA_DID },
   { id: 'smokesignal', name: 'Smoke Signal', did: SMOKESIGNAL_DID },
   { id: 'spark', name: 'Spark', did: SPARK_DID },
@@ -761,6 +766,28 @@ export const permissionSets: CuratedScope[] = [
       'Full access to Pollen Place: create and manage all post types, feed interactions, social graph, and your profile.',
   },
 
+  // ---- Semble (network.cosmik namespace) ---------------------------------
+  {
+    id: 'network.cosmik.authFull',
+    appId: 'semble',
+    label: 'Full Semble App',
+    description: 'Create and manage Semble cards, collections, and collection links.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:network.cosmik.authFull`,
+    expandedPermissions: {
+      repo: [
+        'network.cosmik.card',
+        'network.cosmik.collection',
+        'network.cosmik.collectionLink',
+        'network.cosmik.collectionLinkRemoval',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(COSMIK_DID, 'network.cosmik.authFull'),
+    explanation:
+      'Create, update, and delete Semble cards, collections, collection links, and collection link removals. Repo-only — no API method or audience scoping required.',
+  },
+
   // ---- Sifa ---------------------------------------------------------------
   {
     id: 'id.sifa.authProject',
@@ -840,6 +867,37 @@ export const permissionSets: CuratedScope[] = [
     explanation:
       'Create and update your professional Sifa profile — positions, education, skills, certifications, projects, publications, and more — and follow others.',
   },
+  {
+    id: 'id.sifa.authProfileAccess',
+    appId: 'sifa',
+    label: 'Professional profile with endorsements',
+    description:
+      'Manage your full professional profile, including endorsements, and follow others.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:id.sifa.authProfileAccess`,
+    expandedPermissions: {
+      repo: [
+        'id.sifa.profile.self',
+        'id.sifa.profile.position',
+        'id.sifa.profile.education',
+        'id.sifa.profile.skill',
+        'id.sifa.profile.certification',
+        'id.sifa.profile.project',
+        'id.sifa.profile.volunteering',
+        'id.sifa.profile.publication',
+        'id.sifa.profile.course',
+        'id.sifa.profile.honor',
+        'id.sifa.profile.language',
+        'id.sifa.endorsement',
+        'id.sifa.endorsement.confirmation',
+        'id.sifa.graph.follow',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+    },
+    specLink: lexiconGardenLink(SIFA_DID, 'id.sifa.authProfileAccess'),
+    explanation:
+      'Create, update, and delete your full professional Sifa profile, plus give and confirm endorsements and follow others. Overlaps id.sifa.authProfile but adds endorsements and omits externalAccount.',
+  },
 
   // ---- Smoke Signal -------------------------------------------------------
   {
@@ -864,9 +922,243 @@ export const permissionSets: CuratedScope[] = [
   },
 
   // ---- Spark --------------------------------------------------------------
-  // Only Spark's repo-only sets are curated. Its rpc/inheritAud sets
-  // (authViewAll, authFullApp, authManageNotifications, authManageModeration,
-  // authCreatePosts) need an audience DID and are intentionally omitted for now.
+  {
+    id: 'so.sprk.authFullApp',
+    appId: 'spark',
+    label: 'Full Spark App',
+    description: 'All Spark content, interactions, preferences, notifications, and app features.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authFullApp?aud=${SPARK_APPVIEW_AUD_ENCODED}`,
+    defaultAud: SPARK_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'so.sprk.actor.profile',
+        'so.sprk.feed.generator',
+        'so.sprk.feed.like',
+        'so.sprk.feed.post',
+        'so.sprk.feed.reply',
+        'so.sprk.feed.repost',
+        'so.sprk.feed.threadgate',
+        'so.sprk.graph.block',
+        'so.sprk.graph.follow',
+        'so.sprk.labeler.service',
+        'so.sprk.story.post',
+      ].map((collection) => ({ collection, actions: [...ALL_WRITE_ACTIONS] })),
+      rpc: [
+        'so.sprk.actor.getPreferences',
+        'so.sprk.actor.getProfile',
+        'so.sprk.actor.getProfiles',
+        'so.sprk.actor.getSuggestions',
+        'so.sprk.actor.putPreferences',
+        'so.sprk.actor.searchActors',
+        'so.sprk.actor.searchActorsTypeahead',
+        'so.sprk.feed.describeFeedGenerator',
+        'so.sprk.feed.getActorFeeds',
+        'so.sprk.feed.getActorLikes',
+        'so.sprk.feed.getActorReposts',
+        'so.sprk.feed.getAuthorFeed',
+        'so.sprk.feed.getCrosspostThread',
+        'so.sprk.feed.getFeed',
+        'so.sprk.feed.getFeedGenerator',
+        'so.sprk.feed.getFeedGenerators',
+        'so.sprk.feed.getFeedSkeleton',
+        'so.sprk.feed.getLikes',
+        'so.sprk.feed.getPostThread',
+        'so.sprk.feed.getPosts',
+        'so.sprk.feed.getRepostedBy',
+        'so.sprk.feed.getSuggestedFeeds',
+        'so.sprk.feed.getTimeline',
+        'so.sprk.feed.searchPosts',
+        'so.sprk.feed.sendInteractions',
+        'so.sprk.graph.getBlocks',
+        'so.sprk.graph.getFollowers',
+        'so.sprk.graph.getFollows',
+        'so.sprk.graph.getKnownFollowers',
+        'so.sprk.graph.getMutes',
+        'so.sprk.graph.getRelationships',
+        'so.sprk.graph.getSuggestedFollowsByActor',
+        'so.sprk.graph.muteActor',
+        'so.sprk.graph.muteThread',
+        'so.sprk.graph.unmuteActor',
+        'so.sprk.graph.unmuteThread',
+        'so.sprk.labeler.getServices',
+        'so.sprk.notification.getUnreadCount',
+        'so.sprk.notification.listNotifications',
+        'so.sprk.notification.putPreferences',
+        'so.sprk.notification.registerPush',
+        'so.sprk.notification.unregisterPush',
+        'so.sprk.notification.updateSeen',
+        'so.sprk.sound.getActorAudios',
+        'so.sprk.sound.getAudioPosts',
+        'so.sprk.sound.getAudios',
+        'so.sprk.sound.searchAudios',
+        'so.sprk.sound.getTrendingAudios',
+        'so.sprk.story.getStories',
+        'so.sprk.story.getTimeline',
+        'so.sprk.video.getJobStatus',
+        'so.sprk.video.getUploadLimits',
+        'so.sprk.video.uploadVideo',
+      ],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authFullApp'),
+    explanation:
+      'The broadest Spark permission set. Grants full control of Spark content and interactions, private preferences and notifications, and Spark-specific app features.',
+  },
+  {
+    id: 'so.sprk.authViewAll',
+    appId: 'spark',
+    label: 'Read-only access to all Spark content',
+    description: 'View Spark content from the account\'s perspective. No write access.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authViewAll?aud=${SPARK_APPVIEW_AUD_ENCODED}`,
+    defaultAud: SPARK_APPVIEW_AUD,
+    expandedPermissions: {
+      rpc: [
+        'so.sprk.actor.getPreferences',
+        'so.sprk.actor.getProfile',
+        'so.sprk.actor.getProfiles',
+        'so.sprk.actor.getSuggestions',
+        'so.sprk.actor.searchActors',
+        'so.sprk.actor.searchActorsTypeahead',
+        'so.sprk.feed.describeFeedGenerator',
+        'so.sprk.feed.getActorFeeds',
+        'so.sprk.feed.getActorLikes',
+        'so.sprk.feed.getActorReposts',
+        'so.sprk.feed.getAuthorFeed',
+        'so.sprk.feed.getCrosspostThread',
+        'so.sprk.feed.getFeed',
+        'so.sprk.feed.getFeedGenerator',
+        'so.sprk.feed.getFeedGenerators',
+        'so.sprk.feed.getFeedSkeleton',
+        'so.sprk.feed.getLikes',
+        'so.sprk.feed.getPostThread',
+        'so.sprk.feed.getPosts',
+        'so.sprk.feed.getRepostedBy',
+        'so.sprk.feed.getSuggestedFeeds',
+        'so.sprk.feed.getTimeline',
+        'so.sprk.feed.searchPosts',
+        'so.sprk.graph.getBlocks',
+        'so.sprk.graph.getFollowers',
+        'so.sprk.graph.getFollows',
+        'so.sprk.graph.getKnownFollowers',
+        'so.sprk.graph.getMutes',
+        'so.sprk.graph.getRelationships',
+        'so.sprk.graph.getSuggestedFollowsByActor',
+        'so.sprk.labeler.getServices',
+        'so.sprk.notification.getUnreadCount',
+        'so.sprk.notification.listNotifications',
+        'so.sprk.notification.updateSeen',
+        'so.sprk.sound.getActorAudios',
+        'so.sprk.sound.getAudioPosts',
+        'so.sprk.sound.getAudios',
+        'so.sprk.sound.searchAudios',
+        'so.sprk.sound.getTrendingAudios',
+        'so.sprk.story.getStories',
+        'so.sprk.story.getTimeline',
+        'so.sprk.video.getUploadLimits',
+      ],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authViewAll'),
+    explanation:
+      'Read-only access to Spark network content from the account\'s perspective, including notifications and preferences. No ability to create, update, or delete any records.',
+  },
+  {
+    id: 'so.sprk.authCreatePosts',
+    appId: 'spark',
+    label: 'Create Spark Posts',
+    description: 'Create Spark posts, replies, stories, and media uploads. Cannot update or delete.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authCreatePosts?aud=${SPARK_APPVIEW_AUD_ENCODED}`,
+    defaultAud: SPARK_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [
+        'so.sprk.feed.post',
+        'so.sprk.feed.reply',
+        'so.sprk.feed.threadgate',
+        'so.sprk.story.post',
+      ].map((collection) => ({ collection, actions: ['create'] as Array<'create'> })),
+      rpc: [
+        'so.sprk.video.getJobStatus',
+        'so.sprk.video.getUploadLimits',
+        'so.sprk.video.uploadVideo',
+      ],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authCreatePosts'),
+    explanation:
+      'Create Spark posts, replies, threadgates, and stories, plus video uploads. Cannot update or delete content.',
+  },
+  {
+    id: 'so.sprk.authDeleteContent',
+    appId: 'spark',
+    label: 'Delete Spark Content',
+    description: 'Clean up posts, replies, reposts, and likes. Cannot create or update.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authDeleteContent`,
+    expandedPermissions: {
+      repo: [
+        'so.sprk.feed.like',
+        'so.sprk.feed.post',
+        'so.sprk.feed.reply',
+        'so.sprk.feed.repost',
+        'so.sprk.feed.threadgate',
+        'so.sprk.story.post',
+      ].map((collection) => ({ collection, actions: ['delete'] as Array<'delete'> })),
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authDeleteContent'),
+    explanation:
+      'Delete Spark posts, replies, reposts, likes, threadgates, and stories. Useful for cleanup tools. Cannot create or update content. Repo-only — no audience scoping required.',
+  },
+  {
+    id: 'so.sprk.authManageNotifications',
+    appId: 'spark',
+    label: 'Manage Spark Notifications',
+    description: 'View and configure Spark notifications.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageNotifications?aud=${SPARK_APPVIEW_AUD_ENCODED}`,
+    defaultAud: SPARK_APPVIEW_AUD,
+    expandedPermissions: {
+      rpc: [
+        'so.sprk.notification.getUnreadCount',
+        'so.sprk.notification.listNotifications',
+        'so.sprk.notification.putPreferences',
+        'so.sprk.notification.registerPush',
+        'so.sprk.notification.unregisterPush',
+        'so.sprk.notification.updateSeen',
+      ],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageNotifications'),
+    explanation:
+      'View and configure notifications for the Spark app, including push registration and notification preferences.',
+  },
+  {
+    id: 'so.sprk.authManageModeration',
+    appId: 'spark',
+    label: 'Manage Spark Moderation',
+    description: 'Control blocks, mutes, and moderation preferences.',
+    kind: 'permission-set',
+    resourceType: 'include',
+    scopeString: `include:so.sprk.authManageModeration?aud=${SPARK_APPVIEW_AUD_ENCODED}`,
+    defaultAud: SPARK_APPVIEW_AUD,
+    expandedPermissions: {
+      repo: [{ collection: 'so.sprk.graph.block', actions: [...ALL_WRITE_ACTIONS] }],
+      rpc: [
+        'so.sprk.actor.getPreferences',
+        'so.sprk.actor.putPreferences',
+        'so.sprk.graph.muteActor',
+        'so.sprk.graph.muteThread',
+        'so.sprk.graph.unmuteActor',
+        'so.sprk.graph.unmuteThread',
+      ],
+    },
+    specLink: lexiconGardenLink(SPARK_DID, 'so.sprk.authManageModeration'),
+    explanation:
+      'Control personal moderation settings, including blocks, mutes, and moderation-related preferences.',
+  },
   {
     id: 'so.sprk.authManageProfile',
     appId: 'spark',
