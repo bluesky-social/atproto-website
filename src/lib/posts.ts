@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'rpg-actor',
+    title: 'What if your RPG character could log in to any game?',
+    description: 'Carrying your adventures through many worlds with the AT Protocol',
+    date: 'June 11, 2026',
+    author: 'rpg.actor',
+  },
+  {
     slug: 'atmospheric-website',
     title: 'Build an Atmospheric Website (with CodeTV)',
     description: 'Watch the episode and follow along to build a website on AT Protocol.',
