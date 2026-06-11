@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
+import Link from 'next/link'
 import knownAuthors from '@/lib/authors.json'
-import { formatDurationForDisplay, SHOW, type Episode } from '@/lib/episodes'
+import { SHOW, type Episode } from '@/lib/episodes'
 import { SubscribeLinks } from './SubscribeLinks'
 
 // Renders a name as a link to bsky.app when authors.json knows its DID,
@@ -58,7 +59,6 @@ export interface EpisodeHeaderProps
     | 'description'
     | 'date'
     | 'pubDate'
-    | 'durationSeconds'
     | 'guests'
     | 'host'
     | 'audioUrl'
@@ -73,10 +73,16 @@ export function EpisodeHeader(props: EpisodeHeaderProps) {
     <header className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline gap-3 text-sm text-zinc-500 dark:text-zinc-500">
-          <span className="font-mono">Episode {props.episodeNumber}</span>
+          <span className="font-mono">
+            <Link
+              href="/off-protocol"
+              className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
+            >
+              Off Protocol
+            </Link>{' '}
+            &gt; Episode {props.episodeNumber}
+          </span>
           <time dateTime={props.pubDate}>{props.date}</time>
-          <span aria-hidden="true">·</span>
-          <span>{formatDurationForDisplay(props.durationSeconds)}</span>
         </div>
         <h1 className="font-mono text-3xl font-medium md:text-4xl">
           {props.title}

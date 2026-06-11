@@ -70,7 +70,9 @@ function probeDuration(url) {
   try {
     const out = execSync(
       `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${url}"`,
-      { encoding: 'utf-8' },
+      // Ignore stderr so a missing/failing ffprobe falls through silently to
+      // the manual-entry prompt instead of leaking "ffprobe: not found".
+      { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
     ).trim()
     const seconds = parseFloat(out)
     if (Number.isFinite(seconds) && seconds > 0) return seconds
@@ -222,7 +224,7 @@ export const metadata = {
 }
 
 export default async function EpisodeRoute({ params }: any) {
-  const Notes = await import(\`./\${params.locale}.mdx\`).catch(
+  const Notes = await import(\`./\${(await params).locale}.mdx\`).catch(
     () => import(\`./en.mdx\`),
   )
   let Transcript = null

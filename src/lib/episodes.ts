@@ -89,6 +89,22 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'in-our-timeline',
+    episodeNumber: 7,
+    title: 'In Our Timeline',
+    description: 'Paul and Daniel are on the livestream this week with a look at the new Standard.site integration, updates from permissioned data, and news from around the Atmosphere',
+    date: 'May 29, 2026',
+    pubDate: '2026-06-11T20:00:18.291Z',
+    host: ['Paul Frazee', 'Daniel Holmgren'],
+    duration: '00:46:29',
+    durationSeconds: 2789,
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-05-29-live/2026-05-29-live-paul-daniel.mp3',
+    audioSizeBytes: 22320651,
+    audioMimeType: 'audio/mpeg',
+    hasShowNotes: false,
+    hasTranscript: false,
+  },
+  {
     slug: 'do-this-together-standard-site',
     episodeNumber: 6,
     title: 'Why Don\'t We Just Do This Together?',
