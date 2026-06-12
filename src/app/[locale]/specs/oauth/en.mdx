@@ -347,7 +347,9 @@ To enable browser apps, Authorization Servers must support [HTTP CORS](https://d
 
 ### Server Metadata
 
-Both Resource Servers (PDS instances) and Authorization Servers (PDS or [PDS Entryway](https://docs.bsky.app/docs/advanced-guides/entryway)) need to publish metadata files at well-known HTTPS endpoints.
+In AT Protocol, we have both Resource Servers and Authorization Servers, which may be combined into one service or as two separate services. When running the Authorization Server separately from the PDS, we end up with the PDS being the resource server and the Entryway being the Authorization Server.
+
+To allow clients to discover how to interact with the Authorization Server, both the Resource Server and Authorization Server need to publish metadata files at well-known HTTPS endpoints.
 
 Resource Server (PDS) metadata must comply with the "OAuth 2.0 Protected Resource Metadata" ([RFC 9728](https://datatracker.ietf.org/doc/rfc9728)) specification. A summary of requirements:
 
