@@ -43,7 +43,9 @@ This section describes requirements for OAuth clients, which are enforced by Aut
 OAuth client software is identified by a globally unique `client_id`. Distinct variants of client software may have distinct `client_id` values; for example the browser app and Android (mobile OS) variants of the same software might have different `client_id` values. As required by the [`draft-ietf-oauth-client-id-metadata-document`](https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/) specification draft, the `client_id` must be a fully-qualified web URL from which the client-metadata JSON document can be fetched. For example, `https://app.example.com/oauth-client-metadata.json`. Some more about the `client_id`:
 
 - it must be a well-formed URL, following the W3C URL specification
-- the schema must be `https://`, and there must not be a port number, username or password included.
+- the schema must be `https://`
+- there must not username or password component included
+- there may be be a port number included, however this is not required (`https://` implies port 443)
 - the path does not need to include `oauth-client-metadata.json`, but it is helpful convention.
 
 Authorization Servers which support both the atproto OAuth profile and other forms of OAuth should take care to prevent `client_id` value collisions. For example, `client_id` values for clients which are not auto-registered should never have the prefix `https://` or `http://`.
