@@ -251,7 +251,7 @@ The OpenID Connect Core 1.0 specification allows for multiple `prompt` parameter
 
 For understanding how the `prompt` parameter affects the Authorization Server User Interface, see the ["Authorization Interface"](#authorization-interface) section.
 
-Currently known values for the `prompt` parameter include:
+Current known values for the `prompt` parameter include:
 
 - `none`: The Authorization Server MUST NOT display any authentication or consent user interface pages. An error is returned if an End-User is not already authenticated or the Client does not have pre-configured consent for the requested authorization request or does not fulfill other conditions for processing the request. The error code will typically be `login_required`, `interaction_required`, or [another error code](https://openid.net/specs/openid-connect-core-1_0.html#AuthError). This can be used as a method to check for existing authentication and/or consent.
 - `consent`: The Authorization Server SHOULD prompt the End-User for consent before returning information to the Client. If it cannot obtain consent, it MUST return an error, typically `consent_required` or `access_denied`.
