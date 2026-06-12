@@ -368,6 +368,11 @@ export const navigation: Array<NavGroup> = [
         ]
       },
       {
+        title: 'Login with Atmosphere',
+        href: '/guides/login-with-atmosphere',
+        icon: 'user',
+      },
+      {
         title: 'Deploy recipes',
         href: 'https://github.com/bluesky-social/deploy-recipes/',
         icon: 'book',
