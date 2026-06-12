@@ -257,7 +257,7 @@ Currently known values for the `prompt` parameter include:
 - `consent`: The Authorization Server SHOULD prompt the End-User for consent before returning information to the Client. If it cannot obtain consent, it MUST return an error, typically `consent_required` or `access_denied`.
 - `login`: The Authorization Server SHOULD prompt the End-User for reauthentication. If it cannot reauthenticate the End-User, it MUST return an error, typically `login_required`.
 - `select_account`: The Authorization Server SHOULD prompt the End-User to select a user account. This enables an End-User who has multiple accounts at the Authorization Server to select amongst the multiple accounts that they might have current sessions for. If it cannot obtain an account selection choice made by the End-User, it MUST return an error, typically `account_selection_required`. 
-- `create`: The Authorization Server SHOULD prompt the End-User for account creation rather than the login. Upon successfully creating an account, the user should be shown the consent screen. Support for this parameter was only recently added. See the ["Initiating User Registration"](#initiating-user-registration) section below.
+- `create`: The Authorization Server SHOULD prompt the End-User for account creation rather than the login. Upon successfully creating an account, the user should be shown the consent screen. See the ["Initiating User Registration"](#initiating-user-registration) section below.
 
 Authorization Servers SHOULD ignore the `prompt` parameter or its value if they do not support this user experience.
 
