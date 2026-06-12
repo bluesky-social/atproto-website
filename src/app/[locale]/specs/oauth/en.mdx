@@ -259,7 +259,7 @@ Currently known values for the `prompt` parameter include:
 - `select_account`: The Authorization Server SHOULD prompt the End-User to select a user account. This enables an End-User who has multiple accounts at the Authorization Server to select amongst the multiple accounts that they might have current sessions for. If it cannot obtain an account selection choice made by the End-User, it MUST return an error, typically `account_selection_required`. 
 - `create`: The Authorization Server SHOULD prompt the End-User for account creation rather than the login. Upon successfully creating an account, the user should be shown the consent screen. See the ["Initiating User Registration"](#initiating-user-registration) section below.
 
-Authorization Servers SHOULD ignore the `prompt` parameter or its value if they do not support this user experience.
+AS MUST support the `prompt` parameter, and MUST advertise the supported values in `prompt_values_supported`. Clients MAY account for AS not up-to-date with this spec by detecting missing support for the `prompt` parameter (by detecting the missing `prompt_values_supported`.
 
 ### Initiating User Registration
 
