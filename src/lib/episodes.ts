@@ -89,6 +89,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'cobblers-kids',
+    episodeNumber: 8,
+    title: 'The Cobbler’s Kids',
+    description: 'Jim and Alex are back on the livestream at a new time to discuss personal websites, Coop 1.0, exciting announcements from Eurosky, a new OAuth scope builder, and more news from the Atmosphere.',
+    date: 'June 15, 2026',
+    pubDate: '2026-06-15T21:24:51.805Z',
+    duration: '00:40:20',
+    durationSeconds: 2419,
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-06-10-live/2026-06-10-live-jim-alex.mp3',
+    audioSizeBytes: 19470143,
+    audioMimeType: 'audio/mpeg',
+    hasShowNotes: false,
+    hasTranscript: false,
+  },
+  {
     slug: 'in-our-timeline',
     episodeNumber: 7,
     title: 'In Our Timeline',
@@ -107,7 +122,7 @@ export const episodes: Episode[] = [
   {
     slug: 'do-this-together-standard-site',
     episodeNumber: 6,
-    title: 'Why Don\'t We Just Do This Together?',
+    title: 'Why Don’t We Just Do This Together?',
     description: 'Jim sits down with members of the core team building and governing Standard.site, the shared Lexicon for publishing longform writing on atproto. Brooke from pckt.blog, Jared from Leaflet, and Miguel from Offprint cover the design tradeoffs in creating a new shared format, tales of data migrations, strategies for shared governance, and why you shouldn\'t buy a premium domain name.',
     date: 'May 28, 2026',
     pubDate: '2026-05-28T17:30:10.563Z',
