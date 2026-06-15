@@ -9,10 +9,32 @@ import { stripLocalePrefix } from '@/components/Navigation'
 // layout and the new segment's element is judged "already visible" — most
 // noticeable on /blog → /blog/<slug>, where users land on the post still
 // scrolled down. Force a reset on every pathname change.
+//
+// When the URL carries a hash, scroll to that anchor instead of the top. The
+// browser's native anchor scroll on a cold load otherwise races this effect's
+// reset (and loses to it), so deep links only landed on a warm/cached load.
+// We also re-assert the position once the page has fully loaded, since image-
+// heavy articles shift layout as their images decode after first paint.
 function ScrollToTop() {
   const pathname = usePathname()
   useEffect(() => {
-    window.scrollTo(0, 0)
+    const hash = window.location.hash
+    if (!hash) {
+      window.scrollTo(0, 0)
+      return
+    }
+
+    function scrollToHash() {
+      const target = document.getElementById(
+        decodeURIComponent(hash.slice(1)),
+      )
+      target?.scrollIntoView()
+    }
+
+    scrollToHash()
+    if (document.readyState === 'complete') return
+    window.addEventListener('load', scrollToHash, { once: true })
+    return () => window.removeEventListener('load', scrollToHash)
   }, [pathname])
   return null
 }
