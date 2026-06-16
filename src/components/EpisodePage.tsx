@@ -14,10 +14,16 @@ interface EpisodePageProps {
   default: MDXContent
   /**
    * Header data — same fields as Episode, minus the slug-level concerns.
-   * Comes from the MDX module's `header` export.
+   * Comes from the MDX module's `header` export. `hasShowNotes` /
+   * `hasTranscript` live only in the MDX header (the single source of truth
+   * for whether real notes/transcript content exists), not in the Episode
+   * catalog, so they're declared here directly.
    */
   header: EpisodeHeaderProps &
-    Pick<Episode, 'blueskyPostUrl' | 'hasShowNotes' | 'hasTranscript'>
+    Pick<Episode, 'blueskyPostUrl'> & {
+      hasShowNotes?: boolean
+      hasTranscript?: boolean
+    }
   /** Optional default export of a transcript MDX module. */
   Transcript?: MDXContent
 }

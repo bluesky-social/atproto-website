@@ -17,6 +17,8 @@ import type { Episode, ShowMeta } from './episodes'
 export interface FeedEpisode extends Episode {
   /** HTML-rendered show notes; placed in <content:encoded> CDATA. */
   contentHtml: string
+  /** Whether real show notes exist, derived from the episode MDX header. */
+  hasShowNotes: boolean
 }
 
 const ITUNES_NS = 'http://www.itunes.com/dtds/podcast-1.0.dtd'
@@ -61,6 +63,14 @@ function episodeUrl(show: ShowMeta, episode: Episode): string {
   return `${show.siteUrl}/${episode.slug}`
 }
 
+// A visible "go to the web page" link appended to the notes body. The <link>
+// element is the machine-readable permalink; this is the human-clickable one
+// that surfaces inside the rendered notes in every podcatcher.
+function linkBackHtml(pageUrl: string): string {
+  const display = pageUrl.replace(/^https?:\/\//, '')
+  return `<p><a href="${pageUrl}">Listen and read more at ${display}</a></p>`
+}
+
 // Resolve a possibly-relative URL against the show's origin. Absolute URLs
 // (e.g., R2-hosted cover art) pass through unchanged; relative paths get
 // prefixed. Important because cover URLs can be either form.
@@ -78,10 +88,14 @@ function renderItem(ctx: RenderCtx, episode: FeedEpisode): string {
   const { show, origin } = ctx
   const mime = episode.audioMimeType ?? 'audio/mpeg'
   const cover = absUrl(origin, episode.coverImage ?? show.coverImage)
+  const pageUrl = episodeUrl(show, episode)
+  const linkBack = linkBackHtml(pageUrl)
 
+  // <description> is the short episode summary (plain text). The full show
+  // notes — and the link-back — live in <content:encoded> below.
   return `    <item>
       <title>${xmlEscape(episode.title)}</title>
-      <link>${xmlEscape(episodeUrl(show, episode))}</link>
+      <link>${xmlEscape(pageUrl)}</link>
       <description>${xmlEscape(episode.description)}</description>
       <enclosure url="${xmlEscape(episode.audioUrl)}" length="${episode.audioSizeBytes}" type="${xmlEscape(mime)}"/>
       <guid isPermaLink="false">${xmlEscape(episodeGuid(episode))}</guid>
@@ -91,7 +105,7 @@ function renderItem(ctx: RenderCtx, episode: FeedEpisode): string {
       <itunes:episodeType>full</itunes:episodeType>
       <itunes:explicit>${episode.explicit ? 'true' : 'false'}</itunes:explicit>
       <itunes:image href="${xmlEscape(cover)}"/>
-      <content:encoded><![CDATA[${cdataSafe(episode.contentHtml)}]]></content:encoded>
+      <content:encoded><![CDATA[${cdataSafe(episode.contentHtml + linkBack)}]]></content:encoded>
     </item>`
 }
 

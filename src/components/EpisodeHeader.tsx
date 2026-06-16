@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import Link from 'next/link'
 import knownAuthors from '@/lib/authors.json'
-import { SHOW, type Episode } from '@/lib/episodes'
+import { resolveHosts, type Episode } from '@/lib/episodes'
 import { SubscribeLinks } from './SubscribeLinks'
 
 // Renders a name as a link to bsky.app when authors.json knows its DID,
@@ -60,13 +60,13 @@ export interface EpisodeHeaderProps
     | 'date'
     | 'pubDate'
     | 'guests'
-    | 'host'
+    | 'hosts'
     | 'audioUrl'
     | 'audioMimeType'
   > {}
 
 export function EpisodeHeader(props: EpisodeHeaderProps) {
-  const hosts = props.host ?? [SHOW.defaultHost]
+  const hosts = resolveHosts(props)
   const mimeType = props.audioMimeType ?? 'audio/mpeg'
 
   return (

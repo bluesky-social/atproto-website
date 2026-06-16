@@ -23,13 +23,11 @@ export interface Episode {
   duration: string              // "HH:MM:SS" — RSS spec format
   durationSeconds: number       // numeric, easier to format/sort
   guests?: string[]
-  host?: string[]               // defaults to [SHOW.defaultHost] when omitted
+  hosts?: string[]              // defaults to [SHOW.defaultHost] when omitted
   audioUrl: string              // absolute CDN URL to the MP3
   audioSizeBytes: number        // required by RSS <enclosure length="…">
   audioMimeType?: string        // defaults to "audio/mpeg"
   coverImage?: string           // square, ≥1400px; falls back to SHOW.coverImage
-  hasShowNotes?: boolean        // author flips to true when en.mdx body has real content
-  hasTranscript?: boolean       // author flips to true when transcript.mdx has real content
   explicit?: boolean            // RSS <itunes:explicit>; defaults false
   blueskyPostUrl?: string       // optional Bluesky discussion thread anchor
 }
@@ -46,6 +44,16 @@ export function formatDurationForDisplay(seconds: number): string {
   const s = seconds % 60
   const pad = (n: number) => n.toString().padStart(2, '0')
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`
+}
+
+/**
+ * The hosts to display for an episode: the episode's own `hosts` when set,
+ * otherwise the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Codifies
+ * the host fallback in one place so the page header and any other consumer
+ * agree.
+ */
+export function resolveHosts(episode: Pick<Episode, 'hosts'>): string[] {
+  return episode.hosts ?? [SHOW.defaultHost]
 }
 
 export interface SubscribeUrls {
@@ -100,8 +108,6 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/2026-06-10-live/2026-06-10-live-jim-alex.mp3',
     audioSizeBytes: 19470143,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
-    hasTranscript: false,
   },
   {
     slug: 'in-our-timeline',
@@ -110,14 +116,12 @@ export const episodes: Episode[] = [
     description: 'Paul and Daniel are on the livestream this week with a look at the new Standard.site integration, updates from permissioned data, and news from around the Atmosphere',
     date: 'May 29, 2026',
     pubDate: '2026-06-11T20:00:18.291Z',
-    host: ['Paul Frazee', 'Daniel Holmgren'],
+    hosts: ['Paul Frazee', 'Daniel Holmgren'],
     duration: '00:46:29',
     durationSeconds: 2789,
     audioUrl: 'https://media.atproto.com/off-protocol/2026-05-29-live/2026-05-29-live-paul-daniel.mp3',
     audioSizeBytes: 22320651,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
-    hasTranscript: false,
   },
   {
     slug: 'do-this-together-standard-site',
@@ -132,8 +136,6 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260528-conversation-standard-site/2026-05-28-conversation-standard-site.mp3',
     audioSizeBytes: 123247872,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
-    hasTranscript: false,
   },
   {
     slug: 'the-puppy-problem',
@@ -145,12 +147,10 @@ export const episodes: Episode[] = [
     pubDate: '2026-05-15T12:00:00Z',
     duration: '00:33:08',
     durationSeconds: 1988,
-    host: ['Jim Ray', 'Alex Garnett'],
+    hosts: ['Jim Ray', 'Alex Garnett'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260515-live/2026-05-15-off-protocol-live.mp3',
     audioSizeBytes: 63624960,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
-    hasTranscript: false,
   },
   {
     slug: 'why-a-new-protocol-the-history-and-future-of-at-protocol',
@@ -166,8 +166,6 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260524-conversation/2026-05-14-conversation-paul-danny.mp3',
     audioSizeBytes: 114122496,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: false,
-    hasTranscript: false,
   },
   {
     slug: 'blacksky-as-a-service-a-first-look-at-acorn',
@@ -179,13 +177,11 @@ export const episodes: Episode[] = [
     pubDate: '2026-04-24T12:00:00Z',
     duration: '00:55:55',
     durationSeconds: 3355,
-    host: ['Jim Ray', 'Alex Garnett'],
+    hosts: ['Jim Ray', 'Alex Garnett'],
     guests: ['Rishi Balakrishnan'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260424-live/2026-04-24-live-rishi-acorn.mp3',
     audioSizeBytes: 107389440,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: true,
-    hasTranscript: false,
   },
   {
     slug: 'slowly-then-quickly-what-atmosphereconf-made-visible',
@@ -201,8 +197,6 @@ export const episodes: Episode[] = [
     audioUrl: 'https://media.atproto.com/off-protocol/20260410-live/2026-04-10-live-boris-ted.mp3',
     audioSizeBytes: 127011840,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: true,
-    hasTranscript: false,
   },
   {
     slug: 'a-thousand-prs-in-two-weeks-building-npmx',
@@ -214,13 +208,11 @@ export const episodes: Episode[] = [
     pubDate: '2026-02-27T12:00:00Z',
     duration: '00:58:45',
     durationSeconds: 3525,
-    host: ['Jim Ray', 'Alex Garnett'],
+    hosts: ['Jim Ray', 'Alex Garnett'],
     guests: ['Daniel Roe', 'Matias Capeletto', 'Zeu'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,
     audioMimeType: 'audio/mpeg',
-    hasShowNotes: true,
-    hasTranscript: false,
   },
   // newest first; populate via `npm run podcast create`
 ]

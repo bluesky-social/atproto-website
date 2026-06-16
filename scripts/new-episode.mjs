@@ -259,6 +259,7 @@ export default async function EpisodeRoute({ params }: any) {
   description: '${description.replace(/'/g, "\\'")}',
   date: '${date}',
   pubDate: '${pubDate}',
+  hosts: ['Jim Ray'],
   duration: '${duration}',
   durationSeconds: ${durationSeconds},
 ${guestsField}  audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
@@ -290,11 +291,10 @@ ${blueskyField}}
     pubDate: '${pubDate}',
     duration: '${duration}',
     durationSeconds: ${durationSeconds},
+    hosts: ['Jim Ray'],
 ${guests.length ? `    guests: [${guests.map((g) => `'${g.replace(/'/g, "\\'")}'`).join(', ')}],\n` : ''}    audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
     audioSizeBytes: ${audioInfo.sizeBytes},
     audioMimeType: '${audioInfo.contentType.replace(/'/g, "\\'")}',
-    hasShowNotes: false,
-    hasTranscript: false,
 ${blueskyPostUrl ? `    blueskyPostUrl: '${blueskyPostUrl.replace(/'/g, "\\'")}',\n` : ''}  },`
 
   const updated = episodesFile.replace(
@@ -325,8 +325,8 @@ Files:
 
 Next:
   1. Edit en.mdx with your show notes, then flip hasShowNotes: true
-     (in both the MDX header and src/lib/episodes.ts)
-  2. Edit transcript.mdx, then flip hasTranscript: true (same two places)
+     in the MDX header (the single source of truth — the RSS feed reads it)
+  2. Edit transcript.mdx, then flip hasTranscript: true in the MDX header
   3. npm run dev — preview at http://localhost:3000/off-protocol/${slug}
 `)
 }

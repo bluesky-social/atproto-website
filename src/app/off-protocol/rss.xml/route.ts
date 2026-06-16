@@ -11,13 +11,14 @@ import { episodes, SHOW, type Episode } from '@/lib/episodes'
 import { buildPodcastFeed, type FeedEpisode } from '@/lib/podcast-feed'
 import {
   mdxBodyToHtml,
+  readShowNotesFlag,
   stripMdxFrontmatter,
 } from '@/lib/podcast-feed-content'
 
-async function loadEpisodeContentHtml(slug: string): Promise<string> {
-  // Show notes live alongside the episode pages under [locale]; we always
-  // read the English MDX for the (English-only) feed.
-  const mdxPath = path.join(
+// Show notes live alongside the episode pages under [locale]; we always read
+// the English MDX for the (English-only) feed.
+function episodeMdxPath(slug: string): string {
+  return path.join(
     process.cwd(),
     'src',
     'app',
@@ -26,13 +27,6 @@ async function loadEpisodeContentHtml(slug: string): Promise<string> {
     slug,
     'en.mdx',
   )
-  try {
-    const raw = await fs.readFile(mdxPath, 'utf-8')
-    const body = stripMdxFrontmatter(raw)
-    return await mdxBodyToHtml(body)
-  } catch {
-    return '<p></p>'
-  }
 }
 
 function xmlEscape(s: string): string {
@@ -44,13 +38,27 @@ function xmlEscape(s: string): string {
     .replace(/'/g, '&apos;')
 }
 
-async function resolveContentHtml(episode: Episode): Promise<string> {
-  // When the author hasn't published real show notes yet, fall back to the
-  // episode description so podcatchers still have meaningful copy.
-  if (!episode.hasShowNotes) {
-    return `<p>${xmlEscape(episode.description)}</p>`
+// The MDX header is the single source of truth for whether real show notes
+// exist; derive both the flag and the rendered notes from that one file so the
+// feed and the episode page can never disagree. <content:encoded> gets the
+// notes when present, otherwise the episode summary as a fallback.
+async function resolveFeedFields(
+  episode: Episode,
+): Promise<{ hasShowNotes: boolean; contentHtml: string }> {
+  const summaryHtml = `<p>${xmlEscape(episode.description)}</p>`
+  let raw: string
+  try {
+    raw = await fs.readFile(episodeMdxPath(episode.slug), 'utf-8')
+  } catch {
+    return { hasShowNotes: false, contentHtml: summaryHtml }
   }
-  return loadEpisodeContentHtml(episode.slug)
+  if (!readShowNotesFlag(raw)) {
+    return { hasShowNotes: false, contentHtml: summaryHtml }
+  }
+  return {
+    hasShowNotes: true,
+    contentHtml: await mdxBodyToHtml(stripMdxFrontmatter(raw)),
+  }
 }
 
 // Behind a reverse proxy (Render, Cloudflare Pages, Vercel, etc.), the
@@ -77,7 +85,7 @@ export async function GET(request: Request) {
   const feedEpisodes: FeedEpisode[] = await Promise.all(
     episodes.map(async (e) => ({
       ...e,
-      contentHtml: await resolveContentHtml(e),
+      ...(await resolveFeedFields(e)),
     })),
   )
 
