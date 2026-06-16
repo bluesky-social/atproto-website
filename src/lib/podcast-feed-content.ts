@@ -34,6 +34,23 @@ export async function mdxBodyToHtml(rawMdxBody: string): Promise<string> {
  * The blog/podcast convention places the header at the very top, so this
  * is sufficient. We do NOT try to be a general MDX parser.
  */
+/**
+ * Read `hasShowNotes` from an episode MDX file's `export const header` block.
+ * The MDX header is the single source of truth for whether real show notes
+ * have been written (the author flips it on alongside the notes); the RSS feed
+ * derives note presence from here rather than from a duplicated flag.
+ *
+ * Scoped to the header block so a mention like "hasShowNotes: true" in the
+ * notes prose can't flip it on.
+ */
+export function readShowNotesFlag(rawMdx: string): boolean {
+  const headerMatch = rawMdx.match(
+    /export\s+const\s+header\s*=\s*\{[\s\S]*?\n\}/,
+  )
+  const headerScope = headerMatch ? headerMatch[0] : ''
+  return /\bhasShowNotes:\s*true\b/.test(headerScope)
+}
+
 export function stripMdxFrontmatter(rawMdx: string): string {
   let out = rawMdx
 
