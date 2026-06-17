@@ -22,8 +22,7 @@ export interface Episode {
   pubDate: string               // ISO 8601, used for RSS <pubDate>
   duration: string              // "HH:MM:SS" — RSS spec format
   durationSeconds: number       // numeric, easier to format/sort
-  guests?: string[]
-  hosts?: string[]              // defaults to [SHOW.defaultHost] when omitted
+  guests?: string[]             // rendered on the episode listing page
   audioUrl: string              // absolute CDN URL to the MP3
   audioSizeBytes: number        // required by RSS <enclosure length="…">
   audioMimeType?: string        // defaults to "audio/mpeg"
@@ -47,12 +46,12 @@ export function formatDurationForDisplay(seconds: number): string {
 }
 
 /**
- * The hosts to display for an episode: the episode's own `hosts` when set,
- * otherwise the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Codifies
- * the host fallback in one place so the page header and any other consumer
- * agree.
+ * The hosts to display for an episode: the given `hosts` when set, otherwise
+ * the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Hosts live only in
+ * the MDX episode header (the byline is the only consumer), so this takes a
+ * plain shape rather than an Episode field.
  */
-export function resolveHosts(episode: Pick<Episode, 'hosts'>): string[] {
+export function resolveHosts(episode: { hosts?: string[] }): string[] {
   return episode.hosts ?? [SHOW.defaultHost]
 }
 
@@ -97,6 +96,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'roost-v1-juliet-shen',
+    episodeNumber: 9,
+    title: '“Policy Without Tools Is Just Poetry”',
+    description: 'Juliet Shen from ROOST joins the show to talk through the Coop 1.0 release, what open-source trust and safety unlocks for new builders, and where AI actually belongs in moderation',
+    date: 'June 16, 2026',
+    pubDate: '2026-06-16T21:19:48.973Z',
+    duration: '00:19:43',
+    durationSeconds: 1182,
+    guests: ['Juliet Shen'],
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-06-16-juliet-shen/2026-06-16-juliet-shen.mp3',
+    audioSizeBytes: 9572516,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: 'cobblers-kids',
     episodeNumber: 8,
     title: 'The Cobbler’s Kids',
@@ -116,7 +129,6 @@ export const episodes: Episode[] = [
     description: 'Paul and Daniel are on the livestream this week with a look at the new Standard.site integration, updates from permissioned data, and news from around the Atmosphere',
     date: 'May 29, 2026',
     pubDate: '2026-06-11T20:00:18.291Z',
-    hosts: ['Paul Frazee', 'Daniel Holmgren'],
     duration: '00:46:29',
     durationSeconds: 2789,
     audioUrl: 'https://media.atproto.com/off-protocol/2026-05-29-live/2026-05-29-live-paul-daniel.mp3',
@@ -147,7 +159,6 @@ export const episodes: Episode[] = [
     pubDate: '2026-05-15T12:00:00Z',
     duration: '00:33:08',
     durationSeconds: 1988,
-    hosts: ['Jim Ray', 'Alex Garnett'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260515-live/2026-05-15-off-protocol-live.mp3',
     audioSizeBytes: 63624960,
     audioMimeType: 'audio/mpeg',
@@ -177,7 +188,6 @@ export const episodes: Episode[] = [
     pubDate: '2026-04-24T12:00:00Z',
     duration: '00:55:55',
     durationSeconds: 3355,
-    hosts: ['Jim Ray', 'Alex Garnett'],
     guests: ['Rishi Balakrishnan'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260424-live/2026-04-24-live-rishi-acorn.mp3',
     audioSizeBytes: 107389440,
@@ -208,7 +218,6 @@ export const episodes: Episode[] = [
     pubDate: '2026-02-27T12:00:00Z',
     duration: '00:58:45',
     durationSeconds: 3525,
-    hosts: ['Jim Ray', 'Alex Garnett'],
     guests: ['Daniel Roe', 'Matias Capeletto', 'Zeu'],
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,

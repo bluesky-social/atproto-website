@@ -1,4 +1,5 @@
 import { type Metadata } from 'next'
+import { resolveSiteOrigin } from '@/lib/site-url'
 import { Providers } from '@/app/[locale]/providers'
 import { Layout } from '@/components/Layout'
 import Script from "next/script";
@@ -6,6 +7,13 @@ import Script from "next/script";
 import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
+  // Base for resolving relative metadata URLs — notably the per-route
+  // `opengraph-image` file convention, which needs this to emit an absolute
+  // og:image URL. Resolves to the canonical origin in production and to the
+  // preview's own URL on Render PR deploys (so preview OG images self-
+  // reference instead of pointing at production). Relative URLs below resolve
+  // against this.
+  metadataBase: new URL(resolveSiteOrigin()),
   icons: { icon: '/favicon.ico' },
   title: {
     template: '%s - AT Protocol',
@@ -19,23 +27,24 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    url: 'https://atproto.com/',
+    // Relative URLs resolve against metadataBase, so these follow the
+    // environment (canonical in prod, the preview URL on Render PR deploys).
+    url: '/',
     siteName: 'AT Protocol',
     type: 'website',
     images: [
       {
-        url: 'https://atproto.com/default-social-card.png',
-        secureUrl: 'https://atproto.com/default-social-card.png',
+        url: '/default-social-card.png',
         width: 1200,
         height: 630,
       },
     ],
   },
   twitter: {
+    // No explicit image: X falls back to og:image, so per-route
+    // opengraph-image files (and the openGraph default above) carry through
+    // to the Twitter card without duplicating image config here.
     card: 'summary_large_image',
-    images: {
-      url: 'https://atproto.com/default-social-card.png',
-    },
   },
 }
 
