@@ -6,6 +6,10 @@ import Script from "next/script";
 import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
+  // Base for resolving relative metadata URLs — notably the per-route
+  // `opengraph-image` file convention, which needs this to emit an absolute
+  // og:image URL rather than a relative/localhost one.
+  metadataBase: new URL('https://atproto.com'),
   icons: { icon: '/favicon.ico' },
   title: {
     template: '%s - AT Protocol',
@@ -32,10 +36,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
+    // No explicit image: X falls back to og:image, so per-route
+    // opengraph-image files (and the openGraph default above) carry through
+    // to the Twitter card without duplicating image config here.
     card: 'summary_large_image',
-    images: {
-      url: 'https://atproto.com/default-social-card.png',
-    },
   },
 }
 
