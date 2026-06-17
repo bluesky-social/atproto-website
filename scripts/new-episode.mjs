@@ -291,6 +291,7 @@ ${blueskyField}}
     pubDate: '${pubDate}',
     duration: '${duration}',
     durationSeconds: ${durationSeconds},
+    hosts: ['Jim Ray'],
 ${guests.length ? `    guests: [${guests.map((g) => `'${g.replace(/'/g, "\\'")}'`).join(', ')}],\n` : ''}    audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
     audioSizeBytes: ${audioInfo.sizeBytes},
     audioMimeType: '${audioInfo.contentType.replace(/'/g, "\\'")}',
