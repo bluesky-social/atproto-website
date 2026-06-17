@@ -82,7 +82,7 @@ export const SHOW: ShowMeta = {
   description: 'Conversations about AT Protocol and the open social web with the people working to build a better internet. Brought to you by the Bluesky DevRel team.',
   author: 'Bluesky DevRel',
   defaultHost: 'Jim Ray',
-  ownerEmail: 'hello+atproto@blueskyweb.xyz',
+  ownerEmail: 'atmosphere@blueskyweb.xyz',
   language: 'en-US',
   category: 'Technology',
   coverImage: 'https://media.atproto.com/off-protocol/off-protocol-cover.png',
