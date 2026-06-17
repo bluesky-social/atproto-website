@@ -56,7 +56,6 @@ export interface EpisodeHeaderProps
     Episode,
     | 'episodeNumber'
     | 'title'
-    | 'description'
     | 'date'
     | 'pubDate'
     | 'guests'
@@ -73,30 +72,28 @@ export function EpisodeHeader(props: EpisodeHeaderProps) {
     <header className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline gap-3 text-sm text-zinc-500 dark:text-zinc-500">
-          <span className="font-mono">
-            <Link
-              href="/off-protocol"
-              className="underline hover:text-zinc-700 dark:hover:text-zinc-200"
-            >
-              Off Protocol
-            </Link>{' '}
-            &gt; Episode {props.episodeNumber}
-          </span>
+          <Link
+            href="/off-protocol"
+            className="font-mono underline hover:text-zinc-700 dark:hover:text-zinc-200"
+          >
+            Off Protocol
+          </Link>
+          <span aria-hidden="true">&bull;</span>
+          <span className="font-mono">Episode {props.episodeNumber}</span>
+          <span aria-hidden="true">&bull;</span>
           <time dateTime={props.pubDate}>{props.date}</time>
         </div>
         <h1 className="font-mono text-3xl font-medium md:text-4xl">
           {props.title}
         </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">
-          {props.description}
-        </p>
-        {props.guests && props.guests.length > 0 && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            With <NameList names={props.guests} />
-          </p>
-        )}
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Hosted by <NameList names={hosts} />
+          {props.guests && props.guests.length > 0 && (
+            <>
+              {' '}
+              with <NameList names={props.guests} />
+            </>
+          )}
         </p>
       </div>
 

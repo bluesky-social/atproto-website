@@ -20,7 +20,7 @@ interface EpisodePageProps {
    * catalog, so they're declared here directly.
    */
   header: EpisodeHeaderProps &
-    Pick<Episode, 'blueskyPostUrl'> & {
+    Pick<Episode, 'description' | 'blueskyPostUrl'> & {
       hasShowNotes?: boolean
       hasTranscript?: boolean
     }
@@ -33,16 +33,24 @@ export function EpisodePage({ default: Notes, header, Transcript }: EpisodePageP
     <article className="mx-auto max-w-4xl px-4 py-12">
       <EpisodeHeader {...header} />
 
-      {header.hasShowNotes && (
-        <section className="mt-12">
-          <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
-            Show notes
-          </h2>
-          <div className="prose mt-4 max-w-none [&>:first-child]:!mt-0 dark:prose-invert">
+      {/*
+        Show notes section is always present. When the author has written
+        real notes we render the MDX body; otherwise the episode description
+        stands in for them (the description no longer appears as a subhead in
+        the header, and it still shows in the episode listing).
+      */}
+      <section className="mt-12">
+        <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
+          Show notes
+        </h2>
+        <div className="prose mt-4 max-w-none [&>:first-child]:!mt-0 dark:prose-invert">
+          {header.hasShowNotes ? (
             <Notes components={{ wrapper: MdxPassthrough }} />
-          </div>
-        </section>
-      )}
+          ) : (
+            <p>{header.description}</p>
+          )}
+        </div>
+      </section>
 
       {Transcript && header.hasTranscript && (
         <EpisodeTranscript Transcript={Transcript} />
