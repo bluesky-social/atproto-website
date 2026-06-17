@@ -50,7 +50,9 @@ function NameList({ names }: { names: string[] }) {
 
 // Picks the exact subset of Episode this header actually reads. Stating
 // what's used (rather than Omit<>ing what isn't) keeps RSS-only fields
-// like audioSizeBytes and explicit out of the visual surface.
+// like audioSizeBytes and explicit out of the visual surface. `hosts` is not
+// an Episode field — it lives only in the MDX episode header — so it's
+// declared directly.
 export interface EpisodeHeaderProps
   extends Pick<
     Episode,
@@ -59,10 +61,11 @@ export interface EpisodeHeaderProps
     | 'date'
     | 'pubDate'
     | 'guests'
-    | 'hosts'
     | 'audioUrl'
     | 'audioMimeType'
-  > {}
+  > {
+  hosts?: string[]
+}
 
 export function EpisodeHeader(props: EpisodeHeaderProps) {
   const hosts = resolveHosts(props)
