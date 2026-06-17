@@ -96,6 +96,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'roost-v1-juliet-shen',
+    episodeNumber: 9,
+    title: '“Policy Without Tools Is Just Poetry”',
+    description: 'Juliet Shen from ROOST joins the show to talk through the Coop 1.0 release, what open-source trust and safety unlocks for new builders, and where AI actually belongs in moderation',
+    date: 'June 16, 2026',
+    pubDate: '2026-06-16T21:19:48.973Z',
+    duration: '00:19:43',
+    durationSeconds: 1182,
+    guests: ['Juliet Shen'],
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-06-16-juliet-shen/2026-06-16-juliet-shen.mp3',
+    audioSizeBytes: 9572516,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: 'cobblers-kids',
     episodeNumber: 8,
     title: 'The Cobbler’s Kids',
