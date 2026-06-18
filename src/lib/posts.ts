@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'going-off-protocol',
+    title: 'Going Off Protocol',
+    description: 'We\'re expanding our office hours livestream. Look for it wherever you get your podcasts.',
+    date: 'June 18, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'rpg-actor',
     title: 'What if your RPG character could log in to any game?',
     description: 'Carrying your adventures through many worlds with the AT Protocol',
