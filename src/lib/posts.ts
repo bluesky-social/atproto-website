@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'a-pds-web-admin-interface-at-last',
+    title: 'A PDS Web Admin Interface?? At Last!',
+    description: 'Announcing the addition of an account management interface to the reference PDS',
+    date: 'June 24, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'report-based-moderation',
     title: 'Report-Based Moderation in Ozone',
     description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
