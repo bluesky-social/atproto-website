@@ -2,6 +2,7 @@ import {Container} from "@/components/Container"
 import devices from "./pds-devices.png"
 import apps from "./pds-apps.png"
 import password from "./pds-password.png"
+import email from "./pds-email.png"
 
 export const header = {
   title: 'Account Management',
@@ -33,6 +34,12 @@ Once you have an account, you can manage it via the host PDS. Our [reference PDS
 
 <Container>
   <Image src={password} alt="" className="w-full max-w-md mx-auto" /> 
+</Container>
+
+- Change the email address associated with your account:
+
+<Container>
+  <Image src={email} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
 You can also perform some account actions — including on PDSes that do not implement this interface — using `goat`, our CLI tool.

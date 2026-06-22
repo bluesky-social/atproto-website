@@ -34,8 +34,8 @@ The new interface lives at the `/account` path on the PDS itself — for an acco
   <Image src={password} alt="Account management interface showing a change-password form." className="w-full max-w-md mx-auto" />
 </Container>
 
-For a fuller walkthrough of this functionality, see the new [Account Management](/guides/account-management) guide. This builds on the [web sign-up and account management flows](/blog/network-account-management) we shipped last year, fleshing out the self-service surface that lives directly on the PDS rather than inside any one client app.
+And more!
 
-As with the rest of the reference implementation, the specific design and feature set here aren't mandated by the protocol — they're a sensible default. PDS operators are free to customize, extend, or replace this interface, and we expect more application-agnostic actions (email updates, account deactivation, migration, additional 2FA methods) to land here over time.
+For a fuller walkthrough of this functionality, see the new [Account Management](/guides/account-management) guide.  As of today, the new PDS admin interface is available in both the newest release of [the reference PDS](https://github.com/bluesky-social/pds) (v0.4.5006), and on Bluesky's hosted [PDS entryway](https://docs.bsky.app/docs/advanced-guides/entryway). If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release.
 
-As of today, the new PDS admin interface is available in both the newest release of [the reference PDS](https://github.com/bluesky-social/pds) (v0.4.5006), and on Bluesky's hosted [PDS entryway](https://docs.bsky.app/docs/advanced-guides/entryway). If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release.
+This is only one of a few reference PDS updates we have planned for this summer — stay tuned for some observability dashboards and other monitoring tools for PDS deployment, coming soon!
