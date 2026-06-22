@@ -59,6 +59,28 @@ Wildcards (*) are allowed in scope string syntax, and grants access to all recor
 
 Permission sets are themselves Lexicon schemas and are namespaced like other Lexicons. Permission sets are prefixed with `include:` in the scope string. Unlike other Lexicons, they can be updated in [most contexts](#rolling-out-changes).
 
+## Permission sets
+
+Recall that the point of OAuth is to let applications act on a user's behalf without requiring the user to hand over their username and password. For atproto apps, that means an OAuth request will ask for permission to write records to the user's PDS, call API endpoints on their behalf, upload media — everything outlined in the permission types above.
+
+Even relatively simple apps can end up requesting several permissions, and the OAuth authorization dialog listing them all individually can be confusing to the people using your app. To solve this, permission sets let you logically group permissions together and present them with a human-readable title and description.
+
+Bluesky has published a number of permission sets for the various ways people might want to build Bluesky-specific applications. For example, if you're building a full-featured microblogging client, you probably want to request the [`app.bsky.authFullApp` permission set](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.authFullApp), which grants a comprehensive set of permissions covering posts, settings, and subscriptions.
+
+If, however, you only want to build an app that posts to someone's timeline, you can request the much more narrowly scoped [`app.bsky.authCreatePosts` permission set](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.authCreatePosts).
+
+When requesting OAuth permissions, keep these rules of thumb in mind:
+
+1. If you are building a client app for an existing service, use a permission set published by that service if one is available. For example, a streaming video client for Stream.place would request the [`place.stream.authFull` permission set](https://lexicon.garden/lexicon/did:plc:gqtagsooi75obldmytuow57q/place.stream.authFull), which grants full access to Stream.place on the user's behalf.
+
+2. If you are building your own Lexicons, author a permission set that bundles the related record types and API endpoints your app exposes. See [Permission Sets](/guides/permission-sets) for the design guide.
+
+3. Request individual scopes directly when your app only needs a few permissions, or when you need `blob`, `account`, or `identity` scopes — those can never be included in a permission set and must always be requested on their own.
+
+These approaches compose: apps often request one or more permission sets plus a handful of individual scopes in the same OAuth flow.
+
+And if you need help building your own permission sets, or requesting Bluesky permissions, we've built a [scope builder](/guides/scope-builder) page to help.
+
 ## Clients
 
 OAuth client software is identified by a globally unique `client_id`. Distinct variants of client software may have distinct `client_id` values; for example the browser app and Android (mobile OS) variants of the same software might have different `client_id` values. The `client_id` must be a fully-qualified web URL from which the client-metadata JSON document can be fetched. For example, `https://app.example.com/oauth-client-metadata.json`. Some more about the `client_id`:

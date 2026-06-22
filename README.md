@@ -40,10 +40,18 @@ Run `npm run blog` with no arguments to see this list.
 
 #### Configure credentials (one-time)
 
+> **Use the site's canonical publishing account, not your personal Bluesky.**
+> `npm run blog ssite` creates standard.site records on whichever PDS the
+> `.env` credentials authenticate against. For atproto.com that needs to be
+> the atproto.com Bluesky account — records published from a personal
+> account won't verify against the site, and have to be manually deleted
+> from that PDS to clean up the duplicate. Coordinate with the team if you
+> don't already have the shared credentials.
+
 ```bash
 cp .env.example .env
 ```
-Fill in your `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
+Fill in `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` (create an app password in Bluesky settings).
 
 ### Creating a new blog post
 
@@ -102,6 +110,16 @@ lex install site.standard.document
 lex build
 ```
 
+> **Troubleshooting:** if `npm run build` fails with a type error like
+> `'…/@atproto/lex-schema/dist/external' has no exported member named 'TypedObject'`,
+> the locally-generated `src/lexicons` directory is stale relative to the
+> current `@atproto/lex` API. Regenerate with the `--clear` flag, which
+> removes the existing output before rebuilding:
+> ```bash
+> npx ts-lex build --clear
+> ```
+> `src/lexicons` is gitignored, so this is a local-only fix.
+
 #### Create the publication record
 
 ```bash
@@ -121,7 +139,8 @@ npm run blog ssite welcome-to-the-blog
 ```
 
 This will:
-- Create a `standard.site` document record on your PDS
+- Create a `standard.site` document record on the site's PDS (see the
+  credentials note above — this is the publishing account, not yours)
 - Save the AT-URI back to the post's MDX file for verification
 - Update the record if it already exists
 
@@ -133,7 +152,7 @@ TODO:
 The site implements [site.standard verification](https://standard.site/):
 
 - **Publication:** `/.well-known/site.standard.publication` returns the publication AT-URI
-- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag
+- **Documents:** Each published post includes a `<link rel="site.standard.document">` tag pointing at the document record, plus a `<link rel="site.standard.publication">` tag pointing at the shared publication record
 
 For production, set `ATPROTO_PUBLICATION_URI` in your deployment environment.
 
@@ -282,6 +301,151 @@ Requires `ATPROTO_HANDLE` and `ATPROTO_APP_PASSWORD` in `.env`. The authenticate
 - more templating
 - how should quote posts appear differently from replies?
 - extract into standalone project(?)
+
+---
+
+### Scope Builder widgets
+
+Two interactive web components live at `src/components/ScopeBuilder/` and are embedded as the only content of two guide pages:
+
+- **`<scope-builder>`** at [`/guides/scope-builder`](https://atproto.com/guides/scope-builder) — picks scopes from a curated catalog (apps + their permission sets, plus standalone individual scopes) and assembles a complete OAuth scope string ready to paste into `oauth-client-metadata.json`.
+- **`<permission-author>`** at [`/guides/permission-set-builder`](https://atproto.com/guides/permission-set-builder) — composes individual permissions into a permission-set Lexicon JSON document for lexicon authors who want to publish their own.
+
+Both are vanilla JS custom elements; thin React loaders (`ScopeBuilderLoader.tsx`, `PermissionAuthorLoader.tsx`) handle client-side registration. See [`src/components/ScopeBuilder/README.md`](src/components/ScopeBuilder/README.md) for architecture details and how to add a new app to the curated catalog.
+
+#### `@atproto/oauth-scopes` dependency
+
+Scope-string serialization uses the official [`@atproto/oauth-scopes`](https://www.npmjs.com/package/@atproto/oauth-scopes) package as the canonical implementation. Our wrappers in `scopeUtils.ts` adapt the library's strict types to the looser shapes our forms produce, but the actual scope-string formatting flows through the library at runtime.
+
+To keep it current:
+
+```bash
+npm update @atproto/oauth-scopes
+npm test
+npm run dev   # spot-check both guide pages
+```
+
+The unit tests cover the format expectations end-to-end. If the library's output format ever changes, the test suite is the first place you'll see it. After upgrades, also visit `/guides/scope-builder` and `/guides/permission-set-builder` to verify the generated strings still look right; the assembled scope string is sorted alphabetically by the library, so any visual regression there is the first signal.
+
+The curated permission-set catalog in `scopeData.ts` is hand-maintained — adding a new app or a new permission set means appending a few lines there, not running a generator. The library does not author Lexicons, only parse them.
+
+#### Adding a permission set to the catalog
+
+When a third-party app publishes a permission-set Lexicon and we want it to appear in the Scope Builder's pill row, edit `src/components/ScopeBuilder/scopeData.ts`. Both the app and the set live in this one file.
+
+You'll need:
+
+- The publishing repo's **DID** (e.g., `did:plc:...`). Find it on the app's profile or via [Lexicon Garden](https://lexicon.garden).
+- The permission set's **NSID** (e.g., `app.acme.authFull`).
+- The set's **title** and **detail** (copy from the Lexicon record's `defs.main.title` and `defs.main.detail`, easiest to grab from `https://lexicon.garden/lexicon/<did>/<nsid>/llms.txt`).
+- The list of **permissions** the set bundles (also in the same Lexicon record, under `defs.main.permissions`).
+- The set's **audience DID** if it contains rpc permissions with `inheritAud: true`. Most third-party sets are repo-only and don't need this.
+- Claude can usually one shot adding a new permission set if you pass the llms.txt from Lexicon Garden
+
+The recipe:
+
+1. **Add a DID constant** near the top of `scopeData.ts`, alongside the existing `BSKY_DID`, `BEACONBITS_DID`, etc:
+
+   ```ts
+   const ACME_DID = 'did:plc:...'
+   ```
+
+2. **Append to the `apps[]` array**, keeping it alphabetical:
+
+   ```ts
+   { id: 'acme', name: 'Acme', did: ACME_DID },
+   ```
+
+3. **Append one entry per permission set** to `permissionSets[]`, with `appId` matching what you used in step 2:
+
+   ```ts
+   {
+     id: 'app.acme.authFull',                   // same as the NSID
+     appId: 'acme',
+     label: 'Full Acme Access',                 // from the Lexicon's title
+     description: 'One-line summary for the checkbox.',
+     kind: 'permission-set',
+     resourceType: 'include',
+     scopeString: 'include:app.acme.authFull',  // add `?aud=...%23...` only if defaultAud is set
+     // defaultAud: 'did:web:api.acme.app#api', // ONLY for sets with rpc inheritAud permissions
+     expandedPermissions: {
+       repo: [
+         { collection: 'app.acme.thing', actions: [...ALL_WRITE_ACTIONS] },
+       ],
+       rpc: ['app.acme.getThings'],             // omit if the set has no rpc permissions
+     },
+     specLink: lexiconGardenLink(ACME_DID, 'app.acme.authFull'),
+     explanation: 'Longer prose shown when the user expands the checkbox.',
+   }
+   ```
+
+   The `defaultAud` field is in **unencoded** form (raw `#`); the library handles `%23` encoding when emitting scope strings. Only include it if the underlying Lexicon contains `rpc` permissions with `inheritAud: true` — for repo-only sets, omit it and the include-scope string drops the `?aud=` suffix.
+
+4. **Run the test suite** (`npm test`) to confirm the data shape is valid. Then `npm run dev` and visit `/guides/scope-builder` to verify the new pill appears alphabetically and the set's bundled permissions render under "Bundled permissions (N)."
+
+For adding individual (non-set) scopes, scopes with subset relationships, warning badges, or the deeper rendering details, see [`src/components/ScopeBuilder/README.md`](src/components/ScopeBuilder/README.md#adding-to-the-catalog).
+---
+
+### Off Protocol (Podcast)
+
+The site hosts the *Off Protocol* podcast at `/off-protocol`. Episodes follow the same MDX-per-directory pattern as the blog, with podcast-specific additions: native `<audio>` playback, optional transcripts, an RSS feed for podcatchers, and subscribe links.
+
+#### Add an episode
+
+```sh
+npm run podcast create
+```
+
+Prompts for title, slug, episode number, description, audio URL, guests, and an optional Bluesky discussion link. The script HEADs the audio URL (failing if unreachable) and probes its duration via `ffprobe` if installed (falling back to a manual prompt). It scaffolds:
+
+- `src/app/[locale]/off-protocol/<slug>/page.tsx`
+- `src/app/[locale]/off-protocol/<slug>/en.mdx` (show notes)
+- `src/app/[locale]/off-protocol/<slug>/transcript.mdx` (optional transcript stub)
+
+…and prepends a new entry to `src/lib/episodes.ts`.
+
+To remove an episode:
+
+```sh
+npm run podcast remove
+```
+
+This deletes local files only. Once a feed `guid` has been distributed to subscribers, you cannot retroactively unsubscribe them — be deliberate.
+
+#### Why two date fields and two duration fields
+
+`src/lib/episodes.ts` stores both `date` (`"May 7, 2026"`) and `pubDate` (ISO 8601), and both `duration` (`"HH:MM:SS"`) and `durationSeconds` (a number). This is deliberate:
+
+- Display formats and machine formats serve different consumers.
+- Deriving one from the other at render time means re-parsing on every page load and risks subtle locale bugs.
+- The RSS spec wants specific formats (`pubDate` in RFC 822, `<itunes:duration>` in `HH:MM:SS`).
+
+The `npm run podcast create` script populates both fields in sync. They cannot drift unless edited by hand.
+
+#### Pre-launch checklist
+
+Things that must happen **before** submitting the feed to Apple Podcasts or Spotify:
+
+- [ ] At least one episode added via `npm run podcast create`
+
+#### RSS feed validation
+
+Before announcing the show or submitting to directories:
+
+1. Run `npm run dev` and visit `http://localhost:3000/off-protocol/rss.xml`
+2. Validate against [validator.podcastindex.org](https://validator.podcastindex.org/) and [castfeedvalidator.com](https://castfeedvalidator.com/) — both must pass
+3. Subscribe to the local feed in Pocket Casts (it accepts arbitrary URLs) and confirm episodes appear with art, duration, and show notes
+4. Confirm audio plays from each episode page on desktop and mobile
+
+#### Post-launch: subscribe links
+
+Once Apple/Spotify/Overcast/Pocket Casts have ingested the feed (typically 24–72h after submission), populate the corresponding URLs in `SHOW.subscribe` in `src/lib/episodes.ts`. The `SubscribeLinks` component renders a button only for non-null entries — at launch only RSS and the generic `podcast://` link are populated.
+
+#### GUID stability
+
+Episode RSS GUIDs are `off-protocol-ep-<episodeNumber>` and **must never change**. Slugs may be renamed; GUIDs may not. Renaming a GUID makes every podcatcher re-download the episode as new.
+
+The feed builder validates inputs at render time — invalid `pubDate` or `audioSizeBytes` will throw rather than emit a malformed feed.
 
 ---
 

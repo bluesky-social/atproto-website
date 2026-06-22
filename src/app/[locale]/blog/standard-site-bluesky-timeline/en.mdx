@@ -1,0 +1,34 @@
+import standardSiteScreens from "./standard-site-screens.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mmwflzsgoe2w',
+  title: 'Now in your timeline: Standard.site',
+  description: 'Articles from across the open web published with this community-built format now receive richer treatment in the Bluesky app',
+  date: 'May 27, 2026',
+  author: 'Jim Ray',
+  blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mmwoyyeobs2x'
+}
+
+At the end of last year, three excellent AT Protocol-based publishing apps—[Leaflet](https://leaflet.pub/), [pckt.blog](https://pckt.blog/), and [Offprint](https://offprint.app/)—got together and decided to collaborate on creating their own [Lexicon](https://atproto.com/guides/lexicon) for publishing longer records like blog posts, articles, and newsletters on the protocol. They called it [Standard.site](https://standard.site/) and it has since emerged as one of the most successful community generated Lexicons on the Atmosphere.
+
+Starting today, Standard.site links will have an enhanced render in the Bluesky app, with extra, actionable metadata about the post, including the publication and author. Include a link to a post on Offprint, Leaflet, pckt.blog, or any site that creates a Standard.site record (including [this very blog post](https://pdsls.dev/at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document) you are reading right now\!) and you’ll see an enhanced treatment in the Bluesky apps across web and mobile.
+
+<Image src={standardSiteScreens} alt="Screenshot of the Bluesky app with the new enhanced Standard.site preview, showcasing posts from Leaflet, pckt.blog, and Offprint" />
+
+For people using the Bluesky app, this means that when they come across a link published with a Standard.site record, they’ll get an enhanced preview. For developers and publishers building on atproto, we hope this provides a bit more encouragement to use this exciting community-built format on your own sites. We worked with the core Standard.site team to make sure we struck the right balance between enhancing the Bluesky post and supporting their projects. Anyone with a website can [read up on the Bluesky implementation](https://github.com/bluesky-social/atproto/discussions/4978) and get your site ready.
+
+## What the Standard.site Lexicons do
+
+A core component of every atproto app is what we call the Lexicon, a way of defining the shape of the data. Lexicons are essential for building custom apps on atproto and because they are interoperable by default, any other app can read the public records defined by another apps’ Lexicons. If you give an app permission, it can even write records using another app’s Lexicons.
+
+Standard.site defines a few Lexicons for publishing websites—such as a [publication](https://standard.site/docs/lexicons/publication/) (like a website or blog), a [document](https://standard.site/docs/lexicons/document/) (like an article or post), and one for [subscriptions](https://standard.site/docs/lexicons/subscription/) (for tracking which publications to follow). Taken together, these describe longform writing in an [atmospheric way](https://am.jimray.net/3mcxq7tyx522r), similar to how [the Bluesky lexicons describe a social network](https://lexicon.garden/identity/did:plc:4v4y5r3lwsbtmsxhile2ljac).
+
+Because the Standard.site Lexicons are open source, anyone is free to use them to publish to the web. WordPress, the CMS that powers over 40% of the internet, [just released a plugin that publishes a Standard.site record for every post](https://activitypub.blog/2026/05/20/atmosphere-1-0-0-liftoff/). [EmDash](https://emdashcms.com/), a ground-up re-imagination of a CMS, [baked Standard.site into their publishing toolchain](https://github.com/emdash-cms/emdash/blob/102535f308942e018b59c69dbbecbe0839f90872/packages/plugins/atproto/src/standard-site.ts#L4) from the beginning. [Sequoia is a command line tool for publishing posts from static-site generators](https://sequoia.pub/) like 11ty, Hugo, Astro, and Jekyll. If you’re publishing a website today, you could be writing Standard.site records
+
+With thousands of sites now publishing longform content to the Atmosphere, other applications have emerged that index these records to [search](https://pub-search.waow.tech), [explore](https://potatonet.app/explore) and [aggregate](https://docs.surf/) across the network. [Other clients like Heron](https://bsky.app/profile/heron.tunji.dev/post/3mlocbei6nkbw) and the [upcoming release from Anisota](https://bsky.app/profile/dame.is/post/3mlebrj2j2t22) have already integrated Standard.site into their apps.
+
+## A universe of apps and Lexicons
+
+The team building the Bluesky app is hard at work on deeper protocol integrations that showcase the full range of everything that’s being built with atproto, and Standard.site is a first step in that direction.
+
+When the Standard.site project launched early this year, no one at Bluesky knew it was coming—we were as surprised and delighted as anyone to see it\! That’s one of the many wonderful things about working on an open, permissionless protocol, *anyone* can just do things. As the ecosystem continues to grow and evolve, as more Lexicons are built and shared, the Bluesky app will continue to be just one of many surfaces for exploring this universe of apps.

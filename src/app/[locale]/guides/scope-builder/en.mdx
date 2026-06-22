@@ -1,0 +1,28 @@
+import { ScopeBuilderLoader } from '@/components/ScopeBuilder'
+
+export const header = {
+  title: 'Scope Builder',
+  description: 'Compose an OAuth scope string for your app',
+}
+
+OAuth scopes are how an app requests permission to create, update, and delete records from a repo, call XRPC methods, or perform certain account management functions. This is critical to [how OAuth works](/guides/auth#what-is-o-auth) and how an app establishes trust with the people using it.
+
+An app can request individual scopes, which tend to correspond to specific [Lexicons](/guides/lexicon), XRPC methods, or management actions.
+
+However, requesting many individual scopes tends to be confusing, and requesing blanket permission to a PDS is overly permissive, so apps can bundle permissions together into [Permission Sets](/guides/permission-sets). Since their introduction in late 2025, permission sets have been the recommended way for apps to manage OAuth permissions. Note that some scopes, such as uploading files or managing an account's email, can not be bundled into a set and must be requested individually.
+
+This tool lets you interactively select the scopes your app requires and generates the appropriate [scope string](specs/permission#scope-string-syntax). We've included permission sets for Bluesky as well as many popular apps in the atproto ecosystem; if you'd like to have your apps' permission set included, [let us know](https://github.com/bluesky-social/atproto-website/issues/676). You can even provide a link to a specific permission set (either an `at://` URL or a link from [lexicon.garden](https://lexicon.garden)) if you are building your own.
+
+A note about security: an OAuth scope is a request from an app, not an explicit grant. The generated scope string is meant for developers to paste into their own OAuth request and permission must still be given by the person using the app. The generated scopes have been tested to work with atproto OAuth, developers are still responsible for [requesting only the level of access their app requires](/guides/permission-requests#requesting-permissions).
+
+<ScopeBuilderLoader />
+
+## Further Reading and Resources
+
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [Auth](/guides/auth)
+- [OAuth Patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)

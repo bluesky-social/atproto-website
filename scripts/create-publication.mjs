@@ -16,10 +16,24 @@ import { PasswordSession } from '@atproto/lex-password-session'
 import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
 
-const PUBLICATION_URL = 'https://atproto.com'
+const PUBLICATION_URL = 'https://atproto.com/blog'
 const PUBLICATION_NAME = 'AT Protocol'
 const PUBLICATION_DESCRIPTION =
   'Documentation, guides, and updates for the AT Protocol - the decentralized foundation for social networking.'
+
+const rgb = (r, g, b) => ({
+  $type: 'site.standard.theme.color#rgb',
+  r,
+  g,
+  b,
+})
+
+const BASIC_THEME = {
+  background: rgb(255, 255, 255),
+  foreground: rgb(24, 24, 27),
+  accent: rgb(234, 179, 8),
+  accentForeground: rgb(24, 24, 27),
+}
 
 export async function main() {
   const { ATPROTO_HANDLE, ATPROTO_APP_PASSWORD, ATPROTO_PDS_URL } = process.env
@@ -78,6 +92,7 @@ export async function main() {
     preferences: {
       showInDiscover: true,
     },
+    basicTheme: BASIC_THEME,
   })
 
   console.log('\n✅ Publication created successfully!\n')

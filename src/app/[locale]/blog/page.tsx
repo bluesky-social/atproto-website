@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { posts } from '@/lib/posts'
+import { AtprotoPublicationLink } from '@/components/AtprotoPublicationLink'
 
 /**
  * Blog Post Listing
@@ -42,6 +43,7 @@ export const metadata = {
 export default async function BlogIndexPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
+      <AtprotoPublicationLink />
       <header className="mb-12">
         <h1 className="font-mono text-4xl font-bold uppercase tracking-tight md:text-5xl">
           Blog

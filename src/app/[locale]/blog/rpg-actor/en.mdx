@@ -1,0 +1,71 @@
+import banner from "./rpg-actor-banner.png"
+import dashboard from "./dashboard.png"
+import characters from "./characters.png"
+import items from "./items.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mnzovv24jy2v',
+  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3mnzp5ead422z',
+  title: 'What if your RPG character could log in to any game?',
+  description: 'Carrying your adventures through many worlds with the AT Protocol',
+  date: 'June 11, 2026',
+  author: 'rpg.actor',
+}
+
+## Characters you handle
+
+There is a feeling of attachment that most fans of roleplaying games are familiar with when it comes to characters. More than just a collection of stats, these fictional personas become part of our identities, and reshape how we express ourselves. They represent hard-earned progress, tough choices, and relationships forged in perilous adventure. 
+
+[**rpg.actor**](https://rpg.actor/) is a universal roleplaying compendium that uses your Atmosphere account to store that character (complete with stats, inventory, and a sprite), then use it in different games, apps, and experiences across the open web. Now, any game developer can use the actor.rpg.sprite to represent you consistently within playable environments, and interact with your actor.rpg.stats to figure out if that skeleton's arrow just killed you or not.
+
+<Image src={banner} alt="rpg.actor banner" />
+
+Because every character stays within your own repository, there is no way to get locked out or held hostage by subscriptions ever again. More importantly, because your data is open to the network, your legend can grow in unpredictable ways as new (digital) dungeon masters begin incorporating you in their own worlds, awarding items and verifying your accomplishments. All of this from a single login that everyone can validate, but only you can control.
+
+## Games to keep
+
+What this enables is a new method of building and storing player data across multiple games, and to have that data accessible and freely interoperable by any experience that developers wish to create. This means that game makers are free to recognize the inventory and accomplishments of players cross-game, and offer a truly unlimited playspace.
+
+Already there are [dozens of items](https://rpg.actor/catalogue) provided from IRL events and various AT Protocol oriented unlocks, as well as familiar webgames like Hopper at [protoimsg.app](http://protoimsg.app), and a mini D\&D adventure by [games.laurenshof.online](http://games.laurenshof.online)—all of which provide items that are independently generated, but impact other titles like [Clun's Cannon](https://rpg.actor/cannon), and all playable with your [rpg.actor](https://rpg.actor/catalogue) character.
+
+<Image src={characters} alt="rpg.actor characters" />
+
+This open paradigm is something developers have sought for a long time, as a means of better collaboration and for the continuity it brings players. That sense of familiarity among those who treasure their personal characters is uplifting to any game that enables their use because giving respect towards our personas instantly integrates us through play, and genuinely ingratiates us by providing new means of expressing that identity. There is a substantial difference between swinging “a sword” and “*that* sword” as far as roleplayers are concerned, and now players can carry their own records to make that quality real.
+
+<Image src={items} alt="rpg.actor items" />
+
+## Playing well together
+
+While there are dozens of apps that let you store tabletop characters and paper folios work well for local games, they are often mono-system and rarely provide access to anyone outside your immediate playgroup. When it comes to digital characters, this isolation grows even stronger as accessing character data cross-game often requires literal dev-to-dev pacts, which leave players beholden to platforms and those they partner with.
+
+What makes this character layer for the Atmosphere so fascinating is the permissionless aspect innate to the protocol. Without a contract or keys, any developer can now enable your play to become more personal. They can honour your history, leverage your inventory, and respect your creative persona with nobody's permission but your own. It liberates our playful identities.
+
+As a developer, there are always surprising delights in finding your work recognized by others. Once more, the permissionless nature enables this to happen more often. These systems can never force your work to conform to undesirable inputs, but they can empower fellow creators to adopt yours as canon. Other developers can choose to expand the usefulness of things you make, and add value for players engaging with your creations. Those hours you spend crafting meaningful experiences and treasured keepsakes can now earn legends of their own, mattering in new contexts as they continue travelling throughout The Atmosphere.
+
+<Image src={dashboard} alt="rpg.actor dashboard" />
+
+Nobody is ever obligated to adopt the records you produce, yet anyone can. The uplift and surprise this freedom brings is why the permissionless experiment remains so satisfying.
+
+## Validating adventures
+
+Naturally, with any open system there is the need to have some level of provenance. With self-managed records, what's to stop a player from claiming they're a Level 99 Ultra-Wizard?
+
+Well, nothing really… but, that's the point.
+
+Your records are yours to control, and that ownership means players are free to express their character and identity however they please. Yet, like any good roleplaying community, it's always up to the network to agree with their claims or not. This is where the provenance of our .master records for stats and our .give records for items come into play.
+
+No matter what they're making, developers must always choose which records to operate with, and so the source of truth is always theirs to accept. While one game may be fine with an honor system basis, others might demand proof from other providers. This is simple enough on AT Protocol thanks to paired records. Whenever a game or dungeon master provides some items or stats, they can produce matching proclamations in their own repo that can be checked against with little fuss. They're simple, plain to read, and support a player's records while also providing a full basis to adopt from.
+
+In the end, everything is just JSON and pixels, so there will never be a means to stop someone from copy-pasting Excalibur into their records but if there was ever a need to verify who really held The One Ring, then we might want to check the backing records from [middleearth.quest](https://middleearth.quest).
+
+## Joining the party
+
+So, want to do something cool with all this? Want to make something… FUN?
+
+We've set up [rpg.actor/jamming](https://rpg.actor/jamming) as a home for our expanding **Builder Jams** and there's one starting later this month. It's a 2-week challenge to produce a new game or experience that lets players use their characters and inventories however you see fit. *Adventure module? Strategy game? Dating simulator?\!* It really doesn't matter, so long as you take advantage of their existing records and try to use their items in some clever way.
+
+There are plugins for game engines already available at [rpg.actor/plugins](https://rpg.actor/plugins) including gamedev staples like **Godot**, and super simple ones like **RPG Maker**, as well as various web app tooling.
+
+Winners receive [rpg.actor/creator](http://rpg.actor/creator) accounts which offer additional API access, easy tools for item creation and distribution, as well as the means to produce new character accounts on our PDS which can be handed off to players with a simple claim link. We'll also feature all the top entries on the site, and during our first livestream on [stream.place](https://stream.place) later this July\!
+
+If you've ever imagined an adventure worth sharing, or simply wanted to try making games that [hundreds of players](https://rpg.actor/compendium) were waiting to play, we encourage you to join our [Builder Jam](https://rpg.actor/jamming) and create something fun in The Atmosphere.

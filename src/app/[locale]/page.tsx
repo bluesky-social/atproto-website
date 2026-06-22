@@ -9,7 +9,7 @@ import { Usecases } from '@/components/home/Usecases'
 import { homeT } from '@/lib/home-translations'
 
 export default async function HomePage({ params }: any) {
-  const locale = params.locale as string
+  const locale = (await params).locale as string
   const t = (key: string) => homeT(locale, key)
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 px-2 md:gap-12 md:px-8 lg:max-w-7xl">

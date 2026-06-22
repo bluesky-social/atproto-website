@@ -142,9 +142,10 @@ function CodePanel({
   label?: string
   code?: string
 }) {
-  let child = Children.only(children)
+  let child =
+    Array.isArray(children) && children.length === 1 ? children[0] : children
 
-  if (isValidElement(child)) {
+  if (isValidElement<{ tag?: string; label?: string; code?: string }>(child)) {
     tag = child.props.tag ?? tag
     label = child.props.label ?? label
     code = child.props.code ?? code
