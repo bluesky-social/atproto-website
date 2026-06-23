@@ -8,8 +8,8 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
-    slug: 'a-pds-web-admin-interface-at-last',
-    title: 'A PDS Web Admin Interface?? At Last!',
+    slug: 'pds-account-management',
+    title: 'The Reference PDS Gets an Account Management Page',
     description: 'Announcing the addition of an account management interface to the reference PDS',
     date: 'June 24, 2026',
     author: 'AT Protocol Team',

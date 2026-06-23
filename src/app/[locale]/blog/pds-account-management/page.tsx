@@ -1,7 +1,7 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'A PDS Web Admin Interface?? At Last!',
+  title: 'The Reference PDS Gets an Account Management Page',
   description: 'Announcing the addition of an account management interface to the reference PDS',
 }
 
