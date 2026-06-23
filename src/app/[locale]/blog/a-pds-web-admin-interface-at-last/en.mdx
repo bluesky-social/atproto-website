@@ -10,8 +10,6 @@ export const header = {
   author: 'AT Protocol Team',
 }
 
-# A PDS Web Admin Interface?? At Last!
-
 For a while now, we've found ourselves saying "well, technically the user interface to the PDS is [goat](https://github.com/bluesky-social/goat)". This is still the most complete solution for "PDS user interface" — if you haven't used `goat` lately you really should check out how powerful and straightforward it can be! — but we also know that `goat` is, well, a command-line tool. In particular, it's quite usable for PDS *administrators*, but if you're hosting on someone else's PDS (something that atproto makes [super flexible](/guides/account-migration)), and you want a reasonable contract for "user interface", you probably want something more graphical.
 
 The new interface lives at the `/account` path on the PDS itself — for an account hosted at `pds.example.com`, that's `https://pds.example.com/account`. Users are already signed in if they've recently completed an OAuth flow for an app; otherwise they sign in with their full account password (not an app password). From there, the interface lets you:
