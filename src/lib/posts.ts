@@ -10,7 +10,7 @@ export const posts: BlogPost[] = [
   {
     slug: 'pds-account-management',
     title: 'The Reference PDS Gets an Account Management Page',
-    description: 'Announcing the addition of an account management interface to the reference PDS',
+    description: 'Now anyone can easily manage their atproto account on the web.',
     date: 'June 24, 2026',
     author: 'AT Protocol Team',
   },
