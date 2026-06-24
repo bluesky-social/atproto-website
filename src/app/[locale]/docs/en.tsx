@@ -96,6 +96,12 @@ export default function DocsHome() {
             </Link>{' '}
             - Formats over apps.
           </li>
+          <li>
+            <Link href="https://overreacted.io/there-are-no-instances-in-atproto/">
+              <strong>There Are No Instances in atproto</strong>
+            </Link>{' '}
+            - On big world decentralization.
+          </li>
         </ul>
         <p>
           Or, learn more <Link href="/guides/understanding-atproto">in our intro doc</Link>.
