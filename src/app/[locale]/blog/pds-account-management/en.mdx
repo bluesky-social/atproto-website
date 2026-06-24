@@ -1,0 +1,44 @@
+import { Container } from "@/components/Container"
+import devices from "./pds-devices.png"
+import apps from "./pds-apps.png"
+import password from "./pds-password.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mp2bntgfiv2a',
+  title: 'The Reference PDS Gets an Account Management Page',
+  description: 'Now anyone can easily manage their atproto account on the web',
+  date: 'June 24, 2026',
+  author: 'AT Protocol Team',
+}
+
+Starting today, there's a new account management page built into the [reference PDS](https://github.com/bluesky-social/pds) maintained by Bluesky. This will make it easier for everyone to manage their atproto account on the web.
+
+Importantly, this means that Atmospheric app builders no longer need to direct their users to the Bluesky app for account management. You can now deactivate or delete your account, change your password, and manage your connected apps and devices directly on the PDS itself — a big move toward ecosystem independence and user control.
+
+For a while now, we've found ourselves saying "well, technically the user interface to the PDS is [goat](https://github.com/bluesky-social/goat)". This is still the most complete solution for "PDS user interface" — if you haven't used `goat` lately you really should check out how powerful and straightforward it can be! — but we also know that `goat` is, well, a command-line tool. In particular, it's quite usable for PDS *administrators*, but if you're hosting on someone else's PDS (something that atproto makes [super flexible](/guides/account-migration)), and you want a reasonable contract for "user interface", you probably want something more graphical.
+
+The new interface lives at the `/account` path on the PDS itself — for an account hosted at `pds.example.com`, that's `https://pds.example.com/account`. Users are already signed in if they've recently completed an OAuth flow for an app; otherwise they sign in with their full account password (not an app password). From there, the interface lets you:
+
+- **See the devices that are signed in to your account, and sign any of them out.** This covers the browsers and sessions authenticated against the host itself.
+
+<Container>
+  <Image src={devices} alt="Account management interface showing a list of signed-in devices, each with a Sign Out button." className="w-full max-w-md mx-auto" />
+</Container>
+
+- **Review the apps that have access to your account, and revoke any of them.** These are the OAuth clients you've authorized, listed with a Revoke access button for each.
+
+<Container>
+  <Image src={apps} alt="Account management interface showing a list of connected apps, each with a Revoke access button." className="w-full max-w-md mx-auto" />
+</Container>
+
+- **Change your password.**
+
+<Container>
+  <Image src={password} alt="Account management interface showing a change-password form." className="w-full max-w-md mx-auto" />
+</Container>
+
+And more!
+
+For a fuller walkthrough of this functionality, see the new [Account Management](/guides/account-management) guide.  As of today, the new PDS admin interface is available in both the newest release of [the reference PDS](https://github.com/bluesky-social/pds) (v0.4.5006), and on Bluesky's hosted [PDS entryway](https://docs.bsky.app/docs/advanced-guides/entryway). If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release.
+
+This is only one of a few reference PDS updates we have planned for this summer — stay tuned for some observability dashboards and other monitoring tools for PDS deployment, coming soon!

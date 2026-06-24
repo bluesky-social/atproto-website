@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'pds-account-management',
+    title: 'The Reference PDS Gets an Account Management Page',
+    description: 'Now anyone can easily manage their atproto account on the web.',
+    date: 'June 24, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'going-off-protocol',
     title: 'Going Off Protocol',
     description: 'We\'re expanding our office hours livestream. Look for it wherever you get your podcasts.',
