@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:scripts": "node --import tsx --test 'scripts/**/*.test.mjs'",
     "blog": "tsx --env-file=.env scripts/blog.mjs",
     "podcast": "tsx --env-file=.env scripts/podcast.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",

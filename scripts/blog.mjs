@@ -55,6 +55,6 @@ if (!command || !commands[command]) {
 }
 
 commands[command].run().catch((err) => {
-  console.error(err)
+  console.error(`\n❌ ${err.message}`)
   process.exit(1)
 })
