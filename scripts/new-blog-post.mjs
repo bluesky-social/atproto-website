@@ -5,6 +5,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
+import { parseCreateArgs } from './lib/parseCreateArgs.mjs'
+import { createPublishFn } from './lib/createPublishFn.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -69,7 +71,12 @@ function createBranch(slug) {
 }
 
 export async function main(...args) {
-  const noSsite = args.includes('--no-ssite')
+  const { noSsite, unknownFlags } = parseCreateArgs(args)
+  if (unknownFlags.length) {
+    console.warn(
+      `⚠️  Ignoring unrecognized option(s): ${unknownFlags.join(', ')}`,
+    )
+  }
 
   console.log('\n📝 Create a new blog post\n')
 
@@ -193,13 +200,6 @@ Next steps:
 `)
 
   const { maybePublish } = await import('./lib/maybePublish.mjs')
-  const publishFn = async (postSlug) => {
-    // Dynamic import so a module-load failure (e.g. missing generated
-    // src/lexicons) is caught by maybePublish's warn-and-continue rather
-    // than crashing the just-completed scaffolding.
-    const mod = await import('./publish-post.mjs')
-    return mod.main(postSlug)
-  }
-  await maybePublish(slug, { noSsite, publishFn })
+  await maybePublish(slug, { noSsite, publishFn: createPublishFn() })
 }
 
