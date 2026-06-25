@@ -68,6 +68,24 @@ This will prompt you for:
 
 The script creates the necessary files and updates the blog index automatically.
 
+After scaffolding, `create` automatically publishes the post's `standard.site`
+record (the same step as `npm run blog ssite <slug>`) and writes the resulting
+`standardSiteUri` back into the post's MDX header. This requires
+`ATPROTO_HANDLE` / `ATPROTO_APP_PASSWORD` in `.env` and network access.
+
+- If the publish fails (missing credentials, offline, wrong publishing
+  account), creation still succeeds — you'll get a warning and the exact
+  `npm run blog ssite <slug>` command to publish later.
+- To skip publishing entirely (offline drafting), pass `--no-ssite`:
+
+  ```bash
+  npm run blog create -- --no-ssite
+  ```
+
+Because the record's canonical URL only resolves after the post is merged and
+deployed, the publish is metadata-only and idempotent — re-running
+`npm run blog ssite <slug>` after edits updates the same record.
+
 #### Author bylines
 
 Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.

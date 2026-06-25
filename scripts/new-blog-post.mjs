@@ -68,7 +68,9 @@ function createBranch(slug) {
   }
 }
 
-export async function main() {
+export async function main(...args) {
+  const noSsite = args.includes('--no-ssite')
+
   console.log('\n📝 Create a new blog post\n')
 
   const shouldCreateBranch = await checkGitStatus()
@@ -189,5 +191,15 @@ Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
   2. Run 'npm run dev' to preview at http://localhost:3000/blog/${slug}
 `)
+
+  const { maybePublish } = await import('./lib/maybePublish.mjs')
+  const publishFn = async (postSlug) => {
+    // Dynamic import so a module-load failure (e.g. missing generated
+    // src/lexicons) is caught by maybePublish's warn-and-continue rather
+    // than crashing the just-completed scaffolding.
+    const mod = await import('./publish-post.mjs')
+    return mod.main(postSlug)
+  }
+  await maybePublish(slug, { noSsite, publishFn })
 }
 
