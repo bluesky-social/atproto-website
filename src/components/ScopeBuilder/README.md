@@ -126,7 +126,7 @@ When a checkbox toggle triggers a full `_render()`, the position of the clicked 
 ┌─ Sticky header (top: 14, alphabetical-sorted scope string + Copy)
 │
 ├─ Individual Scopes
-│    blob:*/*, account:email, account:email?action=manage,
+│    blob:*/*, account:email,
 │    identity:handle, identity:*, account:repo?action=manage
 │
 └─ Permission Sets
