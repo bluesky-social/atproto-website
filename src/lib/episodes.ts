@@ -96,6 +96,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: 'ama-dholms-irons-still-hot',
+    episodeNumber: 10,
+    title: 'The Iron’s Still Hot',
+    description: 'Daniel Holmgren joins the livestream for an AMA on permissioned data.',
+    date: 'June 25, 2026',
+    pubDate: '2026-06-26T01:16:18.447Z',
+    duration: '00:46:35',
+    durationSeconds: 2794,
+    hosts: ['Jim Ray', 'Alex Garnett'],
+    guests: ['Daniel Holmgren'],
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-06-24-ama-dholms/2020-06-24-dholms-ama.mp3',
+    audioSizeBytes: 22464670,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: 'roost-v1-juliet-shen',
     episodeNumber: 9,
     title: '“Policy Without Tools Is Just Poetry”',
