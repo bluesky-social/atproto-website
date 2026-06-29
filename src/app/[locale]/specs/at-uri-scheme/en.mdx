@@ -47,7 +47,7 @@ A major semantic difference between AT URIs and common URL formats like `https:/
 
 ### Generic URI Compliance
 
-AT URIs meet the generic syntax for Universal Resource Identifiers, as defined in IETF [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986). They utilize some generic URI features outlined in that document, though not all. As a summary of generic URI parts and features:
+AT URIs *align* with the generic Universal Resource Identifiers (URI) syntax described in [IETF RFC-3986](https://www.rfc-editor.org/rfc/rfc3986), but are *not* fully compliant. As a summary of generic URI parts and features:
 
 - Authority part, preceded by double slash: supported
 - Empty authority part: not supported
@@ -59,7 +59,7 @@ AT URIs meet the generic syntax for Universal Resource Identifiers, as defined i
 - Relative references: not yet supported
 - Normalization rules: supported in general syntax, not currently used
 
-AT URIs are not compliant with the WHATWG URL Standard ([https://url.spec.whatwg.org/](https://url.spec.whatwg.org/)). Un-encoded colon characters in DIDs in the authority part of the URI are disallowed by that standard. Note that it is possible to un-ambigiously differentiate a DID in the authority section from a `host:port` pair. DIDs always have at least two colons, always begin with `did:`, and the DID method can not contain digits.
+AT URIs are not fully compliant with either [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) or the WHATWG URL Standard ([https://url.spec.whatwg.org/](https://url.spec.whatwg.org/)). Un-encoded colon characters in DIDs in the authority part of the URI are disallowed by those standard. Note that it is possible to un-ambigiously differentiate a DID in the authority section from a `host:port` pair. DIDs always have at least two colons, and always begin with `did:`.
 
 ### Full AT URI Syntax
 
