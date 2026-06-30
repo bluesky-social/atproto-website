@@ -111,7 +111,27 @@ describe('read/update/list/delete', () => {
 
   it('lists posts by scanning for en.mdx', async () => {
     const list = await listPosts(paths)
-    expect(list).toEqual([{ slug: 'hello', title: 'Hello' }])
+    expect(list).toEqual([{ slug: 'hello', title: 'Hello', date: 'June 1, 2026' }])
+  })
+
+  it('lists posts newest-first (reverse-chronological)', async () => {
+    await createPost(paths, {
+      slug: 'older',
+      title: 'Older',
+      description: 'D',
+      date: 'January 1, 2026',
+      author: 'Jim Ray',
+    })
+    await createPost(paths, {
+      slug: 'newer',
+      title: 'Newer',
+      description: 'D',
+      date: 'December 1, 2026',
+      author: 'Jim Ray',
+    })
+    const slugs = (await listPosts(paths)).map((p) => p.slug)
+    // 'hello' (June 1) is created by the surrounding beforeEach
+    expect(slugs).toEqual(['newer', 'hello', 'older'])
   })
 
   it('reads owned fields and body', async () => {

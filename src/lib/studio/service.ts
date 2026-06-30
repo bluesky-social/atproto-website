@@ -48,21 +48,31 @@ function entryFor(slug: string, owned: OwnedFields): PostEntry {
 
 export async function listPosts(
   paths: StudioPaths,
-): Promise<{ slug: string; title: string }[]> {
+): Promise<{ slug: string; title: string; date: string }[]> {
   const dirents = await fs.readdir(paths.blogDir, { withFileTypes: true })
-  const out: { slug: string; title: string }[] = []
+  const out: { slug: string; title: string; date: string }[] = []
   for (const d of dirents) {
     if (!d.isDirectory()) continue
     const mdxPath = path.join(paths.blogDir, d.name, 'en.mdx')
     if (!existsSync(mdxPath)) continue
     try {
       const owned = getOwnedFields(parseMdxFile(await fs.readFile(mdxPath, 'utf-8')))
-      out.push({ slug: d.name, title: owned.title || d.name })
+      out.push({ slug: d.name, title: owned.title || d.name, date: owned.date })
     } catch {
-      out.push({ slug: d.name, title: d.name })
+      out.push({ slug: d.name, title: d.name, date: '' })
     }
   }
-  return out.sort((a, b) => a.slug.localeCompare(b.slug))
+  // Reverse-chronological (newest first); fall back to slug when a date is
+  // missing or unparseable so ordering stays deterministic.
+  return out.sort((a, b) => {
+    const ta = Date.parse(a.date)
+    const tb = Date.parse(b.date)
+    const aOk = !Number.isNaN(ta)
+    const bOk = !Number.isNaN(tb)
+    if (aOk && bOk && ta !== tb) return tb - ta
+    if (aOk !== bOk) return aOk ? -1 : 1
+    return a.slug.localeCompare(b.slug)
+  })
 }
 
 export async function readPost(

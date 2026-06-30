@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-type PostListItem = { slug: string; title: string }
+type PostListItem = { slug: string; title: string; date: string }
 type Owned = { title: string; description: string; date: string; author: string }
 
 const EMPTY: Owned = { title: '', description: '', date: '', author: '' }
@@ -120,25 +120,16 @@ export function BlogEditor() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="flex w-72 shrink-0 flex-col border-r border-stone-200/70 px-5 py-6">
-        <div className="flex items-baseline gap-2">
-          <span className="font-display text-2xl font-medium tracking-tight text-stone-900">
-            Studio
-          </span>
-          <span className="font-display text-2xl font-normal italic text-stone-400">
-            blog
-          </span>
-        </div>
-
+      {/* Post list (left, newest first) */}
+      <aside className="flex w-72 shrink-0 flex-col border-r border-neutral-200 px-5 py-6">
         <button
           onClick={startNew}
-          className="mt-6 rounded-md bg-stone-900 px-3 py-2 text-sm font-medium text-[#faf8f3] transition hover:bg-stone-700"
+          className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-900 transition hover:border-neutral-400 hover:bg-neutral-50"
         >
           + New post
         </button>
 
-        <p className="mt-8 mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-stone-400">
+        <p className="mt-8 mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
           Posts
         </p>
         <ul className="-mx-2 flex flex-col gap-0.5 overflow-y-auto">
@@ -149,20 +140,25 @@ export function BlogEditor() {
                 <button
                   onClick={() => loadPost(p.slug)}
                   className={
-                    'w-full truncate rounded-md px-2 py-1.5 text-left text-sm transition ' +
+                    'block w-full rounded-md px-2 py-1.5 text-left transition ' +
                     (active
-                      ? 'bg-stone-900/[0.06] font-medium text-stone-900'
-                      : 'text-stone-600 hover:bg-stone-900/[0.04] hover:text-stone-900')
+                      ? 'bg-neutral-900/[0.06] text-neutral-900'
+                      : 'text-neutral-600 hover:bg-neutral-900/[0.04] hover:text-neutral-900')
                   }
                   title={p.title}
                 >
-                  {p.title}
+                  <span className="block truncate text-sm">{p.title}</span>
+                  {p.date && (
+                    <span className="mt-0.5 block font-mono text-[0.7rem] text-neutral-400">
+                      {p.date}
+                    </span>
+                  )}
                 </button>
               </li>
             )
           })}
           {posts.length === 0 && (
-            <li className="px-2 py-1.5 text-sm italic text-stone-400">
+            <li className="px-2 py-1.5 text-sm italic text-neutral-400">
               No posts yet
             </li>
           )}
@@ -172,9 +168,11 @@ export function BlogEditor() {
       {/* Main */}
       <main className="flex-1 overflow-y-auto">
         {/* Action bar */}
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-stone-200/70 bg-[#faf8f3]/85 px-8 py-3 backdrop-blur">
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/85 px-8 py-3 backdrop-blur">
           <div className="flex items-baseline gap-3 text-sm">
-            <span className="text-stone-500">
+            <span className="font-semibold tracking-tight">Studio</span>
+            <span className="text-neutral-300">/</span>
+            <span className="text-neutral-500">
               {mode === 'new' ? 'New post' : 'Editing'}
             </span>
             {mode === 'edit' && (
@@ -182,7 +180,7 @@ export function BlogEditor() {
                 href={`/blog/${slug}`}
                 target="_blank"
                 rel="noreferrer"
-                className="font-mono text-xs text-[#9a3412] underline decoration-[#9a3412]/30 underline-offset-4 hover:decoration-[#9a3412]"
+                className="font-mono text-xs text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition hover:text-neutral-900 hover:decoration-neutral-500"
               >
                 /blog/{slug} ↗
               </a>
@@ -191,9 +189,7 @@ export function BlogEditor() {
           <div className="flex items-center gap-4">
             {status && (
               <span
-                className={
-                  'text-sm ' + (isError ? 'text-red-700' : 'text-stone-500')
-                }
+                className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')}
                 aria-live="polite"
               >
                 {status}
@@ -202,14 +198,14 @@ export function BlogEditor() {
             {mode === 'edit' && (
               <button
                 onClick={remove}
-                className="text-sm text-stone-400 transition hover:text-red-700"
+                className="text-sm text-neutral-400 transition hover:text-red-600"
               >
                 Delete
               </button>
             )}
             <button
               onClick={save}
-              className="rounded-md bg-stone-900 px-4 py-1.5 text-sm font-medium text-[#faf8f3] transition hover:bg-stone-700"
+              className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
             >
               Save
             </button>
@@ -222,29 +218,29 @@ export function BlogEditor() {
             value={owned.title}
             onChange={set('title')}
             placeholder="Untitled post"
-            className="font-display w-full bg-transparent text-4xl font-medium leading-tight tracking-tight text-stone-900 outline-none"
+            className="w-full bg-transparent text-4xl font-semibold leading-tight tracking-tight text-neutral-900 outline-none placeholder:text-neutral-300"
           />
           <input
             value={owned.description}
             onChange={set('description')}
             placeholder="A one- or two-sentence description…"
-            className="mt-3 w-full bg-transparent text-lg text-stone-600 outline-none"
+            className="mt-3 w-full bg-transparent text-lg text-neutral-600 outline-none placeholder:text-neutral-300"
           />
 
           {/* Meta */}
-          <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-stone-200/70 pt-6">
+          <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-neutral-200 pt-6">
             <Field label="Date">
               <input
                 value={owned.date}
                 onChange={set('date')}
-                className="w-full rounded-md border border-stone-300/70 bg-white/60 px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-neutral-500"
               />
             </Field>
             <Field label="Author">
               <input
                 value={owned.author}
                 onChange={set('author')}
-                className="w-full rounded-md border border-stone-300/70 bg-white/60 px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-neutral-500"
               />
             </Field>
 
@@ -255,7 +251,7 @@ export function BlogEditor() {
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
                     placeholder={slugify(owned.title) || 'my-post'}
-                    className="w-full rounded-md border border-stone-300/70 bg-white/60 px-3 py-1.5 font-mono text-sm outline-none focus:border-stone-400"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
                   />
                 </Field>
                 <Field label="Author DID" hint="only if new author">
@@ -263,13 +259,13 @@ export function BlogEditor() {
                     value={authorDid}
                     onChange={(e) => setAuthorDid(e.target.value)}
                     placeholder="did:plc:…"
-                    className="w-full rounded-md border border-stone-300/70 bg-white/60 px-3 py-1.5 font-mono text-sm outline-none focus:border-stone-400"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
                   />
                 </Field>
               </>
             ) : (
               <Field label="Slug" hint="read-only — delete & recreate to rename">
-                <div className="rounded-md border border-stone-200/70 bg-stone-100/60 px-3 py-1.5 font-mono text-sm text-stone-500">
+                <div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm text-neutral-500">
                   {slug}
                 </div>
               </Field>
@@ -278,7 +274,7 @@ export function BlogEditor() {
 
           {/* Body */}
           <div className="mt-8">
-            <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-stone-400">
+            <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
               Body — MDX
             </p>
             <textarea
@@ -286,7 +282,7 @@ export function BlogEditor() {
               onChange={(e) => setBody(e.target.value)}
               spellCheck={false}
               placeholder={'# Title\n\nWrite the MDX body here…'}
-              className="min-h-[26rem] w-full resize-y rounded-lg border border-stone-300/70 bg-white/70 p-4 font-mono text-sm leading-7 text-stone-800 outline-none focus:border-stone-400"
+              className="min-h-[26rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
             />
           </div>
         </div>
@@ -307,10 +303,10 @@ function Field({
   return (
     <label className="block">
       <span className="mb-1.5 flex items-baseline gap-2">
-        <span className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-stone-400">
+        <span className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
           {label}
         </span>
-        {hint && <span className="text-xs italic text-stone-400">{hint}</span>}
+        {hint && <span className="text-xs italic text-neutral-400">{hint}</span>}
       </span>
       {children}
     </label>
