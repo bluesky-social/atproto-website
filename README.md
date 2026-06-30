@@ -94,6 +94,42 @@ Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the
 
 When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
 
+### Dev Studio — blog authoring UI (dev only)
+
+A browser UI for creating, editing, and deleting blog posts that writes the
+same files as the CLI (`page.tsx`, `en.mdx` with the `export const header`
+front matter, and the `src/lib/posts.ts` entry). It exists only in development.
+
+```bash
+npm run dev
+# then open http://localhost:3000/studio/blog
+```
+
+- **Dev only.** The page and its API routes return 404 when
+  `NODE_ENV === 'production'` (and the site deploys to the Cloudflare edge,
+  where filesystem writes can't run anyway). It is never reachable in prod.
+- **Files are the source of truth.** Every load re-reads the file from disk,
+  and a save only rewrites the fields the form owns
+  (`title`/`description`/`date`/`author`) plus the body. Imports, custom JSX in
+  the body, and other header fields (`standardSiteUri`, `blueskyPostUrl`, …) are
+  preserved byte-for-byte. **Hand-editing the `.mdx` directly is fully
+  supported** — the UI is for the easy path, the raw file is for everything
+  else.
+- **Create:** pick *New*, fill title/description/date/author (slug auto-derives
+  from the title; an Author DID field appears for authors not yet in
+  `authors.json`), write the body as raw MDX, Save.
+- **Edit:** pick a post from the list (the list scans the blog directory, so
+  hand-created posts show up too). Slug is read-only — to "rename", delete and
+  recreate.
+- **Delete:** removes the post directory and its `posts.ts` entry, behind a
+  confirmation. Recoverable from git if it was committed.
+- The editor does not render a preview; use the **Open `/blog/<slug>` ↗** link
+  to see the real page.
+- The UI does no git operations — branch/stage/commit in your normal flow.
+
+Standard.site publishing and OG-image generation are planned as follow-on
+additions to this page.
+
 ### Removing a blog post
 
 ```bash
