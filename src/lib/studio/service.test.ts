@@ -153,4 +153,11 @@ describe('read/update/list/delete', () => {
     expect(fs.existsSync(path.join(paths.blogDir, 'hello'))).toBe(false)
     expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain("slug: 'hello'")
   })
+
+  it('deletePost is idempotent — tolerates missing dir and absent entry', async () => {
+    const res = await deletePost(paths, 'nonexistent')
+    expect(res.dirRemoved).toBe(false)
+    expect(res.entryRemoved).toBe(false)
+    // returns flags, does not throw
+  })
 })
