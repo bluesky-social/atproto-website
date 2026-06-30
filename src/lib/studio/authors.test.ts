@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { resolveAuthorDid, withAuthor } from './authors'
+import { resolveAuthorDid, withAuthor, type AuthorMap } from './authors'
 
-const MAP = { 'Jim Ray': 'did:plc:jim' }
+const MAP: AuthorMap = { 'Jim Ray': 'did:plc:jim' }
 
 describe('resolveAuthorDid', () => {
   it('returns the DID for a known author', () => {
