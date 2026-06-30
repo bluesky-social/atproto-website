@@ -15,6 +15,14 @@ export const OWNED_KEYS = ['title', 'description', 'date', 'author'] as const
 
 const HEADER_RE = /export\s+const\s+header\s*=\s*\{/
 
+// A quote closes a string only when preceded by an even number of consecutive
+// backslashes; an odd count means the quote itself is escaped.
+function isEscapedAt(s: string, i: number): boolean {
+  let n = 0
+  for (let j = i - 1; j >= 0 && s[j] === '\\'; j--) n++
+  return n % 2 === 1
+}
+
 export function quoteSingle(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
 }
@@ -50,9 +58,8 @@ function findHeaderBraces(content: string): { open: number; close: number } {
   let inString: string | null = null
   for (let i = open; i < content.length; i++) {
     const ch = content[i]
-    const prev = content[i - 1]
     if (inString) {
-      if (ch === inString && prev !== '\\') inString = null
+      if (ch === inString && !isEscapedAt(content, i)) inString = null
       continue
     }
     if (ch === "'" || ch === '"' || ch === '`') {
@@ -78,9 +85,8 @@ function splitEntries(inner: string): HeaderEntry[] {
   const pieces: string[] = []
   for (let i = 0; i < inner.length; i++) {
     const ch = inner[i]
-    const prev = inner[i - 1]
     if (inString) {
-      if (ch === inString && prev !== '\\') inString = null
+      if (ch === inString && !isEscapedAt(inner, i)) inString = null
       continue
     }
     if (ch === "'" || ch === '"' || ch === '`') inString = ch
@@ -101,9 +107,8 @@ function splitEntries(inner: string): HeaderEntry[] {
     let s: string | null = null
     for (let i = 0; i < piece.length; i++) {
       const ch = piece[i]
-      const prev = piece[i - 1]
       if (s) {
-        if (ch === s && prev !== '\\') s = null
+        if (ch === s && !isEscapedAt(piece, i)) s = null
         continue
       }
       if (ch === "'" || ch === '"' || ch === '`') s = ch

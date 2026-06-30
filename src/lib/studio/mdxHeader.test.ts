@@ -72,6 +72,32 @@ describe('parse + serialize round-trip', () => {
   })
 })
 
+describe('string-scan escape parity', () => {
+  it('treats a value ending in an escaped backslash as closed (does not eat later fields)', () => {
+    const sample =
+      'export const header = {\n' +
+      "  winpath: 'ends with a backslash\\\\',\n" +
+      "  title: 'After',\n" +
+      '}\n\nbody\n'
+    const parsed = parseMdxFile(sample)
+    expect(parsed.headerEntries.map((e) => e.key)).toEqual(['winpath', 'title'])
+    expect(parsed.headerEntries[1].rawValue).toBe("'After'")
+    expect(serializeMdxFile(parsed)).toBe(sample) // byte-identical round-trip
+  })
+})
+
+describe('getOwnedFields with missing keys', () => {
+  it('returns empty strings for owned fields absent from the header', () => {
+    const sample = "export const header = {\n  title: 'Only Title',\n}\n\nbody\n"
+    expect(getOwnedFields(parseMdxFile(sample))).toEqual({
+      title: 'Only Title',
+      description: '',
+      date: '',
+      author: '',
+    })
+  })
+})
+
 describe('newPostMdx', () => {
   it('builds a canonical header with the owned fields in order, then the body', () => {
     const out = newPostMdx(
