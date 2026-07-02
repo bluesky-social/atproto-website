@@ -122,13 +122,20 @@ npm run dev
   hand-created posts show up too). Slug is read-only — to "rename", delete and
   recreate.
 - **Delete:** removes the post directory and its `posts.ts` entry, behind a
-  confirmation. Recoverable from git if it was committed.
+  confirmation. Recoverable from git if it was committed. (Note: this does not
+  retract an already-published standard.site record — same as the CLI.)
+- **standard.site:** creating a post auto-publishes its standard.site record,
+  and every Save updates it; there's also a manual **Publish** button. This runs
+  the same path as `npm run blog ssite` (it shells out to that command, which
+  loads `.env` and writes `standardSiteUri` back into the post), so it needs the
+  publishing credentials in `.env`. Publish failures are non-blocking — the post
+  still saves and a warning shows. The front-matter shows the record's `at://`
+  URI (read-only) with **Copy** and **pdsls ↗** buttons once published.
 - The editor does not render a preview; use the **Open `/blog/<slug>` ↗** link
   to see the real page.
 - The UI does no git operations — branch/stage/commit in your normal flow.
 
-Standard.site publishing and OG-image generation are planned as follow-on
-additions to this page.
+OG-image generation is the remaining planned addition to this page.
 
 ### Removing a blog post
 

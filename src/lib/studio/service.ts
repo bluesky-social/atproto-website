@@ -1,14 +1,19 @@
 import * as fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
 import {
   parseMdxFile,
   serializeMdxFile,
   getOwnedFields,
+  getHeaderField,
   applyOwnedFields,
   newPostMdx,
   type OwnedFields,
 } from './mdxHeader'
+
+const execFileAsync = promisify(execFile)
 import {
   prependEntry,
   updateEntryBySlug,
@@ -78,13 +83,59 @@ export async function listPosts(
 export async function readPost(
   paths: StudioPaths,
   slug: string,
-): Promise<{ slug: string; owned: OwnedFields; body: string }> {
+): Promise<{
+  slug: string
+  owned: OwnedFields
+  body: string
+  standardSiteUri: string
+}> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
-  return { slug, owned: getOwnedFields(parsed), body: parsed.body }
+  return {
+    slug,
+    owned: getOwnedFields(parsed),
+    body: parsed.body,
+    standardSiteUri: getHeaderField(parsed, 'standardSiteUri'),
+  }
+}
+
+export type PublishResult = { ok: boolean; uri?: string; error?: string }
+
+// Publishes/updates the post's standard.site record by shelling out to the
+// existing, battle-tested CLI (`npm run blog ssite <slug>`), which loads .env
+// itself and writes `standardSiteUri` back into the post's en.mdx. We shell out
+// rather than import publish-post.mjs because it uses @atproto/lex plus a JSON
+// import-assertion that the Next webpack bundler can't handle. Never throws:
+// a publish failure is returned so create/save can warn-and-continue.
+export async function publishPost(
+  paths: StudioPaths,
+  slug: string,
+): Promise<PublishResult> {
+  try {
+    await execFileAsync('npm', ['run', 'blog', 'ssite', slug], {
+      cwd: process.cwd(),
+      timeout: 90_000,
+    })
+  } catch (err) {
+    const e = err as { stderr?: string; message?: string }
+    const msg = (e.stderr || e.message || 'publish failed')
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .pop()
+    return { ok: false, error: msg || 'publish failed' }
+  }
+  // The CLI wrote standardSiteUri back into the header; read it out.
+  try {
+    const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
+    const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+    return { ok: true, uri: getHeaderField(parsed, 'standardSiteUri') }
+  } catch {
+    return { ok: true }
+  }
 }
 
 export async function createPost(

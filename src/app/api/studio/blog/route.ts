@@ -1,5 +1,5 @@
 import { isProd, studioPaths } from '@/lib/studio/paths'
-import { listPosts, createPost } from '@/lib/studio/service'
+import { listPosts, createPost, publishPost } from '@/lib/studio/service'
 
 export const runtime = 'nodejs'
 
@@ -16,9 +16,12 @@ export async function GET() {
 export async function POST(request: Request) {
   if (isProd()) return notFound()
   try {
+    const paths = studioPaths()
     const input = await request.json()
-    const result = await createPost(studioPaths(), input)
-    return Response.json(result, { status: 201 })
+    const result = await createPost(paths, input)
+    // Auto-publish the standard.site record on create (non-blocking).
+    const publish = await publishPost(paths, result.slug)
+    return Response.json({ ...result, publish }, { status: 201 })
   } catch (err) {
     return Response.json({ error: (err as Error).message }, { status: 400 })
   }

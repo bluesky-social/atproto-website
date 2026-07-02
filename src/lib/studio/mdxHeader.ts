@@ -147,11 +147,16 @@ export function serializeMdxFile(parsed: ParsedMdx): string {
   return `${parsed.preamble}export const header = {\n${lines}}${parsed.body}`
 }
 
+// Read a single header field's decoded string value (or '' if absent). Used to
+// surface non-owned fields like `standardSiteUri` without treating them as
+// editable.
+export function getHeaderField(parsed: ParsedMdx, key: string): string {
+  const e = parsed.headerEntries.find((x) => x.key === key)
+  return e ? decodeStringLiteral(e.rawValue) : ''
+}
+
 export function getOwnedFields(parsed: ParsedMdx): OwnedFields {
-  const get = (key: string) => {
-    const e = parsed.headerEntries.find((x) => x.key === key)
-    return e ? decodeStringLiteral(e.rawValue) : ''
-  }
+  const get = (key: string) => getHeaderField(parsed, key)
   return {
     title: get('title'),
     description: get('description'),

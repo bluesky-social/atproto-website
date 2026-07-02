@@ -1,5 +1,5 @@
 import { isProd, studioPaths } from '@/lib/studio/paths'
-import { readPost, updatePost, deletePost } from '@/lib/studio/service'
+import { readPost, updatePost, deletePost, publishPost } from '@/lib/studio/service'
 
 export const runtime = 'nodejs'
 
@@ -23,8 +23,12 @@ export async function PUT(request: Request, { params }: Ctx) {
   if (isProd()) return notFound()
   const { slug } = await params
   try {
+    const paths = studioPaths()
     const input = await request.json()
-    return Response.json(await updatePost(studioPaths(), slug, input))
+    const result = await updatePost(paths, slug, input)
+    // Update the standard.site record on every save (non-blocking).
+    const publish = await publishPost(paths, slug)
+    return Response.json({ ...result, publish })
   } catch (err) {
     return Response.json({ error: (err as Error).message }, { status: 400 })
   }

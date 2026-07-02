@@ -5,6 +5,7 @@ import {
   parseMdxFile,
   serializeMdxFile,
   getOwnedFields,
+  getHeaderField,
   applyOwnedFields,
   newPostMdx,
 } from './mdxHeader'
@@ -112,5 +113,15 @@ describe('newPostMdx', () => {
         `  author: 'Jim Ray',\n` +
         `}\n\n# T\n\nStart writing your post here...\n`,
     )
+  })
+})
+
+describe('getHeaderField', () => {
+  it('returns a non-owned field decoded, and empty string when absent', () => {
+    const parsed = parseMdxFile(SAMPLE)
+    expect(getHeaderField(parsed, 'standardSiteUri')).toBe(
+      'at://did:plc:abc/site.standard.document/xyz',
+    )
+    expect(getHeaderField(parsed, 'nope')).toBe('')
   })
 })

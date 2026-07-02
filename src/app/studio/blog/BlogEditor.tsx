@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 type PostListItem = { slug: string; title: string; date: string }
 type Owned = { title: string; description: string; date: string; author: string }
+type Publish = { ok: boolean; uri?: string; error?: string }
 
 const EMPTY: Owned = { title: '', description: '', date: '', author: '' }
 
@@ -29,7 +30,9 @@ export function BlogEditor() {
   const [owned, setOwned] = useState<Owned>({ ...EMPTY, date: todayLong() })
   const [authorDid, setAuthorDid] = useState('')
   const [body, setBody] = useState('')
+  const [ssiteUri, setSsiteUri] = useState('')
   const [status, setStatus] = useState<string>('')
+  const [copied, setCopied] = useState(false)
 
   async function refreshList() {
     try {
@@ -52,6 +55,7 @@ export function BlogEditor() {
     setOwned({ ...EMPTY, date: todayLong() })
     setAuthorDid('')
     setBody('')
+    setSsiteUri('')
     setStatus('')
   }
 
@@ -67,7 +71,19 @@ export function BlogEditor() {
     setOwned(data.owned)
     setAuthorDid('')
     setBody(data.body)
+    setSsiteUri(data.standardSiteUri || '')
     setStatus('')
+  }
+
+  // Fold a publish result into the URI field + status line.
+  function applyPublish(pub: Publish | undefined, prefix: string) {
+    if (pub?.uri) setSsiteUri(pub.uri)
+    if (!pub) return setStatus(prefix)
+    setStatus(
+      pub.ok
+        ? `${prefix} · published`
+        : `${prefix} · publish failed: ${pub.error ?? 'unknown'}`,
+    )
   }
 
   async function save() {
@@ -82,9 +98,9 @@ export function BlogEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
-      setStatus(`Created ${data.slug}`)
       setMode('edit')
       setSlug(data.slug)
+      applyPublish(data.publish, `Created ${data.slug}`)
       await refreshList()
     } else {
       setStatus('Saving…')
@@ -95,9 +111,18 @@ export function BlogEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
-      setStatus(`Saved ${data.slug}`)
+      applyPublish(data.publish, `Saved ${data.slug}`)
       await refreshList()
     }
+  }
+
+  async function publishNow() {
+    if (mode !== 'edit') return
+    setStatus('Publishing…')
+    const res = await fetch(`/api/studio/blog/${slug}/publish`, { method: 'POST' })
+    const data = await res.json()
+    if (!res.ok) return setStatus(`Error: ${data.error}`)
+    applyPublish(data.publish, 'Publish')
   }
 
   async function remove() {
@@ -113,10 +138,24 @@ export function BlogEditor() {
     await refreshList()
   }
 
+  async function copyUri() {
+    try {
+      await navigator.clipboard.writeText(ssiteUri)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      // clipboard blocked — ignore
+    }
+  }
+
   const set = (k: keyof Owned) => (e: { target: { value: string } }) =>
     setOwned((o) => ({ ...o, [k]: e.target.value }))
 
-  const isError = status.startsWith('Error') || status.startsWith('Could not')
+  const statusTone = status.startsWith('Error') || status.startsWith('Could not')
+    ? 'text-red-600'
+    : status.includes('publish failed')
+      ? 'text-amber-600'
+      : 'text-neutral-500'
 
   return (
     <div className="flex min-h-screen">
@@ -188,12 +227,17 @@ export function BlogEditor() {
           </div>
           <div className="flex items-center gap-4">
             {status && (
-              <span
-                className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')}
-                aria-live="polite"
-              >
+              <span className={'text-sm ' + statusTone} aria-live="polite">
                 {status}
               </span>
+            )}
+            {mode === 'edit' && (
+              <button
+                onClick={publishNow}
+                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+              >
+                Publish
+              </button>
             )}
             {mode === 'edit' && (
               <button
@@ -271,6 +315,43 @@ export function BlogEditor() {
               </Field>
             )}
           </div>
+
+          {/* standard.site record */}
+          {mode === 'edit' && (
+            <div className="mt-6">
+              <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                standard.site record
+              </p>
+              {ssiteUri ? (
+                <div className="flex items-center gap-2">
+                  <code
+                    className="min-w-0 flex-1 truncate rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-xs text-neutral-600"
+                    title={ssiteUri}
+                  >
+                    {ssiteUri}
+                  </code>
+                  <button
+                    onClick={copyUri}
+                    className="shrink-0 rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                  <a
+                    href={`https://pdsls.dev/${ssiteUri}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="shrink-0 rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                  >
+                    pdsls ↗
+                  </a>
+                </div>
+              ) : (
+                <p className="text-sm italic text-neutral-400">
+                  Not published yet — Save or Publish to create the record.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Body */}
           <div className="mt-8">
