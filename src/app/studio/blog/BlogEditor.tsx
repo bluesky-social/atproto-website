@@ -323,27 +323,29 @@ export function BlogEditor() {
                 </button>
               </div>
               {ssiteUri ? (
-                <div className="flex items-center gap-2">
+                <div>
                   <code
-                    className="min-w-0 flex-1 truncate rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-xs text-neutral-600"
+                    className="block w-full truncate rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-xs text-neutral-600"
                     title={ssiteUri}
                   >
                     {ssiteUri}
                   </code>
-                  <button
-                    onClick={copyUri}
-                    className="shrink-0 rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
-                  >
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
-                  <a
-                    href={`https://pdsls.dev/${ssiteUri}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="shrink-0 rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
-                  >
-                    pdsls ↗
-                  </a>
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      onClick={copyUri}
+                      className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                    >
+                      {copied ? 'Copied' : 'Copy'}
+                    </button>
+                    <a
+                      href={`https://pdsls.dev/${ssiteUri}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                    >
+                      pdsls ↗
+                    </a>
+                  </div>
                 </div>
               ) : (
                 <p className="text-sm italic text-neutral-400">
