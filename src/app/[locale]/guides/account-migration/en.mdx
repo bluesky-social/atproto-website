@@ -4,7 +4,7 @@ export const header = {
     'Migrating an account to a new PDS',
 }
 
-This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time.
+This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time. It is recommended to read this first, and to understand that an identity on the atproto network can have multiple accounts on different PDSs, but only one account can be the identity's active account signing new records.
 
 If you're just looking to migrate an account to a new PDS using existing tools, we recommend:
 - [Migrating PDS Account with `goat`](https://whtwnd.com/bnewbold.net/3l5ii332pf32u)
@@ -18,11 +18,11 @@ To create a PDS account with an existing identity, it is necessary to prove cont
 
 For an active account on another PDS, this is done by generating a service auth token (JWT) signed with the current atproto signing key indicated in the identity DID document. This can be requested from the previous PDS instance using the `com.atproto.server.getServiceAuth` endpoint (or an equivalent interface/API).
 
-For an independently-controlled identity (eg, `did:web`, or a `did:plc` with old PDS offline or uncooperative), this may involve updating the identity to include a self-controlled atproto signing key, and generating the service auth token offline.
+For an independently-controlled identity (eg, `did:web`, or a `did:plc` with old PDS offline or uncooperative), this may involve updating the identity to include a self-controlled atproto signing key, and generating the service auth token offline. This is often referred to as an "Adversarial Migration" with the steps outlined in [Adversarial ATProto PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html).
 
-The service auth token is provided along with the existing DID when creating the account with `com.atproto.server.createAccount` (or an equivalent interface/API) on the new PDS.
+The service auth token is provided as a `Bearer` `Authorization` header along with the existing DID when creating the account with `com.atproto.server.createAccount` (or an equivalent interface/API) on the new PDS to prove then identity is requesting for a new account to be created on the target PDS.
 
-The new account will be in a `deactivated` state. It should be possible to directly login and authenticate, but not to participate in the network. From the perspective of other services in the network, the old PDS account is still current, and the new PDS account is not yet active or valid. Functionality like OAuth or proxied requests using service auth will not yet work with the new PDS.
+The new account will be in a `deactivated` state. It should be possible to directly login and authenticate, but not to participate in the network. From the perspective of other services in the network, the old PDS account is still current, and the new PDS account is not yet active or valid. Functionality like OAuth or proxied requests using service auth will not yet work with the new PDS. The migration of the identity to pointing to the new account on the PDS is not finalized till the change on the identity's did document is made. Up until that point you can bail on the migration with no ill effects to your existing identity or account on your current PDS.
 
 ## Migrating Data
 
@@ -34,11 +34,17 @@ Some categories of data that are typically migrated are:
 
 At any stage of migration, the authenticated `com.atproto.server.checkAccountStatus` endpoint can be called on either the old or new PDS instance to check statistics about currently indexed data.
 
+### Repositories
+
 A copy of the repository can be fetched as a CAR file from the old PDS using the public `com.atproto.sync.getRepo` endpoint. If the old PDS is inaccessible, a mirror might be available from a public relay, or a local backup might be available. If not, the new account will still function with the same identity, but old content would be missing.
 
 A CAR file can be imported to the new PDS using the authenticated `com.atproto.repo.importRepo` endpoint.
 
+### Blobs
+
 Blobs (media files) are download and re-uploaded one by one. They should not be uploaded to the new PDS until the repository has been imported and fully indexed, so that blobs can be linked to the records that refer to them, and won’t be garbage collected. A full list of relevant blobs (by CID) can be fetched either from the old PDS (`com.atproto.sync.listBlobs`), or the current list of "missing" blobs can be checked on the new PDS (`com.atproto.repo.listMissingBlobs`). If some blobs can not be found, the migration process can continue, and any recovered blobs can be uploaded later (if the blob CIDs match exactly).
+
+### Preferences
 
 Private account preferences can be exported from the old PDS using the authenticated like `app.bsky.actor.getPreferences` endpoint, then imported using `app.bsky.actor.putPreferences`. These are Bluesky app-specific endpoints, and other apps (Lexicons) may define their own preference APIs. Note that this will only include private state stored in the PDS; some preferences and state may exist in external services (eg, centralized chat/DM implementations).
 
