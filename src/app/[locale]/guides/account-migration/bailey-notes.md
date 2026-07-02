@@ -3,12 +3,19 @@
 # Points covered not in the guide
 - Maybe talk about how there are multiple accounts but one identity?
 - Talk about how the whole process does not have to be done now. I talk about how you can bail but prob need more
+- Talk about how an account can be created with a signed verification token as well
+- Talk about how a repo can be reuploaded. 
+
+
+# Repo notes
+- The since flag import does work 
+- "Failed to fetch" I assume it's the connection being dropped at the PDS level
+- In a web browser this can appear as a CORS error
+
 
 
 # still to be done
-- Talk about how a repo can be reuploaded. 
 
-- Talk about how an account can be created with a signed verification token as well
 - Talk about client vs server 
 - Talk about blob upload rate limits, explain how those show on headers and what they are
 - Talk about upload fails because of ram, and cors (will need to check this)
