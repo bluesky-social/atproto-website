@@ -233,14 +233,6 @@ export function BlogEditor() {
             )}
             {mode === 'edit' && (
               <button
-                onClick={publishNow}
-                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
-              >
-                Publish
-              </button>
-            )}
-            {mode === 'edit' && (
-              <button
                 onClick={remove}
                 className="text-sm text-neutral-400 transition hover:text-red-600"
               >
@@ -319,9 +311,17 @@ export function BlogEditor() {
           {/* standard.site record */}
           {mode === 'edit' && (
             <div className="mt-6">
-              <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
-                standard.site record
-              </p>
+              <div className="mb-1.5 flex items-center justify-between">
+                <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                  standard.site record
+                </p>
+                <button
+                  onClick={publishNow}
+                  className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                >
+                  Publish
+                </button>
+              </div>
               {ssiteUri ? (
                 <div className="flex items-center gap-2">
                   <code

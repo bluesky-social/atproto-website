@@ -179,11 +179,22 @@ export function applyOwnedFields(
   return { ...parsed, headerEntries }
 }
 
+// Guarantee a blank line between the header's closing `}` and the body. MDX
+// requires an ESM export to be separated from following prose by a blank line;
+// without this, `}This is a post` is invalid and breaks the MDX parser (and the
+// site-wide search indexer that parses every .mdx).
+export function normalizeBodySeparation(body: string): string {
+  return '\n\n' + body.replace(/^\n+/, '')
+}
+
 export function newPostMdx(owned: OwnedFields, body: string): string {
   const headerEntries: HeaderEntry[] = OWNED_KEYS.map((key) => ({
     key,
     rawValue: quoteSingle(owned[key]),
   }))
-  const sep = body.startsWith('\n') ? '' : '\n\n'
-  return serializeMdxFile({ preamble: '', headerEntries, body: sep + body })
+  return serializeMdxFile({
+    preamble: '',
+    headerEntries,
+    body: normalizeBodySeparation(body),
+  })
 }

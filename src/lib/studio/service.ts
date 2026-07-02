@@ -10,6 +10,7 @@ import {
   getHeaderField,
   applyOwnedFields,
   newPostMdx,
+  normalizeBodySeparation,
   type OwnedFields,
 } from './mdxHeader'
 
@@ -201,7 +202,7 @@ export async function updatePost(
   // file (supports concurrent hand-edits).
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
   const next = applyOwnedFields(parsed, input.owned)
-  next.body = input.body
+  next.body = normalizeBodySeparation(input.body)
   await fs.writeFile(mdxPath, serializeMdxFile(next))
 
   const postsSrc = await fs.readFile(paths.postsFile, 'utf-8')

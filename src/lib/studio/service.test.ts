@@ -167,6 +167,22 @@ describe('read/update/list/delete', () => {
     expect(fs.readFileSync(paths.postsFile, 'utf-8')).toContain("title: 'Hello (edited)'")
   })
 
+  it('keeps a blank line between header and body when the body has no leading newline', async () => {
+    await updatePost(paths, 'hello', {
+      owned: {
+        title: 'Hello',
+        description: 'Desc',
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+      },
+      body: 'Body with no leading newline',
+    })
+    const mdx = fs.readFileSync(path.join(paths.blogDir, 'hello', 'en.mdx'), 'utf-8')
+    // Must NOT glue the closing brace to prose (that is invalid MDX).
+    expect(mdx).toContain('}\n\nBody with no leading newline')
+    expect(mdx).not.toMatch(/}\S/)
+  })
+
   it('deletes the dir and posts.ts entry', async () => {
     const res = await deletePost(paths, 'hello')
     expect(res.dirRemoved).toBe(true)
