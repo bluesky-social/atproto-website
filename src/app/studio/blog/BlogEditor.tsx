@@ -311,17 +311,9 @@ export function BlogEditor() {
           {/* standard.site record */}
           {mode === 'edit' && (
             <div className="mt-6">
-              <div className="mb-1.5 flex items-center justify-between">
-                <p className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
-                  standard.site record
-                </p>
-                <button
-                  onClick={publishNow}
-                  className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
-                >
-                  Publish
-                </button>
-              </div>
+              <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                standard.site record
+              </p>
               {ssiteUri ? (
                 <div>
                   <code
@@ -330,7 +322,7 @@ export function BlogEditor() {
                   >
                     {ssiteUri}
                   </code>
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-2 flex items-center gap-2">
                     <button
                       onClick={copyUri}
                       className="rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
@@ -345,12 +337,26 @@ export function BlogEditor() {
                     >
                       pdsls ↗
                     </a>
+                    <button
+                      onClick={publishNow}
+                      className="ml-auto rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                    >
+                      Publish
+                    </button>
                   </div>
                 </div>
               ) : (
-                <p className="text-sm italic text-neutral-400">
-                  Not published yet — Save or Publish to create the record.
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm italic text-neutral-400">
+                    Not published yet — Save or Publish to create the record.
+                  </p>
+                  <button
+                    onClick={publishNow}
+                    className="ml-auto rounded-md border border-neutral-300 px-2.5 py-1.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                  >
+                    Publish
+                  </button>
+                </div>
               )}
             </div>
           )}
