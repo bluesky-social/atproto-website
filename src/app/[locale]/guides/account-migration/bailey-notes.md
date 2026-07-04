@@ -8,8 +8,6 @@
 
 - Talk about client vs server 
 - OAuth claims
-- PLC token timeout?
-- Manual PLC sign overs?
 - Talk about the PLC does not validate all PLC opertions for this. Like double rotation keys (will need testing)
 - Talk about dangers of migrations, and what isn't a danger. Like blob reuploads or repo uploads
 - Talk about how some PDSs have account creation locked down and need an orginal account there (*cough bksy.social*, but kindly cause it is valid)
@@ -35,9 +33,16 @@ Rough resume draft
 - Maybe talk about how there are multiple accounts but one identity?
 - Talk about how an account can be created with a signed verification token as well
 - Talk about how a repo can be reuploaded.
-
+- PLC token timeout?
 
 # Repo notes
 - The since flag import does work 
 - "Failed to fetch" I assume it's the connection being dropped at the PDS level
 - In a web browser this can appear as a CORS error
+
+
+
+# Oauth notes
+- cant deactivate account with oauth
+- scores
+-atproto rpc:com.atproto.server.getServiceAuth?aud=* rpc:com.atproto.server.createAccount?aud=* identity:* account:repo?action=manage account:status?action=manage rpc:app.bsky.actor.getPreferences?aud=*
