@@ -4,7 +4,7 @@ export const header = {
     'Migrating an account to a new PDS',
 }
 
-This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time. It is recommended to read this first, and to understand that an identity on the atproto network can have multiple accounts on different PDSs, but only one account can be the identity's active account signing new records.
+This document complements the [Account Hosting](/specs/account) specification, which gives a high-level overview of account lifecycles. It breaks down the individual migration steps, both for an "easy" migration (when both PDS instances participate), and for account recovery scenarios. Note that these specific mechanisms are not a formal part of the protocol, and may evolve over time. 
 
 If you're just looking to migrate an account to a new PDS using existing tools, we recommend:
 - [Migrating PDS Account with `goat`](https://whtwnd.com/bnewbold.net/3l5ii332pf32u)
@@ -14,11 +14,11 @@ For an in-depth explanation of the steps involved in a migration, read on.
 
 ## Creating a New Account
 
-To create a PDS account with an existing identity, it is necessary to prove control of the identity.
+An identity on the atproto network can have multiple accounts on different PDSs, but only one account can be the identity's active account signing new records. To create a PDS account with an existing identity, it is necessary to prove control of the identity.
 
 For an active account on another PDS, this is done by generating a service auth token (JWT) signed with the current atproto signing key indicated in the identity DID document. This can be requested from the previous PDS instance using the `com.atproto.server.getServiceAuth` endpoint (or an equivalent interface/API).
 
-For an independently-controlled identity (eg, `did:web`, or a `did:plc` with old PDS offline or uncooperative), this may involve updating the identity to include a self-controlled atproto signing key, and generating the service auth token offline. This is often referred to as an "Adversarial Migration" with the steps outlined in [Adversarial ATProto PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html).
+For an independently-controlled identity (eg, `did:web`, or a `did:plc` with the old PDS offline or uncooperative), this may involve updating the identity to include a self-controlled atproto signing key, and generating the service auth token offline. This is often referred to as an "Adversarial Migration" with the steps outlined in [Adversarial ATProto PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html).
 
 The service auth token is provided as a `Bearer` `Authorization` header along with the existing DID when creating the account with `com.atproto.server.createAccount` (or an equivalent interface/API) on the new PDS to prove then identity is requesting for a new account to be created on the target PDS.
 
@@ -40,13 +40,18 @@ A copy of the repository can be fetched as a CAR file from the old PDS using the
 
 A CAR file can be imported to the new PDS using the authenticated `com.atproto.repo.importRepo` endpoint.
 
-If there was previously an account on the target PDS, or a migration was started and never completed, you can call `com.atproto.server.checkAccountStatus` to get the current repo revision of that account on the target PDS and use the repo revision with the `since` param on `com.atproto.repo.getRepo` from the source PDS to import a smaller diff of the repository containing only the new data since the last import. It also does not harm anything to re-import the repo multiple times from source to target, and is recommended to do so on migration retries to ensure all data is imported successfully from the source PDS. The PDS handles the diff of the import uploaded and what it has stored.
+If there was previously an account on the target PDS, or a migration was started and never completed, you can call `com.atproto.server.checkAccountStatus` to get the current repo revision of that account on the target PDS and use the repo's revision with the `since` param on `com.atproto.repo.getRepo` from the source PDS to import a smaller diff of the repository containing only the new data since the last import. It also does not harm anything to re-import the repo multiple times from source to target, and is recommended to do so on migration retries to ensure all data is imported successfully from the source PDS. The PDS handles the diff of the import uploaded and what it has stored.
 
 Larger repo exports may fail on import and give unexpected errors. This is not always related to memory exhaustion on the target PDS, but it is often a good first check. This also shows as a `CORS` error in the browser console if a migration runs in the web browser due to the unexpected disconnect.
 
 ### Blobs
 
-Blobs (media files) are download and re-uploaded one by one. They should not be uploaded to the new PDS until the repository has been imported and fully indexed, so that blobs can be linked to the records that refer to them, and won’t be garbage collected. A full list of relevant blobs (by CID) can be fetched either from the old PDS (`com.atproto.sync.listBlobs`), or the current list of "missing" blobs can be checked on the new PDS (`com.atproto.repo.listMissingBlobs`). If some blobs can not be found, the migration process can continue, and any recovered blobs can be uploaded later (if the blob CIDs match exactly).
+Blobs (media files) are download and re-uploaded one by one. They should not be uploaded to the new PDS until the repository has been imported and fully indexed, so that blobs can be linked to the records that refer to them, and won’t be garbage collected. A full list of relevant blobs (by CID) can be fetched either from the old PDS (`com.atproto.sync.listBlobs`), or the current list of "missing" blobs can be checked on the new PDS (`com.atproto.repo.listMissingBlobs`). It is recommended if the target PDS already has an account at the start of the migration to use `com.atproto.repo.listMissingBlobs` after a repo import so you are not reuploading any blobs that the target PDS may already have.
+
+
+If some blobs can not be found, the migration process can continue, and any recovered blobs can be uploaded later (if the blob CIDs match exactly). When accessing blobs from a "deactivated" account the request must be authenicated using the account from that PDS, other wise you cannot access them. 
+
+Most PDSs also implement a rate limit on blob uploads. For the refernce PDS this is 1,000 uploads per 24 hours, per an IP address. This can be bypassed on the refernce PDS by adding IPs to the `PDS_RATE_LIMIT_BYPASS_IPS` environment variable, or by `PDS_RATE_LIMIT_BYPASS_KEY` that matches teh same password on the `x-ratelimit-bypass` header up the upload request. This should only be done for trusted sources, since it is a bypass for all rate limits.
 
 ### Preferences
 
