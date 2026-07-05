@@ -1,13 +1,14 @@
 import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
 import NpmInstall from './_snippets/npm-install.mdx'
 import GoGet from './_snippets/go-get.mdx'
 
 export const header = {
-  title: 'Auth',
-  description: 'atprotoアプリケーション開発者向けの認証',
+  title: '認証',
+  description: 'atprotoアプリケーション開発者向けの認証・認可ガイド',
 }
 
-## はじめに
+<Heading level={2} id="getting-started">はじめましょう</Heading>
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -16,54 +17,54 @@ export const header = {
   </TabList>
   <TabPanels>
     <TabPanel value="ts">
-    任意の[OAuth](/guides/oauth-cli-tutorial)プロバイダーを使用してログインするか、パスワード認証を使用している場合はSDKの[PasswordSession](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-session)を使用できます。
+    任意の[OAuth](/guides/about-oauth)プロバイダでログインできます。SDKの[PasswordSession](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-password-session)でパスワード認証もできます。
 
-    まず、atprotoパッケージをインストールします：
+    まずatprotoパッケージをインストールしてください。
 
     <NpmInstall />
     </TabPanel>
     <TabPanel value="go">
-    任意の[OAuth](/guides/go-oauth-cli-tutorial)プロバイダーを使用してログインするか、SDKのパスワード認証を使用できます。
+    任意の[OAuth](/guides/about-oauth)プロバイダでログインすることもできますし、SDKのパスワード認証を使用することもできます。
 
-    まず、atprotoパッケージをインストールします：
+    まずatprotoパッケージをインストールしてください。
 
     <GoGet />
     </TabPanel>
   </TabPanels>
 </TabGroup>
 
-次に、[SDK](/guides/sdk-auth)で認証します。
+続いて、[SDK](/guides/sdk-auth)を使って認証します。
 
-## 認可について
+<Heading level={2} id="about-authorization">認証について</Heading>
 
-**Authがドキュメントのはじめにあるのには理由があります！** [レコードの読み取り](/guides/reading-data#unauthenticated-reads)や[ファイアホースからのデータストリーミング](/guides/streaming-data)には認証は不要です。しかし、Atmosphereと連携するアプリを構築する場合は、認証から始めることになります。
+**認証が最初のドキュメントであることには理由があります**。[レコードを読み出す](/guides/reading-data#unauthenticated-reads)ために認証が必要というわけではありませんし、[firehoseからデータをストリーム](/guides/streaming-data)する場合も同じです。ただしAtmosphereに統合されるアプリケーションを構築する場合は、認証から始めることになります。
 
-最初はatprotoのアイデンティティをOAuthソースとして使うだけかもしれませんが、atprotoの[ソーシャルグラフ](/guides/social-graph)の上に構築することで、さらに多くのことができることがわかるでしょう。
+最初はatprotoのIDをOAuthソースとして使うだけかもしれませんが、atprotoの[ソーシャルグラフ](/guides/social-graph)上でさらに多くのことができることに気付くでしょう。
 
-このセクションは、atproto上でアプリケーションを構築する開発者を対象としています。独自のエンドユーザーログインフローを持つアプリケーションは、認証に[OAuth](#what-is-o-auth)を実装する必要があります。ボットやコマンドラインツールなどの単一目的のアプリケーションは、代わりに[パスワード認証](/guides/sdk-auth)を使用できます。
+このセクションはatprotoでアプリケーションを構築している開発者を対象としています。独自のログインフローを持つアプリケーションは認証に[OAuth](#what-is-o-auth)を実装すべきです。ボットやコマンドラインツールなどの単一目的のアプリケーションは[パスワード認証](/guides/sdk-auth)を使うこともできます。
 
 <Note>
-[App Passwords](/specs/xrpc#app-passwords)の使用もサポートしています。アカウントはプライマリパスワードとは別にアプリパスワードを作成・失効させることができます。これにより、パスワード認証を使用するアプリケーションにプライマリパスワードを提供する必要がなくなります。
+私たちは[アプリパスワード](/specs/xrpc#app-passwords)の使用もサポートしています。アカウントは主パスワードとは別にアプリパスワードの作成・取消しができます。これにより、パスワード認証を使うアプリケーションに主パスワードを渡す必要がありません。
 </Note>
 
-アプリケーションにOAuthを実装するには、一般的なユースケースについて[About OAuth](/guides/about-oauth)を、パーミッションモデルの理解については[Permission Sets](/guides/permission-sets)ガイドを参照してください。独自のプロトコル実装またはOAuth Client SDKを構築している場合は、[OAuth spec](/specs/oauth)を参照してください。
+アプリケーションにOAuthを実装するには、一般的なユースケースについては[OAuthについて](/guides/about-oauth)を、権限モデルの理解については[権限セット](/guides/permission-sets)を参照してください。独自のプロトコル実装またはOAuthクライアアントSDKを構築している場合は、[OAuth仕様](/specs/oauth)を参照してください。
 
-## OAuthとは何ですか？
+<Heading level={2} id="what-is-o-auth">OAuthとは？</Heading>
 
-OAuthは、ユーザーがパスワードを渡すことなく、開発者がアカウントへのアクセスをリクエストできる認可フレームワークです。OAuthがなければ、誰かがサードパーティアプリに自分のアカウントへのアクセスを許可したい場合、そのアプリにユーザー名とパスワードを入力する以外に選択肢がありません。これはさまざまな理由で問題があります。まず、サードパーティアプリがパスワードを見て、おそらく保存できてしまうという点です。そして、アプリがユーザー名とパスワードを持ってしまうと、アカウントへの_完全な_アクセス権を持つことになります。
+OAuthは、ユーザーがパスワードを渡すことなく、開発者がアカウントへのアクセスをリクエストできるようにする認可フレームワークです。OAuthがなければ、サードパーティアプリケーションにアカウントへのアクセスを許可したい場合、ユーザー名とパスワードをそのアプリケーションに入力するしかありません。これはさまざまな理由で問題があり、一番の理由はサードパーティアプリケーションがパスワードを見て、ともすれば保存してしまうという点です。アプリケーションがユーザー名とパスワードを持つと、アプリケーションはアカウントへの*完全な*アクセスを持つことになります。
 
-OAuthは、ユーザー名とパスワードを必要とせずに安全な認可を管理するためのオープン仕様のファミリーでこれらの問題を解決することを目的としています。ウェブ上で「Sign in with...」ボタンやリンクを使ったことがあれば、OAuthを使用したことがあります。
+OAuthはこれらの問題を、個人のユーザー名とパスワードを必要とせずに安全な認可を管理するオープン仕様群によって解決することを目指しています。ウェブ上で「…でサインイン」ボタンやリンクを使用したことがあれば、OAuthを使用したことがあるということです。
 
-開発者として、あなたはユーザーのアカウントへの限定的なアクセスをリクエストできます。つまり、誰かのパブリックタイムラインにメッセージを投稿するだけでよい場合、プライベートメッセージへのアクセスをリクエストする必要はありません。これはあなたのアプリにとって素晴らしいことです。なぜなら、不要なデータの管理を心配する必要がなく、アプリを使用するユーザーにとっても、DMが漏洩する心配をしなくて済むからです。
+開発者からすると、個人のアカウントへの限定的なアクセスをリクエストできます。つまり、誰かのパブリックタイムラインにメッセージを投稿するだけでよい場合、プライベートメッセージの閲覧まで要求する必要はありません。これはあなたのアプリケーションにとって素晴らしいことです。なぜなら、必要のないデータを管理することについて心配する必要がないからです。また、あなたのアプリケーションを使う人にとっても素晴らしいことです。なぜなら、DMが漏洩することについて心配する必要がないからです。
 
-## 参考資料とリソース
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 
-まず[SDK authentication](/guides/sdk-auth)をお読みください。アプリケーションにOAuthを実装するには、一般的なユースケースについて[About OAuth](/guides/about-oauth)を、パーミッションモデルの理解については[Permission Sets](/guides/permission-sets)ガイドを参照してください。
+まずは[SDKによる認証](/guides/sdk-auth)を読んでください。アプリケーションにOAuthを実装するには、一般的なユースケースについては[OAuthについて](/guides/about-oauth)を、権限モデルを理解するには[権限セット](/guides/permission-sets)を参照してください。
 
-- [SDK authentication](/guides/sdk-auth)
-- [About OAuth](/guides/about-oauth)
-- [Permission Requests](/guides/permission-requests)
-- [Permission Sets](/guides/permission-sets)
-- [OAuth Patterns](/guides/oauth-patterns)（上級トピック）
-- [OAuth spec](/specs/oauth)
-- [Permissions spec](/specs/permission)
+- [SDKによる認証](/guides/sdk-auth)
+- [OAuthについて](/guides/about-oauth)
+- [権限リクエスト](/guides/permission-requests)
+- [権限セット](/guides/permission-sets)
+- [OAuthパターン](/guides/oauth-patterns)
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)
