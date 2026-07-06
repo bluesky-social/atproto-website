@@ -1,0 +1,137 @@
+import {Heading} from '@/components/Heading'
+
+export const header = {
+  title: 'アカウント復旧',
+  description: 'ローテーション鍵によるATプロトコルIDの自己管理',
+}
+
+このガイドでは、`did:plc` IDに独自の暗号ローテーション鍵を事前登録する方法を説明します。PDSが非協力的になったりオフラインになった場合でも、アカウントを復旧できるようになります。
+
+<Heading level={2} id="do-you-need-this">必要な場合</Heading>
+
+**ほとんどのユーザーはこれを行う必要はありません**。Blueskyの公式ホスティングのような信頼できるPDSプロバイダーを利用している場合、アカウントはメールベースの復旧を含むセキュリティ対策によってすでに保護されています。
+
+ローテーション鍵の自己管理を検討するのは、以下のような場合です。
+
+- あらゆるサービスプロバイダーから独立して自分のアイデンティティを最大限に管理したい
+- 暗号鍵を安全に管理することに技術的に慣れている
+- 鍵を失うとこの復旧手段も失われることを理解している
+
+PDSがオフラインになり、自己管理されたローテーション鍵を持っていない場合でも、PDS運営者を通じて、あるいは[72時間復旧ウィンドウ](#recovery-keys)中に[PLCディレクトリ](/guides/the-at-stack#did-plc)と連携することでアカウントを復旧できる可能性があります。ローテーション鍵の事前登録は追加の保護策であり、PDSプロバイダーを信頼することの代替ではありません。
+
+<Heading level={2} id="how-identity-works">IDの仕組み</Heading>
+
+ATプロトコルアカウントには、人間が読める**ハンドル**（`@alice.bsky.social`等）と永久的な**DID**（`did:plc:ewvi7nxzyoun6zhxrhs64oiz`等）の2つの識別子があります。DIDが真のIDであり、ハンドルは変更できますがDIDは変わりません。
+
+ほとんどのatprotoアカウントは、ID更新に**ローテーション鍵**を使用するDIDメソッドである`did:plc`を利用しています。これらの鍵は優先順位順に並んでおり、リストの前の鍵は後の鍵による変更を上書きできます。デフォルトでは、PDSがあなたのIDの唯一のローテーション鍵を保持します。
+
+PDSの鍵よりも優先度の高い独自のローテーション鍵を追加することで、必要に応じて新しいPDSを指すなど、独立して自分のIDを更新できるようになります。
+
+<Heading level={2} id="rotation-keys">ローテーション鍵</Heading>
+
+各DIDドキュメントは、署名鍵とローテーション鍵の2種類の公開鍵を利用します。
+
+- **署名鍵**：ユーザーのデータリポジトリへの変更を保証します。
+- **ローテーション鍵**：DIDドキュメントへの変更を保証し、署名鍵を更新することもできます。
+
+署名鍵はPDSに委託され、ユーザーのデータを管理できるようにします。ローテーション鍵はユーザーが保存することもできます（紙に印刷するなど）。これにより、ユーザーは元のホストの助けを借りずにアカウントを新しいPDSに更新できます。
+
+<Heading level={2} id="pre-registering-a-key">鍵の事前登録</Heading>
+
+必要なもの
+
+- 秘密鍵を保管する安全な場所（パスワードマネージャーを推奨）
+- アカウントに関連するメールアドレスへのアクセス
+- [`goat`](https://github.com/bluesky-social/indigo/tree/main/cmd/goat)コマンドラインツール
+
+```bash
+brew install goat
+```
+
+`goat`を使って新しい暗号鍵ペアを生成します。
+
+```bash
+goat key generate
+```
+
+これにより、**秘密鍵**（プライベート）と**公開鍵**の両方が出力されます。出力は次のようになります。
+
+```
+Secret Key: ...
+Public Key: did:key:z...
+```
+
+**秘密鍵を安全に保管してください**。パスワードマネージャー、暗号化ファイル、またはその他のセキュアストレージに保存します。この鍵を失うと、これによる復旧手段も失われます。他の誰かが入手した場合、あなたのIDの制御を奪われる可能性があります。
+
+`did:key:`で始まる公開鍵は共有しても安全で、PLCディレクトリに登録されます。
+
+次に、`goat`を使ってアカウントに認証します。
+
+```bash
+goat account login
+```
+
+プロンプトに従ってPDSホスト、ハンドル、アプリパスワードを入力します。その後、トークンをリクエストします。
+
+```bash
+goat account plc request-token
+```
+
+メールで確認コードが届きます。最後に、`goat account plc`を使用して公開鍵をあなたのIDに追加します。
+
+```bash
+goat account plc add-rotation-key --token YOUR_TOKEN did:key:YOUR_PUBLIC_KEY
+```
+
+`YOUR_TOKEN`をメール確認コードに置き換え、`did:key:YOUR_PUBLIC_KEY`を`goat key generate`で生成した公開鍵に置き換えます。
+
+これにより、あなたの鍵がPDSの鍵より高い優先度でローテーション鍵リストに追加されます。
+
+<Heading level={2} id="verifying-your-setup">セットアップ完了の確認</Heading>
+
+ローテーション鍵が追加されたことを確認してください。
+
+```bash
+goat account plc current
+```
+
+ローテーション鍵の一覧にあなたの`did:key:...`が表示されているはずです。
+
+次のURLであなたのDIDの公開PLC監査ログを確認することもできます。
+
+```
+https://plc.directory/{your-did}/log/audit
+```
+
+<Heading level={2} id="using-your-key-for-recovery">鍵を使った復旧</Heading>
+
+PDSが非協力的になったりオフラインになってアカウントを復旧する必要がある場合、ローテーション鍵を使って以下のことができます。
+
+- DIDドキュメントが新しいPDSを指すように更新する
+- 新しいatproto署名鍵を追加する
+- 古いPDSのローテーション鍵を削除する
+
+このプロセスは[Adversarial PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html)で詳細に文書化されています。一般的な手順は次のとおりです。
+
+1. [**新しいPDSを準備する**](/guides/self-hosting#pds)（招待コード付き）
+2. ローテーション鍵を使用して`goat`でDIDドキュメントを新しいPDSに向けて更新し、一時的な署名鍵を追加する
+3. サービス認証トークンを使用して新しいPDSに**アカウントを作成**する
+4. バックアップから**データをインポート**する（リポジトリCARファイル、BLOB、設定）
+5. 資格情報を更新してアカウントを有効化し、**移行を完了**する
+
+これを機能させるには、**データのバックアップ**も必要です。リポジトリを定期的にエクスポートすることを検討してください。
+
+```bash
+goat repo export $ACCOUNT_DID        # export your public data (bluesky posts, etc.)
+goat blob export $ACCOUNT_DID        # export blobs (e.g. images, videos)
+goat bsky prefs export > prefs.json  # export your private bluesky preferences
+```
+
+冗長性のために複数のローテーション鍵を登録し、異なる安全な場所に保管できます。
+
+<Heading level={2} id="further-reading">関連資料</Heading>
+
+- [Self-Custody of PLC Rotation Keys](https://whtwnd.com/bnewbold.net/3lj7jmt2ct72r)：この文書の元になったオリジナルガイド
+- [Adversarial PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html)：最悪の復旧ケースの詳細なウォークスルー
+- [Account Hosting Specification](/specs/account)：アカウント管理の技術仕様
+- [DID Specification](/specs/did)：`did:plc`とローテーション鍵の詳細

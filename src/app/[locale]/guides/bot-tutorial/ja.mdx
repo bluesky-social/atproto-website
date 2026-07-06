@@ -36,7 +36,7 @@ export const header = {
 
 <S01 />
 
-さらに、`lex` CLIツールをグローバルにインストールしておく必要があります。
+さらに、`lex` CLIツールと`tsx`をグローバルにインストールしておく必要があります。
 
 <S02 />
 
@@ -46,7 +46,7 @@ export const header = {
 
 既存アカウントから投稿するつもりでなければ、ボット用に[新しいアカウントを作成](https://bsky.app/)してください。また、そのアカウント用の[アプリパスワード](/guides/sdk-auth)も生成してください。
 
-<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading>
+<Heading level={2} id="part-1-lexicons">パート1：Lexicon</Heading>
 
 [Lexicon](/guides/lexicon)はatprotoのレコードを定義します。ボットは[app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post) Lexiconを使ってBluesky投稿を作成します。`lex`を使えば、このLexiconをダウンロードしてプロジェクトに組み込めます。
 
@@ -78,11 +78,11 @@ export const header = {
 
 <Heading level={2} id="part-3-label-as-a-bot">パート3：ボットとしてラベル付け</Heading>
 
-ベストプラクティスとして、ボットアカウントはプロフィールにセルフラベルを追加して自身を識別するべきです。これにより、ユーザーやモデレーションツールが自動化されたアカウントを認識しやすくなります。`src/index.ts`に以下の関数を追加してください：
+ベストプラクティスとして、ボットアカウントはプロフィールにセルフラベルを追加して自分を識別すべきです。これにより、ユーザーやモデレーションツールが自動化されたアカウントを認識しやすくなります。`src/index.ts`に以下の関数を追加してください。
 
 <S08a />
 
-ボットを初めてセットアップする際に、`labelAsBot(session)`を一度呼び出してください。これは一度だけ行えば十分です。ラベルはプロフィールに永続的に保存されます。cronジョブを開始する前に`main()`から呼び出し、初回実行後にその呼び出しを削除できます。
+ボットを初めてセットアップする際に、`labelAsBot(session)`を呼び出します。これは一度だけ行えば十分です。ラベルはプロフィールに永続的に保存されます。cronジョブを開始する前に`main()`から呼び出したら、初回実行後はその呼び出しを削除できます。
 
 <Heading level={2} id="part-4-run-the-bot">パート4：ボット実行</Heading>
 
@@ -90,7 +90,7 @@ export const header = {
 
 <S09 />
 
-これで`npx tsx`を使ってボットをテストできます。
+これで`tsx`を使ってボットをテストできます。
 
 <S10 />
 

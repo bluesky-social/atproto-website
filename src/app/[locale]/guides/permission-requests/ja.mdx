@@ -1,4 +1,6 @@
 import {Container} from "@/components/Container"
+import {ResponsiveTable} from '@/components/ResponsiveTable'
+import {Heading} from "@/components/Heading"
 import oauth from "./oauth-only.png"
 import skyblur from "./skyblur-oauth.png"
 import granular from "./skyblur-granular.png"
@@ -8,120 +10,147 @@ import OauthAuthUrl from './_snippets/oauth-auth-url.mdx'
 import oauthdomain from "./oauth-domain.jpg"
 
 export const header = {
-  title: 'パーミッションリクエスト',
+  title: '権限リクエスト',
   description:
-    'アプリ開発者とLexiconデザイナーのためのパーミッションガイド',
+    'アプリ開発者とLexicon設計者のための権限ガイド',
 }
 
-このページでは、OAuthフローにおけるパーミッションスコープの**使い方**について説明します。カスタムLexiconを構築していて、独自のパーミッションセットを**定義・公開**したい場合は、[パーミッションセット](/guides/permission-sets)を参照してください。
+このページでは、OAuthフローで権限スコープを**使用**する方法を説明します。カスタムLexiconを使用してアプリを構築し、独自の権限セットを**定義および公開**したい場合は、[権限セット](/guides/permission-sets)を参照してください。
 
-## 概要
+<Heading level={2} id="overview">概要</Heading>
 
-このガイドでは、atprotoアプリケーションのパーミッションをリクエストおよび定義する方法を説明します。[OAuth](/guides/auth)が認可を処理し、このページではアプリが*何に*アクセスできるかを指定する方法を説明します。
+このガイドでは、atprotoアプリケーションの権限リクエスト方法を説明します。[OAuth](/guides/auth)は認可について扱い、このページではあなたのアプリが*何に*アクセスできるかを指定する方法について説明します。
 
-atprotoリソースへのアクセス制御は[パーミッション](/specs/permission)を使って付与されます。`repo:com.example.post`のような個別のパーミッションは、特定のレコードタイプやAPIエンドポイントへのアクセスを許可します。関連するパーミッションは、人間が読める形のタイトルと説明を持つ**パーミッションセット**にまとめることができます。これがユーザーに認可ダイアログで表示されるものです。
+atprotoリソースの制御権は[権限](/specs/permission)によって付与されます。`repo:com.example.post`のような個々の権限は、特定のレコードタイプやAPIエンドポイントへの書き込みアクセスを付与します。関連する権限は、人間が読めるタイトルと説明を持つ**権限セット**にまとめることができます。ユーザーはこれらを認可ダイアログで目にすることになります。
 
-**カスタムLexicon**を使ったアプリを構築している場合は、それらのパーミッションセットを定義する必要があります。これにより、不透明なネームスペースIDの羅列ではなく、アプリが何をできるかについて明確な説明をユーザーに提供できます。構造については[パーミッションセットの設計](/guides/permission-sets#permission-set-design)を参照してください。
+あなたが**カスタムLexicon**を使用してアプリを構築しているなら、その権限セットを定義するべきです。これにより、ユーザーはよく分からないNSIDのリストではなく、あなたのアプリが何をできるかについて明確な説明を得ることができます。構造については[権限セット設計](/guides/permission-sets#permission-set-design)を参照してください。
 
-**既存のLexicon**（Blueskyの`app.bsky.*`など）のみを使ったアプリを構築している場合は、公開されているパーミッションセットを参照するか、個別の細かいパーミッションをリクエストすることができます。ユーザーへの表示方法については[OAuthフローの例](#o-auth-flow-examples)のセクションを参照してください。
+既存Lexicon（Blueskyの`app.bsky.*`等）だけでアプリを構築している場合、公開されている権限セットを参照するか、個々の詳細な権限を要求できます。ユーザーにどのように表示されるかは、[OAuthフローの例](#o-auth-flow-examples)を参照してください。
 
-## パーミッションのリクエスト
+<Heading level={2} id="requesting-permissions">権限の要求</Heading>
 
-アプリがatprotoのIDプロバイダーとOAuthフローを開始する際、認可リクエストの`scope`パラメーターに含めることで特定のパーミッションセットをリクエストできます。OAuthクライアントを登録する際に[`oauth-client-metadata.json`ファイル](/specs/oauth#clients)内で*スペース区切りのリスト*として指定する必要があります：
+アプリがatprotoのIDプロバイダーでOAuthフローを開始する際、認可リクエストの`scope`パラメータに含めることで特定の権限セットを要求できます。これはOAuthクライアント登録時に[`oauth-client-metadata.json`ファイル](specs/oauth#client-id-metadata-document)へ*スペース区切りのリスト*として指定します。
 
 <OauthScopeMetadata />
 
-AT Protocol のOAuthでは[Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/)（PAR）が使用されます。クライアントメタデータファイルはセッションのライフサイクル中に動的に取得され、`oauth-client-metadata.json`の`scope`パラメーターはアプリが行う実際の認可HTTPリクエストと*一致する必要があります*：
+ATにおけるOAuthは[Pushed Authorization Requests](https://auth0.com/blog/what-are-oauth-push-authorization-requests-par/)（PAR）を使用します。クライアントメタデータファイルはセッションライフサイクル中に動的に取得され、`oauth-client-metadata.json`の`scope`パラメータはアプリが実際に行う認可HTTPリクエストを*含んでいる必要があります*。
 
 <OauthAuthUrl />
 
-アプリが必要とする機能をカバーするのに十分なパーミッションのみをリクエストするようにしてください。ユーザーのATレコード（他のアプリケーションからの投稿を含む）の作成、更新、削除に広範なパーミッションを付与する[トランジションスコープ](/specs/oauth#authorization-scopes)も提供していますが、一般的にこのような広範なパーミッションリクエストは避けるべきです。細かいパーミッションはユーザーとの信頼を構築し、認可プロセス中の摩擦を最小限に抑えます。
+アプリ機能に必要な最小限の権限だけを要求するようにしてください。[トランジションスコープ](/specs/oauth#transitional-scopes)は、他アプリの投稿を含むユーザーのあらゆるATレコードを作成・更新・削除する権限を付与します。しかし、通常、こうした広範な権限要求は避けるべきです。そうすることでユーザーとの信頼関係を築き、認可プロセスの摩擦を最小化します。
 
-ユーザーエクスペリエンスの観点からは、リクエストするパーミッションセットの数を少なく保つのが最善です。パーミッションセットが増えるほど認可ダイアログに表示される情報が多くなり、決定疲れを引き起こす可能性があります。ユーザーがリクエストされたパーミッションの一部のみを承認できるようにすることも可能ですが、エッジケースが発生する可能性があります。
+ユーザー体験の観点では、要求する権限セットの数は少なく保つのが望ましいです。権限セットが追加されるたびに認可ダイアログの情報量が増え、判断疲れにつながる可能性があります。ユーザーに要求権限の一部のみを付与させることもできますが、エッジケースを生む場合があります。
 
-## パーミッションの種類
+<Heading level={2} id="permission-types">権限の種類</Heading>
 
-PDSインスタンス上のユーザー所有リソースに関するパーミッションは、5つの種類で表されます：
+PDSインスタンス上のユーザー所有リソースに関わる権限は、次の5種類で表されます。
 
-- `repo`: パブリックリポジトリ（レコードとコレクション）
-- `rpc`: サービス認証（外部サービスへのAPI呼び出し）
-- `blob`: アップロードされたメディアファイル
-- `identity`: DIDとハンドル
-- `account`: ホスティングステータス、メールアドレス
+<ResponsiveTable
+  columns={[{label: '種類'}, {label: '内容'}, {label: '例'}]}
+  rows={[
+    [{label: 'repo'}, {label: 'ユーザーリポジトリへの書き込みアクセス'}, {label: 'repo:com.example.post, repo:com.example.post?action=create'}],
+    [{label: 'rpc'}, {label: 'リモートAPIエンドポイントへの認証付き呼び出し'}, {label: 'rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview, rpc:app.example.moderation.createReport?aud=*'}],
+    [{label: 'blob'}, {label: 'PDSへのメディアファイルアップロード（権限セットに含めることはできません）'}, {label: 'blob:*/*（任意のタイプ）, blob:image/*（画像のみ）'}],
+    [{label: 'identity'}, {label: 'DIDドキュメントとハンドル'}, {label: 'identity:handle, identity:*'}],
+    [{label: 'account'}, {label: 'アカウントホスティングの詳細設定（権限セットに含めることはできません）'}, {label: 'account:email, account:email?action=manage'}],
+  ]}
+/>
 
-スコープ文字列の構文ではワイルドカード（*）が使用でき、すべてのレコードへのアクセスを許可します。最も一般的な例は画像や動画を扱うための`blob:*/*`です。部分的なワイルドカードは*サポートされていません*。例えば、`app.bsky.*`は有効なスコープ文字列ではありません。特定のネームスペースやLexiconから複数のパーミッションをリクエストする場合は、それぞれを個別にリストするか、[パーミッションセット](/guides/permission-sets)を使用する必要があります。これは過度に広範なパーミッションリクエストを避けるための意図的な設計です。
+スコープ文字列の構文ではワイルドカード（*）が許可され、すべてのレコードへのアクセス権が付与されます。最も一般的な例は、画像や動画の取り扱い向けの`blob:*/*`です。部分的なワイルドカードはサポート*されません*。例えば、`repo:app.bsky.*`は有効なスコープ文字列ではありません。特定の名前空間やLexiconから複数の権限を要求したい場合は、個別に列挙するか、[権限セット](#for-lexicon-designers)を使用する必要があります。これは過剰に広い権限要求を避けるための意図的な設計です。
 
-パーミッションセット自体もLexiconスキーマであり、他のLexiconと同様にネームスペースが付けられます。他のLexiconとは異なり、パーミッションセットはスコープ文字列内で`include:`というプレフィックスが付き、動的に更新可能です。
+権限セット自体もLexiconスキーマであり、他のLexiconと同様に名前空間が付いています。権限セットはスコープ文字列では`include:`のプレフィックスを付けます。他のLexiconと異なり、権限セットは[多くのコンテキスト](#rolling-out-changes)で動的に更新できます。
 
-## クライアント
+<Heading level={2} id="permission-sets">権限セット</Heading>
 
-OAuthクライアントソフトウェアはグローバルに一意な`client_id`で識別されます。クライアントソフトウェアの異なるバリアントは異なる`client_id`値を持つ場合があります。例えば、同じソフトウェアのブラウザアプリ版とAndroid（モバイルOS）版では異なる`client_id`値を持つ場合があります。`client_id`はクライアントメタデータJSONドキュメントを取得できる完全修飾のWebURLでなければなりません。例えば、`https://app.example.com/oauth-client-metadata.json`のようになります。`client_id`についての詳細：
+OAuthの目的は、ユーザーが自分のユーザー名とパスワードを渡すことなく、アプリケーションがユーザーに代わって動作できるようにすることです。atprotoアプリの場合、OAuthリクエストは、ユーザーのPDSへのレコード書き込み、APIエンドポイントの呼び出し、メディアのアップロードなど、上記の権限タイプで概説されたあらゆる操作を行うための権限を要求します。
 
-- W3C URLの仕様に従った正しい形式のURLでなければなりません
-- スキーマは`https://`でなければならず、ポート番号を含めてはいけません。開発用の`http://localhost`の`client_id`値には[特別な例外](/specs/oauth#localhost-client-development)があることに注意してください。
-- パスに`oauth-client-metadata.json`を含める必要はありませんが、役に立つ慣例です。
+比較的シンプルなアプリでも、最終的にはいくつもの権限を要求することになり、OAuth認可ダイアログでそれらを個別に列挙すると、アプリを使用する人々にとって混乱を招く可能性があります。これを解決するために、権限セットは権限を論理的にグループ化し、人間に優しいタイトルと説明を提示できるようにします。
+
+Blueskyは、Bluesky固有のアプリケーションを構築するさまざまな方法に対応するための権限セットを公開しています。例えば、フル機能のマイクロブログクライアントを構築している場合、投稿、設定、購読をカバーする包括的な権限セットを付与する[`app.bsky.authFullApp`権限セット](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.authFullApp)を要求することになるでしょう。
+
+しかし、タイムラインに投稿するだけのアプリを構築したい場合は、より狭いスコープの[`app.bsky.authCreatePosts`権限セット](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.authCreatePosts)を要求できます。
+
+OAuth権限を要求する際には、次のルールを念頭に置いてください。
+
+1. 既存サービスのクライアントアプリを構築している場合、利用可能であればそのサービスが公開している権限セットを使用してください。例えば、Stream.placeのストリーミングクライアントは、ユーザーに代わってStream.placeへの完全なアクセス権を付与する[`place.stream.authFull`権限セット](https://lexicon.garden/lexicon/did:plc:gqtagsooi75obldmytuow57q/place.stream.authFull)を要求します。
+
+2. 独自のLexiconを構築している場合、アプリが公開する関連レコードタイプとAPIエンドポイントをまとめた権限セットを作成してください。設計ガイドについては[権限セット](/guides/permission-sets)を参照してください。
+
+3. アプリが少数の権限しか必要としない場合、または`blob`、`account`、`identity`スコープが必要な場合は、個々のスコープを直接要求してください。これらは権限セットに含めることはできず、常に個別に要求する必要があります。
+
+これらのアプローチは組み合わせることができます。アプリは、同じOAuthフローで1つ以上の権限セットと少数の個別スコープを要求することがよくあります。
+
+独自の権限セットを構築したり、Blueskyの権限を要求する際に支援が必要な場合は、[スコープビルダー](/guides/scope-builder)ページを用意しています。
+
+<Heading level={2} id="clients">クライアント</Heading>
+
+OAuthクライアントソフトウェアはグローバルに一意な`client_id`で識別されます。クライアントソフトウェアの各バリアントは異なる`client_id`を持つことがあります。例えば同じソフトウェアのブラウザ版とAndroid（モバイル）版は異なる`client_id`を持つかもしれません。`client_id`は、クライアントメタデータJSONドキュメントが取得できる完全修飾のウェブURLでなければなりません。例えば`https://app.example.com/oauth-client-metadata.json`のようなものです。
+
+- W3CのURL仕様に従った正しい形式のURLである必要があります
+- スキーマは`https://`でなければならず、ポート番号を含めてはいけません。開発用には`http://localhost`の`client_id`に対する[特別な例外](/specs/oauth#localhost-client-development)がある点に注意してください。
+- パスに`oauth-client-metadata.json`を含める必要はありませんが、慣例としては役立ちます。
 
 <Note>
-`oauth-client-metadata.json`ではなく`client-metadata.json`を使用していた場合、この変更を行うことでURL文字列ではなくドメインが認証フローページに表示されるようになります。
+もし`oauth-client-metadata.json`の代わりに`client-metadata.json`を使用している場合、認可フローのページでURL文字列ではなくドメインを表示させることができます。
 </Note>
 
 <Container>
   <Image src={oauthdomain} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-認証フローページには付与されるすべての関連パーミッションが表示されます。これは[細かいパーミッション](/specs/permission)を使用するアプリと[トランジション](/specs/oauth#authorization-scopes)OAuthスコープを使用するアプリの両方に当てはまります。
+認可フローのページは付与される関連権限をすべて表示します。これは[細分化されたスコープ](/specs/permission)を使うアプリでも、[トランジションスコープ](/specs/oauth#authorization-scopes)を使うものでも同様です。
 
-クライアントアプリは、認証フロー中に実際に承認された認証スコープを必ず確認する必要があります。特に、アカウントのメールアドレスの読み取りパーミッション（`account:email`）をリクエストする場合、ユーザーが他のパーミッションを付与しながらそのパーミッションを拒否する可能性があります。理論的には、全体のリクエストが承認されても、個別のパーミッションが拒否される場合があります。
+クライアントアプリは認可フロー中に実際に承認された認可スコープを必ず確認してください。特にアカウントのメールアドレス読み取り権限（`account:email`）を要求した場合、ユーザーはその権限だけを拒否して他の権限を承認する可能性があります。理論上はどの個別の権限も拒否された上で、リクエスト全体としては承認されることがあり得ます。
 
-## 変更のロールアウト
+<Heading level={2} id="rolling-out-changes">変更の展開</Heading>
 
-新しいパーミッションセットを使用するようにアプリを更新する際は、ソフトウェアのリリースとパーミッションセットの更新を連携させることが重要です。ユーザーの承認が必要な新しいパーミッションセットを追加する場合、ユーザーはアプリを再認可してこれらの新しいパーミッションを付与する必要があります。
+アプリを新しい権限セットに対応させる際は、ソフトウェアのリリースと権限セットの更新を同期させることが重要です。ユーザーの承認が必要な新しい権限セットを追加すると、ユーザーは新しい権限を付与するためにアプリを再認可する必要があります。
 
-[クライアントメタデータドキュメント](/specs/oauth#clients)のリリースおよびデプロイプロセスは、アプリのコードデプロイプロセスとは別になる場合があります。新しいパーミッションをリクエストする更新された`oauth-client-metadata.json`は、それらのパーミッションを必要とするアプリのバージョンよりも前に公開されている必要があるため、それに応じた計画を立てるようにしてください。
+[クライアントメタデータドキュメント](/specs/oauth#clients)のリリース/デプロイの手順は、アプリのコードデプロイ手順とは別である場合があります。適切に計画してください。新しい権限を要求する更新済みの`oauth-client-metadata.json`は、その権限を必要とするアプリのバージョンより先に公開されている必要があります。
 
-パーミッションセットは改訂できますが、削除や破壊的な変更は既存のアプリケーションを壊す可能性があります。一般的に、パーミッションセットは設計対象のアプリケーションと密接に結びついているべきですが、必ずしも1対1である必要はありません。atprotoアプリケーションは複数の異なるLexiconを利用できることを覚えておいてください。
+権限セットは改訂できますが、削除したり破壊的変更を行うと既存アプリケーションが壊れる可能性があります。一般に、権限セットは設計対象のアプリケーションに密接に結びつけるべきですが、必ずしも1:1である必要はありません。atprotoアプリケーションは複数の異なるLexiconを利用できることを覚えておいてください。
 
-## OAuthフローの例
+<Heading level={2} id="o-auth-flow-examples">OAuthフローの例</Heading>
 
-atproto IDプロバイダーを*認証のみ*に使用しているアプリは、[`atproto`パーミッションのみをリクエストする必要があります](/guides/permission-sets)。これは他のIDプロバイダーから期待されるものと同じOAuthフローを提供します。Atmosphereソーシャルグラフの機能は使用されず、追加のパーミッションは不要です：
+atprotoのIDプロバイダーを認証*のみ*に利用するアプリは、[`atproto`権限を要求するだけで十分](/guides/permission-sets)です。これにより、他のIDプロバイダーで期待するのと同じOAuthフローが提供されます。Atmosphereのソーシャルグラフ機能は使われず、追加の権限も不要です。
 
 <Container>
   <Image src={oauth} alt="" className="w-full max-w-md mx-auto"/>
 </Container>
 
-これは完全に使用可能なAtmosphere統合であり、多くのアプリケーションはこれを出発点として使用します。シンプルで読みやすい「Authorize」フローが生成されることに注目してください。リクエストしているアプリのURLが明確に表示され、パーミッションダイアログにはアプリが「あなたを一意に識別したい」と記載されていますが、それ以外は何もありません。
+これは十分に実用的なAtmosphere連携で、多くのアプリが出発点として利用します。ここでは明快で読みやすい「Authorize」フローが提示されます。要求元アプリのURLが明確に表示され、権限ダイアログにはアプリが「wants to uniquely identify you（あなたを識別しようとしています）」とだけ示され、それ以外はありません。
 
-次に、追加のパーミッションをリクエストする、より複雑な統合を考えてみましょう。デフォルトでは、これらはサマリービューで表示されます：
+次に、追加の権限を要求する、より複雑な連携を考えます。デフォルトでは、これらは要約で提示されます。
 
 <Container>
   <Image src={skyblur} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-この画像では、2つの異なるLexiconグループがあることに注目してください：*Bluesky*パーミッションと*Skyblur*パーミッションです。各Lexiconは独自のパーミッションセット、およびそれらのパーミッションのグループ化と表示方法を定義します。
+この画像では、*Bluesky*権限と*Skyblur*権限という2つの異なるLexiconのグループがあることに注目してください。各Lexiconは独自の権限セットを定義し、それらのグループと表示方法も独自に定義します。
 
-**?**アイコンをクリックすると、各パーミッションセットの詳細が表示されます：
+「**?**」アイコンをクリックすると、各権限セットの詳細を確認できます。
 
 <Container>
   <Image src={granular} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-展開されたatprotoとBlueskyのパーミッションから、`atproto`（OAuthログイン用）、`blob:*/*`（画像と動画の処理用）、およびプロフィールとソーシャルグラフの操作のための`app.bsky.*`パーミッションなどを認識できるかもしれません。
+展開されたatprotoとBlueskyの権限には、OAuthログイン用の`atproto`、画像・動画の取り扱い用の`blob:*/*`、そしてプロフィールやソーシャルグラフ操作のための複数の`app.bsky.*`権限が含まれていることが分かるでしょう。
 
-*Skyblur* LexiconのパーミッションはLexiconによって異なる方法で定義・要約されています：
+*Skyblur*のLexicon権限は、異なる方法で定義・要約されています。
 
 <Container>
   <Image src={lexicon} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-これはすべてアプリ開発者とLexiconデザイナーの裁量に委ねられています。異なるLexiconを並列で使用するためのモデルを提供し、各Lexiconが独自のパーミッションセットと表示方法を定義できるようにしています。
+これらはすべてアプリ開発者とLexicon設計者の裁量に委ねられています。私たちは、異なるLexiconを並行して利用し、各Lexiconが独自の権限セットと表示を定義するためのモデルを提供しています。
 
-## 参考資料とリソース
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 
-- [Auth](/guides/auth)
-- [SDK authentication](/guides/sdk-auth)
-- [About OAuth](/guides/about-oauth)
-- [パーミッションセット](/guides/permission-sets)
-- [OAuth Patterns](/guides/oauth-patterns)（上級トピック）
+- [認証](/guides/auth)
+- [SDKによる認証](/guides/sdk-auth)
+- [OAuthについて](/guides/about-oauth)
+- [権限セット](/guides/permission-sets)
+- [OAuthパターン](/guides/oauth-patterns)
 - [Lexiconの公開](/guides/publishing-lexicons)
-- [OAuth spec](/specs/oauth)
-- [Permissions spec](/specs/permission)
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)
