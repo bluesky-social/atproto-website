@@ -112,7 +112,7 @@ In the Authorization Request, the `redirect_uri` must match one of those supplie
 
 Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate URL encoding):
 
-- `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL. The scheme must be `http`, and the hostname must be either `localhost` or a loopback IP literal (`127.0.0.1` or `[::1]`). Path components are matched, but port numbers are ignored. The default values (if none are supplied) are `http://127.0.0.1/`, `http://[::1]/`, and `http://localhost/`.
+- `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL. The scheme must be `http`, and the hostname must be either `localhost` or a loopback IP literal (`127.0.0.1` or `[::1]`). Path components are matched, but port numbers are ignored. The default values (if none are supplied) are `http://localhost/`, `http://127.0.0.1/`, and `http://[::1]/`.
 - `scope` (string with space-separated values, single query parameter allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
 
 The other parameters in the virtual client metadata document will be:
