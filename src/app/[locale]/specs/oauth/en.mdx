@@ -108,11 +108,11 @@ To make development workflows easier, a special exception is made for clients wi
 
 In a localhost `client_id` scenario, the Authorization Server should verify that the scheme is `http`, and that the hostname is exactly `localhost` with no port specified. IP addresses (`127.0.0.1`, etc) are not supported. The path parameter must be empty (`/`).
 
-In the Authorization Request, the `redirect_uri` must match one of those supplied (or a default). Path components must match, but port numbers are not matched.
+In the Authorization Request, the `redirect_uri` must match one of those supplied (or a default). Hostname and path components must match, but port numbers are not matched.
 
 Some metadata fields can be configured via query parameter in the `client_id` URL (with appropriate URL encoding):
 
-- `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL, with path component matched but port numbers ignored. The default values (if none are supplied) are `http://127.0.0.1/` and `http://[::1]/`.
+- `redirect_uri` (string, multiple query parameters allowed, optional): allows declaring a local redirect/callback URL. The scheme must be `http`, and the hostname must be either `localhost` or a loopback IP literal (`127.0.0.1` or `[::1]`). Path components are matched, but port numbers are ignored. The default values (if none are supplied) are `http://127.0.0.1/`, `http://[::1]/`, and `http://localhost/`.
 - `scope` (string with space-separated values, single query parameter allowed, optional): the set of scopes which might be requested by the client. Default is `atproto`.
 
 The other parameters in the virtual client metadata document will be:
@@ -126,6 +126,10 @@ The other parameters in the virtual client metadata document will be:
 - `dpop_bound_access_tokens`: `true`
 
 Note that this works as a public client, not a confidential client.
+
+<Note>
+[RFC 8252](https://datatracker.ietf.org/doc/html/rfc8252#section-8.3) recommends loopback IP literals over `localhost` for native apps binding a local port listener, out of concern that `localhost` could resolve to a non-loopback address. In this browser-mediated development flow that concern is largely historic: modern web browsers always resolve `localhost` to the loopback interface, and the mandatory PKCE and DPoP requirements prevent use of an intercepted authorization code. Allowing `localhost` redirect URIs avoids a common development failure mode where OAuth session state is stored under the `localhost` origin in the browser, but a loopback IP `redirect_uri` returns the user to a different origin which cannot access that state.
+</Note>
 
 ## Identity Authentication
 
@@ -218,7 +222,7 @@ The `state` parameter in client authorization requests is mandatory. Clients sho
 
 For web clients, the `redirect_uri` is a HTTPS URL which will be redirected in the browser to return users to the application at the end of the Authorization flow. The URL may include a port number, but not if it is the default port number. The `redirect_uri` must match one of the URIs declared in the client metadata and the Authorization Server must verify this condition.
 
-There is a special exception for the localhost development workflow to use `http://127.0.0.1` or `http://[::1]` URLs, with matching rules described in the "Localhost Client Development" section. These clients use web URLs, but have `application_type` set to `native` in the generated client metadata.
+There is a special exception for the localhost development workflow to use `http://localhost`, `http://127.0.0.1`, or `http://[::1]` URLs, with matching rules described in the "Localhost Client Development" section. These clients use web URLs, but have `application_type` set to `native` in the generated client metadata.
 
 For native clients, the `redirect_uri` may use a custom URI scheme to have the operating system redirect the user back to the app, instead of a web browser. Native clients are also allowed to use an HTTPS URL. Any custom scheme must match the `client_id` hostname in reverse-domain order. The URI scheme must be followed by a single colon (`:`) then a single forward slash (`/`) and then a URI path component. For example, an app with `client_id`  [`https://app.example.com/oauth-client-metadata.json`](https://app.example.com/oauth-client-metadata.json) could have a `redirect_uri` of `com.example.app:/callback`.
 
