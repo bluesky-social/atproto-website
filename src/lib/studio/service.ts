@@ -199,7 +199,9 @@ export async function createPost(
   const body =
     input.body && input.body.trim()
       ? input.body
-      : `# ${input.title}\n\nStart writing your post here...\n`
+      : // No leading `# ${title}` — the page renders the title itself, so an H1
+        // here would be redundant.
+        `Start writing your post here...\n`
 
   // Validate the posts.ts anchor before writing any files.
   const postsSrc = await fs.readFile(paths.postsFile, 'utf-8')
