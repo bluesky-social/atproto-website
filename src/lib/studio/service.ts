@@ -99,7 +99,10 @@ export async function readPost(
   return {
     slug,
     owned: getOwnedFields(parsed),
-    body: parsed.body,
+    // Strip the leading blank-line separator between the header and the body so
+    // the editor doesn't show phantom empty lines; save re-adds it via
+    // normalizeBodySeparation.
+    body: parsed.body.replace(/^\n+/, ''),
     standardSiteUri: getHeaderField(parsed, 'standardSiteUri'),
     ogImage: findOgImage(paths, slug),
   }

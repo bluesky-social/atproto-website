@@ -82,15 +82,11 @@ export function BlogEditor() {
     setStatus('')
   }
 
-  // Fold a publish result into the URI field + status line.
-  function applyPublish(pub: Publish | undefined, prefix: string) {
+  // Update the standard.site URI field from a publish result. Publish state is
+  // reflected inline in the standard.site record section, not the top status
+  // line (which is about the post save), to avoid ambiguity.
+  function applyPublish(pub: Publish | undefined) {
     if (pub?.uri) setSsiteUri(pub.uri)
-    if (!pub) return setStatus(prefix)
-    setStatus(
-      pub.ok
-        ? `${prefix} · published`
-        : `${prefix} · publish failed: ${pub.error ?? 'unknown'}`,
-    )
   }
 
   async function save() {
@@ -106,9 +102,10 @@ export function BlogEditor() {
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Reveal step 2: load the created post (body placeholder, ssite, og image)
-      // from disk, then surface the publish result as the status.
+      // from disk, then show a plain save status.
       await loadPost(data.slug)
-      applyPublish(data.publish, `Created ${data.slug}`)
+      applyPublish(data.publish)
+      setStatus(`Created ${data.slug}`)
       await refreshList()
     } else {
       setStatus('Saving…')
@@ -119,7 +116,8 @@ export function BlogEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
-      applyPublish(data.publish, `Saved ${data.slug}`)
+      applyPublish(data.publish)
+      setStatus(`Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -130,7 +128,10 @@ export function BlogEditor() {
     const res = await fetch(`/api/studio/blog/${slug}/publish`, { method: 'POST' })
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
-    applyPublish(data.publish, 'Publish')
+    const pub: Publish | undefined = data.publish
+    applyPublish(pub)
+    // Publish state shows inline with the record; only surface failures up top.
+    setStatus(pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : '')
   }
 
   async function uploadOgImage(file: File) {
@@ -263,12 +264,14 @@ export function BlogEditor() {
                 Delete
               </button>
             )}
-            <button
-              onClick={save}
-              className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
-            >
-              {mode === 'new' ? 'Create post' : 'Save'}
-            </button>
+            {mode === 'edit' && (
+              <button
+                onClick={save}
+                className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
+              >
+                Save
+              </button>
+            )}
           </div>
         </div>
 
@@ -331,6 +334,21 @@ export function BlogEditor() {
               </Field>
             )}
           </div>
+
+          {mode === 'new' && (
+            <div className="mt-6 flex flex-col items-end gap-2 border-t border-neutral-200 pt-6">
+              <button
+                onClick={save}
+                className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
+              >
+                Create post
+              </button>
+              <span className="text-xs italic text-neutral-400">
+                Body, Open Graph image, and standard.site record appear after you
+                create the post.
+              </span>
+            </div>
+          )}
 
           {/* standard.site record */}
           {mode === 'edit' && (
@@ -456,12 +474,6 @@ export function BlogEditor() {
             </div>
           )}
 
-          {mode === 'new' && (
-            <p className="mt-8 border-t border-neutral-200 pt-6 text-sm italic text-neutral-400">
-              Create the post to add the body, Open Graph image, and standard.site
-              record.
-            </p>
-          )}
         </div>
       </main>
     </div>
