@@ -89,6 +89,7 @@ export async function readPost(
   owned: OwnedFields
   body: string
   standardSiteUri: string
+  ogImage: string | null
 }> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
@@ -100,7 +101,40 @@ export async function readPost(
     owned: getOwnedFields(parsed),
     body: parsed.body,
     standardSiteUri: getHeaderField(parsed, 'standardSiteUri'),
+    ogImage: findOgImage(paths, slug),
   }
+}
+
+// Next's opengraph-image file convention supports these extensions.
+export const OG_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'gif'] as const
+export type OgImageExt = (typeof OG_IMAGE_EXTS)[number]
+
+// Basename of the post's opengraph-image.* if one exists, else null.
+export function findOgImage(paths: StudioPaths, slug: string): string | null {
+  for (const ext of OG_IMAGE_EXTS) {
+    const name = `opengraph-image.${ext}`
+    if (existsSync(path.join(paths.blogDir, slug, name))) return name
+  }
+  return null
+}
+
+// Writes the post's OG image as opengraph-image.<ext>, removing any existing
+// opengraph-image.* first so exactly one remains (Next only uses one).
+export async function saveOgImage(
+  paths: StudioPaths,
+  slug: string,
+  bytes: Buffer,
+  ext: OgImageExt,
+): Promise<{ filename: string }> {
+  const dir = path.join(paths.blogDir, slug)
+  if (!existsSync(dir)) throw new Error(`Post not found: ${slug}`)
+  for (const e of OG_IMAGE_EXTS) {
+    const p = path.join(dir, `opengraph-image.${e}`)
+    if (existsSync(p)) await fs.rm(p)
+  }
+  const filename = `opengraph-image.${ext}`
+  await fs.writeFile(path.join(dir, filename), bytes)
+  return { filename }
 }
 
 export type PublishResult = { ok: boolean; uri?: string; error?: string }

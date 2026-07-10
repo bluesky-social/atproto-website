@@ -131,11 +131,17 @@ npm run dev
   publishing credentials in `.env`. Publish failures are non-blocking — the post
   still saves and a warning shows. The front-matter shows the record's `at://`
   URI (read-only) with **Copy** and **pdsls ↗** buttons once published.
-- The editor does not render a preview; use the **Open `/blog/<slug>` ↗** link
-  to see the real page.
+- **Open Graph image:** a drag-and-drop zone (also click-to-choose) saves the
+  dropped image as `opengraph-image.<ext>` in the post's directory — Next's file
+  convention then serves it as the post's OG image. PNG/JPG/GIF, ≤8MB; a new
+  drop replaces the existing one (exactly one per post). A thumbnail preview
+  shows the current image.
+- The editor does not render a preview of the post body; use the
+  **Open `/blog/<slug>` ↗** link to see the real page.
 - The UI does no git operations — branch/stage/commit in your normal flow.
 
-OG-image generation is the remaining planned addition to this page.
+Automatic OG-image *generation* is the remaining planned addition (this slice
+is manual drop-to-save only).
 
 ### Removing a blog post
 

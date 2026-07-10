@@ -31,6 +31,9 @@ export function BlogEditor() {
   const [authorDid, setAuthorDid] = useState('')
   const [body, setBody] = useState('')
   const [ssiteUri, setSsiteUri] = useState('')
+  const [ogImage, setOgImage] = useState<string | null>(null)
+  const [ogVersion, setOgVersion] = useState(0)
+  const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<string>('')
   const [copied, setCopied] = useState(false)
 
@@ -56,6 +59,8 @@ export function BlogEditor() {
     setAuthorDid('')
     setBody('')
     setSsiteUri('')
+    setOgImage(null)
+    setDragging(false)
     setStatus('')
   }
 
@@ -72,6 +77,8 @@ export function BlogEditor() {
     setAuthorDid('')
     setBody(data.body)
     setSsiteUri(data.standardSiteUri || '')
+    setOgImage(data.ogImage ?? null)
+    setOgVersion((v) => v + 1)
     setStatus('')
   }
 
@@ -123,6 +130,22 @@ export function BlogEditor() {
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
     applyPublish(data.publish, 'Publish')
+  }
+
+  async function uploadOgImage(file: File) {
+    if (mode !== 'edit') return
+    setStatus('Uploading image…')
+    const form = new FormData()
+    form.append('file', file)
+    const res = await fetch(`/api/studio/blog/${slug}/og-image`, {
+      method: 'POST',
+      body: form,
+    })
+    const data = await res.json()
+    if (!res.ok) return setStatus(`Error: ${data.error}`)
+    setOgImage(data.filename)
+    setOgVersion((v) => v + 1)
+    setStatus(`OG image saved (${data.filename})`)
   }
 
   async function remove() {
@@ -358,6 +381,61 @@ export function BlogEditor() {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Open Graph image */}
+          {mode === 'edit' && (
+            <div className="mt-6">
+              <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                Open Graph image
+              </p>
+              <label
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setDragging(true)
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  setDragging(false)
+                  const file = e.dataTransfer.files?.[0]
+                  if (file) uploadOgImage(file)
+                }}
+                className={
+                  'flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 text-center transition ' +
+                  (dragging
+                    ? 'border-neutral-500 bg-neutral-50'
+                    : 'border-neutral-300 hover:border-neutral-400')
+                }
+              >
+                {ogImage && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={`/api/studio/blog/${slug}/og-image?v=${ogVersion}`}
+                    alt="Open Graph preview"
+                    className="mb-3 max-h-40 rounded border border-neutral-200"
+                  />
+                )}
+                <span className="text-sm text-neutral-500">
+                  {ogImage
+                    ? 'Drop a new image to replace, or click to choose'
+                    : 'Drag an image here, or click to choose'}
+                </span>
+                <span className="mt-1 text-xs text-neutral-400">
+                  PNG, JPG, or GIF · saved as opengraph-image in the post dir
+                </span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/gif"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) uploadOgImage(file)
+                    e.target.value = ''
+                  }}
+                />
+              </label>
             </div>
           )}
 

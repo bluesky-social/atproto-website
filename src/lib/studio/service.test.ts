@@ -8,6 +8,8 @@ import {
   createPost,
   updatePost,
   deletePost,
+  findOgImage,
+  saveOgImage,
   type StudioPaths,
 } from './service'
 
@@ -195,5 +197,25 @@ describe('read/update/list/delete', () => {
     expect(res.dirRemoved).toBe(false)
     expect(res.entryRemoved).toBe(false)
     // returns flags, does not throw
+  })
+
+  it('saveOgImage writes opengraph-image.<ext> and findOgImage reports it', async () => {
+    expect(findOgImage(paths, 'hello')).toBeNull()
+    const res = await saveOgImage(paths, 'hello', Buffer.from('fake-png-bytes'), 'png')
+    expect(res.filename).toBe('opengraph-image.png')
+    expect(findOgImage(paths, 'hello')).toBe('opengraph-image.png')
+    expect(
+      fs.existsSync(path.join(paths.blogDir, 'hello', 'opengraph-image.png')),
+    ).toBe(true)
+    expect((await readPost(paths, 'hello')).ogImage).toBe('opengraph-image.png')
+  })
+
+  it('saveOgImage replaces an existing image so exactly one remains', async () => {
+    await saveOgImage(paths, 'hello', Buffer.from('png'), 'png')
+    await saveOgImage(paths, 'hello', Buffer.from('jpg'), 'jpg')
+    const dir = path.join(paths.blogDir, 'hello')
+    expect(fs.existsSync(path.join(dir, 'opengraph-image.png'))).toBe(false)
+    expect(fs.existsSync(path.join(dir, 'opengraph-image.jpg'))).toBe(true)
+    expect(findOgImage(paths, 'hello')).toBe('opengraph-image.jpg')
   })
 })
