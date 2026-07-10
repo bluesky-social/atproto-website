@@ -105,8 +105,9 @@ export function BlogEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
-      setMode('edit')
-      setSlug(data.slug)
+      // Reveal step 2: load the created post (body placeholder, ssite, og image)
+      // from disk, then surface the publish result as the status.
+      await loadPost(data.slug)
       applyPublish(data.publish, `Created ${data.slug}`)
       await refreshList()
     } else {
@@ -266,7 +267,7 @@ export function BlogEditor() {
               onClick={save}
               className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-neutral-700"
             >
-              Save
+              {mode === 'new' ? 'Create post' : 'Save'}
             </button>
           </div>
         </div>
@@ -439,19 +440,28 @@ export function BlogEditor() {
             </div>
           )}
 
-          {/* Body */}
-          <div className="mt-8">
-            <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
-              Body — MDX
+          {/* Body (revealed after the post is created) */}
+          {mode === 'edit' && (
+            <div className="mt-8">
+              <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                Body — MDX
+              </p>
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                spellCheck={false}
+                placeholder={'# Title\n\nWrite the MDX body here…'}
+                className="min-h-[26rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
+              />
+            </div>
+          )}
+
+          {mode === 'new' && (
+            <p className="mt-8 border-t border-neutral-200 pt-6 text-sm italic text-neutral-400">
+              Create the post to add the body, Open Graph image, and standard.site
+              record.
             </p>
-            <textarea
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              spellCheck={false}
-              placeholder={'# Title\n\nWrite the MDX body here…'}
-              className="min-h-[26rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
-            />
-          </div>
+          )}
         </div>
       </main>
     </div>
