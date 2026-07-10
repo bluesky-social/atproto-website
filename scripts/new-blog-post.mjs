@@ -161,8 +161,6 @@ export default async function BlogPost({ params }: any) {
   author: '${authorName.replace(/'/g, "\\'")}',
 }
 
-# ${title}
-
 Start writing your post here...
 `
   fs.writeFileSync(path.join(postDir, 'en.mdx'), mdxContent)
