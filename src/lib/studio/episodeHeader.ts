@@ -1,5 +1,4 @@
 import {
-  parseMdxFile,
   serializeMdxFile,
   normalizeBodySeparation,
   decodeStringLiteral,
