@@ -100,7 +100,7 @@ export const episodes: Episode[] = [
     episodeNumber: 11,
     title: 'Sometimes you just want to hold the entire network in your hand',
     description: 'Jim and Alex are back on the livestream. The permissioned data proposal has shipped, updates from Tangled, Roomy, and Anisota, and a look ahead at Jetstream v2.',
-    date: 'July 9, 2026',
+    date: 'July 8, 2026',
     pubDate: '2026-07-10T02:05:39.456Z',
     duration: '00:33:20',
     durationSeconds: 2000,
