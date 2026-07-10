@@ -45,7 +45,7 @@ export async function GET(_request: Request, { params }: Ctx) {
   if (isProd()) return notFound()
   const { slug } = await params
   const paths = studioPaths()
-  const name = findOgImage(paths, slug)
+  const name = findOgImage(paths.blogDir, slug)
   if (!name) return notFound()
   const ext = name.split('.').pop() as OgImageExt
   const bytes = await readFile(path.join(paths.blogDir, slug, name))
@@ -85,7 +85,7 @@ export async function POST(request: Request, { params }: Ctx) {
       )
     }
     const bytes = Buffer.from(await file.arrayBuffer())
-    const { filename } = await saveOgImage(paths, slug, bytes, ext)
+    const { filename } = await saveOgImage(paths.blogDir, slug, bytes, ext)
     return Response.json({ slug, filename })
   } catch (err) {
     return Response.json({ error: (err as Error).message }, { status: 400 })
