@@ -125,3 +125,26 @@ describe('getHeaderField', () => {
     expect(getHeaderField(parsed, 'nope')).toBe('')
   })
 })
+
+describe('comment-aware header parsing', () => {
+  it('skips // line comments (even with apostrophes) in the header', () => {
+    const sample =
+      'export const header = {\n' +
+      "  title: 'X',\n" +
+      "  // Flip to true once you've written the show notes / transcript below.\n" +
+      '  hasShowNotes: false,\n' +
+      '}\n\nbody\n'
+    const parsed = parseMdxFile(sample)
+    expect(parsed.headerEntries.map((e) => e.key)).toEqual(['title', 'hasShowNotes'])
+  })
+
+  it('skips /* block comments */ in the header', () => {
+    const sample =
+      'export const header = {\n' +
+      "  title: 'X', /* note: don't break */\n" +
+      '  n: 1,\n' +
+      '}\n\nbody\n'
+    const parsed = parseMdxFile(sample)
+    expect(parsed.headerEntries.map((e) => e.key)).toEqual(['title', 'n'])
+  })
+})

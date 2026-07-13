@@ -62,6 +62,17 @@ function findHeaderBraces(content: string): { open: number; close: number } {
       if (ch === inString && !isEscapedAt(content, i)) inString = null
       continue
     }
+    if (ch === '/' && content[i + 1] === '/') {
+      i += 2
+      while (i < content.length && content[i] !== '\n') i++
+      continue
+    }
+    if (ch === '/' && content[i + 1] === '*') {
+      i += 2
+      while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++
+      i += 1 // sits on '*'; the for-loop's i++ moves past the '/'
+      continue
+    }
     if (ch === "'" || ch === '"' || ch === '`') {
       inString = ch
       continue
@@ -73,6 +84,38 @@ function findHeaderBraces(content: string): { open: number; close: number } {
     }
   }
   throw new Error('Unterminated header object in MDX file')
+}
+
+// Remove JS // line comments and /* block comments */ from a string while
+// respecting string literals so slashes inside strings are not treated as
+// comment openers.
+function stripComments(s: string): string {
+  let out = ''
+  let inString: string | null = null
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i]
+    if (inString) {
+      out += ch
+      if (ch === inString && !isEscapedAt(s, i)) inString = null
+      continue
+    }
+    if (ch === '/' && s[i + 1] === '/') {
+      i += 2
+      while (i < s.length && s[i] !== '\n') i++
+      // Keep the newline so surrounding whitespace-trimming still works.
+      if (i < s.length) out += s[i]
+      continue
+    }
+    if (ch === '/' && s[i + 1] === '*') {
+      i += 2
+      while (i < s.length && !(s[i] === '*' && s[i + 1] === '/')) i++
+      i += 1 // skip past closing '/'
+      continue
+    }
+    if (ch === "'" || ch === '"' || ch === '`') inString = ch
+    out += ch
+  }
+  return out
 }
 
 // Split the inner text of the header object into entries at top-level commas,
@@ -89,6 +132,17 @@ function splitEntries(inner: string): HeaderEntry[] {
       if (ch === inString && !isEscapedAt(inner, i)) inString = null
       continue
     }
+    if (ch === '/' && inner[i + 1] === '/') {
+      i += 2
+      while (i < inner.length && inner[i] !== '\n') i++
+      continue
+    }
+    if (ch === '/' && inner[i + 1] === '*') {
+      i += 2
+      while (i < inner.length && !(inner[i] === '*' && inner[i + 1] === '/')) i++
+      i += 1 // sits on '*'; the for-loop's i++ moves past the '/'
+      continue
+    }
     if (ch === "'" || ch === '"' || ch === '`') inString = ch
     else if (ch === '{' || ch === '[' || ch === '(') depth++
     else if (ch === '}' || ch === ']' || ch === ')') depth--
@@ -100,15 +154,18 @@ function splitEntries(inner: string): HeaderEntry[] {
   pieces.push(inner.slice(start))
 
   for (const piece of pieces) {
-    if (!piece.trim()) continue
+    // Strip JS comments before processing so that comment lines (e.g. a `//`
+    // comment that contains an apostrophe) don't interfere with key detection.
+    const clean = stripComments(piece)
+    if (!clean.trim()) continue
     // Split at the first top-level colon.
     let ci = -1
     let d = 0
     let s: string | null = null
-    for (let i = 0; i < piece.length; i++) {
-      const ch = piece[i]
+    for (let i = 0; i < clean.length; i++) {
+      const ch = clean[i]
       if (s) {
-        if (ch === s && !isEscapedAt(piece, i)) s = null
+        if (ch === s && !isEscapedAt(clean, i)) s = null
         continue
       }
       if (ch === "'" || ch === '"' || ch === '`') s = ch
@@ -120,12 +177,12 @@ function splitEntries(inner: string): HeaderEntry[] {
       }
     }
     if (ci === -1) continue
-    const rawKey = piece.slice(0, ci).trim()
+    const rawKey = clean.slice(0, ci).trim()
     const key =
       rawKey.startsWith("'") || rawKey.startsWith('"')
         ? decodeStringLiteral(rawKey)
         : rawKey
-    const rawValue = piece.slice(ci + 1).trim()
+    const rawValue = clean.slice(ci + 1).trim()
     entries.push({ key, rawValue })
   }
   return entries

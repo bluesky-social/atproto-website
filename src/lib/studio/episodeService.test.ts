@@ -135,4 +135,25 @@ describe('read/update/delete/list', () => {
     expect(again.dirRemoved).toBe(false)
     expect(again.entryRemoved).toBe(false)
   })
+
+  it('recomputes hasShowNotes on update from the body', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: 'Some real notes.' })
+    expect((await readEpisode(paths, 'my-ep')).fields.hasShowNotes).toBe(true)
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: '' })
+    expect((await readEpisode(paths, 'my-ep')).fields.hasShowNotes).toBe(false)
+  })
+
+  it('reads an episode whose header has a // comment (CLI/template style)', async () => {
+    const mdxPath = path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+    const withComment = fs
+      .readFileSync(mdxPath, 'utf-8')
+      .replace(
+        'export const header = {\n',
+        "export const header = {\n  // Flip to true once you've written the notes\n",
+      )
+    fs.writeFileSync(mdxPath, withComment)
+    const ep = await readEpisode(paths, 'my-ep')
+    expect(ep.fields.title).toBe('My Episode')
+  })
 })

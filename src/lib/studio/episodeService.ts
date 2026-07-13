@@ -188,15 +188,16 @@ export async function updateEpisode(
 ): Promise<{ slug: string }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
+  const fields = { ...input.fields, hasShowNotes: Boolean(input.body && input.body.trim()) }
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
-  const next = applyEpisodeFields(parsed, input.fields)
+  const next = applyEpisodeFields(parsed, fields)
   next.body = normalizeBodySeparation(input.body)
   await fs.writeFile(mdxPath, serializeMdxFile(next))
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(
     paths.episodesFile,
-    updateEntryBySlug(src, slug, entryFrom(slug, input.fields)),
+    updateEntryBySlug(src, slug, entryFrom(slug, fields)),
   )
   return { slug }
 }
