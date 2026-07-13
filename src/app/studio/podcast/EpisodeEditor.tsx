@@ -81,7 +81,9 @@ export function EpisodeEditor() {
   }
 
   useEffect(() => {
-    refreshList()
+    refreshList().then((n) => {
+      if (typeof n === 'number') setFields((f) => ({ ...f, episodeNumber: n }))
+    })
   }, [])
 
   function startNew() {
