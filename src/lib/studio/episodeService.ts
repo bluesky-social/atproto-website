@@ -4,6 +4,7 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
+import { randomBytes } from 'node:crypto'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
 import {
   newEpisodeMdx,
@@ -167,10 +168,16 @@ export async function createEpisode(
   const nextSrc = prependEntry(src, entryFrom(input.slug, fields))
 
   await fs.mkdir(dir, { recursive: true })
-  await fs.writeFile(path.join(dir, 'page.tsx'), pageTsx(input.title, input.description))
-  await fs.writeFile(path.join(dir, 'en.mdx'), newEpisodeMdx(fields, body))
-  await fs.writeFile(path.join(dir, 'transcript.mdx'), TRANSCRIPT_STUB)
-  await fs.writeFile(paths.episodesFile, nextSrc)
+  try {
+    await fs.writeFile(path.join(dir, 'page.tsx'), pageTsx(input.title, input.description))
+    await fs.writeFile(path.join(dir, 'en.mdx'), newEpisodeMdx(fields, body))
+    await fs.writeFile(path.join(dir, 'transcript.mdx'), TRANSCRIPT_STUB)
+    await fs.writeFile(paths.episodesFile, nextSrc)
+  } catch (err) {
+    // Roll back the partially-created directory so a retry isn't blocked.
+    await fs.rm(dir, { recursive: true, force: true })
+    throw err
+  }
   return { slug: input.slug }
 }
 
@@ -214,7 +221,7 @@ export async function uploadAudio(
 ): Promise<{ audioUrl: string; audioSizeBytes: number }> {
   const { bucket, publicBase, token, accountId } = r2Config()
   const key = `off-protocol/${slug}/${slug}.mp3`
-  const tmp = path.join(os.tmpdir(), `studio-${slug}-${bytes.length}.mp3`)
+  const tmp = path.join(os.tmpdir(), `studio-${slug}-${randomBytes(4).toString('hex')}.mp3`)
   await fs.writeFile(tmp, bytes)
   try {
     await execFileAsync(

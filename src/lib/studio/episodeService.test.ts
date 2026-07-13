@@ -129,8 +129,10 @@ describe('read/update/delete/list', () => {
   it('deletes dir + entry, idempotently', async () => {
     const res = await deleteEpisode(paths, 'my-ep')
     expect(res.dirRemoved).toBe(true)
+    expect(res.entryRemoved).toBe(true)
     expect(fs.existsSync(path.join(paths.podcastDir, 'my-ep'))).toBe(false)
     const again = await deleteEpisode(paths, 'my-ep')
     expect(again.dirRemoved).toBe(false)
+    expect(again.entryRemoved).toBe(false)
   })
 })
