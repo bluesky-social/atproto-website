@@ -1,8 +1,8 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'The Reference PDS Gets an Account Management Page',
-  description: 'Announcing the addition of an account management interface to the reference PDS',
+  title: 'AT Protocol Trademark',
+  description: 'Bluesky now owns the AT Protocol trademark to help make sure it can be used as widely and responsibly as possible.',
 }
 
 export default async function BlogPost({ params }: any) {

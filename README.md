@@ -20,6 +20,21 @@ The page auto-updates as you edit the file.
 
 ---
 
+### Hiding the on-page section nav
+
+Long-form pages render a sticky table-of-contents nav on the right (`PageSectionsNavigation`), auto-generated from the page's `##` headings. To hide it on a specific page — for example, when the page supplies its own in-content table of contents — set `hideSectionNav` in the MDX `header` export:
+
+```js
+export const header = {
+  // ...
+  hideSectionNav: true,
+}
+```
+
+The flag is opt-in and defaults to off, so every other page is unaffected: the right-hand nav still renders wherever a page has `##` sections. Heading anchors are generated independently, so in-page links keep working either way.
+
+---
+
 ### Blog tools
 
 All blog-related commands are available through a single entry point:
