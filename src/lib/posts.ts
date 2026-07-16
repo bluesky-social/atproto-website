@@ -10,7 +10,7 @@ export const posts: BlogPost[] = [
   {
     slug: 'at-protocol-trademark',
     title: 'AT Protocol Trademark',
-    description: 'Bluesky now owns the AT Protocol trademark to help make sure it can be used as widely and responsibly as possible.',
+    description: 'Bluesky now owns the trademark for AT Protocol to shield the ecosystem and make sure it can be used as widely as possible.',
     date: 'July 15, 2026',
     author: 'Jim Ray',
   },
