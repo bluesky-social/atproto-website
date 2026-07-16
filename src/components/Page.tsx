@@ -13,7 +13,7 @@ const BSKY_CONVERSATION_HEADER = "This post has {replies?{replies|reply|replies}
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string }
+  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string; hideSectionNav?: boolean }
   sections?: PageSectionProp[]
 }
 
@@ -22,6 +22,7 @@ export function Page(page: PageProps) {
   const navSections = page.header?.blueskyPostUrl
     ? [...sections, { id: 'discuss', title: 'Discussion' }]
     : sections
+  const showSectionNav = navSections.length > 0 && !page.header?.hideSectionNav
 
   return (
     <SectionProvider sections={navSections}>
@@ -35,7 +36,7 @@ export function Page(page: PageProps) {
       <SubpageLinks />
       <div className="flex flex-wrap items-start">
         <page.default />
-        {navSections.length > 0 && <PageSectionsNavigation sections={navSections} />}
+        {showSectionNav && <PageSectionsNavigation sections={navSections} />}
         {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER} />}
       </div>
     </SectionProvider>

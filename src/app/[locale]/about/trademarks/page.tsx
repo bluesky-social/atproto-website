@@ -1,11 +1,11 @@
 import { Page } from '@/components/Page'
 
 export const metadata = {
-  title: 'The Reference PDS Gets an Account Management Page',
-  description: 'Announcing the addition of an account management interface to the reference PDS',
+  title: 'Trademarks',
+  description: 'Trademark and brand usage guidelines for the AT Protocol.',
 }
 
-export default async function BlogPost({ params }: any) {
+export default async function HomePage({ params }: any) {
   let Content
   try {
     Content = await import(`./${(await params).locale}.mdx`)

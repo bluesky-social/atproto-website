@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'at-protocol-trademark',
+    title: 'AT Protocol Trademark',
+    description: 'Bluesky now owns the AT Protocol trademark to help make sure it can be used as widely and responsibly as possible.',
+    date: 'July 15, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'pds-account-management',
     title: 'The Reference PDS Gets an Account Management Page',
     description: 'Now anyone can easily manage their atproto account on the web.',

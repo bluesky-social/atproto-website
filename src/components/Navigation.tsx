@@ -376,6 +376,22 @@ export const navigation: Array<NavGroup> = [
     ],
   },
   {
+    title: 'About',
+    links: [
+      {
+        title: 'Trademarks',
+        icon: 'document-text',
+        href: '/about/trademarks',
+        links: [
+          {
+            title: 'Atproto Trademark Policy',
+            href: '/about/trademarks/atproto-trademark-policy',
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: 'Specs',
     links: [
       { title: 'Overview', icon: 'document-text', href: '/specs/atp' },
