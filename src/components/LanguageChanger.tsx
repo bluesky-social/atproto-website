@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import i18nConfig from '../../i18nConfig'
 import { ChangeEvent } from 'react'
 
@@ -24,7 +24,6 @@ function localeFromPathname(pathname: string): string {
 }
 
 export default function LanguageChanger() {
-  const router = useRouter()
   const pathname = usePathname()
   const currentLocale = localeFromPathname(pathname)
 
@@ -54,10 +53,14 @@ export default function LanguageChanger() {
         ? basePath
         : `/${newLocale}${basePath === '/' ? '' : basePath}`
 
-    router.push(target)
-    // Invalidate the client router cache so prefetched links don't replay a
-    // locale redirect that was cached under the previous cookie value.
-    router.refresh()
+    // Hard navigation, not router.push. Unprefixed links (`/`, `/docs`) get
+    // prefetched under the old cookie, caching a redirect to the old locale;
+    // a soft push replays that stale entry before router.refresh() can purge
+    // it, landing on the old-locale page — whose response then rewrites the
+    // cookie back (serverSetCookie: 'always'), wiping the user's choice. A
+    // full load skips the router cache and hits middleware with the fresh
+    // cookie.
+    window.location.assign(target)
   }
 
   return (
