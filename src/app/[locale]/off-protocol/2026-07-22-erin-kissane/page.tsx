@@ -1,8 +1,8 @@
 import { EpisodePage } from '@/components/EpisodePage'
 
 export const metadata = {
-  title: 'Sometimes You Just Want to Hold the Entire Network in Your Hand',
-  description: 'Jim and Alex are back on the livestream. The permissioned data proposal has shipped, updates from Tangled, Roomy, and Anisota, and a look ahead at Jetstream v2.',
+  title: '“Nothing Is Ever Over”',
+  description: 'Writer, speaker, and researcher Erin Kissane joins Jim to trace how the social internet got here, what’s worth salvaging, and how we can do better by listening to people.',
 }
 
 export default async function EpisodeRoute({ params }: any) {

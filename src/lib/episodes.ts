@@ -96,9 +96,23 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-07-22-erin-kissane',
+    episodeNumber: 12,
+    title: '“Nothing Is Ever Over”',
+    description: 'Writer, speaker, and researcher Erin Kissane joins Jim to trace how the social internet got here, what\'s worth salvaging, how we can do better by listening to people.',
+    date: 'July 22, 2026',
+    pubDate: '2026-07-22T15:33:23.353Z',
+    duration: '01:16:25',
+    durationSeconds: 4585,
+    guests: ['Erin Kissane'],
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-07-22-erin-kissane/2026-07-22-erin-kissane.mp3',
+    audioSizeBytes: 36791233,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: 'network-in-your-hand',
     episodeNumber: 11,
-    title: 'Sometimes you just want to hold the entire network in your hand',
+    title: 'Sometimes You Just Want to Hold the Entire Network in Your Hand',
     description: 'Jim and Alex are back on the livestream. The permissioned data proposal has shipped, updates from Tangled, Roomy, and Anisota, and a look ahead at Jetstream v2.',
     date: 'July 8, 2026',
     pubDate: '2026-07-10T02:05:39.456Z',
