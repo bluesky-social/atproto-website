@@ -39,13 +39,9 @@ You can find the source code for this tutorial in the [statusphere-example-app](
 This tutorial builds on top of the app created in our [OAuth with NextJS Tutorial](/guides/oauth-tutorial). You should have a completed NextJS OAuth app before starting this tutorial. If you want to skip that step, you can clone the completed OAuth app from the [Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559).
 
 You should have installed:
-- Node.js 18-22.x
+- Node.js 20+
 - Go 1.25+
 - The pnpm package manager
-
-<Note>
-This tutorial currently doesn't work on Node 24.x because of a [Request bug](https://github.com/vercel/next.js/issues/90826).
-</Note>
 
 On platforms supported by [homebrew](https://brew.sh/), you can install them with:
 
@@ -67,7 +63,7 @@ You'll begin by adding Lexicons to your project.
 
 <S04 />
 
-If you want, you can view the downloaded Lexicon file at `lib/lexicons/xyz.statusphere.status.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
+If you want, you can view the downloaded Lexicon file at `lexicons/xyz/statusphere/status.json`. From here, you can run `lex build` to generate TypeScript types for all of your installed Lexicons:
 
 <S05 />
 
