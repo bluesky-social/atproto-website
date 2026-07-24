@@ -102,8 +102,12 @@ front matter, and the `src/lib/posts.ts` entry). It exists only in development.
 
 ```bash
 npm run dev
-# then open http://localhost:3000/studio/blog
+# then open http://localhost:3000/studio
 ```
+
+`/studio` lists the editors: **Blog** (below) and **Podcast** (see
+[episode editor](#dev-studio--episode-editor-dev-only)). Both editors link to
+each other in the sidebar.
 
 - **Dev only.** The page and its API routes return 404 when
   `NODE_ENV === 'production'` (and the site deploys to the Cloudflare edge,
@@ -140,8 +144,8 @@ npm run dev
   **Open `/blog/<slug>` ↗** link to see the real page.
 - The UI does no git operations — branch/stage/commit in your normal flow.
 
-Automatic OG-image *generation* is the remaining planned addition (this slice
-is manual drop-to-save only).
+OG images are drop-to-save only — automatic *generation* is not implemented for
+either editor.
 
 ### Removing a blog post
 
@@ -479,6 +483,73 @@ npm run podcast remove
 
 This deletes local files only. Once a feed `guid` has been distributed to subscribers, you cannot retroactively unsubscribe them — be deliberate.
 
+#### Dev Studio — episode editor (dev only)
+
+The browser alternative to `npm run podcast create`, at
+`http://localhost:3000/studio/podcast`. It writes the same three files and the
+same `src/lib/episodes.ts` entry, and adds two things the CLI can't do: it
+uploads the MP3 to R2 for you, and it reads the duration out of the file
+instead of asking `ffprobe`.
+
+Same ground rules as the [blog studio](#dev-studio--blog-authoring-ui-dev-only):
+dev-only (404s in production), files are the source of truth, hand-editing the
+MDX is fully supported, and the UI does no git operations.
+
+**Two-step create.** Fill in the metadata and press *Create episode*; audio,
+show notes, and the OG image appear afterwards. That's not arbitrary — those
+three write into the episode's directory, which doesn't exist until the episode
+does.
+
+**Audio upload requires R2 credentials.** Uploading is the *only* way to set an
+episode's audio in the studio — there's no URL field — so without these four
+values in `.env` the editor can create and edit everything except the audio, and
+the drop zone reports `R2 not configured`. Use `npm run podcast create` if you
+already have a hosted MP3 URL.
+
+```
+CLOUDFLARE_API_TOKEN=      # R2 token with Object Read & Write on the bucket
+CLOUDFLARE_ACCOUNT_ID=
+R2_BUCKET=                 # the media bucket behind R2_PUBLIC_BASE
+R2_PUBLIC_BASE=            # https://media.atproto.com
+```
+
+Drop an MP3 on the zone and it uploads by shelling out to `wrangler` (a
+devDependency, so no global install), then writes `audioUrl`, `audioSizeBytes`,
+`duration`, and `durationSeconds` into `en.mdx` and `episodes.ts` immediately —
+no separate Save needed, so an uploaded object is never left unreferenced. Large
+episodes take a few minutes and the status line is the only progress signal.
+
+The object key is date-stamped from the episode's publish date to match the
+show's existing bucket layout:
+
+```
+off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3
+```
+
+The key is fixed at upload time — changing the publish date afterwards does not
+move the object, and the `audioUrl` in the episode header remains the
+authoritative pointer.
+
+**Publish date.** The *Publish date* control sets `pubDate` (what RSS reads) and
+derives the *Display date* string from it, so the two can't drift. Edit the
+display date on its own if you want custom wording.
+
+**Show notes** are the MDX body; `hasShowNotes` is recomputed from whether the
+body has content, so there's no flag to remember.
+
+**Transcripts are not in the UI.** `npm run podcast create` and the studio both
+write a `transcript.mdx` stub. To add one, paste the transcript into that file
+and flip `hasTranscript: true` in the `en.mdx` header by hand — the studio
+preserves both on save.
+
+**Delete** removes the episode directory and its `episodes.ts` entry, behind a
+confirmation. It does **not** delete the MP3 from R2. To remove that too, take
+the key from the episode's `audioUrl` before deleting and run:
+
+```sh
+npx wrangler r2 object delete <bucket>/off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3 --remote
+```
+
 #### Why two date fields and two duration fields
 
 `src/lib/episodes.ts` stores both `date` (`"May 7, 2026"`) and `pubDate` (ISO 8601), and both `duration` (`"HH:MM:SS"`) and `durationSeconds` (a number). This is deliberate:
@@ -493,7 +564,7 @@ The `npm run podcast create` script populates both fields in sync. They cannot d
 
 Things that must happen **before** submitting the feed to Apple Podcasts or Spotify:
 
-- [ ] At least one episode added via `npm run podcast create`
+- [ ] At least one episode added via `npm run podcast create` or `/studio/podcast`
 
 #### RSS feed validation
 
