@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { studioPaths, episodePaths, r2Config } from './paths'
+import { studioPaths, episodePaths, r2Config, audioObjectKey } from './paths'
 
 describe('studioPaths', () => {
   it('resolves blog/posts/authors paths under cwd', () => {
@@ -15,6 +15,19 @@ describe('episodePaths', () => {
     const p = episodePaths()
     expect(p.podcastDir.endsWith('src/app/[locale]/off-protocol')).toBe(true)
     expect(p.episodesFile.endsWith('src/lib/episodes.ts')).toBe(true)
+  })
+})
+
+describe('audioObjectKey', () => {
+  it('date-stamps the directory to match the existing bucket layout', () => {
+    expect(audioObjectKey('roost-v1-juliet-shen', '2026-06-16T12:00:00.000Z')).toBe(
+      'off-protocol/2026-06-16-roost-v1-juliet-shen/roost-v1-juliet-shen.mp3',
+    )
+  })
+
+  it('falls back to an undated directory when pubDate is missing', () => {
+    expect(audioObjectKey('my-ep', '')).toBe('off-protocol/my-ep/my-ep.mp3')
+    expect(audioObjectKey('my-ep', 'nonsense')).toBe('off-protocol/my-ep/my-ep.mp3')
   })
 })
 

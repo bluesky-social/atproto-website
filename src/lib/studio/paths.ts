@@ -1,5 +1,6 @@
 import * as path from 'node:path'
 import type { StudioPaths } from './service'
+import { isoToDateStamp } from './episodeDates'
 
 export function isProd(): boolean {
   return process.env.NODE_ENV === 'production'
@@ -22,6 +23,20 @@ export function episodePaths(): EpisodePaths {
     podcastDir: path.join(cwd, 'src', 'app', '[locale]', 'off-protocol'),
     episodesFile: path.join(cwd, 'src', 'lib', 'episodes.ts'),
   }
+}
+
+/**
+ * The R2 object key for an episode's MP3, matching the layout the show already
+ * uses: a date-stamped directory per episode (`off-protocol/2026-06-16-<slug>/`).
+ * Derived from the episode's publish date; an episode with no usable pubDate
+ * gets an undated directory rather than a bogus one. The key is fixed at upload
+ * time — changing the publish date later doesn't move the object, and the URL
+ * stored in the episode header stays authoritative.
+ */
+export function audioObjectKey(slug: string, pubDate: string): string {
+  const stamp = isoToDateStamp(pubDate)
+  const dir = stamp ? `${stamp}-${slug}` : slug
+  return `off-protocol/${dir}/${slug}.mp3`
 }
 
 export type R2Config = {
