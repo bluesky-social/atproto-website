@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { StudioNav } from '../StudioNav'
 
 type PostListItem = { slug: string; title: string; date: string }
 type Owned = { title: string; description: string; date: string; author: string }
@@ -186,6 +187,7 @@ export function BlogEditor() {
     <div className="flex min-h-screen">
       {/* Post list (left, newest first) */}
       <aside className="flex w-72 shrink-0 flex-col border-r border-neutral-200 px-5 py-6">
+        <StudioNav active="blog" />
         <button
           onClick={startNew}
           className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-900 transition hover:border-neutral-400 hover:bg-neutral-50"
@@ -234,7 +236,7 @@ export function BlogEditor() {
         {/* Action bar */}
         <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/85 px-8 py-3 backdrop-blur">
           <div className="flex items-baseline gap-3 text-sm">
-            <span className="font-semibold tracking-tight">Studio</span>
+            <span className="font-semibold tracking-tight">Blog</span>
             <span className="text-neutral-300">/</span>
             <span className="text-neutral-500">
               {mode === 'new' ? 'New post' : 'Editing'}
