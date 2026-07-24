@@ -142,9 +142,7 @@ function parseDate(dateStr) {
 
 export async function main(slug) {
   if (!slug) {
-    console.error('Usage: npm run blog ssite <slug>')
-    console.error('Example: npm run blog ssite welcome-to-the-blog')
-    process.exit(1)
+    throw new Error('Usage: npm run blog ssite <slug>')
   }
 
   // Load environment variables
@@ -152,9 +150,9 @@ export async function main(slug) {
     process.env
 
   if (!ATPROTO_HANDLE || !ATPROTO_APP_PASSWORD) {
-    console.error('Error: Missing required environment variables.')
-    console.error('Please set ATPROTO_HANDLE and ATPROTO_APP_PASSWORD in your .env file.')
-    process.exit(1)
+    throw new Error(
+      'Missing required environment variables. Set ATPROTO_HANDLE and ATPROTO_APP_PASSWORD in your .env file.',
+    )
   }
 
   const service = ATPROTO_PDS_URL || 'https://bsky.social'
@@ -164,9 +162,7 @@ export async function main(slug) {
   const mdxPath = path.join(postDir, 'en.mdx')
 
   if (!fs.existsSync(mdxPath)) {
-    console.error(`Error: Post not found: ${slug}`)
-    console.error(`Expected file: ${mdxPath}`)
-    process.exit(1)
+    throw new Error(`Post not found: ${slug} (expected ${mdxPath})`)
   }
 
   console.log(`\n📝 Publishing post: ${slug}\n`)
@@ -201,16 +197,11 @@ export async function main(slug) {
   if (ATPROTO_PUBLICATION_URI) {
     const expectedDid = ATPROTO_PUBLICATION_URI.match(/^at:\/\/([^/]+)/)?.[1]
     if (expectedDid && expectedDid !== session.did) {
-      console.error(
-        `\n❌ Refusing to publish: authenticated as ${session.handle} (${session.did})`,
+      throw new Error(
+        `Refusing to publish: authenticated as ${session.handle} (${session.did}) ` +
+          `but ATPROTO_PUBLICATION_URI is owned by ${expectedDid}. ` +
+          'Update your .env credentials to the publishing account before retrying.',
       )
-      console.error(
-        `   but ATPROTO_PUBLICATION_URI is owned by ${expectedDid}.`,
-      )
-      console.error(
-        '   Update your .env credentials to the publishing account before retrying.',
-      )
-      process.exit(1)
     }
   }
 
@@ -224,8 +215,7 @@ export async function main(slug) {
   // string isn't in authors.json — better than silently emitting a
   // contributor-less record.
   if (!header.author) {
-    console.error('\n❌ Missing `author` field in MDX header.')
-    process.exit(1)
+    throw new Error('Missing `author` field in MDX header.')
   }
   const contributors = buildContributors(header.author, authors)
 
@@ -317,5 +307,7 @@ export async function main(slug) {
 
   fs.writeFileSync(mdxPath, updatedMdx)
   console.log(`\n📎 Saved AT-URI to ${path.basename(mdxPath)}`)
+
+  return documentUri
 }
 

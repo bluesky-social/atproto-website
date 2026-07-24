@@ -5,6 +5,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
+import { parseCreateArgs } from './lib/parseCreateArgs.mjs'
+import { createPublishFn } from './lib/createPublishFn.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -68,7 +70,14 @@ function createBranch(slug) {
   }
 }
 
-export async function main() {
+export async function main(...args) {
+  const { noSsite, unknownFlags } = parseCreateArgs(args)
+  if (unknownFlags.length) {
+    console.warn(
+      `⚠️  Ignoring unrecognized option(s): ${unknownFlags.join(', ')}`,
+    )
+  }
+
   console.log('\n📝 Create a new blog post\n')
 
   const shouldCreateBranch = await checkGitStatus()
@@ -189,5 +198,8 @@ Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
   2. Run 'npm run dev' to preview at http://localhost:3000/blog/${slug}
 `)
+
+  const { maybePublish } = await import('./lib/maybePublish.mjs')
+  await maybePublish(slug, { noSsite, publishFn: createPublishFn() })
 }
 

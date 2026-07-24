@@ -83,6 +83,24 @@ This will prompt you for:
 
 The script creates the necessary files and updates the blog index automatically.
 
+After scaffolding, `create` automatically publishes the post's `standard.site`
+record (the same step as `npm run blog ssite <slug>`) and writes the resulting
+`standardSiteUri` back into the post's MDX header. This requires
+`ATPROTO_HANDLE` / `ATPROTO_APP_PASSWORD` in `.env` and network access.
+
+- If the publish fails (missing credentials, offline, wrong publishing
+  account), creation still succeeds — you'll get a warning and the exact
+  `npm run blog ssite <slug>` command to publish later.
+- To skip publishing entirely (offline drafting), pass `--no-ssite`:
+
+  ```bash
+  npm run blog create -- --no-ssite
+  ```
+
+Because the record's canonical URL only resolves after the post is merged and
+deployed, the publish is metadata-only and idempotent — re-running
+`npm run blog ssite <slug>` after edits updates the same record.
+
 #### Author bylines
 
 Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.
@@ -90,6 +108,49 @@ Individual blog post pages display an author byline below the date. Named author
 Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the single source of truth. The `PageHeader` component looks up the DID at render time based on the `author` name from the post's MDX header — no need to store DIDs in individual posts.
 
 When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
+
+### Dev Studio — blog authoring UI (dev only)
+
+A browser UI for creating, editing, and deleting blog posts that writes the
+same files as the CLI (`page.tsx`, `en.mdx` with the `export const header`
+front matter, and the `src/lib/posts.ts` entry). It exists only in development.
+
+```bash
+npm run dev
+# then open http://localhost:3000/studio/blog
+```
+
+- **Dev only.** The page and its API routes return 404 when
+  `NODE_ENV === 'production'` (and the site deploys to the Cloudflare edge,
+  where filesystem writes can't run anyway). It is never reachable in prod.
+- **Files are the source of truth.** Every load re-reads the file from disk,
+  and a save only rewrites the fields the form owns
+  (`title`/`description`/`date`/`author`) plus the body. Imports, custom JSX in
+  the body, and other header fields (`standardSiteUri`, `blueskyPostUrl`, …) are
+  preserved byte-for-byte. **Hand-editing the `.mdx` directly is fully
+  supported** — the UI is for the easy path, the raw file is for everything
+  else.
+- **Create:** pick *New*, fill title/description/date/author (slug auto-derives
+  from the title; an Author DID field appears for authors not yet in
+  `authors.json`), write the body as raw MDX, Save.
+- **Edit:** pick a post from the list (the list scans the blog directory, so
+  hand-created posts show up too). Slug is read-only — to "rename", delete and
+  recreate.
+- **Delete:** removes the post directory and its `posts.ts` entry, behind a
+  confirmation. Recoverable from git if it was committed. (Note: this does not
+  retract an already-published standard.site record — same as the CLI.)
+- **standard.site:** creating a post auto-publishes its standard.site record,
+  and every Save updates it; there's also a manual **Publish** button. This runs
+  the same path as `npm run blog ssite` (it shells out to that command, which
+  loads `.env` and writes `standardSiteUri` back into the post), so it needs the
+  publishing credentials in `.env`. Publish failures are non-blocking — the post
+  still saves and a warning shows. The front-matter shows the record's `at://`
+  URI (read-only) with **Copy** and **pdsls ↗** buttons once published.
+- The editor does not render a preview; use the **Open `/blog/<slug>` ↗** link
+  to see the real page.
+- The UI does no git operations — branch/stage/commit in your normal flow.
+
+OG-image generation is the remaining planned addition to this page.
 
 ### Removing a blog post
 
