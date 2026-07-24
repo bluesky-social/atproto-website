@@ -9,6 +9,7 @@ import {
   createEpisode,
   updateEpisode,
   deleteEpisode,
+  setEpisodeAudio,
   type CreateEpisodeInput,
 } from './episodeService'
 import type { EpisodePaths } from './paths'
@@ -77,6 +78,22 @@ describe('createEpisode', () => {
     expect(eps).toContain('episodeNumber: 1,')
   })
 
+  it('uses a supplied pubDate instead of stamping now', async () => {
+    await createEpisode(paths, baseInput({ pubDate: '2026-03-01T15:00:00.000Z' }))
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain("pubDate: '2026-03-01T15:00:00.000Z',")
+    expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain(
+      "pubDate: '2026-03-01T15:00:00.000Z',",
+    )
+  })
+
+  it('stamps pubDate when none is supplied', async () => {
+    await createEpisode(paths, baseInput())
+    const { fields } = await readEpisode(paths, 'my-ep')
+    expect(fields.pubDate).not.toBe('')
+    expect(Number.isNaN(new Date(fields.pubDate).getTime())).toBe(false)
+  })
+
   it('rejects a duplicate slug', async () => {
     await createEpisode(paths, baseInput())
     await expect(createEpisode(paths, baseInput())).rejects.toThrow(/exists/i)
@@ -142,6 +159,49 @@ describe('read/update/delete/list', () => {
     expect((await readEpisode(paths, 'my-ep')).fields.hasShowNotes).toBe(true)
     await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: '' })
     expect((await readEpisode(paths, 'my-ep')).fields.hasShowNotes).toBe(false)
+  })
+
+  it('setEpisodeAudio persists the audio fields to en.mdx and episodes.ts', async () => {
+    const result = await setEpisodeAudio(paths, 'my-ep', {
+      audioUrl: 'https://media.atproto.com/off-protocol/my-ep/my-ep.mp3',
+      audioSizeBytes: 90_000_000,
+      audioMimeType: 'audio/mpeg',
+      duration: '01:02:03',
+      durationSeconds: 3723,
+    })
+    expect(result.fields.audioSizeBytes).toBe(90_000_000)
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain('audioSizeBytes: 90000000,')
+    expect(mdx).toContain("duration: '01:02:03',")
+    expect(mdx).toContain('durationSeconds: 3723,')
+    const eps = fs.readFileSync(paths.episodesFile, 'utf-8')
+    expect(eps).toContain('audioSizeBytes: 90000000,')
+    expect(eps).toContain("duration: '01:02:03',")
+  })
+
+  it('setEpisodeAudio leaves the body and unmanaged header keys alone', async () => {
+    const mdxPath = path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+    fs.writeFileSync(
+      mdxPath,
+      fs.readFileSync(mdxPath, 'utf-8').replace(
+        'export const header = {\n',
+        "export const header = {\n  coverImage: 'https://x/c.png',\n",
+      ),
+    )
+    await setEpisodeAudio(paths, 'my-ep', {
+      audioUrl: 'https://media.atproto.com/off-protocol/my-ep/new.mp3',
+      audioSizeBytes: 42,
+    })
+    const mdx = fs.readFileSync(mdxPath, 'utf-8')
+    expect(mdx).toContain("coverImage: 'https://x/c.png'")
+    expect(mdx).toContain('Show notes.')
+    expect(mdx).toContain("audioUrl: 'https://media.atproto.com/off-protocol/my-ep/new.mp3',")
+  })
+
+  it('setEpisodeAudio rejects an unknown slug', async () => {
+    await expect(
+      setEpisodeAudio(paths, 'nope', { audioUrl: 'https://x/y.mp3', audioSizeBytes: 1 }),
+    ).rejects.toThrow(/not found/i)
   })
 
   it('reads an episode whose header has a // comment (CLI/template style)', async () => {

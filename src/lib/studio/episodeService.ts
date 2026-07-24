@@ -19,7 +19,7 @@ import {
   type EpisodeEntry,
 } from './episodesFile'
 import { findOgImage } from './service'
-import { r2Config, type EpisodePaths } from './paths'
+import { r2Config, audioObjectKey, type EpisodePaths } from './paths'
 
 const execFileAsync = promisify(execFile)
 
@@ -29,6 +29,8 @@ export type CreateEpisodeInput = {
   title: string
   description: string
   date: string
+  /** ISO 8601. Defaults to now when the caller doesn't set a publish date. */
+  pubDate?: string
   hosts: string[]
   guests: string[]
   duration: string
@@ -149,7 +151,7 @@ export async function createEpisode(
     title: input.title,
     description: input.description,
     date: input.date,
-    pubDate: new Date().toISOString(),
+    pubDate: input.pubDate || new Date().toISOString(),
     hosts: input.hosts,
     duration: input.duration,
     durationSeconds: input.durationSeconds,
@@ -202,6 +204,43 @@ export async function updateEpisode(
   return { slug }
 }
 
+export type AudioFields = {
+  audioUrl: string
+  audioSizeBytes: number
+  audioMimeType?: string
+  duration?: string
+  durationSeconds?: number
+}
+
+/**
+ * Write just the audio fields into en.mdx and the episodes.ts entry, leaving
+ * the body, hasShowNotes, and unmanaged header keys untouched. The upload route
+ * calls this straight after R2 accepts the file, so an uploaded MP3 is never
+ * left unreferenced by a browser that navigates away before Save.
+ */
+export async function setEpisodeAudio(
+  paths: EpisodePaths,
+  slug: string,
+  audio: AudioFields,
+): Promise<{ slug: string; fields: EpisodeFields }> {
+  const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
+  if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
+  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const fields: EpisodeFields = {
+    ...getEpisodeFields(parsed),
+    audioUrl: audio.audioUrl,
+    audioSizeBytes: audio.audioSizeBytes,
+    ...(audio.audioMimeType ? { audioMimeType: audio.audioMimeType } : {}),
+    ...(audio.duration ? { duration: audio.duration } : {}),
+    ...(audio.durationSeconds ? { durationSeconds: audio.durationSeconds } : {}),
+  }
+  await fs.writeFile(mdxPath, serializeMdxFile(applyEpisodeFields(parsed, fields)))
+
+  const src = await fs.readFile(paths.episodesFile, 'utf-8')
+  await fs.writeFile(paths.episodesFile, updateEntryBySlug(src, slug, entryFrom(slug, fields)))
+  return { slug, fields }
+}
+
 export async function deleteEpisode(
   paths: EpisodePaths,
   slug: string,
@@ -219,9 +258,10 @@ export async function deleteEpisode(
 export async function uploadAudio(
   slug: string,
   bytes: Buffer,
+  pubDate: string,
 ): Promise<{ audioUrl: string; audioSizeBytes: number }> {
   const { bucket, publicBase, token, accountId } = r2Config()
-  const key = `off-protocol/${slug}/${slug}.mp3`
+  const key = audioObjectKey(slug, pubDate)
   const tmp = path.join(os.tmpdir(), `studio-${slug}-${randomBytes(4).toString('hex')}.mp3`)
   await fs.writeFile(tmp, bytes)
   try {

@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import {
+  isoToLocalInput,
+  localInputToIso,
+  isoToHumanDate,
+} from '@/lib/studio/episodeDates'
+import { StudioNav } from '../StudioNav'
 
 type ListItem = { slug: string; title: string; episodeNumber: number }
 type Fields = {
@@ -22,9 +28,6 @@ type Fields = {
   blueskyPostUrl: string
 }
 
-function todayLong(): string {
-  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-}
 function slugify(t: string): string {
   return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
@@ -35,12 +38,19 @@ function fmtDuration(totalSeconds: number): string {
   const ss = String(s % 60).padStart(2, '0')
   return `${hh}:${mm}:${ss}`
 }
+// The clock is read on mount, never during render: this component is server-
+// rendered first, and a timestamp baked into the initial state would hydrate
+// against a different value a second later.
+function nowDates(): Pick<Fields, 'date' | 'pubDate'> {
+  const now = new Date().toISOString()
+  return { pubDate: now, date: isoToHumanDate(now) }
+}
 function emptyFields(nextNumber: number): Fields {
   return {
     episodeNumber: nextNumber,
     title: '',
     description: '',
-    date: todayLong(),
+    date: '',
     pubDate: '',
     hosts: ['Jim Ray'],
     duration: '',
@@ -81,6 +91,7 @@ export function EpisodeEditor() {
   }
 
   useEffect(() => {
+    setFields((f) => ({ ...f, ...nowDates() }))
     refreshList().then((n) => {
       if (typeof n === 'number') setFields((f) => ({ ...f, episodeNumber: n }))
     })
@@ -89,7 +100,7 @@ export function EpisodeEditor() {
   function startNew() {
     setMode('new')
     setSlug('')
-    setFields(emptyFields(nextNumber))
+    setFields({ ...emptyFields(nextNumber), ...nowDates() })
     setBody('')
     setOgImage(null)
     setStatus('')
@@ -111,7 +122,18 @@ export function EpisodeEditor() {
   const setF = <K extends keyof Fields>(k: K, v: Fields[K]) =>
     setFields((f) => ({ ...f, [k]: v }))
 
+  // One control drives both date fields: `pubDate` is what RSS reads, `date` is
+  // the string the page prints. Keeping them in one handler stops them drifting.
+  function setPublishedAt(localValue: string) {
+    const iso = localInputToIso(localValue)
+    if (!iso) return setF('pubDate', '')
+    setFields((f) => ({ ...f, pubDate: iso, date: isoToHumanDate(iso) }))
+  }
+
   async function onAudio(file: File) {
+    // The drop zone only renders once the episode exists (two-step flow).
+    if (mode !== 'edit') return
+
     // Read duration client-side from an <audio> element.
     const url = URL.createObjectURL(file)
     const audio = document.createElement('audio')
@@ -122,23 +144,31 @@ export function EpisodeEditor() {
       audio.src = url
     })
     URL.revokeObjectURL(url)
-    setF('durationSeconds', Math.round(seconds))
-    setF('duration', fmtDuration(seconds))
-    setF('audioSizeBytes', file.size)
+    const durationSeconds = Math.round(seconds)
+    const duration = fmtDuration(seconds)
 
-    if (mode !== 'edit') {
-      setStatus('Save the episode first, then upload audio.')
-      return
-    }
-    setStatus('Uploading audio…')
+    const mb = Math.round(file.size / 1024 / 1024)
+    setStatus(`Uploading ${mb}MB to R2 — this can take a few minutes…`)
     const form = new FormData()
     form.append('file', file)
+    form.append('duration', duration)
+    form.append('durationSeconds', String(durationSeconds))
     const res = await fetch(`/api/studio/podcast/${slug}/audio`, { method: 'POST', body: form })
     const data = await res.json()
     if (!res.ok) return setStatus(`Audio upload failed: ${data.error}`)
-    setF('audioUrl', data.audioUrl)
-    setF('audioSizeBytes', data.audioSizeBytes)
-    setStatus('Audio uploaded')
+    // The route writes the audio fields to en.mdx and episodes.ts itself. Merge
+    // only those fields back, so edits in progress elsewhere on the form aren't
+    // clobbered by the on-disk copy.
+    const saved: Partial<Fields> = data.fields ?? {}
+    setFields((f) => ({
+      ...f,
+      audioUrl: saved.audioUrl ?? data.audioUrl,
+      audioSizeBytes: saved.audioSizeBytes ?? data.audioSizeBytes,
+      audioMimeType: saved.audioMimeType ?? f.audioMimeType,
+      duration: saved.duration ?? duration,
+      durationSeconds: saved.durationSeconds ?? durationSeconds,
+    }))
+    setStatus('Audio uploaded and saved')
   }
 
   async function onOgImage(file: File) {
@@ -168,6 +198,7 @@ export function EpisodeEditor() {
           title: fields.title,
           description: fields.description,
           date: fields.date,
+          pubDate: fields.pubDate,
           hosts: fields.hosts,
           guests: fields.guests,
           duration: fields.duration,
@@ -216,6 +247,7 @@ export function EpisodeEditor() {
   return (
     <div className="flex min-h-screen">
       <aside className="flex w-72 shrink-0 flex-col border-r border-neutral-200 px-5 py-6">
+        <StudioNav active="podcast" />
         <button onClick={startNew} className="rounded-md border border-neutral-300 px-3 py-2 text-sm font-medium hover:border-neutral-400 hover:bg-neutral-50">
           + New episode
         </button>
@@ -242,7 +274,7 @@ export function EpisodeEditor() {
       <main className="flex-1 overflow-y-auto">
         <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/85 px-8 py-3 backdrop-blur">
           <div className="flex items-baseline gap-3 text-sm">
-            <span className="font-semibold tracking-tight">Studio</span>
+            <span className="font-semibold tracking-tight">Podcast</span>
             <span className="text-neutral-300">/</span>
             <span className="text-neutral-500">{mode === 'new' ? 'New episode' : 'Editing'}</span>
             {mode === 'edit' && (
@@ -266,8 +298,16 @@ export function EpisodeEditor() {
 
           <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-neutral-200 pt-6">
             <div><span className={label}>Episode #</span><input type="number" value={fields.episodeNumber} onChange={(e) => setF('episodeNumber', Number(e.target.value))} className={input} /></div>
-            <div><span className={label}>Date</span><input value={fields.date} onChange={(e) => setF('date', e.target.value)} className={input} /></div>
-            <div><span className={label}>Hosts (comma-sep)</span><input value={fields.hosts.join(', ')} onChange={(e) => setF('hosts', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} className={input} /></div>
+            <div>
+              <span className={label}>Publish date — RSS</span>
+              <input type="datetime-local" value={isoToLocalInput(fields.pubDate)} onChange={(e) => setPublishedAt(e.target.value)} className={input + ' font-mono'} />
+            </div>
+            <div>
+              <span className={label}>Display date</span>
+              <input value={fields.date} onChange={(e) => setF('date', e.target.value)} className={input} />
+              <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
+            </div>
+            <div><span className={label}>Hosts (comma-sep)</span><input value={fields.hosts.join(', ')} onChange={(e) => setF('hosts', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} placeholder="Jim Ray (show default)" className={input} /></div>
             <div><span className={label}>Guests (comma-sep)</span><input value={fields.guests.join(', ')} onChange={(e) => setF('guests', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} className={input} /></div>
             {mode === 'new' ? (
               <div><span className={label}>Slug (blank = from title)</span><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={slugify(fields.title) || 'my-episode'} className={input + ' font-mono'} /></div>
