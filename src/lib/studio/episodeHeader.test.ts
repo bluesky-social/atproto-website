@@ -42,6 +42,13 @@ describe('newEpisodeMdx', () => {
   })
 })
 
+describe('empty hosts', () => {
+  it('omits the hosts key so the page falls back to the default host', () => {
+    const out = newEpisodeMdx({ ...FIELDS, hosts: [] }, 'body')
+    expect(out).not.toContain('hosts:')
+  })
+})
+
 describe('round-trip', () => {
   it('getEpisodeFields decodes what newEpisodeMdx wrote', () => {
     const parsed = parseMdxFile(newEpisodeMdx(FIELDS, 'body'))

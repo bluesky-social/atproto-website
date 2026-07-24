@@ -93,7 +93,9 @@ function buildEntries(
   push('description', quoteSingle(fields.description))
   push('date', quoteSingle(fields.date))
   push('pubDate', quoteSingle(fields.pubDate))
-  push('hosts', arrayLiteral(fields.hosts))
+  // Omitted when empty so the page falls back to SHOW.defaultHost, matching
+  // the episodes that never set hosts by hand.
+  if (fields.hosts.length) push('hosts', arrayLiteral(fields.hosts))
   push('duration', quoteSingle(fields.duration))
   push('durationSeconds', String(fields.durationSeconds))
   if (fields.guests.length) push('guests', arrayLiteral(fields.guests))

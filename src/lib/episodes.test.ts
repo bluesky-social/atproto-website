@@ -12,6 +12,12 @@ describe('resolveHosts', () => {
     expect(resolveHosts({})).toEqual(['Jim Ray'])
   })
 
+  it('falls back to the default host when hosts is an empty array', () => {
+    // The studio writes `hosts` from a form field that can be cleared; an
+    // empty array must not blank out the byline.
+    expect(resolveHosts({ hosts: [] })).toEqual(['Jim Ray'])
+  })
+
   it('uses the show default host for the fallback', () => {
     expect(SHOW.defaultHost).toBe('Jim Ray')
     expect(resolveHosts({})).toEqual([SHOW.defaultHost])
