@@ -1,6 +1,7 @@
 import { remark } from 'remark'
 import { describe, expect, it } from 'vitest'
 import {
+  remarkPlugins,
   remarkSmartTypographyScoped,
   SMART_TYPOGRAPHY_OPTIONS,
 } from './remark.mjs'
@@ -38,5 +39,15 @@ describe('remarkSmartTypographyScoped', () => {
   it('does NOT transform docs MDX', async () => {
     const out = await render(`She said "hi" -- ok...`, '/s/app/en/docs/guide.mdx')
     expect(out).toBe('She said "hi" -- ok...')
+  })
+})
+
+describe('remarkPlugins wiring', () => {
+  it('includes the scoped smart-typography plugin as the last entry', () => {
+    const last = remarkPlugins[remarkPlugins.length - 1]
+    expect(Array.isArray(last)).toBe(true)
+    expect(last[0]).toBe(remarkSmartTypographyScoped)
+    expect(last[1]).toEqual(SMART_TYPOGRAPHY_OPTIONS)
+    expect(last[1].dashes).toBe('inverted')
   })
 })
