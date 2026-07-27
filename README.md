@@ -501,23 +501,34 @@ three write into the episode's directory, which doesn't exist until the episode
 does.
 
 **Audio upload requires R2 credentials.** Uploading is the *only* way to set an
-episode's audio in the studio — there's no URL field — so without these four
+episode's audio in the studio — there's no URL field — so without these five
 values in `.env` the editor can create and edit everything except the audio, and
 the drop zone reports `R2 not configured`. Use `npm run podcast create` if you
 already have a hosted MP3 URL.
 
 ```
-CLOUDFLARE_API_TOKEN=      # R2 token with Object Read & Write on the bucket
-CLOUDFLARE_ACCOUNT_ID=
+CLOUDFLARE_ACCOUNT_ID=     # 32-char hex, from the R2 overview page
+R2_ACCESS_KEY_ID=          # from an R2 API token, Object Read & Write
+R2_SECRET_ACCESS_KEY=      # ditto — NOT the "Token value" on that page
 R2_BUCKET=                 # the media bucket behind R2_PUBLIC_BASE
 R2_PUBLIC_BASE=            # https://media.atproto.com
 ```
 
-Drop an MP3 on the zone and it uploads by shelling out to `wrangler` (a
-devDependency, so no global install), then writes `audioUrl`, `audioSizeBytes`,
-`duration`, and `durationSeconds` into `en.mdx` and `episodes.ts` immediately —
-no separate Save needed, so an uploaded object is never left unreferenced. Large
-episodes take a few minutes and the status line is the only progress signal.
+Uploads use R2's **S3-compatible API** with the bucket-scoped Access Key pair,
+not a Cloudflare API token. That's deliberate: the REST API behind
+`wrangler r2 object put` only accepts an account-wide
+`Workers R2 Storage: Edit` token, which could write to every bucket in the
+account, while S3 credentials can be scoped to this one bucket. If you set
+`CLOUDFLARE_API_TOKEN` expecting it to be used — it isn't, and it can be removed.
+
+Drop an MP3 on the zone and it uploads, then writes `audioUrl`,
+`audioSizeBytes`, `duration`, and `durationSeconds` into `en.mdx` and
+`episodes.ts` immediately — no separate Save needed, so an uploaded object is
+never left unreferenced. Large episodes take a few minutes; the status line is
+the only progress signal, since the upload isn't streamed back to the browser.
+
+Note `.env` changes need a dev-server restart — Next reads it at boot, so a
+token pasted into a running server won't be picked up.
 
 The object key is date-stamped from the episode's publish date to match the
 show's existing bucket layout:
@@ -543,12 +554,17 @@ and flip `hasTranscript: true` in the `en.mdx` header by hand — the studio
 preserves both on save.
 
 **Delete** removes the episode directory and its `episodes.ts` entry, behind a
-confirmation. It does **not** delete the MP3 from R2. To remove that too, take
-the key from the episode's `audioUrl` before deleting and run:
+confirmation. It does **not** delete the MP3 from R2. To remove that too, note
+the key from the episode's `audioUrl` *before* deleting, then either delete the
+object in the R2 dashboard, or use an S3 client with the same credentials:
 
 ```sh
-npx wrangler r2 object delete <bucket>/off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3 --remote
+aws s3 rm "s3://<bucket>/off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3" \
+  --endpoint-url "https://<account-id>.r2.cloudflarestorage.com"
 ```
+
+(`wrangler r2 object delete` won't work with these credentials — it uses the
+REST API, which needs an account-wide token. See the upload note above.)
 
 #### Why two date fields and two duration fields
 
