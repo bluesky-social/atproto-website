@@ -32,32 +32,54 @@ describe('audioObjectKey', () => {
 })
 
 describe('r2Config', () => {
-  it('reads config from env', () => {
+  const VALID = {
+    CLOUDFLARE_ACCOUNT_ID: 'acct123',
+    R2_ACCESS_KEY_ID: 'ak',
+    R2_SECRET_ACCESS_KEY: 'sk',
+    R2_BUCKET: 'atproto-example',
+    R2_PUBLIC_BASE: 'https://media.atproto.com',
+  }
+
+  function withEnv(over: Record<string, string | undefined>, fn: () => void) {
     const prev = { ...process.env }
-    process.env.CLOUDFLARE_API_TOKEN = 't'
-    process.env.CLOUDFLARE_ACCOUNT_ID = 'a'
-    process.env.R2_BUCKET = 'b'
-    process.env.R2_PUBLIC_BASE = 'https://media.atproto.com'
     try {
-      expect(r2Config()).toEqual({
-        token: 't',
-        accountId: 'a',
-        bucket: 'b',
-        publicBase: 'https://media.atproto.com',
-      })
+      Object.assign(process.env, VALID, over)
+      for (const [k, v] of Object.entries(over)) {
+        if (v === undefined) delete process.env[k]
+      }
+      fn()
     } finally {
       process.env = prev
     }
+  }
+
+  it('reads the S3 credentials and derives the R2 endpoint', () => {
+    withEnv({}, () => {
+      expect(r2Config()).toEqual({
+        accountId: 'acct123',
+        accessKeyId: 'ak',
+        secretAccessKey: 'sk',
+        bucket: 'atproto-example',
+        publicBase: 'https://media.atproto.com',
+        endpoint: 'https://acct123.r2.cloudflarestorage.com',
+      })
+    })
   })
 
-  it('throws when a value is missing', () => {
-    const prev = { ...process.env }
-    delete process.env.R2_BUCKET
-    delete process.env.CLOUDFLARE_API_TOKEN
-    try {
-      expect(() => r2Config()).toThrow(/R2/)
-    } finally {
-      process.env = prev
-    }
+  it('throws naming the variable that is missing', () => {
+    withEnv({ R2_BUCKET: undefined }, () => {
+      expect(() => r2Config()).toThrow(/R2_BUCKET/)
+    })
+  })
+
+  it('rejects an unfilled placeholder rather than sending it upstream', () => {
+    // A copied `<bucket name>` is non-empty, so a bare emptiness check lets it
+    // through and Cloudflare answers with an opaque 403 two layers away.
+    withEnv({ R2_SECRET_ACCESS_KEY: '<secret access key>' }, () => {
+      expect(() => r2Config()).toThrow(/placeholder/i)
+    })
+    withEnv({ R2_BUCKET: 'bucket name' }, () => {
+      expect(() => r2Config()).toThrow(/placeholder/i)
+    })
   })
 })

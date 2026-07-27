@@ -40,21 +40,54 @@ export function audioObjectKey(slug: string, pubDate: string): string {
 }
 
 export type R2Config = {
-  token: string
   accountId: string
+  accessKeyId: string
+  secretAccessKey: string
   bucket: string
   publicBase: string
+  /** S3-compatible endpoint for the account, derived from accountId. */
+  endpoint: string
+}
+
+// `<bucket name>` and friends are non-empty, so an emptiness check passes them
+// through to Cloudflare, which answers with an opaque 403. Catch them here
+// instead: no legitimate credential or bucket name contains these.
+function looksLikePlaceholder(value: string): boolean {
+  return /[<>\s]/.test(value)
 }
 
 export function r2Config(): R2Config {
-  const token = process.env.CLOUDFLARE_API_TOKEN
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const bucket = process.env.R2_BUCKET
-  const publicBase = process.env.R2_PUBLIC_BASE
-  if (!token || !accountId || !bucket || !publicBase) {
+  const required = {
+    CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
+    R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+    R2_BUCKET: process.env.R2_BUCKET,
+    R2_PUBLIC_BASE: process.env.R2_PUBLIC_BASE,
+  }
+
+  const missing = Object.entries(required)
+    .filter(([, v]) => !v || !v.trim())
+    .map(([k]) => k)
+  if (missing.length) {
+    throw new Error(`R2 not configured — set ${missing.join(', ')} in .env`)
+  }
+
+  const placeholders = Object.entries(required)
+    .filter(([, v]) => looksLikePlaceholder(v!.trim()))
+    .map(([k]) => k)
+  if (placeholders.length) {
     throw new Error(
-      'R2 not configured — set CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, R2_BUCKET, R2_PUBLIC_BASE in .env',
+      `R2 misconfigured — ${placeholders.join(', ')} still looks like a placeholder, not a real value`,
     )
   }
-  return { token, accountId, bucket, publicBase }
+
+  const accountId = required.CLOUDFLARE_ACCOUNT_ID!.trim()
+  return {
+    accountId,
+    accessKeyId: required.R2_ACCESS_KEY_ID!.trim(),
+    secretAccessKey: required.R2_SECRET_ACCESS_KEY!.trim(),
+    bucket: required.R2_BUCKET!.trim(),
+    publicBase: required.R2_PUBLIC_BASE!.trim().replace(/\/$/, ''),
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+  }
 }

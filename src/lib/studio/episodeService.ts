@@ -1,10 +1,6 @@
 import * as fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import * as os from 'node:os'
 import * as path from 'node:path'
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
-import { randomBytes } from 'node:crypto'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
 import {
   newEpisodeMdx,
@@ -20,8 +16,6 @@ import {
 } from './episodesFile'
 import { findOgImage } from './service'
 import { r2Config, audioObjectKey, type EpisodePaths } from './paths'
-
-const execFileAsync = promisify(execFile)
 
 export type CreateEpisodeInput = {
   slug: string
@@ -255,23 +249,46 @@ export async function deleteEpisode(
   return { slug, dirRemoved, entryRemoved }
 }
 
+/**
+ * Upload an episode MP3 to R2 over the S3-compatible API.
+ *
+ * Uses the bucket-scoped Access Key pair rather than a Cloudflare API token:
+ * R2's REST API (what `wrangler r2 object put` calls) requires an account-wide
+ * `Workers R2 Storage: Edit` token, while the S3 endpoint honors credentials
+ * scoped to a single bucket. Talking S3 keeps the blast radius at one bucket and
+ * avoids spawning a subprocess from inside a request handler.
+ *
+ * The SDK is imported lazily so it stays out of the module graph — this is a
+ * dev-only path and the client is several megabytes.
+ */
 export async function uploadAudio(
   slug: string,
   bytes: Buffer,
   pubDate: string,
 ): Promise<{ audioUrl: string; audioSizeBytes: number }> {
-  const { bucket, publicBase, token, accountId } = r2Config()
+  const { bucket, publicBase, endpoint, accessKeyId, secretAccessKey } = r2Config()
   const key = audioObjectKey(slug, pubDate)
-  const tmp = path.join(os.tmpdir(), `studio-${slug}-${randomBytes(4).toString('hex')}.mp3`)
-  await fs.writeFile(tmp, bytes)
+
+  const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
+  const client = new S3Client({
+    // R2 ignores the region but the SDK insists on one.
+    region: 'auto',
+    endpoint,
+    credentials: { accessKeyId, secretAccessKey },
+  })
+
   try {
-    await execFileAsync(
-      'npx',
-      ['wrangler', 'r2', 'object', 'put', `${bucket}/${key}`, '--file', tmp, '--remote', '--content-type', 'audio/mpeg'],
-      { env: { ...process.env, CLOUDFLARE_API_TOKEN: token, CLOUDFLARE_ACCOUNT_ID: accountId }, timeout: 300_000 },
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: bytes,
+        ContentType: 'audio/mpeg',
+      }),
     )
   } finally {
-    await fs.rm(tmp, { force: true })
+    client.destroy()
   }
+
   return { audioUrl: `${publicBase}/${key}`, audioSizeBytes: bytes.length }
 }
