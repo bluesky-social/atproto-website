@@ -1,16 +1,18 @@
 import { Page } from '@/components/Page'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: 'Looking Back At 2024 AT Protocol Development',
-  description: 'A lot of progress was made on the protocol in 2024, here’s a look at the big milestones',
+// Blog posts aren't translated (crowdin.yml covers guides/articles/specs only),
+// so this imports en.mdx statically. That gives the route a real module-graph
+// edge — which is what lets a content edit hot-reload — and lets the metadata
+// come from the header instead of being a second copy that can drift from it.
+
+export function generateMetadata() {
+  return {
+    title: content.header?.title,
+    description: content.header?.description,
+  }
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }
