@@ -159,7 +159,9 @@ Each editor has a switch to the other in its sidebar.
   `posts.ts`/`episodes.ts` and `page.tsx` metadata, so remark never sees them —
   without this a title reads `"Like This"` while the body around it is curled.
   The editor shows the transformed value after saving. Slugs, dates, URLs, and
-  author/host names are left exactly as typed.
+  author/host names are left exactly as typed. `npm run blog create` and
+  `npm run podcast create` apply the same transform, so it doesn't matter which
+  tool you author with.
 
 #### Credentials
 

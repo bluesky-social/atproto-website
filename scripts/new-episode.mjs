@@ -6,6 +6,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
+import { smartText } from '../src/mdx/smartText.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PODCAST_DIR = path.join(__dirname, '../src/app/[locale]/off-protocol')
@@ -133,7 +134,7 @@ export async function main() {
     process.exit(1)
   }
 
-  const title = (await question('Title: ')).trim()
+  const title = smartText((await question('Title: ')).trim())
   if (!title) {
     console.error('Error: Title is required')
     process.exit(1)
@@ -153,7 +154,7 @@ export async function main() {
     process.exit(1)
   }
 
-  const description = (await question('Description: ')).trim()
+  const description = smartText((await question('Description: ')).trim())
   if (!description) {
     console.error('Error: Description is required')
     process.exit(1)
