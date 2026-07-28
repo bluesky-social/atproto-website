@@ -1,26 +1,24 @@
 import { EpisodePage } from '@/components/EpisodePage'
+import * as notes from './en.mdx'
+import * as transcript from './transcript.mdx'
 
-export const metadata = {
-  title: 'Why Don’t We Just Do This Together?',
-  description: 'Jim sits down with members of the core team building and governing Standard.site, the shared Lexicon for publishing longform writing on atproto. Brooke from pckt.blog, Jared from Leaflet, and Miguel from Offprint cover the design tradeoffs in creating a new shared format, tales of data migrations, strategies for shared governance, and why you shouldn’t buy a premium domain name.',
+// Metadata comes from the MDX header (see mdx.d.ts). Episodes aren't
+// translated, so en.mdx and transcript.mdx are static imports — which is also
+// what makes show-notes edits hot-reload.
+
+export function generateMetadata() {
+  return {
+    title: notes.header.title,
+    description: notes.header.description,
+  }
 }
 
-export default async function EpisodeRoute({ params }: any) {
-  const Notes = await import(`./${(await params).locale}.mdx`).catch(
-    () => import(`./en.mdx`),
-  )
-  let Transcript = null
-  try {
-    Transcript = await import(`./transcript.mdx`)
-  } catch {
-    // optional
-  }
-
+export default function EpisodeRoute() {
   return (
     <EpisodePage
-      default={Notes.default}
-      header={Notes.header}
-      Transcript={Transcript?.default}
+      default={notes.default}
+      header={notes.header}
+      Transcript={transcript.default}
     />
   )
 }

@@ -12,8 +12,8 @@ import * as en from './en.mdx'
 
 export function generateMetadata() {
   return {
-    title: en.header?.title,
-    description: en.header?.description,
+    title: en.header.title,
+    description: en.header.description,
   }
 }
 

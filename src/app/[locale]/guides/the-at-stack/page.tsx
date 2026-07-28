@@ -1,17 +1,20 @@
 import { Page } from '@/components/Page'
+import * as en from './en.mdx'
 
-export const metadata = {
-  title: 'The AT Stack - AT Protocol Docs',
-  description:
-    'Components of the AT Protocol Stack.',
+// Metadata comes from the MDX header (see mdx.d.ts), in English for every
+// locale as before. English is imported statically so it can be the fallback
+// and so content edits hot-reload; other locales resolve per request.
+
+export function generateMetadata() {
+  return {
+    title: en.header.title,
+    description: en.header.description,
+  }
 }
 
 export default async function HomePage({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+  const { locale } = await params
+  const content =
+    locale === 'en' ? en : await import(`./${locale}.mdx`).catch(() => en)
+  return <Page {...content} />
 }

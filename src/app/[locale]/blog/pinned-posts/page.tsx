@@ -1,16 +1,17 @@
 import { Page } from '@/components/Page'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: 'Lexicons, Pinned Posts, and Interoperability',
-  description: 'A discussion of Lexicons, schema extensions, and lessons learned from the pinned posts feature collision.',
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return {
+    title: content.header.title,
+    description: content.header.description,
+  }
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }

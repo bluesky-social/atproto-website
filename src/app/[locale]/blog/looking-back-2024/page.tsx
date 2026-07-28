@@ -8,8 +8,8 @@ import * as content from './en.mdx'
 
 export function generateMetadata() {
   return {
-    title: content.header?.title,
-    description: content.header?.description,
+    title: content.header.title,
+    description: content.header.description,
   }
 }
 
