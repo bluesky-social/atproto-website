@@ -186,6 +186,58 @@ describe('createPost', () => {
   })
 })
 
+describe('createPost partial writes', () => {
+  it('removes the directory when a write fails', async () => {
+    // The failure has to land *after* mkdir to exercise the rollback: a
+    // duplicate slug or a bad posts.ts anchor both fail earlier, before any
+    // directory exists. Making posts.ts read-only fails the last of the three
+    // writes instead.
+    fs.chmodSync(paths.postsFile, 0o444)
+    try {
+      await expect(
+        createPost(paths, {
+          slug: 'boom',
+          title: 'T',
+          description: 'D',
+          date: 'June 1, 2026',
+          author: 'Jim Ray',
+        }),
+      ).rejects.toThrow()
+    } finally {
+      fs.chmodSync(paths.postsFile, 0o644)
+    }
+    expect(fs.existsSync(path.join(paths.blogDir, 'boom'))).toBe(false)
+  })
+
+  it('keeps the post and returns a warning when authors.json cannot be written', async () => {
+    // A malformed authors.json is plausible; losing a written post over it is not.
+    fs.writeFileSync(paths.authorsFile, 'not json at all')
+    const res = await createPost(paths, {
+      slug: 'kept',
+      title: 'Kept',
+      description: 'D',
+      date: 'June 1, 2026',
+      author: 'Guest Person',
+      authorDid: 'did:plc:guest',
+    })
+    expect(res.slug).toBe('kept')
+    expect(res.warning).toMatch(/authors\.json/i)
+    expect(fs.existsSync(path.join(paths.blogDir, 'kept', 'en.mdx'))).toBe(true)
+    expect(fs.readFileSync(paths.postsFile, 'utf-8')).toContain("slug: 'kept'")
+  })
+
+  it('returns no warning on the happy path', async () => {
+    const res = await createPost(paths, {
+      slug: 'fine',
+      title: 'Fine',
+      description: 'D',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+    })
+    expect(res.warning).toBeUndefined()
+  })
+})
+
 describe('read/update/list/delete', () => {
   beforeEach(async () => {
     await createPost(paths, {
