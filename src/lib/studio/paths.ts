@@ -39,6 +39,23 @@ export function audioObjectKey(slug: string, pubDate: string): string {
   return `off-protocol/${dir}/${slug}.mp3`
 }
 
+/**
+ * Recover an object key from an episode's stored `audioUrl`.
+ *
+ * The stored URL is authoritative — the key is fixed when the object is
+ * uploaded, so recomputing it from slug and pubDate would miss a publish date
+ * edited afterwards. Returns null when the audio isn't in our bucket (empty, or
+ * hosted elsewhere), so a delete is never issued for an object we don't own.
+ */
+export function objectKeyFromUrl(audioUrl: string, publicBase: string): string | null {
+  if (!audioUrl) return null
+  const base = publicBase.replace(/\/$/, '')
+  const prefix = `${base}/`
+  if (!audioUrl.startsWith(prefix)) return null
+  const key = audioUrl.slice(prefix.length)
+  return key || null
+}
+
 export type R2Config = {
   accountId: string
   accessKeyId: string

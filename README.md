@@ -186,8 +186,8 @@ See `.env.example` for the full annotated list.
   transcripts. Set `blueskyPostUrl` by hand in `en.mdx` to attach a discussion
   thread; for a transcript, paste it into the generated `transcript.mdx` and
   flip `hasTranscript: true`. The editor preserves all three on save.
-- **Delete** does not remove the MP3 from R2 — see
-  [audio upload](#audio-upload-r2).
+- **Delete** asks a second time whether to remove the MP3 from storage as well.
+  That one is irreversible — see [audio upload](#audio-upload-r2).
 
 ### Removing a blog post
 
@@ -570,8 +570,17 @@ The key is fixed at upload time — changing the publish date afterwards does no
 move the object, and `audioUrl` in the episode header stays the authoritative
 pointer.
 
-Deleting an episode does **not** delete its MP3. To remove that too, note the
-key from `audioUrl` *before* deleting, then use the R2 dashboard or an S3
+Deleting an episode in the Studio offers to delete its MP3 too, as a second
+confirmation after the episode one. It's opt-in per deletion and irreversible —
+the files are recoverable from git, the object isn't. Decline it and the object
+stays. The key comes from the episode's stored `audioUrl` rather than being
+recomputed, so it stays correct even if the publish date changed after upload,
+and audio hosted outside the bucket is never touched. If the object delete
+fails, the episode is left in place rather than stranding an object whose key
+you no longer have.
+
+To remove an object by hand — for an episode deleted before this existed, or
+one removed with `npm run podcast remove` — use the R2 dashboard or an S3
 client:
 
 ```sh

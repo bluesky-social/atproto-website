@@ -153,6 +153,92 @@ describe('read/update/delete/list', () => {
     expect(again.entryRemoved).toBe(false)
   })
 
+  describe('deleteEpisode with deleteAudio', () => {
+    const AUDIO = 'https://media.atproto.com/off-protocol/2026-07-10-my-ep/my-ep.mp3'
+    let prevEnv: NodeJS.ProcessEnv
+
+    beforeEach(async () => {
+      prevEnv = { ...process.env }
+      Object.assign(process.env, {
+        CLOUDFLARE_ACCOUNT_ID: 'acct',
+        R2_ACCESS_KEY_ID: 'ak',
+        R2_SECRET_ACCESS_KEY: 'sk',
+        R2_BUCKET: 'bucket',
+        R2_PUBLIC_BASE: 'https://media.atproto.com',
+      })
+      const ep = await readEpisode(paths, 'my-ep')
+      await updateEpisode(paths, 'my-ep', {
+        fields: { ...ep.fields, audioUrl: AUDIO },
+        body: 'Notes.',
+      })
+    })
+
+    afterEach(() => {
+      process.env = prevEnv
+    })
+
+    it('deletes the object using the key from audioUrl, then the files', async () => {
+      const deleted: string[] = []
+      const res = await deleteEpisode(paths, 'my-ep', {
+        deleteAudio: true,
+        deleteObject: async (key) => {
+          // Must be read before the directory goes, or the key is unrecoverable.
+          expect(fs.existsSync(path.join(paths.podcastDir, 'my-ep'))).toBe(true)
+          deleted.push(key)
+        },
+      })
+      expect(deleted).toEqual(['off-protocol/2026-07-10-my-ep/my-ep.mp3'])
+      expect(res.audioDeleted).toBe(true)
+      expect(res.audioKey).toBe('off-protocol/2026-07-10-my-ep/my-ep.mp3')
+      expect(fs.existsSync(path.join(paths.podcastDir, 'my-ep'))).toBe(false)
+    })
+
+    it('leaves the episode in place when the object delete fails', async () => {
+      await expect(
+        deleteEpisode(paths, 'my-ep', {
+          deleteAudio: true,
+          deleteObject: async () => {
+            throw new Error('AccessDenied')
+          },
+        }),
+      ).rejects.toThrow(/off-protocol\/2026-07-10-my-ep\/my-ep\.mp3/)
+      // Nothing removed, so the key is still recoverable and it can be retried.
+      expect(fs.existsSync(path.join(paths.podcastDir, 'my-ep'))).toBe(true)
+      expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("slug: 'my-ep'")
+    })
+
+    it('skips the object when the audio is hosted elsewhere', async () => {
+      const ep = await readEpisode(paths, 'my-ep')
+      await updateEpisode(paths, 'my-ep', {
+        fields: { ...ep.fields, audioUrl: 'https://example.com/x.mp3' },
+        body: 'Notes.',
+      })
+      let called = false
+      const res = await deleteEpisode(paths, 'my-ep', {
+        deleteAudio: true,
+        deleteObject: async () => {
+          called = true
+        },
+      })
+      expect(called).toBe(false)
+      expect(res.audioDeleted).toBe(false)
+      expect(res.audioKey).toBeNull()
+      expect(fs.existsSync(path.join(paths.podcastDir, 'my-ep'))).toBe(false)
+    })
+
+    it('never touches the object unless asked', async () => {
+      let called = false
+      const res = await deleteEpisode(paths, 'my-ep', {
+        deleteObject: async () => {
+          called = true
+        },
+      })
+      expect(called).toBe(false)
+      expect(res.audioDeleted).toBe(false)
+      expect(res.dirRemoved).toBe(true)
+    })
+  })
+
   it('recomputes hasShowNotes on update from the body', async () => {
     const ep = await readEpisode(paths, 'my-ep')
     await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: 'Some real notes.' })

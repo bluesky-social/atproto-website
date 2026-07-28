@@ -30,11 +30,14 @@ export async function PUT(request: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_request: Request, { params }: Ctx) {
+export async function DELETE(request: Request, { params }: Ctx) {
   if (isProd()) return notFound()
   const { slug } = await params
+  // Opt-in per deletion: the MP3 survives unless ?deleteAudio=true is passed.
+  const deleteAudio =
+    new URL(request.url).searchParams.get('deleteAudio') === 'true'
   try {
-    return Response.json(await deleteEpisode(episodePaths(), slug))
+    return Response.json(await deleteEpisode(episodePaths(), slug, { deleteAudio }))
   } catch (err) {
     return Response.json({ error: (err as Error).message }, { status: 400 })
   }

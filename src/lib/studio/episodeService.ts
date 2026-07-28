@@ -15,7 +15,12 @@ import {
   type EpisodeEntry,
 } from './episodesFile'
 import { findOgImage } from './service'
-import { r2Config, audioObjectKey, type EpisodePaths } from './paths'
+import {
+  r2Config,
+  audioObjectKey,
+  objectKeyFromUrl,
+  type EpisodePaths,
+} from './paths'
 
 export type CreateEpisodeInput = {
   slug: string
@@ -235,18 +240,75 @@ export async function setEpisodeAudio(
   return { slug, fields }
 }
 
+export type DeleteEpisodeOptions = {
+  /** Also delete the episode's MP3 from R2. Off by default — irreversible. */
+  deleteAudio?: boolean
+  /** Injectable for tests; defaults to the real R2 delete. */
+  deleteObject?: (key: string) => Promise<void>
+}
+
+export type DeleteEpisodeResult = {
+  slug: string
+  dirRemoved: boolean
+  entryRemoved: boolean
+  audioKey: string | null
+  audioDeleted: boolean
+}
+
 export async function deleteEpisode(
   paths: EpisodePaths,
   slug: string,
-): Promise<{ slug: string; dirRemoved: boolean; entryRemoved: boolean }> {
+  options: DeleteEpisodeOptions = {},
+): Promise<DeleteEpisodeResult> {
   const dir = path.join(paths.podcastDir, slug)
+  const mdxPath = path.join(dir, 'en.mdx')
+
+  // Resolve the key while the files still exist — once the directory is gone,
+  // the only record of where the object lives is the bucket itself.
+  let audioKey: string | null = null
+  if (options.deleteAudio && existsSync(mdxPath)) {
+    const { publicBase } = r2Config()
+    const fields = getEpisodeFields(parseMdxFile(await fs.readFile(mdxPath, 'utf-8')))
+    audioKey = objectKeyFromUrl(fields.audioUrl, publicBase)
+  }
+
+  let audioDeleted = false
+  if (audioKey) {
+    try {
+      await (options.deleteObject ?? deleteAudioObject)(audioKey)
+      audioDeleted = true
+    } catch (err) {
+      // Leave everything in place: a failed object delete plus a removed
+      // episode would strand the object with no record of its key.
+      throw new Error(
+        `Could not delete the audio object (${audioKey}): ${(err as Error).message}. The episode was left in place.`,
+      )
+    }
+  }
+
   const dirRemoved = existsSync(dir)
   if (dirRemoved) await fs.rm(dir, { recursive: true, force: true })
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   const nextSrc = removeEntryBySlug(src, slug)
   const entryRemoved = nextSrc !== src
   if (entryRemoved) await fs.writeFile(paths.episodesFile, nextSrc)
-  return { slug, dirRemoved, entryRemoved }
+  return { slug, dirRemoved, entryRemoved, audioKey, audioDeleted }
+}
+
+/** Delete one object from the media bucket over the S3-compatible API. */
+export async function deleteAudioObject(key: string): Promise<void> {
+  const { bucket, endpoint, accessKeyId, secretAccessKey } = r2Config()
+  const { S3Client, DeleteObjectCommand } = await import('@aws-sdk/client-s3')
+  const client = new S3Client({
+    region: 'auto',
+    endpoint,
+    credentials: { accessKeyId, secretAccessKey },
+  })
+  try {
+    await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))
+  } finally {
+    client.destroy()
+  }
 }
 
 /**

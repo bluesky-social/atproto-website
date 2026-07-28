@@ -234,10 +234,24 @@ export function EpisodeEditor() {
   async function remove() {
     if (mode !== 'edit') return
     if (!confirm(`Delete "${fields.title || slug}"? Deletes the episode directory and episodes.ts entry.`)) return
-    const res = await fetch(`/api/studio/podcast/${slug}`, { method: 'DELETE' })
+
+    // Second, separate confirmation: the files are recoverable from git, the
+    // object in R2 is not. Whether the URL actually points at our bucket is the
+    // server's call — it holds R2_PUBLIC_BASE — so just ask when there's a URL.
+    const deleteAudio =
+      Boolean(fields.audioUrl) &&
+      confirm(
+        `Also delete the audio file from storage?\n\n${fields.audioUrl}\n\nThis cannot be undone. Cancel to keep it.`,
+      )
+
+    setStatus('Deleting…')
+    const res = await fetch(
+      `/api/studio/podcast/${slug}${deleteAudio ? '?deleteAudio=true' : ''}`,
+      { method: 'DELETE' },
+    )
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
-    setStatus(`Deleted ${slug}`)
+    setStatus(data.audioDeleted ? `Deleted ${slug} and its MP3` : `Deleted ${slug}`)
     startNew()
     await refreshList()
   }

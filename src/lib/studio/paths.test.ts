@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { studioPaths, episodePaths, r2Config, audioObjectKey } from './paths'
+import {
+  studioPaths,
+  episodePaths,
+  r2Config,
+  audioObjectKey,
+  objectKeyFromUrl,
+} from './paths'
 
 describe('studioPaths', () => {
   it('resolves blog/posts/authors paths under cwd', () => {
@@ -28,6 +34,31 @@ describe('audioObjectKey', () => {
   it('falls back to an undated directory when pubDate is missing', () => {
     expect(audioObjectKey('my-ep', '')).toBe('off-protocol/my-ep/my-ep.mp3')
     expect(audioObjectKey('my-ep', 'nonsense')).toBe('off-protocol/my-ep/my-ep.mp3')
+  })
+})
+
+describe('objectKeyFromUrl', () => {
+  const BASE = 'https://media.atproto.com'
+
+  it('recovers the key from a stored audioUrl', () => {
+    // The stored URL is authoritative: the key is fixed at upload time, so
+    // recomputing it from slug + pubDate would miss a later date change.
+    expect(
+      objectKeyFromUrl(`${BASE}/off-protocol/2026-07-27-foo/foo.mp3`, BASE),
+    ).toBe('off-protocol/2026-07-27-foo/foo.mp3')
+  })
+
+  it('tolerates a trailing slash on the base', () => {
+    expect(objectKeyFromUrl(`${BASE}/a/b.mp3`, `${BASE}/`)).toBe('a/b.mp3')
+  })
+
+  it('returns null for audio hosted somewhere else', () => {
+    // Never issue a delete for an object this bucket does not own.
+    expect(objectKeyFromUrl('https://example.com/a/b.mp3', BASE)).toBeNull()
+  })
+
+  it('returns null when there is no audio at all', () => {
+    expect(objectKeyFromUrl('', BASE)).toBeNull()
   })
 })
 
