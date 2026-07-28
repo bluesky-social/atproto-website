@@ -198,6 +198,32 @@ describe('read/update/delete/list', () => {
     expect(mdx).toContain("audioUrl: 'https://media.atproto.com/off-protocol/my-ep/new.mp3',")
   })
 
+  it('keeps blueskyPostUrl through a round-trip, though no UI field owns it', async () => {
+    // The editor dropped its Bluesky URL input; the value is set by hand in
+    // en.mdx and must survive load → save, or episode pages silently lose their
+    // discussion thread.
+    const mdxPath = path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+    fs.writeFileSync(
+      mdxPath,
+      fs
+        .readFileSync(mdxPath, 'utf-8')
+        .replace(
+          'export const header = {\n',
+          "export const header = {\n  blueskyPostUrl: 'https://bsky.app/profile/did:plc:x/post/abc',\n",
+        ),
+    )
+    const ep = await readEpisode(paths, 'my-ep')
+    expect(ep.fields.blueskyPostUrl).toBe('https://bsky.app/profile/did:plc:x/post/abc')
+
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: 'Notes.' })
+    expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(
+      "blueskyPostUrl: 'https://bsky.app/profile/did:plc:x/post/abc'",
+    )
+    expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain(
+      "blueskyPostUrl: 'https://bsky.app/profile/did:plc:x/post/abc'",
+    )
+  })
+
   it('setEpisodeAudio rejects an unknown slug', async () => {
     await expect(
       setEpisodeAudio(paths, 'nope', { audioUrl: 'https://x/y.mp3', audioSizeBytes: 1 }),

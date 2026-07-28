@@ -25,6 +25,8 @@ type Fields = {
   hasShowNotes: boolean
   hasTranscript: boolean
   explicit: boolean
+  // Not editable here — the episode page renders a discussion thread from it,
+  // so it's carried through load → save untouched and set by hand in en.mdx.
   blueskyPostUrl: string
 }
 
@@ -314,7 +316,6 @@ export function EpisodeEditor() {
             ) : (
               <div><span className={label}>Slug (read-only)</span><div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm text-neutral-500">{slug}</div></div>
             )}
-            <div><span className={label}>Bluesky post URL</span><input value={fields.blueskyPostUrl} onChange={(e) => setF('blueskyPostUrl', e.target.value)} placeholder="https://bsky.app/…" className={input + ' font-mono'} /></div>
             <label className="col-span-2 flex items-center gap-2 text-sm text-neutral-600">
               <input type="checkbox" checked={fields.explicit} onChange={(e) => setF('explicit', e.target.checked)} /> Explicit
             </label>
