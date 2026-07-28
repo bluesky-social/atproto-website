@@ -1,62 +1,74 @@
+import {Heading} from "@/components/Heading"
+
 export const header = {
-  title: 'OAuthパターン',
-  description: 'atprotoアプリケーション向けの高度なOAuth実装パターン',
+  title: 'OAuthパターン集',
+  description: 'atprotoアプリケーションにおけるOAuthの発展的な実装パターン',
 }
 
-このページでは、ほとんどの開発者が直接扱う必要のない高度なOAuth実装の詳細について説明します。[リファレンスSDK](/guides/about-oauth#typescript)を使用している場合、これらの詳細は自動的に処理されます。
+このページでは、ほとんどの開発者が直接扱う必要のない高度なOAuth実装の詳細について説明します。[リファレンスSDK](/guides/about-oauth#typescript)を使用している場合、これらの細部は自動的に処理されます。
 
 OAuthの入門については、[OAuthについて](/guides/about-oauth)をご覧ください。権限スコープの理解については、[権限セット](/guides/permission-sets)をご覧ください。完全な仕様については、[OAuth仕様](/specs/oauth)をご覧ください。
 
-## AT ProtocolにおけるOAuthの違い
+<Heading level={2} id="how-is-o-auth-different-in-at-protocol">ATプロトコルのOAuthは何が違う？</Heading>
 
-Atprotoは[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)を基盤として、OAuth標準の特定の「プロファイル」を[仕様として定めています](/specs/oauth)。
+atprotoは[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)を基盤として、OAuth標準の特定の「プロファイル」を[仕様として定めています](/specs/oauth)。
 
 他のOAuthシステムに慣れている場合、驚くかもしれない点がいくつかあります。
 
-- **Atprotoは分散型**: 通常、アプリに「〇〇でサインイン」ボタンがある場合、ユーザーを認証できる機関（通常は大企業のいずれか）の選択肢が提供されます。atproto OAuthでは、アプリは認証プロバイダー（ユーザーの[PDS](/guides/the-at-stack#pds)）との事前の関係を持ちません。これは、事前に確立された関係を必要とするOIDCとatproto OAuthに互換性がない理由でもあります。
+- **atprotoは分散型**：通常、アプリに「…でサインイン」ボタンがある場合、ユーザーの認証を許可する権威を選択できます（大抵は少数の大企業のどれか）。atprotoのOAuthでは、アプリは認証プロバイダー、つまりユーザーの[PDS](/guides/the-at-stack#pds)との事前の関係がありません。これは、atprotoのOAuthが、事前に確立された関係を必要とするOIDCと互換性がない理由でもあります。
 
-- **マイグレーション**: Atprotoユーザーは時間とともにサーバー（[PDS](/guides/glossary#pds-personal-data-server)）間でアカウントを移行できます。これを容易にするために、atprotoは柔軟な[アイデンティティ](/guides/identity)レイヤーを持ちます。このレイヤーにより、ユーザー名（[ハンドル](/specs/handle)）を静的なユーザーID（[DID](/specs/did)）に解決でき、さらにそこからユーザーのPDSを特定できます。ユーザーがアプリにログインする際、OAuthクライアントはこれらの関係を動的に解決します。
+- **移行**：atprotoユーザーはアカウントをサーバー（[PDS](/guides/glossary#pds-personal-data-server)）間で移行できます。これを促進するため、atprotoは柔軟な[ID](/guides/identity)レイヤーを持っており、ユーザー名（[ハンドル](/specs/handle)）を不変のユーザーID（[DID](/specs/did)）に解決でき、さらにそれを解決してユーザーのPDSを見つけることができます。ユーザーがアプリケーションにログインすると、OAuthクライアントはこれらの関係を動的に解決します。
 
-- **クライアントID**: 他のOAuthエコシステムでは、クライアントアプリがリソースサーバーに事前登録する必要があることが多いです。分散型システム（多数のクライアントと多数のリソースサーバーが存在する）ではこれは実用的ではないため、atprotoは[クライアントIDメタデータドキュメント](/specs/oauth#client-id-metadata-document)を使用してこの問題に対処します。
+- **クライアントID**：他のOAuthエコシステムでは、クライアントアプリケーションがリソースサーバーに事前登録が必要なことがよくあります。これは分散型システム（多数のクライアントと多数のリソースサーバーがある）では実行できないため、atprotoは[Client ID Metadata Documents](/specs/oauth#client-id-metadata-document)を使用してこれに対処しています。
 
-## DPoPの理解
+<Heading level={2} id="understanding-d-po-p">DPoPを理解する</Heading>
 
-[DPoP (Demonstrating Proof of Possession)](https://datatracker.ietf.org/doc/html/rfc9449)は、OAuthトークンをクライアントが保持する鍵に暗号学的に紐付けます。攻撃者がアクセストークンを傍受しても、秘密鍵なしでは使用できません。これは、長期セッション（最大2年）を持つ機密クライアントにとって特に重要です。
+[DPoP（Demonstrating Proof of Possession）](https://datatracker.ietf.org/doc/html/rfc9449)はOAuthトークンをクライアントが保持する鍵に暗号学的に紐付けます。攻撃者がアクセストークンを傍受しても、秘密鍵なしでは使用できません。これ、長期セッション（最大2年）を持つ機密クライアントにとって特に重要です。
 
-DPoPはatproto OAuthで必須です。**SDKを使用している場合**、自動的に処理されます。OAuthを手動で実装する場合（例：レコードを書き込むサイドカー）、知っておくべき重要な事項は以下の通りです：
+DPoPはatproto OAuthで必須です。**SDKを使用している場合**、自動的に処理されます。OAuthを自分で実装する場合（例：レコードを書き込むサイドカー）、知っておくべき重要な事項は以下の通りです。
 
-- セッションごとに一度ES256鍵ペアを生成し、すべてのリクエストで再利用する
-- すべてのリクエストには`DPoP`ヘッダーに新鮮なDPoP証明JWTが必要で、`Authorization: DPoP {access_token}`と組み合わせる
-- 認可サーバーとPDS用のnonceを別々に追跡する（異なる場合がある）
+- セッションごとに1回ES256鍵ペアを生成し、すべてのリクエストで再利用する
+- すべてのリクエストには`DPoP`ヘッダーで新しいDPoP proof JWTを付け、`Authorization: DPoP {access_token}`にする
+- 認可サーバー用とPDS用のnonceを別々に追跡する（異なる場合がある）
 - `error="use_dpop_nonce"`を伴う401を受け取った場合、`DPoP-Nonce`レスポンスヘッダーのnonceで再試行する
 - PDSへのリクエストには、アクセストークンのSHA-256ハッシュを含む`ath`クレームを含める
 
-[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app)には`atproto_oauth.py`に完全な手動DPoP実装が含まれています。完全な仕様については、[OAuth仕様のDPoP](/specs/oauth#demonstrating-proof-of-possession-d-po-p)をご覧ください。
+[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app)の`atproto_oauth.py`には完全な手書きDPoP実装が含まれています。完全な仕様については[OAuth仕様のDPoPの記述](/specs/oauth#demonstrating-proof-of-possession-d-po-p)を参照してください。
 
-## トークンリフレッシュ
+<Heading level={2} id="pkce-and-par">PKCEとPAR</Heading>
 
-atprotoのOAuthアクセストークンには有効期限があります。トークンが期限切れになった場合、リフレッシュトークンを使用して新しいアクセストークンを取得する必要があります。SDKはこれを自動的に処理しますが、OAuthを手動で実装する場合：
+atproto OAuthでは、さらにあと2つのセキュリティ機構が必須です。
+
+- **[PKCE（Proof Key for Code Exchange）](/specs/oauth#proof-key-for-code-exchange-pkce)**は認可コード傍受攻撃を防ぎます。クライアントは各認可要求ごとにランダムなシークレットを生成し、コードをトークンに交換するときにその所有を証明します。
+
+- **[PAR（Pushed Authorization Requests）](/specs/oauth#pushed-authorization-requests-par)**はユーザーをリダイレクトする前に認可パラメータをサーバーに直接送信することで、URL露出を減らし、より良いリクエスト検証を可能にします。
+
+DPoPと同様に、両方ともSDKで自動的に処理されます。OAuthを自分で実装する場合は、要件について[OAuth spec](/specs/oauth)を参照してください。
+
+<Heading level={2} id="token-refresh">トークンリフレッシュ</Heading>
+
+atprotoのOAuthアクセストークンには有効期限があります。トークンが期限切れになった場合、リフレッシュトークンを使用して新しいアクセストークンを取得する必要があります。SDKはこれを自動的に処理しますが、自分で実装する場合は次の点に注意してください。
 
 - リフレッシュトークンをアクセストークンと一緒に安全に保存する
-- APIコールが401で失敗した場合、再試行前にトークンリフレッシュを試みる
+- API呼び出しが401で失敗した場合、再試行前にトークンリフレッシュを試みる
 - 新しいアクセストークンは同じDPoP鍵ペアに紐付けられる
 
-## セッションストレージ
+<Heading level={2} id="session-storage">セッションストレージ</Heading>
 
-BFFパターンを使用するウェブアプリケーションでは、OAuthセッションをユーザーセッションと関連付ける必要があります。一般的なアプローチには以下があります：
+BFFパターンを使用するウェブアプリケーションでは、OAuthセッションをユーザーセッションと関連付ける必要があります。一般的なアプローチには以下があります。
 
-- **Cookieベースのセッション**: OAuthトークンをサーバーサイドに保存し、HTTP専用CookieのセッションIDをキーとして使用する
-- **データベースバックのセッション**: ユーザーアカウントとともにトークンをデータベースに保存し、マルチデバイスセッションを可能にする
+- **Cookieベースのセッション**：OAuthトークンをサーバーサイドに保存し、HTTP専用CookieのセッションIDをキーとして使用する
+- **データベース管理のセッション**：ユーザーアカウントとともにトークンをデータベースに保存し、マルチデバイスセッションを可能にする
 
 アーキテクチャパターンについては、[アプリの種類](/guides/about-oauth#types-of-app)をご覧ください。
 
-## 段階的なスコープリクエスト
+<Heading level={2} id="progressive-scope-requests">段階的なスコープ要求</Heading>
 
-アプリケーションは常にサインイン時にすべての権限を必要とするわけではありません。[クライアントメタデータドキュメント](/specs/oauth#client-id-metadata-document)の`scope`パラメーターはアプリケーションが要求できるスコープの最大セットを宣言しますが、個々の認可フローはそのサブセットを要求できます。これにより、最小限のスコープから始めて、ユーザーがその機能を必要とする機能を選択するにつれて、後でより多くのスコープを要求することが可能になります。
+アプリケーションは常にサインイン時にすべての権限を必要とするわけではありません。[クライアントメタデータドキュメント](/specs/oauth#client-id-metadata-document)の`scope`パラメータはアプリケーションが要求できるスコープの最大セットを宣言しますが、個々の認可フローはそのサブセットを要求できます。これにより、最小限のスコープから始めて、機能が必要になった際にユーザーが追加で同意する形で後から要求できます。
 
-### 認可前のスコープ選択
+<Heading level={3} id="selecting-scopes-before-authorization">認可前のスコープ選択</Heading>
 
-ユーザーによって異なるニーズを持つクライアントサイドアプリケーションの場合、OAuthリダイレクト前にユーザーが付与する[権限](/specs/permission)を選択できるようにするアプローチがあります。アプリケーションはユーザーの選択から[スコープ文字列](/specs/permission#scope-string-syntax)を構築し、[`authorize()`](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme)に渡します：
+ユーザーによって異なるニーズを持つクライアントサイドアプリケーションの場合、OAuthリダイレクト前にユーザーが付与する[権限](/specs/permission)を選択できるようにするアプローチもあります。アプリケーションはユーザーの選択から[スコープ文字列](/specs/permission#scope-string-syntax)を構築し、[`authorize()`](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme)に渡します。
 
 ```typescript
 const BASE_SCOPES = ["atproto"];
@@ -84,13 +96,13 @@ const url = await oauthClient.authorize(handle, {
 });
 ```
 
-`repo:com.example.post`はそのコレクションへの完全な作成/更新/削除アクセスを付与することに注意してください。クエリパラメーターで特定のアクションに制限できます：`repo:com.example.post?action=create&action=update`。完全な構文については[権限仕様](/specs/permission#resource-types)をご覧ください。
+`repo:com.example.post`はそのコレクションへの完全な作成/更新/削除アクセスを付与することに注意してください。`repo:com.example.post?action=create&action=update`のようにクエリパラメーターで特定のアクションに制限できます。完全な構文については[権限仕様](/specs/permission#resource-types)をご覧ください。
 
 コールバック後、アプリケーションはセッションで付与されたスコープを追跡し、それに応じて機能を表示または非表示にします。
 
-### 既存セッションのスコープアップグレード
+<Heading level={3} id="upgrading-scopes-for-an-existing-session">既存セッションのスコープアップグレード</Heading>
 
-オプションの統合機能（アプリケーションの主要な[名前空間権限](/specs/permission#namespace-authority)外のスコープを必要とする機能）を持つ[BFFパターン](/guides/about-oauth#types-of-app)を使用するアプリケーションでは、ユーザーがすでにサインインした後にスコープのアップグレードが行えます。アプリケーションはユーザーの設定を保存し、拡張されたスコープセットで新しいOAuthフローを開始し、コールバックで古いセッションを置き換えます：
+オプションの統合機能（アプリケーションの主要な[名前空間権限](/specs/permission#namespace-authority)外のスコープを必要とする機能）を持つ[BFFパターン](/guides/about-oauth#types-of-app)を使用するアプリケーションでは、ユーザーがサインインした後にスコープのアップグレードが行えます。アプリケーションはユーザーの設定を保存し、拡張されたスコープセットで新しいOAuthフローを開始し、コールバックで古いセッションを置き換えます。
 
 ```typescript
 // Your app's core permissions
@@ -109,9 +121,9 @@ const url = await oauthClient.authorize(handle, {
 
 サーバーはコールバックハンドラーが置き換えるべきセッションを識別できるよう、OAuthステートとともに古いセッション識別子を保存します。以降のログイン時に、サーバーはユーザーの保存された設定を参照し、拡張スコープを自動的に含めることができます。
 
-[権限セット](/specs/permission#permission-sets)は明示的なスコープアップグレードの必要性を減らせることに注意してください：クライアントがトークンをリフレッシュする際、計算された権限が解決されたセットの変更を反映して更新される場合があります。新しい機能が既存の権限セットの[名前空間権限](/specs/permission#namespace-authority)内に収まる場合、公開されたセットを更新するだけで十分です。再認可は不要です。名前空間をまたぐ統合については、引き続き明示的なアップグレードが必要になります。スコープの変更をアプリケーションのリリースと調整するためのガイダンスについては、[変更のロールアウト](/guides/permission-requests#rolling-out-changes)をご覧ください。
+[権限セット](/specs/permission#permission-sets)は明示的なスコープアップグレードの必要性を減らせることに注意してください。クライアントがトークンをリフレッシュする際、計算された権限が解決されたセットの変更を反映して更新される場合があります。新しい機能が既存の権限セットの[名前空間権限](/specs/permission#namespace-authority)内に収まる場合、公開されたセットを更新するだけで十分です。再認可は不要です。名前空間をまたぐ統合については、引き続き明示的なアップグレードが必要になります。スコープの変更をアプリケーションのリリースと調整するためのガイダンスについては、[変更のロールアウト](/guides/permission-requests#rolling-out-changes)をご覧ください。
 
-## 参考資料
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 
 - [認証](/guides/auth)
 - [OAuthについて](/guides/about-oauth)

@@ -75,7 +75,10 @@ function probeDuration(url) {
       { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
     ).trim()
     const seconds = parseFloat(out)
-    if (Number.isFinite(seconds) && seconds > 0) return seconds
+    // ffprobe reports fractional seconds (e.g. 2794.500625); round to a whole
+    // second so durationSeconds stays an integer and the listing page renders
+    // cleanly.
+    if (Number.isFinite(seconds) && seconds > 0) return Math.round(seconds)
   } catch {
     // ffprobe not installed or failed — fall through
   }

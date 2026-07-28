@@ -14,6 +14,10 @@ Atmosphereは分散型として構築されているため、誰もが自分のA
 
 リソースが限定されたVPS上で独自のPDSを起動して実行するように設計された[PDSインストールスクリプト](https://github.com/bluesky-social/pds)を提供しています。これにより、自分のデータリポジトリをホストし、アカウントを作成・管理し、より広いAtmosphereネットワークまたは他のAtmosphereアプリにセルフホストされたデータを提供できます。このセクションは、PDSを本番環境に移行するのに役立つでしょう。
 
+<Heading level={2} id="hardening">セキュリティ強化</Heading>
+
+[PDS Gatekeeper](https://tangled.org/pds.dad/pds-gatekeeper)は、セルフホストPDSに2FAやセキュリティ機能を追加するコミュニティプロジェクトです。
+
 <Heading level={2} id="domain-names">ドメイン名</Heading>
 
 PDSデプロイメントに加えてBluesky以外のアプリを実行している場合、PDSホスティングとアプリには**異なるドメイン名が必要**です。そうしないと、画像や動画のblobがOAuthやセッション管理ページと同じドメイン名から提供されることになります。これは認証情報盗難などのセキュリティ問題につながる可能性があり、サブドメインの使用は実用的ではないことを意味します。

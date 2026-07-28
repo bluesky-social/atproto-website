@@ -14,11 +14,19 @@ export const header = {
 
 <LabelerServiceRecord />
 
+[Ozone](/guides/using-ozone)をラベラーサービスとして使用する場合、セットアップ中にアカウントを関連付けると、このレコードが自動的に公開されます。
+
 `labelValues`はラベラーから何が期待できるかを宣言します。グローバルまたはカスタムラベル値が含まれます。
 
 `labelValueDefinitions`はカスタムラベルを定義します。様々な言語で人間可読なコピーを指定するための`locales`フィールドが含まれます。ユーザーの言語が見つからない場合は、配列の先頭の文字列セットを使用します。
 
 `subjectTypes`、`subjectCollections`、`reasonTypes`は、ラベラーが受け付ける報告のタイプを宣言します。`subjectTypes`は個別のコンテンツが対象の場合は`record`、アカウント全体が対象の場合は`account`を含めることができます。`subjectCollections`はレコードの型を示すNSIDのリストです。定義されていない場合は、任意の型のレコードが許可されます。`reasonTypes`は報告理由コードのリスト（Lexicon参照）です。
+
+<Heading level={2} id="updating-your-labeler">ラベラーの更新</Heading>
+
+新しい[`reasonType`の`knownValues`](https://github.com/bluesky-social/atproto/blob/main/lexicons/com/atproto/moderation/defs.json)のサポートが追加される以前に作成されたラベラーサービスレコードは、手動で更新する必要がある場合があります。更新がない場合、ラベラーは認識しない理由の報告を受け取る可能性があります。これは、カスタム報告理由を追加した長期的なメンテナーに影響を与える可能性があります。[現在の`reasonType`定義](https://lexicon.garden/lexicon/did:plc:6msi3pj7krzih5qxqtryxlzw/com.atproto.moderation.defs#reasonType)を確認して、レコードが古いものかどうかを確認できます。
+
+レコードは[他のレコードと同様に](/guides/writing-data#updating-records)手動で更新できます。あるいは、レコードから`reasonType`フィールドを完全に削除することもできます。これにより、ラベラーは将来的に追加されるものを含め、すべての報告理由タイプを受け入れるようになります。
 
 <Heading level={2} id="ozone">Ozone</Heading>
 
@@ -28,9 +36,9 @@ export const header = {
   <Image src={ozone} alt="" className="w-full max-w-md mx-auto" />
 </Container>
 
-OzoneをセルフホストすることでATプロトコルのスタッカブルモデレーションアーキテクチャにラベラーとして参加できます。Ozoneサービスは、ウェブUI、バックエンド、およびPostgresデータベースで構成されています。 
+OzoneをセルフホストすることでATプロトコルのスタッカブルモデレーションアーキテクチャにラベラーとして参加できます。Ozoneサービスは、ウェブUI、バックエンド、およびPostgresデータベースで構成されています。
 
-Ozoneサービスをセットアップする前に、メインアカウントから独立した*新しい*アカウントをネットワーク上に作成してください。これはラベラー利用者との窓口になるアカウントです。ラベラーアカウントはアプリ上で通常のアカウントとは異なるインターフェースで表示されます。詳細は[Ozoneユーザーガイド](https://github.com/bluesky-social/ozone/blob/main/docs/userguide.md)を参照してください。
+Ozoneサービスをセットアップする前に、メインアカウントから独立した*新しい*アカウントをネットワーク上に作成してください。これはラベラー利用者との窓口になるアカウントです。ラベラーアカウントはアプリ上で通常のアカウントとは異なるインターフェースで表示されます。Ozoneを使い始めるには、[Ozoneの利用](/guides/using-ozone)を参照してください。
 
 <Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 

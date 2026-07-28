@@ -94,6 +94,12 @@ export default function DocsHome() {
             </Link>{' '}
             - フォーマットはアプリを超える
           </li>
+          <li>
+            <Link href="https://overreacted.io/there-are-no-instances-in-atproto/">
+              <strong>There Are No Instances in atproto</strong>
+            </Link>{' '}
+            - 大きな世界の分散化
+          </li>
         </ul>
         <p>
           さらに学びたければ、<Link href="/guides/understanding-atproto">導入</Link>をお読みください。

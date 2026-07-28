@@ -1,0 +1,29 @@
+import { Heading } from '@/components/Heading'
+import { ScopeBuilderLoader } from '@/components/ScopeBuilder'
+
+export const header = {
+  title: 'スコープビルダー',
+  description: 'アプリ用のOAuthスコープ文字列を構成する',
+}
+
+OAuthスコープは、アプリがリポジトリのレコードを作成・更新・削除したり、XRPCメソッドを呼び出したり、特定のアカウント管理機能を実行したりするために要求する権限です。これは[OAuthの仕組み](/guides/auth#what-is-o-auth)の重要な部分であり、アプリが利用者との信頼関係を築く要です。
+
+アプリは個別のスコープを要求できます。これらは特定の[Lexicon](/guides/lexicon)、XRPCメソッド、または管理アクションに対応することが多いです。
+
+ただし、多数のスコープを個別に要求すると混乱しがちで、PDSに対する包括的な許可を求めるのは過剰な権限になるため、アプリは[権限セット](/guides/permission-sets)によって権限をまとめることができます。2025年後半の導入以来、権限セットはOAuth権限を管理する推奨手法です。ファイルのアップロードやアカウントのメール管理など、一部のスコープはセットにまとめられず個別に要求する必要がある点に注意してください。
+
+このツールでは、アプリが必要とするスコープを対話的に選択し、適切な[スコープ文字列](specs/permission#scope-string-syntax)を生成できます。Blueskyおよびatprotoエコシステムの多くの人気アプリ向けの権限セットを含んでいます。自身のアプリの権限セットも含めてほしい場合は、[こちら](https://github.com/bluesky-social/atproto-website/issues/676)でお知らせください。独自に構築している権限セットへのリンク（`at://` URLまたは[lexicon.garden](https://lexicon.garden)のリンク）を渡すこともできます。
+
+セキュリティに関する注意：OAuthスコープはアプリからの要求であって、明示的な付与とは違います。生成されたスコープ文字列は開発者が自身のOAuthリクエストに貼り付けるためのものであり、アプリを使う人による許可がまだ必要です。生成されたスコープはatproto OAuthで動作するようにテストされていますが、開発者は依然として[アプリが必要とするアクセス権だけを要求する](/guides/permission-requests#requesting-permissions)責任があります。
+
+<ScopeBuilderLoader />
+
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+
+- [OAuthについて](/guides/about-oauth)
+- [権限リクエスト](/guides/permission-requests)
+- [権限セット](/guides/permission-sets)
+- [認証](/guides/auth)
+- [OAuthパターン](/guides/oauth-patterns)
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)

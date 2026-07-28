@@ -40,9 +40,13 @@ export const header = {
 このチュートリアルは、[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)で作成したアプリをベースに進めます。開始前にNextJS OAuthアプリを完成させておいてください。この手順を省略したい場合は、[Cookbook](https://github.com/bluesky-social/nextjs-oauth-tutorial/tree/129cf28b4146ae709e0dac43ce20154ab5237559)から完成版をクローンできます。
 
 以下をインストールしておいてください。
-- Node.js 18以上
+- Node.js 18〜22.x
 - Go 1.25以上
 - pnpmパッケージマネージャー
+
+<Note>
+このチュートリアルは現在[Requestのバグ](https://github.com/vercel/next.js/issues/90826)のためNode 24.xでは動作しません。
+</Note>
 
 [homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
 
@@ -58,7 +62,7 @@ export const header = {
 
 まず、プロジェクトにLexiconを追加します。
 
-<Heading level={2} id="part-1-lexicons">パート1：Lexion</Heading>
+<Heading level={2} id="part-1-lexicons">パート1：Lexicon</Heading>
 
 [Lexicon](/guides/lexicon)はatprotoのレコードスキーマを定義します。このチュートリアル向けに、新しい"Statusphere" Lexicon（`xyz.statusphere.status`）をすでに公開しています。`lex`を使ってこのLexiconを取得し、プロジェクトに取り込みます。
 
@@ -147,6 +151,11 @@ Tapはネットワーク上のどこかでレコードが変更されるとwebho
 次に別ターミナルで、ソースリポジトリから`tap`をインストールして実行します。
 
 <S16 />
+
+<Note>
+`TAP_ADMIN_PASSWORD`を環境変数に設定している場合、`--admin-password="<your-password>"`で同じ値をtapに渡してください。
+</Note>
+
 
 実行中のアプリをCtrl+Cで停止し、追跡対象として自分のデータリポジトリをTapに追加します（他のデータソースは後で追加します）。
 

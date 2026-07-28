@@ -1,30 +1,31 @@
 import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
 import PermissionSetLexicon from '../permission-requests/_snippets/permission-set-lexicon.mdx'
 
 export const header = {
-  title: 'パーミッションセット',
-  description: 'OAuthパーミッションスコープとセット',
+  title: '権限セット',
+  description: 'OAuthの権限スコープと権限セット',
 }
 
-このページでは、カスタムLexiconのためのパーミッションセットを**定義・公開**する方法を説明します。OAuthフローで既存のパーミッションスコープを**使用**したいだけの場合は、[パーミッションリクエスト](/guides/permission-requests)を参照してください。
+このページでは、カスタムLexiconのための権限セットを**定義・公開**する方法を説明します。OAuthフローで既存の権限スコープを**使用**したいだけの場合は、[権限リクエスト](/guides/permission-requests)を参照してください。
 
-## パーミッションセットについて
+<Heading level={2} id="understanding-permission-sets">権限セットについて</Heading>
 
-OAuthフローはセッションで付与されるアクセスのレベルを表すパーミッション「スコープ」を使用します。ユーザーのアカウントへの広範なアクセスをリクエストするのではなく、atprotoアプリは特定のレコードタイプやAPIエンドポイントに対して細かいパーミッションをリクエストする必要があります。
+OAuthフローはセッションで付与されるアクセスのレベルを表す権限の「スコープ」を使用します。ユーザーのアカウントへの広範なアクセスを要求するのではなく、atprotoアプリは特定のレコードタイプやAPIエンドポイントに対して細かい権限を要求する必要があります。
 
-コアとなるパターンはシンプルです：**アプリが必要とするコレクションへのアクセスのみをリクエストする**。例えば、アプリが独自のLexiconを使って投稿といいねを作成する場合：
+コアとなるパターンはシンプルです。**アプリが必要とするコレクションへのアクセスのみを要求する**。例えば、アプリが独自のLexiconを使って投稿といいねを作成する場合、以下のようになります。
 
 ```
 repo:com.example.post repo:com.example.like blob:*/*
 ```
 
-これにより、アプリは`com.example.post`と`com.example.like`コレクションのレコードを作成・更新・削除するパーミッション、およびメディアをアップロードするパーミッションを取得します。ユーザーの認可ダイアログには、`transition:generic`のような広範なスコープが生み出す不安を感じさせる「ほぼすべてへのアクセス」ではなく、これらの特定のパーミッションが明確に表示されます。
+これにより、アプリは`com.example.post`と`com.example.like`コレクションでレコードの作成/更新/削除を行う権限と、メディアアップロードの権限を得ることができます。ユーザーの認可ダイアログはこれらの特定の権限を明確に表示し、`transition:generic`のような広範なスコープが示す「ほぼすべてへのアクセス」という不穏な表現にはなりません。
 
-より整理された認可UIのために、関連するパーミッションを人間が読める説明付きの**パーミッションセット**にまとめることができます。以下の[パーミッションセットの設計](#permission-set-design)を参照してください。
+よりわかりやすい認可UIにするために、関連する権限を人間向け説明付きの**権限セット**にまとめることができます。詳細は[権限セットの設計](#permission-set-design)を参照してください。
 
-### クイックスタート
+<Heading level={3} id="quick-start">クイックスタート</Heading>
 
-独自のレコードタイプを作成するアプリのための最小限の`oauth-client-metadata.json`の例：
+独自のレコードタイプを作成するアプリに対する、最小限の`oauth-client-metadata.json`は次のようになります。
 
 ```json
 {
@@ -40,51 +41,51 @@ repo:com.example.post repo:com.example.like blob:*/*
 }
 ```
 
-これはアイデンティティ（`atproto`）、2つのレコードコレクションへの書き込みアクセス、およびメディアアップロードをリクエストします。完全なセットアップガイドについては、[About OAuth](/guides/about-oauth)を参照してください。
+これはアイデンティティ（`atproto`）、2つのレコードコレクションへの書き込みアクセス、メディアアップロードを要求します。完全なセットアップガイドについては[OAuthについて](/guides/about-oauth)を参照してください。
 
-### 最小限のパーミッション
+<Heading level={3} id="minimal-permissions">最小限の権限</Heading>
 
-atproto OAuthを使用するアプリ（アイデンティティのみ、データアクセスなし）の絶対最小値：
+atproto OAuthを使用するアプリにおける究極に最小限（アイデンティティのみ、データアクセスなし）の権限：
 - `atproto`
 
-Blueskyのプロフィールデータも必要な場合：
+Blueskyのプロフィール情報を利用したい場合：
 - `rpc:app.bsky.actor.getProfile?aud=did:web:api.bsky.app#bsky_appview`
 
-画像や動画のアップロードが必要な場合：
+画像や動画をアップロードする場合：
 - `blob:*/*`
 
-`transition:generic`のような粗い粒度の「トランジションスコープ」は引き続きサポートされていますが、細かいパーミッションの採用を推奨します。トランジションスコープの概要については、[Authorization Scopes](/specs/oauth#authorization-scopes)を参照してください。完全な細かいパーミッション仕様については、[Permissions](/specs/permission)を参照してください。
+`transition:generic`のような粗い「トランジションスコープ」もまだサポートされていますが、細かな権限の採用を推奨します。トランジションスコープの概要については[認可スコープ](/specs/oauth#authorization-scopes)を、粒度の細かい権限仕様の完全版については[権限](/specs/permission)を参照してください。
 
-## パーミッションセットの設計
+<Heading level={2} id="permission-set-design">権限セットの設計</Heading>
 
-フル機能のクライアントアプリは動作するために多数の細かいパーミッションを必要とします：数十、場合によっては数百の個別のパーミッションが必要です。パーミッション管理を簡素化するために、Lexiconデザイナーは公開するスキーマの一部としてパーミッションの「セット」を定義できます。これらのパーミッションセット自体もLexiconスキーマであり、`com.example.authBasicFeatures`のようなネームスペースIDで参照されます。
+フル機能のクライアントアプリは、多数の細かな権限（数十、場合によっては数百）を必要とします。権限管理を簡素化するために、Lexicon設計者は公開するスキーマの一部として権限の集合を定義できます。これらの権限セット自体もLexiconスキーマであり、`com.example.authBasicFeatures`のような名前空間IDで参照されます。
 
-例えば、アプリケーションは`include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`のようなパーミッションセットをリクエストできます。これはアプリが動作するために必要なパーミッションのセットを定義するLexiconに解決されます：
+例えば、アプリケーションは`include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview`のような権限セットを要求できます。これはアプリの動作に必要な権限の集まりを定義するLexiconに解決されます。
 
 <PermissionSetLexicon />
 
-`app.example.feed.authOnlyPost`と`com.example.authBasicFeatures`の例にある`auth`プレフィックスに注目してください。これはLexiconがパーミッションセットとして使用するよう設計されていることを示す命名規則です。
+`app.example.feed.authOnlyPost`や`com.example.authBasicFeatures`の例にある`auth`プレフィックスに注目してください。これは、そのLexiconが権限セットとして使われるよう設計されていることを示す命名規則です。
 
-パーミッションセットは、セット自体と同じNSIDネームスペース下のリソースを参照するパーミッションのみを表現できます。例えば、セット`app.example.feed.authOnlyPost`は`app.example.feed.post`レコードへのパーミッションと、リモートサービスへの`app.example.feed.getPostThread` APIエンドポイントリクエストのパーミッションを含めることができます。しかし、`app.example.actor.profile`へのパーミッションは付与できません。階層で一段上の`app.example.authFull`のようなパーミッションセットは、これらすべてのリソースへのパーミッションを含めることができます。
+権限セットは、そのセット自身と同じNSID名前空間下のリソースを参照する権限のみを表現できます。例えば、`app.example.feed.authOnlyPost`というセットには、`app.example.feed.post`レコードへの権限や、リモートサービスへの`app.example.feed.getPostThread` APIエンドポイントのリクエスト権限を含めることができます。しかし、`app.example.actor.profile`への権限は付与できません。階層が一段上の`app.example.authFull`のような権限セットであれば、これらすべてのリソースへの権限を含められます。
 
-`title`と`details`フィールドは説明的であり、OAuthフローの一部として表示されます。これらの説明フィールドの国際化がサポートされています。詳細は[パーミッションセット仕様](/specs/permission#permission-sets)を参照してください。
+`title`と`details`フィールドは説明用で、OAuthフローの一部として表示されます。これらの説明フィールドは国際化にも対応しています。詳細は[権限セット仕様](/specs/permission#permission-sets)を参照してください。
 
-`rpc`パーミッションにおける`inheritAud`の使用により、[継承の動作を制御](/specs/permission#rpc)できます。
+`rpc`権限における`inheritAud`の使用により、[継承の挙動](/specs/permission#rpc)を制御できます。
 
-画像・動画の処理のための`blob:*/*`パーミッションはパーミッションセットに含めることができず、常に個別にリクエストする必要があります。
+画像/動画の取り扱い用の`blob:*/*`権限は権限セットに含めることができず、常に個別に要求する必要があります。
 
-パーミッションセットもLexiconであり、同じツールを使って公開されます。`goat`を使ってLexiconを作成、リント、公開する方法については、[Lexiconの公開](/guides/publishing-lexicons)を参照してください。
+権限セットもLexiconであり、同じツールチェーンを使って公開されます。`goat`を使用してLexiconを作成、リンティング、公開する手順については[Lexiconの公開](/guides/publishing-lexicons)を参照してください。
 
-## プログレッシブスコープリクエスト
+<Heading level={2} id="progressive-scope-requests">段階的なスコープ要求</Heading>
 
-アプリはサインイン時にすべてのパーミッションをリクエストする必要はありません。最小限のスコープから始めて、ユーザーが機能にオプトインするにつれて後からさらにリクエストすることができます。動的なスコープ選択や既存セッションのアップグレードを含む実装パターンについては、[OAuth Patterns](/guides/oauth-patterns#progressive-scope-requests)を参照してください。
+アプリはサインイン時にすべての権限を要求する必要はありません。最小限のスコープから始め、ユーザーが機能をオプトインするのに合わせて後から追加で要求できます。動的なスコープ選択や既存セッションのアップグレードなどの実装パターンについては[OAuthパターン集](/guides/oauth-patterns#progressive-scope-requests)を参照してください。
 
-## 参考資料とリソース
+<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
 
-- [Auth](/guides/auth)
-- [SDK authentication](/guides/sdk-auth)
-- [About OAuth](/guides/about-oauth)
-- [パーミッションリクエスト](/guides/permission-requests)
-- [OAuth Patterns](/guides/oauth-patterns)（上級トピック）
-- [OAuth spec](/specs/oauth)
-- [Permissions spec](/specs/permission)
+- [認証](/guides/auth)
+- [SDKによる認証](/guides/sdk-auth)
+- [OAuthについて](/guides/about-oauth)
+- [権限リクエスト](/guides/permission-requests)
+- [OAuthパターン](/guides/oauth-patterns)
+- [OAuth仕様](/specs/oauth)
+- [権限仕様](/specs/permission)

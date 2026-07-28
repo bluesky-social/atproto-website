@@ -1,33 +1,66 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
-import { useCurrentLocale } from 'next-i18n-router/client'
 import i18nConfig from '../../i18nConfig'
 import { ChangeEvent } from 'react'
 
+const { locales, defaultLocale } = i18nConfig
+
+// Derive the locale from the URL rather than the NEXT_LOCALE cookie.
+//
+// next-i18n-router's `useCurrentLocale` reads the cookie *before* the
+// pathname, so once the cookie is set it can disagree with the page you're
+// actually on. Switching locale off of the cookie value then rewrites the
+// wrong path prefix, which is what made a /ja selection on the homepage
+// "stick" and keep redirecting other pages back to /ja. The URL is the only
+// reliable source of truth for which locale a page is rendering.
+function localeFromPathname(pathname: string): string {
+  return (
+    locales.find(
+      (locale) =>
+        pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+    ) ?? defaultLocale
+  )
+}
+
 export default function LanguageChanger() {
-  const currentLocale = useCurrentLocale(i18nConfig)
-  const router = useRouter()
-  const currentPathname = usePathname()
+  const pathname = usePathname()
+  const currentLocale = localeFromPathname(pathname)
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newLocale = e.target.value
+    if (newLocale === currentLocale) return
 
-    // set cookie for next-i18n-router
+    // set cookie for next-i18n-router (drives middleware redirects on
+    // unprefixed/default-locale paths)
     const days = 30
     const date = new Date()
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
     document.cookie = `NEXT_LOCALE=${newLocale};expires=${date.toUTCString()};path=/`
 
-    // redirect to the new locale path
-    if (currentLocale === i18nConfig.defaultLocale) {
-      router.push('/' + newLocale + currentPathname)
-    } else {
-      router.push(currentPathname.replace(`/${currentLocale}`, `/${newLocale}`))
-    }
+    // Strip the current locale prefix to get the locale-agnostic base path...
+    const basePath =
+      currentLocale === defaultLocale
+        ? pathname
+        : pathname.replace(`/${currentLocale}`, '') || '/'
 
-    router.refresh()
+    // ...then re-prefix only for non-default locales. The default locale is
+    // served unprefixed, so building the canonical path directly (e.g. `/docs`
+    // rather than `/en/docs`) avoids forcing the middleware into a redirect
+    // mid-navigation, which is what made the soft push misbehave before.
+    const target =
+      newLocale === defaultLocale
+        ? basePath
+        : `/${newLocale}${basePath === '/' ? '' : basePath}`
+
+    // Hard navigation, not router.push. Unprefixed links (`/`, `/docs`) get
+    // prefetched under the old cookie, caching a redirect to the old locale;
+    // a soft push replays that stale entry before router.refresh() can purge
+    // it, landing on the old-locale page — whose response then rewrites the
+    // cookie back (serverSetCookie: 'always'), wiping the user's choice. A
+    // full load skips the router cache and hits middleware with the fresh
+    // cookie.
+    window.location.assign(target)
   }
 
   return (

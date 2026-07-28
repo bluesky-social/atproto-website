@@ -10,6 +10,10 @@ export const header = {
 
 チュートリアルは順番に進める構成ですが、各チュートリアルは独立しているため個別に取り組むこともできます。
 
+<Note>
+これらのチュートリアルはクロスプラットフォームで書かれています。一般的には、[homebrew](https://brew.sh/)でサポートされているプラットフォームの使用をお勧めします。すなわち、macOS、Linux、またはWindowsの[WSL](https://docs.microsoft.com/en-us/windows/wsl/)。WSLを使用しないWindowsにはNode.jsに影響する未解決の[DNSバグ](https://github.com/nodejs/node/issues/62347)があります。これは`lex`の解決を阻害する可能性があります。
+</Note>
+
 <Heading level={2} id="build-a-bot">ボット作成</Heading>
 
 ATプロトコルと対話し、投稿し、ユーザーに応答できるエージェントを作成します。
@@ -22,19 +26,19 @@ ATプロトコルと対話し、投稿し、ユーザーに応答できるエー
 
 [**カスタムフィードチュートリアル**](/guides/custom-feed-tutorial)
 
-<Heading level={2} id="oauth-with-go">OAuth with Go</Heading>
+<Heading level={2} id="o-auth-with-go">OAuth with Go</Heading>
 
 最小限のGo CLIアプリからATプロトコルOAuthで認証します。
 
 [**OAuth with Goチュートリアル**](/guides/go-oauth-cli-tutorial)
 
-<Heading level={2} id="oauth-with-nodejs">OAuth with Node.js</Heading>
+<Heading level={2} id="o-auth-with-nodejs">OAuth with Node.js</Heading>
 
 最小限のNode.js CLIアプリからATプロトコルOAuthで認証します。atproto OAuthの仕組みを理解するための良い出発点となります。
 
 [**OAuth with Node.jsチュートリアル**](/guides/oauth-cli-tutorial)
 
-<Heading level={2} id="oauth-with-nextjs">OAuth with NextJS</Heading>
+<Heading level={2} id="o-auth-with-next-js">OAuth with NextJS</Heading>
 
 OAuthを使ってユーザーがATプロトコルのIDでログインできるNext.jsアプリを構築します。
 
@@ -49,3 +53,11 @@ OAuthを使ってユーザーがATプロトコルのIDでログインできるNe
 これは元のStatusphereチュートリアルを改訂したものです。
 
 [**Statusphereサンプルアプリチュートリアル**](/guides/statusphere-tutorial)
+
+また、サーバーレスワーカーを使用したStatusphereのコミュニティ貢献クローンである[こちら](https://github.com/flo-bit/svelte-cloudflare-statusphere)も参照できます。
+
+<Heading level={2} id="add-labels-to-your-app">アプリにラベルを付ける</Heading>
+
+Statusphereアプリを、モデレーター発行のラベルの利用と、独自のOzoneラベラーサービスに送信する報告フローの両方で拡張します。
+
+[**ラベラーチュートリアル**](/guides/labels-tutorial)

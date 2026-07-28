@@ -36,13 +36,13 @@ export const header = {
 
 <S02 />
 
-ユーザーのプロフィールを取得するには、`lex` CLIツールをグローバルにインストールし、このプロジェクトに`app.bsky.actor.profile` Lexiconを導入する必要があります。
+ユーザーのプロフィールを取得するには、`lex` CLIツールおよび`tsx`をグローバルにインストールし、このプロジェクトに`app.bsky.actor.profile` Lexiconを導入する必要があります。
 
 <S03 />
 
 これによりプロジェクト内にLexicon用のTypeScriptの型が生成され、後で認証済みユーザーのプロフィールを読む際に利用します。
 
-<Heading level={2} id="part-2-build-the-oauth-client">パート2：OAuthクライアントを作る</Heading>
+<Heading level={2} id="part-2-build-the-o-auth-client">パート2：OAuthクライアントを作る</Heading>
 
 `src/index.ts`に新しいファイルを作成してください。このファイルにCLIツールのコードをすべて記述します。
 
@@ -95,6 +95,6 @@ ATプロトコルで認証する最小構成のOAuth CLIツールが完成しま
 
 - **これはローカル開発向けです**。ループバッククライアントは本番環境では動作しません。実アプリのデプロイは[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
 - **セッションはメモリ上に保持されます**。実行のたびに再認可が必要です。永続セッションが必要な場合は、[NextJSチュートリアル](/guides/oauth-tutorial#part-3-adding-database-persistence)のようにデータベースを使ってください。
-- **スコープに注意してください**。このチュートリアルが要求するのは基本の`atproto`スコープのみです。ユーザーに代わってデータを読み書きするには、追加の[スコープ](/guides/scopes)が必要です。
+- **スコープに注意してください**。このチュートリアルが要求するのは基本の`atproto`スコープのみです。ユーザーに代わってデータを読み書きするには、追加の[スコープ](/guides/permission-sets)が必要です。
 
 さらに多くのガイドやチュートリアルは[Docs](/guides)で、より多くのサンプルアプリは[Cookbook](https://github.com/bluesky-social/cookbook/)リポジトリで確認できます。ぜひ開発を楽しんでください。

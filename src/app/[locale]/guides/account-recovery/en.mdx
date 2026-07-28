@@ -26,14 +26,14 @@ Most atproto accounts use `did:plc`, a DID method that relies on **rotation keys
 
 By adding your own rotation key with higher priority than your PDS's key, you gain the ability to update your identity independently, including pointing it to a new PDS if needed.
 
-## Recovery Keys
+## Rotation Keys
 
-Each DID document publishes two public keys: a signing key and a recovery key.
+Each DID uses two kinds of keys: a signing key and rotation keys.
 
-- **Signing key**: Asserts changes to the DID Document and to the user's data repository.
-- **Recovery key**: Asserts changes to the DID Document; may override the signing key within a **72-hour window**.
+- **Signing key**: Asserts changes to the user's data repository.
+- **Rotation key**: Asserts changes to the DID Document; can update the signing key.
 
-The signing key is entrusted to the PDS so that it can manage the user's data, but the recovery key is saved by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
+The signing key is entrusted to the PDS so that it can manage the user's data. A rotation key can also be saved by the user, e.g. as a paper key. This makes it possible for the user to update their account to a new PDS without the original host's help.
 
 ## Pre-registering a Key
 

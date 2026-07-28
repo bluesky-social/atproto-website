@@ -1,0 +1,16 @@
+import { Page } from '@/components/Page'
+
+export const metadata = {
+  title: 'Trademarks',
+  description: 'Trademark and brand usage guidelines for the AT Protocol.',
+}
+
+export default async function HomePage({ params }: any) {
+  let Content
+  try {
+    Content = await import(`./${(await params).locale}.mdx`)
+  } catch (error) {
+    Content = await import(`./en.mdx`)
+  }
+  return <Page {...Content} />
+}

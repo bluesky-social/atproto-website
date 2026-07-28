@@ -1,0 +1,155 @@
+import {Container} from "@/components/Container"
+import {Heading} from "@/components/Heading"
+import S01 from './_snippets/01-env-vars.mdx'
+import S02 from './_snippets/02-scope-update.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-lib-labels.mdx'
+import S05 from './_snippets/05-schema-cid.mdx'
+import S06 from './_snippets/06-migration-cid.mdx'
+import S07 from './_snippets/07-webhook-cid.mdx'
+import S08 from './_snippets/08-report-route.mdx'
+import S09 from './_snippets/09-report-button.mdx'
+import S10 from './_snippets/10-page-with-labels.mdx'
+import reportbutton from './report-button.png'
+import ozonereport from './ozone-report.png'
+import labelapplied from './label-applied.png'
+
+export const header = {
+  title: 'アプリにラベルを追加する',
+  description: 'StatusphereアプリをOzoneラベラーサービスに接続してラベルを表示・作成する',
+}
+
+このチュートリアルでは、前のチュートリアルで作成したStatusphereアプリを[Ozone](https://github.com/bluesky-social/ozone)のラベラーサービスに接続します。ユーザーはフィード上でモデレーターが付与したラベルを確認でき、ステータスをラベラーに報告して審査を依頼できるようになります。
+
+<Heading level={2} id="prerequisites">前提条件</Heading>
+
+このチュートリアルは、[ソーシャルアプリの作成](/guides/statusphere-tutorial)チュートリアルの完了を前提としています。始める前にそちらのチュートリアルを動作させてください。
+
+管理下のOzoneインスタンスも動作している必要があります。[OzoneのHOSTINGガイド](https://github.com/bluesky-social/ozone/blob/main/HOSTING.md)に従って立ち上げてください。セットアップが完了すると、次のものが揃っているはずです。
+
+- **ラベラーDID**（`did:web:...`または`did:plc:...`）が存在し、そのDIDドキュメントに`#atproto_labeler`と`#atproto_label`のエントリが含まれていること。これは[ラベラーとしてアカウントを設定する](/guides/using-ozone#configuring-ozone)ときに作られます。
+- **公開サービスURL**があり、`GET /xrpc/com.atproto.label.queryLabels?uriPatterns=*`に応答すること。Ozoneはこのエンドポイントを実装します。
+- Ozone UIの**管理者ログイン**
+
+ラベラーに到達できるかは以下のように確認できます。
+
+```bash
+curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*&limit=1"
+```
+
+インストールしたばかりのOzoneでは、`{"labels":[]}`が返るはずです。
+
+<Heading level={2} id="part-1-wiring-the-labeler-into-your-app">パート1：ラベラーをアプリと接続</Heading>
+
+ラベラーのDIDを環境に追加します。
+
+<S01 />
+
+`lib/auth/client.ts`の`SCOPE`定数を更新することで、アプリがユーザーのPDS経由でレポートを送信できるようになります。
+
+<S02 />
+
+<Note>
+`rpc:`スコープはXRPCメソッド呼び出しを許可します。`?aud=<labeler-did>#atproto_labeler`を後ろに付けると、そのスコープを特定のラベラーに紐付けます。これがないとPDSはレポートのプロキシを拒否します。
+</Note>
+
+新しいスコープを既存セッションに反映させるには、ログアウトして再度ログインしてください。
+
+<Heading level={2} id="part-2-querying-labels">パート2：ラベルの照会</Heading>
+
+ラベルはラベラーサービス上に保存され、各ユーザーのリポジトリには保存されません。フィードをレンダリングするたびにラベラーに直接問い合わせます。
+
+ラベラー（ラベル取得）とユーザーPDS（レポート送信）の両方に対して型付きXRPC呼び出しを行うため、事前に両方のLexiconをインストールしてください。
+
+<S03 />
+
+そうしたら、`lib/labels.ts`を作成します。
+
+<S04 />
+
+以下の点に注意してください。
+
+- エンドポイントURLはラベラーのDIDドキュメントから取得されます。DIDは信頼のアンカーです。DIDドキュメントは署名されており、`#atproto_labeler`サービスの実際の場所を示します。TapはDID解決をキャッシュします。
+- lexの`Client`は解決されたURLに対して構築され、認証なしで使用されます。`queryLabels`は公開エンドポイントです。
+- 各ラベルの`src`はそれを発行したラベラーのDIDです。これはハンドルに解決され（呼び出しごとに重複除去され）、各`Label`に`srcHandle`として添付されます。これによりUIは不透明なDIDの代わりに『誰が』ラベルを付けたかを表示できます。
+
+3つのヘルパー（`isHidden`, `isWarned`, `displayLabels`）は値を解釈します。`!hide`と`!warn`はシステムレベルのラベルで、UI上の挙動が定められています。それ以外は`spam`や`joke`のような説明的ラベルで、任意の方法でレンダリングできます。
+
+<Heading level={2} id="part-3-capturing-record-cids">パート3：レコードCIDの取得</Heading>
+
+レポート対象の指定には、報告されるレコードのURIとCIDの両方が必要です。TapのwebhookイベントはCIDを含んでいますが、既存スキーマではそれを破棄しています。`status`テーブルを拡張してCIDを保持するようにします。
+
+`lib/db/index.ts`の`StatusTable`インターフェースに`cid`列を追加します。
+
+<S05 />
+
+`lib/db/migrations.ts`に新しいマイグレーションを追加します。
+
+<S06 />
+
+適用するには`pnpm migrate`を実行します。既存の行にはデフォルトの空文字列が設定されますが、新しいステータスはwebhookから実際のCIDを取得します。
+
+`app/api/webhook/route.ts`の`insertStatus`呼び出しを更新してCIDを渡すようにします。
+
+<S07 />
+
+<Note>
+[statusphere-example-app](https://github.com/bluesky-social/statusphere-example-app)のクローンから始めた場合（前のチュートリアルを手動作成した場合）、ユーザーのPDSに書き込んだ後、`app/api/status/route.ts`が楽観的にローカル挿入を行います。その`insertStatus`呼び出しにも`cid: res.cid`を渡してください。そうしないと、ユーザー自身の投稿にTapのwebhookが追いつくまで、DBに空の`cid`のまま残ることがあります。
+</Note>
+
+`getRecentStatuses`は既に`selectAll()`を使用しているため、新しいカラムは他の変更なしにフィードページへ反映されます。
+
+<Heading level={2} id="part-4-reporting-statuses">パート4：ステータスの報告</Heading>
+
+`app/api/report/route.ts`を作成します。
+
+<S08 />
+
+ルートはリクエストボディから`uri`と`cid`の両方を読み取るため、レポート時にレコードの検索は不要です。`service: '${LABELER_DID}#atproto_labeler'`オプションはlex Clientに対して送信リクエストの`atproto-proxy`ヘッダを設定させ、ユーザーのPDSがレポートをOzoneインスタンスへ転送するようにします。
+
+同様に`components/ReportButton.tsx`も作成します。
+
+<S09 />
+
+<Heading level={2} id="part-5-displaying-labels-in-the-feed">パート5：フィードにラベルを表示</Heading>
+
+ここで全てを連携させます。`app/page.tsx`を更新して表示されているステータスのラベルを取得し、非表示ラベルなら除外、警告ラベルは表示を薄くし、残りのラベル値をバッジとしてレンダリングして、各行に`ReportButton`を表示するようにします。以下には変更されたセクションのみを示しています。ヘッダー、セッションブロック、トップステータスブロックは前のチュートリアルから変更ありません。
+
+<S10 />
+
+テストする前に、前のチュートリアルで起動した`tap`をまだ実行していることを確認してください。
+
+```bash
+tap run \
+  --webhook-url=http://localhost:3000/api/webhook \
+  --collection-filters=xyz.statusphere.status \
+  --signal-collection=xyz.statusphere.status
+```
+
+`pnpm dev`を再起動します。ログイン中のユーザーは他ユーザーのステータス横に小さな「report」UIを見るはずです。レポートを送信すると、ユーザーのPDS経由であなたのラベラーに送信されます。
+
+<Container>
+  <Image src={reportbutton} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+OzoneのUIを開き、キュー内のレポートを見つけてラベルを適用します。`spam`のようなカスタム値、またはシステム値の`!warn`や`!hide`が使えます。
+
+<Container>
+  <Image src={ozonereport} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+アプリのフィードを更新すると、ラベルが表示されたり、ステータスが非表示になるはずです。
+
+<Container>
+  <Image src={labelapplied} alt="" className="w-full max-w-md mx-auto" />
+</Container>
+
+親指を立てる絵文字は非常に残虐（graphic）だとみなされたようです。
+
+<Heading level={2} id="conclusion">結論</Heading>
+
+これで、ラベラーサービスから署名付きラベルを取得し、ユーザーがレポートを送信できるatprotoアプリができました。小さなアプリではレンダリングごとにクエリする方法でも動作しますが、本番環境向けには`com.atproto.label.subscribeLabels`のWebSocketストリームを利用してローカルキャッシュを最新に保つことを推奨します。これが次のステップです。
+
+このセットアップにBluesky固有の前提はありません。同じOzoneインスタンス、同じプロトコルエンドポイント、同じクライアントパターンは、コミュニティ運営を行いたい任意のatprotoアプリで機能します。
+
+続けて[ラベル](/guides/labels)の章をお読みください。

@@ -360,10 +360,11 @@ export const navigation: Array<NavGroup> = [
         icon: 'briefcase',
       },
       {
-        title: 'Account migration',
-        href: '/guides/account-migration',
+        title: 'User Accounts',
+        href: '/guides/account-management',
         icon: 'paper-airplane',
         links: [
+          { title: 'Account Migration', href: '/guides/account-migration' },
           { title: 'Account Recovery', href: '/guides/account-recovery' },
         ]
       },
@@ -371,6 +372,22 @@ export const navigation: Array<NavGroup> = [
         title: 'Deploy recipes',
         href: 'https://github.com/bluesky-social/deploy-recipes/',
         icon: 'book',
+      },
+    ],
+  },
+  {
+    title: 'About',
+    links: [
+      {
+        title: 'Trademarks',
+        icon: 'document-text',
+        href: '/about/trademarks',
+        links: [
+          {
+            title: 'Atproto Trademark Policy',
+            href: '/about/trademarks/atproto-trademark-policy',
+          },
+        ],
       },
     ],
   },

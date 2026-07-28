@@ -73,3 +73,12 @@ Moderation actions can be applied at both the AppView and the PDS level. However
 [Ozone](https://github.com/bluesky-social/ozone) is our labeling service and moderation interface. If you are building your own AppView, AppViews can use the Ozone `subscribeLabel` "firehose" to receive updates. Ozone can also be granted permission to read additional PDS-level private information, such as the account email. This is helpful for things like account recovery.
 
 You should generally run separate Ozone instances for moderating the PDS (since they can see private account info) and standalone AppViews, unless there is actually a single administrative org doing the moderation for both.
+
+## Preventing spam
+
+Running a PDS that's open for other people to sign up on is a responsibility. You should do your part to keep the network free of spam and other bad actors. In particular:
+
+- **Don't disable invite codes.** Requiring an invite code to register is one of the most effective controls you have against automated signups. Keep them enabled. If you need to issue a code and register an account in a single step, you can [create an account using an invite code](https://github.com/bluesky-social/pds#creating-an-account-using-an-invite-code) programmatically rather than turning invites off.
+- **Expect signup limits at the Relay.** Relays limit new signups on new PDSes until you've established a track record, and may limit them again if they detect an influx of spam. Plan for this rather than trying to work around it, and reach out to Relay administrators proactively if you are expecting a large number of new signups.
+
+Beyond those, you can add a captcha to your signup flow to raise the cost of automated account creation, and set up a [labeler](https://github.com/bluesky-social/ozone) to flag or take action on abusive accounts once they exist.
