@@ -1,5 +1,23 @@
 import { describe, it, expect } from 'vitest'
-import { parseGitStatus, branchNameFor, isValidBranchName } from './git.mjs'
+import {
+  parseGitStatus,
+  branchNameFor,
+  isValidBranchName,
+  gitState,
+  createBranch,
+} from './git.mjs'
+
+/** Records calls and replies from a script of canned outputs. */
+function fakeRun(replies: Record<string, string | Error>) {
+  const calls: string[][] = []
+  const run = async (command: string, args: string[]) => {
+    calls.push([command, ...args])
+    const reply = replies[args.join(' ')]
+    if (reply instanceof Error) throw reply
+    return reply ?? ''
+  }
+  return { run, calls }
+}
 
 describe('parseGitStatus', () => {
   it('reports a clean tree', () => {
@@ -86,5 +104,69 @@ describe('isValidBranchName', () => {
     ]) {
       expect(isValidBranchName(name), name).toBe(false)
     }
+  })
+})
+
+describe('gitState', () => {
+  it('reports the current branch and a clean tree', async () => {
+    const { run } = fakeRun({
+      'branch --show-current': 'main\n',
+      'status --porcelain': '',
+    })
+    expect(await gitState({ run })).toEqual({
+      branch: 'main',
+      dirty: false,
+      files: [],
+    })
+  })
+
+  it('reports dirty files', async () => {
+    const { run } = fakeRun({
+      'branch --show-current': 'typography\n',
+      'status --porcelain': ' M README.md\n?? scratch.txt',
+    })
+    expect(await gitState({ run })).toEqual({
+      branch: 'typography',
+      dirty: true,
+      files: ['README.md', 'scratch.txt'],
+    })
+  })
+})
+
+describe('createBranch', () => {
+  it('fetches origin/main before checking out, in that order', async () => {
+    const { run, calls } = fakeRun({})
+    await createBranch('blog-my-post', { run })
+    expect(calls).toEqual([
+      ['git', 'fetch', 'origin', 'main'],
+      ['git', 'checkout', '-b', 'blog-my-post', 'origin/main'],
+    ])
+  })
+
+  it('rejects an invalid name before running any command', async () => {
+    const { run, calls } = fakeRun({})
+    await expect(createBranch('bad name', { run })).rejects.toThrow(/invalid/i)
+    expect(calls).toEqual([])
+  })
+
+  it('does not attempt checkout when the fetch fails', async () => {
+    const err = Object.assign(new Error('exit 128'), {
+      stderr: 'fatal: unable to access origin',
+    })
+    const { run, calls } = fakeRun({ 'fetch origin main': err })
+    await expect(createBranch('blog-my-post', { run })).rejects.toThrow(
+      /unable to access origin/,
+    )
+    expect(calls).toEqual([['git', 'fetch', 'origin', 'main']])
+  })
+
+  it('surfaces stderr when the checkout fails', async () => {
+    const err = Object.assign(new Error('exit 128'), {
+      stderr: "fatal: a branch named 'blog-dup' already exists",
+    })
+    const { run } = fakeRun({ 'checkout -b blog-dup origin/main': err })
+    await expect(createBranch('blog-dup', { run })).rejects.toThrow(
+      /already exists/,
+    )
   })
 })
