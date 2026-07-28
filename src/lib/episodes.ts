@@ -46,13 +46,15 @@ export function formatDurationForDisplay(seconds: number): string {
 }
 
 /**
- * The hosts to display for an episode: the given `hosts` when set, otherwise
- * the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Hosts live only in
- * the MDX episode header (the byline is the only consumer), so this takes a
- * plain shape rather than an Episode field.
+ * The hosts to display for an episode: the given `hosts` when non-empty,
+ * otherwise the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Hosts live
+ * only in the MDX episode header (the byline is the only consumer), so this
+ * takes a plain shape rather than an Episode field. An empty array is treated
+ * as absent — the studio's hosts field can be cleared, and a blank byline is
+ * never what's wanted.
  */
 export function resolveHosts(episode: { hosts?: string[] }): string[] {
-  return episode.hosts ?? [SHOW.defaultHost]
+  return episode.hosts?.length ? episode.hosts : [SHOW.defaultHost]
 }
 
 export interface SubscribeUrls {

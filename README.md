@@ -83,6 +83,24 @@ This will prompt you for:
 
 The script creates the necessary files and updates the blog index automatically.
 
+After scaffolding, `create` automatically publishes the post's `standard.site`
+record (the same step as `npm run blog ssite <slug>`) and writes the resulting
+`standardSiteUri` back into the post's MDX header. This requires
+`ATPROTO_HANDLE` / `ATPROTO_APP_PASSWORD` in `.env` and network access.
+
+- If the publish fails (missing credentials, offline, wrong publishing
+  account), creation still succeeds — you'll get a warning and the exact
+  `npm run blog ssite <slug>` command to publish later.
+- To skip publishing entirely (offline drafting), pass `--no-ssite`:
+
+  ```bash
+  npm run blog create -- --no-ssite
+  ```
+
+Because the record's canonical URL only resolves after the post is merged and
+deployed, the publish is metadata-only and idempotent — re-running
+`npm run blog ssite <slug>` after edits updates the same record.
+
 #### Author bylines
 
 Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.
@@ -90,6 +108,101 @@ Individual blog post pages display an author byline below the date. Named author
 Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the single source of truth. The `PageHeader` component looks up the DID at render time based on the `author` name from the post's MDX header — no need to store DIDs in individual posts.
 
 When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
+
+### Dev Studio (dev only)
+
+A browser UI for authoring both **blog posts** and **Off Protocol episodes**. It
+writes exactly the same files the CLIs write — `page.tsx`, `en.mdx` with the
+`export const header` front matter, and the `src/lib/posts.ts` or
+`src/lib/episodes.ts` entry — so the two approaches are interchangeable. Use
+whichever suits the moment.
+
+```bash
+npm run dev
+# then open http://localhost:3000/studio
+```
+
+`/studio` is the index. From there:
+
+| Editor | URL | Writes |
+| --- | --- | --- |
+| Blog | `/studio/blog` | `src/app/[locale]/blog/<slug>/` + `src/lib/posts.ts` |
+| Podcast | `/studio/podcast` | `src/app/[locale]/off-protocol/<slug>/` + `src/lib/episodes.ts` |
+
+Each editor has a switch to the other in its sidebar.
+
+#### Ground rules (both editors)
+
+- **Dev only.** Pages and API routes return 404 when
+  `NODE_ENV === 'production'`. The site deploys to the Cloudflare edge, where
+  filesystem writes can't run anyway, so it is never reachable in prod.
+- **Files are the source of truth.** Every load re-reads from disk, and a save
+  rewrites only the fields the form owns, plus the body. Imports, custom JSX,
+  and header fields the form doesn't manage are preserved byte-for-byte.
+  **Hand-editing the `.mdx` is fully supported** — the UI is the easy path, the
+  raw file is for everything else.
+- **Lists scan the content directory**, so anything you created by hand or with
+  the CLI shows up in the sidebar.
+- **Slug is read-only after creation.** To rename, delete and recreate.
+- **Delete** removes the directory and the index entry, behind a confirmation.
+  Recoverable from git if it was committed.
+- **Open Graph image:** drag-and-drop (or click to choose) saves the image as
+  `opengraph-image.<ext>` in the item's directory, which is the Next file
+  convention. PNG/JPG/GIF, ≤8MB, exactly one per item; a new drop replaces it.
+  Automatic *generation* is not implemented for either editor.
+- **No body preview.** Use the **Open ↗** link in the action bar to see the real
+  page.
+- **No git operations.** Branch, stage, and commit in your normal flow.
+
+#### Credentials
+
+The Studio runs fine with no credentials at all — you just lose two features.
+Both read `.env`, and **Next only reads `.env` at boot, so restart the dev
+server after editing it.**
+
+| Feature | Needs |
+| --- | --- |
+| Blog → standard.site publishing | `ATPROTO_HANDLE`, `ATPROTO_APP_PASSWORD` |
+| Podcast → audio upload | `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE` |
+
+See `.env.example` for the full annotated list.
+
+#### Blog editor
+
+- **Create:** pick *New*, fill title/description/date/author — the slug derives
+  from the title, and an Author DID field appears for authors not yet in
+  `authors.json`. Write the body as raw MDX, then Save.
+- **standard.site:** creating a post auto-publishes its record and every Save
+  updates it; there's also a manual **Publish** button. It shells out to the
+  same path as `npm run blog ssite`, so it needs the publishing credentials.
+  Failures are non-blocking — the post still saves and a warning shows. Once
+  published, the front matter shows the record's `at://` URI with **Copy** and
+  **pdsls ↗** buttons.
+- **Delete** does not retract an already-published standard.site record, same as
+  the CLI.
+
+#### Podcast editor
+
+- **Two-step create.** Fill in the metadata and press *Create episode*; audio,
+  show notes, and the OG image appear afterwards. Those three write into the
+  episode's directory, which doesn't exist until the episode does.
+- **Audio upload** is the only way to set an episode's audio here — there is no
+  URL field. Without R2 credentials the drop zone reports `R2 not configured`;
+  use `npm run podcast create` instead if you already have a hosted MP3 URL.
+  See [audio upload](#audio-upload-r2) below for the details.
+- **Publish date.** One control sets `pubDate` (what RSS reads) and derives the
+  *Display date* from it, so the two can't drift. Edit the display date on its
+  own for custom wording.
+- **Show notes** are the MDX body. `hasShowNotes` is recomputed from whether the
+  body has content, so there's no flag to remember.
+- **Hosts** defaults to the show host when left empty; fill it in only for
+  guest-hosted episodes.
+- **Not in the UI:** the Bluesky discussion URL (`blueskyPostUrl`) and
+  transcripts. Set `blueskyPostUrl` by hand in `en.mdx` to attach a discussion
+  thread; for a transcript, paste it into the generated `transcript.mdx` and
+  flip `hasTranscript: true`. The editor preserves all three on save.
+- **Delete** asks a second time whether to remove the MP3 from storage as well.
+  That one is irreversible — see [audio upload](#audio-upload-r2).
 
 ### Removing a blog post
 
@@ -427,6 +540,69 @@ npm run podcast remove
 
 This deletes local files only. Once a feed `guid` has been distributed to subscribers, you cannot retroactively unsubscribe them — be deliberate.
 
+#### Add an episode in the browser
+
+`npm run podcast create` has a browser equivalent — see
+[Dev Studio](#dev-studio-dev-only). It writes the same three files and the same
+`episodes.ts` entry, and adds two things the CLI can't do: it uploads the MP3
+for you, and it reads the duration out of the file rather than asking `ffprobe`.
+
+#### Audio upload (R2)
+
+Only the Studio uploads audio; `npm run podcast create` expects a URL you've
+already hosted. Uploading needs five values in `.env`:
+
+```
+CLOUDFLARE_ACCOUNT_ID=     # 32-char hex, from the R2 overview page
+R2_ACCESS_KEY_ID=          # from an R2 API token, Object Read & Write
+R2_SECRET_ACCESS_KEY=      # ditto — NOT the "Token value" on that page
+R2_BUCKET=                 # the media bucket behind R2_PUBLIC_BASE
+R2_PUBLIC_BASE=            # https://media.atproto.com
+```
+
+Uploads use R2's **S3-compatible API** with the bucket-scoped Access Key pair,
+not a Cloudflare API token. That's deliberate: the REST API behind
+`wrangler r2 object put` only accepts an account-wide
+`Workers R2 Storage: Edit` token, which could write to every bucket in the
+account, while S3 credentials can be scoped to this one bucket. `wrangler`
+commands against these objects will fail for the same reason — use an S3 client
+or the dashboard. `CLOUDFLARE_API_TOKEN` is not used by anything here.
+
+Drop an MP3 on the zone and it uploads, then writes `audioUrl`,
+`audioSizeBytes`, `duration`, and `durationSeconds` into `en.mdx` and
+`episodes.ts` immediately — no separate Save needed, so an uploaded object is
+never left unreferenced. Large episodes take a few minutes; the status line is
+the only progress signal, since the upload isn't streamed back to the browser.
+
+The object key is date-stamped from the episode's publish date, matching the
+layout the show's existing objects use:
+
+```
+off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3
+```
+
+The key is fixed at upload time — changing the publish date afterwards does not
+move the object, and `audioUrl` in the episode header stays the authoritative
+pointer.
+
+Deleting an episode in the Studio offers to delete its MP3 too, as a second
+confirmation after the episode one. It's opt-in per deletion and irreversible —
+the files are recoverable from git, the object isn't. Decline it and the object
+stays. The key comes from the episode's stored `audioUrl` rather than being
+recomputed, so it stays correct even if the publish date changed after upload,
+and audio hosted outside the bucket is never touched. If the object delete
+fails, the episode is left in place rather than stranding an object whose key
+you no longer have.
+
+To remove an object by hand — for an episode deleted before this existed, or
+one removed with `npm run podcast remove` — use the R2 dashboard or an S3
+client:
+
+```sh
+aws s3 rm "s3://<bucket>/off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3" \
+  --endpoint-url "https://<account-id>.r2.cloudflarestorage.com"
+```
+
 #### Why two date fields and two duration fields
 
 `src/lib/episodes.ts` stores both `date` (`"May 7, 2026"`) and `pubDate` (ISO 8601), and both `duration` (`"HH:MM:SS"`) and `durationSeconds` (a number). This is deliberate:
@@ -441,7 +617,7 @@ The `npm run podcast create` script populates both fields in sync. They cannot d
 
 Things that must happen **before** submitting the feed to Apple Podcasts or Spotify:
 
-- [ ] At least one episode added via `npm run podcast create`
+- [ ] At least one episode added via `npm run podcast create` or `/studio/podcast`
 
 #### RSS feed validation
 

@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:scripts": "node --import tsx --test 'scripts/**/*.test.mjs'",
     "blog": "tsx --env-file=.env scripts/blog.mjs",
     "podcast": "tsx --env-file=.env scripts/podcast.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",
@@ -21,6 +22,7 @@
     "@atproto/lex": "^0.0.25",
     "@atproto/lex-password-session": "^0.0.2",
     "@atproto/oauth-scopes": "^0.5.0",
+    "@aws-sdk/client-s3": "^3.1096.0",
     "@headlessui/react": "^2.1.0",
     "@headlessui/tailwindcss": "^0.2.0",
     "@mdx-js/loader": "^3.0.0",
@@ -69,6 +71,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "sharp": "^0.33.1",
     "tsx": "^4.21.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "wrangler": "^4.110.0"
   }
 }
