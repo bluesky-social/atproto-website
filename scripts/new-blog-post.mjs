@@ -7,6 +7,7 @@ import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import { parseCreateArgs } from './lib/parseCreateArgs.mjs'
 import { createPublishFn } from './lib/createPublishFn.mjs'
+import { smartText } from '../src/mdx/smartText.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -82,7 +83,7 @@ export async function main(...args) {
 
   const shouldCreateBranch = await checkGitStatus()
 
-  const title = await question('Title: ')
+  const title = smartText(await question('Title: '))
   if (!title.trim()) {
     console.error('Error: Title is required')
     process.exit(1)
@@ -92,7 +93,7 @@ export async function main(...args) {
   const slugInput = await question(`Slug (${suggestedSlug}): `)
   const slug = slugInput.trim() || suggestedSlug
 
-  const description = await question('Description: ')
+  const description = smartText(await question('Description: '))
   if (!description.trim()) {
     console.error('Error: Description is required')
     process.exit(1)

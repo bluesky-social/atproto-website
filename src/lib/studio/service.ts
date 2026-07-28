@@ -23,6 +23,7 @@ import {
 } from './postsFile'
 import { resolveAuthorDid, withAuthor, type AuthorMap } from './authors'
 import { blogPageTsx } from './templates'
+import { smartenTitleAndDescription } from './smartText'
 
 export type StudioPaths = {
   blogDir: string
@@ -190,12 +191,14 @@ export async function createPost(
     throw new Error(`A post with slug "${input.slug}" already exists`)
   }
 
-  const owned: OwnedFields = {
+  // Smarten here: page.tsx, en.mdx, and the posts.ts entry are all written from
+  // this one object, so the three copies can't disagree.
+  const owned: OwnedFields = smartenTitleAndDescription({
     title: input.title,
     description: input.description,
     date: input.date,
     author: input.author,
-  }
+  })
   const body =
     input.body && input.body.trim()
       ? input.body
@@ -232,24 +235,27 @@ export async function updatePost(
   paths: StudioPaths,
   slug: string,
   input: UpdateInput,
-): Promise<{ slug: string }> {
+): Promise<{ slug: string; owned: OwnedFields }> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
   // Re-read from disk so preamble + unknown header fields reflect the current
   // file (supports concurrent hand-edits).
+  const owned = smartenTitleAndDescription(input.owned)
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
-  const next = applyOwnedFields(parsed, input.owned)
+  const next = applyOwnedFields(parsed, owned)
   next.body = normalizeBodySeparation(input.body)
   await fs.writeFile(mdxPath, serializeMdxFile(next))
 
   const postsSrc = await fs.readFile(paths.postsFile, 'utf-8')
   await fs.writeFile(
     paths.postsFile,
-    updateEntryBySlug(postsSrc, slug, entryFor(slug, input.owned)),
+    updateEntryBySlug(postsSrc, slug, entryFor(slug, owned)),
   )
-  return { slug }
+  // Hand back what was actually stored — the editor echoes the smartened title
+  // and description so the transform is visible rather than silent.
+  return { slug, owned }
 }
 
 export async function deletePost(

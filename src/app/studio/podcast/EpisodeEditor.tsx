@@ -226,6 +226,15 @@ export function EpisodeEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
+      // Smart typography is applied server-side; show the stored strings so the
+      // form doesn't keep displaying straight quotes the file no longer has.
+      if (data.fields) {
+        setFields((f) => ({
+          ...f,
+          title: data.fields.title,
+          description: data.fields.description,
+        }))
+      }
       setStatus(`Saved ${data.slug}`)
       await refreshList()
     }

@@ -2,7 +2,7 @@ import { EpisodePage } from '@/components/EpisodePage'
 
 export const metadata = {
   title: 'Protocolly Atmoseed',
-  description: 'News from around the Atmosphere, including a proposal to fix localhost, more webdevs getting into atproto, Mu Social\'s opinionated news feed, and more.',
+  description: 'News from around the Atmosphere, including a proposal to fix localhost, more webdevs getting into atproto, Mu Social’s opinionated news feed, and more.',
 }
 
 export default async function EpisodeRoute({ params }: any) {

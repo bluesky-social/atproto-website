@@ -43,6 +43,77 @@ afterEach(() => {
   fs.rmSync(root, { recursive: true, force: true })
 })
 
+describe('smart typography', () => {
+  it('smartens title and description in all three files createPost writes', async () => {
+    await createPost(paths, {
+      slug: 'hello',
+      title: '"Quoted" Title',
+      description: "What's next -- a lot...",
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      body: 'Body.\n',
+    })
+    const dir = path.join(paths.blogDir, 'hello')
+    for (const [label, file] of [
+      ['en.mdx', path.join(dir, 'en.mdx')],
+      ['page.tsx', path.join(dir, 'page.tsx')],
+      ['posts.ts', paths.postsFile],
+    ] as const) {
+      const content = fs.readFileSync(file, 'utf-8')
+      expect(content, label).toContain('“Quoted” Title')
+      expect(content, label).toContain('What’s next — a lot…')
+    }
+  })
+
+  it('returns the smartened fields so the editor can show what was stored', async () => {
+    await createPost(paths, {
+      slug: 'hello',
+      title: 'Plain',
+      description: 'Plain',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      body: 'Body.\n',
+    })
+    const res = await updatePost(paths, 'hello', {
+      owned: {
+        title: '"Quoted"',
+        description: "It's fine",
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+      },
+      body: 'Body.\n',
+    })
+    expect(res.owned.title).toBe('“Quoted”')
+    expect(res.owned.description).toBe('It’s fine')
+  })
+
+  it('smartens title and description on updatePost', async () => {
+    await createPost(paths, {
+      slug: 'hello',
+      title: 'Plain',
+      description: 'Plain',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      body: 'Body.\n',
+    })
+    await updatePost(paths, 'hello', {
+      owned: {
+        title: '"Quoted"',
+        description: "It's fine",
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+      },
+      body: 'Body.\n',
+    })
+    const mdx = fs.readFileSync(path.join(paths.blogDir, 'hello', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain('“Quoted”')
+    expect(mdx).toContain('It’s fine')
+    const posts = fs.readFileSync(paths.postsFile, 'utf-8')
+    expect(posts).toContain('“Quoted”')
+    expect(posts).toContain('It’s fine')
+  })
+})
+
 describe('createPost', () => {
   it('writes the dir, page.tsx, en.mdx, and a posts.ts entry', async () => {
     await createPost(paths, {

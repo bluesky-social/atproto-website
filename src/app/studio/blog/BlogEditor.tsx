@@ -117,6 +117,15 @@ export function BlogEditor() {
       })
       const data = await res.json()
       if (!res.ok) return setStatus(`Error: ${data.error}`)
+      // Smart typography is applied server-side; show the stored strings so the
+      // form doesn't keep displaying straight quotes the file no longer has.
+      if (data.owned) {
+        setOwned((o) => ({
+          ...o,
+          title: data.owned.title,
+          description: data.owned.description,
+        }))
+      }
       applyPublish(data.publish)
       setStatus(`Saved ${data.slug}`)
       await refreshList()

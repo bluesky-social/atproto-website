@@ -24,7 +24,7 @@ export const posts: BlogPost[] = [
   {
     slug: 'going-off-protocol',
     title: 'Going Off Protocol',
-    description: 'We\'re expanding our office hours livestream. Look for it wherever you get your podcasts.',
+    description: 'We’re expanding our office hours livestream. Look for it wherever you get your podcasts.',
     date: 'June 18, 2026',
     author: 'Jim Ray',
   },
@@ -124,7 +124,7 @@ export const posts: BlogPost[] = [
   {
     slug: 'new-site-2026',
     title: 'Welcome to the New atproto.com',
-    description: 'We\'ve updated just about everything about atproto.com to make it easier for developers to just build things.',
+    description: 'We’ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 17, 2026',
     author: 'Alex Garnett',
 
