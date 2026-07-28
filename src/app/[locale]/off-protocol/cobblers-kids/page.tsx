@@ -1,19 +1,14 @@
 import { EpisodePage } from '@/components/EpisodePage'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as notes from './en.mdx'
 import * as transcript from './transcript.mdx'
 
-// Episodes aren't translated, so en.mdx is imported statically: it gives the
-// route a real module-graph edge (content edits hot-reload) and its header
-// supplies the metadata rather than a duplicate copy that can drift from it.
-// transcript.mdx is always scaffolded alongside en.mdx, so it's a static import
-// too — a stub with no real transcript renders nothing, and EpisodePage only
-// shows the section when the header sets hasTranscript.
+// Metadata comes from the MDX header (see mdx.d.ts). Episodes aren't
+// translated, so en.mdx and transcript.mdx are static imports — which is also
+// what makes show-notes edits hot-reload.
 
 export function generateMetadata() {
-  return {
-    title: notes.header.title,
-    description: notes.header.description,
-  }
+  return mdxRouteMetadata(notes)
 }
 
 export default function EpisodeRoute() {

@@ -1,22 +1,16 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata, resolveLocaleMdx } from '@/lib/localizedMdx'
 import * as en from './en.mdx'
 
-// This page's MDX carries `metadata` rather than a `header`, so it supplies the
-// route metadata from there. <Page> still receives the whole module, and with no
-// `header` prop it renders no PageHeader — the MDX provides its own heading,
-// which is the existing behaviour. English is imported statically so it can be
-// the fallback and so content edits hot-reload.
+// Metadata is read from the requested locale's own header, so a translated page
+// gets a translated <title>. English is imported statically so it can be the
+// fallback and so content edits hot-reload; other locales resolve per request.
+const load = (locale: string) => import(`./${locale}.mdx`)
 
-export function generateMetadata() {
-  return {
-    title: en.metadata.title,
-    description: en.metadata.description,
-  }
+export async function generateMetadata({ params }: any) {
+  return mdxRouteMetadata(await resolveLocaleMdx(params, en, load))
 }
 
 export default async function HomePage({ params }: any) {
-  const { locale } = await params
-  const content =
-    locale === 'en' ? en : await import(`./${locale}.mdx`).catch(() => en)
-  return <Page {...content} />
+  return <Page {...(await resolveLocaleMdx(params, en, load))} />
 }

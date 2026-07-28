@@ -1,22 +1,19 @@
+import { mdxRouteMetadata, resolveLocaleMdx } from '@/lib/localizedMdx'
 import * as en from './en.mdx'
 
-// This page's MDX renders its own `# h1` and carries no `header`, so it takes
-// its metadata from the MDX `metadata` export and renders the content directly
-// rather than through <Page> — deliberately different from its neighbours.
-// English is imported statically so it can be the fallback and so content edits
-// hot-reload; other locales resolve per request.
+// Unlike its neighbours this page renders its MDX directly, with no <Page>
+// wrapper: the content supplies its own heading. Metadata is read from the
+// requested locale's own export — this file predates the `header` convention and
+// uses `metadata`, which mdxRouteMetadata handles. English is imported
+// statically so it can be the fallback and so content edits hot-reload.
+const load = (locale: string) => import(`./${locale}.mdx`)
 
-export function generateMetadata() {
-  return {
-    title: en.metadata.title,
-    description: en.metadata.description,
-  }
+export async function generateMetadata({ params }: any) {
+  return mdxRouteMetadata(await resolveLocaleMdx(params, en, load))
 }
 
 export default async function HomePage({ params }: any) {
-  const { locale } = await params
-  const content =
-    locale === 'en' ? en : await import(`./${locale}.mdx`).catch(() => en)
+  const content = await resolveLocaleMdx(params, en, load)
   const Content = content.default
   return <Content />
 }

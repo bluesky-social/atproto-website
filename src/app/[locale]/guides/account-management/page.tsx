@@ -1,25 +1,16 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata, resolveLocaleMdx } from '@/lib/localizedMdx'
 import * as en from './en.mdx'
 
-// Guides are translated, so the locale variant is still resolved at request
-// time. English is imported statically anyway: it's the fallback, it's the file
-// authors actually edit (so it gets a real module-graph edge for hot reload),
-// and its header supplies the metadata rather than a duplicated copy.
-//
-// Metadata stays English for every locale — same as before this change. Reading
-// the locale's own header would localize titles, which is worth doing but is a
-// visible change across ~70 translated pages, so it's deliberately out of scope.
+// Metadata is read from the requested locale's own header, so a translated page
+// gets a translated <title>. English is imported statically so it can be the
+// fallback and so content edits hot-reload; other locales resolve per request.
+const load = (locale: string) => import(`./${locale}.mdx`)
 
-export function generateMetadata() {
-  return {
-    title: en.header.title,
-    description: en.header.description,
-  }
+export async function generateMetadata({ params }: any) {
+  return mdxRouteMetadata(await resolveLocaleMdx(params, en, load))
 }
 
 export default async function GuidePage({ params }: any) {
-  const { locale } = await params
-  const content =
-    locale === 'en' ? en : await import(`./${locale}.mdx`).catch(() => en)
-  return <Page {...content} />
+  return <Page {...(await resolveLocaleMdx(params, en, load))} />
 }

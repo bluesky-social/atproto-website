@@ -1,16 +1,13 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as content from './en.mdx'
 
-// Blog posts aren't translated (crowdin.yml covers guides/articles/specs only),
-// so this imports en.mdx statically. That gives the route a real module-graph
-// edge — which is what lets a content edit hot-reload — and lets the metadata
-// come from the header instead of being a second copy that can drift from it.
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
 
 export function generateMetadata() {
-  return {
-    title: content.header.title,
-    description: content.header.description,
-  }
+  return mdxRouteMetadata(content)
 }
 
 export default function BlogPost() {
