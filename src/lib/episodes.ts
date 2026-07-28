@@ -114,7 +114,7 @@ export const episodes: Episode[] = [
     slug: '2026-07-22-erin-kissane',
     episodeNumber: 12,
     title: '“Nothing Is Ever Over”',
-    description: 'Writer, speaker, and researcher Erin Kissane joins Jim to trace how the social internet got here, what\'s worth salvaging, how we can do better by listening to people.',
+    description: 'Writer, speaker, and researcher Erin Kissane joins Jim to trace how the social internet got here, what’s worth salvaging, and how we can do better by listening to people.',
     date: 'July 22, 2026',
     pubDate: '2026-07-22T15:33:23.353Z',
     duration: '01:16:25',
