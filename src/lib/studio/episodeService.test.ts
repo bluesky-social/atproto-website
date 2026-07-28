@@ -94,7 +94,7 @@ describe('createEpisode', () => {
     expect(Number.isNaN(new Date(fields.pubDate).getTime())).toBe(false)
   })
 
-  it('smartens the title and description in all three files it writes', async () => {
+  it('smartens the title and description everywhere it stores them', async () => {
     await createEpisode(
       paths,
       baseInput({
@@ -104,16 +104,27 @@ describe('createEpisode', () => {
     )
     const dir = path.join(paths.podcastDir, 'my-ep')
     const mdx = fs.readFileSync(path.join(dir, 'en.mdx'), 'utf-8')
-    const page = fs.readFileSync(path.join(dir, 'page.tsx'), 'utf-8')
     const eps = fs.readFileSync(paths.episodesFile, 'utf-8')
     for (const [label, content] of [
       ['en.mdx', mdx],
-      ['page.tsx', page],
       ['episodes.ts', eps],
     ] as const) {
       expect(content, label).toContain('“Nothing Is Ever Over”')
       expect(content, label).toContain('What’s next — a lot, it turns out…')
     }
+  })
+
+  it('does not write the title into page.tsx at all', async () => {
+    // page.tsx reads the MDX header, so it must not become a third copy — that
+    // duplication is what drifted before, leaving stale titles in OG previews.
+    await createEpisode(paths, baseInput({ title: 'Distinctive Title' }))
+    const page = fs.readFileSync(
+      path.join(paths.podcastDir, 'my-ep', 'page.tsx'),
+      'utf-8',
+    )
+    expect(page).not.toContain('Distinctive Title')
+    expect(page).not.toContain('export const metadata')
+    expect(page).toContain('notes.header.title')
   })
 
   it('rejects a duplicate slug', async () => {

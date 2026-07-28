@@ -3,20 +3,37 @@
 // *script* file (no top-level import/export) for this to be an ambient
 // augmentation rather than a module one.
 //
-// Needed because page.tsx reads `header` to build its metadata. Until that
-// change, pages imported MDX through a template-literal `import()`, which TS
-// resolves to `any` — so a missing type was never surfaced.
+// Needed because page.tsx now reads `header` to build its metadata. Before that,
+// pages imported MDX through a template-literal `import()`, which TS resolves to
+// `any` — so the absence of these types was never surfaced.
 
 declare module '*.mdx' {
   /**
-   * `export const header` from the MDX file. Typed loosely on purpose: blog
-   * posts, episodes, guides, and specs all carry different extra fields, and
-   * only title/description are read by shared code. Optional because plenty of
-   * MDX files — code snippets, transcripts — have no header at all.
+   * `export const header` from the MDX file.
+   *
+   * Typed as `any`, deliberately. Blog posts, episodes, guides, and specs all
+   * carry different header shapes, and an ambient declaration can't vary per
+   * file. A structural type doesn't work either: `EpisodePage` requires
+   * `episodeNumber`, `date`, `pubDate`, and `audioUrl`, and no index signature
+   * or optional-property type satisfies required props — the alternative was a
+   * double cast in every episode page, which asserts just as much as `any` does
+   * while looking more rigorous.
+   *
+   * This is not a regression: the dynamic import these pages used before
+   * resolved to `any` too. Header shape is enforced where headers are *written*
+   * — `EpisodeFields` and `OwnedFields` in src/lib/studio, both covered by
+   * tests — rather than where they're read.
    */
-  export const header:
-    | ({ title: string; description: string } & Record<string, unknown>)
-    | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const header: any
+
+  /**
+   * `export const metadata` — a second, older convention used by two pages
+   * (guides/data-validation, specs/permission) whose MDX renders its own `# h1`
+   * and so carries no `header`. Same `any` reasoning as above.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const metadata: any
 
   /** Section list injected by the recma plugin, consumed by the section nav. */
   export const sections: Array<{ id: string; title: string }> | undefined

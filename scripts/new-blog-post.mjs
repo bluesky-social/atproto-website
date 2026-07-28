@@ -135,21 +135,26 @@ export async function main(...args) {
   fs.mkdirSync(postDir, { recursive: true })
 
   // Create page.tsx
+  // No title/description here: the route reads them from the MDX header, so
+  // page.tsx can't drift from the content. en.mdx is imported statically because
+  // blog posts aren't translated and the module edge is what makes content edits
+  // hot-reload.
   const pageContent = `import { Page } from '@/components/Page'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: '${title.replace(/'/g, "\\'")}',
-  description: '${description.replace(/'/g, "\\'")}',
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return {
+    title: content.header.title,
+    description: content.header.description,
+  }
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(\`./\${(await params).locale}.mdx\`)
-  } catch (error) {
-    Content = await import(\`./en.mdx\`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }
 `
   fs.writeFileSync(path.join(postDir, 'page.tsx'), pageContent)

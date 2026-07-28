@@ -220,29 +220,31 @@ export async function main() {
   fs.mkdirSync(episodeDir, { recursive: true })
 
   // Write page.tsx
+  // No title/description here: the route reads them from the MDX header, so
+  // page.tsx can't drift from the content. en.mdx and transcript.mdx are static
+  // imports because episodes aren't translated, and the module edge is what makes
+  // show-notes edits hot-reload.
   const pageTsx = `import { EpisodePage } from '@/components/EpisodePage'
+import * as notes from './en.mdx'
+import * as transcript from './transcript.mdx'
 
-export const metadata = {
-  title: '${title.replace(/'/g, "\\'")}',
-  description: '${description.replace(/'/g, "\\'")}',
+// Metadata comes from the MDX header (see mdx.d.ts). Episodes aren't
+// translated, so en.mdx and transcript.mdx are static imports — which is also
+// what makes show-notes edits hot-reload.
+
+export function generateMetadata() {
+  return {
+    title: notes.header.title,
+    description: notes.header.description,
+  }
 }
 
-export default async function EpisodeRoute({ params }: any) {
-  const Notes = await import(\`./\${(await params).locale}.mdx\`).catch(
-    () => import(\`./en.mdx\`),
-  )
-  let Transcript = null
-  try {
-    Transcript = await import(\`./transcript.mdx\`)
-  } catch {
-    // optional
-  }
-
+export default function EpisodeRoute() {
   return (
     <EpisodePage
-      default={Notes.default}
-      header={Notes.header}
-      Transcript={Transcript?.default}
+      default={notes.default}
+      header={notes.header}
+      Transcript={transcript.default}
     />
   )
 }

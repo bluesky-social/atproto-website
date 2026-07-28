@@ -101,6 +101,45 @@ Because the record's canonical URL only resolves after the post is merged and
 deployed, the publish is metadata-only and idempotent — re-running
 `npm run blog ssite <slug>` after edits updates the same record.
 
+### Content page structure
+
+Every content route — blog posts, episodes, guides, specs — is a `page.tsx` next
+to an `en.mdx`. Two rules hold across all 131 of them:
+
+**Route metadata comes from the MDX header.** `page.tsx` exports
+`generateMetadata()` reading `header.title` / `header.description`, rather than
+repeating them in a `metadata` object. That object used to be a second copy that
+nothing kept in sync — the studio and CLIs rewrite `en.mdx` and the
+`posts.ts`/`episodes.ts` entry but never touched `page.tsx` — which left episodes
+whose `<h1>` and OG preview disagreed. There is now nothing to keep in sync.
+
+**`en.mdx` is imported statically.** A template-literal `import()` makes webpack
+build a *context module*, so the route has no dependency edge on the specific
+file and editing content doesn't hot-reload until you restart the dev server.
+A static import fixes that.
+
+Which shape a page uses depends on whether its area is translated. Only
+`guides`, `articles`, and `specs` are (per `crowdin.yml`, into ja/ko/pt):
+
+- **Untranslated** — blog, off-protocol, about — import `en.mdx` and nothing
+  else. No locale resolution at all.
+- **Translated** import English statically for the fallback, the metadata, and
+  the module edge, and resolve other locales per request.
+
+Route metadata stays English for every locale, which is the long-standing
+behaviour: translated pages carry translated headers, but `<title>` and OG come
+from English. Reading each locale's own header would localise them — a worthwhile
+follow-up, and a visible change across ~70 pages.
+
+Two pages predate the `header` convention and export `metadata` from their MDX
+instead (`guides/data-validation`, `specs/permission`); they read that. The
+former also renders its MDX directly, with no `<Page>` wrapper, because its
+content supplies its own heading.
+
+`mdx.d.ts` types the named MDX exports. `@types/mdx` only types the default
+export, and nothing surfaced that before, because the dynamic import resolved to
+`any`.
+
 #### Author bylines
 
 Individual blog post pages display an author byline below the date. Named authors with a Bluesky DID are linked to their `bsky.app` profile.
@@ -156,12 +195,15 @@ Each editor has a switch to the other in its sidebar.
 - **Smart typography on save.** Titles and descriptions are stored with curly
   quotes, em/en dashes, and ellipses, matching what the prose pipeline does to
   MDX bodies at render time. Those two fields are plain JS strings in
-  `posts.ts`/`episodes.ts` and `page.tsx` metadata, so remark never sees them —
-  without this a title reads `"Like This"` while the body around it is curled.
-  The editor shows the transformed value after saving. Slugs, dates, URLs, and
-  author/host names are left exactly as typed. `npm run blog create` and
-  `npm run podcast create` apply the same transform, so it doesn't matter which
-  tool you author with.
+  `posts.ts`/`episodes.ts`, so remark never sees them — without this a title
+  reads `"Like This"` while the body around it is curled. The editor shows the
+  transformed value after saving. Slugs, dates, URLs, and author/host names are
+  left exactly as typed. `npm run blog create` and `npm run podcast create` apply
+  the same transform, so it doesn't matter which tool you author with.
+- **The title lives in two places, not three.** `page.tsx` derives its route
+  metadata from the MDX header via `generateMetadata()`, so editing a title
+  updates `<title>` and the OG preview without anything having to copy it there.
+  See [Content page structure](#content-page-structure).
 
 #### Credentials
 

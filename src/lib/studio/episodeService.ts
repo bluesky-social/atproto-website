@@ -46,31 +46,36 @@ export type CreateEpisodeInput = {
 const TRANSCRIPT_STUB =
   '{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}\n'
 
-function pageTsx(title: string, description: string): string {
-  const q = (v: string) => v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+/**
+ * The `page.tsx` written alongside a new episode.
+ *
+ * Takes no arguments: the route reads its title and description from the MDX
+ * header, so nothing is interpolated and nothing can drift from the content.
+ * en.mdx and transcript.mdx are static imports — episodes aren't translated, and
+ * the module edge is what lets show-notes edits hot-reload.
+ */
+function pageTsx(): string {
   return `import { EpisodePage } from '@/components/EpisodePage'
+import * as notes from './en.mdx'
+import * as transcript from './transcript.mdx'
 
-export const metadata = {
-  title: '${q(title)}',
-  description: '${q(description)}',
+// Metadata comes from the MDX header (see mdx.d.ts). Episodes aren't
+// translated, so en.mdx and transcript.mdx are static imports — which is also
+// what makes show-notes edits hot-reload.
+
+export function generateMetadata() {
+  return {
+    title: notes.header.title,
+    description: notes.header.description,
+  }
 }
 
-export default async function EpisodeRoute({ params }: any) {
-  const Notes = await import(\`./\${(await params).locale}.mdx\`).catch(
-    () => import(\`./en.mdx\`),
-  )
-  let Transcript = null
-  try {
-    Transcript = await import(\`./transcript.mdx\`)
-  } catch {
-    // optional
-  }
-
+export default function EpisodeRoute() {
   return (
     <EpisodePage
-      default={Notes.default}
-      header={Notes.header}
-      Transcript={Transcript?.default}
+      default={notes.default}
+      header={notes.header}
+      Transcript={transcript.default}
     />
   )
 }
@@ -140,9 +145,9 @@ export async function createEpisode(
   paths: EpisodePaths,
   rawInput: CreateEpisodeInput,
 ): Promise<{ slug: string }> {
-  // Smarten once, up front: page.tsx metadata is written from `input` while the
-  // MDX header and episodes.ts entry come from `fields`, so transforming here is
-  // what keeps all three copies identical.
+  // Smarten before anything derives from these values, so the MDX header and the
+  // episodes.ts entry agree. (page.tsx used to be a third copy; it now reads the
+  // header, so there's one fewer place to keep in step.)
   const input = smartenTitleAndDescription(rawInput)
   for (const f of ['slug', 'title', 'description', 'date'] as const) {
     if (!input[f] || !String(input[f]).trim()) throw new Error(`Field "${f}" is required`)
@@ -175,7 +180,7 @@ export async function createEpisode(
 
   await fs.mkdir(dir, { recursive: true })
   try {
-    await fs.writeFile(path.join(dir, 'page.tsx'), pageTsx(input.title, input.description))
+    await fs.writeFile(path.join(dir, 'page.tsx'), pageTsx())
     await fs.writeFile(path.join(dir, 'en.mdx'), newEpisodeMdx(fields, body))
     await fs.writeFile(path.join(dir, 'transcript.mdx'), TRANSCRIPT_STUB)
     await fs.writeFile(paths.episodesFile, nextSrc)
