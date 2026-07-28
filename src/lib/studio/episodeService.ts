@@ -15,6 +15,7 @@ import {
   type EpisodeEntry,
 } from './episodesFile'
 import { findOgImage } from './service'
+import { smartenTitleAndDescription } from './smartText'
 import {
   r2Config,
   audioObjectKey,
@@ -137,8 +138,12 @@ export async function readEpisode(
 
 export async function createEpisode(
   paths: EpisodePaths,
-  input: CreateEpisodeInput,
+  rawInput: CreateEpisodeInput,
 ): Promise<{ slug: string }> {
+  // Smarten once, up front: page.tsx metadata is written from `input` while the
+  // MDX header and episodes.ts entry come from `fields`, so transforming here is
+  // what keeps all three copies identical.
+  const input = smartenTitleAndDescription(rawInput)
   for (const f of ['slug', 'title', 'description', 'date'] as const) {
     if (!input[f] || !String(input[f]).trim()) throw new Error(`Field "${f}" is required`)
   }
@@ -186,10 +191,13 @@ export async function updateEpisode(
   paths: EpisodePaths,
   slug: string,
   input: { fields: EpisodeFields; body: string },
-): Promise<{ slug: string }> {
+): Promise<{ slug: string; fields: EpisodeFields }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
-  const fields = { ...input.fields, hasShowNotes: Boolean(input.body && input.body.trim()) }
+  const fields = {
+    ...smartenTitleAndDescription(input.fields),
+    hasShowNotes: Boolean(input.body && input.body.trim()),
+  }
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
   const next = applyEpisodeFields(parsed, fields)
   next.body = normalizeBodySeparation(input.body)
@@ -200,7 +208,9 @@ export async function updateEpisode(
     paths.episodesFile,
     updateEntryBySlug(src, slug, entryFrom(slug, fields)),
   )
-  return { slug }
+  // Hand back what was actually stored — the editor echoes the smartened title
+  // and description so the transform is visible rather than silent.
+  return { slug, fields }
 }
 
 export type AudioFields = {

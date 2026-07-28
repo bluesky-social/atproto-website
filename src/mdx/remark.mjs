@@ -7,6 +7,9 @@ import remarkSmartypants from 'remark-smartypants'
 // verbatim, so we gate on the VFile path segment.
 export const SMART_TYPOGRAPHY_PATHS = /[\\/](blog|off-protocol)[\\/]/
 
+// Annotated so the literal `dashes` value keeps its type for TS consumers —
+// src/lib/studio/smartText.ts feeds this same object to retext-smartypants.
+/** @type {import('retext-smartypants').Options} */
 export const SMART_TYPOGRAPHY_OPTIONS = {
   quotes: true,
   dashes: 'inverted', // `--` → em (—), `---` → en (–)

@@ -153,6 +153,13 @@ Each editor has a switch to the other in its sidebar.
 - **No body preview.** Use the **Open ↗** link in the action bar to see the real
   page.
 - **No git operations.** Branch, stage, and commit in your normal flow.
+- **Smart typography on save.** Titles and descriptions are stored with curly
+  quotes, em/en dashes, and ellipses, matching what the prose pipeline does to
+  MDX bodies at render time. Those two fields are plain JS strings in
+  `posts.ts`/`episodes.ts` and `page.tsx` metadata, so remark never sees them —
+  without this a title reads `"Like This"` while the body around it is curled.
+  The editor shows the transformed value after saving. Slugs, dates, URLs, and
+  author/host names are left exactly as typed.
 
 #### Credentials
 

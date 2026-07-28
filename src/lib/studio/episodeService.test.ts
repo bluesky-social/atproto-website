@@ -94,6 +94,28 @@ describe('createEpisode', () => {
     expect(Number.isNaN(new Date(fields.pubDate).getTime())).toBe(false)
   })
 
+  it('smartens the title and description in all three files it writes', async () => {
+    await createEpisode(
+      paths,
+      baseInput({
+        title: '"Nothing Is Ever Over"',
+        description: "What's next -- a lot, it turns out...",
+      }),
+    )
+    const dir = path.join(paths.podcastDir, 'my-ep')
+    const mdx = fs.readFileSync(path.join(dir, 'en.mdx'), 'utf-8')
+    const page = fs.readFileSync(path.join(dir, 'page.tsx'), 'utf-8')
+    const eps = fs.readFileSync(paths.episodesFile, 'utf-8')
+    for (const [label, content] of [
+      ['en.mdx', mdx],
+      ['page.tsx', page],
+      ['episodes.ts', eps],
+    ] as const) {
+      expect(content, label).toContain('“Nothing Is Ever Over”')
+      expect(content, label).toContain('What’s next — a lot, it turns out…')
+    }
+  })
+
   it('rejects a duplicate slug', async () => {
     await createEpisode(paths, baseInput())
     await expect(createEpisode(paths, baseInput())).rejects.toThrow(/exists/i)
@@ -135,6 +157,30 @@ describe('read/update/delete/list', () => {
     expect(mdx).toContain("coverImage: 'https://x/c.png'")
     expect(mdx).toContain('New notes.')
     expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("title: 'Renamed'")
+  })
+
+  it('returns the smartened fields so the editor can show what was stored', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const res = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, title: '"Quoted"', description: "It's fine" },
+      body: 'Notes.',
+    })
+    expect(res.fields.title).toBe('“Quoted”')
+    expect(res.fields.description).toBe('It’s fine')
+  })
+
+  it('smartens the title and description on update', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, title: '"Quoted"', description: "It's fine" },
+      body: 'Notes.',
+    })
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain('“Quoted”')
+    expect(mdx).toContain('It’s fine')
+    const eps = fs.readFileSync(paths.episodesFile, 'utf-8')
+    expect(eps).toContain('“Quoted”')
+    expect(eps).toContain('It’s fine')
   })
 
   it('lists newest-first and computes nextEpisodeNumber', async () => {
