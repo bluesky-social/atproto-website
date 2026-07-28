@@ -94,58 +94,100 @@ Author-to-DID mappings are stored in `src/lib/authors.json`, which serves as the
 
 When creating a new post, if the author name isn't found in the registry, the script will prompt for a DID and automatically add it to `authors.json` for future posts. Authors without a DID (e.g. guest authors) simply get a plain text byline with no link.
 
-### Dev Studio — blog authoring UI (dev only)
+### Dev Studio (dev only)
 
-A browser UI for creating, editing, and deleting blog posts that writes the
-same files as the CLI (`page.tsx`, `en.mdx` with the `export const header`
-front matter, and the `src/lib/posts.ts` entry). It exists only in development.
+A browser UI for authoring both **blog posts** and **Off Protocol episodes**. It
+writes exactly the same files the CLIs write — `page.tsx`, `en.mdx` with the
+`export const header` front matter, and the `src/lib/posts.ts` or
+`src/lib/episodes.ts` entry — so the two approaches are interchangeable. Use
+whichever suits the moment.
 
 ```bash
 npm run dev
 # then open http://localhost:3000/studio
 ```
 
-`/studio` lists the editors: **Blog** (below) and **Podcast** (see
-[episode editor](#dev-studio--episode-editor-dev-only)). Both editors link to
-each other in the sidebar.
+`/studio` is the index. From there:
 
-- **Dev only.** The page and its API routes return 404 when
-  `NODE_ENV === 'production'` (and the site deploys to the Cloudflare edge,
-  where filesystem writes can't run anyway). It is never reachable in prod.
-- **Files are the source of truth.** Every load re-reads the file from disk,
-  and a save only rewrites the fields the form owns
-  (`title`/`description`/`date`/`author`) plus the body. Imports, custom JSX in
-  the body, and other header fields (`standardSiteUri`, `blueskyPostUrl`, …) are
-  preserved byte-for-byte. **Hand-editing the `.mdx` directly is fully
-  supported** — the UI is for the easy path, the raw file is for everything
-  else.
-- **Create:** pick *New*, fill title/description/date/author (slug auto-derives
-  from the title; an Author DID field appears for authors not yet in
-  `authors.json`), write the body as raw MDX, Save.
-- **Edit:** pick a post from the list (the list scans the blog directory, so
-  hand-created posts show up too). Slug is read-only — to "rename", delete and
-  recreate.
-- **Delete:** removes the post directory and its `posts.ts` entry, behind a
-  confirmation. Recoverable from git if it was committed. (Note: this does not
-  retract an already-published standard.site record — same as the CLI.)
-- **standard.site:** creating a post auto-publishes its standard.site record,
-  and every Save updates it; there's also a manual **Publish** button. This runs
-  the same path as `npm run blog ssite` (it shells out to that command, which
-  loads `.env` and writes `standardSiteUri` back into the post), so it needs the
-  publishing credentials in `.env`. Publish failures are non-blocking — the post
-  still saves and a warning shows. The front-matter shows the record's `at://`
-  URI (read-only) with **Copy** and **pdsls ↗** buttons once published.
-- **Open Graph image:** a drag-and-drop zone (also click-to-choose) saves the
-  dropped image as `opengraph-image.<ext>` in the post's directory — Next's file
-  convention then serves it as the post's OG image. PNG/JPG/GIF, ≤8MB; a new
-  drop replaces the existing one (exactly one per post). A thumbnail preview
-  shows the current image.
-- The editor does not render a preview of the post body; use the
-  **Open `/blog/<slug>` ↗** link to see the real page.
-- The UI does no git operations — branch/stage/commit in your normal flow.
+| Editor | URL | Writes |
+| --- | --- | --- |
+| Blog | `/studio/blog` | `src/app/[locale]/blog/<slug>/` + `src/lib/posts.ts` |
+| Podcast | `/studio/podcast` | `src/app/[locale]/off-protocol/<slug>/` + `src/lib/episodes.ts` |
 
-OG images are drop-to-save only — automatic *generation* is not implemented for
-either editor.
+Each editor has a switch to the other in its sidebar.
+
+#### Ground rules (both editors)
+
+- **Dev only.** Pages and API routes return 404 when
+  `NODE_ENV === 'production'`. The site deploys to the Cloudflare edge, where
+  filesystem writes can't run anyway, so it is never reachable in prod.
+- **Files are the source of truth.** Every load re-reads from disk, and a save
+  rewrites only the fields the form owns, plus the body. Imports, custom JSX,
+  and header fields the form doesn't manage are preserved byte-for-byte.
+  **Hand-editing the `.mdx` is fully supported** — the UI is the easy path, the
+  raw file is for everything else.
+- **Lists scan the content directory**, so anything you created by hand or with
+  the CLI shows up in the sidebar.
+- **Slug is read-only after creation.** To rename, delete and recreate.
+- **Delete** removes the directory and the index entry, behind a confirmation.
+  Recoverable from git if it was committed.
+- **Open Graph image:** drag-and-drop (or click to choose) saves the image as
+  `opengraph-image.<ext>` in the item's directory, which is the Next file
+  convention. PNG/JPG/GIF, ≤8MB, exactly one per item; a new drop replaces it.
+  Automatic *generation* is not implemented for either editor.
+- **No body preview.** Use the **Open ↗** link in the action bar to see the real
+  page.
+- **No git operations.** Branch, stage, and commit in your normal flow.
+
+#### Credentials
+
+The Studio runs fine with no credentials at all — you just lose two features.
+Both read `.env`, and **Next only reads `.env` at boot, so restart the dev
+server after editing it.**
+
+| Feature | Needs |
+| --- | --- |
+| Blog → standard.site publishing | `ATPROTO_HANDLE`, `ATPROTO_APP_PASSWORD` |
+| Podcast → audio upload | `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE` |
+
+See `.env.example` for the full annotated list.
+
+#### Blog editor
+
+- **Create:** pick *New*, fill title/description/date/author — the slug derives
+  from the title, and an Author DID field appears for authors not yet in
+  `authors.json`. Write the body as raw MDX, then Save.
+- **standard.site:** creating a post auto-publishes its record and every Save
+  updates it; there's also a manual **Publish** button. It shells out to the
+  same path as `npm run blog ssite`, so it needs the publishing credentials.
+  Failures are non-blocking — the post still saves and a warning shows. Once
+  published, the front matter shows the record's `at://` URI with **Copy** and
+  **pdsls ↗** buttons.
+- **Delete** does not retract an already-published standard.site record, same as
+  the CLI.
+
+#### Podcast editor
+
+- **Two-step create.** Fill in the metadata and press *Create episode*; audio,
+  show notes, and the OG image appear afterwards. Those three write into the
+  episode's directory, which doesn't exist until the episode does.
+- **Audio upload** is the only way to set an episode's audio here — there is no
+  URL field. Without R2 credentials the drop zone reports `R2 not configured`;
+  use `npm run podcast create` instead if you already have a hosted MP3 URL.
+  See [audio upload](#audio-upload-r2) below for the details.
+- **Publish date.** One control sets `pubDate` (what RSS reads) and derives the
+  *Display date* from it, so the two can't drift. Edit the display date on its
+  own for custom wording.
+- **Show notes** are the MDX body. `hasShowNotes` is recomputed from whether the
+  body has content, so there's no flag to remember.
+- **Hosts** defaults to the show host when left empty; fill it in only for
+  guest-hosted episodes.
+- **Not in the UI:** the Bluesky discussion URL (`blueskyPostUrl`) and
+  transcripts. Set `blueskyPostUrl` by hand in `en.mdx` to attach a discussion
+  thread; for a transcript, paste it into the generated `transcript.mdx` and
+  flip `hasTranscript: true`. The editor preserves all three on save.
+- **Delete** does not remove the MP3 from R2 — see
+  [audio upload](#audio-upload-r2).
 
 ### Removing a blog post
 
@@ -483,28 +525,17 @@ npm run podcast remove
 
 This deletes local files only. Once a feed `guid` has been distributed to subscribers, you cannot retroactively unsubscribe them — be deliberate.
 
-#### Dev Studio — episode editor (dev only)
+#### Add an episode in the browser
 
-The browser alternative to `npm run podcast create`, at
-`http://localhost:3000/studio/podcast`. It writes the same three files and the
-same `src/lib/episodes.ts` entry, and adds two things the CLI can't do: it
-uploads the MP3 to R2 for you, and it reads the duration out of the file
-instead of asking `ffprobe`.
+`npm run podcast create` has a browser equivalent — see
+[Dev Studio](#dev-studio-dev-only). It writes the same three files and the same
+`episodes.ts` entry, and adds two things the CLI can't do: it uploads the MP3
+for you, and it reads the duration out of the file rather than asking `ffprobe`.
 
-Same ground rules as the [blog studio](#dev-studio--blog-authoring-ui-dev-only):
-dev-only (404s in production), files are the source of truth, hand-editing the
-MDX is fully supported, and the UI does no git operations.
+#### Audio upload (R2)
 
-**Two-step create.** Fill in the metadata and press *Create episode*; audio,
-show notes, and the OG image appear afterwards. That's not arbitrary — those
-three write into the episode's directory, which doesn't exist until the episode
-does.
-
-**Audio upload requires R2 credentials.** Uploading is the *only* way to set an
-episode's audio in the studio — there's no URL field — so without these five
-values in `.env` the editor can create and edit everything except the audio, and
-the drop zone reports `R2 not configured`. Use `npm run podcast create` if you
-already have a hosted MP3 URL.
+Only the Studio uploads audio; `npm run podcast create` expects a URL you've
+already hosted. Uploading needs five values in `.env`:
 
 ```
 CLOUDFLARE_ACCOUNT_ID=     # 32-char hex, from the R2 overview page
@@ -518,8 +549,9 @@ Uploads use R2's **S3-compatible API** with the bucket-scoped Access Key pair,
 not a Cloudflare API token. That's deliberate: the REST API behind
 `wrangler r2 object put` only accepts an account-wide
 `Workers R2 Storage: Edit` token, which could write to every bucket in the
-account, while S3 credentials can be scoped to this one bucket. If you set
-`CLOUDFLARE_API_TOKEN` expecting it to be used — it isn't, and it can be removed.
+account, while S3 credentials can be scoped to this one bucket. `wrangler`
+commands against these objects will fail for the same reason — use an S3 client
+or the dashboard. `CLOUDFLARE_API_TOKEN` is not used by anything here.
 
 Drop an MP3 on the zone and it uploads, then writes `audioUrl`,
 `audioSizeBytes`, `duration`, and `durationSeconds` into `en.mdx` and
@@ -527,44 +559,25 @@ Drop an MP3 on the zone and it uploads, then writes `audioUrl`,
 never left unreferenced. Large episodes take a few minutes; the status line is
 the only progress signal, since the upload isn't streamed back to the browser.
 
-Note `.env` changes need a dev-server restart — Next reads it at boot, so a
-token pasted into a running server won't be picked up.
-
-The object key is date-stamped from the episode's publish date to match the
-show's existing bucket layout:
+The object key is date-stamped from the episode's publish date, matching the
+layout the show's existing objects use:
 
 ```
 off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3
 ```
 
 The key is fixed at upload time — changing the publish date afterwards does not
-move the object, and the `audioUrl` in the episode header remains the
-authoritative pointer.
+move the object, and `audioUrl` in the episode header stays the authoritative
+pointer.
 
-**Publish date.** The *Publish date* control sets `pubDate` (what RSS reads) and
-derives the *Display date* string from it, so the two can't drift. Edit the
-display date on its own if you want custom wording.
-
-**Show notes** are the MDX body; `hasShowNotes` is recomputed from whether the
-body has content, so there's no flag to remember.
-
-**Transcripts are not in the UI.** `npm run podcast create` and the studio both
-write a `transcript.mdx` stub. To add one, paste the transcript into that file
-and flip `hasTranscript: true` in the `en.mdx` header by hand — the studio
-preserves both on save.
-
-**Delete** removes the episode directory and its `episodes.ts` entry, behind a
-confirmation. It does **not** delete the MP3 from R2. To remove that too, note
-the key from the episode's `audioUrl` *before* deleting, then either delete the
-object in the R2 dashboard, or use an S3 client with the same credentials:
+Deleting an episode does **not** delete its MP3. To remove that too, note the
+key from `audioUrl` *before* deleting, then use the R2 dashboard or an S3
+client:
 
 ```sh
 aws s3 rm "s3://<bucket>/off-protocol/<YYYY-MM-DD>-<slug>/<slug>.mp3" \
   --endpoint-url "https://<account-id>.r2.cloudflarestorage.com"
 ```
-
-(`wrangler r2 object delete` won't work with these credentials — it uses the
-REST API, which needs an account-wide token. See the upload note above.)
 
 #### Why two date fields and two duration fields
 
