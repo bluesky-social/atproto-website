@@ -7,8 +7,8 @@ describe('blogPageTsx', () => {
     expect(out).toContain("import { Page } from '@/components/Page'")
     expect(out).toContain("import * as content from './en.mdx'")
     expect(out).toContain('export function generateMetadata()')
-    expect(out).toContain('content.header.title')
-    expect(out).toContain('content.header.description')
+    expect(out).toContain("from '@/lib/localizedMdx'")
+    expect(out).toContain('mdxRouteMetadata(content)')
     expect(out).toContain('export default function BlogPost')
   })
 

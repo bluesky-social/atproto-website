@@ -8,6 +8,7 @@
  */
 export function blogPageTsx(): string {
   return `import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as content from './en.mdx'
 
 // Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
@@ -15,10 +16,7 @@ import * as content from './en.mdx'
 // edits hot-reload.
 
 export function generateMetadata() {
-  return {
-    title: content.header.title,
-    description: content.header.description,
-  }
+  return mdxRouteMetadata(content)
 }
 
 export default function BlogPost() {

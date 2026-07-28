@@ -78,7 +78,7 @@ describe('smart typography', () => {
     const page = fs.readFileSync(path.join(paths.blogDir, 'hello', 'page.tsx'), 'utf-8')
     expect(page).not.toContain('Distinctive Title')
     expect(page).not.toContain('export const metadata')
-    expect(page).toContain('content.header.title')
+    expect(page).toContain('mdxRouteMetadata(content)')
   })
 
   it('returns the smartened fields so the editor can show what was stored', async () => {

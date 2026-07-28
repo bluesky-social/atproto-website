@@ -124,7 +124,7 @@ describe('createEpisode', () => {
     )
     expect(page).not.toContain('Distinctive Title')
     expect(page).not.toContain('export const metadata')
-    expect(page).toContain('notes.header.title')
+    expect(page).toContain('mdxRouteMetadata(notes)')
   })
 
   it('rejects a duplicate slug', async () => {

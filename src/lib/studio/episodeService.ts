@@ -56,6 +56,7 @@ const TRANSCRIPT_STUB =
  */
 function pageTsx(): string {
   return `import { EpisodePage } from '@/components/EpisodePage'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as notes from './en.mdx'
 import * as transcript from './transcript.mdx'
 
@@ -64,10 +65,7 @@ import * as transcript from './transcript.mdx'
 // what makes show-notes edits hot-reload.
 
 export function generateMetadata() {
-  return {
-    title: notes.header.title,
-    description: notes.header.description,
-  }
+  return mdxRouteMetadata(notes)
 }
 
 export default function EpisodeRoute() {

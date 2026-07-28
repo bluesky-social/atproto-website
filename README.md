@@ -123,17 +123,26 @@ Which shape a page uses depends on whether its area is translated. Only
 
 - **Untranslated** — blog, off-protocol, about — import `en.mdx` and nothing
   else. No locale resolution at all.
-- **Translated** import English statically for the fallback, the metadata, and
-  the module edge, and resolve other locales per request.
+- **Translated** import English statically for the fallback and the module edge,
+  and resolve the requested locale per request.
 
-Route metadata stays English for every locale, which is the long-standing
-behaviour: translated pages carry translated headers, but `<title>` and OG come
-from English. Reading each locale's own header would localise them — a worthwhile
-follow-up, and a visible change across ~70 pages.
+Both share two helpers in `src/lib/localizedMdx.ts`, so the fallback rule and the
+header lookup are defined and tested once rather than regenerated into 130 route
+files: `resolveLocaleMdx()` (English short-circuits; a locale with no translated
+file falls back rather than 500ing) and `mdxRouteMetadata()`. The dynamic
+`import()` still lives in each page, since webpack resolves it relative to that
+file.
+
+**Route metadata is localised.** `/ja/guides/account-management` reports
+`アカウント管理`, and a page with no translation for the requested locale falls
+back to English. The ` - AT Protocol` suffix comes from the root layout and stays
+English.
 
 Two pages predate the `header` convention and export `metadata` from their MDX
-instead (`guides/data-validation`, `specs/permission`); they read that. The
-former also renders its MDX directly, with no `<Page>` wrapper, because its
+instead (`guides/data-validation`, `specs/permission`) — `mdxRouteMetadata()`
+prefers `header` and falls back to `metadata`, so both conventions work, including
+`specs/permission`, whose English file uses one and its Korean the other. The
+former page also renders its MDX directly, with no `<Page>` wrapper, because its
 content supplies its own heading.
 
 `mdx.d.ts` types the named MDX exports. `@types/mdx` only types the default

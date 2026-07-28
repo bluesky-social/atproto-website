@@ -140,6 +140,7 @@ export async function main(...args) {
   // blog posts aren't translated and the module edge is what makes content edits
   // hot-reload.
   const pageContent = `import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as content from './en.mdx'
 
 // Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
@@ -147,10 +148,7 @@ import * as content from './en.mdx'
 // edits hot-reload.
 
 export function generateMetadata() {
-  return {
-    title: content.header.title,
-    description: content.header.description,
-  }
+  return mdxRouteMetadata(content)
 }
 
 export default function BlogPost() {
