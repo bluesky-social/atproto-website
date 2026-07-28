@@ -46,13 +46,15 @@ export function formatDurationForDisplay(seconds: number): string {
 }
 
 /**
- * The hosts to display for an episode: the given `hosts` when set, otherwise
- * the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Hosts live only in
- * the MDX episode header (the byline is the only consumer), so this takes a
- * plain shape rather than an Episode field.
+ * The hosts to display for an episode: the given `hosts` when non-empty,
+ * otherwise the show default ([SHOW.defaultHost], i.e. ['Jim Ray']). Hosts live
+ * only in the MDX episode header (the byline is the only consumer), so this
+ * takes a plain shape rather than an Episode field. An empty array is treated
+ * as absent — the studio's hosts field can be cleared, and a blank byline is
+ * never what's wanted.
  */
 export function resolveHosts(episode: { hosts?: string[] }): string[] {
-  return episode.hosts ?? [SHOW.defaultHost]
+  return episode.hosts?.length ? episode.hosts : [SHOW.defaultHost]
 }
 
 export interface SubscribeUrls {
@@ -95,6 +97,19 @@ export const SHOW: ShowMeta = {
 }
 
 export const episodes: Episode[] = [
+  {
+    slug: '2026-07-23-livestream-protocolly-atmoseed',
+    episodeNumber: 13,
+    title: 'Protocolly Atmoseed',
+    description: 'News from around the Atmosphere, including a proposal to fix localhost, more webdevs getting into atproto, Mu Social\'s opinionated news feed, and more.',
+    date: 'July 23, 2026',
+    pubDate: '2026-07-23T16:38:42.556Z',
+    duration: '00:36:02',
+    durationSeconds: 2162,
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-07-22-live-protocolly-atmoseed/2026-07-23-livestream-protocolly-atmoseed.mp3',
+    audioSizeBytes: 17403717,
+    audioMimeType: 'audio/mpeg',
+  },
   {
     slug: '2026-07-22-erin-kissane',
     episodeNumber: 12,

@@ -6,5 +6,7 @@ export function proxy(request) {
 }
 
 export const config = {
-  matcher: '/((?!api|static|.*\\..*|_next).*)',
+  // Exclude `studio` so the dev-only authoring tool bypasses i18n routing and
+  // is served by its own root layout at /studio/* (no locale prefix, no nav).
+  matcher: '/((?!api|static|studio|.*\\..*|_next).*)',
 }

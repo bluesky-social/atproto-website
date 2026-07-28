@@ -7,7 +7,7 @@ const extraArgs = process.argv.slice(3)
 const commands = {
   create: {
     description: 'Create a new blog post',
-    run: () => import('./new-blog-post.mjs').then((m) => m.main()),
+    run: () => import('./new-blog-post.mjs').then((m) => m.main(...extraArgs)),
   },
   remove: {
     description: 'Remove a blog post',
@@ -55,6 +55,6 @@ if (!command || !commands[command]) {
 }
 
 commands[command].run().catch((err) => {
-  console.error(err)
+  console.error(`\n❌ ${err.message}`)
   process.exit(1)
 })
