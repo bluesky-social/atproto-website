@@ -2,7 +2,7 @@ import { Page } from '@/components/Page'
 
 export const metadata = {
   title: 'Going Off Protocol',
-  description: 'We\'re expanding our office hours livestream. Look for it wherever you get your podcasts.',
+  description: 'We’re expanding our office hours livestream. Look for it wherever you get your podcasts.',
 }
 
 export default async function BlogPost({ params }: any) {

@@ -2,7 +2,7 @@ import { Page } from '@/components/Page'
 
 export const metadata = {
   title: 'OAuth Improvements',
-  description: 'We\'ve been making improvements to the end-user and developer experiences with atproto OAuth.',
+  description: 'We’ve been making improvements to the end-user and developer experiences with atproto OAuth.',
 }
 
 export default async function BlogPost({ params }: any) {
