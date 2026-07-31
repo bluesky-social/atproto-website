@@ -98,6 +98,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-07-31-design-for-uncertainty-ethan-marcotte',
+    episodeNumber: 14,
+    title: 'Designing for Uncertainty',
+    description: 'Ethan Marcotte, who helped kick off Responsive Design, joins to discuss how to build ',
+    date: 'July 31, 2026',
+    pubDate: '2026-07-31T21:23:48.929Z',
+    duration: '',
+    durationSeconds: 0,
+    guests: ['Ethan Marcotte'],
+    audioUrl: '',
+    audioSizeBytes: 0,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-07-23-livestream-protocolly-atmoseed',
     episodeNumber: 13,
     title: 'Protocolly Atmoseed',
