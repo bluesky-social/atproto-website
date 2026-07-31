@@ -9,6 +9,7 @@ import {
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
+import { episodeSlug } from '@/lib/slugs.mjs'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -34,9 +35,6 @@ type Fields = {
   blueskyPostUrl: string
 }
 
-function slugify(t: string): string {
-  return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
 function fmtDuration(totalSeconds: number): string {
   const s = Math.round(totalSeconds)
   const hh = String(Math.floor(s / 3600)).padStart(2, '0')
@@ -86,6 +84,11 @@ export function EpisodeEditor() {
   const [makeBranch, setMakeBranch] = useState(true)
   const [branchName, setBranchName] = useState('')
   const [dirtyFiles, setDirtyFiles] = useState<string[]>([])
+  // The comma-separated fields keep their own raw text. Deriving the input's
+  // value from the parsed array re-rendered a trimmed string on every
+  // keystroke, so a space could never survive being typed.
+  const [hostsText, setHostsText] = useState('')
+  const [guestsText, setGuestsText] = useState('')
 
   async function refreshList() {
     try {
@@ -99,6 +102,18 @@ export function EpisodeEditor() {
       setStatus('Could not load the episode list')
     }
   }
+
+  // Split on commas but preserve what was typed inside each name.
+  const parseNames = (text: string) =>
+    text.split(',').map((n) => n.trim()).filter(Boolean)
+
+  // YYYY-MM-DD-title[-first-guest], matching the show's existing slugs. Derived
+  // so it tracks the title, guests, and publish date as they're edited.
+  const defaultSlug = episodeSlug({
+    pubDate: fields.pubDate,
+    title: fields.title,
+    guests: fields.guests,
+  })
 
   async function loadGit() {
     try {
@@ -130,6 +145,8 @@ export function EpisodeEditor() {
     setSlug('')
     const dates = nowDates()
     setFields({ ...emptyFields(nextNumber), ...dates })
+    setHostsText('')
+    setGuestsText('')
     setBody('')
     setOgImage(null)
     setStatus('')
@@ -145,6 +162,8 @@ export function EpisodeEditor() {
     setMode('edit')
     setSlug(s)
     setFields(data.fields)
+    setHostsText((data.fields.hosts ?? []).join(', '))
+    setGuestsText((data.fields.guests ?? []).join(', '))
     setBody(data.body)
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
@@ -218,7 +237,7 @@ export function EpisodeEditor() {
 
   async function save() {
     if (mode === 'new') {
-      const finalSlug = slug || slugify(fields.title)
+      const finalSlug = slug || defaultSlug
       if (!finalSlug) return setStatus('Add a title or slug first')
       setStatus('Creating…')
       const res = await fetch('/api/studio/podcast', {
@@ -379,10 +398,31 @@ export function EpisodeEditor() {
               <input value={fields.date} onChange={(e) => setF('date', e.target.value)} className={input} />
               <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
             </div>
-            <div><span className={label}>Hosts (comma-sep)</span><input value={fields.hosts.join(', ')} onChange={(e) => setF('hosts', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} placeholder="Jim Ray (show default)" className={input} /></div>
-            <div><span className={label}>Guests (comma-sep)</span><input value={fields.guests.join(', ')} onChange={(e) => setF('guests', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} className={input} /></div>
+            <div>
+              <span className={label}>Hosts (comma-sep)</span>
+              <input
+                value={hostsText}
+                onChange={(e) => {
+                  setHostsText(e.target.value)
+                  setF('hosts', parseNames(e.target.value))
+                }}
+                placeholder="Jim Ray (show default)"
+                className={input}
+              />
+            </div>
+            <div>
+              <span className={label}>Guests (comma-sep)</span>
+              <input
+                value={guestsText}
+                onChange={(e) => {
+                  setGuestsText(e.target.value)
+                  setF('guests', parseNames(e.target.value))
+                }}
+                className={input}
+              />
+            </div>
             {mode === 'new' ? (
-              <div><span className={label}>Slug (blank = from title)</span><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={slugify(fields.title) || 'my-episode'} className={input + ' font-mono'} /></div>
+              <div><span className={label}>Slug (blank = from title)</span><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={defaultSlug || 'my-episode'} className={input + ' font-mono'} /></div>
             ) : (
               <div><span className={label}>Slug (read-only)</span><div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm text-neutral-500">{slug}</div></div>
             )}

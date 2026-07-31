@@ -172,17 +172,22 @@ describe('createBranch', () => {
 })
 
 describe('client-bundle safety', () => {
-  it('gitNames.mjs imports nothing, so client components can use it', async () => {
-    // The studio editors are 'use client' and import branchNameFor. If this file
-    // ever reaches for node:child_process — as it did when the pure and
-    // effectful helpers lived together — the webpack build fails and the dev
-    // server dies with it. tsc cannot catch that; this can.
-    const { readFileSync } = await import('node:fs')
-    const src = readFileSync(
-      new URL('./gitNames.mjs', import.meta.url),
-      'utf-8',
-    )
-    const imports = src.match(/^\s*import\s.+$/gm) ?? []
-    expect(imports).toEqual([])
-  })
+  // The studio editors are 'use client' and import from these. If any of them
+  // reaches for a node: built-in — as gitNames did when the pure and effectful
+  // helpers lived in one file — the webpack build fails and takes the dev
+  // server with it. tsc cannot catch that; this can.
+  //
+  // Checks for `node:` specifically rather than banning imports outright: these
+  // modules legitimately import each other. That means the check is not
+  // transitive, so every client-safe module must be listed here.
+  const CLIENT_SAFE = ['./gitNames.mjs', './slugs.mjs']
+
+  for (const mod of CLIENT_SAFE) {
+    it(`${mod} pulls in no node: built-ins`, async () => {
+      const { readFileSync } = await import('node:fs')
+      const src = readFileSync(new URL(mod, import.meta.url), 'utf-8')
+      const nodeImports = src.match(/^\s*import\s.*['"]node:.*$/gm) ?? []
+      expect(nodeImports).toEqual([])
+    })
+  }
 })
