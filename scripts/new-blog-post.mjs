@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url'
 import { parseCreateArgs } from './lib/parseCreateArgs.mjs'
 import { createPublishFn } from './lib/createPublishFn.mjs'
 import { smartText } from '../src/mdx/smartText.mjs'
+import { gitState, createBranch, branchNameFor } from '../src/lib/git.mjs'
+import { slugify } from '../src/lib/slugs.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
@@ -26,13 +28,6 @@ function question(prompt) {
   })
 }
 
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
 function formatDate(date) {
   return date.toLocaleDateString('en-US', {
     month: 'long',
@@ -42,33 +37,38 @@ function formatDate(date) {
 }
 
 async function checkGitStatus() {
+  let state
   try {
-    const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim()
-    if (status) {
-      const branch = execSync('git branch --show-current', { encoding: 'utf-8' }).trim()
-      console.error(`⚠️ You have uncommitted changes on ${branch}. Please commit or stash your work and then get back to blogging.`)
-      process.exit(1)
-    }
+    state = await gitState()
   } catch {
     console.error('Error: Failed to check git status. Are you in a git repository?')
     process.exit(1)
   }
-
+  if (state.dirty) {
+    console.error(
+      `⚠️ You have uncommitted changes on ${state.branch}. Please commit or stash your work and then get back to blogging.`,
+    )
+    process.exit(1)
+  }
   const answer = await question('Create a new branch from origin/main? (Y/n): ')
   return answer.trim().toLowerCase() !== 'n'
 }
 
-function createBranch(slug) {
-  const branch = `blog-${slug}`
+// Prompts for the branch name, defaulting to the same `blog-<slug>` the studio
+// suggests, then creates it from origin/main. Shares one implementation with the
+// studio so the two tools can't drift.
+async function makeBranch(slug) {
+  const suggested = branchNameFor('blog', { slug })
+  const answer = (await question(`Branch name (${suggested}): `)).trim()
+  const name = answer || suggested
+  console.log(`\nFetching origin/main and creating ${name}...`)
   try {
-    console.log(`\nFetching latest from origin/main...`)
-    execSync('git fetch origin main', { encoding: 'utf-8', stdio: 'inherit' })
-    console.log(`Creating branch ${branch} from origin/main...`)
-    execSync(`git checkout -b ${branch} origin/main`, { encoding: 'utf-8', stdio: 'inherit' })
-  } catch {
-    console.error(`Error: Failed to create branch "${branch}". Does it already exist?`)
+    await createBranch(name)
+  } catch (err) {
+    console.error(`Error: ${err.message}`)
     process.exit(1)
   }
+  return name
 }
 
 export async function main(...args) {
@@ -122,8 +122,9 @@ export async function main(...args) {
 
   rl.close()
 
+  let branchName
   if (shouldCreateBranch) {
-    createBranch(slug)
+    branchName = await makeBranch(slug)
   }
 
   // Create directory
@@ -195,7 +196,7 @@ Start writing your post here...
 Files created:
   - src/app/[locale]/blog/${slug}/page.tsx
   - src/app/[locale]/blog/${slug}/en.mdx
-${shouldCreateBranch ? `\nBranch: blog-${slug} (from origin/main)` : ''}
+${branchName ? `\nBranch: ${branchName} (from origin/main)` : ''}
 Next steps:
   1. Edit src/app/[locale]/blog/${slug}/en.mdx to write your post
   2. Run 'npm run dev' to preview at http://localhost:3000/blog/${slug}
