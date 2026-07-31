@@ -1,0 +1,91 @@
+export const header = {
+  title: 'Make the PDS Your Own: Customization and Metrics',
+  description: 'Branding, observability, and a session-list fix in the newest reference PDS',
+  date: 'August 5, 2026',
+  author: 'AT Protocol Team',
+}
+
+When we [shipped the account management page](/blog/pds-account-management) back in June, we closed that post with a promise: more reference PDS updates over the summer, including observability tooling. Today's release makes good on that and then some.
+
+There are three things in this release: customization for the account management interface, OpenTelemetry support, and a fix for a bug in the connected apps list.
+
+## Making it yours
+
+The account management page and the OAuth sign-in screens are the parts of your PDS that your users actually look at. Until now, everyone's looked identical...
+
+All of this is configured with environment variables, so there's nothing to rebuild and no theme files to manage. If you're running the reference PDS with the standard Docker deployment, add these to your `pds.env` and restart.
+
+The basics are your service's name and logo:
+
+```bash
+PDS_SERVICE_NAME="Example Social"
+PDS_LOGO_URL="https://example.com/logo.svg"
+```
+
+`PDS_SERVICE_NAME` defaults to your hostname followed by "PDS", so setting it is usually the single highest-impact change you can make. Both of these also flow through to the transactional emails your PDS sends, so password reset messages get your branding too — not just the web interface.
+
+Colors are set the same way. The one you'll want first is the primary color, which drives buttons, links, and accents:
+
+```bash
+PDS_PRIMARY_COLOR="#7c3aed"
+```
+
+From there you can go as deep as you like. There are `PDS_ERROR_COLOR`, `PDS_WARNING_COLOR`, `PDS_INFO_COLOR`, and `PDS_SUCCESS_COLOR` for the semantic states, and `PDS_LIGHT_COLOR` and `PDS_DARK_COLOR` to set the two ends of the neutral range. Each semantic color also accepts a `_CONTRAST` variant (for the text drawn on top of it) and a `_HUE` variant, and there's a `PDS_CONTRAST_SATURATION` knob for tinting the greys toward your palette.
+
+You mostly don't need to set any of those. If you specify `PDS_PRIMARY_COLOR` but not `PDS_PRIMARY_COLOR_CONTRAST`, the interface picks whichever of your light or dark colors has the better contrast ratio against it. The accessible thing is the default, and you have to go out of your way to override it.
+
+Finally, you can add your own links to the footer:
+
+```bash
+PDS_HOME_URL="https://example.com"
+PDS_TERMS_OF_SERVICE_URL="https://example.com/tos"
+PDS_PRIVACY_POLICY_URL="https://example.com/privacy"
+PDS_SUPPORT_URL="https://example.com/support"
+```
+
+{/* TODO(alex): banner image support is not merged yet — picking this up Monday.
+    Once it lands, document the env var here and drop in a screenshot showing a
+    customized account page. Rough shape of the section below; fix before publish. */}
+
+**[DRAFT — pending the banner work]** Alongside the logo, you'll be able to set a banner image that runs across the top of the account management interface, giving you a full header rather than just a mark in the corner. *(Env var name and any sizing or aspect-ratio guidance to be filled in once this lands.)*
+
+## Knowing what your PDS is doing
+
+The other half of this release is for operators rather than users. The PDS now supports [OpenTelemetry](https://opentelemetry.io/) for traces, metrics, and logs.
+
+Telemetry is off unless you ask for it, and the way you ask for it is simply to configure an endpoint — there's no separate enable flag:
+
+```bash
+OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+OTEL_SERVICE_NAME="pds"
+```
+
+Setting an OTLP endpoint is what turns the SDK on, which means the standard `OTEL_*` environment variables you already know work as written, and there's no bespoke PDS-specific configuration layered on top. Signals you don't configure stay off rather than quietly defaulting to localhost, so pointing only `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` somewhere gets you metrics and nothing else. `OTEL_SDK_DISABLED=true` remains available as a kill switch.
+
+Once it's on, you get automatic instrumentation for the things the PDS spends its time on: inbound and outbound HTTP, Express, the SQLite layer, S3-compatible blob storage, Redis, and Node runtime metrics like event loop lag and garbage collection.
+
+XRPC requests are normalized by method, so a span comes through as `GET /xrpc/com.atproto.repo.getRecord` rather than being flattened into a single useless `/` route, and the NSID is attached as an attribute.
+
+On top of the automatic instrumentation, the PDS emits counters for the events an operator cares about:
+
+- `account.created` — new accounts, dimensioned by whether signup came through OAuth or the XRPC endpoint
+- `session.created` — sign-ins, dimensioned by source
+- `oauth.authorization` — OAuth grants issued to apps
+
+These deliberately carry only low-cardinality dimensions. The corresponding structured logs carry the full detail (DIDs and client IDs) and are trace-correlated, so you can pivot from an anomaly on a graph to the specific requests behind it.
+
+We're also publishing sample Grafana dashboards...
+
+## Sessions that actually show up
+
+This release also fixes a bug in the connected apps list on the account management page.
+
+Previously, the list only reliably surfaced sessions that had been refreshed recently. If you'd authorized an app and then not opened it in a while, it could be missing from the list.
+
+The list is now accurate regardless of when a session was last refreshed. If you've been using the account management page to audit your connected apps, you may see entries that were previously hidden.
+
+## Getting the update
+
+TKTK — reference PDS version number, once the release is cut.
+
+If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release. For a fuller walkthrough of the account management interface itself, see the [Account Management](/guides/account-management) guide.

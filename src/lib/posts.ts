@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'pds-customization-and-metrics',
+    title: 'Make the PDS Your Own: Customization and Metrics',
+    description: 'Branding, observability, and a session-list fix in the newest reference PDS.',
+    date: 'August 5, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'at-protocol-trademark',
     title: 'AT Protocol Trademark',
     description: 'Bluesky now owns the trademark for AT Protocol to shield the ecosystem and make sure it can be used as widely as possible.',
