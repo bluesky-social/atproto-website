@@ -200,7 +200,19 @@ Each editor has a switch to the other in its sidebar.
   Automatic *generation* is not implemented for either editor.
 - **No body preview.** Use the **Open ↗** link in the action bar to see the real
   page.
-- **No git operations.** Branch, stage, and commit in your normal flow.
+- **Creating offers a branch.** The create form shows the branch it will make
+  from `origin/main`, with an editable name and the exact commands it will run.
+  Defaults match the names already in use: `blog-<slug>` for posts,
+  `off-protocol-<YYYY-MM-DD>` for episodes. Untick it to create on the current
+  branch instead. Editing existing content never branches — the action bar just
+  shows which branch you're on, so it isn't silent.
+- **A dirty working tree blocks branching, not authoring.** Any output from
+  `git status --porcelain` counts, untracked files included: a stray file would
+  travel to the new branch and could land in the PR. The form lists what's dirty
+  and still lets you create where you are. Nothing is written when a branch is
+  requested and refused — the refusal is complete, not partial.
+- **Nothing else is a git operation.** Staging, committing, and pushing stay in
+  your normal flow.
 - **Smart typography on save.** Titles and descriptions are stored with curly
   quotes, em/en dashes, and ellipses, matching what the prose pipeline does to
   MDX bodies at render time. Those two fields are plain JS strings in
@@ -584,7 +596,18 @@ The site hosts the *Off Protocol* podcast at `/off-protocol`. Episodes follow th
 npm run podcast create
 ```
 
-Prompts for title, slug, episode number, description, audio URL, guests, and an optional Bluesky discussion link. The script HEADs the audio URL (failing if unreachable) and probes its duration via `ffprobe` if installed (falling back to a manual prompt). It scaffolds:
+Refuses to run on a dirty working tree, then offers to create a branch from
+`origin/main` — the same step, and the same implementation (`src/lib/git.mjs`),
+as the [Dev Studio](#dev-studio-dev-only). The CLIs refuse outright on a dirty
+tree rather than offering to continue, which is reasonable for a command you
+invoke deliberately.
+
+Prompts for title, guests, slug, episode number, description, audio URL, and an
+optional Bluesky discussion link. Guests come before the slug so the suggested
+slug can include the guest: episodes default to
+`YYYY-MM-DD-title[-first-guest]`, matching the show's existing slugs. The script
+HEADs the audio URL (failing if unreachable) and probes its duration via
+`ffprobe` if installed (falling back to a manual prompt). It scaffolds:
 
 - `src/app/[locale]/off-protocol/<slug>/page.tsx`
 - `src/app/[locale]/off-protocol/<slug>/en.mdx` (show notes)
