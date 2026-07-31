@@ -170,3 +170,19 @@ describe('createBranch', () => {
     )
   })
 })
+
+describe('client-bundle safety', () => {
+  it('gitNames.mjs imports nothing, so client components can use it', async () => {
+    // The studio editors are 'use client' and import branchNameFor. If this file
+    // ever reaches for node:child_process — as it did when the pure and
+    // effectful helpers lived together — the webpack build fails and the dev
+    // server dies with it. tsc cannot catch that; this can.
+    const { readFileSync } = await import('node:fs')
+    const src = readFileSync(
+      new URL('./gitNames.mjs', import.meta.url),
+      'utf-8',
+    )
+    const imports = src.match(/^\s*import\s.+$/gm) ?? []
+    expect(imports).toEqual([])
+  })
+})

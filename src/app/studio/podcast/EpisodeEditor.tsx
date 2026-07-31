@@ -6,6 +6,10 @@ import {
   localInputToIso,
   isoToHumanDate,
 } from '@/lib/studio/episodeDates'
+// Pure module, and a type-only import that TypeScript erases: this is a client
+// component, so nothing reaching node:child_process may be imported here.
+import { branchNameFor } from '@/lib/gitNames.mjs'
+import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
 type ListItem = { slug: string; title: string; episodeNumber: number }
@@ -78,6 +82,10 @@ export function EpisodeEditor() {
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [status, setStatus] = useState('')
+  const [git, setGit] = useState<GitState | null>(null)
+  const [makeBranch, setMakeBranch] = useState(true)
+  const [branchName, setBranchName] = useState('')
+  const [dirtyFiles, setDirtyFiles] = useState<string[]>([])
 
   async function refreshList() {
     try {
@@ -92,8 +100,26 @@ export function EpisodeEditor() {
     }
   }
 
+  async function loadGit() {
+    try {
+      const res = await fetch('/api/studio/git')
+      if (!res.ok) return setGit(null)
+      const data: GitState = await res.json()
+      setGit(data)
+      setDirtyFiles(data.files)
+      // A dirty tree can't be branched from; creating here stays available.
+      if (data.dirty) setMakeBranch(false)
+      return data
+    } catch {
+      setGit(null)
+    }
+  }
+
   useEffect(() => {
-    setFields((f) => ({ ...f, ...nowDates() }))
+    const dates = nowDates()
+    setFields((f) => ({ ...f, ...dates }))
+    setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
+    loadGit()
     refreshList().then((n) => {
       if (typeof n === 'number') setFields((f) => ({ ...f, episodeNumber: n }))
     })
@@ -102,10 +128,14 @@ export function EpisodeEditor() {
   function startNew() {
     setMode('new')
     setSlug('')
-    setFields({ ...emptyFields(nextNumber), ...nowDates() })
+    const dates = nowDates()
+    setFields({ ...emptyFields(nextNumber), ...dates })
     setBody('')
     setOgImage(null)
     setStatus('')
+    setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
+    setMakeBranch(true)
+    loadGit()
   }
 
   async function loadEpisode(s: string) {
@@ -210,12 +240,26 @@ export function EpisodeEditor() {
           explicit: fields.explicit,
           blueskyPostUrl: fields.blueskyPostUrl,
           body,
+          branch: makeBranch && branchName ? { name: branchName } : undefined,
         }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // Dirty tree: nothing was branched and nothing was written. Untick the
+        // box so a retry creates here instead.
+        setDirtyFiles(data.files ?? [])
+        setMakeBranch(false)
+        await loadGit()
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       await loadEpisode(data.slug)
-      setStatus(`Created ${data.slug}`)
+      setStatus(
+        data.branch?.created
+          ? `Created ${data.slug} on ${data.branch.name}`
+          : `Created ${data.slug}`,
+      )
+      await loadGit()
       await refreshList()
     } else {
       setStatus('Saving…')
@@ -307,6 +351,9 @@ export function EpisodeEditor() {
                 /off-protocol/{slug} ↗
               </a>
             )}
+            {git && (
+              <span className="font-mono text-xs text-neutral-400">on {git.branch}</span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             {status && <span className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')} aria-live="polite">{status}</span>}
@@ -343,6 +390,57 @@ export function EpisodeEditor() {
               <input type="checkbox" checked={fields.explicit} onChange={(e) => setF('explicit', e.target.checked)} /> Explicit
             </label>
           </div>
+
+          {mode === 'new' && (
+            <div className="mt-6 border-t border-neutral-200 pt-6">
+              <p className={label}>Branch</p>
+              {git?.dirty ? (
+                <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-neutral-700">
+                  <p>
+                    Can’t branch: {dirtyFiles.length} uncommitted change
+                    {dirtyFiles.length === 1 ? '' : 's'} on{' '}
+                    <span className="font-mono">{git.branch}</span>. Commit or stash
+                    them to branch, or create here anyway.
+                  </p>
+                  <ul className="mt-1 font-mono text-xs text-neutral-500">
+                    {dirtyFiles.slice(0, 5).map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                    {dirtyFiles.length > 5 && <li>…and {dirtyFiles.length - 5} more</li>}
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <label className="flex items-center gap-2 text-sm text-neutral-700">
+                    <input
+                      type="checkbox"
+                      checked={makeBranch}
+                      onChange={(e) => setMakeBranch(e.target.checked)}
+                    />
+                    Create a branch from origin/main
+                  </label>
+                  {makeBranch && (
+                    <>
+                      <input
+                        value={branchName}
+                        onChange={(e) => setBranchName(e.target.value)}
+                        className={input + ' mt-2 font-mono'}
+                      />
+                      <pre className="mt-2 overflow-x-auto rounded bg-neutral-50 px-3 py-2 font-mono text-xs text-neutral-500">
+                        git fetch origin main{'\n'}git checkout -b {branchName} origin/main
+                      </pre>
+                    </>
+                  )}
+                  {git && (
+                    <p className="mt-2 text-xs text-neutral-500">
+                      Currently on <span className="font-mono">{git.branch}</span> ·
+                      working tree clean
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 flex flex-col items-end gap-2 border-t border-neutral-200 pt-6">
