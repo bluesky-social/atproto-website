@@ -7,6 +7,8 @@ import * as path from 'path'
 import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import { smartText } from '../src/mdx/smartText.mjs'
+import { gitState, createBranch, branchNameFor } from '../src/lib/git.mjs'
+import { episodeSlug } from '../src/lib/slugs.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PODCAST_DIR = path.join(__dirname, '../src/app/[locale]/off-protocol')
@@ -27,13 +29,6 @@ function question(prompt) {
   return new Promise((resolve) => {
     rl.question(prompt, resolve)
   })
-}
-
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
 }
 
 function formatDate(date) {
@@ -87,23 +82,38 @@ function probeDuration(url) {
 }
 
 async function checkGitStatus() {
+  let state
   try {
-    const status = execSync('git status --porcelain', {
-      encoding: 'utf-8',
-    }).trim()
-    if (status) {
-      const branch = execSync('git branch --show-current', {
-        encoding: 'utf-8',
-      }).trim()
-      console.error(
-        `⚠️ You have uncommitted changes on ${branch}. Please commit or stash before continuing.`,
-      )
-      process.exit(1)
-    }
+    state = await gitState()
   } catch {
     console.error('Error: Failed to check git status. Are you in a git repository?')
     process.exit(1)
   }
+  if (state.dirty) {
+    console.error(
+      `⚠️ You have uncommitted changes on ${state.branch}. Please commit or stash before continuing.`,
+    )
+    process.exit(1)
+  }
+  const answer = await question('Create a new branch from origin/main? (Y/n): ')
+  return answer.trim().toLowerCase() !== 'n'
+}
+
+// Prompts for the branch name, defaulting to the same off-protocol-<date> the
+// studio suggests, then creates it from origin/main. Shares one implementation
+// with the studio so the two tools can't drift.
+async function makeBranch(pubDate, slug) {
+  const suggested = branchNameFor('podcast', { pubDate, slug })
+  const answer = (await question(`Branch name (${suggested}): `)).trim()
+  const name = answer || suggested
+  console.log(`\nFetching origin/main and creating ${name}...`)
+  try {
+    await createBranch(name)
+  } catch (err) {
+    console.error(`Error: ${err.message}`)
+    process.exit(1)
+  }
+  return name
 }
 
 function nextEpisodeNumber() {
@@ -116,7 +126,7 @@ function nextEpisodeNumber() {
 export async function main() {
   console.log('\n🎙️  Create a new Off Protocol episode\n')
 
-  await checkGitStatus()
+  const shouldCreateBranch = await checkGitStatus()
 
   // Fail fast if the anchor we insert against isn't where we expect it,
   // rather than running the user through every prompt and then writing
@@ -134,13 +144,24 @@ export async function main() {
     process.exit(1)
   }
 
+  // Stamped up front: the slug suggestion and the branch name both need it.
+  const now = new Date()
+  const date = formatDate(now)
+  const pubDate = now.toISOString()
+
   const title = smartText((await question('Title: ')).trim())
   if (!title) {
     console.error('Error: Title is required')
     process.exit(1)
   }
 
-  const suggestedSlug = slugify(title)
+  const guestsInput = (await question('Guests (comma-separated, optional): ')).trim()
+  const guests = guestsInput
+    ? guestsInput.split(',').map((s) => s.trim()).filter(Boolean)
+    : []
+
+  // YYYY-MM-DD-title[-first-guest], the same default the studio offers.
+  const suggestedSlug = episodeSlug({ pubDate, title, guests })
   const slugInput = (await question(`Slug (${suggestedSlug}): `)).trim()
   const slug = slugInput || suggestedSlug
 
@@ -196,18 +217,14 @@ export async function main() {
   const duration = formatHHMMSS(durationSeconds)
   console.log(`  Duration: ${duration} (${durationSeconds}s)`)
 
-  const guestsInput = (await question('Guests (comma-separated, optional): ')).trim()
-  const guests = guestsInput
-    ? guestsInput.split(',').map((s) => s.trim()).filter(Boolean)
-    : []
-
   const blueskyPostUrl = (
     await question('Bluesky discussion post URL (optional): ')
   ).trim()
 
-  const now = new Date()
-  const date = formatDate(now)
-  const pubDate = now.toISOString()
+  let branchName
+  if (shouldCreateBranch) {
+    branchName = await makeBranch(pubDate, slug)
+  }
 
   rl.close()
 
@@ -319,7 +336,7 @@ ${blueskyPostUrl ? `    blueskyPostUrl: '${blueskyPostUrl.replace(/'/g, "\\'")}'
   fs.writeFileSync(EPISODES_FILE, updated)
 
   console.log(`
-✅ Episode created!
+✅ Episode created!${branchName ? `\n\nBranch: ${branchName} (from origin/main)` : ''}
 
 Files:
   - src/app/[locale]/off-protocol/${slug}/page.tsx

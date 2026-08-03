@@ -180,7 +180,7 @@ export async function publishPost(
 export async function createPost(
   paths: StudioPaths,
   input: CreateInput,
-): Promise<{ slug: string }> {
+): Promise<{ slug: string; warning?: string }> {
   for (const f of ['slug', 'title', 'description', 'date', 'author'] as const) {
     if (!input[f] || !String(input[f]).trim()) {
       throw new Error(`Field "${f}" is required`)
@@ -211,24 +211,40 @@ export async function createPost(
   const nextPostsSrc = prependEntry(postsSrc, entryFor(input.slug, owned))
 
   await fs.mkdir(dir, { recursive: true })
-  await fs.writeFile(path.join(dir, 'page.tsx'), blogPageTsx())
-  await fs.writeFile(path.join(dir, 'en.mdx'), newPostMdx(owned, body))
-  await fs.writeFile(paths.postsFile, nextPostsSrc)
+  try {
+    await fs.writeFile(path.join(dir, 'page.tsx'), blogPageTsx())
+    await fs.writeFile(path.join(dir, 'en.mdx'), newPostMdx(owned, body))
+    await fs.writeFile(paths.postsFile, nextPostsSrc)
+  } catch (err) {
+    // Roll back the partially-created directory so a retry isn't blocked, and so
+    // a failed create never leaves half a post behind. Matches createEpisode.
+    // posts.ts is written last, so a failure never leaves an entry pointing at a
+    // missing directory.
+    await fs.rm(dir, { recursive: true, force: true })
+    throw err
+  }
 
-  // Author DID: add to authors.json when a new author + DID was supplied.
+  // Everything past this point is best-effort: the post exists, so a failure
+  // here is a warning rather than an error. Reporting it as an error would tell
+  // the author the post wasn't created when it was.
+  let warning: string | undefined
   if (input.authorDid) {
-    const authors: AuthorMap = JSON.parse(
-      await fs.readFile(paths.authorsFile, 'utf-8'),
-    )
-    if (!resolveAuthorDid(authors, input.author)) {
-      await fs.writeFile(
-        paths.authorsFile,
-        JSON.stringify(withAuthor(authors, input.author, input.authorDid), null, 2) + '\n',
+    try {
+      const authors: AuthorMap = JSON.parse(
+        await fs.readFile(paths.authorsFile, 'utf-8'),
       )
+      if (!resolveAuthorDid(authors, input.author)) {
+        await fs.writeFile(
+          paths.authorsFile,
+          JSON.stringify(withAuthor(authors, input.author, input.authorDid), null, 2) + '\n',
+        )
+      }
+    } catch (err) {
+      warning = `Post created, but authors.json could not be updated: ${(err as Error).message}`
     }
   }
 
-  return { slug: input.slug }
+  return warning ? { slug: input.slug, warning } : { slug: input.slug }
 }
 
 export async function updatePost(
