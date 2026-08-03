@@ -98,7 +98,7 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
-    slug: '2026-07-31-design-for-uncertainty-ethan-marcotte',
+    slug: '2026-08-03-designing-for-uncertainty-ethan-marcotte',
     episodeNumber: 14,
     title: 'Designing for Uncertainty',
     description: 'Ethan Marcotte, who first coined the phrase Responsive Design, joins to discuss how to operate in a world defined by uncertainty.',
