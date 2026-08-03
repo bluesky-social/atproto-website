@@ -103,7 +103,7 @@ export const episodes: Episode[] = [
     title: 'Designing for Uncertainty',
     description: 'Ethan Marcotte, who first coined the phrase Responsive Design, joins to discuss how to operate in a world defined by uncertainty.',
     date: 'August 3, 2026',
-    pubDate: '2026-07-31T21:23:48.929Z',
+    pubDate: '2026-08-03T22:18:49.823Z',
     duration: '00:44:37',
     durationSeconds: 2677,
     guests: ['Ethan Marcotte'],
