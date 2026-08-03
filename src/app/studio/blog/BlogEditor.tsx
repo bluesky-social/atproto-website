@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+// Pure module, and a type-only import that TypeScript erases: this is a client
+// component, so nothing reaching node:child_process may be imported here.
+import { branchNameFor } from '@/lib/gitNames.mjs'
+import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
 type PostListItem = { slug: string; title: string; date: string }
@@ -37,6 +41,10 @@ export function BlogEditor() {
   const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<string>('')
   const [copied, setCopied] = useState(false)
+  const [git, setGit] = useState<GitState | null>(null)
+  const [makeBranch, setMakeBranch] = useState(true)
+  const [branchName, setBranchName] = useState('')
+  const [dirtyFiles, setDirtyFiles] = useState<string[]>([])
 
   async function refreshList() {
     try {
@@ -49,8 +57,29 @@ export function BlogEditor() {
     }
   }
 
+  // Derived rather than stored so it keeps tracking the title as it's typed;
+  // an edit to the field wins from then on. Declared above save(), which reads it.
+  const derivedBranch =
+    branchName || branchNameFor('blog', { slug: slug || slugify(owned.title) })
+
+  async function loadGit() {
+    try {
+      const res = await fetch('/api/studio/git')
+      if (!res.ok) return setGit(null)
+      const data: GitState = await res.json()
+      setGit(data)
+      setDirtyFiles(data.files)
+      // A dirty tree can't be branched from; creating here stays available.
+      if (data.dirty) setMakeBranch(false)
+      return data
+    } catch {
+      setGit(null)
+    }
+  }
+
   useEffect(() => {
     refreshList()
+    loadGit()
   }, [])
 
   function startNew() {
@@ -63,6 +92,9 @@ export function BlogEditor() {
     setOgImage(null)
     setDragging(false)
     setStatus('')
+    setBranchName('')
+    setMakeBranch(true)
+    loadGit()
   }
 
   async function loadPost(s: string) {
@@ -98,15 +130,31 @@ export function BlogEditor() {
       const res = await fetch('/api/studio/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: finalSlug, ...owned, authorDid: authorDid || undefined, body }),
+        body: JSON.stringify({
+          slug: finalSlug,
+          ...owned,
+          authorDid: authorDid || undefined,
+          body,
+          branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
+        }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // Dirty tree: nothing was branched and nothing was written. Untick the
+        // box so a retry creates here instead.
+        setDirtyFiles(data.files ?? [])
+        setMakeBranch(false)
+        await loadGit()
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Reveal step 2: load the created post (body placeholder, ssite, og image)
       // from disk, then show a plain save status.
       await loadPost(data.slug)
       applyPublish(data.publish)
-      setStatus(`Created ${data.slug}`)
+      const where = data.branch?.created ? ` on ${data.branch.name}` : ''
+      setStatus(data.warning ?? `Created ${data.slug}${where}`)
+      await loadGit()
       await refreshList()
     } else {
       setStatus('Saving…')
@@ -260,6 +308,11 @@ export function BlogEditor() {
                 /blog/{slug} ↗
               </a>
             )}
+            {git && (
+              <span className="font-mono text-xs text-neutral-400">
+                on {git.branch}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             {status && (
@@ -345,6 +398,59 @@ export function BlogEditor() {
               </Field>
             )}
           </div>
+
+          {mode === 'new' && (
+            <div className="mt-6 border-t border-neutral-200 pt-6">
+              <p className="mb-1.5 block text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                Branch
+              </p>
+              {git?.dirty ? (
+                <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-neutral-700">
+                  <p>
+                    Can’t branch: {dirtyFiles.length} uncommitted change
+                    {dirtyFiles.length === 1 ? '' : 's'} on{' '}
+                    <span className="font-mono">{git.branch}</span>. Commit or stash
+                    them to branch, or create here anyway.
+                  </p>
+                  <ul className="mt-1 font-mono text-xs text-neutral-500">
+                    {dirtyFiles.slice(0, 5).map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                    {dirtyFiles.length > 5 && <li>…and {dirtyFiles.length - 5} more</li>}
+                  </ul>
+                </div>
+              ) : (
+                <>
+                  <label className="flex items-center gap-2 text-sm text-neutral-700">
+                    <input
+                      type="checkbox"
+                      checked={makeBranch}
+                      onChange={(e) => setMakeBranch(e.target.checked)}
+                    />
+                    Create a branch from origin/main
+                  </label>
+                  {makeBranch && (
+                    <>
+                      <input
+                        value={derivedBranch}
+                        onChange={(e) => setBranchName(e.target.value)}
+                        className="mt-2 w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
+                      />
+                      <pre className="mt-2 overflow-x-auto rounded bg-neutral-50 px-3 py-2 font-mono text-xs text-neutral-500">
+                        git fetch origin main{'\n'}git checkout -b {derivedBranch} origin/main
+                      </pre>
+                    </>
+                  )}
+                  {git && (
+                    <p className="mt-2 text-xs text-neutral-500">
+                      Currently on <span className="font-mono">{git.branch}</span> ·
+                      working tree clean
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 flex flex-col items-end gap-2 border-t border-neutral-200 pt-6">
