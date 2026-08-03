@@ -98,6 +98,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-08-03-designing-for-uncertainty-ethan-marcotte',
+    episodeNumber: 14,
+    title: 'Designing for Uncertainty',
+    description: 'Ethan Marcotte, who first coined the phrase Responsive Design, joins to discuss how to operate in a world defined by uncertainty.',
+    date: 'August 3, 2026',
+    pubDate: '2026-07-31T21:23:48.929Z',
+    duration: '00:44:37',
+    durationSeconds: 2677,
+    guests: ['Ethan Marcotte'],
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-07-31-2026-07-31-design-for-uncertainty-ethan-marcotte/2026-07-31-design-for-uncertainty-ethan-marcotte.mp3',
+    audioSizeBytes: 21523467,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-07-23-livestream-protocolly-atmoseed',
     episodeNumber: 13,
     title: 'Protocolly Atmoseed',
