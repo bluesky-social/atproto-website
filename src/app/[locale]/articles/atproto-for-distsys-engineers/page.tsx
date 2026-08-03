@@ -1,17 +1,16 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata, resolveLocaleMdx } from '@/lib/localizedMdx'
+import * as en from './en.mdx'
 
-export const metadata = {
-  title: 'Atproto for distributed systems engineers',
-  description:
-    "AT Protocol is the tech developed at Bluesky for open social networking. In this article we're going to explore atproto from the perspective of distributed backend engineering.",
+// Metadata is read from the requested locale's own header, so a translated page
+// gets a translated <title>. English is imported statically so it can be the
+// fallback and so content edits hot-reload; other locales resolve per request.
+const load = (locale: string) => import(`./${locale}.mdx`)
+
+export async function generateMetadata({ params }: any) {
+  return mdxRouteMetadata(await resolveLocaleMdx(params, en, load))
 }
 
 export default async function HomePage({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+  return <Page {...(await resolveLocaleMdx(params, en, load))} />
 }

@@ -1,26 +1,26 @@
-function q(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-}
-
-export function blogPageTsx(input: {
-  title: string
-  description: string
-}): string {
+/**
+ * The `page.tsx` written alongside a new blog post.
+ *
+ * Takes no arguments: the route reads its title and description from the MDX
+ * header, so there's nothing to interpolate and nothing that can drift from the
+ * content. en.mdx is imported statically — blog posts aren't translated, and the
+ * module edge is what lets a content edit hot-reload.
+ */
+export function blogPageTsx(): string {
   return `import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: '${q(input.title)}',
-  description: '${q(input.description)}',
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return mdxRouteMetadata(content)
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(\`./\${(await params).locale}.mdx\`)
-  } catch (error) {
-    Content = await import(\`./en.mdx\`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }
 `
 }

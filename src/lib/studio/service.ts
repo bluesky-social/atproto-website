@@ -211,7 +211,7 @@ export async function createPost(
   const nextPostsSrc = prependEntry(postsSrc, entryFor(input.slug, owned))
 
   await fs.mkdir(dir, { recursive: true })
-  await fs.writeFile(path.join(dir, 'page.tsx'), blogPageTsx(owned))
+  await fs.writeFile(path.join(dir, 'page.tsx'), blogPageTsx())
   await fs.writeFile(path.join(dir, 'en.mdx'), newPostMdx(owned, body))
   await fs.writeFile(paths.postsFile, nextPostsSrc)
 

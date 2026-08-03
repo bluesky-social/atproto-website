@@ -1,16 +1,15 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: 'Looking Back At 2024 AT Protocol Development',
-  description: 'A lot of progress was made on the protocol in 2024, here’s a look at the big milestones',
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return mdxRouteMetadata(content)
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }

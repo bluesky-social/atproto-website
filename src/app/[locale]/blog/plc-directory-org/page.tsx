@@ -1,16 +1,15 @@
 import { Page } from '@/components/Page'
+import { mdxRouteMetadata } from '@/lib/localizedMdx'
+import * as content from './en.mdx'
 
-export const metadata = {
-  title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
-  description: 'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return mdxRouteMetadata(content)
 }
 
-export default async function BlogPost({ params }: any) {
-  let Content
-  try {
-    Content = await import(`./${(await params).locale}.mdx`)
-  } catch (error) {
-    Content = await import(`./en.mdx`)
-  }
-  return <Page {...Content} />
+export default function BlogPost() {
+  return <Page {...content} />
 }

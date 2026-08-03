@@ -44,7 +44,7 @@ afterEach(() => {
 })
 
 describe('smart typography', () => {
-  it('smartens title and description in all three files createPost writes', async () => {
+  it('smartens title and description everywhere createPost stores them', async () => {
     await createPost(paths, {
       slug: 'hello',
       title: '"Quoted" Title',
@@ -56,13 +56,29 @@ describe('smart typography', () => {
     const dir = path.join(paths.blogDir, 'hello')
     for (const [label, file] of [
       ['en.mdx', path.join(dir, 'en.mdx')],
-      ['page.tsx', path.join(dir, 'page.tsx')],
       ['posts.ts', paths.postsFile],
     ] as const) {
       const content = fs.readFileSync(file, 'utf-8')
       expect(content, label).toContain('“Quoted” Title')
       expect(content, label).toContain('What’s next — a lot…')
     }
+  })
+
+  it('does not write the title into page.tsx at all', async () => {
+    // page.tsx reads the MDX header, so it must not become a third copy — that
+    // duplication is what drifted before, leaving stale titles in OG previews.
+    await createPost(paths, {
+      slug: 'hello',
+      title: 'Distinctive Title',
+      description: 'Desc',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      body: 'Body.\n',
+    })
+    const page = fs.readFileSync(path.join(paths.blogDir, 'hello', 'page.tsx'), 'utf-8')
+    expect(page).not.toContain('Distinctive Title')
+    expect(page).not.toContain('export const metadata')
+    expect(page).toContain('mdxRouteMetadata(content)')
   })
 
   it('returns the smartened fields so the editor can show what was stored', async () => {
