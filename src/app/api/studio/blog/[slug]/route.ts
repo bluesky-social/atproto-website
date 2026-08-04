@@ -1,10 +1,20 @@
 import { isProd, studioPaths } from '@/lib/studio/paths'
 import { readPost, updatePost, deletePost, publishPost } from '@/lib/studio/service'
+import { RevisionConflictError } from '@/lib/studio/revision'
 
 export const runtime = 'nodejs'
 
 function notFound() {
   return new Response('Not found', { status: 404 })
+}
+
+// A stale-revision save is a conflict, not a bad request: nothing was written and
+// the client can recover by reloading. The editor keys off `code`.
+function errorResponse(err: unknown) {
+  if (err instanceof RevisionConflictError) {
+    return Response.json({ error: err.message, code: err.code }, { status: 409 })
+  }
+  return Response.json({ error: (err as Error).message }, { status: 400 })
 }
 
 type Ctx = { params: Promise<{ slug: string }> }
@@ -30,7 +40,7 @@ export async function PUT(request: Request, { params }: Ctx) {
     const publish = await publishPost(paths, slug)
     return Response.json({ ...result, publish })
   } catch (err) {
-    return Response.json({ error: (err as Error).message }, { status: 400 })
+    return errorResponse(err)
   }
 }
 

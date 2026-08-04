@@ -9,6 +9,12 @@ import { fileURLToPath } from 'url'
 import { smartText } from '../src/mdx/smartText.mjs'
 import { gitState, createBranch, branchNameFor } from '../src/lib/git.mjs'
 import { episodeSlug } from '../src/lib/slugs.mjs'
+import {
+  EPISODE_FORMATS,
+  FORMAT_LABELS,
+  DEFAULT_EPISODE_FORMAT,
+  toEpisodeFormat,
+} from '../src/lib/episodeFormat.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PODCAST_DIR = path.join(__dirname, '../src/app/[locale]/off-protocol')
@@ -160,6 +166,20 @@ export async function main() {
     ? guestsInput.split(',').map((s) => s.trim()).filter(Boolean)
     : []
 
+  // Formats offered as a numbered list: typing 'ama' works too, but the numbers
+  // make the vocabulary discoverable without reading the source.
+  console.log('\nFormat:')
+  EPISODE_FORMATS.forEach((f, i) => {
+    const marker = f === DEFAULT_EPISODE_FORMAT ? ' (default)' : ''
+    console.log(`  ${i + 1}) ${FORMAT_LABELS[f]}${marker}`)
+  })
+  const formatInput = (await question('Format (1-3 or name): ')).trim()
+  const byNumber = EPISODE_FORMATS[Number(formatInput) - 1]
+  // An empty or unrecognized answer falls back to the default; echoing the
+  // result means a typo is visible before anything is written.
+  const format = byNumber ?? toEpisodeFormat(formatInput)
+  console.log(`  Using: ${FORMAT_LABELS[format]}`)
+
   // YYYY-MM-DD-title[-first-guest], the same default the studio offers.
   const suggestedSlug = episodeSlug({ pubDate, title, guests })
   const slugInput = (await question(`Slug (${suggestedSlug}): `)).trim()
@@ -283,7 +303,8 @@ export default function EpisodeRoute() {
   hosts: ['Jim Ray'],
   duration: '${duration}',
   durationSeconds: ${durationSeconds},
-${guestsField}  audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
+${guestsField}  format: '${format}',
+  audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
   audioSizeBytes: ${audioInfo.sizeBytes},
   audioMimeType: '${audioInfo.contentType.replace(/'/g, "\\'")}',
   // Flip to true once you've written the show notes / transcript below.
@@ -312,7 +333,8 @@ ${blueskyField}}
     pubDate: '${pubDate}',
     duration: '${duration}',
     durationSeconds: ${durationSeconds},
-${guests.length ? `    guests: [${guests.map((g) => `'${g.replace(/'/g, "\\'")}'`).join(', ')}],\n` : ''}    audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
+${guests.length ? `    guests: [${guests.map((g) => `'${g.replace(/'/g, "\\'")}'`).join(', ')}],\n` : ''}    format: '${format}',
+    audioUrl: '${audioUrl.replace(/'/g, "\\'")}',
     audioSizeBytes: ${audioInfo.sizeBytes},
     audioMimeType: '${audioInfo.contentType.replace(/'/g, "\\'")}',
 ${blueskyPostUrl ? `    blueskyPostUrl: '${blueskyPostUrl.replace(/'/g, "\\'")}',\n` : ''}  },`

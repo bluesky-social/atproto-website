@@ -2,6 +2,13 @@ import * as fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
+import { fileRevision, assertRevision } from './revision'
+import { applyAuthorDids } from './authorsFile'
+import {
+  toEpisodeFormat,
+  DEFAULT_EPISODE_FORMAT,
+  type EpisodeFormat,
+} from '@/lib/episodeFormat.mjs'
 import {
   newEpisodeMdx,
   applyEpisodeFields,
@@ -33,6 +40,13 @@ export type CreateEpisodeInput = {
   pubDate?: string
   hosts: string[]
   guests: string[]
+  /** Defaults to 'conversation' when the caller doesn't say. */
+  format?: EpisodeFormat
+  /**
+   * Name → DID for hosts or guests authors.json doesn't know yet, so a new
+   * guest's byline links to their profile instead of rendering as plain text.
+   */
+  authorDids?: Record<string, string>
   duration: string
   durationSeconds: number
   audioUrl: string
@@ -80,7 +94,9 @@ export default function EpisodeRoute() {
 `
 }
 
-function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
+// Exported for the one-shot format backfill, which needs the same
+// EpisodeFields → EpisodeEntry mapping the service uses.
+export function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
   return {
     slug,
     episodeNumber: f.episodeNumber,
@@ -91,6 +107,7 @@ function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
     duration: f.duration,
     durationSeconds: f.durationSeconds,
     guests: f.guests,
+    format: f.format,
     audioUrl: f.audioUrl,
     audioSizeBytes: f.audioSizeBytes,
     audioMimeType: f.audioMimeType,
@@ -127,22 +144,32 @@ export async function listEpisodes(
 export async function readEpisode(
   paths: EpisodePaths,
   slug: string,
-): Promise<{ slug: string; fields: EpisodeFields; body: string; ogImage: string | null }> {
+): Promise<{
+  slug: string
+  fields: EpisodeFields
+  body: string
+  ogImage: string | null
+  revision: string
+}> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  const parsed = parseMdxFile(raw)
   return {
     slug,
     fields: getEpisodeFields(parsed),
     body: parsed.body.replace(/^\n+/, ''),
     ogImage: findOgImage(paths.podcastDir, slug),
+    // Fingerprint of exactly the bytes these fields were parsed from, so a save
+    // can prove it is editing the version it was shown.
+    revision: fileRevision(raw),
   }
 }
 
 export async function createEpisode(
   paths: EpisodePaths,
   rawInput: CreateEpisodeInput,
-): Promise<{ slug: string }> {
+): Promise<{ slug: string; warning?: string }> {
   // Smarten before anything derives from these values, so the MDX header and the
   // episodes.ts entry agree. (page.tsx used to be a third copy; it now reads the
   // header, so there's one fewer place to keep in step.)
@@ -163,6 +190,7 @@ export async function createEpisode(
     duration: input.duration,
     durationSeconds: input.durationSeconds,
     guests: input.guests,
+    format: input.format ?? DEFAULT_EPISODE_FORMAT,
     audioUrl: input.audioUrl,
     audioSizeBytes: input.audioSizeBytes,
     audioMimeType: input.audioMimeType ?? 'audio/mpeg',
@@ -187,24 +215,51 @@ export async function createEpisode(
     await fs.rm(dir, { recursive: true, force: true })
     throw err
   }
-  return { slug: input.slug }
+  // Best-effort, past the point where content exists: a byline link that
+  // couldn't be recorded must not read as "the episode wasn't created".
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+  return reason
+    ? { slug: input.slug, warning: `Episode created, but ${reason}` }
+    : { slug: input.slug }
 }
 
 export async function updateEpisode(
   paths: EpisodePaths,
   slug: string,
-  input: { fields: EpisodeFields; body: string },
-): Promise<{ slug: string; fields: EpisodeFields }> {
+  input: {
+    fields: EpisodeFields
+    body: string
+    revision?: string
+    /**
+     * See CreateEpisodeInput.authorDids — accepted on update too, because a
+     * guest is usually added after the episode already exists.
+     */
+    authorDids?: Record<string, string>
+  },
+): Promise<{
+  slug: string
+  fields: EpisodeFields
+  revision: string
+  warning?: string
+}> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const fields = {
     ...smartenTitleAndDescription(input.fields),
     hasShowNotes: Boolean(input.body && input.body.trim()),
+    // Defensive: the editor's own Fields type gains `format` in a later task,
+    // and a stale browser tab can PUT without it. Without this the header would
+    // get `format: 'undefined'`.
+    format: toEpisodeFormat(input.fields.format),
   }
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  // Check before the first write, so a refusal leaves both files untouched.
+  assertRevision(input.revision, fileRevision(raw), 'This episode')
+  const parsed = parseMdxFile(raw)
   const next = applyEpisodeFields(parsed, fields)
   next.body = normalizeBodySeparation(input.body)
-  await fs.writeFile(mdxPath, serializeMdxFile(next))
+  const serialized = serializeMdxFile(next)
+  await fs.writeFile(mdxPath, serialized)
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(
@@ -212,8 +267,17 @@ export async function updateEpisode(
     updateEntryBySlug(src, slug, entryFrom(slug, fields)),
   )
   // Hand back what was actually stored — the editor echoes the smartened title
-  // and description so the transform is visible rather than silent.
-  return { slug, fields }
+  // and description so the transform is visible rather than silent — plus the
+  // revision it just created, so the still-open form can save again without
+  // conflicting with itself.
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+
+  return {
+    slug,
+    fields,
+    revision: fileRevision(serialized),
+    ...(reason ? { warning: `Episode saved, but ${reason}` } : {}),
+  }
 }
 
 export type AudioFields = {
@@ -234,23 +298,36 @@ export async function setEpisodeAudio(
   paths: EpisodePaths,
   slug: string,
   audio: AudioFields,
-): Promise<{ slug: string; fields: EpisodeFields }> {
+): Promise<{ slug: string; fields: EpisodeFields; revision: string }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  // duration and durationSeconds describe one measurement, so they move together
+  // or not at all. The browser resolves 0 when it can't read a file's metadata,
+  // which the client formats as '00:00:00' — and that string is truthy while 0 is
+  // not, so guarding them separately wrote a zero duration while keeping the old
+  // durationSeconds. The page then showed 0:00 while the feed still claimed the
+  // real length.
+  const measured = Boolean(audio.duration) && Boolean(audio.durationSeconds)
   const fields: EpisodeFields = {
     ...getEpisodeFields(parsed),
     audioUrl: audio.audioUrl,
     audioSizeBytes: audio.audioSizeBytes,
     ...(audio.audioMimeType ? { audioMimeType: audio.audioMimeType } : {}),
-    ...(audio.duration ? { duration: audio.duration } : {}),
-    ...(audio.durationSeconds ? { durationSeconds: audio.durationSeconds } : {}),
+    ...(measured
+      ? { duration: audio.duration!, durationSeconds: audio.durationSeconds! }
+      : {}),
   }
-  await fs.writeFile(mdxPath, serializeMdxFile(applyEpisodeFields(parsed, fields)))
+  const serialized = serializeMdxFile(applyEpisodeFields(parsed, fields))
+  await fs.writeFile(mdxPath, serialized)
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(paths.episodesFile, updateEntryBySlug(src, slug, entryFrom(slug, fields)))
-  return { slug, fields }
+  // No precondition is checked here — an upload is an append-only act on fields
+  // the form isn't editing. But it *does* rewrite en.mdx, so hand back the new
+  // revision or the open form goes stale and its next save is refused for
+  // nothing.
+  return { slug, fields, revision: fileRevision(serialized) }
 }
 
 export type DeleteEpisodeOptions = {
@@ -339,10 +416,22 @@ export async function deleteAudioObject(key: string): Promise<void> {
 export async function uploadAudio(
   slug: string,
   bytes: Buffer,
-  pubDate: string,
-): Promise<{ audioUrl: string; audioSizeBytes: number }> {
+  // Named rather than positional: the object key is derived from three fields
+  // now, and three bare strings at the call site would be easy to transpose.
+  episode: {
+    pubDate: string
+    guests?: readonly string[]
+    format: EpisodeFormat
+    /**
+     * Name of the file that was dropped. Names the object after it, so a
+     * differently-named file lands as a new object rather than overwriting the
+     * previous one in place.
+     */
+    uploadedFilename?: string
+  },
+): Promise<{ audioUrl: string; audioSizeBytes: number; objectKey: string }> {
   const { bucket, publicBase, endpoint, accessKeyId, secretAccessKey } = r2Config()
-  const key = audioObjectKey(slug, pubDate)
+  const key = audioObjectKey(slug, episode.pubDate, episode, episode.uploadedFilename)
 
   const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
   const client = new S3Client({
@@ -365,5 +454,5 @@ export async function uploadAudio(
     client.destroy()
   }
 
-  return { audioUrl: `${publicBase}/${key}`, audioSizeBytes: bytes.length }
+  return { audioUrl: `${publicBase}/${key}`, audioSizeBytes: bytes.length, objectKey: key }
 }

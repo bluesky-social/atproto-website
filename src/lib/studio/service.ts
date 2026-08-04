@@ -21,7 +21,8 @@ import {
   removeEntryBySlug,
   type PostEntry,
 } from './postsFile'
-import { resolveAuthorDid, withAuthor, type AuthorMap } from './authors'
+import { fileRevision, assertRevision } from './revision'
+import { applyAuthorDids } from './authorsFile'
 import { blogPageTsx } from './templates'
 import { smartenTitleAndDescription } from './smartText'
 
@@ -37,11 +38,26 @@ export type CreateInput = {
   description: string
   date: string
   author: string
-  authorDid?: string
+  /**
+   * Name → DID for authors authors.json doesn't know yet. A map rather than a
+   * single DID so the same shape works for episodes, which have several names.
+   */
+  authorDids?: Record<string, string>
   body?: string
 }
 
-export type UpdateInput = { owned: OwnedFields; body: string }
+export type UpdateInput = {
+  owned: OwnedFields
+  body: string
+  /** Base revision from readPost; omit for no precondition. See ./revision. */
+  revision?: string
+  /**
+   * Name → DID for authors authors.json doesn't know yet. Accepted on update as
+   * well as create: an author can turn out to be unknown long after the post was
+   * written, which previously meant editing authors.json by hand.
+   */
+  authorDids?: Record<string, string>
+}
 
 function entryFor(slug: string, owned: OwnedFields): PostEntry {
   return {
@@ -91,12 +107,14 @@ export async function readPost(
   body: string
   standardSiteUri: string
   ogImage: string | null
+  revision: string
 }> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  const parsed = parseMdxFile(raw)
   return {
     slug,
     owned: getOwnedFields(parsed),
@@ -106,6 +124,9 @@ export async function readPost(
     body: parsed.body.replace(/^\n+/, ''),
     standardSiteUri: getHeaderField(parsed, 'standardSiteUri'),
     ogImage: findOgImage(paths.blogDir, slug),
+    // Fingerprint of exactly the bytes these fields were parsed from, so a save
+    // can prove it is editing the version it was shown.
+    revision: fileRevision(raw),
   }
 }
 
@@ -227,22 +248,8 @@ export async function createPost(
   // Everything past this point is best-effort: the post exists, so a failure
   // here is a warning rather than an error. Reporting it as an error would tell
   // the author the post wasn't created when it was.
-  let warning: string | undefined
-  if (input.authorDid) {
-    try {
-      const authors: AuthorMap = JSON.parse(
-        await fs.readFile(paths.authorsFile, 'utf-8'),
-      )
-      if (!resolveAuthorDid(authors, input.author)) {
-        await fs.writeFile(
-          paths.authorsFile,
-          JSON.stringify(withAuthor(authors, input.author, input.authorDid), null, 2) + '\n',
-        )
-      }
-    } catch (err) {
-      warning = `Post created, but authors.json could not be updated: ${(err as Error).message}`
-    }
-  }
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+  const warning = reason ? `Post created, but ${reason}` : undefined
 
   return warning ? { slug: input.slug, warning } : { slug: input.slug }
 }
@@ -251,18 +258,28 @@ export async function updatePost(
   paths: StudioPaths,
   slug: string,
   input: UpdateInput,
-): Promise<{ slug: string; owned: OwnedFields }> {
+): Promise<{
+  slug: string
+  owned: OwnedFields
+  revision: string
+  warning?: string
+}> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
   // Re-read from disk so preamble + unknown header fields reflect the current
-  // file (supports concurrent hand-edits).
+  // file (supports concurrent hand-edits). That only ever protected the fields
+  // the editor doesn't own; the revision check is what protects the rest.
   const owned = smartenTitleAndDescription(input.owned)
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  // Check before the first write, so a refusal leaves both files untouched.
+  assertRevision(input.revision, fileRevision(raw), 'This post')
+  const parsed = parseMdxFile(raw)
   const next = applyOwnedFields(parsed, owned)
   next.body = normalizeBodySeparation(input.body)
-  await fs.writeFile(mdxPath, serializeMdxFile(next))
+  const serialized = serializeMdxFile(next)
+  await fs.writeFile(mdxPath, serialized)
 
   const postsSrc = await fs.readFile(paths.postsFile, 'utf-8')
   await fs.writeFile(
@@ -270,8 +287,19 @@ export async function updatePost(
     updateEntryBySlug(postsSrc, slug, entryFor(slug, owned)),
   )
   // Hand back what was actually stored — the editor echoes the smartened title
-  // and description so the transform is visible rather than silent.
-  return { slug, owned }
+  // and description so the transform is visible rather than silent — plus the
+  // revision it just created, so the still-open form can save again without
+  // conflicting with itself.
+  // Best-effort, like createPost: the post is written, so a byline link that
+  // couldn't be recorded is a warning rather than a failure.
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+
+  return {
+    slug,
+    owned,
+    revision: fileRevision(serialized),
+    ...(reason ? { warning: `Post saved, but ${reason}` } : {}),
+  }
 }
 
 export async function deletePost(

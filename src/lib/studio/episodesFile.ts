@@ -1,3 +1,6 @@
+import { quoteSingle } from './mdxHeader'
+import type { EpisodeFormat } from '@/lib/episodeFormat.mjs'
+
 export type EpisodeEntry = {
   slug: string
   episodeNumber: number
@@ -8,6 +11,7 @@ export type EpisodeEntry = {
   duration: string
   durationSeconds: number
   guests: string[]
+  format: EpisodeFormat
   audioUrl: string
   audioSizeBytes: number
   audioMimeType: string
@@ -17,9 +21,9 @@ export type EpisodeEntry = {
 
 const ANCHOR = 'export const episodes: Episode[] = ['
 
-function q(v: string): string {
-  return `'${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
-}
+// One escaping implementation for every generated single-quoted literal; see
+// quoteSingle for why newlines matter.
+const q = quoteSingle
 
 function arr(items: string[]): string {
   return `[${items.map(q).join(', ')}]`
@@ -38,6 +42,7 @@ function renderEntry(e: EpisodeEntry): string {
     `    durationSeconds: ${e.durationSeconds},`,
   ]
   if (e.guests.length) lines.push(`    guests: ${arr(e.guests)},`)
+  lines.push(`    format: ${q(e.format)},`)
   lines.push(`    audioUrl: ${q(e.audioUrl)},`)
   lines.push(`    audioSizeBytes: ${e.audioSizeBytes},`)
   lines.push(`    audioMimeType: ${q(e.audioMimeType)},`)

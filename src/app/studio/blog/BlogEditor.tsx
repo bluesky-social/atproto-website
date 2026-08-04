@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
+import { singleLine } from '@/lib/studio/text'
+import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -33,13 +35,23 @@ export function BlogEditor() {
   const [mode, setMode] = useState<'new' | 'edit'>('new')
   const [slug, setSlug] = useState('')
   const [owned, setOwned] = useState<Owned>({ ...EMPTY, date: todayLong() })
-  const [authorDid, setAuthorDid] = useState('')
+  // authors.json, so the form can say when the author has no DID yet. Refreshed
+  // by refreshList() on mount and after every save.
+  const [knownAuthors, setKnownAuthors] = useState<AuthorMap>({})
+  // Name → DID typed into the prompt below. Not post data — it lands in
+  // authors.json, and a map keeps the shape identical to the episode editor's.
+  const [authorDids, setAuthorDids] = useState<Record<string, string>>({})
   const [body, setBody] = useState('')
   const [ssiteUri, setSsiteUri] = useState('')
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<string>('')
+  // Fingerprint of the file this form was loaded from. Sent with every save so
+  // the server can refuse to overwrite changes made since. Empty means "no
+  // precondition" — a new post has no file yet.
+  const [revision, setRevision] = useState('')
+  const [conflict, setConflict] = useState(false)
   const [copied, setCopied] = useState(false)
   const [git, setGit] = useState<GitState | null>(null)
   const [makeBranch, setMakeBranch] = useState(true)
@@ -52,6 +64,7 @@ export function BlogEditor() {
       if (!res.ok) return setStatus('Could not load the post list')
       const data = await res.json()
       setPosts(data.posts ?? [])
+      setKnownAuthors(data.knownAuthors ?? {})
     } catch {
       setStatus('Could not load the post list')
     }
@@ -86,12 +99,15 @@ export function BlogEditor() {
     setMode('new')
     setSlug('')
     setOwned({ ...EMPTY, date: todayLong() })
-    setAuthorDid('')
+    setAuthorDids({})
     setBody('')
     setSsiteUri('')
     setOgImage(null)
     setDragging(false)
     setStatus('')
+    setRevision('')
+    setConflict(false)
+    setAuthorDids({})
     setBranchName('')
     setMakeBranch(true)
     loadGit()
@@ -107,11 +123,13 @@ export function BlogEditor() {
     setMode('edit')
     setSlug(s)
     setOwned(data.owned)
-    setAuthorDid('')
+    setAuthorDids({})
     setBody(data.body)
     setSsiteUri(data.standardSiteUri || '')
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
+    setRevision(data.revision ?? '')
+    setConflict(false)
     setStatus('')
   }
 
@@ -133,7 +151,7 @@ export function BlogEditor() {
         body: JSON.stringify({
           slug: finalSlug,
           ...owned,
-          authorDid: authorDid || undefined,
+          authorDids,
           body,
           branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
         }),
@@ -161,9 +179,16 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned, body }),
+        body: JSON.stringify({ owned, body, revision, authorDids }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // The file moved on since this form loaded. Nothing was written, so the
+        // call is the author's: reload and lose these edits, or copy them out
+        // first. Never resolve it silently — that is the bug this prevents.
+        setConflict(true)
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
@@ -174,8 +199,15 @@ export function BlogEditor() {
           description: data.owned.description,
         }))
       }
+      // Adopt the revision this save created, or the next save from this same
+      // open tab would conflict with its own write.
+      if (data.revision) setRevision(data.revision)
+      setConflict(false)
       applyPublish(data.publish)
-      setStatus(`Saved ${data.slug}`)
+      // Recorded DIDs come back in knownAuthors on the next refresh, so the
+      // prompt disappears on its own; drop what was typed either way.
+      setAuthorDids({})
+      setStatus(data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -230,6 +262,10 @@ export function BlogEditor() {
       // clipboard blocked — ignore
     }
   }
+
+  // A post has a single author, so this is at most one name — but the same
+  // helper and the same shape as the episode editor's hosts + guests.
+  const missingDids = unknownAuthors(knownAuthors, [owned.author])
 
   const set = (k: keyof Owned) => (e: { target: { value: string } }) =>
     setOwned((o) => ({ ...o, [k]: e.target.value }))
@@ -320,6 +356,22 @@ export function BlogEditor() {
                 {status}
               </span>
             )}
+            {/* Only offered on a conflict, and it discards the form's edits — so
+                it says so rather than looking like an ordinary refresh. */}
+            {conflict && (
+              <button
+                onClick={() => {
+                  if (
+                    confirm('Reload from disk? Unsaved changes in this form are lost.')
+                  ) {
+                    loadPost(slug)
+                  }
+                }}
+                className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+              >
+                Reload from disk
+              </button>
+            )}
             {mode === 'edit' && (
               <button
                 onClick={remove}
@@ -347,11 +399,22 @@ export function BlogEditor() {
             placeholder="Untitled post"
             className="w-full bg-transparent text-4xl font-semibold leading-tight tracking-tight text-neutral-900 outline-none placeholder:text-neutral-300"
           />
-          <input
+          {/* A textarea so long descriptions wrap instead of scrolling out of
+              sight. field-sizing:content grows it to fit where supported;
+              rows=2 is the fallback height elsewhere. The value stays
+              single-line — Enter is ignored and pasted breaks fold to spaces —
+              because this is one MDX header field and one line in posts.ts. */}
+          <textarea
             value={owned.description}
-            onChange={set('description')}
+            onChange={(e) =>
+              setOwned((o) => ({ ...o, description: singleLine(e.target.value) }))
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault()
+            }}
+            rows={2}
             placeholder="A one- or two-sentence description…"
-            className="mt-3 w-full bg-transparent text-lg text-neutral-600 outline-none placeholder:text-neutral-300"
+            className="mt-3 w-full resize-none bg-transparent text-lg text-neutral-600 outline-none [field-sizing:content] placeholder:text-neutral-300"
           />
 
           {/* Meta */}
@@ -381,14 +444,6 @@ export function BlogEditor() {
                     className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
                   />
                 </Field>
-                <Field label="Author DID" hint="only if new author">
-                  <input
-                    value={authorDid}
-                    onChange={(e) => setAuthorDid(e.target.value)}
-                    placeholder="did:plc:…"
-                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
-                  />
-                </Field>
               </>
             ) : (
               <Field label="Slug" hint="read-only — delete & recreate to rename">
@@ -398,6 +453,51 @@ export function BlogEditor() {
               </Field>
             )}
           </div>
+
+          {/* Replaces the old always-visible "Author DID" field, which only
+              appeared when creating a post and never said whether the author was
+              actually unknown. This appears only when authors.json has no DID for
+              the name, and it appears while editing too — an author usually turns
+              out to be unknown after the post exists. */}
+          {missingDids.length > 0 && (
+            <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
+              <p className="text-sm text-neutral-700">
+                <span className="font-medium">{missingDids[0]}</span> is not in
+                authors.json. Add a DID to link the byline to a Bluesky profile, or
+                leave blank and the name renders as plain text.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <input
+                  value={authorDids[missingDids[0]] ?? ''}
+                  onChange={(e) =>
+                    setAuthorDids((d) => ({ ...d, [missingDids[0]]: e.target.value }))
+                  }
+                  placeholder="did:plc:…"
+                  aria-label={`DID for ${missingDids[0]}`}
+                  aria-invalid={
+                    ((authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                      !isValidDid(authorDids[missingDids[0]] ?? '')) ||
+                    undefined
+                  }
+                  className={
+                    'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                    ((authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                    !isValidDid(authorDids[missingDids[0]] ?? '')
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-neutral-300 focus:border-neutral-500')
+                  }
+                />
+              </div>
+              {(authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                !isValidDid(authorDids[missingDids[0]] ?? '') && (
+                  <p className="mt-2 text-xs text-red-700">
+                    A DID looks like <span className="font-mono">did:plc:…</span> or{' '}
+                    <span className="font-mono">did:web:…</span>. Anything else is left
+                    out of authors.json.
+                  </p>
+                )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 border-t border-neutral-200 pt-6">

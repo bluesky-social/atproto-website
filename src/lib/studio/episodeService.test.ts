@@ -12,6 +12,7 @@ import {
   setEpisodeAudio,
   type CreateEpisodeInput,
 } from './episodeService'
+import { RevisionConflictError, fileRevision } from './revision'
 import type { EpisodePaths } from './paths'
 
 let root: string
@@ -48,7 +49,9 @@ beforeEach(() => {
   fs.mkdirSync(podcastDir, { recursive: true })
   const episodesFile = path.join(root, 'episodes.ts')
   fs.writeFileSync(episodesFile, EPISODES_SRC)
-  paths = { podcastDir, episodesFile }
+  const authorsFile = path.join(root, 'authors.json')
+  fs.writeFileSync(authorsFile, JSON.stringify({ 'Jim Ray': 'did:plc:jim' }, null, 2))
+  paths = { podcastDir, episodesFile, authorsFile }
 })
 
 afterEach(() => {
@@ -127,6 +130,20 @@ describe('createEpisode', () => {
     expect(page).toContain('mdxRouteMetadata(notes)')
   })
 
+  it('writes the requested format to both en.mdx and episodes.ts', async () => {
+    await createEpisode(paths, baseInput({ format: 'livestream' }))
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain("format: 'livestream',")
+    expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("format: 'livestream',")
+  })
+
+  it('defaults to conversation when no format is given', async () => {
+    await createEpisode(paths, baseInput())
+    expect(await readEpisode(paths, 'my-ep').then((e) => e.fields.format)).toBe(
+      'conversation',
+    )
+  })
+
   it('rejects a duplicate slug', async () => {
     await createEpisode(paths, baseInput())
     await expect(createEpisode(paths, baseInput())).rejects.toThrow(/exists/i)
@@ -168,6 +185,127 @@ describe('read/update/delete/list', () => {
     expect(mdx).toContain("coverImage: 'https://x/c.png'")
     expect(mdx).toContain('New notes.')
     expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("title: 'Renamed'")
+  })
+
+  // Reproduces how episode 14's pubDate was reverted: the editor loaded the
+  // episode, the file changed underneath it, and the next save wrote the stale
+  // snapshot back over both files.
+  it('refuses a save whose base revision is stale', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+
+    // Someone else corrects the pubDate while the form sits open.
+    const mdxPath = path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+    fs.writeFileSync(
+      mdxPath,
+      fs
+        .readFileSync(mdxPath, 'utf-8')
+        .replace(/pubDate: '[^']*'/, "pubDate: '2026-08-03T22:18:49.823Z'"),
+    )
+
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: opened.fields,
+        body: opened.body,
+        revision: opened.revision,
+      }),
+    ).rejects.toThrow(RevisionConflictError)
+
+    // The refusal must be total: the correction survives.
+    expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(
+      "pubDate: '2026-08-03T22:18:49.823Z'",
+    )
+  })
+
+  it('accepts a save whose base revision is current', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Renamed' },
+        body: opened.body,
+        revision: opened.revision,
+      }),
+    ).resolves.toMatchObject({ slug: 'my-ep' })
+  })
+
+  // Without this, a second save from the same open tab would conflict with the
+  // tab's own first save.
+  it('returns the new revision so consecutive saves work', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    const first = await updateEpisode(paths, 'my-ep', {
+      fields: { ...opened.fields, title: 'One' },
+      body: opened.body,
+      revision: opened.revision,
+    })
+    expect(first.revision).not.toBe(opened.revision)
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Two' },
+        body: opened.body,
+        revision: first.revision,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  // The audio route writes en.mdx itself, and the editor merges back only the
+  // audio fields so in-progress edits survive. Without a fresh revision the form
+  // would be stale the moment an upload finished, and the next save would be
+  // refused for no good reason.
+  it('setEpisodeAudio returns a revision the open form can keep saving with', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    const after = await setEpisodeAudio(paths, 'my-ep', {
+      audioUrl: 'https://media/new.mp3',
+      audioSizeBytes: 99,
+    })
+    // Must be the fingerprint of what is actually on disk now — not merely
+    // "different from before", which undefined would satisfy for free.
+    const onDisk = fs.readFileSync(
+      path.join(paths.podcastDir, 'my-ep', 'en.mdx'),
+      'utf-8',
+    )
+    expect(after.revision).toBe(fileRevision(onDisk))
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Edited after upload' },
+        body: opened.body,
+        revision: after.revision,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('still saves when no revision is sent, for the CLIs', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'No precondition' },
+        body: opened.body,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('preserves format across an update that does not mention it', async () => {
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...(await readEpisode(paths, 'my-ep')).fields, format: 'ama' },
+      body: 'Notes.',
+    })
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: ep.body })
+    expect((await readEpisode(paths, 'my-ep')).fields.format).toBe('ama')
+  })
+
+  // The editor's local Fields type gains `format` in a later task. Until it
+  // does — and for any other client that omits it — the server must not write
+  // `format: 'undefined'` into the header.
+  it('normalizes a missing format on update instead of writing undefined', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const withoutFormat = { ...ep.fields } as Record<string, unknown>
+    delete withoutFormat.format
+    await updateEpisode(paths, 'my-ep', {
+      fields: withoutFormat as typeof ep.fields,
+      body: ep.body,
+    })
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain("format: 'conversation',")
+    expect(mdx).not.toContain('undefined')
   })
 
   it('returns the smartened fields so the editor can show what was stored', async () => {
@@ -384,5 +522,126 @@ describe('read/update/delete/list', () => {
     fs.writeFileSync(mdxPath, withComment)
     const ep = await readEpisode(paths, 'my-ep')
     expect(ep.fields.title).toBe('My Episode')
+  })
+})
+
+describe('episode author DIDs', () => {
+  beforeEach(async () => {
+    await createEpisode(paths, baseInput())
+  })
+
+  const authors = () =>
+    JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8')) as Record<string, string>
+
+  it('records a guest DID supplied at create time', async () => {
+    await createEpisode(
+      paths,
+      baseInput({
+        slug: 'with-guest',
+        guests: ['Ethan Marcotte'],
+        authorDids: { 'Ethan Marcotte': 'did:plc:ethan' },
+      }),
+    )
+    expect(authors()['Ethan Marcotte']).toBe('did:plc:ethan')
+  })
+
+  // This is the case that bit us: the episode existed, the guest was added
+  // afterwards, and the DID had to go into authors.json by hand.
+  it('records a guest DID supplied while editing an existing episode', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, guests: ['Ethan Marcotte'] },
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Ethan Marcotte': 'did:plc:ethan' },
+    })
+    expect(authors()['Ethan Marcotte']).toBe('did:plc:ethan')
+  })
+
+  it('leaves an already-known name alone', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Jim Ray': 'did:plc:impostor' },
+    })
+    expect(authors()['Jim Ray']).toBe('did:plc:jim')
+  })
+
+  it('warns about a malformed DID but still saves the episode', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const res = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, title: 'Renamed', guests: ['Typo Person'] },
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Typo Person': 'not-a-did' },
+    })
+    expect(res.warning).toMatch(/Typo Person/)
+    expect(authors()['Typo Person']).toBeUndefined()
+    expect((await readEpisode(paths, 'my-ep')).fields.title).toBe('Renamed')
+  })
+
+  it('does not touch authors.json when no DIDs are sent', async () => {
+    const before = fs.readFileSync(paths.authorsFile, 'utf-8')
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      revision: ep.revision,
+    })
+    expect(fs.readFileSync(paths.authorsFile, 'utf-8')).toBe(before)
+  })
+})
+
+describe('setEpisodeAudio duration pairing', () => {
+  beforeEach(async () => {
+    await createEpisode(paths, baseInput())   // duration 00:10:00 / 600
+  })
+
+  const audio = { audioUrl: 'https://media/new.mp3', audioSizeBytes: 99 }
+
+  it('writes both duration fields when both are measured', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:20:00',
+      durationSeconds: 1200,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:20:00')
+    expect(f.durationSeconds).toBe(1200)
+  })
+
+  // The browser resolves 0 when it can't read a file's metadata, which the
+  // client formats as '00:00:00'. That string is truthy while 0 is not, so
+  // guarding the two fields separately wrote a zero duration and kept the old
+  // durationSeconds — the page showing 0:00 while the feed claimed 10 minutes.
+  it('writes neither when the duration could not be measured', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:00:00',
+      durationSeconds: 0,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:10:00')
+    expect(f.durationSeconds).toBe(600)
+  })
+
+  it('writes neither when only one of the pair arrives', async () => {
+    await setEpisodeAudio(paths, 'my-ep', { ...audio, duration: '00:20:00' })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:10:00')
+    expect(f.durationSeconds).toBe(600)
+  })
+
+  it('still records the new url and size when the duration is unusable', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:00:00',
+      durationSeconds: 0,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.audioUrl).toBe('https://media/new.mp3')
+    expect(f.audioSizeBytes).toBe(99)
   })
 })

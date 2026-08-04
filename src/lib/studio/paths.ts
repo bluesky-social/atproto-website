@@ -1,6 +1,8 @@
 import * as path from 'node:path'
 import type { StudioPaths } from './service'
 import { isoToDateStamp } from './episodeDates'
+import { slugify } from '@/lib/slugs.mjs'
+import { FORMAT_DIR_TOKENS, type EpisodeFormat } from '@/lib/episodeFormat.mjs'
 
 export function isProd(): boolean {
   return process.env.NODE_ENV === 'production'
@@ -15,28 +17,78 @@ export function studioPaths(): StudioPaths {
   }
 }
 
-export type EpisodePaths = { podcastDir: string; episodesFile: string }
+export type EpisodePaths = {
+  podcastDir: string
+  episodesFile: string
+  /** Shared with the blog: one name → DID map serves both bylines. */
+  authorsFile: string
+}
 
 export function episodePaths(): EpisodePaths {
   const cwd = process.cwd()
   return {
     podcastDir: path.join(cwd, 'src', 'app', '[locale]', 'off-protocol'),
     episodesFile: path.join(cwd, 'src', 'lib', 'episodes.ts'),
+    authorsFile: path.join(cwd, 'src', 'lib', 'authors.json'),
   }
 }
 
 /**
- * The R2 object key for an episode's MP3, matching the layout the show already
- * uses: a date-stamped directory per episode (`off-protocol/2026-06-16-<slug>/`).
- * Derived from the episode's publish date; an episode with no usable pubDate
- * gets an undated directory rather than a bogus one. The key is fixed at upload
- * time — changing the publish date later doesn't move the object, and the URL
- * stored in the episode header stays authoritative.
+ * The R2 object key for an episode's MP3:
+ * `off-protocol/<YYYY-MM-DD>-<who-or-what>/<slug>.mp3`.
+ *
+ * The directory is named after the first guest when there is one
+ * (`2026-07-22-erin-kissane`), and after the episode's format when there isn't
+ * (`2026-07-08-live`). Both match folders the show already made by hand. A guest
+ * wins over the format even for an AMA, so there is one rule rather than a
+ * special case per format.
+ *
+ * It deliberately does *not* interpolate the slug: slugs begin with the publish
+ * date now, which produced directories like
+ * `off-protocol/2026-08-03-2026-08-03-designing-for-uncertainty-…/`.
+ *
+ * An episode with no usable pubDate gets an undated directory rather than a
+ * bogus one. The key is fixed at upload time — changing the publish date, the
+ * guests, or the format later doesn't move the object, and the URL stored in the
+ * episode header stays authoritative.
+ *
+ * `uploadedFilename` names the object after the file that was dropped, so
+ * uploading a differently-named file writes a **new** object instead of
+ * overwriting the old one in place. That busts any CDN cache outright, and the
+ * changed URL is visible confirmation the bytes landed. The previous object is
+ * left alone — it costs nothing and is a free backup.
  */
-export function audioObjectKey(slug: string, pubDate: string): string {
+export function audioObjectKey(
+  slug: string,
+  pubDate: string,
+  // readonly: this only reads the guest list, so a frozen or `as const` array is
+  // just as valid an argument as a mutable one.
+  episode: { guests?: readonly string[]; format: EpisodeFormat },
+  uploadedFilename?: string,
+): string {
   const stamp = isoToDateStamp(pubDate)
-  const dir = stamp ? `${stamp}-${slug}` : slug
-  return `off-protocol/${dir}/${slug}.mp3`
+  const guest = episode.guests?.[0]
+  const who = guest ? slugify(guest) : FORMAT_DIR_TOKENS[episode.format]
+  const dir = stamp ? `${stamp}-${who}` : slug
+  return `off-protocol/${dir}/${audioBaseName(slug, uploadedFilename)}.mp3`
+}
+
+/**
+ * The object's basename, from the uploaded filename when there is one.
+ *
+ * Slugified rather than taken verbatim: this ends up in a URL that has to
+ * survive being pasted into RSS and read by podcast clients, and some handle
+ * percent-encoded spaces badly. The extension is dropped and replaced rather
+ * than trusted, so `Loud.MP3` and a file with no extension both yield `.mp3`.
+ *
+ * Falls back to the slug when the name slugifies to nothing — dropping a file
+ * called `___.mp3` must not produce an object named `.mp3`.
+ */
+function audioBaseName(slug: string, uploadedFilename?: string): string {
+  if (!uploadedFilename) return slug
+  // Only the final dot is the extension: `ep.12.final.mp3` keeps `ep.12.final`.
+  const withoutExtension = uploadedFilename.replace(/\.[^./]*$/, '')
+  return slugify(withoutExtension) || slug
 }
 
 /**

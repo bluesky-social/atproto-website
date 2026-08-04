@@ -17,6 +17,7 @@ const FIELDS: EpisodeFields = {
   duration: '00:20:00',
   durationSeconds: 1200,
   guests: ['Ada L'],
+  format: 'conversation',
   audioUrl: 'https://media.atproto.com/off-protocol/x/x.mp3',
   audioSizeBytes: 123,
   audioMimeType: 'audio/mpeg',
@@ -65,5 +66,43 @@ describe('round-trip', () => {
     const out = next.headerEntries.map((e) => `${e.key}:${e.rawValue}`).join('|')
     expect(out).toContain("title:'Renamed'")
     expect(out).toContain("coverImage:'https://x/c.png'")
+  })
+})
+
+describe('format', () => {
+  it('round-trips through the header', () => {
+    const mdx = newEpisodeMdx({ ...FIELDS, format: 'livestream' }, 'Notes.')
+    expect(mdx).toContain("format: 'livestream',")
+    expect(getEpisodeFields(parseMdxFile(mdx)).format).toBe('livestream')
+  })
+
+  // Simulates every en.mdx written before this field existed.
+  it('reads as conversation when the header has no format key', () => {
+    const withoutFormat = newEpisodeMdx(FIELDS, 'Notes.').replace(
+      /\n\s*format: '[^']*',/,
+      '',
+    )
+    expect(withoutFormat).not.toContain('format:')
+    expect(getEpisodeFields(parseMdxFile(withoutFormat)).format).toBe('conversation')
+  })
+
+  it('reads an unrecognized value as conversation rather than throwing', () => {
+    const withTypo = newEpisodeMdx(FIELDS, 'Notes.').replace(
+      "format: 'conversation',",
+      "format: 'livestrem',",
+    )
+    expect(getEpisodeFields(parseMdxFile(withTypo)).format).toBe('conversation')
+  })
+
+  it('emits format immediately after guests and before audioUrl', () => {
+    const mdx = newEpisodeMdx({ ...FIELDS, format: 'ama' }, 'Notes.')
+    expect(mdx.indexOf("guests: ['Ada L']")).toBeLessThan(mdx.indexOf("format: 'ama'"))
+    expect(mdx.indexOf("format: 'ama'")).toBeLessThan(mdx.indexOf('audioUrl:'))
+  })
+
+  it('emits format even for a conversation, so the value is never implicit', () => {
+    expect(newEpisodeMdx({ ...FIELDS, format: 'conversation' }, 'Notes.')).toContain(
+      "format: 'conversation',",
+    )
   })
 })

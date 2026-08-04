@@ -41,6 +41,12 @@ describe('prependEntry', () => {
     expect(firstSlug).toBeGreaterThan(-1)
     expect(firstSlug).toBeLessThan(oldSlug)
   })
+  // A raw newline would split the literal across two lines and make posts.ts
+  // unparseable, so every rendered value has to stay on its own line.
+  it('escapes newlines in a multi-line description', () => {
+    const out = prependEntry(SRC, { ...ENTRY, description: 'first\nsecond' })
+    expect(out).toContain("description: 'first\\nsecond',")
+  })
   it('throws when the anchor is missing', () => {
     expect(() => prependEntry('const x = []\n', ENTRY)).toThrow(/anchor/i)
   })

@@ -5,11 +5,20 @@ import {
   isoToLocalInput,
   localInputToIso,
   isoToHumanDate,
+  dateDivergesFromPubDate,
 } from '@/lib/studio/episodeDates'
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { episodeSlug } from '@/lib/slugs.mjs'
+import { singleLine } from '@/lib/studio/text'
+import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
+import {
+  EPISODE_FORMATS,
+  FORMAT_LABELS,
+  DEFAULT_EPISODE_FORMAT,
+  type EpisodeFormat,
+} from '@/lib/episodeFormat.mjs'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -24,6 +33,7 @@ type Fields = {
   duration: string
   durationSeconds: number
   guests: string[]
+  format: EpisodeFormat
   audioUrl: string
   audioSizeBytes: number
   audioMimeType: string
@@ -60,6 +70,7 @@ function emptyFields(nextNumber: number): Fields {
     duration: '',
     durationSeconds: 0,
     guests: [],
+    format: DEFAULT_EPISODE_FORMAT,
     audioUrl: '',
     audioSizeBytes: 0,
     audioMimeType: 'audio/mpeg',
@@ -80,6 +91,11 @@ export function EpisodeEditor() {
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [status, setStatus] = useState('')
+  // Fingerprint of the file this form was loaded from. Sent with every save so
+  // the server can refuse to overwrite changes made since. Empty means "no
+  // precondition" — a new episode has no file yet.
+  const [revision, setRevision] = useState('')
+  const [conflict, setConflict] = useState(false)
   const [git, setGit] = useState<GitState | null>(null)
   const [makeBranch, setMakeBranch] = useState(true)
   const [branchName, setBranchName] = useState('')
@@ -89,6 +105,12 @@ export function EpisodeEditor() {
   // keystroke, so a space could never survive being typed.
   const [hostsText, setHostsText] = useState('')
   const [guestsText, setGuestsText] = useState('')
+  // authors.json, so the form can say which hosts or guests have no DID yet.
+  // Refreshed by refreshList() on mount and after every save.
+  const [knownAuthors, setKnownAuthors] = useState<AuthorMap>({})
+  // Name → DID typed into the prompts below. Kept separate from `fields` because
+  // these are not episode data; they end up in authors.json.
+  const [authorDids, setAuthorDids] = useState<Record<string, string>>({})
 
   async function refreshList() {
     try {
@@ -97,6 +119,7 @@ export function EpisodeEditor() {
       const data = await res.json()
       setEpisodes(data.episodes ?? [])
       setNextNumber(data.nextNumber ?? 1)
+      setKnownAuthors(data.knownAuthors ?? {})
       return data.nextNumber ?? 1
     } catch {
       setStatus('Could not load the episode list')
@@ -114,6 +137,10 @@ export function EpisodeEditor() {
     title: fields.title,
     guests: fields.guests,
   })
+
+  // Hosts and guests whose names authors.json has no DID for. Derived, so it
+  // updates as the name fields are typed in and clears as DIDs are recorded.
+  const missingDids = unknownAuthors(knownAuthors, [...fields.hosts, ...fields.guests])
 
   async function loadGit() {
     try {
@@ -150,6 +177,8 @@ export function EpisodeEditor() {
     setBody('')
     setOgImage(null)
     setStatus('')
+    setRevision('')
+    setConflict(false)
     setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
     setMakeBranch(true)
     loadGit()
@@ -167,6 +196,8 @@ export function EpisodeEditor() {
     setBody(data.body)
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
+    setRevision(data.revision ?? '')
+    setConflict(false)
     setStatus('')
   }
 
@@ -219,7 +250,18 @@ export function EpisodeEditor() {
       duration: saved.duration ?? duration,
       durationSeconds: saved.durationSeconds ?? durationSeconds,
     }))
-    setStatus('Audio uploaded and saved')
+    // The upload rewrote en.mdx, so the form's base revision is now stale.
+    // Adopt the new one or the next save would be refused for no reason.
+    if (data.revision) setRevision(data.revision)
+    // Say which object it wrote. "Uploaded" alone is indistinguishable from
+    // "nothing changed" when the name, size and duration all happen to match —
+    // which is exactly how a successful replace once looked like a no-op.
+    const objectName = String(data.audioUrl ?? '').split('/').pop()
+    setStatus(
+      data.replacedInPlace
+        ? `Audio replaced in place: ${objectName}`
+        : `Audio uploaded as ${objectName} — the previous file is still in the bucket`,
+    )
   }
 
   async function onOgImage(file: File) {
@@ -252,6 +294,8 @@ export function EpisodeEditor() {
           pubDate: fields.pubDate,
           hosts: fields.hosts,
           guests: fields.guests,
+          format: fields.format,
+          authorDids,
           duration: fields.duration,
           durationSeconds: fields.durationSeconds,
           audioUrl: fields.audioUrl,
@@ -273,6 +317,10 @@ export function EpisodeEditor() {
       }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       await loadEpisode(data.slug)
+      // Recorded DIDs come back in knownAuthors on the next refresh, so the
+      // prompts disappear on their own; drop what was typed either way.
+      setAuthorDids({})
+      if (data.warning) return setStatus(data.warning)
       setStatus(
         data.branch?.created
           ? `Created ${data.slug} on ${data.branch.name}`
@@ -285,9 +333,16 @@ export function EpisodeEditor() {
       const res = await fetch(`/api/studio/podcast/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields, body }),
+        body: JSON.stringify({ fields, body, revision, authorDids }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // The file moved on since this form loaded. Nothing was written, so the
+        // call is the author's: reload and lose these edits, or copy them out
+        // first. Never resolve it silently — that is the bug this prevents.
+        setConflict(true)
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
@@ -298,7 +353,12 @@ export function EpisodeEditor() {
           description: data.fields.description,
         }))
       }
-      setStatus(`Saved ${data.slug}`)
+      // Adopt the revision this save created, or the next save from this same
+      // open tab would conflict with its own write.
+      if (data.revision) setRevision(data.revision)
+      setConflict(false)
+      setAuthorDids({})
+      setStatus(data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -376,6 +436,20 @@ export function EpisodeEditor() {
           </div>
           <div className="flex items-center gap-4">
             {status && <span className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')} aria-live="polite">{status}</span>}
+            {/* Only offered on a conflict, and it discards the form's edits — so
+                it says so rather than looking like an ordinary refresh. */}
+            {conflict && (
+              <button
+                onClick={() => {
+                  if (confirm('Reload from disk? Unsaved changes in this form are lost.')) {
+                    loadEpisode(slug)
+                  }
+                }}
+                className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+              >
+                Reload from disk
+              </button>
+            )}
             {mode === 'edit' && <button onClick={remove} className="text-sm text-neutral-400 hover:text-red-600">Delete</button>}
             {mode === 'edit' && (
               <button onClick={save} className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-neutral-700">Save</button>
@@ -385,7 +459,12 @@ export function EpisodeEditor() {
 
         <div className="mx-auto max-w-3xl px-8 py-10">
           <input value={fields.title} onChange={(e) => setF('title', e.target.value)} placeholder="Untitled episode" className="w-full bg-transparent text-4xl font-semibold tracking-tight outline-none placeholder:text-neutral-300" />
-          <input value={fields.description} onChange={(e) => setF('description', e.target.value)} placeholder="A one- or two-sentence description…" className="mt-3 w-full bg-transparent text-lg text-neutral-600 outline-none placeholder:text-neutral-300" />
+          {/* A textarea so long descriptions wrap instead of scrolling out of
+              sight. field-sizing:content grows it to fit where supported;
+              rows=2 is the fallback height elsewhere. The value stays
+              single-line — Enter is ignored and pasted breaks fold to spaces —
+              because this is one MDX header field and one RSS element. */}
+          <textarea value={fields.description} onChange={(e) => setF('description', singleLine(e.target.value))} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault() }} rows={2} placeholder="A one- or two-sentence description…" className="mt-3 w-full resize-none bg-transparent text-lg text-neutral-600 outline-none [field-sizing:content] placeholder:text-neutral-300" />
 
           <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-neutral-200 pt-6">
             <div><span className={label}>Episode #</span><input type="number" value={fields.episodeNumber} onChange={(e) => setF('episodeNumber', Number(e.target.value))} className={input} /></div>
@@ -396,7 +475,17 @@ export function EpisodeEditor() {
             <div>
               <span className={label}>Display date</span>
               <input value={fields.date} onChange={(e) => setF('date', e.target.value)} className={input} />
-              <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
+              {/* Editing this field alone is supported ("August 2026"), but
+                  landing on a different *day* than pubDate means the page and the
+                  feed advertise different dates. Episode 14 shipped that way. */}
+              {dateDivergesFromPubDate(fields.date, fields.pubDate) ? (
+                <span className="mt-1 block text-xs text-amber-700">
+                  The feed will say {isoToHumanDate(fields.pubDate)}. Change the
+                  publish date above if this should match.
+                </span>
+              ) : (
+                <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
+              )}
             </div>
             <div>
               <span className={label}>Hosts (comma-sep)</span>
@@ -421,6 +510,20 @@ export function EpisodeEditor() {
                 className={input}
               />
             </div>
+            <div>
+              <span className={label}>Format</span>
+              {/* The cast is safe: every option value comes from
+                  EPISODE_FORMATS, so a <select> cannot produce anything else. */}
+              <select
+                value={fields.format}
+                onChange={(e) => setF('format', e.target.value as EpisodeFormat)}
+                className={input}
+              >
+                {EPISODE_FORMATS.map((f) => (
+                  <option key={f} value={f}>{FORMAT_LABELS[f]}</option>
+                ))}
+              </select>
+            </div>
             {mode === 'new' ? (
               <div><span className={label}>Slug (blank = from title)</span><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={defaultSlug || 'my-episode'} className={input + ' font-mono'} /></div>
             ) : (
@@ -430,6 +533,58 @@ export function EpisodeEditor() {
               <input type="checkbox" checked={fields.explicit} onChange={(e) => setF('explicit', e.target.checked)} /> Explicit
             </label>
           </div>
+
+          {/* Only appears when a host or guest has no DID on file. Without it
+              their byline renders as plain text — which is how Ethan Marcotte's
+              episode shipped, since nothing said the name was unknown. Shown
+              while editing too, not just on create: a guest is usually added
+              after the episode already exists. */}
+          {missingDids.length > 0 && (
+            <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
+              <p className="text-sm text-neutral-700">
+                {missingDids.length === 1 ? 'This name is' : 'These names are'} not in
+                authors.json. Add {missingDids.length === 1 ? 'a DID' : 'DIDs'} to link{' '}
+                {missingDids.length === 1 ? 'it' : 'them'} to a Bluesky profile, or leave
+                blank and the name renders as plain text.
+              </p>
+              <div className="mt-3 space-y-2">
+                {missingDids.map((name) => {
+                  const value = authorDids[name] ?? ''
+                  const bad = value.trim() !== '' && !isValidDid(value)
+                  return (
+                    <div key={name} className="flex items-center gap-3">
+                      <span className="w-44 shrink-0 truncate text-sm text-neutral-600">{name}</span>
+                      <input
+                        value={value}
+                        onChange={(e) => setAuthorDids((d) => ({ ...d, [name]: e.target.value }))}
+                        placeholder="did:plc:…"
+                        aria-label={`DID for ${name}`}
+                        aria-invalid={bad || undefined}
+                        className={
+                          'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                          (bad
+                            ? 'border-red-400 focus:border-red-500'
+                            : 'border-neutral-300 focus:border-neutral-500')
+                        }
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+              {/* Flagged while typing rather than only on save: otherwise the
+                  server accepts the save and reports the problem afterwards. */}
+              {missingDids.some((n) => {
+                const v = authorDids[n] ?? ''
+                return v.trim() !== '' && !isValidDid(v)
+              }) && (
+                <p className="mt-2 text-xs text-red-700">
+                  A DID looks like <span className="font-mono">did:plc:…</span> or{' '}
+                  <span className="font-mono">did:web:…</span>. Anything else is left out of
+                  authors.json.
+                </p>
+              )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 border-t border-neutral-200 pt-6">
