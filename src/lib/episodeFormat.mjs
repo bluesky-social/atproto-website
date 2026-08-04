@@ -72,7 +72,7 @@ export const FILTER_ORDER = ['all', 'livestream', 'ama', 'conversation']
  * @type {Record<FormatFilter, string>}
  */
 export const FILTER_LABELS = {
-  all: 'All',
+  all: 'All Episodes',
   livestream: 'Live Recordings',
   ama: 'AMAs',
   conversation: 'Conversations',

@@ -64,7 +64,7 @@ export default async function OffProtocolIndexPage({
           resolution, which the client router handles inconsistently. */}
       <nav
         aria-label="Filter episodes by format"
-        className="mb-8 flex flex-wrap items-baseline gap-x-4 gap-y-2 text-sm"
+        className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-2 text-sm"
       >
         <span className="text-zinc-500 dark:text-zinc-500">Show:</span>
         {FILTER_ORDER.map((key) => {
