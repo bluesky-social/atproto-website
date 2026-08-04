@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { episodes, formatDurationForDisplay, SHOW } from '@/lib/episodes'
+import { FORMAT_LABELS } from '@/lib/episodeFormat.mjs'
 import { SubscribeLinks } from '@/components/SubscribeLinks'
 import { OffProtocolNext } from '@/components/OffProtocolNext'
 
@@ -57,6 +58,11 @@ export default async function OffProtocolIndexPage() {
                   <time dateTime={episode.pubDate}>{episode.date}</time>
                   <span aria-hidden="true">·</span>
                   <span>{formatDurationForDisplay(episode.durationSeconds)}</span>
+                  {/* Same neutral pill for every format — the word does the
+                      differentiating, which suits the restraint of this page. */}
+                  <span className="rounded-full border border-zinc-300 px-2 py-0.5 text-xs dark:border-zinc-700">
+                    {FORMAT_LABELS[episode.format]}
+                  </span>
                 </div>
                 <h2 className="mt-2 text-xl font-semibold text-zinc-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
                   {episode.title}
