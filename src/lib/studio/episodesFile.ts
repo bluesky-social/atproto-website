@@ -1,4 +1,5 @@
 import { quoteSingle } from './mdxHeader'
+import type { EpisodeFormat } from '@/lib/episodeFormat.mjs'
 
 export type EpisodeEntry = {
   slug: string
@@ -10,6 +11,7 @@ export type EpisodeEntry = {
   duration: string
   durationSeconds: number
   guests: string[]
+  format: EpisodeFormat
   audioUrl: string
   audioSizeBytes: number
   audioMimeType: string
@@ -40,6 +42,7 @@ function renderEntry(e: EpisodeEntry): string {
     `    durationSeconds: ${e.durationSeconds},`,
   ]
   if (e.guests.length) lines.push(`    guests: ${arr(e.guests)},`)
+  lines.push(`    format: ${q(e.format)},`)
   lines.push(`    audioUrl: ${q(e.audioUrl)},`)
   lines.push(`    audioSizeBytes: ${e.audioSizeBytes},`)
   lines.push(`    audioMimeType: ${q(e.audioMimeType)},`)

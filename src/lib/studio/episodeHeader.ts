@@ -6,6 +6,7 @@ import {
   type ParsedMdx,
   type HeaderEntry,
 } from './mdxHeader'
+import { toEpisodeFormat, type EpisodeFormat } from '@/lib/episodeFormat.mjs'
 
 export type EpisodeFields = {
   episodeNumber: number
@@ -17,6 +18,7 @@ export type EpisodeFields = {
   duration: string
   durationSeconds: number
   guests: string[]
+  format: EpisodeFormat
   audioUrl: string
   audioSizeBytes: number
   audioMimeType: string
@@ -37,6 +39,7 @@ const KEY_ORDER = [
   'duration',
   'durationSeconds',
   'guests',
+  'format',
   'audioUrl',
   'audioSizeBytes',
   'audioMimeType',
@@ -99,6 +102,10 @@ function buildEntries(
   push('duration', quoteSingle(fields.duration))
   push('durationSeconds', String(fields.durationSeconds))
   if (fields.guests.length) push('guests', arrayLiteral(fields.guests))
+  // Always emitted, including for a conversation: the listing badges every
+  // episode, so an implicit value would be indistinguishable from an unlabelled
+  // one.
+  push('format', quoteSingle(fields.format))
   push('audioUrl', quoteSingle(fields.audioUrl))
   push('audioSizeBytes', String(fields.audioSizeBytes))
   push('audioMimeType', quoteSingle(fields.audioMimeType))
@@ -154,6 +161,7 @@ export function getEpisodeFields(parsed: ParsedMdx): EpisodeFields {
     duration: str('duration'),
     durationSeconds: num('durationSeconds'),
     guests: arr('guests'),
+    format: toEpisodeFormat(str('format')),
     audioUrl: str('audioUrl'),
     audioSizeBytes: num('audioSizeBytes'),
     audioMimeType: str('audioMimeType') || 'audio/mpeg',

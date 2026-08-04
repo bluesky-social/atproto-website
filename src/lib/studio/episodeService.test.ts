@@ -128,6 +128,20 @@ describe('createEpisode', () => {
     expect(page).toContain('mdxRouteMetadata(notes)')
   })
 
+  it('writes the requested format to both en.mdx and episodes.ts', async () => {
+    await createEpisode(paths, baseInput({ format: 'livestream' }))
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain("format: 'livestream',")
+    expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("format: 'livestream',")
+  })
+
+  it('defaults to conversation when no format is given', async () => {
+    await createEpisode(paths, baseInput())
+    expect(await readEpisode(paths, 'my-ep').then((e) => e.fields.format)).toBe(
+      'conversation',
+    )
+  })
+
   it('rejects a duplicate slug', async () => {
     await createEpisode(paths, baseInput())
     await expect(createEpisode(paths, baseInput())).rejects.toThrow(/exists/i)
@@ -264,6 +278,32 @@ describe('read/update/delete/list', () => {
         body: opened.body,
       }),
     ).resolves.toBeTruthy()
+  })
+
+  it('preserves format across an update that does not mention it', async () => {
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...(await readEpisode(paths, 'my-ep')).fields, format: 'ama' },
+      body: 'Notes.',
+    })
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: ep.body })
+    expect((await readEpisode(paths, 'my-ep')).fields.format).toBe('ama')
+  })
+
+  // The editor's local Fields type gains `format` in a later task. Until it
+  // does — and for any other client that omits it — the server must not write
+  // `format: 'undefined'` into the header.
+  it('normalizes a missing format on update instead of writing undefined', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const withoutFormat = { ...ep.fields } as Record<string, unknown>
+    delete withoutFormat.format
+    await updateEpisode(paths, 'my-ep', {
+      fields: withoutFormat as typeof ep.fields,
+      body: ep.body,
+    })
+    const mdx = fs.readFileSync(path.join(paths.podcastDir, 'my-ep', 'en.mdx'), 'utf-8')
+    expect(mdx).toContain("format: 'conversation',")
+    expect(mdx).not.toContain('undefined')
   })
 
   it('returns the smartened fields so the editor can show what was stored', async () => {

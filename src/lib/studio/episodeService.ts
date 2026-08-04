@@ -4,6 +4,11 @@ import * as path from 'node:path'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
 import { fileRevision, assertRevision } from './revision'
 import {
+  toEpisodeFormat,
+  DEFAULT_EPISODE_FORMAT,
+  type EpisodeFormat,
+} from '@/lib/episodeFormat.mjs'
+import {
   newEpisodeMdx,
   applyEpisodeFields,
   getEpisodeFields,
@@ -34,6 +39,8 @@ export type CreateEpisodeInput = {
   pubDate?: string
   hosts: string[]
   guests: string[]
+  /** Defaults to 'conversation' when the caller doesn't say. */
+  format?: EpisodeFormat
   duration: string
   durationSeconds: number
   audioUrl: string
@@ -81,7 +88,9 @@ export default function EpisodeRoute() {
 `
 }
 
-function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
+// Exported for the one-shot format backfill, which needs the same
+// EpisodeFields → EpisodeEntry mapping the service uses.
+export function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
   return {
     slug,
     episodeNumber: f.episodeNumber,
@@ -92,6 +101,7 @@ function entryFrom(slug: string, f: EpisodeFields): EpisodeEntry {
     duration: f.duration,
     durationSeconds: f.durationSeconds,
     guests: f.guests,
+    format: f.format,
     audioUrl: f.audioUrl,
     audioSizeBytes: f.audioSizeBytes,
     audioMimeType: f.audioMimeType,
@@ -174,6 +184,7 @@ export async function createEpisode(
     duration: input.duration,
     durationSeconds: input.durationSeconds,
     guests: input.guests,
+    format: input.format ?? DEFAULT_EPISODE_FORMAT,
     audioUrl: input.audioUrl,
     audioSizeBytes: input.audioSizeBytes,
     audioMimeType: input.audioMimeType ?? 'audio/mpeg',
@@ -211,6 +222,10 @@ export async function updateEpisode(
   const fields = {
     ...smartenTitleAndDescription(input.fields),
     hasShowNotes: Boolean(input.body && input.body.trim()),
+    // Defensive: the editor's own Fields type gains `format` in a later task,
+    // and a stale browser tab can PUT without it. Without this the header would
+    // get `format: 'undefined'`.
+    format: toEpisodeFormat(input.fields.format),
   }
   const raw = await fs.readFile(mdxPath, 'utf-8')
   // Check before the first write, so a refusal leaves both files untouched.

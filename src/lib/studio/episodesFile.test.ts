@@ -36,6 +36,7 @@ const ENTRY: EpisodeEntry = {
   duration: '00:12:00',
   durationSeconds: 720,
   guests: ['Ada'],
+  format: 'conversation',
   audioUrl: 'https://media/y.mp3',
   audioSizeBytes: 20,
   audioMimeType: 'audio/mpeg',
@@ -54,6 +55,18 @@ describe('prependEntry', () => {
     expect(out).not.toContain('explicit:') // false omitted
     expect(out).not.toContain('blueskyPostUrl:') // empty omitted
   })
+  it('renders format after guests and before audioUrl', () => {
+    const out = prependEntry(SRC, { ...ENTRY, format: 'livestream' })
+    expect(out).toContain("format: 'livestream',")
+    expect(out.indexOf("guests: ['Ada']")).toBeLessThan(out.indexOf("format: 'livestream'"))
+    expect(out.indexOf("format: 'livestream'")).toBeLessThan(out.indexOf('audioUrl:'))
+  })
+
+  it('renders format even when there are no guests', () => {
+    const out = prependEntry(SRC, { ...ENTRY, guests: [], format: 'livestream' })
+    expect(out).toContain("format: 'livestream',")
+  })
+
   it('throws when the anchor is missing', () => {
     expect(() => prependEntry('const x = []\n', ENTRY)).toThrow(/anchor/i)
   })
