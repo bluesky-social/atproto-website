@@ -29,6 +29,17 @@ describe('quoteSingle', () => {
   it('wraps and escapes single quotes and backslashes', () => {
     expect(quoteSingle("It's a \\ test")).toBe("'It\\'s a \\\\ test'")
   })
+
+  // A raw newline inside a single-quoted literal is a syntax error, so a
+  // multi-line value would emit an episodes.ts/posts.ts that cannot be parsed —
+  // taking the whole build down.
+  it('escapes newlines so the literal stays on one line', () => {
+    expect(quoteSingle('first\nsecond')).toBe("'first\\nsecond'")
+  })
+
+  it('escapes carriage returns', () => {
+    expect(quoteSingle('first\r\nsecond')).toBe("'first\\r\\nsecond'")
+  })
 })
 
 describe('decodeStringLiteral', () => {
@@ -37,6 +48,17 @@ describe('decodeStringLiteral', () => {
   })
   it('decodes double-quoted', () => {
     expect(decodeStringLiteral('"hello"')).toBe('hello')
+  })
+
+  // Must understand every escape quoteSingle emits, or the pair loses data:
+  // a naive "backslash takes the next char literally" turns \n into the letter n.
+  it('decodes escaped newlines back to newlines', () => {
+    expect(decodeStringLiteral("'first\\nsecond'")).toBe('first\nsecond')
+  })
+
+  it('round-trips a multi-line value through quoteSingle', () => {
+    const value = 'first\nsecond\ttabbed'
+    expect(decodeStringLiteral(quoteSingle(value))).toBe(value)
   })
 })
 

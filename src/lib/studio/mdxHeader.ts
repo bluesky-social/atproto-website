@@ -23,9 +23,22 @@ function isEscapedAt(s: string, i: number): boolean {
   return n % 2 === 1
 }
 
+// Escape order matters: backslashes first, so the escapes added afterwards
+// aren't themselves doubled. Newlines and carriage returns must be escaped
+// because a raw one closes nothing and simply breaks the literal — an
+// unparseable episodes.ts/posts.ts fails the whole build. Tabs are legal inside
+// a single-quoted string, so they pass through untouched.
 export function quoteSingle(value: string): string {
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+  return `'${value
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')}'`
 }
+
+// Every escape quoteSingle can emit must decode back to the same character, or
+// the pair silently corrupts data on round-trip.
+const ESCAPES: Record<string, string> = { n: '\n', r: '\r', t: '\t' }
 
 export function decodeStringLiteral(raw: string): string {
   const trimmed = raw.trim()
@@ -35,7 +48,10 @@ export function decodeStringLiteral(raw: string): string {
     let out = ''
     for (let i = 0; i < inner.length; i++) {
       if (inner[i] === '\\' && i + 1 < inner.length) {
-        out += inner[i + 1] // unescape: backslash takes the next char literally
+        const next = inner[i + 1]
+        // A recognized escape maps to its character; anything else (\\ , \') is
+        // the backslash taking the next char literally.
+        out += ESCAPES[next] ?? next
         i++
       } else {
         out += inner[i]

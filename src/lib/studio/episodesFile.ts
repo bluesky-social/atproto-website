@@ -1,3 +1,5 @@
+import { quoteSingle } from './mdxHeader'
+
 export type EpisodeEntry = {
   slug: string
   episodeNumber: number
@@ -17,9 +19,9 @@ export type EpisodeEntry = {
 
 const ANCHOR = 'export const episodes: Episode[] = ['
 
-function q(v: string): string {
-  return `'${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
-}
+// One escaping implementation for every generated single-quoted literal; see
+// quoteSingle for why newlines matter.
+const q = quoteSingle
 
 function arr(items: string[]): string {
   return `[${items.map(q).join(', ')}]`

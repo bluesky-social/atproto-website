@@ -57,6 +57,13 @@ describe('prependEntry', () => {
   it('throws when the anchor is missing', () => {
     expect(() => prependEntry('const x = []\n', ENTRY)).toThrow(/anchor/i)
   })
+
+  // A raw newline would split the literal across two lines and make episodes.ts
+  // unparseable, so every rendered value has to stay on its own line.
+  it('escapes newlines in a multi-line description', () => {
+    const out = prependEntry(SRC, { ...ENTRY, description: 'first\nsecond' })
+    expect(out).toContain("description: 'first\\nsecond',")
+  })
 })
 
 describe('updateEntryBySlug', () => {

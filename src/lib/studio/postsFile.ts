@@ -1,3 +1,5 @@
+import { quoteSingle } from './mdxHeader'
+
 export type PostEntry = {
   slug: string
   title: string
@@ -8,9 +10,9 @@ export type PostEntry = {
 
 const ANCHOR = 'export const posts: BlogPost[] = ['
 
-function q(value: string): string {
-  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
-}
+// One escaping implementation for every generated single-quoted literal; see
+// quoteSingle for why newlines matter.
+const q = quoteSingle
 
 function renderEntry(entry: PostEntry): string {
   const lines = [
