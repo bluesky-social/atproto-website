@@ -180,10 +180,53 @@ describe('createPost', () => {
       description: 'D',
       date: 'June 1, 2026',
       author: 'Guest Person',
-      authorDid: 'did:plc:guest',
+      authorDids: { 'Guest Person': 'did:plc:guest' },
     })
     const authors = JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8'))
     expect(authors['Guest Person']).toBe('did:plc:guest')
+  })
+
+  // The old field only existed on create, so an author who turned out to be
+  // unknown after the post was written had to be added to authors.json by hand.
+  it('adds a DID on update too, not just on create', async () => {
+    await createPost(paths, {
+      slug: 'later',
+      title: 'T',
+      description: 'D',
+      date: 'June 1, 2026',
+      author: 'Late Arrival',
+    })
+    expect(
+      JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8'))['Late Arrival'],
+    ).toBeUndefined()
+
+    const opened = await readPost(paths, 'later')
+    await updatePost(paths, 'later', {
+      owned: opened.owned,
+      body: opened.body,
+      revision: opened.revision,
+      authorDids: { 'Late Arrival': 'did:plc:late' },
+    })
+    expect(
+      JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8'))['Late Arrival'],
+    ).toBe('did:plc:late')
+  })
+
+  it('warns and writes nothing when the DID is malformed', async () => {
+    const res = await createPost(paths, {
+      slug: 'bad-did',
+      title: 'T',
+      description: 'D',
+      date: 'June 1, 2026',
+      author: 'Typo Person',
+      authorDids: { 'Typo Person': 'jimray.net' },
+    })
+    expect(res.warning).toMatch(/Typo Person/)
+    expect(
+      JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8'))['Typo Person'],
+    ).toBeUndefined()
+    // The post itself still exists — authors.json is best-effort.
+    expect(fs.existsSync(path.join(paths.blogDir, 'bad-did', 'en.mdx'))).toBe(true)
   })
 })
 
@@ -219,7 +262,7 @@ describe('createPost partial writes', () => {
       description: 'D',
       date: 'June 1, 2026',
       author: 'Guest Person',
-      authorDid: 'did:plc:guest',
+      authorDids: { 'Guest Person': 'did:plc:guest' },
     })
     expect(res.slug).toBe('kept')
     expect(res.warning).toMatch(/authors\.json/i)

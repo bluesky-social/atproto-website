@@ -4,7 +4,7 @@
  * quietly, with nothing to indicate a link was intended.
  *
  * Pure: no filesystem access here. Reading and writing the file lives in
- * ./service.ts, which owns the warn-don't-fail semantics.
+ * ./authorsFile.ts, which owns the warn-don't-fail semantics.
  */
 export type AuthorMap = Record<string, string>
 

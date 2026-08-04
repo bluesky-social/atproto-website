@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import * as path from 'node:path'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
 import { fileRevision, assertRevision } from './revision'
+import { applyAuthorDids } from './authorsFile'
 import {
   toEpisodeFormat,
   DEFAULT_EPISODE_FORMAT,
@@ -41,6 +42,11 @@ export type CreateEpisodeInput = {
   guests: string[]
   /** Defaults to 'conversation' when the caller doesn't say. */
   format?: EpisodeFormat
+  /**
+   * Name → DID for hosts or guests authors.json doesn't know yet, so a new
+   * guest's byline links to their profile instead of rendering as plain text.
+   */
+  authorDids?: Record<string, string>
   duration: string
   durationSeconds: number
   audioUrl: string
@@ -163,7 +169,7 @@ export async function readEpisode(
 export async function createEpisode(
   paths: EpisodePaths,
   rawInput: CreateEpisodeInput,
-): Promise<{ slug: string }> {
+): Promise<{ slug: string; warning?: string }> {
   // Smarten before anything derives from these values, so the MDX header and the
   // episodes.ts entry agree. (page.tsx used to be a third copy; it now reads the
   // header, so there's one fewer place to keep in step.)
@@ -209,14 +215,33 @@ export async function createEpisode(
     await fs.rm(dir, { recursive: true, force: true })
     throw err
   }
-  return { slug: input.slug }
+  // Best-effort, past the point where content exists: a byline link that
+  // couldn't be recorded must not read as "the episode wasn't created".
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+  return reason
+    ? { slug: input.slug, warning: `Episode created, but ${reason}` }
+    : { slug: input.slug }
 }
 
 export async function updateEpisode(
   paths: EpisodePaths,
   slug: string,
-  input: { fields: EpisodeFields; body: string; revision?: string },
-): Promise<{ slug: string; fields: EpisodeFields; revision: string }> {
+  input: {
+    fields: EpisodeFields
+    body: string
+    revision?: string
+    /**
+     * See CreateEpisodeInput.authorDids — accepted on update too, because a
+     * guest is usually added after the episode already exists.
+     */
+    authorDids?: Record<string, string>
+  },
+): Promise<{
+  slug: string
+  fields: EpisodeFields
+  revision: string
+  warning?: string
+}> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const fields = {
@@ -245,7 +270,14 @@ export async function updateEpisode(
   // and description so the transform is visible rather than silent — plus the
   // revision it just created, so the still-open form can save again without
   // conflicting with itself.
-  return { slug, fields, revision: fileRevision(serialized) }
+  const reason = await applyAuthorDids(paths.authorsFile, input.authorDids)
+
+  return {
+    slug,
+    fields,
+    revision: fileRevision(serialized),
+    ...(reason ? { warning: `Episode saved, but ${reason}` } : {}),
+  }
 }
 
 export type AudioFields = {

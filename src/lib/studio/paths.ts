@@ -17,13 +17,19 @@ export function studioPaths(): StudioPaths {
   }
 }
 
-export type EpisodePaths = { podcastDir: string; episodesFile: string }
+export type EpisodePaths = {
+  podcastDir: string
+  episodesFile: string
+  /** Shared with the blog: one name → DID map serves both bylines. */
+  authorsFile: string
+}
 
 export function episodePaths(): EpisodePaths {
   const cwd = process.cwd()
   return {
     podcastDir: path.join(cwd, 'src', 'app', '[locale]', 'off-protocol'),
     episodesFile: path.join(cwd, 'src', 'lib', 'episodes.ts'),
+    authorsFile: path.join(cwd, 'src', 'lib', 'authors.json'),
   }
 }
 

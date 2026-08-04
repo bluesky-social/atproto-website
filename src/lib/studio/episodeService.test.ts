@@ -49,7 +49,9 @@ beforeEach(() => {
   fs.mkdirSync(podcastDir, { recursive: true })
   const episodesFile = path.join(root, 'episodes.ts')
   fs.writeFileSync(episodesFile, EPISODES_SRC)
-  paths = { podcastDir, episodesFile }
+  const authorsFile = path.join(root, 'authors.json')
+  fs.writeFileSync(authorsFile, JSON.stringify({ 'Jim Ray': 'did:plc:jim' }, null, 2))
+  paths = { podcastDir, episodesFile, authorsFile }
 })
 
 afterEach(() => {
@@ -520,5 +522,74 @@ describe('read/update/delete/list', () => {
     fs.writeFileSync(mdxPath, withComment)
     const ep = await readEpisode(paths, 'my-ep')
     expect(ep.fields.title).toBe('My Episode')
+  })
+})
+
+describe('episode author DIDs', () => {
+  beforeEach(async () => {
+    await createEpisode(paths, baseInput())
+  })
+
+  const authors = () =>
+    JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8')) as Record<string, string>
+
+  it('records a guest DID supplied at create time', async () => {
+    await createEpisode(
+      paths,
+      baseInput({
+        slug: 'with-guest',
+        guests: ['Ethan Marcotte'],
+        authorDids: { 'Ethan Marcotte': 'did:plc:ethan' },
+      }),
+    )
+    expect(authors()['Ethan Marcotte']).toBe('did:plc:ethan')
+  })
+
+  // This is the case that bit us: the episode existed, the guest was added
+  // afterwards, and the DID had to go into authors.json by hand.
+  it('records a guest DID supplied while editing an existing episode', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, guests: ['Ethan Marcotte'] },
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Ethan Marcotte': 'did:plc:ethan' },
+    })
+    expect(authors()['Ethan Marcotte']).toBe('did:plc:ethan')
+  })
+
+  it('leaves an already-known name alone', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Jim Ray': 'did:plc:impostor' },
+    })
+    expect(authors()['Jim Ray']).toBe('did:plc:jim')
+  })
+
+  it('warns about a malformed DID but still saves the episode', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const res = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, title: 'Renamed', guests: ['Typo Person'] },
+      body: ep.body,
+      revision: ep.revision,
+      authorDids: { 'Typo Person': 'not-a-did' },
+    })
+    expect(res.warning).toMatch(/Typo Person/)
+    expect(authors()['Typo Person']).toBeUndefined()
+    expect((await readEpisode(paths, 'my-ep')).fields.title).toBe('Renamed')
+  })
+
+  it('does not touch authors.json when no DIDs are sent', async () => {
+    const before = fs.readFileSync(paths.authorsFile, 'utf-8')
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      revision: ep.revision,
+    })
+    expect(fs.readFileSync(paths.authorsFile, 'utf-8')).toBe(before)
   })
 })
