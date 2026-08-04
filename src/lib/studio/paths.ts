@@ -1,6 +1,8 @@
 import * as path from 'node:path'
 import type { StudioPaths } from './service'
 import { isoToDateStamp } from './episodeDates'
+import { slugify } from '@/lib/slugs.mjs'
+import { FORMAT_DIR_TOKENS, type EpisodeFormat } from '@/lib/episodeFormat.mjs'
 
 export function isProd(): boolean {
   return process.env.NODE_ENV === 'production'
@@ -26,16 +28,35 @@ export function episodePaths(): EpisodePaths {
 }
 
 /**
- * The R2 object key for an episode's MP3, matching the layout the show already
- * uses: a date-stamped directory per episode (`off-protocol/2026-06-16-<slug>/`).
- * Derived from the episode's publish date; an episode with no usable pubDate
- * gets an undated directory rather than a bogus one. The key is fixed at upload
- * time — changing the publish date later doesn't move the object, and the URL
- * stored in the episode header stays authoritative.
+ * The R2 object key for an episode's MP3:
+ * `off-protocol/<YYYY-MM-DD>-<who-or-what>/<slug>.mp3`.
+ *
+ * The directory is named after the first guest when there is one
+ * (`2026-07-22-erin-kissane`), and after the episode's format when there isn't
+ * (`2026-07-08-live`). Both match folders the show already made by hand. A guest
+ * wins over the format even for an AMA, so there is one rule rather than a
+ * special case per format.
+ *
+ * It deliberately does *not* interpolate the slug: slugs begin with the publish
+ * date now, which produced directories like
+ * `off-protocol/2026-08-03-2026-08-03-designing-for-uncertainty-…/`.
+ *
+ * An episode with no usable pubDate gets an undated directory rather than a
+ * bogus one. The key is fixed at upload time — changing the publish date, the
+ * guests, or the format later doesn't move the object, and the URL stored in the
+ * episode header stays authoritative.
  */
-export function audioObjectKey(slug: string, pubDate: string): string {
+export function audioObjectKey(
+  slug: string,
+  pubDate: string,
+  // readonly: this only reads the guest list, so a frozen or `as const` array is
+  // just as valid an argument as a mutable one.
+  episode: { guests?: readonly string[]; format: EpisodeFormat },
+): string {
   const stamp = isoToDateStamp(pubDate)
-  const dir = stamp ? `${stamp}-${slug}` : slug
+  const guest = episode.guests?.[0]
+  const who = guest ? slugify(guest) : FORMAT_DIR_TOKENS[episode.format]
+  const dir = stamp ? `${stamp}-${who}` : slug
   return `off-protocol/${dir}/${slug}.mp3`
 }
 

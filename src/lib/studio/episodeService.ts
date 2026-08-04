@@ -376,10 +376,12 @@ export async function deleteAudioObject(key: string): Promise<void> {
 export async function uploadAudio(
   slug: string,
   bytes: Buffer,
-  pubDate: string,
+  // Named rather than positional: the object key is derived from three fields
+  // now, and three bare strings at the call site would be easy to transpose.
+  episode: { pubDate: string; guests?: readonly string[]; format: EpisodeFormat },
 ): Promise<{ audioUrl: string; audioSizeBytes: number }> {
   const { bucket, publicBase, endpoint, accessKeyId, secretAccessKey } = r2Config()
-  const key = audioObjectKey(slug, pubDate)
+  const key = audioObjectKey(slug, episode.pubDate, episode)
 
   const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
   const client = new S3Client({

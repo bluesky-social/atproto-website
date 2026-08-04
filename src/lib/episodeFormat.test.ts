@@ -7,6 +7,7 @@ import {
   FILTER_ORDER,
   FILTER_LABELS,
   toFormatFilter,
+  FORMAT_DIR_TOKENS,
 } from './episodeFormat.mjs'
 
 describe('EPISODE_FORMATS', () => {
@@ -115,5 +116,24 @@ describe('toFormatFilter', () => {
 
   it('accepts an explicit all', () => {
     expect(toFormatFilter('all')).toBe('all')
+  })
+})
+
+describe('FORMAT_DIR_TOKENS', () => {
+  // Used for the R2 folder when an episode has no guest to name it after.
+  // 'live' rather than 'livestream' because the bucket already has
+  // 2026-07-08-live, 2026-06-10-live and 2026-05-29-live.
+  it('matches the folder names already in the bucket', () => {
+    expect(FORMAT_DIR_TOKENS).toEqual({
+      conversation: 'conversation',
+      livestream: 'live',
+      ama: 'ama',
+    })
+  })
+
+  it('has a token for every format', () => {
+    for (const format of EPISODE_FORMATS) {
+      expect(FORMAT_DIR_TOKENS[format], format).toBeTruthy()
+    }
   })
 })

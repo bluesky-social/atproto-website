@@ -25,12 +25,16 @@ export async function POST(request: Request, { params }: Ctx) {
     const duration = String(form.get('duration') ?? '')
     const durationSeconds = Number(form.get('durationSeconds') ?? 0)
 
-    // The object key is date-stamped from the episode's publish date as saved on
-    // disk, not from whatever the form is currently showing.
+    // The object key comes from the episode as saved on disk — publish date,
+    // guests, and format — not from whatever the form is currently showing.
     const { fields: onDisk } = await readEpisode(paths, slug)
 
     const bytes = Buffer.from(await file.arrayBuffer())
-    const uploaded = await uploadAudio(slug, bytes, onDisk.pubDate)
+    const uploaded = await uploadAudio(slug, bytes, {
+      pubDate: onDisk.pubDate,
+      guests: onDisk.guests,
+      format: onDisk.format,
+    })
     // Persist immediately: an uploaded MP3 that only lives in browser state
     // becomes an orphaned R2 object the moment the tab navigates away.
     const { fields, revision } = await setEpisodeAudio(paths, slug, {

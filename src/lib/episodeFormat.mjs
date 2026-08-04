@@ -54,6 +54,22 @@ export function toEpisodeFormat(raw) {
   return EPISODE_FORMATS.includes(raw) ? raw : DEFAULT_EPISODE_FORMAT
 }
 
+/**
+ * Token used in an episode's R2 folder name when it has no guest to be named
+ * after: `off-protocol/<YYYY-MM-DD>-<token>/`.
+ *
+ * 'live' rather than 'livestream' because the bucket already contains
+ * 2026-07-08-live, 2026-06-10-live and 2026-05-29-live — this keeps new uploads
+ * consistent with the ones made by hand.
+ *
+ * @type {Record<EpisodeFormat, string>}
+ */
+export const FORMAT_DIR_TOKENS = {
+  conversation: 'conversation',
+  livestream: 'live',
+  ama: 'ama',
+}
+
 /** @typedef {EpisodeFormat | 'all'} FormatFilter */
 
 /**
