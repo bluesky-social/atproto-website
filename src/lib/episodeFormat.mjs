@@ -30,7 +30,9 @@ export const EPISODE_FORMATS = ['conversation', 'livestream', 'ama']
  */
 export const FORMAT_LABELS = {
   conversation: 'Conversation',
-  livestream: 'Livestream',
+  // "Recorded Live", not "Livestream": what's published is a recording of a
+  // stream, not a stream. The stored value stays `livestream`.
+  livestream: 'Recorded Live',
   ama: 'AMA',
 }
 
@@ -50,4 +52,41 @@ export const DEFAULT_EPISODE_FORMAT = 'conversation'
  */
 export function toEpisodeFormat(raw) {
   return EPISODE_FORMATS.includes(raw) ? raw : DEFAULT_EPISODE_FORMAT
+}
+
+/** @typedef {EpisodeFormat | 'all'} FormatFilter */
+
+/**
+ * Reading order for the listing's filter. Deliberately not EPISODE_FORMATS
+ * order: that one drives the editor's <select> and is the storage vocabulary,
+ * while this is how the filter reads on the page.
+ *
+ * @type {readonly FormatFilter[]}
+ */
+export const FILTER_ORDER = ['all', 'livestream', 'ama', 'conversation']
+
+/**
+ * Plural, because each filter names a set of episodes rather than one episode's
+ * kind — so they read differently from FORMAT_LABELS on purpose.
+ *
+ * @type {Record<FormatFilter, string>}
+ */
+export const FILTER_LABELS = {
+  all: 'All',
+  livestream: 'Live Recordings',
+  ama: 'AMAs',
+  conversation: 'Conversations',
+}
+
+/**
+ * Normalize a `?show=` query value.
+ *
+ * Unknown values fall back to 'all' rather than to an empty list: a typo or a
+ * stale bookmark should show the whole catalogue, not an apparently empty show.
+ *
+ * @param {string | undefined | null} raw
+ * @returns {FormatFilter}
+ */
+export function toFormatFilter(raw) {
+  return raw && EPISODE_FORMATS.includes(raw) ? raw : 'all'
 }

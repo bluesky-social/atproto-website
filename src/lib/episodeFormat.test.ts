@@ -4,6 +4,9 @@ import {
   FORMAT_LABELS,
   DEFAULT_EPISODE_FORMAT,
   toEpisodeFormat,
+  FILTER_ORDER,
+  FILTER_LABELS,
+  toFormatFilter,
 } from './episodeFormat.mjs'
 
 describe('EPISODE_FORMATS', () => {
@@ -52,5 +55,65 @@ describe('toEpisodeFormat', () => {
   it('does not coerce differing case or surrounding space', () => {
     expect(toEpisodeFormat('Livestream')).toBe('conversation')
     expect(toEpisodeFormat(' livestream')).toBe('conversation')
+  })
+})
+
+describe('FORMAT_LABELS copy', () => {
+  // Pinned because these are the words on the page. "Recorded Live" rather than
+  // "Livestream": the episode is a recording of a stream, not a live stream.
+  it('reads the way the show refers to each format', () => {
+    expect(FORMAT_LABELS).toEqual({
+      conversation: 'Conversation',
+      livestream: 'Recorded Live',
+      ama: 'AMA',
+    })
+  })
+})
+
+describe('FILTER_ORDER', () => {
+  // Deliberately not EPISODE_FORMATS order — this is the order the filter reads
+  // in, which Jim specified as All, Live Recordings, AMAs, Conversations.
+  it('leads with all, then every format exactly once', () => {
+    expect(FILTER_ORDER).toEqual(['all', 'livestream', 'ama', 'conversation'])
+    expect([...FILTER_ORDER].slice(1).sort()).toEqual([...EPISODE_FORMATS].sort())
+  })
+
+  it('labels every entry', () => {
+    for (const key of FILTER_ORDER) {
+      expect(FILTER_LABELS[key], key).toBeTruthy()
+    }
+  })
+
+  it('uses plural labels, since each names a set of episodes', () => {
+    expect(FILTER_LABELS).toEqual({
+      all: 'All',
+      livestream: 'Live Recordings',
+      ama: 'AMAs',
+      conversation: 'Conversations',
+    })
+  })
+})
+
+describe('toFormatFilter', () => {
+  it('passes through each format', () => {
+    for (const format of EPISODE_FORMATS) {
+      expect(toFormatFilter(format)).toBe(format)
+    }
+  })
+
+  // An absent ?show= is the unfiltered listing.
+  it('treats absent as all', () => {
+    expect(toFormatFilter('')).toBe('all')
+    expect(toFormatFilter(undefined)).toBe('all')
+  })
+
+  it('treats an unknown or hand-edited value as all rather than showing nothing', () => {
+    expect(toFormatFilter('livestrem')).toBe('all')
+    expect(toFormatFilter('Livestream')).toBe('all')
+    expect(toFormatFilter('solo')).toBe('all')
+  })
+
+  it('accepts an explicit all', () => {
+    expect(toFormatFilter('all')).toBe('all')
   })
 })
