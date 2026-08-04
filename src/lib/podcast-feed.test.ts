@@ -26,6 +26,10 @@ function makeEpisode(overrides: Partial<FeedEpisode> = {}): FeedEpisode {
     pubDate: '2026-05-01T12:00:00Z',
     duration: '00:10:00',
     durationSeconds: 600,
+    // The feed deliberately doesn't render format — itunes:episodeType only
+    // accepts full/trailer/bonus — but Episode requires one, so the fixture
+    // has to supply it.
+    format: 'conversation',
     audioUrl: 'https://media.example.com/ep.mp3',
     audioSizeBytes: 12345,
     audioMimeType: 'audio/mpeg',

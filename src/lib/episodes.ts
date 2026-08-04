@@ -13,6 +13,8 @@
  *   cannot drift unless edited by hand.
  */
 
+import type { EpisodeFormat } from './episodeFormat.mjs'
+
 export interface Episode {
   slug: string                  // URL slug, e.g. "ep-01-why-atproto"
   episodeNumber: number         // 1, 2, 3… for ordering + RSS <itunes:episode>
@@ -23,6 +25,7 @@ export interface Episode {
   duration: string              // "HH:MM:SS" — RSS spec format
   durationSeconds: number       // numeric, easier to format/sort
   guests?: string[]             // rendered on the episode listing page
+  format: EpisodeFormat         // conversation | livestream | ama — badged in the listing
   audioUrl: string              // absolute CDN URL to the MP3
   audioSizeBytes: number        // required by RSS <enclosure length="…">
   audioMimeType?: string        // defaults to "audio/mpeg"
@@ -106,6 +109,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-07-23T16:38:42.556Z',
     duration: '00:36:02',
     durationSeconds: 2162,
+    format: 'livestream',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-07-22-live-protocolly-atmoseed/2026-07-23-livestream-protocolly-atmoseed.mp3',
     audioSizeBytes: 17403717,
     audioMimeType: 'audio/mpeg',
@@ -120,6 +124,7 @@ export const episodes: Episode[] = [
     duration: '01:16:25',
     durationSeconds: 4585,
     guests: ['Erin Kissane'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-07-22-erin-kissane/2026-07-22-erin-kissane.mp3',
     audioSizeBytes: 36791233,
     audioMimeType: 'audio/mpeg',
@@ -133,6 +138,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-07-10T02:05:39.456Z',
     duration: '00:33:20',
     durationSeconds: 2000,
+    format: 'livestream',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-07-08-live/2026-07-08.mp3',
     audioSizeBytes: 16105595,
     audioMimeType: 'audio/mpeg',
@@ -147,6 +153,7 @@ export const episodes: Episode[] = [
     duration: '00:46:35',
     durationSeconds: 2794,
     guests: ['Daniel Holmgren'],
+    format: 'ama',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-06-24-ama-dholms/2020-06-24-dholms-ama.mp3',
     audioSizeBytes: 22464670,
     audioMimeType: 'audio/mpeg',
@@ -161,6 +168,7 @@ export const episodes: Episode[] = [
     duration: '00:19:43',
     durationSeconds: 1182,
     guests: ['Juliet Shen'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-06-16-juliet-shen/2026-06-16-juliet-shen.mp3',
     audioSizeBytes: 9572516,
     audioMimeType: 'audio/mpeg',
@@ -174,6 +182,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-06-15T21:24:51.805Z',
     duration: '00:40:20',
     durationSeconds: 2419,
+    format: 'livestream',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-06-10-live/2026-06-10-live-jim-alex.mp3',
     audioSizeBytes: 19470143,
     audioMimeType: 'audio/mpeg',
@@ -187,6 +196,7 @@ export const episodes: Episode[] = [
     pubDate: '2026-06-11T20:00:18.291Z',
     duration: '00:46:29',
     durationSeconds: 2789,
+    format: 'livestream',
     audioUrl: 'https://media.atproto.com/off-protocol/2026-05-29-live/2026-05-29-live-paul-daniel.mp3',
     audioSizeBytes: 22320651,
     audioMimeType: 'audio/mpeg',
@@ -201,6 +211,7 @@ export const episodes: Episode[] = [
     duration: '01:04:11',
     durationSeconds: 3851,
     guests: ['Brooke', 'Jared', 'Miguel'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/20260528-conversation-standard-site/2026-05-28-conversation-standard-site.mp3',
     audioSizeBytes: 123247872,
     audioMimeType: 'audio/mpeg',
@@ -209,12 +220,12 @@ export const episodes: Episode[] = [
     slug: 'the-puppy-problem',
     episodeNumber: 5,
     title: 'The Puppy Problem',
-    description:
-      'Jim and Alex are live with the first live episode under the new Off Protocol name. Protocol meetups are happening everywhere, Alex and Jim were both in Portland, the Ozone moderation tool has some new features, and Bluesky is considering an edit button. Plus a few of your questions.',
+    description: 'Jim and Alex are live with the first live episode under the new Off Protocol name. Protocol meetups are happening everywhere, Alex and Jim were both in Portland, the Ozone moderation tool has some new features, and Bluesky is considering an edit button. Plus a few of your questions.',
     date: 'May 15, 2026',
     pubDate: '2026-05-15T12:00:00Z',
     duration: '00:33:08',
     durationSeconds: 1988,
+    format: 'livestream',
     audioUrl: 'https://media.atproto.com/off-protocol/20260515-live/2026-05-15-off-protocol-live.mp3',
     audioSizeBytes: 63624960,
     audioMimeType: 'audio/mpeg',
@@ -223,13 +234,13 @@ export const episodes: Episode[] = [
     slug: 'why-a-new-protocol-the-history-and-future-of-at-protocol',
     episodeNumber: 4,
     title: 'Why a New Protocol? The History and Future of AT Protocol',
-    description:
-      "Bluesky CTO Paul Frazee and Head of Protocol Daniel Holmgren join for a wide-ranging conversation about what atproto is, why it exists, how it got built, and where it's going next. From a Twitter consultancy to an IETF working group, this is where to get started.",
+    description: 'Bluesky CTO Paul Frazee and Head of Protocol Daniel Holmgren join for a wide-ranging conversation about what atproto is, why it exists, how it got built, and where it\'s going next. From a Twitter consultancy to an IETF working group, this is where to get started.',
     date: 'May 14, 2026',
     pubDate: '2026-05-14T12:00:00Z',
     duration: '00:59:26',
     durationSeconds: 3566,
     guests: ['Paul Frazee', 'Daniel Holmgren'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/20260524-conversation/2026-05-14-conversation-paul-danny.mp3',
     audioSizeBytes: 114122496,
     audioMimeType: 'audio/mpeg',
@@ -238,13 +249,13 @@ export const episodes: Episode[] = [
     slug: 'blacksky-as-a-service-a-first-look-at-acorn',
     episodeNumber: 3,
     title: 'Blacksky As a Service',
-    description:
-      "Rishi Balakrishnan joins to talk about the work that went into building Acorn, Blacksky's new platform for creating moderated communities on atproto — and why the landing page never mentions a PDS.",
+    description: 'Rishi Balakrishnan joins to talk about the work that went into building Acorn, Blacksky\'s new platform for creating moderated communities on atproto — and why the landing page never mentions a PDS.',
     date: 'April 24, 2026',
     pubDate: '2026-04-24T12:00:00Z',
     duration: '00:55:55',
     durationSeconds: 3355,
     guests: ['Rishi Balakrishnan'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/20260424-live/2026-04-24-live-rishi-acorn.mp3',
     audioSizeBytes: 107389440,
     audioMimeType: 'audio/mpeg',
@@ -253,13 +264,13 @@ export const episodes: Episode[] = [
     slug: 'slowly-then-quickly-what-atmosphereconf-made-visible',
     episodeNumber: 2,
     title: 'Slowly, Then Quickly: What AtmosphereConf Made Visible',
-    description:
-      'With AtmosphereConf 2026 wrapped, Boris Mann and Ted Han join to talk about what the gathering surfaced in the ecosystem. From the IETF working group, the move beyond a single foundation, to a growing layer of co-ops, regional meetups, and independent stewards.',
+    description: 'With AtmosphereConf 2026 wrapped, Boris Mann and Ted Han join to talk about what the gathering surfaced in the ecosystem. From the IETF working group, the move beyond a single foundation, to a growing layer of co-ops, regional meetups, and independent stewards.',
     date: 'April 20, 2026',
     pubDate: '2026-04-20T12:00:00Z',
     duration: '01:06:09',
     durationSeconds: 3969,
     guests: ['Boris Mann', 'Ted Han'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/20260410-live/2026-04-10-live-boris-ted.mp3',
     audioSizeBytes: 127011840,
     audioMimeType: 'audio/mpeg',
@@ -268,13 +279,13 @@ export const episodes: Episode[] = [
     slug: 'a-thousand-prs-in-two-weeks-building-npmx',
     episodeNumber: 1,
     title: 'A Thousand PRs in Two Weeks',
-    description:
-      'Daniel Roe, Matias Capeletto, and Zeu join to discuss how their frustration with JavaScript packaging went from a Bluesky post to one of the most successful new community-led projects on the protocol.',
+    description: 'Daniel Roe, Matias Capeletto, and Zeu join to discuss how their frustration with JavaScript packaging went from a Bluesky post to one of the most successful new community-led projects on the protocol.',
     date: 'February 27, 2026',
     pubDate: '2026-02-27T12:00:00Z',
     duration: '00:58:45',
     durationSeconds: 3525,
     guests: ['Daniel Roe', 'Matias Capeletto', 'Zeu'],
+    format: 'conversation',
     audioUrl: 'https://media.atproto.com/off-protocol/20260227-live/2026-02-27-npmx-team.mp3',
     audioSizeBytes: 112814592,
     audioMimeType: 'audio/mpeg',
