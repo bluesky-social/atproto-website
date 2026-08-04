@@ -2,6 +2,7 @@ import { isProd } from '@/lib/studio/paths'
 import { episodePaths } from '@/lib/studio/paths'
 import { listEpisodes, createEpisode, nextEpisodeNumber } from '@/lib/studio/episodeService'
 import { gitState, createBranch } from '@/lib/studio/git'
+import { readAuthors } from '@/lib/studio/authorsFile'
 
 export const runtime = 'nodejs'
 
@@ -12,11 +13,14 @@ function notFound() {
 export async function GET() {
   if (isProd()) return notFound()
   const paths = episodePaths()
-  const [episodes, nextNumber] = await Promise.all([
+  // knownAuthors rides along with the list the editor already fetches on mount
+  // and after every save, so it refreshes exactly when a DID may have been added.
+  const [episodes, nextNumber, knownAuthors] = await Promise.all([
     listEpisodes(paths),
     nextEpisodeNumber(paths),
+    readAuthors(paths.authorsFile),
   ])
-  return Response.json({ episodes, nextNumber })
+  return Response.json({ episodes, nextNumber, knownAuthors })
 }
 
 export async function POST(request: Request) {

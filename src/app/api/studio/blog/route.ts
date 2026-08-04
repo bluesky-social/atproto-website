@@ -1,6 +1,7 @@
 import { isProd, studioPaths } from '@/lib/studio/paths'
 import { listPosts, createPost, publishPost } from '@/lib/studio/service'
 import { gitState, createBranch } from '@/lib/studio/git'
+import { readAuthors } from '@/lib/studio/authorsFile'
 
 export const runtime = 'nodejs'
 
@@ -10,8 +11,13 @@ function notFound() {
 
 export async function GET() {
   if (isProd()) return notFound()
-  const posts = await listPosts(studioPaths())
-  return Response.json({ posts })
+  const paths = studioPaths()
+  // See the podcast route: refreshes with the list the editor already fetches.
+  const [posts, knownAuthors] = await Promise.all([
+    listPosts(paths),
+    readAuthors(paths.authorsFile),
+  ])
+  return Response.json({ posts, knownAuthors })
 }
 
 export async function POST(request: Request) {

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { singleLine } from '@/lib/studio/text'
+import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -34,7 +35,12 @@ export function BlogEditor() {
   const [mode, setMode] = useState<'new' | 'edit'>('new')
   const [slug, setSlug] = useState('')
   const [owned, setOwned] = useState<Owned>({ ...EMPTY, date: todayLong() })
-  const [authorDid, setAuthorDid] = useState('')
+  // authors.json, so the form can say when the author has no DID yet. Refreshed
+  // by refreshList() on mount and after every save.
+  const [knownAuthors, setKnownAuthors] = useState<AuthorMap>({})
+  // Name → DID typed into the prompt below. Not post data — it lands in
+  // authors.json, and a map keeps the shape identical to the episode editor's.
+  const [authorDids, setAuthorDids] = useState<Record<string, string>>({})
   const [body, setBody] = useState('')
   const [ssiteUri, setSsiteUri] = useState('')
   const [ogImage, setOgImage] = useState<string | null>(null)
@@ -58,6 +64,7 @@ export function BlogEditor() {
       if (!res.ok) return setStatus('Could not load the post list')
       const data = await res.json()
       setPosts(data.posts ?? [])
+      setKnownAuthors(data.knownAuthors ?? {})
     } catch {
       setStatus('Could not load the post list')
     }
@@ -92,7 +99,7 @@ export function BlogEditor() {
     setMode('new')
     setSlug('')
     setOwned({ ...EMPTY, date: todayLong() })
-    setAuthorDid('')
+    setAuthorDids({})
     setBody('')
     setSsiteUri('')
     setOgImage(null)
@@ -100,6 +107,7 @@ export function BlogEditor() {
     setStatus('')
     setRevision('')
     setConflict(false)
+    setAuthorDids({})
     setBranchName('')
     setMakeBranch(true)
     loadGit()
@@ -115,7 +123,7 @@ export function BlogEditor() {
     setMode('edit')
     setSlug(s)
     setOwned(data.owned)
-    setAuthorDid('')
+    setAuthorDids({})
     setBody(data.body)
     setSsiteUri(data.standardSiteUri || '')
     setOgImage(data.ogImage ?? null)
@@ -143,7 +151,7 @@ export function BlogEditor() {
         body: JSON.stringify({
           slug: finalSlug,
           ...owned,
-          authorDid: authorDid || undefined,
+          authorDids,
           body,
           branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
         }),
@@ -171,7 +179,7 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned, body, revision }),
+        body: JSON.stringify({ owned, body, revision, authorDids }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -196,7 +204,10 @@ export function BlogEditor() {
       if (data.revision) setRevision(data.revision)
       setConflict(false)
       applyPublish(data.publish)
-      setStatus(`Saved ${data.slug}`)
+      // Recorded DIDs come back in knownAuthors on the next refresh, so the
+      // prompt disappears on its own; drop what was typed either way.
+      setAuthorDids({})
+      setStatus(data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -251,6 +262,10 @@ export function BlogEditor() {
       // clipboard blocked — ignore
     }
   }
+
+  // A post has a single author, so this is at most one name — but the same
+  // helper and the same shape as the episode editor's hosts + guests.
+  const missingDids = unknownAuthors(knownAuthors, [owned.author])
 
   const set = (k: keyof Owned) => (e: { target: { value: string } }) =>
     setOwned((o) => ({ ...o, [k]: e.target.value }))
@@ -429,14 +444,6 @@ export function BlogEditor() {
                     className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
                   />
                 </Field>
-                <Field label="Author DID" hint="only if new author">
-                  <input
-                    value={authorDid}
-                    onChange={(e) => setAuthorDid(e.target.value)}
-                    placeholder="did:plc:…"
-                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
-                  />
-                </Field>
               </>
             ) : (
               <Field label="Slug" hint="read-only — delete & recreate to rename">
@@ -446,6 +453,51 @@ export function BlogEditor() {
               </Field>
             )}
           </div>
+
+          {/* Replaces the old always-visible "Author DID" field, which only
+              appeared when creating a post and never said whether the author was
+              actually unknown. This appears only when authors.json has no DID for
+              the name, and it appears while editing too — an author usually turns
+              out to be unknown after the post exists. */}
+          {missingDids.length > 0 && (
+            <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
+              <p className="text-sm text-neutral-700">
+                <span className="font-medium">{missingDids[0]}</span> is not in
+                authors.json. Add a DID to link the byline to a Bluesky profile, or
+                leave blank and the name renders as plain text.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <input
+                  value={authorDids[missingDids[0]] ?? ''}
+                  onChange={(e) =>
+                    setAuthorDids((d) => ({ ...d, [missingDids[0]]: e.target.value }))
+                  }
+                  placeholder="did:plc:…"
+                  aria-label={`DID for ${missingDids[0]}`}
+                  aria-invalid={
+                    ((authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                      !isValidDid(authorDids[missingDids[0]] ?? '')) ||
+                    undefined
+                  }
+                  className={
+                    'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                    ((authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                    !isValidDid(authorDids[missingDids[0]] ?? '')
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-neutral-300 focus:border-neutral-500')
+                  }
+                />
+              </div>
+              {(authorDids[missingDids[0]] ?? '').trim() !== '' &&
+                !isValidDid(authorDids[missingDids[0]] ?? '') && (
+                  <p className="mt-2 text-xs text-red-700">
+                    A DID looks like <span className="font-mono">did:plc:…</span> or{' '}
+                    <span className="font-mono">did:web:…</span>. Anything else is left
+                    out of authors.json.
+                  </p>
+                )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 border-t border-neutral-200 pt-6">

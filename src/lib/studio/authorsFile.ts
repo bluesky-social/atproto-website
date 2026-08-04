@@ -13,6 +13,22 @@ import { mergeAuthorDids, type AuthorMap } from './authors'
  * Returns null when there was nothing to do or everything worked. The message is
  * phrased to read after "Episode saved, but …".
  */
+/**
+ * The stored name → DID map, or an empty map if it can't be read.
+ *
+ * Sent to the editors so they can tell which names have no DID yet. An
+ * unreadable file yields `{}` rather than throwing: the consequence is that
+ * every name looks unknown, which is a harmless prompt, whereas failing the
+ * request would stop the author listing loading at all.
+ */
+export async function readAuthors(authorsFile: string): Promise<AuthorMap> {
+  try {
+    return JSON.parse(await fs.readFile(authorsFile, 'utf-8'))
+  } catch {
+    return {}
+  }
+}
+
 export async function applyAuthorDids(
   authorsFile: string,
   dids: Record<string, string> | undefined,

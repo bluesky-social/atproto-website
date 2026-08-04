@@ -12,6 +12,7 @@ import {
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { episodeSlug } from '@/lib/slugs.mjs'
 import { singleLine } from '@/lib/studio/text'
+import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import {
   EPISODE_FORMATS,
   FORMAT_LABELS,
@@ -104,6 +105,12 @@ export function EpisodeEditor() {
   // keystroke, so a space could never survive being typed.
   const [hostsText, setHostsText] = useState('')
   const [guestsText, setGuestsText] = useState('')
+  // authors.json, so the form can say which hosts or guests have no DID yet.
+  // Refreshed by refreshList() on mount and after every save.
+  const [knownAuthors, setKnownAuthors] = useState<AuthorMap>({})
+  // Name → DID typed into the prompts below. Kept separate from `fields` because
+  // these are not episode data; they end up in authors.json.
+  const [authorDids, setAuthorDids] = useState<Record<string, string>>({})
 
   async function refreshList() {
     try {
@@ -112,6 +119,7 @@ export function EpisodeEditor() {
       const data = await res.json()
       setEpisodes(data.episodes ?? [])
       setNextNumber(data.nextNumber ?? 1)
+      setKnownAuthors(data.knownAuthors ?? {})
       return data.nextNumber ?? 1
     } catch {
       setStatus('Could not load the episode list')
@@ -129,6 +137,10 @@ export function EpisodeEditor() {
     title: fields.title,
     guests: fields.guests,
   })
+
+  // Hosts and guests whose names authors.json has no DID for. Derived, so it
+  // updates as the name fields are typed in and clears as DIDs are recorded.
+  const missingDids = unknownAuthors(knownAuthors, [...fields.hosts, ...fields.guests])
 
   async function loadGit() {
     try {
@@ -275,6 +287,7 @@ export function EpisodeEditor() {
           hosts: fields.hosts,
           guests: fields.guests,
           format: fields.format,
+          authorDids,
           duration: fields.duration,
           durationSeconds: fields.durationSeconds,
           audioUrl: fields.audioUrl,
@@ -296,6 +309,10 @@ export function EpisodeEditor() {
       }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       await loadEpisode(data.slug)
+      // Recorded DIDs come back in knownAuthors on the next refresh, so the
+      // prompts disappear on their own; drop what was typed either way.
+      setAuthorDids({})
+      if (data.warning) return setStatus(data.warning)
       setStatus(
         data.branch?.created
           ? `Created ${data.slug} on ${data.branch.name}`
@@ -308,7 +325,7 @@ export function EpisodeEditor() {
       const res = await fetch(`/api/studio/podcast/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields, body, revision }),
+        body: JSON.stringify({ fields, body, revision, authorDids }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -332,7 +349,8 @@ export function EpisodeEditor() {
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
       setConflict(false)
-      setStatus(`Saved ${data.slug}`)
+      setAuthorDids({})
+      setStatus(data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -507,6 +525,58 @@ export function EpisodeEditor() {
               <input type="checkbox" checked={fields.explicit} onChange={(e) => setF('explicit', e.target.checked)} /> Explicit
             </label>
           </div>
+
+          {/* Only appears when a host or guest has no DID on file. Without it
+              their byline renders as plain text — which is how Ethan Marcotte's
+              episode shipped, since nothing said the name was unknown. Shown
+              while editing too, not just on create: a guest is usually added
+              after the episode already exists. */}
+          {missingDids.length > 0 && (
+            <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
+              <p className="text-sm text-neutral-700">
+                {missingDids.length === 1 ? 'This name is' : 'These names are'} not in
+                authors.json. Add {missingDids.length === 1 ? 'a DID' : 'DIDs'} to link{' '}
+                {missingDids.length === 1 ? 'it' : 'them'} to a Bluesky profile, or leave
+                blank and the name renders as plain text.
+              </p>
+              <div className="mt-3 space-y-2">
+                {missingDids.map((name) => {
+                  const value = authorDids[name] ?? ''
+                  const bad = value.trim() !== '' && !isValidDid(value)
+                  return (
+                    <div key={name} className="flex items-center gap-3">
+                      <span className="w-44 shrink-0 truncate text-sm text-neutral-600">{name}</span>
+                      <input
+                        value={value}
+                        onChange={(e) => setAuthorDids((d) => ({ ...d, [name]: e.target.value }))}
+                        placeholder="did:plc:…"
+                        aria-label={`DID for ${name}`}
+                        aria-invalid={bad || undefined}
+                        className={
+                          'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                          (bad
+                            ? 'border-red-400 focus:border-red-500'
+                            : 'border-neutral-300 focus:border-neutral-500')
+                        }
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+              {/* Flagged while typing rather than only on save: otherwise the
+                  server accepts the save and reports the problem afterwards. */}
+              {missingDids.some((n) => {
+                const v = authorDids[n] ?? ''
+                return v.trim() !== '' && !isValidDid(v)
+              }) && (
+                <p className="mt-2 text-xs text-red-700">
+                  A DID looks like <span className="font-mono">did:plc:…</span> or{' '}
+                  <span className="font-mono">did:web:…</span>. Anything else is left out of
+                  authors.json.
+                </p>
+              )}
+            </div>
+          )}
 
           {mode === 'new' && (
             <div className="mt-6 border-t border-neutral-200 pt-6">
