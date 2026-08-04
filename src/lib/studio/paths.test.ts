@@ -96,6 +96,51 @@ describe('audioObjectKey', () => {
     ).toBe('off-protocol/2026-07-01-daniel-o-brien/ep.mp3')
   })
 
+  // Uploading a differently-named file writes a NEW object rather than
+  // overwriting the old one in place: that busts any CDN cache outright, and the
+  // changed URL is visible confirmation the bytes actually landed.
+  it('names the object after the uploaded file when one is given', () => {
+    expect(
+      audioObjectKey('2026-07-22-erin-kissane', '2026-07-22T12:00:00.000Z', CONV, 'Erin Kissane Remaster V3.mp3'),
+    ).toBe(
+      'off-protocol/2026-07-22-juliet-shen/erin-kissane-remaster-v3.mp3',
+    )
+  })
+
+  it('keeps the object in the episode directory, only changing the file', () => {
+    const key = audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, 'take-two.mp3')
+    expect(key.split('/').slice(0, 2).join('/')).toBe('off-protocol/2026-07-22-juliet-shen')
+    expect(key.split('/')[2]).toBe('take-two.mp3')
+  })
+
+  it('normalizes the extension rather than trusting it', () => {
+    expect(audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, 'Loud.MP3')).toContain('/loud.mp3')
+    // No extension at all still yields a .mp3 object.
+    expect(audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, 'noext')).toContain('/noext.mp3')
+  })
+
+  it('treats only the last dot as the extension', () => {
+    expect(
+      audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, 'ep.12.final.mp3'),
+    ).toContain('/ep-12-final.mp3')
+  })
+
+  // Dropping a file called '___.mp3' must not produce 'off-protocol/dir/.mp3'.
+  it('falls back to the slug when the name slugifies to nothing', () => {
+    expect(audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, '___.mp3')).toBe(
+      'off-protocol/2026-07-22-juliet-shen/my-ep.mp3',
+    )
+  })
+
+  it('falls back to the slug when no filename is given at all', () => {
+    expect(audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV)).toBe(
+      'off-protocol/2026-07-22-juliet-shen/my-ep.mp3',
+    )
+    expect(audioObjectKey('my-ep', '2026-07-22T12:00:00.000Z', CONV, '')).toBe(
+      'off-protocol/2026-07-22-juliet-shen/my-ep.mp3',
+    )
+  })
+
   it('falls back to an undated directory when pubDate is missing', () => {
     expect(audioObjectKey('my-ep', '', CONV)).toBe('off-protocol/my-ep/my-ep.mp3')
     expect(audioObjectKey('my-ep', 'nonsense', CONV)).toBe(

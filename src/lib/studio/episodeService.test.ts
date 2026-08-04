@@ -593,3 +593,55 @@ describe('episode author DIDs', () => {
     expect(fs.readFileSync(paths.authorsFile, 'utf-8')).toBe(before)
   })
 })
+
+describe('setEpisodeAudio duration pairing', () => {
+  beforeEach(async () => {
+    await createEpisode(paths, baseInput())   // duration 00:10:00 / 600
+  })
+
+  const audio = { audioUrl: 'https://media/new.mp3', audioSizeBytes: 99 }
+
+  it('writes both duration fields when both are measured', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:20:00',
+      durationSeconds: 1200,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:20:00')
+    expect(f.durationSeconds).toBe(1200)
+  })
+
+  // The browser resolves 0 when it can't read a file's metadata, which the
+  // client formats as '00:00:00'. That string is truthy while 0 is not, so
+  // guarding the two fields separately wrote a zero duration and kept the old
+  // durationSeconds — the page showing 0:00 while the feed claimed 10 minutes.
+  it('writes neither when the duration could not be measured', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:00:00',
+      durationSeconds: 0,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:10:00')
+    expect(f.durationSeconds).toBe(600)
+  })
+
+  it('writes neither when only one of the pair arrives', async () => {
+    await setEpisodeAudio(paths, 'my-ep', { ...audio, duration: '00:20:00' })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.duration).toBe('00:10:00')
+    expect(f.durationSeconds).toBe(600)
+  })
+
+  it('still records the new url and size when the duration is unusable', async () => {
+    await setEpisodeAudio(paths, 'my-ep', {
+      ...audio,
+      duration: '00:00:00',
+      durationSeconds: 0,
+    })
+    const f = (await readEpisode(paths, 'my-ep')).fields
+    expect(f.audioUrl).toBe('https://media/new.mp3')
+    expect(f.audioSizeBytes).toBe(99)
+  })
+})

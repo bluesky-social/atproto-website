@@ -253,7 +253,15 @@ export function EpisodeEditor() {
     // The upload rewrote en.mdx, so the form's base revision is now stale.
     // Adopt the new one or the next save would be refused for no reason.
     if (data.revision) setRevision(data.revision)
-    setStatus('Audio uploaded and saved')
+    // Say which object it wrote. "Uploaded" alone is indistinguishable from
+    // "nothing changed" when the name, size and duration all happen to match —
+    // which is exactly how a successful replace once looked like a no-op.
+    const objectName = String(data.audioUrl ?? '').split('/').pop()
+    setStatus(
+      data.replacedInPlace
+        ? `Audio replaced in place: ${objectName}`
+        : `Audio uploaded as ${objectName} — the previous file is still in the bucket`,
+    )
   }
 
   async function onOgImage(file: File) {

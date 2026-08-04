@@ -302,13 +302,21 @@ export async function setEpisodeAudio(
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  // duration and durationSeconds describe one measurement, so they move together
+  // or not at all. The browser resolves 0 when it can't read a file's metadata,
+  // which the client formats as '00:00:00' — and that string is truthy while 0 is
+  // not, so guarding them separately wrote a zero duration while keeping the old
+  // durationSeconds. The page then showed 0:00 while the feed still claimed the
+  // real length.
+  const measured = Boolean(audio.duration) && Boolean(audio.durationSeconds)
   const fields: EpisodeFields = {
     ...getEpisodeFields(parsed),
     audioUrl: audio.audioUrl,
     audioSizeBytes: audio.audioSizeBytes,
     ...(audio.audioMimeType ? { audioMimeType: audio.audioMimeType } : {}),
-    ...(audio.duration ? { duration: audio.duration } : {}),
-    ...(audio.durationSeconds ? { durationSeconds: audio.durationSeconds } : {}),
+    ...(measured
+      ? { duration: audio.duration!, durationSeconds: audio.durationSeconds! }
+      : {}),
   }
   const serialized = serializeMdxFile(applyEpisodeFields(parsed, fields))
   await fs.writeFile(mdxPath, serialized)
@@ -410,10 +418,20 @@ export async function uploadAudio(
   bytes: Buffer,
   // Named rather than positional: the object key is derived from three fields
   // now, and three bare strings at the call site would be easy to transpose.
-  episode: { pubDate: string; guests?: readonly string[]; format: EpisodeFormat },
-): Promise<{ audioUrl: string; audioSizeBytes: number }> {
+  episode: {
+    pubDate: string
+    guests?: readonly string[]
+    format: EpisodeFormat
+    /**
+     * Name of the file that was dropped. Names the object after it, so a
+     * differently-named file lands as a new object rather than overwriting the
+     * previous one in place.
+     */
+    uploadedFilename?: string
+  },
+): Promise<{ audioUrl: string; audioSizeBytes: number; objectKey: string }> {
   const { bucket, publicBase, endpoint, accessKeyId, secretAccessKey } = r2Config()
-  const key = audioObjectKey(slug, episode.pubDate, episode)
+  const key = audioObjectKey(slug, episode.pubDate, episode, episode.uploadedFilename)
 
   const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')
   const client = new S3Client({
@@ -436,5 +454,5 @@ export async function uploadAudio(
     client.destroy()
   }
 
-  return { audioUrl: `${publicBase}/${key}`, audioSizeBytes: bytes.length }
+  return { audioUrl: `${publicBase}/${key}`, audioSizeBytes: bytes.length, objectKey: key }
 }
