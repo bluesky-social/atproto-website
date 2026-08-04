@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
+import { singleLine } from '@/lib/studio/text'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -347,11 +348,22 @@ export function BlogEditor() {
             placeholder="Untitled post"
             className="w-full bg-transparent text-4xl font-semibold leading-tight tracking-tight text-neutral-900 outline-none placeholder:text-neutral-300"
           />
-          <input
+          {/* A textarea so long descriptions wrap instead of scrolling out of
+              sight. field-sizing:content grows it to fit where supported;
+              rows=2 is the fallback height elsewhere. The value stays
+              single-line — Enter is ignored and pasted breaks fold to spaces —
+              because this is one MDX header field and one line in posts.ts. */}
+          <textarea
             value={owned.description}
-            onChange={set('description')}
+            onChange={(e) =>
+              setOwned((o) => ({ ...o, description: singleLine(e.target.value) }))
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault()
+            }}
+            rows={2}
             placeholder="A one- or two-sentence description…"
-            className="mt-3 w-full bg-transparent text-lg text-neutral-600 outline-none placeholder:text-neutral-300"
+            className="mt-3 w-full resize-none bg-transparent text-lg text-neutral-600 outline-none [field-sizing:content] placeholder:text-neutral-300"
           />
 
           {/* Meta */}

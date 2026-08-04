@@ -180,7 +180,12 @@ describe('client-bundle safety', () => {
   // Checks for `node:` specifically rather than banning imports outright: these
   // modules legitimately import each other. That means the check is not
   // transitive, so every client-safe module must be listed here.
-  const CLIENT_SAFE = ['./gitNames.mjs', './slugs.mjs']
+  const CLIENT_SAFE = [
+    './gitNames.mjs',
+    './slugs.mjs',
+    './studio/text.ts',
+    './studio/episodeDates.ts',
+  ]
 
   for (const mod of CLIENT_SAFE) {
     it(`${mod} pulls in no node: built-ins`, async () => {

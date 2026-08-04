@@ -10,6 +10,7 @@ import {
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { episodeSlug } from '@/lib/slugs.mjs'
+import { singleLine } from '@/lib/studio/text'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -385,7 +386,12 @@ export function EpisodeEditor() {
 
         <div className="mx-auto max-w-3xl px-8 py-10">
           <input value={fields.title} onChange={(e) => setF('title', e.target.value)} placeholder="Untitled episode" className="w-full bg-transparent text-4xl font-semibold tracking-tight outline-none placeholder:text-neutral-300" />
-          <input value={fields.description} onChange={(e) => setF('description', e.target.value)} placeholder="A one- or two-sentence description…" className="mt-3 w-full bg-transparent text-lg text-neutral-600 outline-none placeholder:text-neutral-300" />
+          {/* A textarea so long descriptions wrap instead of scrolling out of
+              sight. field-sizing:content grows it to fit where supported;
+              rows=2 is the fallback height elsewhere. The value stays
+              single-line — Enter is ignored and pasted breaks fold to spaces —
+              because this is one MDX header field and one RSS element. */}
+          <textarea value={fields.description} onChange={(e) => setF('description', singleLine(e.target.value))} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault() }} rows={2} placeholder="A one- or two-sentence description…" className="mt-3 w-full resize-none bg-transparent text-lg text-neutral-600 outline-none [field-sizing:content] placeholder:text-neutral-300" />
 
           <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 border-t border-neutral-200 pt-6">
             <div><span className={label}>Episode #</span><input type="number" value={fields.episodeNumber} onChange={(e) => setF('episodeNumber', Number(e.target.value))} className={input} /></div>
