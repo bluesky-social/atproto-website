@@ -38,20 +38,24 @@ describe('episode format data', () => {
   })
 
   it('covers the whole catalogue', () => {
-    expect(episodes.length).toBeGreaterThanOrEqual(13)
+    expect(episodes.length).toBeGreaterThanOrEqual(14)
   })
 
-  it('has the recorded livestreams labelled', () => {
-    const livestreams = episodes
-      .filter((e) => e.format === 'livestream')
-      .map((e) => e.episodeNumber)
-      .sort((a, b) => a - b)
-    expect(livestreams).toEqual([5, 7, 8, 11, 13])
-  })
-
-  it('has the AMA labelled', () => {
-    expect(
-      episodes.filter((e) => e.format === 'ama').map((e) => e.episodeNumber),
-    ).toEqual([10])
+  // Deliberately NOT asserting which episodes are which format. Two tests here
+  // used to pin livestreams to [5, 7, 8, 11, 13] and the AMA to [10], which was
+  // only ever a snapshot of the backfill's guesses — it failed the first time
+  // Jim recategorised early episodes that turned out to be livestreams with
+  // guests. Which format an episode is is an editorial call, not an invariant,
+  // and a test that breaks on a correct edit is worse than no test.
+  //
+  // What *is* an invariant: episodeNumber must be unique, because the RSS GUID
+  // is `off-protocol-ep-${episodeNumber}`. Two episodes sharing a number would
+  // publish two feed items with the same GUID, and podcatchers would treat the
+  // second as a duplicate of the first and silently drop it.
+  it('gives every episode a unique episodeNumber', () => {
+    const numbers = episodes.map((e) => e.episodeNumber)
+    expect(new Set(numbers).size, `duplicate in ${numbers.join(', ')}`).toBe(
+      numbers.length,
+    )
   })
 })
