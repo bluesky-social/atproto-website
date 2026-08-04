@@ -21,6 +21,7 @@ import {
   removeEntryBySlug,
   type PostEntry,
 } from './postsFile'
+import { fileRevision, assertRevision } from './revision'
 import { resolveAuthorDid, withAuthor, type AuthorMap } from './authors'
 import { blogPageTsx } from './templates'
 import { smartenTitleAndDescription } from './smartText'
@@ -41,7 +42,12 @@ export type CreateInput = {
   body?: string
 }
 
-export type UpdateInput = { owned: OwnedFields; body: string }
+export type UpdateInput = {
+  owned: OwnedFields
+  body: string
+  /** Base revision from readPost; omit for no precondition. See ./revision. */
+  revision?: string
+}
 
 function entryFor(slug: string, owned: OwnedFields): PostEntry {
   return {
@@ -91,12 +97,14 @@ export async function readPost(
   body: string
   standardSiteUri: string
   ogImage: string | null
+  revision: string
 }> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  const parsed = parseMdxFile(raw)
   return {
     slug,
     owned: getOwnedFields(parsed),
@@ -106,6 +114,9 @@ export async function readPost(
     body: parsed.body.replace(/^\n+/, ''),
     standardSiteUri: getHeaderField(parsed, 'standardSiteUri'),
     ogImage: findOgImage(paths.blogDir, slug),
+    // Fingerprint of exactly the bytes these fields were parsed from, so a save
+    // can prove it is editing the version it was shown.
+    revision: fileRevision(raw),
   }
 }
 
@@ -251,18 +262,23 @@ export async function updatePost(
   paths: StudioPaths,
   slug: string,
   input: UpdateInput,
-): Promise<{ slug: string; owned: OwnedFields }> {
+): Promise<{ slug: string; owned: OwnedFields; revision: string }> {
   const mdxPath = path.join(paths.blogDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) {
     throw new Error(`Post not found: ${slug}`)
   }
   // Re-read from disk so preamble + unknown header fields reflect the current
-  // file (supports concurrent hand-edits).
+  // file (supports concurrent hand-edits). That only ever protected the fields
+  // the editor doesn't own; the revision check is what protects the rest.
   const owned = smartenTitleAndDescription(input.owned)
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  // Check before the first write, so a refusal leaves both files untouched.
+  assertRevision(input.revision, fileRevision(raw), 'This post')
+  const parsed = parseMdxFile(raw)
   const next = applyOwnedFields(parsed, owned)
   next.body = normalizeBodySeparation(input.body)
-  await fs.writeFile(mdxPath, serializeMdxFile(next))
+  const serialized = serializeMdxFile(next)
+  await fs.writeFile(mdxPath, serialized)
 
   const postsSrc = await fs.readFile(paths.postsFile, 'utf-8')
   await fs.writeFile(
@@ -270,8 +286,10 @@ export async function updatePost(
     updateEntryBySlug(postsSrc, slug, entryFor(slug, owned)),
   )
   // Hand back what was actually stored — the editor echoes the smartened title
-  // and description so the transform is visible rather than silent.
-  return { slug, owned }
+  // and description so the transform is visible rather than silent — plus the
+  // revision it just created, so the still-open form can save again without
+  // conflicting with itself.
+  return { slug, owned, revision: fileRevision(serialized) }
 }
 
 export async function deletePost(

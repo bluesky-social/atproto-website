@@ -2,6 +2,7 @@ import * as fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
 import { parseMdxFile, serializeMdxFile, normalizeBodySeparation } from './mdxHeader'
+import { fileRevision, assertRevision } from './revision'
 import {
   newEpisodeMdx,
   applyEpisodeFields,
@@ -127,15 +128,25 @@ export async function listEpisodes(
 export async function readEpisode(
   paths: EpisodePaths,
   slug: string,
-): Promise<{ slug: string; fields: EpisodeFields; body: string; ogImage: string | null }> {
+): Promise<{
+  slug: string
+  fields: EpisodeFields
+  body: string
+  ogImage: string | null
+  revision: string
+}> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  const parsed = parseMdxFile(raw)
   return {
     slug,
     fields: getEpisodeFields(parsed),
     body: parsed.body.replace(/^\n+/, ''),
     ogImage: findOgImage(paths.podcastDir, slug),
+    // Fingerprint of exactly the bytes these fields were parsed from, so a save
+    // can prove it is editing the version it was shown.
+    revision: fileRevision(raw),
   }
 }
 
@@ -193,18 +204,22 @@ export async function createEpisode(
 export async function updateEpisode(
   paths: EpisodePaths,
   slug: string,
-  input: { fields: EpisodeFields; body: string },
-): Promise<{ slug: string; fields: EpisodeFields }> {
+  input: { fields: EpisodeFields; body: string; revision?: string },
+): Promise<{ slug: string; fields: EpisodeFields; revision: string }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const fields = {
     ...smartenTitleAndDescription(input.fields),
     hasShowNotes: Boolean(input.body && input.body.trim()),
   }
-  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const raw = await fs.readFile(mdxPath, 'utf-8')
+  // Check before the first write, so a refusal leaves both files untouched.
+  assertRevision(input.revision, fileRevision(raw), 'This episode')
+  const parsed = parseMdxFile(raw)
   const next = applyEpisodeFields(parsed, fields)
   next.body = normalizeBodySeparation(input.body)
-  await fs.writeFile(mdxPath, serializeMdxFile(next))
+  const serialized = serializeMdxFile(next)
+  await fs.writeFile(mdxPath, serialized)
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(
@@ -212,8 +227,10 @@ export async function updateEpisode(
     updateEntryBySlug(src, slug, entryFrom(slug, fields)),
   )
   // Hand back what was actually stored — the editor echoes the smartened title
-  // and description so the transform is visible rather than silent.
-  return { slug, fields }
+  // and description so the transform is visible rather than silent — plus the
+  // revision it just created, so the still-open form can save again without
+  // conflicting with itself.
+  return { slug, fields, revision: fileRevision(serialized) }
 }
 
 export type AudioFields = {
@@ -234,7 +251,7 @@ export async function setEpisodeAudio(
   paths: EpisodePaths,
   slug: string,
   audio: AudioFields,
-): Promise<{ slug: string; fields: EpisodeFields }> {
+): Promise<{ slug: string; fields: EpisodeFields; revision: string }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
@@ -246,11 +263,16 @@ export async function setEpisodeAudio(
     ...(audio.duration ? { duration: audio.duration } : {}),
     ...(audio.durationSeconds ? { durationSeconds: audio.durationSeconds } : {}),
   }
-  await fs.writeFile(mdxPath, serializeMdxFile(applyEpisodeFields(parsed, fields)))
+  const serialized = serializeMdxFile(applyEpisodeFields(parsed, fields))
+  await fs.writeFile(mdxPath, serialized)
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(paths.episodesFile, updateEntryBySlug(src, slug, entryFrom(slug, fields)))
-  return { slug, fields }
+  // No precondition is checked here — an upload is an append-only act on fields
+  // the form isn't editing. But it *does* rewrite en.mdx, so hand back the new
+  // revision or the open form goes stale and its next save is refused for
+  // nothing.
+  return { slug, fields, revision: fileRevision(serialized) }
 }
 
 export type DeleteEpisodeOptions = {

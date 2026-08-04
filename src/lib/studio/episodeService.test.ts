@@ -12,6 +12,7 @@ import {
   setEpisodeAudio,
   type CreateEpisodeInput,
 } from './episodeService'
+import { RevisionConflictError, fileRevision } from './revision'
 import type { EpisodePaths } from './paths'
 
 let root: string
@@ -168,6 +169,101 @@ describe('read/update/delete/list', () => {
     expect(mdx).toContain("coverImage: 'https://x/c.png'")
     expect(mdx).toContain('New notes.')
     expect(fs.readFileSync(paths.episodesFile, 'utf-8')).toContain("title: 'Renamed'")
+  })
+
+  // Reproduces how episode 14's pubDate was reverted: the editor loaded the
+  // episode, the file changed underneath it, and the next save wrote the stale
+  // snapshot back over both files.
+  it('refuses a save whose base revision is stale', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+
+    // Someone else corrects the pubDate while the form sits open.
+    const mdxPath = path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+    fs.writeFileSync(
+      mdxPath,
+      fs
+        .readFileSync(mdxPath, 'utf-8')
+        .replace(/pubDate: '[^']*'/, "pubDate: '2026-08-03T22:18:49.823Z'"),
+    )
+
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: opened.fields,
+        body: opened.body,
+        revision: opened.revision,
+      }),
+    ).rejects.toThrow(RevisionConflictError)
+
+    // The refusal must be total: the correction survives.
+    expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(
+      "pubDate: '2026-08-03T22:18:49.823Z'",
+    )
+  })
+
+  it('accepts a save whose base revision is current', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Renamed' },
+        body: opened.body,
+        revision: opened.revision,
+      }),
+    ).resolves.toMatchObject({ slug: 'my-ep' })
+  })
+
+  // Without this, a second save from the same open tab would conflict with the
+  // tab's own first save.
+  it('returns the new revision so consecutive saves work', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    const first = await updateEpisode(paths, 'my-ep', {
+      fields: { ...opened.fields, title: 'One' },
+      body: opened.body,
+      revision: opened.revision,
+    })
+    expect(first.revision).not.toBe(opened.revision)
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Two' },
+        body: opened.body,
+        revision: first.revision,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  // The audio route writes en.mdx itself, and the editor merges back only the
+  // audio fields so in-progress edits survive. Without a fresh revision the form
+  // would be stale the moment an upload finished, and the next save would be
+  // refused for no good reason.
+  it('setEpisodeAudio returns a revision the open form can keep saving with', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    const after = await setEpisodeAudio(paths, 'my-ep', {
+      audioUrl: 'https://media/new.mp3',
+      audioSizeBytes: 99,
+    })
+    // Must be the fingerprint of what is actually on disk now — not merely
+    // "different from before", which undefined would satisfy for free.
+    const onDisk = fs.readFileSync(
+      path.join(paths.podcastDir, 'my-ep', 'en.mdx'),
+      'utf-8',
+    )
+    expect(after.revision).toBe(fileRevision(onDisk))
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Edited after upload' },
+        body: opened.body,
+        revision: after.revision,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('still saves when no revision is sent, for the CLIs', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'No precondition' },
+        body: opened.body,
+      }),
+    ).resolves.toBeTruthy()
   })
 
   it('returns the smartened fields so the editor can show what was stored', async () => {

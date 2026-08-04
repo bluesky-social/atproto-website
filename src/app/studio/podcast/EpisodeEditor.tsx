@@ -5,6 +5,7 @@ import {
   isoToLocalInput,
   localInputToIso,
   isoToHumanDate,
+  dateDivergesFromPubDate,
 } from '@/lib/studio/episodeDates'
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
@@ -81,6 +82,11 @@ export function EpisodeEditor() {
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [status, setStatus] = useState('')
+  // Fingerprint of the file this form was loaded from. Sent with every save so
+  // the server can refuse to overwrite changes made since. Empty means "no
+  // precondition" — a new episode has no file yet.
+  const [revision, setRevision] = useState('')
+  const [conflict, setConflict] = useState(false)
   const [git, setGit] = useState<GitState | null>(null)
   const [makeBranch, setMakeBranch] = useState(true)
   const [branchName, setBranchName] = useState('')
@@ -151,6 +157,8 @@ export function EpisodeEditor() {
     setBody('')
     setOgImage(null)
     setStatus('')
+    setRevision('')
+    setConflict(false)
     setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
     setMakeBranch(true)
     loadGit()
@@ -168,6 +176,8 @@ export function EpisodeEditor() {
     setBody(data.body)
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
+    setRevision(data.revision ?? '')
+    setConflict(false)
     setStatus('')
   }
 
@@ -220,6 +230,9 @@ export function EpisodeEditor() {
       duration: saved.duration ?? duration,
       durationSeconds: saved.durationSeconds ?? durationSeconds,
     }))
+    // The upload rewrote en.mdx, so the form's base revision is now stale.
+    // Adopt the new one or the next save would be refused for no reason.
+    if (data.revision) setRevision(data.revision)
     setStatus('Audio uploaded and saved')
   }
 
@@ -286,9 +299,16 @@ export function EpisodeEditor() {
       const res = await fetch(`/api/studio/podcast/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields, body }),
+        body: JSON.stringify({ fields, body, revision }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // The file moved on since this form loaded. Nothing was written, so the
+        // call is the author's: reload and lose these edits, or copy them out
+        // first. Never resolve it silently — that is the bug this prevents.
+        setConflict(true)
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
@@ -299,6 +319,10 @@ export function EpisodeEditor() {
           description: data.fields.description,
         }))
       }
+      // Adopt the revision this save created, or the next save from this same
+      // open tab would conflict with its own write.
+      if (data.revision) setRevision(data.revision)
+      setConflict(false)
       setStatus(`Saved ${data.slug}`)
       await refreshList()
     }
@@ -377,6 +401,20 @@ export function EpisodeEditor() {
           </div>
           <div className="flex items-center gap-4">
             {status && <span className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')} aria-live="polite">{status}</span>}
+            {/* Only offered on a conflict, and it discards the form's edits — so
+                it says so rather than looking like an ordinary refresh. */}
+            {conflict && (
+              <button
+                onClick={() => {
+                  if (confirm('Reload from disk? Unsaved changes in this form are lost.')) {
+                    loadEpisode(slug)
+                  }
+                }}
+                className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+              >
+                Reload from disk
+              </button>
+            )}
             {mode === 'edit' && <button onClick={remove} className="text-sm text-neutral-400 hover:text-red-600">Delete</button>}
             {mode === 'edit' && (
               <button onClick={save} className="rounded-md bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-neutral-700">Save</button>
@@ -402,7 +440,17 @@ export function EpisodeEditor() {
             <div>
               <span className={label}>Display date</span>
               <input value={fields.date} onChange={(e) => setF('date', e.target.value)} className={input} />
-              <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
+              {/* Editing this field alone is supported ("August 2026"), but
+                  landing on a different *day* than pubDate means the page and the
+                  feed advertise different dates. Episode 14 shipped that way. */}
+              {dateDivergesFromPubDate(fields.date, fields.pubDate) ? (
+                <span className="mt-1 block text-xs text-amber-700">
+                  The feed will say {isoToHumanDate(fields.pubDate)}. Change the
+                  publish date above if this should match.
+                </span>
+              ) : (
+                <span className="mt-1 block text-xs italic text-neutral-400">Follows the publish date; edit for custom wording.</span>
+              )}
             </div>
             <div>
               <span className={label}>Hosts (comma-sep)</span>

@@ -38,3 +38,29 @@ export function isoToHumanDate(iso: string): string {
   if (!d) return ''
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
+
+const sameLocalDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate()
+
+/**
+ * True when `date` names a specific calendar day that isn't the one `pubDate`
+ * falls on — i.e. the page and the RSS feed would advertise different days.
+ *
+ * The display date is deliberately free text ("edit for custom wording"), so
+ * this only speaks up when it actually commits to a day: a standalone one- or
+ * two-digit number. "August 2026" and "Summer 2026" name no day and are left
+ * alone; "August 3, 2026" does, and is checked.
+ *
+ * Episode 14 shipped with date "August 3, 2026" against a July 31 pubDate, and
+ * nothing anywhere said so.
+ */
+export function dateDivergesFromPubDate(date: string, pubDate: string): boolean {
+  const pub = parse(pubDate)
+  if (!pub) return false
+  if (!/\b\d{1,2}\b/.test(date)) return false
+  const shown = parse(date)
+  if (!shown) return false
+  return !sameLocalDay(shown, pub)
+}

@@ -12,6 +12,7 @@ import {
   saveOgImage,
   type StudioPaths,
 } from './service'
+import { RevisionConflictError } from './revision'
 
 let root: string
 let paths: StudioPaths
@@ -279,6 +280,54 @@ describe('read/update/list/delete', () => {
     const post = await readPost(paths, 'hello')
     expect(post.owned.title).toBe('Hello')
     expect(post.body).toContain('Body.')
+  })
+
+  // Same lost update the podcast editor had: the form holds a snapshot, the file
+  // moves on, and the next save writes the snapshot back over it.
+  it('refuses a save whose base revision is stale', async () => {
+    const opened = await readPost(paths, 'hello')
+    const mdxPath = path.join(paths.blogDir, 'hello', 'en.mdx')
+    fs.writeFileSync(
+      mdxPath,
+      fs.readFileSync(mdxPath, 'utf-8').replace("date: 'June 1, 2026'", "date: 'July 4, 2026'"),
+    )
+
+    await expect(
+      updatePost(paths, 'hello', {
+        owned: opened.owned,
+        body: opened.body,
+        revision: opened.revision,
+      }),
+    ).rejects.toThrow(RevisionConflictError)
+
+    expect(fs.readFileSync(mdxPath, 'utf-8')).toContain("date: 'July 4, 2026'")
+  })
+
+  it('returns the new revision so consecutive saves work', async () => {
+    const opened = await readPost(paths, 'hello')
+    const first = await updatePost(paths, 'hello', {
+      owned: { ...opened.owned, title: 'One' },
+      body: opened.body,
+      revision: opened.revision,
+    })
+    expect(first.revision).not.toBe(opened.revision)
+    await expect(
+      updatePost(paths, 'hello', {
+        owned: { ...opened.owned, title: 'Two' },
+        body: opened.body,
+        revision: first.revision,
+      }),
+    ).resolves.toBeTruthy()
+  })
+
+  it('still saves when no revision is sent, for the CLIs', async () => {
+    const opened = await readPost(paths, 'hello')
+    await expect(
+      updatePost(paths, 'hello', {
+        owned: { ...opened.owned, title: 'No precondition' },
+        body: opened.body,
+      }),
+    ).resolves.toBeTruthy()
   })
 
   it('updates owned fields + body, preserving unknown header fields', async () => {

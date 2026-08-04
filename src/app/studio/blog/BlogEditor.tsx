@@ -41,6 +41,11 @@ export function BlogEditor() {
   const [ogVersion, setOgVersion] = useState(0)
   const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<string>('')
+  // Fingerprint of the file this form was loaded from. Sent with every save so
+  // the server can refuse to overwrite changes made since. Empty means "no
+  // precondition" — a new post has no file yet.
+  const [revision, setRevision] = useState('')
+  const [conflict, setConflict] = useState(false)
   const [copied, setCopied] = useState(false)
   const [git, setGit] = useState<GitState | null>(null)
   const [makeBranch, setMakeBranch] = useState(true)
@@ -93,6 +98,8 @@ export function BlogEditor() {
     setOgImage(null)
     setDragging(false)
     setStatus('')
+    setRevision('')
+    setConflict(false)
     setBranchName('')
     setMakeBranch(true)
     loadGit()
@@ -113,6 +120,8 @@ export function BlogEditor() {
     setSsiteUri(data.standardSiteUri || '')
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
+    setRevision(data.revision ?? '')
+    setConflict(false)
     setStatus('')
   }
 
@@ -162,9 +171,16 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned, body }),
+        body: JSON.stringify({ owned, body, revision }),
       })
       const data = await res.json()
+      if (res.status === 409) {
+        // The file moved on since this form loaded. Nothing was written, so the
+        // call is the author's: reload and lose these edits, or copy them out
+        // first. Never resolve it silently — that is the bug this prevents.
+        setConflict(true)
+        return setStatus(`Error: ${data.error}`)
+      }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
@@ -175,6 +191,10 @@ export function BlogEditor() {
           description: data.owned.description,
         }))
       }
+      // Adopt the revision this save created, or the next save from this same
+      // open tab would conflict with its own write.
+      if (data.revision) setRevision(data.revision)
+      setConflict(false)
       applyPublish(data.publish)
       setStatus(`Saved ${data.slug}`)
       await refreshList()
@@ -320,6 +340,22 @@ export function BlogEditor() {
               <span className={'text-sm ' + statusTone} aria-live="polite">
                 {status}
               </span>
+            )}
+            {/* Only offered on a conflict, and it discards the form's edits — so
+                it says so rather than looking like an ordinary refresh. */}
+            {conflict && (
+              <button
+                onClick={() => {
+                  if (
+                    confirm('Reload from disk? Unsaved changes in this form are lost.')
+                  ) {
+                    loadPost(slug)
+                  }
+                }}
+                className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+              >
+                Reload from disk
+              </button>
             )}
             {mode === 'edit' && (
               <button

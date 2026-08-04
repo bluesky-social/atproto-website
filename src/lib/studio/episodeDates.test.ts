@@ -4,6 +4,7 @@ import {
   localInputToIso,
   isoToHumanDate,
   isoToDateStamp,
+  dateDivergesFromPubDate,
 } from './episodeDates'
 
 describe('isoToLocalInput', () => {
@@ -51,5 +52,46 @@ describe('isoToHumanDate', () => {
   it('is empty for a missing or unparseable value', () => {
     expect(isoToHumanDate('')).toBe('')
     expect(isoToHumanDate('nope')).toBe('')
+  })
+})
+
+describe('dateDivergesFromPubDate', () => {
+  // The exact state episode 14 shipped in: the page said August 3 while the
+  // feed said July 31, with nothing anywhere pointing it out.
+  it('flags a display date on a different calendar day', () => {
+    expect(
+      dateDivergesFromPubDate('August 3, 2026', '2026-07-31T21:23:48.929Z'),
+    ).toBe(true)
+  })
+
+  it('is quiet when both name the same day', () => {
+    expect(
+      dateDivergesFromPubDate('August 3, 2026', '2026-08-03T12:00:00.000Z'),
+    ).toBe(false)
+  })
+
+  // "Follows the publish date; edit for custom wording" is a supported use, so
+  // wording that names no specific day must not nag.
+  it('is quiet for a month-only display date', () => {
+    expect(dateDivergesFromPubDate('August 2026', '2026-08-03T12:00:00.000Z')).toBe(
+      false,
+    )
+  })
+
+  it('is quiet for wording that is not a date at all', () => {
+    expect(dateDivergesFromPubDate('Summer 2026', '2026-08-03T12:00:00.000Z')).toBe(
+      false,
+    )
+  })
+
+  it('is quiet when either value is missing', () => {
+    expect(dateDivergesFromPubDate('', '2026-08-03T12:00:00.000Z')).toBe(false)
+    expect(dateDivergesFromPubDate('August 3, 2026', '')).toBe(false)
+  })
+
+  it('flags a year that differs even when the day matches', () => {
+    expect(
+      dateDivergesFromPubDate('August 3, 2025', '2026-08-03T12:00:00.000Z'),
+    ).toBe(true)
   })
 })
