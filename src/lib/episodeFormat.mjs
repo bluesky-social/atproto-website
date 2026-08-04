@@ -1,0 +1,53 @@
+/**
+ * Episode format vocabulary — what kind of thing an episode is.
+ *
+ * MUST STAY FREE OF NODE BUILT-INS. The studio's episode editor is a
+ * `'use client'` component and imports from here, so anything reachable from
+ * this file ends up in the browser bundle — see the note in ./gitNames.mjs for
+ * what that costs.
+ *
+ * Plain JavaScript so `scripts/new-episode.mjs` can share it with the
+ * TypeScript studio and the listing page, the same way ./slugs.mjs does.
+ */
+
+/** @typedef {'conversation' | 'livestream' | 'ama'} EpisodeFormat */
+
+/**
+ * Display order for the editor's <select> and the CLI prompt.
+ *
+ * The union above is written by hand rather than derived from this array,
+ * because `as const` is not valid JavaScript. A test pins the two together.
+ *
+ * @type {readonly EpisodeFormat[]}
+ */
+export const EPISODE_FORMATS = ['conversation', 'livestream', 'ama']
+
+/**
+ * Badge and option text. Typed as a total Record so a new format without a
+ * label is a compile error rather than an `undefined` badge.
+ *
+ * @type {Record<EpisodeFormat, string>}
+ */
+export const FORMAT_LABELS = {
+  conversation: 'Conversation',
+  livestream: 'Livestream',
+  ama: 'AMA',
+}
+
+/** @type {EpisodeFormat} */
+export const DEFAULT_EPISODE_FORMAT = 'conversation'
+
+/**
+ * Normalize a value read from an MDX header or typed at a prompt.
+ *
+ * Exact match only — anything unrecognized, including absent and differing
+ * case, becomes the default. This is the boundary where files written by
+ * humans are tolerated; `Episode.format` in src/lib/episodes.ts is where tsc
+ * is strict instead.
+ *
+ * @param {string} raw
+ * @returns {EpisodeFormat}
+ */
+export function toEpisodeFormat(raw) {
+  return EPISODE_FORMATS.includes(raw) ? raw : DEFAULT_EPISODE_FORMAT
+}

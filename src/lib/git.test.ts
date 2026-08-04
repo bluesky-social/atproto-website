@@ -185,6 +185,7 @@ describe('client-bundle safety', () => {
     './slugs.mjs',
     './studio/text.ts',
     './studio/episodeDates.ts',
+    './episodeFormat.mjs',
   ]
 
   for (const mod of CLIENT_SAFE) {
