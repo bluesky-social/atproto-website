@@ -12,6 +12,12 @@ import {
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { episodeSlug } from '@/lib/slugs.mjs'
 import { singleLine } from '@/lib/studio/text'
+import {
+  EPISODE_FORMATS,
+  FORMAT_LABELS,
+  DEFAULT_EPISODE_FORMAT,
+  type EpisodeFormat,
+} from '@/lib/episodeFormat.mjs'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
 
@@ -26,6 +32,7 @@ type Fields = {
   duration: string
   durationSeconds: number
   guests: string[]
+  format: EpisodeFormat
   audioUrl: string
   audioSizeBytes: number
   audioMimeType: string
@@ -62,6 +69,7 @@ function emptyFields(nextNumber: number): Fields {
     duration: '',
     durationSeconds: 0,
     guests: [],
+    format: DEFAULT_EPISODE_FORMAT,
     audioUrl: '',
     audioSizeBytes: 0,
     audioMimeType: 'audio/mpeg',
@@ -266,6 +274,7 @@ export function EpisodeEditor() {
           pubDate: fields.pubDate,
           hosts: fields.hosts,
           guests: fields.guests,
+          format: fields.format,
           duration: fields.duration,
           durationSeconds: fields.durationSeconds,
           audioUrl: fields.audioUrl,
@@ -474,6 +483,20 @@ export function EpisodeEditor() {
                 }}
                 className={input}
               />
+            </div>
+            <div>
+              <span className={label}>Format</span>
+              {/* The cast is safe: every option value comes from
+                  EPISODE_FORMATS, so a <select> cannot produce anything else. */}
+              <select
+                value={fields.format}
+                onChange={(e) => setF('format', e.target.value as EpisodeFormat)}
+                className={input}
+              >
+                {EPISODE_FORMATS.map((f) => (
+                  <option key={f} value={f}>{FORMAT_LABELS[f]}</option>
+                ))}
+              </select>
             </div>
             {mode === 'new' ? (
               <div><span className={label}>Slug (blank = from title)</span><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder={defaultSlug || 'my-episode'} className={input + ' font-mono'} /></div>
