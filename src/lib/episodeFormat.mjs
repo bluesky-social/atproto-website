@@ -83,12 +83,13 @@ export const FILTER_ORDER = ['all', 'livestream', 'ama', 'conversation']
 
 /**
  * Plural, because each filter names a set of episodes rather than one episode's
- * kind — so they read differently from FORMAT_LABELS on purpose.
+ * kind — so they read differently from FORMAT_LABELS on purpose. 'All' rather
+ * than 'All Episodes' so the four filters fit on one line on a phone.
  *
  * @type {Record<FormatFilter, string>}
  */
 export const FILTER_LABELS = {
-  all: 'All Episodes',
+  all: 'All',
   livestream: 'Live Recordings',
   ama: 'AMAs',
   conversation: 'Conversations',

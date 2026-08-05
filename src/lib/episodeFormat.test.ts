@@ -87,7 +87,7 @@ describe('FILTER_ORDER', () => {
 
   it('uses plural labels, since each names a set of episodes', () => {
     expect(FILTER_LABELS).toEqual({
-      all: 'All Episodes',
+      all: 'All',
       livestream: 'Live Recordings',
       ama: 'AMAs',
       conversation: 'Conversations',
