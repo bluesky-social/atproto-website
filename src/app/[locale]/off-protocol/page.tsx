@@ -107,20 +107,40 @@ export default async function OffProtocolIndexPage({
               className="group rounded-lg border border-zinc-200 p-6 transition hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700"
             >
               <Link href={`/off-protocol/${episode.slug}`} className="block">
-                {/* Separators match EpisodeHeader on the individual page:
-                    &bull;, and aria-hidden so they aren't read aloud. */}
-                <div className="flex items-baseline gap-2 text-sm text-zinc-500 dark:text-zinc-500">
-                  <span className="font-mono">Episode {episode.episodeNumber}</span>
-                  <span aria-hidden="true">&bull;</span>
-                  <time dateTime={episode.pubDate}>{episode.date}</time>
-                  <span aria-hidden="true">&bull;</span>
-                  <span>{formatDurationForDisplay(episode.durationSeconds)}</span>
+                {/* Stacks on a phone with the pill above the metadata, and sits
+                    on one line from sm up. items-start matters: in a column,
+                    children stretch by default and the pill would run the full
+                    width of the card. */}
+                <div className="flex flex-col items-start gap-1 text-sm text-zinc-500 sm:flex-row sm:items-baseline sm:gap-2 dark:text-zinc-500">
+                  {/* One group, so the &bull; separators can never wrap onto
+                      lines of their own. aria-hidden so they aren't read aloud;
+                      matches EpisodeHeader on the individual episode page. */}
+                  <span className="flex items-baseline gap-2">
+                    <span className="font-mono">Episode {episode.episodeNumber}</span>
+                    <span aria-hidden="true">&bull;</span>
+                    <time dateTime={episode.pubDate}>{episode.date}</time>
+                    <span aria-hidden="true">&bull;</span>
+                    <span>{formatDurationForDisplay(episode.durationSeconds)}</span>
+                  </span>
                   {/* Same neutral pill for every format — the word does the
                       differentiating, which suits the restraint of this page.
                       leading-[1.125rem] + the 1px border adds up to 20px, the
                       line-height of the text-sm row, so the pill doesn't make
-                      this line taller than the others. */}
-                  <span className="ml-1 rounded-full border border-zinc-300 px-2 text-[0.7rem] leading-[1.125rem] dark:border-zinc-700">
+                      that line taller than the others.
+
+                      Stacked, the pill sits above the metadata (order-first) and
+                      is pulled left by its own inset — px-2 (8px) plus the 1px
+                      border — so the *label* lines up with "Episode" below it,
+                      rather than the pill's border doing so and leaving the text
+                      indented by 9px.
+
+                      sm:order-none and sm:ml-1 both matter: they put the pill
+                      back inline and undo the negative margin from 640px up.
+
+                      DOM order stays metadata-then-pill, so a screen reader
+                      still hears "Episode 12 • July 22 • 1:16:25, Conversation"
+                      rather than leading with the label. */}
+                  <span className="-ml-[9px] order-first rounded-full border border-zinc-300 px-2 text-[0.7rem] leading-[1.125rem] sm:order-none sm:ml-1 dark:border-zinc-700">
                     {FORMAT_LABELS[episode.format]}
                   </span>
                 </div>
