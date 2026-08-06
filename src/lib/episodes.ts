@@ -101,6 +101,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-08-06-shinkansen-mindset',
+    episodeNumber: 15,
+    title: 'Shinkansen Mindset',
+    description: 'News from the Atmosphere, including Bluesky CEO Toni Schneider’s interview with Nilay Patel at The Verge, three big referece PDS improvements shipping very soon, an atlas of Atmospheric apps, and more. (Livestream, recorded August 5, 2026)',
+    date: 'August 6, 2026',
+    pubDate: '2026-08-06T18:29:32.485Z',
+    duration: '00:47:34',
+    durationSeconds: 2854,
+    format: 'livestream',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-08-06-live/2026-08-05-livestream.mp3',
+    audioSizeBytes: 22944954,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-08-03-designing-for-uncertainty-ethan-marcotte',
     episodeNumber: 14,
     title: 'Designing for Uncertainty',
