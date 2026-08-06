@@ -12,6 +12,16 @@ import {
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { episodeSlug } from '@/lib/slugs.mjs'
 import { singleLine } from '@/lib/studio/text'
+import { slugFromSearch, searchWithSlug } from '@/lib/studio/editorUrl'
+import {
+  DRAFT_SCHEMA,
+  draftKey,
+  readDraft,
+  writeDraft,
+  clearDraft,
+  isDirty,
+  describeDraft,
+} from '@/lib/studio/draft'
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import {
   EPISODE_FORMATS,
@@ -45,6 +55,27 @@ type Fields = {
   blueskyPostUrl: string
 }
 
+/**
+ * Everything a reload would otherwise lose. Stored as a draft and compared
+ * against what was loaded from disk to tell whether there is anything to keep.
+ *
+ * Excludes what the server owns and the mount refetches — the episode list, git
+ * state, authors.json, the OG image — and `status`, which describes the last
+ * action rather than the document. Audio and OG uploads write to disk as they
+ * happen, so they were never draft state either.
+ *
+ * Bump DRAFT_SCHEMA in @/lib/studio/draft when this shape changes.
+ */
+type Snapshot = {
+  mode: 'new' | 'edit'
+  slug: string
+  fields: Fields
+  body: string
+  hostsText: string
+  guestsText: string
+  authorDids: Record<string, string>
+}
+
 function fmtDuration(totalSeconds: number): string {
   const s = Math.round(totalSeconds)
   const hh = String(Math.floor(s / 3600)).padStart(2, '0')
@@ -59,6 +90,26 @@ function nowDates(): Pick<Fields, 'date' | 'pubDate'> {
   const now = new Date().toISOString()
   return { pubDate: now, date: isoToHumanDate(now) }
 }
+
+/**
+ * Point the address bar at the episode this tab has open.
+ *
+ * Everything in this form lives in component state, so a reload used to lose it
+ * and drop back to the new-episode form — where the date-derived default slug is
+ * non-empty even with no title, so the next Save created a date-named episode
+ * instead of updating the one being edited. The dev server issues full reloads
+ * for reasons that have nothing to do with this tab (another localhost tab
+ * compiling a route is enough), so the open episode has to be recoverable.
+ *
+ * replaceState rather than pushState: this is where the tab already is, not a
+ * navigation, and Back should leave the studio rather than walk an episode
+ * history that no popstate handler is restoring.
+ */
+function syncUrl(slug: string) {
+  const search = searchWithSlug(window.location.search, slug)
+  window.history.replaceState(null, '', window.location.pathname + search)
+}
+
 function emptyFields(nextNumber: number): Fields {
   return {
     episodeNumber: nextNumber,
@@ -111,6 +162,15 @@ export function EpisodeEditor() {
   // Name → DID typed into the prompts below. Kept separate from `fields` because
   // these are not episode data; they end up in authors.json.
   const [authorDids, setAuthorDids] = useState<Record<string, string>>({})
+  // The form as it was last loaded from disk or written to it. A draft is only
+  // kept while the form differs from this, so "unsaved changes" is never a lie.
+  // Null until the form has been loaded or armed once — there is nothing to
+  // compare against before that, and writing a draft then would capture the
+  // placeholder state.
+  const [baseline, setBaseline] = useState<Snapshot | null>(null)
+  // The status-line message for a draft this tab brought back, and the flag for
+  // the Discard button beside it. Empty when nothing was restored.
+  const [restored, setRestored] = useState('')
 
   async function refreshList() {
     try {
@@ -157,48 +217,204 @@ export function EpisodeEditor() {
     }
   }
 
+  // The form as it stands. Rebuilt every render; `snapshotKey` is what the draft
+  // effect watches, since the object itself is a new identity each time.
+  const snapshot: Snapshot = { mode, slug, fields, body, hostsText, guestsText, authorDids }
+  const snapshotKey = JSON.stringify(snapshot)
+
+  // Which document's draft this form owns. The new-episode form keys off '' — the
+  // slug typed into it is contents, not identity.
+  const docSlug = mode === 'edit' ? slug : ''
+
+  function applySnapshot(s: Snapshot) {
+    setMode(s.mode)
+    setSlug(s.slug)
+    setFields(s.fields)
+    setBody(s.body)
+    setHostsText(s.hostsText)
+    setGuestsText(s.guestsText)
+    setAuthorDids(s.authorDids)
+  }
+
+  // A brand-new episode, clock included. Read here rather than during render (see
+  // nowDates) and returned rather than applied, so it can serve as the baseline
+  // as well as the form state.
+  function newSnapshot(): Snapshot {
+    return {
+      mode: 'new',
+      slug: '',
+      fields: { ...emptyFields(nextNumber), ...nowDates() },
+      body: '',
+      hostsText: '',
+      guestsText: '',
+      authorDids: {},
+    }
+  }
+
+  function armNewEpisode(): Snapshot {
+    const s = newSnapshot()
+    applySnapshot(s)
+    setBaseline(s)
+    setRevision('')
+    setBranchName(branchNameFor('podcast', { pubDate: s.fields.pubDate }))
+    return s
+  }
+
+  /**
+   * Bring back a draft for `s` on top of what was just loaded from disk.
+   *
+   * The baseline is deliberately left as the on-disk state, so the restored form
+   * still reads as changed and keeps its draft until it's saved. The revision
+   * comes from the draft too — a restored draft conflicts with a file that moved
+   * on rather than overwriting it.
+   */
+  function restoreDraft(s: string): boolean {
+    const key = draftKey('podcast', s)
+    const draft = readDraft(key, s)
+    if (!draft) return false
+    // The schema version is the real guard, but a hand-edited or truncated draft
+    // shouldn't be able to take the form down. Check what render depends on.
+    const form = draft.form as Partial<Snapshot>
+    if (!form.fields || typeof form.body !== 'string') {
+      clearDraft(key)
+      return false
+    }
+    applySnapshot(form as Snapshot)
+    setRevision(draft.revision)
+    setRestored(describeDraft(draft))
+    return true
+  }
+
+  // Load from disk, then let any draft this tab holds for it come back on top.
+  // Used from the URL on mount and from the episode list — but never after a
+  // create, and never from the conflict reload, where discarding the form is
+  // exactly what was asked for.
+  async function openEpisode(s: string): Promise<boolean> {
+    const ok = await loadEpisode(s)
+    if (ok) restoreDraft(s)
+    return ok
+  }
+
+  function discardDraft() {
+    clearDraft(draftKey('podcast', docSlug))
+    setRestored('')
+  }
+
+  // Throw away what was restored and go back to what's on disk — or to a blank
+  // form, for an episode that has no file yet.
+  function discard() {
+    discardDraft()
+    if (mode === 'edit') loadEpisode(slug)
+    else startNew()
+  }
+
   useEffect(() => {
-    const dates = nowDates()
-    setFields((f) => ({ ...f, ...dates }))
-    setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
     loadGit()
+    // A slug in the URL means this tab already had an episode open. Restore it
+    // from disk instead of arming a new one — and don't touch the date or
+    // episode-number fields on that path, or they would overwrite what
+    // loadEpisode is about to read.
+    const open = slugFromSearch(window.location.search)
+    if (open) {
+      refreshList()
+      // Deleted since, or a hand-edited URL: keep loadEpisode's error on screen,
+      // drop the stale param, and give them a usable new-episode form.
+      const fallBack = (ok?: boolean) => {
+        if (ok) return
+        syncUrl('')
+        armNewEpisode()
+      }
+      openEpisode(open).then(fallBack).catch(() => fallBack())
+      return
+    }
+    armNewEpisode()
+    const restoredNew = restoreDraft('')
     refreshList().then((n) => {
-      if (typeof n === 'number') setFields((f) => ({ ...f, episodeNumber: n }))
+      // The next episode number isn't known until this resolves, so the armed
+      // form and its baseline both start at 1. Patch both, or the form would read
+      // as changed before anything had been typed. A restored draft already has
+      // the number that was being worked on and keeps it.
+      if (restoredNew || typeof n !== 'number') return
+      setFields((f) => ({ ...f, episodeNumber: n }))
+      setBaseline((b) =>
+        b && b.mode === 'new' ? { ...b, fields: { ...b.fields, episodeNumber: n } } : b,
+      )
     })
   }, [])
 
+  // Keep the draft in step with the form, so an unexpected reload has something
+  // to come back to. Debounced only to avoid a write per keystroke — the write
+  // itself is synchronous and the payload is small.
+  useEffect(() => {
+    if (!baseline) return
+    const key = draftKey('podcast', docSlug)
+    if (!isDirty(snapshot, baseline)) {
+      clearDraft(key)
+      return
+    }
+    const timer = window.setTimeout(() => {
+      // A draft already holding this exact form is left alone. Rewriting it would
+      // only move `savedAt` forward, and then "unsaved changes from 3:42" would
+      // report the last reload rather than the last edit.
+      const stored = readDraft(key, docSlug)
+      if (stored && !isDirty(snapshot, stored.form)) return
+      writeDraft(key, {
+        v: DRAFT_SCHEMA,
+        slug: docSlug,
+        mode,
+        savedAt: new Date().toISOString(),
+        revision,
+        form: snapshot,
+      })
+    }, 300)
+    return () => window.clearTimeout(timer)
+    // snapshotKey stands in for `snapshot`, which is a fresh object each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapshotKey, baseline, docSlug, mode, revision])
+
   function startNew() {
-    setMode('new')
-    setSlug('')
-    const dates = nowDates()
-    setFields({ ...emptyFields(nextNumber), ...dates })
-    setHostsText('')
-    setGuestsText('')
-    setBody('')
+    // Only the new-episode form's own draft goes. A draft for the episode being
+    // left is kept on purpose: clicking back to it in the list brings the work
+    // back, which is the whole point of keeping drafts per document.
+    clearDraft(draftKey('podcast', ''))
+    setRestored('')
+    syncUrl('')
+    armNewEpisode()
     setOgImage(null)
     setStatus('')
-    setRevision('')
     setConflict(false)
-    setBranchName(branchNameFor('podcast', { pubDate: dates.pubDate }))
     setMakeBranch(true)
     loadGit()
   }
 
-  async function loadEpisode(s: string) {
+  // Returns whether the episode loaded, so the mount effect can fall back to the
+  // new-episode form when the slug in the URL no longer names one.
+  async function loadEpisode(s: string): Promise<boolean> {
     const res = await fetch(`/api/studio/podcast/${s}`)
-    if (!res.ok) return setStatus(`Error loading ${s}`)
+    if (!res.ok) {
+      setStatus(`Error loading ${s}`)
+      return false
+    }
     const data = await res.json()
-    setMode('edit')
-    setSlug(s)
-    setFields(data.fields)
-    setHostsText((data.fields.hosts ?? []).join(', '))
-    setGuestsText((data.fields.guests ?? []).join(', '))
-    setBody(data.body)
+    const loaded: Snapshot = {
+      mode: 'edit',
+      slug: s,
+      fields: data.fields,
+      body: data.body,
+      hostsText: (data.fields.hosts ?? []).join(', '),
+      guestsText: (data.fields.guests ?? []).join(', '),
+      authorDids: {},
+    }
+    applySnapshot(loaded)
+    setBaseline(loaded)
+    setRestored('')
+    syncUrl(s)
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
     setRevision(data.revision ?? '')
     setConflict(false)
     setStatus('')
+    return true
   }
 
   const setF = <K extends keyof Fields>(k: K, v: Fields[K]) =>
@@ -242,14 +458,20 @@ export function EpisodeEditor() {
     // only those fields back, so edits in progress elsewhere on the form aren't
     // clobbered by the on-disk copy.
     const saved: Partial<Fields> = data.fields ?? {}
-    setFields((f) => ({
-      ...f,
+    const uploaded = {
       audioUrl: saved.audioUrl ?? data.audioUrl,
       audioSizeBytes: saved.audioSizeBytes ?? data.audioSizeBytes,
-      audioMimeType: saved.audioMimeType ?? f.audioMimeType,
       duration: saved.duration ?? duration,
       durationSeconds: saved.durationSeconds ?? durationSeconds,
+    }
+    setFields((f) => ({
+      ...f,
+      ...uploaded,
+      audioMimeType: saved.audioMimeType ?? f.audioMimeType,
     }))
+    // These landed on disk, so they belong in the baseline too — otherwise an
+    // upload alone would leave the form reading as having unsaved changes.
+    setBaseline((b) => (b ? { ...b, fields: { ...b.fields, ...uploaded } } : b))
     // The upload rewrote en.mdx, so the form's base revision is now stale.
     // Adopt the new one or the next save would be refused for no reason.
     if (data.revision) setRevision(data.revision)
@@ -317,6 +539,11 @@ export function EpisodeEditor() {
       }
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       await loadEpisode(data.slug)
+      // The episode exists now, so the new-episode draft has nothing left to
+      // recover. Cleared *after* the load, not before: the create request takes
+      // longer than the draft debounce, so a write scheduled before it started
+      // would otherwise land after the clear and leave a stale draft behind.
+      clearDraft(draftKey('podcast', ''))
       // Recorded DIDs come back in knownAuthors on the next refresh, so the
       // prompts disappear on their own; drop what was typed either way.
       setAuthorDids({})
@@ -346,13 +573,15 @@ export function EpisodeEditor() {
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
-      if (data.fields) {
-        setFields((f) => ({
-          ...f,
-          title: data.fields.title,
-          description: data.fields.description,
-        }))
-      }
+      const stored: Fields = data.fields
+        ? { ...fields, title: data.fields.title, description: data.fields.description }
+        : fields
+      if (data.fields) setFields(stored)
+      // What's on disk now is what's on screen, so this becomes the baseline and
+      // the draft has nothing left to recover. authorDids is cleared just below,
+      // so the baseline records it empty.
+      setBaseline({ ...snapshot, fields: stored, authorDids: {} })
+      discardDraft()
       // Adopt the revision this save created, or the next save from this same
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
@@ -383,6 +612,9 @@ export function EpisodeEditor() {
     )
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
+    // The episode is gone; a draft keyed to it would be offered for a document
+    // that no longer exists.
+    clearDraft(draftKey('podcast', slug))
     setStatus(data.audioDeleted ? `Deleted ${slug} and its MP3` : `Deleted ${slug}`)
     startNew()
     await refreshList()
@@ -406,7 +638,7 @@ export function EpisodeEditor() {
             return (
               <li key={e.slug}>
                 <button
-                  onClick={() => loadEpisode(e.slug)}
+                  onClick={() => openEpisode(e.slug)}
                   className={'block w-full rounded-md px-2 py-1.5 text-left transition ' + (active ? 'bg-neutral-900/[0.06] text-neutral-900' : 'text-neutral-600 hover:bg-neutral-900/[0.04]')}
                 >
                   <span className="block truncate text-sm">{e.title}</span>
@@ -436,12 +668,31 @@ export function EpisodeEditor() {
           </div>
           <div className="flex items-center gap-4">
             {status && <span className={'text-sm ' + (isError ? 'text-red-600' : 'text-neutral-500')} aria-live="polite">{status}</span>}
+            {/* A draft this tab brought back after a reload. Says so rather than
+                leaving it ambiguous whether the form reflects the file on disk,
+                and offers the one-click way out. */}
+            {restored && (
+              <span className="flex items-baseline gap-2 text-sm text-neutral-500" aria-live="polite">
+                {restored}
+                <span className="text-neutral-300">·</span>
+                <button
+                  onClick={discard}
+                  className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 hover:decoration-neutral-500"
+                >
+                  Discard
+                </button>
+              </span>
+            )}
             {/* Only offered on a conflict, and it discards the form's edits — so
                 it says so rather than looking like an ordinary refresh. */}
             {conflict && (
               <button
                 onClick={() => {
                   if (confirm('Reload from disk? Unsaved changes in this form are lost.')) {
+                    // Reloading from disk is a choice to abandon the form, so the
+                    // draft goes too — otherwise the next reload would hand these
+                    // same edits straight back.
+                    discardDraft()
                     loadEpisode(slug)
                   }
                 }}
