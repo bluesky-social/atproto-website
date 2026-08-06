@@ -5,6 +5,16 @@ import { useEffect, useState } from 'react'
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
 import { singleLine } from '@/lib/studio/text'
+import { slugFromSearch, searchWithSlug } from '@/lib/studio/editorUrl'
+import {
+  DRAFT_SCHEMA,
+  draftKey,
+  readDraft,
+  writeDraft,
+  clearDraft,
+  isDirty,
+  describeDraft,
+} from '@/lib/studio/draft'
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
 import { StudioNav } from '../StudioNav'
@@ -15,12 +25,44 @@ type Publish = { ok: boolean; uri?: string; error?: string }
 
 const EMPTY: Owned = { title: '', description: '', date: '', author: '' }
 
+/**
+ * Everything a reload would otherwise lose. Stored as a draft and compared
+ * against what was loaded from disk to tell whether there is anything to keep.
+ *
+ * Excludes what the server owns and the mount refetches — the post list, git
+ * state, authors.json, the OG image, the standard.site URI — and `status`, which
+ * describes the last action rather than the document.
+ *
+ * Bump DRAFT_SCHEMA in @/lib/studio/draft when this shape changes.
+ */
+type Snapshot = {
+  mode: 'new' | 'edit'
+  slug: string
+  owned: Owned
+  body: string
+  authorDids: Record<string, string>
+}
+
 function todayLong(): string {
   return new Date().toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   })
+}
+
+/**
+ * Point the address bar at the post this tab has open.
+ *
+ * Everything in this form lives in component state, so a reload — including the
+ * full reloads the dev server issues for reasons unrelated to this tab — used to
+ * lose it and drop back to the new-post form, where the next Save creates a post
+ * rather than updating the one being edited. Same fix, same reasoning, as the
+ * episode editor; see the note on syncUrl there.
+ */
+function syncUrl(slug: string) {
+  const search = searchWithSlug(window.location.search, slug)
+  window.history.replaceState(null, '', window.location.pathname + search)
 }
 
 function slugify(text: string): string {
@@ -57,6 +99,12 @@ export function BlogEditor() {
   const [makeBranch, setMakeBranch] = useState(true)
   const [branchName, setBranchName] = useState('')
   const [dirtyFiles, setDirtyFiles] = useState<string[]>([])
+  // The form as it was last loaded from disk or written to it. A draft is only
+  // kept while the form differs from this, so "unsaved changes" is never a lie.
+  const [baseline, setBaseline] = useState<Snapshot | null>(null)
+  // The status-line message for a draft this tab brought back, and the flag for
+  // the Discard button beside it. Empty when nothing was restored.
+  const [restored, setRestored] = useState('')
 
   async function refreshList() {
     try {
@@ -90,47 +138,182 @@ export function BlogEditor() {
     }
   }
 
+  // The form as it stands. Rebuilt every render; `snapshotKey` is what the draft
+  // effect watches, since the object itself is a new identity each time.
+  const snapshot: Snapshot = { mode, slug, owned, body, authorDids }
+  const snapshotKey = JSON.stringify(snapshot)
+
+  // Which document's draft this form owns. The new-post form keys off '' — the
+  // slug typed into it is contents, not identity.
+  const docSlug = mode === 'edit' ? slug : ''
+
+  function applySnapshot(s: Snapshot) {
+    setMode(s.mode)
+    setSlug(s.slug)
+    setOwned(s.owned)
+    setBody(s.body)
+    setAuthorDids(s.authorDids)
+  }
+
+  function newSnapshot(): Snapshot {
+    return {
+      mode: 'new',
+      slug: '',
+      owned: { ...EMPTY, date: todayLong() },
+      body: '',
+      authorDids: {},
+    }
+  }
+
+  /**
+   * Bring back a draft for `s` on top of what was just loaded from disk.
+   *
+   * The baseline stays as the on-disk state, so the restored form still reads as
+   * changed and keeps its draft until it's saved. The revision comes from the
+   * draft too — a restored draft conflicts with a file that moved on rather than
+   * overwriting it.
+   */
+  function restoreDraft(s: string): boolean {
+    const key = draftKey('blog', s)
+    const draft = readDraft(key, s)
+    if (!draft) return false
+    // The schema version is the real guard, but a hand-edited or truncated draft
+    // shouldn't be able to take the form down. Check what render depends on.
+    const form = draft.form as Partial<Snapshot>
+    if (!form.owned || typeof form.body !== 'string') {
+      clearDraft(key)
+      return false
+    }
+    applySnapshot(form as Snapshot)
+    setRevision(draft.revision)
+    setRestored(describeDraft(draft))
+    return true
+  }
+
+  // Load from disk, then let any draft this tab holds for it come back on top.
+  // Used from the URL on mount and from the post list — but never after a create,
+  // and never from the conflict reload, where discarding the form is exactly what
+  // was asked for.
+  async function openPost(s: string): Promise<boolean> {
+    const ok = await loadPost(s)
+    if (ok) restoreDraft(s)
+    return ok
+  }
+
+  function discardDraft() {
+    clearDraft(draftKey('blog', docSlug))
+    setRestored('')
+  }
+
+  // Throw away what was restored and go back to what's on disk — or to a blank
+  // form, for a post that has no file yet.
+  function discard() {
+    discardDraft()
+    if (mode === 'edit') loadPost(slug)
+    else startNew()
+  }
+
   useEffect(() => {
     refreshList()
     loadGit()
+    // A slug in the URL means this tab already had a post open; restore it from
+    // disk. If it won't load — deleted since, or a hand-edited URL — the form is
+    // already in its new-post state, so only the stale param needs clearing.
+    const open = slugFromSearch(window.location.search)
+    if (open) {
+      const clearIfMissing = (ok?: boolean) => {
+        if (ok) return
+        syncUrl('')
+        setBaseline(snapshot)
+      }
+      openPost(open).then(clearIfMissing).catch(() => clearIfMissing())
+      return
+    }
+    // The initial state already *is* the new-post form, so adopt it as the
+    // baseline rather than reading the clock a second time and risking a form
+    // that reads as changed before anything was typed.
+    setBaseline(snapshot)
+    restoreDraft('')
   }, [])
 
+  // Keep the draft in step with the form, so an unexpected reload has something
+  // to come back to. Debounced only to avoid a write per keystroke — the write
+  // itself is synchronous and the payload is small.
+  useEffect(() => {
+    if (!baseline) return
+    const key = draftKey('blog', docSlug)
+    if (!isDirty(snapshot, baseline)) {
+      clearDraft(key)
+      return
+    }
+    const timer = window.setTimeout(() => {
+      // A draft already holding this exact form is left alone. Rewriting it would
+      // only move `savedAt` forward, and then "unsaved changes from 3:42" would
+      // report the last reload rather than the last edit.
+      const stored = readDraft(key, docSlug)
+      if (stored && !isDirty(snapshot, stored.form)) return
+      writeDraft(key, {
+        v: DRAFT_SCHEMA,
+        slug: docSlug,
+        mode,
+        savedAt: new Date().toISOString(),
+        revision,
+        form: snapshot,
+      })
+    }, 300)
+    return () => window.clearTimeout(timer)
+    // snapshotKey stands in for `snapshot`, which is a fresh object each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapshotKey, baseline, docSlug, mode, revision])
+
   function startNew() {
-    setMode('new')
-    setSlug('')
-    setOwned({ ...EMPTY, date: todayLong() })
-    setAuthorDids({})
-    setBody('')
+    // Only the new-post form's own draft goes. A draft for the post being left is
+    // kept on purpose: clicking back to it in the list brings the work back,
+    // which is the whole point of keeping drafts per document.
+    clearDraft(draftKey('blog', ''))
+    setRestored('')
+    syncUrl('')
+    const s = newSnapshot()
+    applySnapshot(s)
+    setBaseline(s)
     setSsiteUri('')
     setOgImage(null)
     setDragging(false)
     setStatus('')
     setRevision('')
     setConflict(false)
-    setAuthorDids({})
     setBranchName('')
     setMakeBranch(true)
     loadGit()
   }
 
-  async function loadPost(s: string) {
+  // Returns whether the post loaded, so the mount effect can tell a stale slug in
+  // the URL from a good one.
+  async function loadPost(s: string): Promise<boolean> {
     const res = await fetch(`/api/studio/blog/${s}`)
     if (!res.ok) {
       setStatus(`Error loading ${s}`)
-      return
+      return false
     }
     const data = await res.json()
-    setMode('edit')
-    setSlug(s)
-    setOwned(data.owned)
-    setAuthorDids({})
-    setBody(data.body)
+    const loaded: Snapshot = {
+      mode: 'edit',
+      slug: s,
+      owned: data.owned,
+      body: data.body,
+      authorDids: {},
+    }
+    applySnapshot(loaded)
+    setBaseline(loaded)
+    setRestored('')
+    syncUrl(s)
     setSsiteUri(data.standardSiteUri || '')
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
     setRevision(data.revision ?? '')
     setConflict(false)
     setStatus('')
+    return true
   }
 
   // Update the standard.site URI field from a publish result. Publish state is
@@ -169,6 +352,11 @@ export function BlogEditor() {
       // Reveal step 2: load the created post (body placeholder, ssite, og image)
       // from disk, then show a plain save status.
       await loadPost(data.slug)
+      // The post exists now, so the new-post draft has nothing left to recover.
+      // Cleared *after* the load, not before: the create request takes longer
+      // than the draft debounce, so a write scheduled before it started would
+      // otherwise land after the clear and leave a stale draft behind.
+      clearDraft(draftKey('blog', ''))
       applyPublish(data.publish)
       const where = data.branch?.created ? ` on ${data.branch.name}` : ''
       setStatus(data.warning ?? `Created ${data.slug}${where}`)
@@ -192,13 +380,15 @@ export function BlogEditor() {
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
-      if (data.owned) {
-        setOwned((o) => ({
-          ...o,
-          title: data.owned.title,
-          description: data.owned.description,
-        }))
-      }
+      const stored: Owned = data.owned
+        ? { ...owned, title: data.owned.title, description: data.owned.description }
+        : owned
+      if (data.owned) setOwned(stored)
+      // What's on disk now is what's on screen, so this becomes the baseline and
+      // the draft has nothing left to recover. authorDids is cleared just below,
+      // so the baseline records it empty.
+      setBaseline({ ...snapshot, owned: stored, authorDids: {} })
+      discardDraft()
       // Adopt the revision this save created, or the next save from this same
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
@@ -248,6 +438,9 @@ export function BlogEditor() {
     const res = await fetch(`/api/studio/blog/${slug}`, { method: 'DELETE' })
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
+    // The post is gone; a draft keyed to it would be offered for a document that
+    // no longer exists.
+    clearDraft(draftKey('blog', slug))
     setStatus(`Deleted ${slug}`)
     startNew()
     await refreshList()
@@ -297,7 +490,7 @@ export function BlogEditor() {
             return (
               <li key={p.slug}>
                 <button
-                  onClick={() => loadPost(p.slug)}
+                  onClick={() => openPost(p.slug)}
                   className={
                     'block w-full rounded-md px-2 py-1.5 text-left transition ' +
                     (active
@@ -356,6 +549,24 @@ export function BlogEditor() {
                 {status}
               </span>
             )}
+            {/* A draft this tab brought back after a reload. Says so rather than
+                leaving it ambiguous whether the form reflects the file on disk,
+                and offers the one-click way out. */}
+            {restored && (
+              <span
+                className="flex items-baseline gap-2 text-sm text-neutral-500"
+                aria-live="polite"
+              >
+                {restored}
+                <span className="text-neutral-300">·</span>
+                <button
+                  onClick={discard}
+                  className="underline decoration-neutral-300 underline-offset-4 transition hover:text-neutral-900 hover:decoration-neutral-500"
+                >
+                  Discard
+                </button>
+              </span>
+            )}
             {/* Only offered on a conflict, and it discards the form's edits — so
                 it says so rather than looking like an ordinary refresh. */}
             {conflict && (
@@ -364,6 +575,10 @@ export function BlogEditor() {
                   if (
                     confirm('Reload from disk? Unsaved changes in this form are lost.')
                   ) {
+                    // Reloading from disk is a choice to abandon the form, so the
+                    // draft goes too — otherwise the next reload would hand these
+                    // same edits straight back.
+                    discardDraft()
                     loadPost(slug)
                   }
                 }}

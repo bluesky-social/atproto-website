@@ -189,6 +189,27 @@ Each editor has a switch to the other in its sidebar.
   and header fields the form doesn't manage are preserved byte-for-byte.
   **Hand-editing the `.mdx` is fully supported** — the UI is the easy path, the
   raw file is for everything else.
+- **Unsaved work survives a reload, not a closed tab.** The open document's slug
+  is in the URL (`?slug=…`), and a draft of the form is kept in `sessionStorage`,
+  so a full page reload comes back to the same document with your text intact and
+  says so in the action bar, with a **Discard** beside it. Next issues full
+  reloads in dev for reasons that have nothing to do with the studio — opening
+  another localhost tab can be enough — which is what this exists for. A draft is
+  only kept while the form differs from the file, so the message only appears
+  when there was something to recover. Drafts are per document and per tab:
+  switching to another episode and back brings its draft with it, and two tabs on
+  two episodes don't tread on each other. Closing the tab drops the draft, on
+  purpose — a draft that outlived the session would eventually be offered for a
+  file that had moved on since.
+- **A save is refused if the file changed underneath you.** Every load
+  fingerprints the file it read, and every save sends that fingerprint back; if it
+  no longer matches, nothing is written and the editor says so with a **Reload
+  from disk** button. Nothing is ever merged silently — resolving it is the
+  author's call, because the two versions can't be reconciled without knowing
+  which one is wanted. You'll meet this if you hand-edit the `.mdx` while a tab
+  has it open, or from a second tab on the same document. A restored draft carries
+  the fingerprint it was captured with, so it conflicts the same way rather than
+  overwriting a newer file. The CLIs send no fingerprint and stay last-write-wins.
 - **Lists scan the content directory**, so anything you created by hand or with
   the CLI shows up in the sidebar.
 - **Slug is read-only after creation.** To rename, delete and recreate.
