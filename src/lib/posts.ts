@@ -11,7 +11,7 @@ export const posts: BlogPost[] = [
     slug: 'pds-customization-and-metrics',
     title: 'Make the PDS Your Own: Customization and Metrics',
     description: 'Branding, observability, and a session-list fix in the newest reference PDS.',
-    date: 'August 5, 2026',
+    date: 'August 7, 2026',
     author: 'AT Protocol Team',
   },
   {
