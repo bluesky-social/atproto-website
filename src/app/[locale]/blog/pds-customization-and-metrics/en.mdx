@@ -116,7 +116,27 @@ If you're already running a PDS: this is a change to what the installer writes i
 PDS_BLOB_UPLOAD_LIMIT=314572800
 ```
 
-We're also planning on allowing the PDS to report its maximum blob size in the future, so clients can split or reject uploads if desired.
+We've also enabled the PDS to advertise its maximum blob size via `describeServer`, so clients can split or reject uploads if desired:
+
+```bash
+curl -s https://maitake.us-west.host.bsky.network/xrpc/com.atproto.server.describeServer | jq
+```
+
+```json
+{
+  "did": "did:web:maitake.us-west.host.bsky.network",
+  "availableUserDomains": [
+    ".bsky.social"
+  ],
+  "inviteCodeRequired": true,
+  "blobUploadLimit": 314572800,
+  "links": {
+    "privacyPolicy": "https://bsky.social/about/support/privacy-policy",
+    "termsOfService": "https://bsky.social/about/support/tos"
+  },
+  "contact": {}
+}
+```
 
 ## Sessions that actually show up
 
