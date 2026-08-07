@@ -18,11 +18,11 @@ There are **four** things in this release: customization for the account managem
 
 ## Making it yours
 
-The account management page and the OAuth sign-in screens are the parts of your PDS that your users actually look at. Until now, everyone's looked identical: the same neutral palette, the same generic service name, nothing to distinguish one host from another at the moment a user is being asked to type their password.
+The account management page and the OAuth sign-in screens are the parts of your PDS that your users actually look at. You've already been able to put your own name, logo, colors and links on them, but they were one-off toggles and not documented consistently.
 
-Now the sign-in screens, the consent screens, and the account management interface now take your name, your logo, your colors, and your links!
+This release cleans that up: a smaller, clearer set of variables, all of it properly documented, plus one fully new piece: a background image for the auth screens.
 
-All of this is configured with environment variables. If you're running the reference PDS with the standard Docker deployment, you can start experimenting in your `pds.env` and restart. Start with a name and logo:
+If you're running the reference PDS with the standard Docker deployment, you can start experimenting in your `pds.env` and restart. Start with a name and logo:
 
 ```bash
 PDS_SERVICE_NAME="Example Social"
@@ -58,7 +58,7 @@ Here's the sign-in step on a deployment with branding configured — in this cas
 
 A PDS that configures none of this does *not* look like Bluesky. The defaults are neutral, and the branding above is the result of setting those variables, not something you inherit.
 
-You can also now set a background image(!) for the auth screens, which sits behind the sign-in card:
+To set a background image(!) for the auth screens, which sits behind the sign-in card:
 
 ```bash
 PDS_BACKGROUND_LIGHT_URL="https://example.com/bg-light.png"
