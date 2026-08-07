@@ -36,9 +36,9 @@ Colors are set the same way. The one you'll want first is the primary color, whi
 PDS_PRIMARY_COLOR="#7c3aed"
 ```
 
-From there you can go as deep as you like. There are `PDS_ERROR_COLOR`, `PDS_WARNING_COLOR`, `PDS_INFO_COLOR`, and `PDS_SUCCESS_COLOR` for the semantic states, and `PDS_LIGHT_COLOR` and `PDS_DARK_COLOR` to set the two ends of the neutral range.
+There are four more for the semantic states: `PDS_ERROR_COLOR`, `PDS_WARNING_COLOR`, `PDS_INFO_COLOR`, and `PDS_SUCCESS_COLOR`.
 
-Many of these are optional. If you specify `PDS_PRIMARY_COLOR` but not `PDS_PRIMARY_COLOR_CONTRAST`, the interface picks whichever of your light or dark colors has the better contrast ratio against it. The defaults are accessible, and you can deviate from there.
+All of them are optional. The color of the text drawn on top of your primary color is derived for you, picking whichever of black or white reads better against it, so the accessible choice is the default rather than something you have to configure.
 
 Finally, you can add your own links to the footer:
 
@@ -148,4 +148,4 @@ The list is now accurate regardless of when a session was last refreshed. If you
 
 ## Getting the update
 
-All in all, this is a big release for the reference PDS, and knocks out all remaining items on our summer PDS to-do list. If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release. Try it out and let us know what you think!
+All in all, this is a big release for the reference PDS, and knocks out all the remaining items on our summer PDS to-do list. If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release. Try it out and let us know what you think!
