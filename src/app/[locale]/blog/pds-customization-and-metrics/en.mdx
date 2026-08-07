@@ -1,0 +1,152 @@
+import { Container } from "@/components/Container"
+import { BlueskyPost } from '@/components/BlueskyPost'
+import brandedSignin from "./pds-branded-signin.png"
+import backgroundDark from "./pds-background-dark.png"
+import dashboard from "./pds-dashboard.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3msixdewxyb2r',
+  title: 'Make the PDS Your Own: Customization and Metrics',
+  description: 'Branding, observability, and a session-list fix in the newest reference PDS',
+  date: 'August 7, 2026',
+  author: 'AT Protocol Team',
+}
+
+When we [shipped the account management page](/blog/pds-account-management) back in June, we closed that post with a promise: more reference PDS updates over the summer, including observability tooling. Today's release makes good on that and then some.
+
+There are **four** things in this release: customization for the account management interface, OpenTelemetry support, bigger default blob sizes, and a fix for a bug in the connected apps list.
+
+## Making it yours
+
+The account management page and the OAuth sign-in screens are the parts of your PDS that your users actually look at. Until now, everyone's looked identical: the same neutral palette, the same generic service name, nothing to distinguish one host from another at the moment a user is being asked to type their password.
+
+Now the sign-in screens, the consent screens, and the account management interface now take your name, your logo, your colors, and your links!
+
+All of this is configured with environment variables. If you're running the reference PDS with the standard Docker deployment, you can start experimenting in your `pds.env` and restart. Start with a name and logo:
+
+```bash
+PDS_SERVICE_NAME="Example Social"
+PDS_LOGO_URL="https://example.com/logo.svg"
+```
+
+`PDS_SERVICE_NAME` defaults to your hostname followed by "PDS", so setting it is the single highest-impact change you can make. Both of these also flow through to the transactional emails your PDS sends, so password reset messages get your branding too.
+
+Colors are set the same way. The one you'll want first is the primary color, which drives buttons, links, and accents:
+
+```bash
+PDS_PRIMARY_COLOR="#7c3aed"
+```
+
+There are four more for the semantic states: `PDS_ERROR_COLOR`, `PDS_WARNING_COLOR`, `PDS_INFO_COLOR`, and `PDS_SUCCESS_COLOR`.
+
+All of them are optional. The color of the text drawn on top of your primary color is derived for you, picking whichever of black or white reads better against it, so the accessible choice is the default rather than something you have to configure.
+
+Finally, you can add your own links to the footer:
+
+```bash
+PDS_HOME_URL="https://example.com"
+PDS_TERMS_OF_SERVICE_URL="https://example.com/tos"
+PDS_PRIVACY_POLICY_URL="https://example.com/privacy"
+PDS_SUPPORT_URL="https://example.com/support"
+```
+
+Here's the sign-in step on a deployment with branding configured — in this case Bluesky's own, applied through exactly the variables above:
+
+<Container>
+  <Image src={brandedSignin} alt="PDS sign-in screen showing a configured service logo and name, with the primary color applied to the Sign in button." className="w-full max-w-md mx-auto" />
+</Container>
+
+A PDS that configures none of this does *not* look like Bluesky. The defaults are neutral, and the branding above is the result of setting those variables, not something you inherit.
+
+You can also now set a background image(!) for the auth screens, which sits behind the sign-in card:
+
+```bash
+PDS_BACKGROUND_LIGHT_URL="https://example.com/bg-light.png"
+PDS_BACKGROUND_DARK_URL="https://example.com/bg-dark.png"
+```
+
+A user in dark mode gets the dark layout implicitly, without a toggle. The image is drawn `cover` and centered over your neutral base color, and the card keeps its own opaque surface, so your copy stays legible no matter how busy the image is.
+
+<Container>
+  <Image src={backgroundDark} alt="PDS account picker card centered over an illustrated park scene, in dark mode." className="w-full mx-auto" />
+</Container>
+
+## Knowing what your PDS is doing
+
+The other half of this release is for operators rather than users. The PDS now supports [OpenTelemetry](https://opentelemetry.io/) for traces, metrics, and logs.
+
+Telemetry is off by default, and once again, you can opt in by setting environment variables on the reference PDS:
+
+```bash
+NODE_OPTIONS="--import=@atproto/pds/telemetry"
+OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+OTEL_SERVICE_NAME="pds"
+```
+
+Once it's on, you get automatic instrumentation for PDS metrics: inbound and outbound HTTP, the SQLite layer, S3-compatible blob storage, and Node runtime metrics like event loop lag and garbage collection.
+
+XRPC requests are normalized by method, so a span comes through as `GET /xrpc/com.atproto.repo.getRecord` rather than being flattened into a single `/` route, and the NSID is attached as an attribute.
+
+On top of the automatic instrumentation, the PDS emits counters for the events an operator cares about:
+
+- `account.created` — new accounts, dimensioned by whether signup came through OAuth or the XRPC endpoint
+- `session.created` — sign-ins, dimensioned by source
+- `oauth.authorization` — OAuth grants issued to apps
+
+We're also publishing a dashboard to go with all of this. The [`monitoring/`](https://github.com/bluesky-social/pds/tree/main/monitoring) directory in the reference PDS repo has a self-contained Prometheus, Grafana and node_exporter stack plus a ready-made **PDS Overview** dashboard, covering host health alongside PDS activity:
+
+<Container>
+  <Image src={dashboard} alt="Grafana PDS Overview dashboard showing accounts created, sessions created, OAuth authorizations and XRPC request rate as stat tiles, with timeseries panels for top XRPC methods, request latency percentiles, account and session activity, and HTTP responses by status code." className="w-full mx-auto" />
+</Container>
+
+There's no OpenTelemetry Collector in that stack. Prometheus v3 can receive OTLP directly, so the PDS pushes metrics straight to it. Our sample dashboard stack can run alongside a PDS in under 1GB of memory.
+
+Everything binds to localhost by default, so you can reach Grafana over an SSH tunnel. If you already run Prometheus and Grafana, you don't need the compose file at all; you can point the PDS at your own OTLP endpoint and import the dashboard JSON. Either way, [`monitoring/README.md`](https://github.com/bluesky-social/pds/blob/main/monitoring/README.md) has the walkthrough, including which `OTEL_*` variables the dashboard's panels depend on.
+
+## Bigger blobs by default
+
+We've decided to raise the default maximum blob size to 300M. This is primarily to allow longer videos on Bluesky, which I posted about last week:
+
+<BlueskyPost url="https://bsky.app/profile/alex.bsky.team/post/3mrqcrhzajc2c" />
+
+The response was positive, so we went ahead and made the change.
+
+If you're already running a PDS: this is a change to what the installer writes into `pds.env`, so new installs pick it up but existing ones don't. To raise the limit on a PDS you've already got running, set it yourself and restart:
+
+```bash
+PDS_BLOB_UPLOAD_LIMIT=314572800
+```
+
+We've also enabled the PDS to advertise its maximum blob size via `describeServer`, so clients can split or reject uploads if desired:
+
+```bash
+curl -s https://maitake.us-west.host.bsky.network/xrpc/com.atproto.server.describeServer | jq
+```
+
+```json
+{
+  "did": "did:web:maitake.us-west.host.bsky.network",
+  "availableUserDomains": [
+    ".bsky.social"
+  ],
+  "inviteCodeRequired": true,
+  "blobUploadLimit": 314572800,
+  "links": {
+    "privacyPolicy": "https://bsky.social/about/support/privacy-policy",
+    "termsOfService": "https://bsky.social/about/support/tos"
+  },
+  "contact": {}
+}
+```
+
+## Sessions that actually show up
+
+This release also fixes a bug in the connected apps list on the [Account Management](/guides/account-management) page.
+
+Previously, the list only reliably surfaced sessions that had been refreshed recently. If you'd authorized an app and then not opened it in a while, it could be missing from the list.
+
+The list is now accurate regardless of when a session was last refreshed. If you've been using the account management page to audit your connected apps, you may see entries that were previously hidden.
+
+## Getting the update
+
+All in all, this is a big release for the reference PDS, and knocks out all the remaining items on our summer PDS to-do list. If you're running the reference PDS with the standard Docker deployment, it'll automatically update to the newest release. Try it out and let us know what you think!
