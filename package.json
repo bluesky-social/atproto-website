@@ -44,7 +44,7 @@
     "framer-motion": "^10.18.0",
     "mdast-util-to-string": "^4.0.0",
     "mdx-annotations": "^0.1.1",
-    "next": "^16.2.7",
+    "next": "^16.3.0",
     "next-i18n-router": "^5.5.1",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
@@ -72,7 +72,7 @@
     "eslint-config-next": "^16.3.0-preview.0",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
-    "sharp": "^0.33.1",
+    "sharp": "^0.35.3",
     "tsx": "^4.21.0",
     "vitest": "^4.1.8",
     "wrangler": "^4.120.0"
