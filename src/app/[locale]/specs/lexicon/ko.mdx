@@ -83,7 +83,7 @@ Lexicon 내 특정 정의에 대한 참조는 조각(fragment) 구문(예: `com.
 - `parameters` (객체, 선택): 이 엔드포인트의 HTTP 쿼리 매개변수를 설명하는 `params` 타입의 스키마 정의
 - `output` (객체, 선택): HTTP 응답 본문을 설명합니다.
     - `description` (문자열, 선택): 간단한 설명
-    - `encoding` (문자열, 필수): 본문 내용의 MIME 타입. JSON 응답의 경우 `application/json`을 사용합니다.
+    - `encoding` (문자열 | 문자열 배열, 필수): 본문 내용의 MIME 타입. JSON 응답의 경우 `application/json`을 사용합니다.
     - `schema` (객체, 선택): `object`, `ref` 또는 refs의 `union` 중 하나인 스키마 정의. JSON 인코딩 응답을 설명하는 데 사용되며, JSON 응답의 경우에도 스키마는 선택적입니다.
 - `input` (객체, 선택, `procedure` 전용): HTTP 요청 본문 스키마를 설명하며, `output` 필드와 동일한 형식을 따릅니다.
 - `errors` (객체 배열, 선택): 반환될 수 있는 문자열 오류 코드 집합
