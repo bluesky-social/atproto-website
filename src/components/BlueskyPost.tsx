@@ -8,12 +8,13 @@ export async function BlueskyPost({ url }: { url: string }) {
     )
     if (!res.ok) throw new Error()
     const data = await res.json()
-    // Strip the <script> tag — the client component loads it explicitly
-    // so it runs after the blockquote is in the DOM
-    const html = data.html
-      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-      .trim()
-    return <BlueskyPostClient html={html} />
+    // We only want the resolved at:// URI out of the oembed snippet — the
+    // embed iframe is addressed by DID, while a bsky.app URL may carry a
+    // handle. The rest of the snippet is markup for embed.js, which we don't
+    // use (see BlueskyPostClient).
+    const uri = /data-bluesky-uri="(at:\/\/[^"]+)"/.exec(data.html)?.[1]
+    if (!uri) throw new Error()
+    return <BlueskyPostClient uri={uri} />
   } catch {
     return (
       <a href={url} target="_blank" rel="noopener noreferrer">
