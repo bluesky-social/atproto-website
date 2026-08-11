@@ -17,7 +17,7 @@ import S12 from './_snippets/12-logout-button.mdx'
 import S13 from './_snippets/13-app-page.mdx'
 import S14 from './_snippets/14-pnpm-workspace-yaml.mdx'
 import S15 from './_snippets/15-pnpm-add-sqlite.mdx'
-import S16 from './_snippets/16-next-config.mdx'
+import S16 from './_snippets/16-add-server-external-packages.mdx'
 import S17 from './_snippets/17-lib-db-index.mdx'
 import S18 from './_snippets/18-lib-db-migrations.mdx'
 import S19 from './_snippets/19-scripts-migrate.mdx'
@@ -58,6 +58,18 @@ On platforms supported by [homebrew](https://brew.sh/), you can install these wi
 You'll start by creating a new Next.js project using the `create-next-app` command.
 
 <S02 />
+
+Since the OAuth flow uses `127.0.0.1`, add it as an allowed development origin in `next.config.ts`:
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1"],
+};
+
+export default nextConfig;
+```
 
 Next, add the `oauth-client-node` package from the atproto ecosystem, which provides OAuth client functionality.
 
@@ -171,7 +183,7 @@ If you're using `pnpm` as a package manager as suggeseted here, you should creat
 
 <S15 />
 
-Next, replace the contents of `next.config.ts` to use `better-sqlite3` server-side:
+Next, add `better-sqlite3` to `serverExternalPackages` in `next.config.ts`:
 
 <S16 />
 
