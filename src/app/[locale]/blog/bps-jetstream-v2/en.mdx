@@ -24,7 +24,7 @@ You can also *just* snapshot the network — a point-in-time copy of the archive
 
 This unlocks much more sophisticated server-side slicing without ever backfilling locally: you can spin up an [App](https://atproto.com/guides/the-at-stack), run an analysis over a month of posts, or recover from downtime, all through the same JSON shape as the live tail. 
 
-One change you should be aware of from the previous version of Jetstream. Because serving the archives are bandwidth-intensive, we want to make sure the service remains reliable and cheap to run, so we're now requiring an [API token](https://bsky.network/account) just for these requests. The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
+One change you should be aware of from the previous version of Jetstream. Because serving the archives is bandwidth-intensive, we want to make sure the service remains reliable and cheap to run, so we're now requiring an [API token](https://bsky.network/account) just for these requests. The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
 
 The v2 instances are live now at `wss://jetstream.us-west.bsky.network` and `wss://jetstream.us-east.bsky.network`. The existing v1 instances will keep running unchanged for a while, and the live tail behaves identically on both, so there's no rush to move. Read the full flow in the [Network Replay docs](https://bsky.network/docs/jetstream-replay).
 
@@ -61,7 +61,7 @@ Every TypeScript example on this new site is written against it, marking a huge 
 
 Finally, the [HTTP reference](https://endpoints.bsky.app) has been updated alongside all of this. Spinning those docs *out of* https://docs.bsky.app was actually step 1 of this overhaul; we're now landing the remainder.
 
-The new `network.bsky.jetstream.*` methods that power Replay — `planSnapshot`, `listSegments`, `getSegment`, and `getBlock` — are now browsable with full request and response schemas, and the reference now documents Jetstream's WebSocket endpoints too, so the entire Jetstream v2 surface lives in one place.
+The new `network.bsky.jetstream.*` methods that power Replay — `planSnapshot`, `listSegments`, `getSegment`, and `getBlock` — are now browsable with full request and response schemas, and the reference now documents Jetstream's WebSocket endpoint too, so the entire Jetstream v2 surface lives in one place.
 
 ## What's next
 
