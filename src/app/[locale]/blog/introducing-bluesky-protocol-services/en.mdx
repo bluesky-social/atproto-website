@@ -1,0 +1,67 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3msxzige4ui2w',
+  title: 'Introducing Bluesky Protocol Services',
+  description: 'A new home for the infrastructure Bluesky runs on the open network — including Jetstream v2 with Replay, a new Jetstream SDK, and a lex-based TypeScript SDK.',
+  date: 'August 13, 2026',
+  author: 'Alex Garnett',
+}
+
+Today we're launching **[Bluesky Protocol Services](https://bsky.network)**: a new brand, and a new website, for the public infrastructure Bluesky operates on the [AT Protocol](https://atproto.com) network.
+
+Bluesky has always run more than the Bluesky app. We operate Jetstream instances, Relays, and the Bluesky API endpoints built on atproto. But if you were a developer trying to build on that infrastructure, our docs didn't always make it easy to tell what we run as a service or where to start. Bluesky Protocol Services is our answer: one place that documents our service offerings within the ecosystem, clarifies the service contracts around Bluesky-provided infrastructure, and gives us a clean way to ship future releases like the ones in this post!
+
+The new site replaces the old docs.bsky.app. If you're new to the network, start with [How It Works](https://bsky.network/docs/how-it-works), a visual walkthrough of how records, Lexicons, and the firehose fit together. If you're building against the Bluesky app's data model, the [Bluesky API guides](https://bsky.network/docs/bluesky-api) are all still there, freshly rewritten (more on that below).
+
+## Jetstream v2: Network Replay
+
+The headline release shipping alongside the new site is **Jetstream v2**. Jetstream is the best way for most developers to use the network at scale: you describe the slice you want, and it arrives as plain JSON over a WebSocket. What it couldn't give you was *history*. If you needed the records that already existed on the network, you had to backfill repos yourself then cut over to the live stream.
+
+Jetstream v2 adds that capability to the server. It keeps a compressed archive of the whole network and adds a new way to consume it, alongside the live tail:
+
+**Network Replay** lets you catch up from any point in the past and cut over to live with no gap. You `POST` your filters to `planSnapshot`, download the sealed segments it returns over plain HTTP, then connect the live WebSocket once at the tip. Replay is **stateless on the server**, with no per-consumer cursor, no subscription to register, and nothing to stage on the client. Jetstream is your buffer.
+You can also *just* snapshot the network — a point-in-time copy of the archive over HTTP only (`listSegments` + `getSegment`), with no live tail. Same archive, same filters, no WebSocket.
+
+This unlocks much more sophisticated server-side slicing without ever backfilling locally: you can spin up an [App](https://atproto.com/guides/the-at-stack), run an analysis over a month of posts, or recover from downtime, all through the same JSON shape as the live tail. 
+
+One change you should be aware of from the previous version of Jetstream. Because serving the archives are bandwidth-intensive, we want to make sure the service remains reliable and cheap to run, so we're now requiring an [API token](https://bsky.network/account) just for these requests. The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
+
+The v2 instances are live now at `wss://jetstream.us-west.bsky.network` and `wss://jetstream.us-east.bsky.network`. The existing v1 instances will keep running unchanged for a while, and the live tail behaves identically on both, so there's no rush to move. Read the full flow in the [Network Replay docs](https://bsky.network/docs/jetstream-replay).
+
+And! As always, this infrastructure is open source and self-hostable. See [Running your own Jetstream](https://bsky.network/docs/jetstream-self-host) for details.
+
+## A Jetstream SDK
+
+Jetstream is plain JSON, so you never *need* an SDK. But there’s some common glue: reconnecting, deduping, cursor management, decoding events into typed records. Hence, the new **Jetstream SDKs**: TypeScript and Go clients where you construct a `Jetstream` object, pass a filter, and `for await` over decoded, typed events:
+
+```ts
+import { Jetstream } from '@bsky/jetstream'
+import { app } from '@bsky/sdk/lexicons'
+
+const js = new Jetstream('https://jetstream.us-east.bsky.network')
+
+for await (const evt of js.live({ collections: [app.bsky.feed.post] })) {
+  if (evt.kind === 'commit' && evt.commit.operation === 'create') {
+    console.log(evt.commit.collection, evt.commit.record.text)
+  }
+}
+```
+
+The SDKs are available at: TK TK
+
+The [Jetstream SDK docs](https://bsky.network/docs/jetstream-sdk) go into more detail.
+
+## The Bluesky TypeScript SDK, rebased on lex
+
+Back in May we [promoted the `lex` SDK to stable preview](https://atproto.com/blog/ts-sdk-upgrades) and promised that the standalone Bluesky docs would follow. That's now done: the **Bluesky TypeScript SDK** https://www.npmjs.com/package/@bsky/sdk`) is rebuilt on top of [`@atproto/lex`](https://www.npmjs.com/package/@atproto/lex), which means we're no longer maintaining legacy code paths for Bluesky-specific helpers. This is the Lexicon toolchain, fully typed end to end, from the protocol layer up through `app.bsky` records.
+
+Every TypeScript example on this new site is written against it, marking a huge move away from legacy technical debt — this is good code hygiene for us, and should eliminate LLM recommendations for deprecated SDKs. If you're still using `@atproto/api` code, it continues to work as before, and the [Bluesky API guides](https://bsky.network/docs/bluesky-api) serve as a migration reference.
+
+## Updates to endpoints.bsky.app
+
+Finally, the [HTTP reference](https://endpoints.bsky.app) has been updated alongside all of this. Spinning those docs *out of* https://docs.bsky.app was actually step 1 of this overhaul; we’re now landing the remainder.
+
+The new `network.bsky.jetstream.*` methods that power Replay — `planBackfill`, `listSegments`, `getSegment`, and `getBlock` — are now browsable with full request and response schemas, and the reference now documents Jetstream's WebSocket endpoints too, so the entire Jetstream v2 surface lives in one place.
+
+## What's next
+
+Everything above is live today: the [new site](https://docs.bsky.app), the v2 Jetstream instances, the SDK preview, and the updated HTTP reference. If you build something on Replay in the next few weeks, we’d love to hear about it; the fastest way to shape where the SDK's orchestration goes is to show us what you're folding the stream into.
