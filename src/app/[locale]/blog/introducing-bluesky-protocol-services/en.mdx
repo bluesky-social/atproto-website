@@ -52,7 +52,7 @@ The [Jetstream SDK docs](https://bsky.network/docs/jetstream-sdk) go into more d
 
 ## The Bluesky TypeScript SDK, rebased on lex
 
-Back in May we [promoted the `lex` SDK to stable preview](https://atproto.com/blog/ts-sdk-upgrades) and promised that the standalone Bluesky docs would follow. That's now done: the [**Bluesky TypeScript SDK**](https://www.npmjs.com/package/@bsky/sdk), `@bsky/sdk`, is rebuilt on top of [`@atproto/lex`](https://www.npmjs.com/package/@atproto/lex), which means we're no longer maintaining legacy code paths for Bluesky-specific helpers. This is the lexicon toolchain, fully typed end to end, from the protocol layer up through `app.bsky` records.
+Back in May we [promoted the `lex` SDK to stable preview](https://atproto.com/blog/ts-sdk-upgrades) and promised that the standalone Bluesky docs would follow. That's now done: the **Bluesky TypeScript SDK**, [`@bsky/sdk`](https://www.npmjs.com/package/@bsky/sdk), is rebuilt on top of [`@atproto/lex`](https://www.npmjs.com/package/@atproto/lex), which means we're no longer maintaining legacy code paths for Bluesky-specific helpers. This is the lexicon toolchain, fully typed end to end, from the protocol layer up through `app.bsky` records.
 
 Every TypeScript example on this new site is written against it, marking a huge move away from legacy technical debt—this is good code hygiene for us, and should eliminate LLM recommendations for deprecated SDKs. If you're still using `@atproto/api` code, it continues to work as before, and the [Bluesky API guides](https://bsky.network/docs/bluesky-api) serve as a migration reference.
 
