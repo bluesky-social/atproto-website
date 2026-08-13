@@ -1,5 +1,6 @@
 export const header = {
   standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3msxzige4ui2w',
+  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',
   title: 'Introducing Bluesky Protocol Services',
   description: 'A new home for the infrastructure Bluesky runs on the open network — including Jetstream v2 with network replay, a new Jetstream SDK, and a lex-based TypeScript SDK',
   date: 'August 13, 2026',
@@ -19,7 +20,7 @@ Jetstream v2 adds that capability to the server. It keeps a compressed archive o
 **Network Replay** lets you catch up from any point in the past and cut over to live with no gap. You `POST` your filters to `planSnapshot`, download the sealed segments it returns over plain HTTP, then connect the live WebSocket once at the tip. Replay is **stateless on the server**, with no per-consumer cursor, no subscription to register, and nothing to stage on the client. Jetstream is your buffer.
 You can also *just* snapshot the network — a point-in-time copy of the archive over HTTP only (`listSegments` + `getSegment`), with no live tail. Same archive, same filters, no WebSocket.
 
-This unlocks much more sophisticated server-side slicing without ever backfilling locally: you can spin up an [App](https://atproto.com/guides/the-at-stack), run an analysis over a month of posts, or recover from downtime, all through the same JSON shape as the live tail. 
+This unlocks much more sophisticated server-side slicing without ever backfilling locally: you can spin up an [App](https://atproto.com/guides/the-at-stack), run an analysis over a month of posts, or recover from downtime, all through the same JSON shape as the live tail.
 
 Serving these archives is bandwidth-intensive. To ensure the service remains reliable and cheap to run, we're now requiring an [API token just for these requests](https://bsky.network/account). The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
 
