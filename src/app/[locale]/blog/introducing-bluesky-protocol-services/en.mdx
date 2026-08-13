@@ -21,7 +21,7 @@ You can also *just* snapshot the network — a point-in-time copy of the archive
 
 This unlocks much more sophisticated server-side slicing without ever backfilling locally: you can spin up an [App](https://atproto.com/guides/the-at-stack), run an analysis over a month of posts, or recover from downtime, all through the same JSON shape as the live tail. 
 
-Serving these archives is bandwidth-intensive. To ensure the service remains reliable and cheap to run, we're now requiring an [API token just for these requests]((https://bsky.network/account). The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
+Serving these archives is bandwidth-intensive. To ensure the service remains reliable and cheap to run, we're now requiring an [API token just for these requests](https://bsky.network/account). The live tail remains open and unauthenticated, it's only when you request an archive that we require a token. We have no plans to introduce an auth requirement for the live stream.
 
 The v2 instances are live now at `wss://jetstream.us-west.bsky.network` and `wss://jetstream.us-east.bsky.network`. The existing v1 instances will keep running unchanged for a while, and the live tail behaves identically on both, so there's no rush to move. Read the full flow in the [Network Replay docs](https://bsky.network/docs/jetstream-replay).
 
@@ -52,7 +52,7 @@ The [Jetstream SDK docs](https://bsky.network/docs/jetstream-sdk) go into more d
 
 ## The Bluesky TypeScript SDK, rebased on lex
 
-Back in May we [promoted the `lex` SDK to stable preview](https://atproto.com/blog/ts-sdk-upgrades) and promised that the standalone Bluesky docs would follow. That's now done: the **Bluesky TypeScript SDK** https://www.npmjs.com/package/@bsky/sdk`) is rebuilt on top of [`@atproto/lex`](https://www.npmjs.com/package/@atproto/lex), which means we're no longer maintaining legacy code paths for Bluesky-specific helpers. This is the lexicon toolchain, fully typed end to end, from the protocol layer up through `app.bsky` records.
+Back in May we [promoted the `lex` SDK to stable preview](https://atproto.com/blog/ts-sdk-upgrades) and promised that the standalone Bluesky docs would follow. That's now done: the [**Bluesky TypeScript SDK**](https://npmx.dev/package/@bsky/sdk) is rebuilt on top of [`@atproto/lex`](https://www.npmjs.com/package/@atproto/lex), which means we're no longer maintaining legacy code paths for Bluesky-specific helpers. This is the lexicon toolchain, fully typed end to end, from the protocol layer up through `app.bsky` records.
 
 Every TypeScript example on this new site is written against it, marking a huge move away from legacy technical debt—this is good code hygiene for us, and should eliminate LLM recommendations for deprecated SDKs. If you're still using `@atproto/api` code, it continues to work as before, and the [Bluesky API guides](https://bsky.network/docs/bluesky-api) serve as a migration reference.
 
@@ -64,6 +64,6 @@ The new `network.bsky.jetstream.*` methods that power Replay — `planBackfill`,
 
 ## What's next
 
-Everything above is live today: the [new site](https://docs.bsky.app), the v2 Jetstream instances, the SDK preview, and the updated HTTP reference. If you're new to the network, start with [How It Works](https://bsky.network/docs/how-it-works), a visual walkthrough of how records, lexicons, and the firehose fit together. If you're building against the Bluesky app's data model, the [Bluesky API guides](https://bsky.network/docs/bluesky-api) are all still there, freshly rewritten (more on that below)
+Everything above is live today: the [new site](https://bsky.network), the v2 Jetstream instances, the SDK preview, and the updated HTTP reference. If you're new to the network, start with [How It Works](https://bsky.network/docs/how-it-works), a visual walkthrough of how records, lexicons, and the firehose fit together. If you're building against the Bluesky app's data model, the [Bluesky API guides](https://bsky.network/docs/bluesky-api) are all still there, freshly rewritten (more on that below)
 
 If you build something on Replay in the next few weeks, we’d love to hear about it; the fastest way to shape where the SDK's orchestration goes is to show us what you're folding the stream into.
