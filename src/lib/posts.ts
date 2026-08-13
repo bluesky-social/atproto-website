@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'introducing-bluesky-protocol-services',
+    title: 'Introducing Bluesky Protocol Services',
+    description: 'A new home for the infrastructure Bluesky runs on the open network — including Jetstream v2 with network replay, a new Jetstream SDK, and a lex-based TypeScript SDK',
+    date: 'August 13, 2026',
+    author: 'Alex Garnett',
+  },
+  {
     slug: 'pds-customization-and-metrics',
     title: 'Make the PDS Your Own: Customization and Metrics',
     description: 'Branding, observability, and a session-list fix in the newest reference PDS.',
