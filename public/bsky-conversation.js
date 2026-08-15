@@ -526,6 +526,7 @@ class BskyConversation extends HTMLElement {
     this.innerHTML = `
       <style>
         .bsky-conversation {
+          overflow-wrap: break-word;
           --bsky-border-color: #e5e7eb;
           --bsky-muted-color: #6b7280;
           --bsky-link-color: black;
