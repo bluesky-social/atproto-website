@@ -27,10 +27,9 @@ const migrations: Record<string, Migration> = {
         .execute();
     },
     async down(db: Kysely<unknown>) {
+      await db.schema.dropIndex("status_current_idx").on("status").execute();
       await db.schema.dropTable("status").execute();
       await db.schema.dropTable("account").execute();
-      await db.schema.dropTable("auth_session").execute();
-      await db.schema.dropTable("auth_state").execute();
     },
   },
 };
