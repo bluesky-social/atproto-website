@@ -19,6 +19,11 @@ interface PageProps {
 
 export function Page(page: PageProps) {
   const sections = page.sections ?? []
+  // Still keyed to the build-time field, deliberately. Revealing this entry when
+  // the thread resolves would mean rendering the nav from the section store
+  // instead of this prop, and SectionProvider resets the store from the prop.
+  // Cost of leaving it: for the window between posting a thread and the next
+  // deploy, the discussion renders but isn't listed in the side nav.
   const navSections = page.header?.blueskyPostUrl
     ? [...sections, { id: 'discuss', title: 'Discussion' }]
     : sections
@@ -37,7 +42,16 @@ export function Page(page: PageProps) {
       <div className="flex flex-wrap items-start">
         <page.default />
         {showSectionNav && <PageSectionsNavigation sections={navSections} />}
-        {page.header?.blueskyPostUrl && <BlueskyConversation uri={page.header.blueskyPostUrl} headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER} />}
+        {/* Gated on either: an explicit URL renders immediately, and a post with
+            only a standardSiteUri resolves its thread from that record — which is
+            what lets a thread reach a live post without rebuilding the site. */}
+        {(page.header?.blueskyPostUrl || page.header?.standardSiteUri) && (
+          <BlueskyConversation
+            uri={page.header.blueskyPostUrl}
+            documentUri={page.header.standardSiteUri}
+            headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER}
+          />
+        )}
       </div>
     </SectionProvider>
   )
