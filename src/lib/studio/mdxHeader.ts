@@ -263,7 +263,9 @@ export function applyOwnedFields(
   for (const key of OWNED_KEYS) {
     const value = owned[key]
     // A cleared optional key is deleted outright rather than written empty.
-    if (OPTIONAL_OWNED_KEYS.has(key) && !value) {
+    // Whitespace-only counts as cleared too: bskyPostUrl.ts validates trimmed,
+    // so a value that trims to '' can never parse and must not be written.
+    if (OPTIONAL_OWNED_KEYS.has(key) && !value.trim()) {
       headerEntries = headerEntries.filter((e) => e.key !== key)
       continue
     }

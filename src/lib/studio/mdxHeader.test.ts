@@ -198,6 +198,20 @@ describe('blueskyPostUrl as an optional owned key', () => {
     expect(out).not.toContain('blueskyPostUrl')
   })
 
+  // A whitespace-only value must be treated exactly like an empty string: the
+  // header key is removed, not written as 'blueskyPostUrl: \'   \''. That value
+  // would parse as truthy everywhere else in the pipeline (the publish script,
+  // Page.tsx's nav gate) while failing bskyPostUrl.ts's own trimmed validation.
+  it('removes the line when the field is whitespace-only', () => {
+    const parsed = parseMdxFile(
+      "export const header = {\n  title: 'Old',\n  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',\n}\n\nBody",
+    )
+    const out = serializeMdxFile(
+      applyOwnedFields(parsed, { ...OWNED_WITH_URL, blueskyPostUrl: '   ' }),
+    )
+    expect(out).not.toContain('blueskyPostUrl')
+  })
+
   it('never writes an empty value for it', () => {
     const parsed = parseMdxFile("export const header = {\n  title: 'Old',\n}\n\nBody")
     const out = serializeMdxFile(applyOwnedFields(parsed, OWNED_WITHOUT_URL))

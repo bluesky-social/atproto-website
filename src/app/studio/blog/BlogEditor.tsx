@@ -331,12 +331,20 @@ export function BlogEditor() {
 
   // Update the standard.site URI field from a publish result. Publish state is
   // reflected inline in the standard.site record section, not the top status
-  // line (which is about the post save), to avoid ambiguity.
-  function applyPublish(pub: Publish | undefined) {
+  // line (which is about the post save), to avoid ambiguity. Returns the
+  // failure status line to show, or null if the publish succeeded (or there
+  // was nothing to publish) — callers must let this win over their own
+  // success message, since a failed republish here means bskyPostRef never
+  // made it onto the record.
+  function applyPublish(pub: Publish | undefined): string | null {
     if (pub?.uri) setSsiteUri(pub.uri)
+    return pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : null
   }
 
   async function save() {
+    // Persist exactly what the publish step will parse (bskyPostUrl.ts
+    // validates trimmed; the header must hold the same trimmed value).
+    const cleanedOwned: Owned = { ...owned, blueskyPostUrl: owned.blueskyPostUrl.trim() }
     if (mode === 'new') {
       const finalSlug = slug || slugify(owned.title)
       if (!finalSlug) return setStatus('Add a title or slug first')
@@ -346,7 +354,7 @@ export function BlogEditor() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           slug: finalSlug,
-          ...owned,
+          ...cleanedOwned,
           authorDids,
           body,
           branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
@@ -370,9 +378,9 @@ export function BlogEditor() {
       // than the draft debounce, so a write scheduled before it started would
       // otherwise land after the clear and leave a stale draft behind.
       clearDraft(draftKey('blog', ''))
-      applyPublish(data.publish)
+      const publishError = applyPublish(data.publish)
       const where = data.branch?.created ? ` on ${data.branch.name}` : ''
-      setStatus(data.warning ?? `Created ${data.slug}${where}`)
+      setStatus(publishError ?? data.warning ?? `Created ${data.slug}${where}`)
       await loadGit()
       await refreshList()
     } else {
@@ -380,7 +388,7 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned, body, revision, authorDids }),
+        body: JSON.stringify({ owned: cleanedOwned, body, revision, authorDids }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -406,11 +414,11 @@ export function BlogEditor() {
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
       setConflict(false)
-      applyPublish(data.publish)
+      const publishError = applyPublish(data.publish)
       // Recorded DIDs come back in knownAuthors on the next refresh, so the
       // prompt disappears on its own; drop what was typed either way.
       setAuthorDids({})
-      setStatus(data.warning ?? `Saved ${data.slug}`)
+      setStatus(publishError ?? data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -422,9 +430,8 @@ export function BlogEditor() {
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
     const pub: Publish | undefined = data.publish
-    applyPublish(pub)
     // Publish state shows inline with the record; only surface failures up top.
-    setStatus(pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : '')
+    setStatus(applyPublish(pub) ?? '')
   }
 
   async function uploadOgImage(file: File) {

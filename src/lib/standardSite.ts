@@ -42,8 +42,13 @@ export function pdsEndpoint(didDoc: unknown): string | null {
   return null
 }
 
-async function fetchJson(url: string): Promise<unknown> {
-  const res = await fetch(url)
+// Same shape and name as ScopeBuilder/permissionSetResolver.ts's FetchFn: a
+// defaulted fetch-like param, so the DID → PDS → getRecord chain below can be
+// driven with a stub in tests instead of the real network.
+export type FetchFn = typeof fetch
+
+async function fetchJson(url: string, fetchFn: FetchFn): Promise<unknown> {
+  const res = await fetchFn(url)
   if (!res.ok) throw new Error(`${res.status} for ${url}`)
   return res.json()
 }
@@ -52,16 +57,16 @@ async function fetchJson(url: string): Promise<unknown> {
  * Resolve the DID's PDS. `com.atproto.repo.getRecord` is served by the PDS
  * holding the repo, not by an appview, so the document has to be resolved first.
  */
-async function resolvePds(did: string): Promise<string | null> {
+async function resolvePds(did: string, fetchFn: FetchFn): Promise<string | null> {
   if (did.startsWith('did:plc:')) {
-    return pdsEndpoint(await fetchJson(`https://plc.directory/${did}`))
+    return pdsEndpoint(await fetchJson(`https://plc.directory/${did}`, fetchFn))
   }
   if (did.startsWith('did:web:')) {
     const host = did.slice('did:web:'.length)
     // Only the bare-host form. did:web with a path uses ':' as a separator and
     // no publication uses it; guessing wrong is worse than not resolving.
     if (!host || host.includes(':')) return null
-    return pdsEndpoint(await fetchJson(`https://${host}/.well-known/did.json`))
+    return pdsEndpoint(await fetchJson(`https://${host}/.well-known/did.json`, fetchFn))
   }
   return null
 }
@@ -75,18 +80,19 @@ async function resolvePds(did: string): Promise<string | null> {
  */
 export async function fetchBskyPostUrl(
   documentUri: string,
+  fetchFn: FetchFn = fetch,
 ): Promise<string | null> {
   try {
     const parts = parseAtUri(documentUri)
     if (!parts) return null
-    const pds = await resolvePds(parts.repo)
+    const pds = await resolvePds(parts.repo, fetchFn)
     if (!pds) return null
     const url =
       `${pds.replace(/\/$/, '')}/xrpc/com.atproto.repo.getRecord` +
       `?repo=${encodeURIComponent(parts.repo)}` +
       `&collection=${encodeURIComponent(parts.collection)}` +
       `&rkey=${encodeURIComponent(parts.rkey)}`
-    const refUri = bskyPostRefUri(await fetchJson(url))
+    const refUri = bskyPostRefUri(await fetchJson(url, fetchFn))
     return refUri ? atUriToBskyPostUrl(refUri) : null
   } catch {
     return null
