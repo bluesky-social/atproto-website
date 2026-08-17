@@ -271,6 +271,16 @@ See `.env.example` for the full annotated list.
   Failures are non-blocking — the post still saves and a warning shows. Once
   published, the front matter shows the record's `at://` URI with **Copy** and
   **pdsls ↗** buttons.
+- **Bluesky post URL:** sits with the standard.site record, above its **Publish**
+  button, and only appears once the post exists — there is no thread to link to
+  before the post is published. Paste the URL and Save: the save writes it to the
+  MDX header *and* republishes the record, which is what stores the thread as the
+  record's `bskyPostRef` and makes the discussion appear on the live page
+  **without a site rebuild**. Clearing the field removes the header line outright
+  rather than leaving it empty. A post that never gets a URL never gets a ref and
+  shows no discussion section at all — declining to add one is how you opt a post
+  out. See [Bluesky Discussion Component](#bluesky-discussion-component) for how
+  the page finds it, and for why *removing* a discussion takes an extra step.
 - **Delete** does not retract an already-published standard.site record, same as
   the CLI.
 
@@ -385,15 +395,46 @@ Blog posts can display a conversation section powered by Bluesky. The `<bsky-con
 
 #### How it works
 
-1. Post the blog link from the account on Bluesky
-2. Add the post URL (using the DID, not the handle) to the blog post's MDX header:
+1. Post the blog link from the account on Bluesky.
+2. Add the post URL (using the DID, not the handle) to the blog post's MDX header
+   — from the studio's **Bluesky post URL** field, or by hand:
    ```js
    export const header = {
      // ...
      blueskyPostUrl: 'https://bsky.app/profile/did:plc:ewvi7nxzyoun6zhxrhs64oiz/post/3mf2y35apvc2i'
    }
    ```
-3. The conversation section renders automatically below the post content
+3. Republish the post's standard.site record. A studio Save does this
+   automatically; by hand it's `npm run blog ssite <slug>`. That's what copies the
+   thread onto the record as a `bskyPostRef`.
+4. The conversation section renders below the post content.
+
+**Why step 3 exists.** The deployed page resolves the thread from the
+standard.site record in the browser — `plc.directory` to find the PDS, then
+`com.atproto.repo.getRecord` — rather than from the MDX header at build time. That
+is what lets you attach a thread to an already-published post without rebuilding
+and redeploying the site. Nothing renders until a ref is found, not even the
+"Discussion" heading, so a post with no thread shows nothing rather than an empty
+section.
+
+**A `blueskyPostUrl` present at build time is an override** and is used as-is,
+skipping resolution entirely — no `plc.directory` or `getRecord` request. That is
+what keeps every post written before this existed rendering exactly as it did,
+with nothing to migrate.
+
+**Removing a discussion is not symmetric with adding one.** Because the live page
+reads the record, deleting `blueskyPostUrl` from the MDX and redeploying is *not*
+enough — the ref stays on the record and the discussion keeps rendering. The
+record has to be republished: a studio Save does it in the same action, by hand
+it's `npm run blog ssite <slug>`. Publishing replaces the whole record, so any
+republish with no URL in the header drops the ref.
+
+**One gap, by design:** the **Discussion** entry in the page's side nav is still
+decided at build time from `blueskyPostUrl`. Between attaching a thread and the
+next deploy, the discussion renders but is missing from the nav. Revealing it at
+runtime would mean rendering the nav from the section store instead of a prop, and
+`SectionProvider` resets that store from the prop — so the cosmetic gap was
+preferred over the coupling.
 
 #### Standalone usage
 
