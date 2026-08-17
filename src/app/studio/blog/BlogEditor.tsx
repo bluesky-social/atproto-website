@@ -17,13 +17,26 @@ import {
 } from '@/lib/studio/draft'
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
+import { isBskyPostUrl } from '@/lib/bskyPostUrl'
 import { StudioNav } from '../StudioNav'
 
 type PostListItem = { slug: string; title: string; date: string }
-type Owned = { title: string; description: string; date: string; author: string }
+type Owned = {
+  title: string
+  description: string
+  date: string
+  author: string
+  blueskyPostUrl: string
+}
 type Publish = { ok: boolean; uri?: string; error?: string }
 
-const EMPTY: Owned = { title: '', description: '', date: '', author: '' }
+const EMPTY: Owned = {
+  title: '',
+  description: '',
+  date: '',
+  author: '',
+  blueskyPostUrl: '',
+}
 
 /**
  * Everything a reload would otherwise lose. Stored as a draft and compared
@@ -788,6 +801,48 @@ export function BlogEditor() {
               <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
                 standard.site record
               </p>
+              {/* Sits with the record rather than in the meta grid because the
+                  two are one motion: paste the thread URL, Save, and the save's
+                  automatic republish writes bskyPostRef onto the record. */}
+              <div className="mb-4">
+                <span className="mb-1.5 block text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                  Bluesky post URL
+                </span>
+                <input
+                  value={owned.blueskyPostUrl}
+                  onChange={set('blueskyPostUrl')}
+                  placeholder="https://bsky.app/profile/…/post/…"
+                  aria-label="Bluesky post URL"
+                  aria-invalid={
+                    (owned.blueskyPostUrl.trim() !== '' &&
+                      !isBskyPostUrl(owned.blueskyPostUrl)) ||
+                    undefined
+                  }
+                  className={
+                    'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                    (owned.blueskyPostUrl.trim() !== '' &&
+                    !isBskyPostUrl(owned.blueskyPostUrl)
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-neutral-300 focus:border-neutral-500')
+                  }
+                />
+                {owned.blueskyPostUrl.trim() !== '' &&
+                !isBskyPostUrl(owned.blueskyPostUrl) ? (
+                  <p className="mt-1 text-xs text-red-700">
+                    Needs the form{' '}
+                    <span className="font-mono">
+                      https://bsky.app/profile/&lt;handle&gt;/post/&lt;id&gt;
+                    </span>{' '}
+                    — that's what the publish step parses to build the record's
+                    bskyPostRef.
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs italic text-neutral-400">
+                    Drives the discussion section. Saving republishes the record,
+                    which is what puts the thread on the live page.
+                  </p>
+                )}
+              </div>
               {ssiteUri ? (
                 <div>
                   <code
