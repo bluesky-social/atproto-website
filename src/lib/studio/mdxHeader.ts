@@ -9,9 +9,25 @@ export type OwnedFields = {
   description: string
   date: string
   author: string
+  blueskyPostUrl: string
 }
 
-export const OWNED_KEYS = ['title', 'description', 'date', 'author'] as const
+export const OWNED_KEYS = [
+  'title',
+  'description',
+  'date',
+  'author',
+  'blueskyPostUrl',
+] as const
+
+/**
+ * Owned keys that are absent from the header when empty rather than written as
+ * ''. A post has no Bluesky thread until one is posted, and the presence of the
+ * key is what decides whether a discussion section exists — so an empty string
+ * would advertise a discussion that isn't there. episodeHeader.ts omits the same
+ * field on the same reasoning.
+ */
+const OPTIONAL_OWNED_KEYS: ReadonlySet<string> = new Set(['blueskyPostUrl'])
 
 const HEADER_RE = /export\s+const\s+header\s*=\s*\{/
 
@@ -235,6 +251,7 @@ export function getOwnedFields(parsed: ParsedMdx): OwnedFields {
     description: get('description'),
     date: get('date'),
     author: get('author'),
+    blueskyPostUrl: get('blueskyPostUrl'),
   }
 }
 
@@ -242,9 +259,15 @@ export function applyOwnedFields(
   parsed: ParsedMdx,
   owned: OwnedFields,
 ): ParsedMdx {
-  const headerEntries = parsed.headerEntries.map((e) => ({ ...e }))
+  let headerEntries = parsed.headerEntries.map((e) => ({ ...e }))
   for (const key of OWNED_KEYS) {
-    const rawValue = quoteSingle(owned[key])
+    const value = owned[key]
+    // A cleared optional key is deleted outright rather than written empty.
+    if (OPTIONAL_OWNED_KEYS.has(key) && !value) {
+      headerEntries = headerEntries.filter((e) => e.key !== key)
+      continue
+    }
+    const rawValue = quoteSingle(value)
     const existing = headerEntries.find((e) => e.key === key)
     if (existing) existing.rawValue = rawValue
     else headerEntries.push({ key, rawValue })
@@ -261,7 +284,9 @@ export function normalizeBodySeparation(body: string): string {
 }
 
 export function newPostMdx(owned: OwnedFields, body: string): string {
-  const headerEntries: HeaderEntry[] = OWNED_KEYS.map((key) => ({
+  const headerEntries: HeaderEntry[] = OWNED_KEYS.filter(
+    (key) => !(OPTIONAL_OWNED_KEYS.has(key) && !owned[key]),
+  ).map((key) => ({
     key,
     rawValue: quoteSingle(owned[key]),
   }))

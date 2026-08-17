@@ -97,6 +97,7 @@ describe('smart typography', () => {
         description: "It's fine",
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body.\n',
     })
@@ -119,6 +120,7 @@ describe('smart typography', () => {
         description: "It's fine",
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body.\n',
     })
@@ -390,6 +392,7 @@ describe('read/update/list/delete', () => {
         description: 'Desc',
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: '\n\nNew body.\n',
     })
@@ -407,6 +410,7 @@ describe('read/update/list/delete', () => {
         description: 'Desc',
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body with no leading newline',
     })
