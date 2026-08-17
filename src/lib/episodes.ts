@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-08-17-waterwheel-logic-eve-osman',
+    episodeNumber: 16,
+    title: 'Waterwheel Logic',
+    description: 'Eve Osman on building Northsky, creating a love letter to the web with Twinkl, approaches to private data on the protocol, and why a Nubian waterwheel is a model for building sustainable technology.',
+    date: 'August 17, 2026',
+    pubDate: '2026-08-17T19:51:29.519Z',
+    duration: '00:57:08',
+    durationSeconds: 3428,
+    guests: ['Eve Osman'],
+    format: 'conversation',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-08-17-eve-osman/2026-07-30-eve-osman.mp3',
+    audioSizeBytes: 54956300,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-08-06-shinkansen-mindset',
     episodeNumber: 15,
     title: 'Shinkansen Mindset',
