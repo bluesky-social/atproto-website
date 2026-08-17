@@ -27,8 +27,10 @@
  * build that reads it. Bump this whenever an editor's snapshot gains, loses, or
  * renames a field; older drafts are then discarded instead of being applied to a
  * form that no longer matches them.
+ *
+ * v2 (2026-08-14): the blog snapshot's `owned` gained blueskyPostUrl.
  */
-export const DRAFT_SCHEMA = 1
+export const DRAFT_SCHEMA = 2
 
 export type Draft<T = unknown> = {
   v: number

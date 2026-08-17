@@ -36,7 +36,11 @@ export async function PUT(request: Request, { params }: Ctx) {
     const paths = studioPaths()
     const input = await request.json()
     const result = await updatePost(paths, slug, input)
-    // Update the standard.site record on every save (non-blocking).
+    // Republish the standard.site record on every save. This is awaited and
+    // shells out to `npm run blog ssite` with a 90s timeout, so a save is as slow
+    // as that subprocess — it is not "non-blocking", as this once claimed. It is
+    // also what makes adding a blueskyPostUrl in the editor land bskyPostRef on
+    // the record without a second click.
     const publish = await publishPost(paths, slug)
     return Response.json({ ...result, publish })
   } catch (err) {

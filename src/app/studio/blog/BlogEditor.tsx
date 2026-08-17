@@ -17,13 +17,26 @@ import {
 } from '@/lib/studio/draft'
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
+import { isBskyPostUrl } from '@/lib/bskyPostUrl'
 import { StudioNav } from '../StudioNav'
 
 type PostListItem = { slug: string; title: string; date: string }
-type Owned = { title: string; description: string; date: string; author: string }
+type Owned = {
+  title: string
+  description: string
+  date: string
+  author: string
+  blueskyPostUrl: string
+}
 type Publish = { ok: boolean; uri?: string; error?: string }
 
-const EMPTY: Owned = { title: '', description: '', date: '', author: '' }
+const EMPTY: Owned = {
+  title: '',
+  description: '',
+  date: '',
+  author: '',
+  blueskyPostUrl: '',
+}
 
 /**
  * Everything a reload would otherwise lose. Stored as a draft and compared
@@ -318,12 +331,20 @@ export function BlogEditor() {
 
   // Update the standard.site URI field from a publish result. Publish state is
   // reflected inline in the standard.site record section, not the top status
-  // line (which is about the post save), to avoid ambiguity.
-  function applyPublish(pub: Publish | undefined) {
+  // line (which is about the post save), to avoid ambiguity. Returns the
+  // failure status line to show, or null if the publish succeeded (or there
+  // was nothing to publish) — callers must let this win over their own
+  // success message, since a failed republish here means bskyPostRef never
+  // made it onto the record.
+  function applyPublish(pub: Publish | undefined): string | null {
     if (pub?.uri) setSsiteUri(pub.uri)
+    return pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : null
   }
 
   async function save() {
+    // Persist exactly what the publish step will parse (bskyPostUrl.ts
+    // validates trimmed; the header must hold the same trimmed value).
+    const cleanedOwned: Owned = { ...owned, blueskyPostUrl: owned.blueskyPostUrl.trim() }
     if (mode === 'new') {
       const finalSlug = slug || slugify(owned.title)
       if (!finalSlug) return setStatus('Add a title or slug first')
@@ -333,7 +354,7 @@ export function BlogEditor() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           slug: finalSlug,
-          ...owned,
+          ...cleanedOwned,
           authorDids,
           body,
           branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
@@ -357,9 +378,9 @@ export function BlogEditor() {
       // than the draft debounce, so a write scheduled before it started would
       // otherwise land after the clear and leave a stale draft behind.
       clearDraft(draftKey('blog', ''))
-      applyPublish(data.publish)
+      const publishError = applyPublish(data.publish)
       const where = data.branch?.created ? ` on ${data.branch.name}` : ''
-      setStatus(data.warning ?? `Created ${data.slug}${where}`)
+      setStatus(publishError ?? data.warning ?? `Created ${data.slug}${where}`)
       await loadGit()
       await refreshList()
     } else {
@@ -367,7 +388,7 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned, body, revision, authorDids }),
+        body: JSON.stringify({ owned: cleanedOwned, body, revision, authorDids }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -393,11 +414,11 @@ export function BlogEditor() {
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
       setConflict(false)
-      applyPublish(data.publish)
+      const publishError = applyPublish(data.publish)
       // Recorded DIDs come back in knownAuthors on the next refresh, so the
       // prompt disappears on its own; drop what was typed either way.
       setAuthorDids({})
-      setStatus(data.warning ?? `Saved ${data.slug}`)
+      setStatus(publishError ?? data.warning ?? `Saved ${data.slug}`)
       await refreshList()
     }
   }
@@ -409,9 +430,8 @@ export function BlogEditor() {
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
     const pub: Publish | undefined = data.publish
-    applyPublish(pub)
     // Publish state shows inline with the record; only surface failures up top.
-    setStatus(pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : '')
+    setStatus(applyPublish(pub) ?? '')
   }
 
   async function uploadOgImage(file: File) {
@@ -788,6 +808,48 @@ export function BlogEditor() {
               <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
                 standard.site record
               </p>
+              {/* Sits with the record rather than in the meta grid because the
+                  two are one motion: paste the thread URL, Save, and the save's
+                  automatic republish writes bskyPostRef onto the record. */}
+              <div className="mb-4">
+                <span className="mb-1.5 block text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                  Bluesky post URL
+                </span>
+                <input
+                  value={owned.blueskyPostUrl}
+                  onChange={set('blueskyPostUrl')}
+                  placeholder="https://bsky.app/profile/…/post/…"
+                  aria-label="Bluesky post URL"
+                  aria-invalid={
+                    (owned.blueskyPostUrl.trim() !== '' &&
+                      !isBskyPostUrl(owned.blueskyPostUrl)) ||
+                    undefined
+                  }
+                  className={
+                    'w-full rounded-md border bg-white px-3 py-1.5 font-mono text-sm outline-none ' +
+                    (owned.blueskyPostUrl.trim() !== '' &&
+                    !isBskyPostUrl(owned.blueskyPostUrl)
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-neutral-300 focus:border-neutral-500')
+                  }
+                />
+                {owned.blueskyPostUrl.trim() !== '' &&
+                !isBskyPostUrl(owned.blueskyPostUrl) ? (
+                  <p className="mt-1 text-xs text-red-700">
+                    Needs the form{' '}
+                    <span className="font-mono">
+                      https://bsky.app/profile/&lt;handle&gt;/post/&lt;id&gt;
+                    </span>{' '}
+                    — that's what the publish step parses to build the record's
+                    bskyPostRef.
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs italic text-neutral-400">
+                    Drives the discussion section. Saving republishes the record,
+                    which is what puts the thread on the live page.
+                  </p>
+                )}
+              </div>
               {ssiteUri ? (
                 <div>
                   <code

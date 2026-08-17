@@ -97,6 +97,7 @@ describe('smart typography', () => {
         description: "It's fine",
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body.\n',
     })
@@ -119,6 +120,7 @@ describe('smart typography', () => {
         description: "It's fine",
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body.\n',
     })
@@ -390,6 +392,7 @@ describe('read/update/list/delete', () => {
         description: 'Desc',
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: '\n\nNew body.\n',
     })
@@ -407,6 +410,7 @@ describe('read/update/list/delete', () => {
         description: 'Desc',
         date: 'June 1, 2026',
         author: 'Jim Ray',
+        blueskyPostUrl: '',
       },
       body: 'Body with no leading newline',
     })
@@ -449,4 +453,41 @@ describe('read/update/list/delete', () => {
     expect(fs.existsSync(path.join(dir, 'opengraph-image.jpg'))).toBe(true)
     expect(findOgImage(paths.blogDir, 'hello')).toBe('opengraph-image.jpg')
   })
+})
+
+it('writes blueskyPostUrl on update, keeps it out of posts.ts, and removes it when cleared', async () => {
+  await createPost(paths, {
+    slug: 'thread-test',
+    title: 'Thread Test',
+    description: 'Desc',
+    date: 'August 14, 2026',
+    author: 'Jim Ray',
+  })
+  const mdxPath = path.join(paths.blogDir, 'thread-test', 'en.mdx')
+
+  // A brand-new post has no thread, so the key shouldn't be in the file at all.
+  expect(fs.readFileSync(mdxPath, 'utf-8')).not.toContain('blueskyPostUrl')
+
+  const POST_URL = 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d'
+  const opened = await readPost(paths, 'thread-test')
+  await updatePost(paths, 'thread-test', {
+    owned: { ...opened.owned, blueskyPostUrl: POST_URL },
+    body: opened.body,
+    revision: opened.revision,
+  })
+  expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(`blueskyPostUrl: '${POST_URL}'`)
+  expect((await readPost(paths, 'thread-test')).owned.blueskyPostUrl).toBe(POST_URL)
+
+  // The blog index has no column for it and must not gain one — the MDX header is
+  // its single home, which is why there's nothing to keep in sync.
+  expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain('blueskyPostUrl')
+
+  // Re-read: the update above moved the revision on.
+  const withUrl = await readPost(paths, 'thread-test')
+  await updatePost(paths, 'thread-test', {
+    owned: { ...withUrl.owned, blueskyPostUrl: '' },
+    body: withUrl.body,
+    revision: withUrl.revision,
+  })
+  expect(fs.readFileSync(mdxPath, 'utf-8')).not.toContain('blueskyPostUrl')
 })

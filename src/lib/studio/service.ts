@@ -219,6 +219,9 @@ export async function createPost(
     description: input.description,
     date: input.date,
     author: input.author,
+    // A new post has no Bluesky thread yet; it's added from the editor once the
+    // post is live and the thread exists. newPostMdx omits the key when empty.
+    blueskyPostUrl: '',
   })
   const body =
     input.body && input.body.trim()

@@ -87,6 +87,7 @@ describe('parse + serialize round-trip', () => {
       description: 'A desc',
       date: 'June 1, 2026',
       author: 'Jim Ray',
+      blueskyPostUrl: '',
     })
   })
 
@@ -117,6 +118,7 @@ describe('getOwnedFields with missing keys', () => {
       description: '',
       date: '',
       author: '',
+      blueskyPostUrl: '',
     })
   })
 })
@@ -124,7 +126,13 @@ describe('getOwnedFields with missing keys', () => {
 describe('newPostMdx', () => {
   it('builds a canonical header with the owned fields in order, then the body', () => {
     const out = newPostMdx(
-      { title: 'T', description: 'D', date: 'June 1, 2026', author: 'Jim Ray' },
+      {
+        title: 'T',
+        description: 'D',
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+        blueskyPostUrl: '',
+      },
       '# T\n\nStart writing your post here...\n',
     )
     expect(out).toBe(
@@ -145,6 +153,88 @@ describe('getHeaderField', () => {
       'at://did:plc:abc/site.standard.document/xyz',
     )
     expect(getHeaderField(parsed, 'nope')).toBe('')
+  })
+})
+
+describe('blueskyPostUrl as an optional owned key', () => {
+  const OWNED_WITH_URL = {
+    title: 'A Post',
+    description: 'About things',
+    date: 'August 14, 2026',
+    author: 'Jim Ray',
+    blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',
+  }
+  const OWNED_WITHOUT_URL = { ...OWNED_WITH_URL, blueskyPostUrl: '' }
+
+  it('reads the field, and empty when the header has none', () => {
+    const withIt = parseMdxFile(
+      "export const header = {\n  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',\n}\n\nBody",
+    )
+    expect(getOwnedFields(withIt).blueskyPostUrl).toBe(
+      'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',
+    )
+    const withoutIt = parseMdxFile(
+      "export const header = {\n  title: 'A Post',\n}\n\nBody",
+    )
+    expect(getOwnedFields(withoutIt).blueskyPostUrl).toBe('')
+  })
+
+  it('adds the line when a URL is set', () => {
+    const parsed = parseMdxFile("export const header = {\n  title: 'Old',\n}\n\nBody")
+    const out = serializeMdxFile(applyOwnedFields(parsed, OWNED_WITH_URL))
+    expect(out).toContain(
+      "blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d'",
+    )
+  })
+
+  // Clearing the field must delete the entry, not leave blueskyPostUrl: ''. An
+  // empty string in the header still reads as "there is a discussion" to anything
+  // checking for the key's presence.
+  it('removes the line when the field is cleared', () => {
+    const parsed = parseMdxFile(
+      "export const header = {\n  title: 'Old',\n  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',\n}\n\nBody",
+    )
+    const out = serializeMdxFile(applyOwnedFields(parsed, OWNED_WITHOUT_URL))
+    expect(out).not.toContain('blueskyPostUrl')
+  })
+
+  // A whitespace-only value must be treated exactly like an empty string: the
+  // header key is removed, not written as 'blueskyPostUrl: \'   \''. That value
+  // would parse as truthy everywhere else in the pipeline (the publish script,
+  // Page.tsx's nav gate) while failing bskyPostUrl.ts's own trimmed validation.
+  it('removes the line when the field is whitespace-only', () => {
+    const parsed = parseMdxFile(
+      "export const header = {\n  title: 'Old',\n  blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d',\n}\n\nBody",
+    )
+    const out = serializeMdxFile(
+      applyOwnedFields(parsed, { ...OWNED_WITH_URL, blueskyPostUrl: '   ' }),
+    )
+    expect(out).not.toContain('blueskyPostUrl')
+  })
+
+  it('never writes an empty value for it', () => {
+    const parsed = parseMdxFile("export const header = {\n  title: 'Old',\n}\n\nBody")
+    const out = serializeMdxFile(applyOwnedFields(parsed, OWNED_WITHOUT_URL))
+    expect(out).not.toContain("blueskyPostUrl: ''")
+  })
+
+  it('still preserves non-owned fields either way', () => {
+    const parsed = parseMdxFile(
+      "export const header = {\n  standardSiteUri: 'at://x',\n  title: 'Old',\n}\n\nBody",
+    )
+    expect(serializeMdxFile(applyOwnedFields(parsed, OWNED_WITH_URL))).toContain(
+      "standardSiteUri: 'at://x'",
+    )
+    expect(serializeMdxFile(applyOwnedFields(parsed, OWNED_WITHOUT_URL))).toContain(
+      "standardSiteUri: 'at://x'",
+    )
+  })
+
+  it('omits it from a new post, and includes it when given', () => {
+    expect(newPostMdx(OWNED_WITHOUT_URL, 'Body')).not.toContain('blueskyPostUrl')
+    expect(newPostMdx(OWNED_WITH_URL, 'Body')).toContain(
+      "blueskyPostUrl: 'https://bsky.app/profile/atproto.com/post/3msydg6sd7s2d'",
+    )
   })
 })
 
