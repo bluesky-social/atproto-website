@@ -21,6 +21,14 @@ This goes beyond following copyright law, and includes respecting content deleti
 
 ## Download a Repository
 
+<Note>
+**Update, August 2026:** this section is out of date. When this post was published in 2023, `bsky.social` was a single PDS instance hosting every Bluesky account. It is now [Bluesky's PDS Entryway](https://bsky.network/docs/entryway), which handles auth for their many PDS instances.
+
+To download any repository, including Bluesky-hosted ones, resolve the account's identity to find its PDS host and send the request there, as described in [On Another Instance](#on-another-instance) below. Sync requests such as `com.atproto.sync.getRepo` sent to `https://bsky.social` do not return a repository; the `@atproto.com` account used in the examples below is now hosted on `enoki.us-east.host.bsky.network`.
+
+The rest of this post has been left unedited.
+</Note>
+
 ### On Bluesky's Main PDS Instance
 
 You can easily construct a URL to download a repository on Bluesky's main PDS instance. In this case, the PDS host is `https://bsky.social`, the Lexicon endpoint is `com.atproto.sync.getRepo`, and the account DID is passed as a query parameter.
