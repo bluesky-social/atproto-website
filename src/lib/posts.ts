@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'atproto-spaces-alpha',
+    title: 'The Atproto Spaces Alpha is Live',
+    description: 'Atproto Spaces, formerly known as “the permissioned data protocol,” is a new extension to atproto that enables non-public data. The alpha is now officially open. Here’s how to develop with it and what to expect as we work towards the full release.',
+    date: 'August 20, 2026',
+    author: 'Daniel Holmgren',
+  },
+  {
     slug: 'introducing-bluesky-protocol-services',
     title: 'Introducing Bluesky Protocol Services',
     description: 'A new home for the infrastructure Bluesky runs on the open network — including Jetstream v2 with network replay, a new Jetstream SDK, and a lex-based TypeScript SDK',
