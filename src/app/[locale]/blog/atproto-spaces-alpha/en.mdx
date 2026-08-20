@@ -22,7 +22,7 @@ Today, we’re making the alpha available with running code, published SDKs, a s
 
 You can think of an atproto space as a miniature atproto network that can be gated so that only certain people and applications are able to access the data published in it. It may sound a little “heavy-duty” to say each space is a mini-atproto, but spaces are actually very lightweight and low overhead. A space can have a single record in it with minimal overhead or scale up to a billion records.
 
-Apart from the space itself, things should feel familiar. Users have [DIDs](https://atproto.com/specs/did). Users host their data in their repositories. Records are JSON and defined by Lexicons. Applications sync repos and build views of the data.
+Apart from the space itself, things should feel familiar. Users have [DIDs](https://atproto.com/specs/did). Users [host their data in their repositories](https://atproto.com/specs/repository). Records are JSON and defined by [Lexicons](https://atproto.com/guides/glossary#lexicon). [Applications sync repos](https://atproto.com/guides/glossary#app-view) and build views of the data.
 
 Access to a space is controlled by a space authority, which is just a DID like any other account (and in some cases actually *is* your account\!). The space authority determines which other DIDs are allowed to access the space. Records live in per-space permissioned repos on the author’s PDS.
 
