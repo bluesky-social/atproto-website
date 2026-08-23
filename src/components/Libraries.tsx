@@ -13,6 +13,7 @@ import logoElixir from '@/images/logos/elixir.svg'
 import logoCsharp from '@/images/logos/csharp.svg'
 import logoRust from '@/images/logos/rust.svg'
 import logoSwift from '@/images/logos/swift.svg'
+import logoFsharp from '@/images/logos/fsharp.svg'
 
 type Status = 'full' | 'partial' | 'none' | 'unknown'
 
@@ -277,6 +278,29 @@ const community: LibraryGroupProp[] = [
           repo: 'none',
           plc: 'none',
           oauthServer: 'none',
+        },
+      },
+    ],
+  },
+  {
+    name: 'F# (.NET)',
+    logo: logoFsharp,
+    sdks: [
+      {
+        href: 'https://arrow7000.github.io/atproto-fsharp/',
+        sdkName: 'FSharp.ATProto',
+        maintainer: { handle: 'adler.dev' },
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'full',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'full',
+          crypto: 'full',
+          repo: 'full',
+          plc: 'full',
+          oauthServer: 'full',
         },
       },
     ],
