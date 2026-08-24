@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-08-24-jim-calabro-ama',
+    episodeNumber: 17,
+    title: 'It’s Important to Own Your Own Destiny',
+    description: 'Jim Calabro, Head of Platform at Bluesky, joins to answer your questions about running what is, for now, the biggest node on the atproto network',
+    date: 'August 24, 2026',
+    pubDate: '2026-08-24T21:32:59.896Z',
+    duration: '00:47:08',
+    durationSeconds: 2828,
+    guests: ['Jim Calabro'],
+    format: 'ama',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-08-24-jim-calabro/2026-08-19-jim-calabro-ama.mp3',
+    audioSizeBytes: 45352801,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-08-17-waterwheel-logic-eve-osman',
     episodeNumber: 16,
     title: 'Waterwheel Logic',
