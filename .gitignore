@@ -8,3 +8,4 @@ docs/superpowers
 oauth-test
 src/lexicons
 tsconfig.tsbuildinfo
+next-env.d.ts
