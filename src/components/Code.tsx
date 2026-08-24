@@ -161,7 +161,10 @@ function CodePanel({
     <div className="group dark:bg-white/2.5">
       <CodePanelHeader tag={tag} label={label} />
       <div className="relative">
-        <pre className="overflow-x-auto p-4 text-xs font-medium text-black dark:text-white">
+        <pre
+          translate="no"
+          className="notranslate overflow-x-auto p-4 text-xs font-medium text-black dark:text-white"
+        >
           {children}
         </pre>
         <CopyButton code={code} />
@@ -358,11 +361,22 @@ export function CodeGroup({
   )
 }
 
+// Code is never worth translating, and machine translation is actively harmful
+// here — it rewrites identifiers and swaps the text nodes React is tracking,
+// which is what makes translated React pages crash. Opting out with both the
+// `translate` attribute and the `notranslate` class covers Google Translate,
+// Firefox's built-in translation, and the Chrome extension.
 export function Code({
   children,
+  className,
   ...props
 }: React.ComponentPropsWithoutRef<'code'>) {
   let isGrouped = useContext(CodeGroupContext)
+  let codeProps = {
+    ...props,
+    translate: 'no' as const,
+    className: clsx(className, 'notranslate'),
+  }
 
   if (isGrouped) {
     if (typeof children !== 'string') {
@@ -370,10 +384,10 @@ export function Code({
         '`Code` children must be a string when nested inside a `CodeGroup`.',
       )
     }
-    return <code {...props} dangerouslySetInnerHTML={{ __html: children }} />
+    return <code {...codeProps} dangerouslySetInnerHTML={{ __html: children }} />
   }
 
-  return <code {...props}>{children}</code>
+  return <code {...codeProps}>{children}</code>
 }
 
 export function Pre({

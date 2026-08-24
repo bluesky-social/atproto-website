@@ -1,5 +1,4 @@
 import FirehoseConnect from './_snippets/firehose-connect.mdx'
-import JetstreamPython from './_snippets/jetstream-python.mdx'
 
 export const header = {
   title: 'Streaming Data',
@@ -24,19 +23,17 @@ Bear in mind that firehose output format is one of the more complex parts of atp
 
 ## Jetstream
 
-Jetstream has a few key advantages:
+Jetstream is the easiest way to get data off the network at scale. Filter the records you want (likes, posts, a single account), and Jetstream streams them as plain JSON over one WebSocket, the moment they happen.
 
-- simple JSON encoding
-- reduced bandwidth, and compression
-- ability to filter by collection (NSID) or repo (DID)
+Jetstream delivers data live, or replayed from history, or both at once, through the same interface. The same code works whether you're building a realtime bot or replaying a month of history into a larger application.
 
-A Jetstream server consumes from the firehose and fans out to many subscribers. It is [open source](https://github.com/bluesky-social/jetstream), implemented in Go, simple to self-host. There is an official client library included (in Go), and [community client libraries](https://skyware.js.org/guides/jetstream/introduction/getting-started/) have been developed.
+There are three ways to consume it:
 
-You can work with Jetstream like any other websocket. Just provide a Jetstream endpoint like `wss://jetstream2.us-east.bsky.network/subscribe`, and a `wantedCollections` parameter, like `?wantedCollections=app.bsky.feed.post`.
+- Live tail — a single WebSocket that streams events the moment they happen.
+- Replay — the WebSocket plus a few HTTP calls to pull history, then cut over to live.
+- Snapshotting — a point-in-time copy of the archive over HTTP, with no live tail.
 
-Here is a Python example:
-
-<JetstreamPython />
+Jetstream is [open source](https://github.com/bluesky-social/jetstream), implemented in Go, and cheap to self-host. Refer to [Bluesky Protocol Services](https://bsky.network/docs/jetstream) for guides on working with Jetstream.
 
 ## Further Reading and Resources
 

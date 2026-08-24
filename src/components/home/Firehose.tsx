@@ -72,7 +72,9 @@ export function Firehose({ locale }: { locale?: string }) {
         >
           <div className="flex flex-col md:flex-row justify-between gap-4 px-4 py-4 font-mono">
             <div
+              translate="no"
               className={clsx(
+                'notranslate',
                 // 'hidden md:block',
                 active
                   ? 'animate-text bg-gradient-to-r from-yellow-800 to-yellow-400 bg-clip-text text-transparent'
@@ -95,7 +97,10 @@ export function Firehose({ locale }: { locale?: string }) {
               <span>{active ? t('Stop stream') : t('Start stream')}</span>
             </div>
           </div>
-          <div className="overflow-x-scroll">
+          {/* Raw records off the network: nothing to translate, and letting a
+              translator rewrite text nodes in a list React mutates several
+              times a second is a reliable way to crash the page. */}
+          <div translate="no" className="notranslate overflow-x-scroll">
             {records.reverse().map((r) => (
               <FirehoseEvent key={r} record={r} />
             ))}
