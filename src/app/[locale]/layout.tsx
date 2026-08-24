@@ -2,6 +2,7 @@ import { type Metadata } from 'next'
 import { resolveSiteOrigin } from '@/lib/site-url'
 import { Providers } from '@/app/[locale]/providers'
 import { Layout } from '@/components/Layout'
+import { translateCrashGuard } from '@/lib/translate-crash-guard'
 import Script from "next/script";
 
 import '@/styles/tailwind.css'
@@ -58,6 +59,7 @@ export default async function RootLayout({
   return (
     <html lang={(await params).locale} className="h-full" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: translateCrashGuard }} />
         <Script
           src="https://widget.kapa.ai/kapa-widget.bundle.js"
           data-website-id="918051fd-2626-4b70-b124-e12c71999dea"

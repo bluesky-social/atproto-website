@@ -178,7 +178,13 @@ export function ExplainerUnit({ locale }: { locale?: string }) {
 
 function JSON({ children }: React.PropsWithChildren<{}>) {
   return (
-    <div className="px-4 py-4 font-mono text-sm text-zinc-800 max-md:text-2xs dark:text-zinc-400">
+    // A verbatim record — translating it would mangle the field names, and the
+    // surrounding markup re-renders on every auto-rotate tick, which is exactly
+    // where translated text nodes cause React to crash.
+    <div
+      translate="no"
+      className="notranslate px-4 py-4 font-mono text-sm text-zinc-800 max-md:text-2xs dark:text-zinc-400"
+    >
       {children}
     </div>
   )
@@ -414,9 +420,13 @@ export function ExplainerUnitCTA({
 function Progress({ current, total, nextLabel }: { current: number; total: number; nextLabel?: string }) {
   return (
     <div className="flex justify-center gap-2 text-xs">
-      {[...Array(total)].map((_, i) => (
-        <div key={i}>{i === current ? '●' : '○'}</div>
-      ))}
+      {/* These glyphs are swapped in place on every rotate. A translator that
+          replaces the text node breaks that update, so opt the row out. */}
+      <div translate="no" className="notranslate flex gap-2">
+        {[...Array(total)].map((_, i) => (
+          <div key={i}>{i === current ? '●' : '○'}</div>
+        ))}
+      </div>
       <div className={clsx('flex items-center pl-2 font-medium')}>
         <div>{nextLabel ?? 'Next'}</div>
         <ButtonArrowIcon className="relative -mr-1 h-6 w-6" />

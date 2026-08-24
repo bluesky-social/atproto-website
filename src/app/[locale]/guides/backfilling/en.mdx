@@ -12,7 +12,7 @@ Backfilling is the process of syncing all the data in the network from scratch. 
 
 Backfilling the Bluesky Lexicons in particular is resource-intensive and time consuming. Backfilling other Lexicons typically is not. If you are developing your own application, using its own set of Lexicons, you can backfill all of the data that you are writing, as you write it, using the same code paths. Our [Statusphere tutorial](/guides/statusphere-tutorial) provides an example of this.
 
-If you are doing large-scale lookups, you can also make use of [backlinks](/guides/social-graph#backlinks) in combination with selective backfilling.
+If you are doing large-scale lookups, you can also make use of [Jetstream](/guides/streaming-data#jetstream) and [backlinks](/guides/social-graph#backlinks) in combination with selective backfilling.
 
 For the entire network to be backfillable by third parties at all is a novel concept for atproto. Other, monolithic social networks generally only offer an large-scale event stream (like our firehose) from the current date and time, making it difficult to perform data analysis without an intermediary.
 
