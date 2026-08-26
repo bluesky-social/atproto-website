@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-08-26-toni-schneider-ama',
+    episodeNumber: 18,
+    title: 'Not Just Us',
+    description: 'Bluesky CEO Toni Schneider sits down to answer your questions about composable moderation, how Bluesky (and the Atmosphere) plans to make money, what makes atproto spaces a true differentiator, and where AI fits on the protocol.',
+    date: 'August 26, 2026',
+    pubDate: '2026-08-26T15:30:00.000Z',
+    duration: '00:47:19',
+    durationSeconds: 2839,
+    guests: ['Toni Schneider'],
+    format: 'ama',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-08-26-toni-schneider/2026-08-25-toni-ama-lev-18lufs.mp3',
+    audioSizeBytes: 56899255,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-08-24-jim-calabro-ama',
     episodeNumber: 17,
     title: 'It’s Important to Own Your Own Destiny',
