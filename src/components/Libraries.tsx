@@ -279,6 +279,23 @@ const community: LibraryGroupProp[] = [
           oauthServer: 'none',
         },
       },
+      {
+        href: 'https://github.com/drasticactions/CarpaNet',
+        sdkName: 'CarpaNet',
+        maintainer: { handle: 'drasticactions.dev' },
+        status: {
+          identifiers: 'full',
+          bskyHelpers: 'none',
+          lexicon: 'full',
+          identity: 'full',
+          streaming: 'full',
+          serviceAuth: 'partial',
+          crypto: 'partial',
+          repo: 'partial',
+          plc: 'partial',
+          oauthServer: 'none',
+        },
+      },
     ],
   },
   {
