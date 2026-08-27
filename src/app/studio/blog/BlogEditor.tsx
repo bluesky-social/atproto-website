@@ -16,6 +16,7 @@ import {
   describeDraft,
 } from '@/lib/studio/draft'
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
+import { imageTag } from '@/lib/studio/postImages'
 import type { GitState } from '@/lib/studio/git'
 import { isBskyPostUrl } from '@/lib/bskyPostUrl'
 import { guardUnload } from '@/lib/studio/unloadGuard'
@@ -30,6 +31,7 @@ type Owned = {
   blueskyPostUrl: string
 }
 type Publish = { ok: boolean; uri?: string; error?: string }
+type PostImage = { filename: string; identifier: string | null }
 
 const EMPTY: Owned = {
   title: '',
@@ -102,6 +104,14 @@ export function BlogEditor() {
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [dragging, setDragging] = useState(false)
+  // Inline body images: the files in the post dir, the alt text typed for each
+  // (state only — it ends up in the body, so there is nothing to persist), and
+  // the one whose tag was last copied.
+  const [images, setImages] = useState<PostImage[]>([])
+  const [imageAlts, setImageAlts] = useState<Record<string, string>>({})
+  const [draggingImage, setDraggingImage] = useState(false)
+  const [copiedImage, setCopiedImage] = useState('')
+  const [imageVersion, setImageVersion] = useState(0)
   const [status, setStatus] = useState<string>('')
   // Fingerprint of the file this form was loaded from. Sent with every save so
   // the server can refuse to overwrite changes made since. Empty means "no
@@ -304,6 +314,9 @@ export function BlogEditor() {
     setSsiteUri('')
     setOgImage(null)
     setDragging(false)
+    setImages([])
+    setImageAlts({})
+    setDraggingImage(false)
     setStatus('')
     setRevision('')
     setConflict(false)
@@ -335,6 +348,8 @@ export function BlogEditor() {
     setSsiteUri(data.standardSiteUri || '')
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
+    setImageAlts({})
+    refreshImages(s)
     setRevision(data.revision ?? '')
     setConflict(false)
     setStatus('')
@@ -460,6 +475,50 @@ export function BlogEditor() {
     setOgImage(data.filename)
     setOgVersion((v) => v + 1)
     setStatus(`OG image saved (${data.filename})`)
+  }
+
+  async function refreshImages(s: string) {
+    try {
+      const res = await fetch(`/api/studio/blog/${s}/images`)
+      if (!res.ok) return setImages([])
+      const data = await res.json()
+      setImages(data.images ?? [])
+      setImageVersion((v) => v + 1)
+    } catch {
+      setImages([])
+    }
+  }
+
+  async function uploadPostImage(file: File) {
+    if (mode !== 'edit') return
+    setStatus('Uploading image…')
+    const form = new FormData()
+    form.append('file', file)
+    const res = await fetch(`/api/studio/blog/${slug}/images`, {
+      method: 'POST',
+      body: form,
+    })
+    const data = await res.json()
+    if (!res.ok) return setStatus(`Error: ${data.error}`)
+    // Writing the import changed en.mdx on disk. Adopt the revision it produced
+    // or the next save is refused as a conflict with our own upload.
+    if (data.revision) setRevision(data.revision)
+    setConflict(false)
+    await refreshImages(slug)
+    setStatus(`Image saved (${data.filename}) — copy its tag into the body`)
+  }
+
+  async function copyImageTag(img: PostImage) {
+    if (!img.identifier) return
+    try {
+      await navigator.clipboard.writeText(
+        imageTag(img.identifier, imageAlts[img.filename] ?? ''),
+      )
+      setCopiedImage(img.filename)
+      window.setTimeout(() => setCopiedImage(''), 1500)
+    } catch {
+      // clipboard blocked — ignore
+    }
   }
 
   async function remove() {
@@ -961,6 +1020,106 @@ export function BlogEditor() {
                   }}
                 />
               </label>
+            </div>
+          )}
+
+          {/* Inline body images */}
+          {mode === 'edit' && (
+            <div className="mt-6">
+              <p className="mb-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+                Body images
+              </p>
+              <label
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  setDraggingImage(true)
+                }}
+                onDragLeave={() => setDraggingImage(false)}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  setDraggingImage(false)
+                  const file = e.dataTransfer.files?.[0]
+                  if (file) uploadPostImage(file)
+                }}
+                className={
+                  'flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 text-center transition ' +
+                  (draggingImage
+                    ? 'border-neutral-500 bg-neutral-50'
+                    : 'border-neutral-300 hover:border-neutral-400')
+                }
+              >
+                <span className="text-sm text-neutral-500">
+                  Drag an image here, or click to choose
+                </span>
+                <span className="mt-1 text-xs text-neutral-400">
+                  PNG, JPG, GIF, or WEBP · saved in the post dir, import added for you
+                </span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/gif,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) uploadPostImage(file)
+                    e.target.value = ''
+                  }}
+                />
+              </label>
+
+              {images.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {images.map((img) => (
+                    <li
+                      key={img.filename}
+                      className="flex items-start gap-3 rounded-lg border border-neutral-200 p-2"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/api/studio/blog/${slug}/images/${img.filename}?v=${imageVersion}`}
+                        alt=""
+                        className="h-16 w-16 shrink-0 rounded border border-neutral-200 object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-mono text-xs text-neutral-500">
+                          {img.filename}
+                        </p>
+                        {img.identifier ? (
+                          <>
+                            <input
+                              value={imageAlts[img.filename] ?? ''}
+                              onChange={(e) =>
+                                setImageAlts((a) => ({
+                                  ...a,
+                                  [img.filename]: e.target.value,
+                                }))
+                              }
+                              placeholder="Alt text — describe the image"
+                              className="mt-1.5 w-full rounded-md border border-neutral-300 px-2 py-1 text-xs text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
+                            />
+                            <div className="mt-1.5 flex items-center gap-2">
+                              <button
+                                onClick={() => copyImageTag(img)}
+                                className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
+                              >
+                                {copiedImage === img.filename ? 'Copied' : 'Copy tag'}
+                              </button>
+                              <code className="truncate font-mono text-[0.7rem] text-neutral-400">
+                                {imageTag(img.identifier, imageAlts[img.filename] ?? '')}
+                              </code>
+                            </div>
+                          </>
+                        ) : (
+                          // No import line: the file was copied into the post
+                          // directory by hand. Dropping it here adds one.
+                          <p className="mt-1.5 text-xs text-neutral-400">
+                            No import yet — drop this file above to add one.
+                          </p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 

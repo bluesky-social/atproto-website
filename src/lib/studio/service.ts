@@ -25,6 +25,12 @@ import { fileRevision, assertRevision } from './revision'
 import { applyAuthorDids } from './authorsFile'
 import { blogPageTsx } from './templates'
 import { smartenTitleAndDescription } from './smartText'
+import {
+  POST_IMAGE_EXTS,
+  sanitizeImageFilename,
+  parsePreambleImports,
+  addPreambleImport,
+} from './postImages'
 
 export type StudioPaths = {
   blogDir: string
@@ -160,6 +166,85 @@ export async function saveOgImage(
   const filename = `opengraph-image.${ext}`
   await fs.writeFile(path.join(postDir, filename), bytes)
   return { filename }
+}
+
+export type PostImage = { filename: string; identifier: string | null }
+
+// True for a file the post's body could import as an inline image. The
+// opengraph-image is excluded: Next reads it as the post's social card, and it
+// is managed by its own dropzone.
+function isInlineImage(name: string): boolean {
+  if (name.startsWith('opengraph-image.')) return false
+  const ext = name.split('.').pop()?.toLowerCase()
+  return !!ext && (POST_IMAGE_EXTS as readonly string[]).includes(ext)
+}
+
+/**
+ * The post's inline images, each paired with the identifier its preamble binds.
+ *
+ * `identifier` is null for an image with no import line — a file copied into the
+ * post directory by hand. It is listed rather than hidden, because an image the
+ * studio can't see is exactly the one an author would go looking for.
+ */
+export async function listPostImages(
+  paths: StudioPaths,
+  slug: string,
+): Promise<PostImage[]> {
+  const postDir = path.join(paths.blogDir, slug)
+  if (!existsSync(postDir)) throw new Error(`Post not found: ${slug}`)
+  const names = (await fs.readdir(postDir)).filter(isInlineImage).sort()
+
+  const mdxPath = path.join(postDir, 'en.mdx')
+  let byFile = new Map<string, string>()
+  if (existsSync(mdxPath)) {
+    try {
+      const { preamble } = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+      byFile = new Map(
+        parsePreambleImports(preamble).map((i) => [i.file, i.identifier]),
+      )
+    } catch {
+      // An unparseable header is the editor's problem to report, not a reason
+      // to hide the files that are plainly sitting there.
+    }
+  }
+  return names.map((filename) => ({
+    filename,
+    identifier: byFile.get(`./${filename}`) ?? null,
+  }))
+}
+
+/**
+ * Store an inline image in the post directory and bind it in the MDX preamble.
+ *
+ * Returns the identifier the body should reference and a fresh `revision`:
+ * writing the import changes en.mdx, so the revision the open editor loaded
+ * with is stale, and its next save would be refused as a conflict.
+ *
+ * Only the preamble is touched. The editor may be holding unsaved body edits,
+ * and rewriting the body from disk would quietly undo them.
+ */
+export async function savePostImage(
+  paths: StudioPaths,
+  slug: string,
+  bytes: Buffer,
+  name: string,
+  ext?: string,
+): Promise<{ filename: string; identifier: string; revision: string }> {
+  const postDir = path.join(paths.blogDir, slug)
+  const mdxPath = path.join(postDir, 'en.mdx')
+  if (!existsSync(mdxPath)) throw new Error(`Post not found: ${slug}`)
+
+  // Parse before writing anything: a header this can't read means no import can
+  // be added, and an image with no import is just litter in the post directory.
+  const parsed = parseMdxFile(await fs.readFile(mdxPath, 'utf-8'))
+  const filename = sanitizeImageFilename(name, ext)
+  const { preamble, identifier } = addPreambleImport(parsed.preamble, filename)
+
+  await fs.writeFile(path.join(postDir, filename), bytes)
+  const serialized = serializeMdxFile({ ...parsed, preamble })
+  await fs.writeFile(mdxPath, serialized)
+
+  return { filename, identifier, revision: fileRevision(serialized) }
 }
 
 export type PublishResult = { ok: boolean; uri?: string; error?: string }
