@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 // Pure module, and a type-only import that TypeScript erases: this is a client
 // component, so nothing reaching node:child_process may be imported here.
 import { branchNameFor } from '@/lib/gitNames.mjs'
@@ -18,6 +18,7 @@ import {
 import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
 import type { GitState } from '@/lib/studio/git'
 import { isBskyPostUrl } from '@/lib/bskyPostUrl'
+import { guardUnload } from '@/lib/studio/unloadGuard'
 import { StudioNav } from '../StudioNav'
 
 type PostListItem = { slug: string; title: string; date: string }
@@ -279,6 +280,17 @@ export function BlogEditor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snapshotKey, baseline, docSlug, mode, revision])
 
+  // A draft only lives as long as the tab, so closing it — or navigating off
+  // /studio — loses work that a reload would have brought back. This is the one
+  // moment the browser lets us speak up. Registered once and reading a ref, so
+  // typing doesn't swap the listener on every keystroke.
+  const unsaved = baseline !== null && isDirty(snapshot, baseline)
+  const unsavedRef = useRef(false)
+  useEffect(() => {
+    unsavedRef.current = unsaved
+  }, [unsaved])
+  useEffect(() => guardUnload(window, () => unsavedRef.current), [])
+
   function startNew() {
     // Only the new-post form's own draft goes. A draft for the post being left is
     // kept on purpose: clicking back to it in the list brings the work back,
@@ -490,7 +502,7 @@ export function BlogEditor() {
       : 'text-neutral-500'
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Post list (left, newest first) */}
       <aside className="flex w-72 shrink-0 flex-col border-r border-neutral-200 px-5 py-6">
         <StudioNav active="blog" />
@@ -504,7 +516,7 @@ export function BlogEditor() {
         <p className="mt-8 mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
           Posts
         </p>
-        <ul className="-mx-2 flex flex-col gap-0.5 overflow-y-auto">
+        <ul className="-mx-2 flex min-h-0 flex-col gap-0.5 overflow-y-auto">
           {posts.map((p) => {
             const active = mode === 'edit' && p.slug === slug
             return (
