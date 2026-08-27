@@ -10,6 +10,8 @@ import {
   deletePost,
   findOgImage,
   saveOgImage,
+  listPostImages,
+  savePostImage,
   type StudioPaths,
 } from './service'
 import { RevisionConflictError } from './revision'
@@ -490,4 +492,127 @@ it('writes blueskyPostUrl on update, keeps it out of posts.ts, and removes it wh
     revision: withUrl.revision,
   })
   expect(fs.readFileSync(mdxPath, 'utf-8')).not.toContain('blueskyPostUrl')
+})
+
+describe('post images', () => {
+  const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47])
+  const GIF = Buffer.from([0x47, 0x49, 0x46, 0x38])
+
+  async function makePost(slug = 'hello') {
+    await createPost(paths, {
+      slug,
+      title: 'Hello',
+      description: 'Desc',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      body: 'The body.\n',
+    })
+    return slug
+  }
+
+  const mdxFor = (slug: string) =>
+    fs.readFileSync(path.join(paths.blogDir, slug, 'en.mdx'), 'utf-8')
+
+  it('writes the image into the post directory', async () => {
+    const slug = await makePost()
+    const { filename } = await savePostImage(paths, slug, PNG, 'My Chart.PNG')
+    expect(filename).toBe('my-chart.png')
+    const written = fs.readFileSync(path.join(paths.blogDir, slug, 'my-chart.png'))
+    expect(written.equals(PNG)).toBe(true)
+  })
+
+  it('adds the import to the MDX preamble and reports the identifier', async () => {
+    const slug = await makePost()
+    const { identifier } = await savePostImage(paths, slug, PNG, 'pds-chart.png')
+    expect(identifier).toBe('pdsChart')
+    expect(mdxFor(slug)).toContain('import pdsChart from "./pds-chart.png"')
+  })
+
+  it('leaves the header and body untouched', async () => {
+    // The editor may hold unsaved body edits; adding an import must not disturb
+    // what is on disk beyond the preamble, or a later save conflicts with it.
+    const slug = await makePost()
+    const before = mdxFor(slug)
+    await savePostImage(paths, slug, PNG, 'chart.png')
+    const after = mdxFor(slug)
+    expect(after.endsWith(before.slice(before.indexOf('export const header')))).toBe(true)
+  })
+
+  it('reads back through readPost, header intact', async () => {
+    const slug = await makePost()
+    await savePostImage(paths, slug, PNG, 'chart.png')
+    const post = await readPost(paths, slug)
+    expect(post.owned.title).toBe('Hello')
+    expect(post.body.trim()).toBe('The body.')
+  })
+
+  it('returns a revision the still-open editor can save against', async () => {
+    // Writing the import changes the file, so the revision the form loaded with
+    // is stale. Without a fresh one, the next save is refused as a conflict.
+    const slug = await makePost()
+    const { revision } = await savePostImage(paths, slug, PNG, 'chart.png')
+    await updatePost(paths, slug, {
+      owned: { title: 'Hello', description: 'Desc', date: 'June 1, 2026', author: 'Jim Ray', blueskyPostUrl: '' },
+      body: 'Edited.\n',
+      revision,
+    })
+    expect(mdxFor(slug)).toContain('Edited.')
+  })
+
+  it('replaces the bytes and reuses the identifier on a same-name re-upload', async () => {
+    const slug = await makePost()
+    const first = await savePostImage(paths, slug, PNG, 'chart.png')
+    const second = await savePostImage(paths, slug, GIF, 'chart.png')
+    expect(second.identifier).toBe(first.identifier)
+    const mdx = mdxFor(slug)
+    expect(mdx.match(/import chart from/g)).toHaveLength(1)
+    const written = fs.readFileSync(path.join(paths.blogDir, slug, 'chart.png'))
+    expect(written.equals(GIF)).toBe(true)
+  })
+
+  it('gives a second image with a colliding name its own identifier', async () => {
+    const slug = await makePost()
+    await savePostImage(paths, slug, PNG, 'chart.png')
+    const second = await savePostImage(paths, slug, GIF, 'chart.gif')
+    expect(second.identifier).toBe('chart2')
+  })
+
+  it('refuses a post that does not exist', async () => {
+    await expect(savePostImage(paths, 'nope', PNG, 'chart.png')).rejects.toThrow(
+      /not found/i,
+    )
+  })
+
+  it('lists images with the identifier each one is bound to', async () => {
+    const slug = await makePost()
+    await savePostImage(paths, slug, PNG, 'pds-chart.png')
+    await savePostImage(paths, slug, GIF, 'banner.gif')
+    expect(await listPostImages(paths, slug)).toEqual([
+      { filename: 'banner.gif', identifier: 'banner' },
+      { filename: 'pds-chart.png', identifier: 'pdsChart' },
+    ])
+  })
+
+  it('omits the opengraph image, which is not an inline image', async () => {
+    const slug = await makePost()
+    await saveOgImage(paths.blogDir, slug, PNG, 'png')
+    await savePostImage(paths, slug, PNG, 'chart.png')
+    expect(await listPostImages(paths, slug)).toEqual([
+      { filename: 'chart.png', identifier: 'chart' },
+    ])
+  })
+
+  it('lists an image dropped in by hand, with no identifier yet', async () => {
+    // A file copied into the post dir outside the studio has no import line.
+    const slug = await makePost()
+    fs.writeFileSync(path.join(paths.blogDir, slug, 'by-hand.png'), PNG)
+    expect(await listPostImages(paths, slug)).toEqual([
+      { filename: 'by-hand.png', identifier: null },
+    ])
+  })
+
+  it('lists nothing for a post with no images', async () => {
+    const slug = await makePost()
+    expect(await listPostImages(paths, slug)).toEqual([])
+  })
 })
