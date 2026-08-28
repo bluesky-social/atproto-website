@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'content-visibility-declaration',
+    title: 'Using the Content Visibility Declaration',
+    description: 'The Bluesky app is shipping a new content visibility declaration setting to give people more control over where and how their posts show up via algorithmic recommendation engines.',
+    date: 'August 27, 2026',
+    author: 'Jim Ray',
+  },
+  {
     slug: 'atproto-spaces-alpha',
     title: 'The Atproto Spaces Alpha is Live',
     description: 'Atproto Spaces, formerly known as “the permissioned data protocol,” is a new extension to atproto that enables non-public data. The alpha is now officially open. Here’s how to develop with it and what to expect as we work towards the full release.',

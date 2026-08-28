@@ -1,0 +1,49 @@
+import algoVisibilityToggle from "./algo-visibility-toggle.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mu3i642zrd2c',
+  title: 'Using the Content Visibility Declaration',
+  description: 'The Bluesky app is shipping a new content visibility declaration setting to give people more control over where and how their posts show up via algorithmic recommendation engines.',
+  date: 'August 27, 2026',
+  author: 'Jim Ray',
+}
+
+A key principle of the atproto ethos is giving people control of their data online. The Bluesky app expresses this value with features like custom feeds and composable moderation to give people more control over their experience using the app.
+
+This week, [the Bluesky app shipped a setting to allow people to ask apps to hide their posts from algorithmic recommendations](https://bsky.app/profile/bsky.app/post/3mu3jzayuys2k). This is designed to accommodate a longstanding feature request to prevent posts from, for example, going viral via the Discover feed.
+
+<Image src={algoVisibilityToggle} alt="Screenshot showing the new setting in Privacy and Security: Ask apps to hide my posts from algorithmic recommendations " />
+
+Of course, Bluesky posts don’t simply live on Bluesky, and in an effort to provide other apps, feed generators, and services with access to this setting, the app will write a new `app.bsky.actor.contentVisibilityDeclaration` record to a person’s repo when they activate the setting. The record itself is minimal:
+
+```json
+{ 
+"$type": "app.bsky.actor.contentVisibilityDeclaration", 
+"hideFromAlgorithmicRecommendations": true 
+}
+```
+
+   
+There’s a single required boolean value, `hideFromAlgorithmicRecommendations` and if it’s set to `true`, apps should respect the declaration by limiting their posts in algorithmic feeds like Bluesky’s Discover. If the record doesn’t exist, treat it the same as the value being set to `false`. For accounts that haven’t activated the setting, nothing changes.
+
+The `contentVisibilityDeclaration` is not meant to hide all posts or even prevent someone’s posts from showing up in any feed. Feeds based on lists of users, or around specific topics like [Science](https://bsky.app/profile/bossett.social/feed/for-science) or [BookSky](https://bsky.app/profile/clarabelle.xyz/feed/aaabrbjcg4hmk), don’t need to use the setting. Those feeds give posts organic reach to people who have sought out posts around a specific topic.
+
+Bluesky’s Discover feed, which has the ability to make a post go viral and invite potentially unwanted attention, will respect the setting.
+
+## How to use the new declaration in your apps
+
+The intention of this setting is to let people opt out of having their posts get actively distributed outside of their own known network. In the case of the Bluesky Discover algorithm, this means setting the option to `true` will prevent someone’s posts from showing up in a stranger’s Discover feed, however their posts might still show up in the Discover feed of a follower.
+
+What constitutes an “algorithmic recommendation” is fairly broad and open to interpretation. Feeds built around a specific topic are not the intended audience for this setting. Aggregators that cast a wide net and perform a version of “based on your profile, interests or activities, we thought you might enjoy these posts” should consider adopting this setting.
+
+When evaluating whether to implement this feature, it may be helpful to think of the feature across two axes: **intent** and **reach**. 
+
+**Intent** is whether the person who shows up in your app or feed wants to be there. If they are posting pictures of moss with the hashtags `#forest #photography` it’s probably safe to assume they are ok with their post appearing in a feed dedicated to nature photos. If someone is just posting bons mots about the trials and tribulations of modernity, you might want to check the declaration before including their post in an off-site aggregator of slice-of-life posts. 
+
+**Reach** is how far beyond someone’s existing social network a post might travel. If you’re building an internet reader app just for yourself, the reach is very small and won’t result in anyone’s posts unexpectedly going viral. If you’re watching the atproto firehose to collect the all time funniest posts for a digital media website filled with the best viral content, you’ll absolutely want to check for the declaration.
+
+The Discover feed built in to Bluesky is both low intent (no one is able to actively signal they want their post in Discover) and high reach (because it’s the default, it has the potential to reach millions of people instantly). Discover is the canonical feed this declaration was designed for. Even feeds that perform a similar function to Discover might not meet the same threshold for intent and reach.
+
+We’re asking apps and feed operators to use their best judgment, respond to good-faith feedback with care, and reach out with questions. If you manage an app, feed, or service that uses algorithmic recommendations to discover posts that are low intent and high reach, please adopt this declaration.
+
+Bluesky is adding this to help people add a bit of nuance to how their posts show up and are distributed across the app. The Atmosphere is different from centralized social media, we don’t have to rely on the old binaries of “all public vs. all private” and can offer people new ways of being online that better capture that fullness of being a person.
