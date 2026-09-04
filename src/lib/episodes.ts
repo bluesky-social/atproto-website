@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-09-04-a-bad-idea',
+    episodeNumber: 19,
+    title: 'A Bad Idea Until You Think About It',
+    description: 'Paul Frazee and Daniel Holmgren return to the livestream to discuss their recent posts that got them thinking a bit more deeply about work on the protocol and just what atproto is building towards.',
+    date: 'September 4, 2026',
+    pubDate: '2026-09-04T13:44:17.703Z',
+    duration: '00:47:16',
+    durationSeconds: 2836,
+    guests: ['Daniel Holmgren', 'Paul Frazee'],
+    format: 'livestream',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-09-04-daniel-holmgren/2026-09-02-livestream.mp3',
+    audioSizeBytes: 56834636,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-08-26-toni-schneider-ama',
     episodeNumber: 18,
     title: 'Not Just Us: An AMA with Toni Schneider',
