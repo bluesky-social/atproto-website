@@ -71,6 +71,19 @@ function linkBackHtml(pageUrl: string): string {
   return `<p><a href="${pageUrl}">Listen and read more at ${display}</a></p>`
 }
 
+// Show-level credits appended to every item, after the link-back. The prose
+// lives here beside linkBackHtml because it describes the show, not any one
+// episode. Separate <p> elements rather than <br>, and real anchors rather
+// than bare URLs, because that is the HTML subset podcatchers agree on.
+const FOOTER_HTML = [
+  '<p>Off Protocol is a production of the Bluesky developer relations team.' +
+    ' For more about AT Protocol and an archive of this show, head to' +
+    ' <a href="https://atproto.com">atproto.com</a>.</p>',
+  '<p>Our theme music was composed and produced by Saleem Reshamwala.</p>',
+  '<p>Catch our livestream every other Wednesday at' +
+    ' <a href="https://stream.place/atproto.com">stream.place/atproto.com</a>.</p>',
+].join('')
+
 // Resolve a possibly-relative URL against the show's origin. Absolute URLs
 // (e.g., R2-hosted cover art) pass through unchanged; relative paths get
 // prefixed. Important because cover URLs can be either form.
@@ -105,7 +118,7 @@ function renderItem(ctx: RenderCtx, episode: FeedEpisode): string {
       <itunes:episodeType>full</itunes:episodeType>
       <itunes:explicit>${episode.explicit ? 'true' : 'false'}</itunes:explicit>
       <itunes:image href="${xmlEscape(cover)}"/>
-      <content:encoded><![CDATA[${cdataSafe(episode.contentHtml + linkBack)}]]></content:encoded>
+      <content:encoded><![CDATA[${cdataSafe(episode.contentHtml + linkBack + FOOTER_HTML)}]]></content:encoded>
     </item>`
 }
 
