@@ -140,3 +140,27 @@ describe('buildPodcastFeed — channel author and owner', () => {
     expect(owner).toContain('<itunes:email>hello@example.com</itunes:email>')
   })
 })
+
+function imageHrefOf(block: string): string | null {
+  const m = block.match(/<itunes:image href="([^"]*)"\/>/)
+  return m ? m[1] : null
+}
+
+// Episode art is optional. When an episode omits it the item must fall back to
+// the show cover, which is how a new show cover reaches every back-catalogue
+// item at once. When an episode sets its own, that one wins.
+describe('buildPodcastFeed — item <itunes:image>', () => {
+  it('falls back to the show cover when the episode has no art', () => {
+    const xml = buildPodcastFeed(show, [makeEpisode({ coverImage: undefined })])
+    expect(imageHrefOf(itemBlock(xml))).toBe('https://media.example.com/cover.png')
+  })
+
+  it("uses the episode's own art when it has some", () => {
+    const xml = buildPodcastFeed(show, [
+      makeEpisode({ coverImage: 'https://media.example.com/ep-art.png' }),
+    ])
+    expect(imageHrefOf(itemBlock(xml))).toBe(
+      'https://media.example.com/ep-art.png',
+    )
+  })
+})
