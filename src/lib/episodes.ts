@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-09-11-make-your-own-thing-john-gruber',
+    episodeNumber: 20,
+    title: 'Make Your Own Thing',
+    description: 'John Gruber has been writing Daring Fireball for nearly a quarter of a century, analyzing and cataloging a distinct array of internet ephemera, designer nerdery, and, of course, the meteoric rise of Apple. He joins Jim to talk about what the pre-platform internet felt like, the oppressive sameness of contemporary web publishing, the creation of Markdown, and covering Apple for half of the company’s life.',
+    date: 'September 11, 2026',
+    pubDate: '2026-09-11T20:08:23.479Z',
+    duration: '01:33:04',
+    durationSeconds: 5584,
+    guests: ['John Gruber'],
+    format: 'conversation',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-09-11-john-gruber/2026-09-11-gruber-lev-18lufs.mp3',
+    audioSizeBytes: 112149913,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-09-04-a-bad-idea',
     episodeNumber: 19,
     title: 'A Bad Idea Until You Think About It',
