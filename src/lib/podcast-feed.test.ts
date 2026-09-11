@@ -164,3 +164,52 @@ describe('buildPodcastFeed — item <itunes:image>', () => {
     )
   })
 })
+
+// Show-level credits, appended to every item's notes. Literals are written out
+// by hand here rather than imported from podcast-feed, so that rewording the
+// production string fails these tests instead of silently agreeing with them.
+const FOOTER_OPENING =
+  'Off Protocol is a production of the Bluesky developer relations team.'
+const FOOTER_MUSIC = 'Saleem Reshamwala'
+const STREAM_HREF = 'href="https://stream.place/atproto.com"'
+
+describe('buildPodcastFeed — episode footer', () => {
+  it('appends the footer after the episode notes', () => {
+    const xml = buildPodcastFeed(show, [
+      makeEpisode({
+        hasShowNotes: true,
+        contentHtml: '<h2>Links</h2><p>The full show notes.</p>',
+      }),
+    ])
+    const content = cdataOf(itemBlock(xml), 'content:encoded') ?? ''
+    expect(content).toContain(FOOTER_OPENING)
+    expect(content).toContain(FOOTER_MUSIC)
+    expect(content.indexOf(FOOTER_OPENING)).toBeGreaterThan(
+      content.indexOf('The full show notes.'),
+    )
+  })
+
+  // Episodes with no real notes fall back to the summary. The footer is a show
+  // credit, not a notes decoration, so it belongs on those items too.
+  it('appends the footer to episodes that have no show notes', () => {
+    const xml = buildPodcastFeed(show, [
+      makeEpisode({
+        hasShowNotes: false,
+        contentHtml: '<p>A one sentence summary.</p>',
+      }),
+    ])
+    expect(cdataOf(itemBlock(xml), 'content:encoded')).toContain(FOOTER_OPENING)
+  })
+
+  it('keeps the footer out of the item <description>', () => {
+    const xml = buildPodcastFeed(show, [makeEpisode({ hasShowNotes: true })])
+    const desc = descriptionOf(itemBlock(xml)) ?? ''
+    expect(desc).not.toContain(FOOTER_OPENING)
+    expect(desc).not.toContain(FOOTER_MUSIC)
+  })
+
+  it('renders the livestream URL as a link, not bare text', () => {
+    const xml = buildPodcastFeed(show, [makeEpisode({ hasShowNotes: true })])
+    expect(cdataOf(itemBlock(xml), 'content:encoded')).toContain(STREAM_HREF)
+  })
+})
