@@ -85,7 +85,7 @@ export interface ShowMeta {
 export const SHOW: ShowMeta = {
   title: 'Off Protocol',
   description: 'Conversations about AT Protocol and the open social web with the people working to build a better internet. Brought to you by the Bluesky DevRel team.',
-  author: 'Bluesky DevRel',
+  author: 'Bluesky',
   defaultHost: 'Jim Ray',
   ownerEmail: 'atmosphere@blueskyweb.xyz',
   language: 'en-US',

@@ -103,3 +103,40 @@ describe('buildPodcastFeed — <content:encoded>', () => {
     expect(content).toContain(PAGE_HREF)
   })
 })
+
+// Channel-level elements only: everything before the first <item>. Items
+// repeat tag names the channel also uses (itunes:image, description), so an
+// item must never be able to satisfy a channel assertion.
+function channelBlock(xml: string): string {
+  const i = xml.indexOf('<item>')
+  return i === -1 ? xml : xml.slice(0, i)
+}
+
+function ownerBlock(xml: string): string {
+  const m = channelBlock(xml).match(/<itunes:owner>[\s\S]*?<\/itunes:owner>/)
+  if (!m) throw new Error('no <itunes:owner> found in channel')
+  return m[0]
+}
+
+// Both the channel byline and the owner name come from show.author — one
+// field, two elements. The fixture's author, defaultHost, and ownerEmail are
+// three distinct values so that wiring an element to the wrong one fails here.
+describe('buildPodcastFeed — channel author and owner', () => {
+  it('renders show.author as the channel <itunes:author>', () => {
+    const xml = buildPodcastFeed(show, [makeEpisode()])
+    expect(channelBlock(xml)).toContain(
+      '<itunes:author>Bluesky DevRel</itunes:author>',
+    )
+  })
+
+  it('renders show.author as the owner name, not the default host', () => {
+    const owner = ownerBlock(buildPodcastFeed(show, [makeEpisode()]))
+    expect(owner).toContain('<itunes:name>Bluesky DevRel</itunes:name>')
+    expect(owner).not.toContain('Jim Ray')
+  })
+
+  it('keeps the owner email in its own element', () => {
+    const owner = ownerBlock(buildPodcastFeed(show, [makeEpisode()]))
+    expect(owner).toContain('<itunes:email>hello@example.com</itunes:email>')
+  })
+})
