@@ -85,12 +85,12 @@ export interface ShowMeta {
 export const SHOW: ShowMeta = {
   title: 'Off Protocol',
   description: 'Conversations about AT Protocol and the open social web with the people working to build a better internet. Brought to you by the Bluesky DevRel team.',
-  author: 'Bluesky DevRel',
+  author: 'Bluesky',
   defaultHost: 'Jim Ray',
   ownerEmail: 'atmosphere@blueskyweb.xyz',
   language: 'en-US',
   category: 'Technology',
-  coverImage: 'https://media.atproto.com/off-protocol/off-protocol-cover.png',
+  coverImage: 'https://media.atproto.com/off-protocol/off-protocol-cover-2026-09-10.png',
   feedUrl: 'https://atproto.com/off-protocol/rss.xml',
   siteUrl: 'https://atproto.com/off-protocol',
   subscribe: {
