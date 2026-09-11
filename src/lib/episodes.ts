@@ -90,7 +90,7 @@ export const SHOW: ShowMeta = {
   ownerEmail: 'atmosphere@blueskyweb.xyz',
   language: 'en-US',
   category: 'Technology',
-  coverImage: 'https://media.atproto.com/off-protocol/off-protocol-cover-2026-09-10.png',
+  coverImage: 'https://media.atproto.com/off-protocol/off-protocol-cover-2026-09-11.jpg',
   feedUrl: 'https://atproto.com/off-protocol/rss.xml',
   siteUrl: 'https://atproto.com/off-protocol',
   subscribe: {
