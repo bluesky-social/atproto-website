@@ -59,3 +59,20 @@ describe('episode format data', () => {
     )
   })
 })
+
+describe('directory subscribe links', () => {
+  // The SubscribeMenu renders Apple and Spotify only when these are non-null.
+  // A regression to null removes the two entries most listeners use, and the
+  // dropdown still looks correct, so nothing else catches it.
+  it('points Apple Podcasts at the Off Protocol show page', () => {
+    expect(SHOW.subscribe.apple).toBe(
+      'https://podcasts.apple.com/us/podcast/off-protocol/id6810931896',
+    )
+  })
+
+  it('points Spotify at the Off Protocol show page', () => {
+    expect(SHOW.subscribe.spotify).toBe(
+      'https://open.spotify.com/show/033A9wAGR5NAE0arNO9mO7',
+    )
+  })
+})
