@@ -94,8 +94,8 @@ export const SHOW: ShowMeta = {
   feedUrl: 'https://atproto.com/off-protocol/rss.xml',
   siteUrl: 'https://atproto.com/off-protocol',
   subscribe: {
-    apple: null,                // TODO(post-launch): fill in after Apple ingestion
-    spotify: null,              // TODO(post-launch): fill in after Spotify ingestion
+    apple: 'https://podcasts.apple.com/us/podcast/off-protocol/id6810931896',
+    spotify: 'https://open.spotify.com/show/033A9wAGR5NAE0arNO9mO7',
   },
 }
 
