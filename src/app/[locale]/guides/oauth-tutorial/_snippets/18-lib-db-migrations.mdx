@@ -1,5 +1,7 @@
 ```typescript
-import { Kysely, Migration, Migrator } from "kysely";
+import { Kysely } from "kysely";
+import { Migrator } from "kysely/migration";
+import type { Migration } from "kysely/migration";
 import { getDb } from ".";
 
 const migrations: Record<string, Migration> = {
