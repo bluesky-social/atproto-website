@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'mysky-feed-infrastructure',
+    title: 'MySky: Open, Controllable Feed Infrastructure for the Atmosphere',
+    description: 'MySky is an algorithmic feed running on Bluesky, with a settings panel that shows you the whole ranking pipeline exactly as it runs.',
+    date: 'September 24, 2026',
+    author: 'Jonathan Stray',
+  },
+  {
     slug: 'atproto-spaces-alpha',
     title: 'The Atproto Spaces Alpha is Live',
     description: 'Atproto Spaces, formerly known as “the permissioned data protocol,” is a new extension to atproto that enables non-public data. The alpha is now officially open. Here’s how to develop with it and what to expect as we work towards the full release.',

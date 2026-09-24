@@ -1,0 +1,70 @@
+import { Container } from "@/components/Container"
+import settingstop from "./mysky-settings-top.jpg"
+import settingsbottom from "./mysky-settings-bottom.jpg"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mwc7klthxr2r',
+  title: 'MySky: Open, Controllable Feed Infrastructure for the Atmosphere',
+  description: 'MySky is an algorithmic feed running on Bluesky, with a settings panel that shows you the whole ranking pipeline exactly as it runs.',
+  date: 'September 24, 2026',
+  author: 'Jonathan Stray',
+}
+
+*What if anyone could create a new algorithm for social media?*
+
+One thing has been remarkably consistent across the whole history of social media: the platform decides what you see. You can follow, mute, like, and block, but the machinery that actually assembles your information environment has been mostly out of reach.
+
+Atproto changed part of this equation. Anyone can deploy a new algorithm, and there are now thousands of [feeds](https://bsky.app/feeds) available for BlueSky and other atproto clients. But state-of-the-art personalized recommendation remains difficult for independent feed developers to build and operate, especially without the infrastructure and ML resources available to major platforms. [MySky](https://www.mysky.social/p/introducing-greenearth) (formerly known as [GreenEarth](https://www.mysky.social/p/greenearth-is-now-mysky)) is a project to change that. Our goal is to make state-of-the-art personalized feed technology available to everyone — as a feed you can [use today](https://bsky.app/profile/did:plc:wrmpulygwvuhjn2c3jbalgqj/feed/your-feed), as [open source](https://github.com/greenearth-social) infrastructure you can run, and as an [API](https://api.greenearth.social/docs#/) that does the heavy lifting for a modern recommender systems.
+
+## A feed you can use today
+
+[MySky](https://bsky.app/profile/did:plc:wrmpulygwvuhjn2c3jbalgqj/feed/your-feed) is an algorithmic feed running on Bluesky, with a settings panel that shows you the whole ranking pipeline exactly as it runs. It now has over 60,000 daily active users.
+
+Most recommendation systems do their work in [several stages](https://medium.com/understanding-recommenders/how-platform-recommenders-work-15e260d9a15a). First, the system narrows down the millions of posts on a platform to a few thousand “possibly good” posts. Then it ranks those posts according to some definition of value. Finally, it makes adjustments, for example preventing the same person or topic from taking over the entire feed. These choices are normally buried deep inside a platform's logic. In MySky, they are visible in a settings panel.
+
+<Container>
+  <Image src={settingstop} alt="MySky settings panel, top half." className="w-full max-w-md mx-auto" />
+</Container>
+
+<Container>
+  <Image src={settingsbottom} alt="MySky settings panel, bottom half." className="w-full max-w-md mx-auto" />
+</Container>
+
+Every stage of this is controllable. MySky can draw from people you follow, posts those people liked, authors and subjects you have shown interest in before, and popular posts from across the network. Once potential posts are collected, each post is scored in two ways: engagement (how likely you are to like, share, or comment on it) and how [constructive](https://www.mysky.social/p/what-does-constructive-mean) it is — whether a post shows reasoned argument, personal experience, curiosity, respect, a genuine attempt to communicate across differences. This is what's known as "bridging," and in the [Prosocial Ranking Challenge](https://rankingchallenge.substack.com/p/its-possible-to-reduce-polarization) we showed that bridging feeds measurably reduce affective polarization. Engagement and constructiveness are weighted equally by default, but nothing is opaque or locked in: you can turn constructiveness down and get something closer to a conventional engagement-ranked feed, or turn engagement down and rank principally on the character of the content itself.
+
+You also never need to wonder how the algorithm is assembling your information diet. The "Why Am I Seeing This?" panel shows where each post came from and how the different ranking and diversity components contributed to its position in your feed.
+
+## Open feed infrastructure
+
+MySky is one feed, but the project behind it is all about open source infrastructure. Our mission is to support a variety of projects which want to use algorithmic social recommenders in different ways, so we've built a configurable recommendation architecture. This is a generalization of the tried-and-true production pipeline you'll find in use at major platforms:
+
+* **Candidate generators** each use a different approach to select a few hundred possibly-relevant items out of an arbitrarily large inventory: posts from people you follow, search over topics you've previously liked, popularity, vector similarity, etc. This step is built on search engine and vector database technology.  
+* **Signal generators** score each candidate on one or more attributes. These include an engagement predictor (a standard two tower model outputting the probability that a particular user will like, reply, follow, etc.) and — coming soon — an [LLM scorer](https://docs.google.com/document/d/10VOQ7FlXJob4RoGqxD6OpvJETv1IT9_xV7yywK3jclM/edit?tab=t.0) that takes a post and a prompt to produce a relevance score. This will allow users to describe their ideal feed in their own words.  
+* **Scoring** combines the signals into a single number per post, with weights you can adjust.  
+* **Re-ranking** reorders the feed to ensure a good mix, preventing repeated authors or an exhausting news cycle from eating your entire feed.
+
+The full architecture, and the reasoning behind it, is [described here](https://www.mysky.social/p/introducing-greenearth). Everything is [open source](https://github.com/greenearth-social), so you can inspect the full stack for yourself: the ingestion and indexing services, the engagement prediction models, the feed definitions, etc. 
+
+## An API you can call today
+
+Motivated builders can run the entire open stack themselves. However, this means continuously ingesting, analyzing, and indexing every post in the Atmosphere in real time, which is expensive (thousands of dollars per month). That's why, for most developers, we recommend starting with the [MySky API](https://api.greenearth.social/docs).
+
+Key endpoints include:
+
+**Get candidates.** `POST /candidates/generate` returns a weighted mix of posts from named candidate generators — posts from people you follow, popularity, similarity to your interests, and more (`GET /candidates/generators` lists them). Each returned candidate post is hydrated and includes its `at_uri`, text content, author, engagement counts, and a MiniLM embedding of the text content.
+
+**Rank them.** `POST /rank/predict` takes a set of candidate post IDs and scores each of them with a set of trained models (viewable via `GET /rank/models`), combining the scores with a caller-supplied weighted average. Right now MySky includes have engagement prediction and [constructiveness](https://www.mysky.social/p/what-does-constructive-mean) rankers. The response is a ranked list of post IDs.
+
+**Diversify.** `POST /diversify` takes the ranked list and reorders it so one person or conversaion doesn't dominate the whole feed. It uses the classic [MMR algorithm](https://medium.com/@adergunov/maximal-marginal-relevance-144c23b42be5) to do this, with separate penalties for repeated authors and topics.
+
+Rather than a fixed feed algorithm, this is a flexible system of components that you can customize to your specific application. The set of candidate generators, prompts, scoring weights, and reranking rules is a design space that we are hoping many people will be able to create wonderful things with. 
+
+## Open science, too
+
+MySky is also designed for open research. Commercial platforms constantly run experiments on their users but don't tell them or share the results. We want to run experiments too, but with consent, on questions like "Can a feed be engaging without being addictive?" We will invite members of the atproto community to participate in experiment design and analysis, and our results will be published in open-access journals.
+
+## Get involved
+
+There is no value-free algorithm. Every feed is already making choices; MySky makes them visible, changeable, and constructive by default.
+
+[Try the feed](https://go.greenearth.social/r/rtryit). Move the sliders. [Call the API](https://api.greenearth.social/docs). Read the [architecture post](https://www.mysky.social/p/introducing-greenearth), check out the [code](https://github.com/greenearth-social), and [join our Discord](https://discord.gg/8bWEyrkrJC) to meet the team. Then tell us: what would you ask your algorithm to do?
