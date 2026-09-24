@@ -53,7 +53,7 @@ Key endpoints include:
 
 **Get candidates.** `POST /candidates/generate` returns a weighted mix of posts from named candidate generators — posts from people you follow, popularity, similarity to your interests, and more (`GET /candidates/generators` lists them). Each returned candidate post is hydrated and includes its `at_uri`, text content, author, engagement counts, and a MiniLM embedding of the text content.
 
-**Rank them.** `POST /rank/predict` takes a set of candidate post IDs and scores each of them with a set of trained models (viewable via `GET /rank/models`), combining the scores with a caller-supplied weighted average. Right now MySky includes have engagement prediction and [constructiveness](https://www.mysky.social/p/what-does-constructive-mean) rankers. The response is a ranked list of post IDs.
+**Rank them.** `POST /rank/predict` takes a set of candidate post IDs and scores each of them with a set of trained models (viewable via `GET /rank/models`), combining the scores with a caller-supplied weighted average. Right now MySky includes  engagement prediction and [constructiveness](https://www.mysky.social/p/what-does-constructive-mean) rankers. The response is a ranked list of post IDs.
 
 **Diversify.** `POST /diversify` takes the ranked list and reorders it so one person or conversaion doesn't dominate the whole feed. It uses the classic [MMR algorithm](https://medium.com/@adergunov/maximal-marginal-relevance-144c23b42be5) to do this, with separate penalties for repeated authors and topics.
 
