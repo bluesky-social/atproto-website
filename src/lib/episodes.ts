@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-09-28-stroopwafels-for-everyone-boris-mann',
+    episodeNumber: 21,
+    title: 'Stroopwafels for Everyone!',
+    description: 'The Atmosphere Conf 2027 organizers joined the livestream for some announcements about when, where, and what you can expect from next year’s conference.',
+    date: 'September 28, 2026',
+    pubDate: '2026-09-29T02:17:30.444Z',
+    duration: '00:36:42',
+    durationSeconds: 2202,
+    guests: ['Boris Mann', 'Guido Jansen', 'Ms. Boba'],
+    format: 'livestream',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-09-28-boris-mann/2026-09-23-live-atmoco-lev-18lufs.mp3',
+    audioSizeBytes: 44511161,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-09-11-make-your-own-thing-john-gruber',
     episodeNumber: 20,
     title: 'Make Your Own Thing',
