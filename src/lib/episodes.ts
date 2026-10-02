@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-10-02-the-only-moat-is-taste-ricardo-m-ndez',
+    episodeNumber: 22,
+    title: 'The Only Moat is Taste',
+    description: 'Ricardo Méndez is a technologist, advocate and investor who’s been working on the decentralized web for years. He joins for a conversation about how to think about building sustainable businesses on a network that upends all of our assumptions.',
+    date: 'October 2, 2026',
+    pubDate: '2026-10-02T20:16:30.395Z',
+    duration: '00:52:46',
+    durationSeconds: 3166,
+    guests: ['Ricardo Méndez'],
+    format: 'conversation',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-10-02-ricardo-m-ndez/2026-10-02-ricardo-me-ndez.mp3',
+    audioSizeBytes: 51126268,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-09-28-stroopwafels-for-everyone-boris-mann',
     episodeNumber: 21,
     title: 'Stroopwafels for Everyone!',
