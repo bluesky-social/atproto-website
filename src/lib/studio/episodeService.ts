@@ -60,6 +60,16 @@ export type CreateEpisodeInput = {
 const TRANSCRIPT_STUB =
   '{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}\n'
 
+/** True for the placeholder (or any comments-only file): nothing to show. */
+function isStubTranscript(src: string): boolean {
+  return src.replace(/\{\/\*[\s\S]*?\*\/\}/g, '').trim() === ''
+}
+
+async function readTranscriptFile(dir: string): Promise<string> {
+  const p = path.join(dir, 'transcript.mdx')
+  return existsSync(p) ? fs.readFile(p, 'utf-8') : ''
+}
+
 /**
  * The `page.tsx` written alongside a new episode.
  *
@@ -148,21 +158,29 @@ export async function readEpisode(
   slug: string
   fields: EpisodeFields
   body: string
+  /** transcript.mdx, or '' while it only holds the placeholder. */
+  transcript: string
   ogImage: string | null
   revision: string
+  transcriptRevision: string
 }> {
   const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
   const raw = await fs.readFile(mdxPath, 'utf-8')
   const parsed = parseMdxFile(raw)
+  const transcriptRaw = await readTranscriptFile(path.join(paths.podcastDir, slug))
   return {
     slug,
     fields: getEpisodeFields(parsed),
     body: parsed.body.replace(/^\n+/, ''),
+    transcript: isStubTranscript(transcriptRaw) ? '' : transcriptRaw,
     ogImage: findOgImage(paths.podcastDir, slug),
     // Fingerprint of exactly the bytes these fields were parsed from, so a save
     // can prove it is editing the version it was shown.
     revision: fileRevision(raw),
+    // Separate from `revision`: `npm run transcribe` rewrites transcript.mdx on
+    // its own, and an audio upload rewrites en.mdx without touching it.
+    transcriptRevision: fileRevision(transcriptRaw),
   }
 }
 
@@ -235,31 +253,55 @@ export async function updateEpisode(
      * guest is usually added after the episode already exists.
      */
     authorDids?: Record<string, string>
+    /**
+     * New contents for transcript.mdx. Absent means "leave the file alone" —
+     * what a CLI or a tab opened before the studio edited transcripts sends.
+     */
+    transcript?: string
+    transcriptRevision?: string
   },
 ): Promise<{
   slug: string
   fields: EpisodeFields
   revision: string
+  transcriptRevision: string
   warning?: string
 }> {
-  const mdxPath = path.join(paths.podcastDir, slug, 'en.mdx')
+  const dir = path.join(paths.podcastDir, slug)
+  const mdxPath = path.join(dir, 'en.mdx')
   if (!existsSync(mdxPath)) throw new Error(`Episode not found: ${slug}`)
+  const transcriptPath = path.join(dir, 'transcript.mdx')
+  const transcriptRaw = await readTranscriptFile(dir)
+  const nextTranscript =
+    input.transcript === undefined
+      ? transcriptRaw
+      : input.transcript.trim()
+        ? input.transcript
+        : TRANSCRIPT_STUB
   const fields = {
     ...smartenTitleAndDescription(input.fields),
     hasShowNotes: Boolean(input.body && input.body.trim()),
+    // The author's call, unlike hasShowNotes — a generated transcript is a
+    // draft until someone reads it. But never true with nothing to show, or the
+    // page renders an empty Transcript disclosure.
+    hasTranscript: Boolean(input.fields.hasTranscript) && !isStubTranscript(nextTranscript),
     // Defensive: the editor's own Fields type gains `format` in a later task,
     // and a stale browser tab can PUT without it. Without this the header would
     // get `format: 'undefined'`.
     format: toEpisodeFormat(input.fields.format),
   }
   const raw = await fs.readFile(mdxPath, 'utf-8')
-  // Check before the first write, so a refusal leaves both files untouched.
+  // Check both before the first write, so a refusal leaves every file untouched.
   assertRevision(input.revision, fileRevision(raw), 'This episode')
+  if (input.transcript !== undefined) {
+    assertRevision(input.transcriptRevision, fileRevision(transcriptRaw), "This episode's transcript")
+  }
   const parsed = parseMdxFile(raw)
   const next = applyEpisodeFields(parsed, fields)
   next.body = normalizeBodySeparation(input.body)
   const serialized = serializeMdxFile(next)
   await fs.writeFile(mdxPath, serialized)
+  if (nextTranscript !== transcriptRaw) await fs.writeFile(transcriptPath, nextTranscript)
 
   const src = await fs.readFile(paths.episodesFile, 'utf-8')
   await fs.writeFile(
@@ -276,6 +318,7 @@ export async function updateEpisode(
     slug,
     fields,
     revision: fileRevision(serialized),
+    transcriptRevision: fileRevision(nextTranscript),
     ...(reason ? { warning: `Episode saved, but ${reason}` } : {}),
   }
 }
