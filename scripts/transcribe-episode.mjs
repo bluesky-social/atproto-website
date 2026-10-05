@@ -25,6 +25,7 @@ import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { groupTurns, toMdx } from './lib/transcript.mjs'
 import { readEpisodeHeader } from './lib/readEpisodeHeader.mjs'
+import { guessSpeakers } from './lib/guessSpeakers.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -58,11 +59,15 @@ export function isStubTranscript(content) {
 
 const SAMPLE_WORDS = 25
 
+// Jim records the intro even on episodes he doesn't host, and `hosts` doesn't
+// list him then, so he is always a candidate.
+const ALWAYS_CANDIDATE = 'Jim Ray'
+
 export function speakerTemplate(segments, { hosts, guests }) {
-  const speakers = {}
+  const names = [...new Set([ALWAYS_CANDIDATE, ...hosts, ...guests])]
+  const { speakers, evidence } = guessSpeakers(segments, names)
   const words = {}
   for (const { speaker, text } of segments) {
-    speakers[speaker] = ''
     words[speaker] ??= []
     if (words[speaker].length <= SAMPLE_WORDS)
       words[speaker].push(...text.trim().split(/\s+/))
@@ -75,12 +80,30 @@ export function speakerTemplate(segments, { hosts, guests }) {
         : w.join(' '),
     ]),
   )
-  return { speakers, names: [...hosts, ...guests], samples, glossary: [] }
+  const guessed = Object.values(speakers).some(Boolean)
+  return {
+    ...(guessed
+      ? {
+          check:
+            'Names guessed from the text. Confirm each one against the samples, then delete this line.',
+        }
+      : {}),
+    speakers,
+    names,
+    evidence,
+    samples,
+    glossary: [],
+  }
 }
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 export function parseSpeakerConfig(config) {
+  if (config.check !== undefined) {
+    throw new Error(
+      'speakers.json still has its "check" line. Confirm the guessed names, then delete it.',
+    )
+  }
   const speakers = config.speakers ?? {}
   const empty = Object.keys(speakers).filter((k) => !String(speakers[k]).trim())
   if (empty.length)

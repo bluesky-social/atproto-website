@@ -744,9 +744,17 @@ Each run picks up where the last one stopped, keeping its work in
    }
    ```
 
-   `names` (hosts and guests from `en.mdx`) and `samples` (each speaker's first
-   ~25 words, uncorrected) are only there to help you tell the voices apart.
-   MacWhisper can't tell you who is who.
+   `names` (Jim Ray, plus hosts and guests from `en.mdx`), `evidence` (which
+   names each label says), and `samples` (each speaker's first ~25 words,
+   uncorrected) are there to help you tell the voices apart. MacWhisper can't
+   tell you who is who.
+
+   For a two-person episode, the script guesses the names by elimination —
+   people rarely say their own name, so the label that keeps saying "Alex" is
+   the other one — and adds a `"check"` line. It refuses to write the MDX
+   until you've confirmed the names and deleted that line. Panels and episodes
+   where the label count doesn't match the people are left blank
+   (`scripts/lib/guessSpeakers.mjs` has the measurements behind this).
 4. `transcript.mdx` — written next to `en.mdx`. It won't overwrite a
    transcript with real content unless you pass `--force`.
 

@@ -114,9 +114,58 @@ test('speakerTemplate lists each label with empty names, hints, and a sample', (
     'Speaker 2': '',
     'Speaker 3': '',
   })
-  assert.deepEqual(t.names, ['Alex Garnett', 'Juliet Shen'])
+  assert.deepEqual(t.names, ['Jim Ray', 'Alex Garnett', 'Juliet Shen'])
   assert.equal(t.samples['Speaker 2'], 'Congratulations on 1. 0.')
   assert.deepEqual(t.glossary, [])
+  assert.equal(t.check, undefined, 'no check line when nothing was guessed')
+})
+
+// Jim records intros on episodes he doesn't host, so he is always a candidate.
+test('speakerTemplate always lists Jim Ray once among the names', () => {
+  const t = speakerTemplate(RAW.segments, {
+    hosts: ['Jim Ray'],
+    guests: ['Erin Kissane'],
+  })
+  assert.deepEqual(t.names, ['Jim Ray', 'Erin Kissane'])
+})
+
+test('speakerTemplate pre-fills guessed names and adds a check line', () => {
+  const t = speakerTemplate(
+    [
+      { speaker: 'Speaker 1', text: 'Alex, welcome back.' },
+      { speaker: 'Speaker 2', text: 'Jim, great to be here.' },
+    ],
+    { hosts: ['Alex Garnett'], guests: [] },
+  )
+  assert.deepEqual(t.speakers, {
+    'Speaker 1': 'Jim Ray',
+    'Speaker 2': 'Alex Garnett',
+  })
+  assert.match(t.check, /guessed/i)
+  assert.deepEqual(t.evidence['Speaker 1'], ['says "Alex Garnett" ×1'])
+})
+
+test('speakerTemplate keeps evidence even when it cannot guess', () => {
+  const t = speakerTemplate(RAW.segments, {
+    hosts: ['Alex Garnett'],
+    guests: ['Juliet Shen'],
+  })
+  assert.deepEqual(Object.keys(t.evidence), [
+    'Speaker 1',
+    'Speaker 2',
+    'Speaker 3',
+  ])
+})
+
+test('parseSpeakerConfig refuses while the check line is still there', () => {
+  assert.throws(
+    () =>
+      parseSpeakerConfig({
+        speakers: { 'Speaker 1': 'Jim Ray', 'Speaker 2': 'Alex Garnett' },
+        check: 'Names guessed from the text.',
+      }),
+    /check/,
+  )
 })
 
 test('speakerTemplate cuts samples to about 25 words', () => {
