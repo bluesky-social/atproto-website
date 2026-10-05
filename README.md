@@ -767,6 +767,9 @@ not a verbatim one, with no timestamps:
 
 - consecutive segments become speaker turns; long turns split into paragraphs
   of about 120 words, with the name on the first;
+- the spoken outro (credits, theme music, livestream plug) is cut: everything
+  from "Thanks so much for listening" in the final turn on, since the page and
+  feed carry those credits already;
 - "um"/"uh" and stutters ("I'm I'm I'm") are removed — real doubles like
   "that that" stay;
 - Parakeet's artifacts are repaired: `1. 0` → `1.0`, `Roost 's` → `Roost's`,

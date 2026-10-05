@@ -181,6 +181,21 @@ export function splitParagraphs(text, targetWords = 120) {
   return paragraphs
 }
 
+// The show's spoken outro (credits, theme music, livestream plug) always
+// opens with this line in the final turn. The page and the feed carry those
+// credits already, so the transcript stops where the conversation does.
+const OUTRO_START = /\bthank(?:s| you) so much for listening\b/gi
+
+/** Cut the outro from the final turn, dropping the turn if nothing is left. */
+function dropOutro(turns) {
+  const last = turns[turns.length - 1]
+  if (!last) return
+  const starts = [...last.text.matchAll(OUTRO_START)]
+  if (!starts.length) return
+  last.text = last.text.slice(0, starts[starts.length - 1].index).trim()
+  if (!last.text) turns.pop()
+}
+
 const HEADER =
   '{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}'
 
@@ -203,6 +218,7 @@ export function toMdx(
     if (last && last.speaker === speaker) last.text += ` ${t}`
     else cleaned.push({ speaker, text: t })
   }
+  dropOutro(cleaned)
 
   const unmapped = [...new Set(cleaned.map((t) => t.speaker))].filter(
     (s) => !speakers[s],

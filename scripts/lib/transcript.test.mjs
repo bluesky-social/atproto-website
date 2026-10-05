@@ -527,3 +527,56 @@ test('toMdx starts with a comment that says the file is generated', () => {
   const out = toMdx([{ speaker: 'Speaker 1', text: 'Hi.' }], SPEAKERS)
   assert.match(out, /^\{\/\*.*generated.*\*\/\}\n/i)
 })
+
+// --- outro ------------------------------------------------------------------
+
+const OUTRO =
+  'Thanks so much for listening and especially thank you to my guest, Ricardo Méndez. Off Protocol is a production of the Bluesky Developer Relations team. Our theme music was composed by Saleem Reshamwala.'
+
+test('toMdx drops a final turn that is only the outro', () => {
+  const out = toMdx(
+    [
+      { speaker: 'Speaker 2', text: 'Thanks for having me, man.' },
+      { speaker: 'Speaker 1', text: OUTRO },
+    ],
+    { 'Speaker 1': 'Jim Ray', 'Speaker 2': 'Ricardo Méndez' },
+  )
+  assert.doesNotMatch(out, /for listening|production of|theme music/)
+  assert.doesNotMatch(out, /\*\*Jim Ray:\*\*/)
+  assert.match(out, /Thanks for having me, man\.\n$/)
+})
+
+test('toMdx keeps the real ending that shares a turn with the outro', () => {
+  const out = toMdx(
+    [{ speaker: 'Speaker 1', text: `A perfect place to end. So thank you for that, Erin. ${OUTRO}` }],
+    { 'Speaker 1': 'Jim Ray' },
+  )
+  assert.match(out, /\*\*Jim Ray:\*\* A perfect place to end\. So thank you for that, Erin\.\n$/)
+})
+
+test('toMdx also cuts an outro that starts "Thank you so much for listening"', () => {
+  const out = toMdx(
+    [{ speaker: 'Speaker 1', text: 'Bye now. Thank you so much for listening, and see you soon.' }],
+    { 'Speaker 1': 'Jim Ray' },
+  )
+  assert.match(out, /\*\*Jim Ray:\*\* Bye now\.\n$/)
+})
+
+test('toMdx leaves "thanks so much for listening" before the final turn alone', () => {
+  const out = toMdx(
+    [
+      { speaker: 'Speaker 1', text: 'Thanks so much for listening to my rant, Alex.' },
+      { speaker: 'Speaker 2', text: 'Any time.' },
+    ],
+    { 'Speaker 1': 'Jim Ray', 'Speaker 2': 'Alex Garnett' },
+  )
+  assert.match(out, /Thanks so much for listening to my rant, Alex\./)
+})
+
+test('toMdx leaves an episode without an outro unchanged at the end', () => {
+  const out = toMdx(
+    [{ speaker: 'Speaker 1', text: 'Take care, everybody.' }],
+    { 'Speaker 1': 'Jim Ray' },
+  )
+  assert.match(out, /\*\*Jim Ray:\*\* Take care, everybody\.\n$/)
+})
