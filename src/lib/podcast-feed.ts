@@ -19,6 +19,8 @@ export interface FeedEpisode extends Episode {
   contentHtml: string
   /** Whether real show notes exist, derived from the episode MDX header. */
   hasShowNotes: boolean
+  /** Whether the episode page shows a transcript, from the same header. */
+  hasTranscript: boolean
 }
 
 const ITUNES_NS = 'http://www.itunes.com/dtds/podcast-1.0.dtd'
@@ -65,10 +67,11 @@ function episodeUrl(show: ShowMeta, episode: Episode): string {
 
 // A visible "go to the web page" link appended to the notes body. The <link>
 // element is the machine-readable permalink; this is the human-clickable one
-// that surfaces inside the rendered notes in every podcatcher.
-function linkBackHtml(pageUrl: string): string {
-  const display = pageUrl.replace(/^https?:\/\//, '')
-  return `<p><a href="${pageUrl}">Listen and read more at ${display}</a></p>`
+// that surfaces inside the rendered notes in every podcatcher. It names the
+// transcript only when the page actually shows one.
+function linkBackHtml(pageUrl: string, hasTranscript: boolean): string {
+  const extra = hasTranscript ? ', including a generated transcript,' : ''
+  return `<p>The archive for this episode${extra} is available at <a href="${pageUrl}">${pageUrl}</a>.</p>`
 }
 
 // Show-level credits appended to every item, after the link-back. The prose
@@ -102,7 +105,7 @@ function renderItem(ctx: RenderCtx, episode: FeedEpisode): string {
   const mime = episode.audioMimeType ?? 'audio/mpeg'
   const cover = absUrl(origin, episode.coverImage ?? show.coverImage)
   const pageUrl = episodeUrl(show, episode)
-  const linkBack = linkBackHtml(pageUrl)
+  const linkBack = linkBackHtml(pageUrl, episode.hasTranscript)
 
   // <description> is the short episode summary (plain text). The full show
   // notes — and the link-back — live in <content:encoded> below.
