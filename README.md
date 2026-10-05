@@ -300,10 +300,17 @@ See `.env.example` for the full annotated list.
   body has content, so there's no flag to remember.
 - **Hosts** defaults to the show host when left empty; fill it in only for
   guest-hosted episodes.
-- **Not in the UI:** the Bluesky discussion URL (`blueskyPostUrl`) and
-  transcripts. Set `blueskyPostUrl` by hand in `en.mdx` to attach a discussion
-  thread; for a transcript, paste it into the generated `transcript.mdx` and
-  flip `hasTranscript: true`. The editor preserves all three on save.
+- **Transcript** is a second MDX box below the show notes, editing
+  `transcript.mdx`. Unlike show notes, it has an explicit **Show on the episode
+  page** checkbox (`hasTranscript`), because a generated transcript is a draft
+  until someone reads it. The box stays disabled — and the server refuses the
+  flag — while the transcript is empty. `transcript.mdx` has its own revision
+  check, so a save from an open tab can't clobber a transcript that
+  [`npm run transcribe`](#transcripts) rewrote in the meantime. To draft one,
+  see [Transcripts](#transcripts).
+- **Not in the UI:** the Bluesky discussion URL (`blueskyPostUrl`). Set it by
+  hand in `en.mdx` to attach a discussion thread; the editor preserves it on
+  save.
 - **Delete** asks a second time whether to remove the MP3 from storage as well.
   That one is irreversible — see [audio upload](#audio-upload-r2).
 
@@ -691,6 +698,90 @@ This deletes local files only. Once a feed `guid` has been distributed to subscr
 [Dev Studio](#dev-studio-dev-only). It writes the same three files and the same
 `episodes.ts` entry, and adds two things the CLI can't do: it uploads the MP3
 for you, and it reads the duration out of the file rather than asking `ffprobe`.
+
+#### Transcripts
+
+`npm run transcribe` drafts an episode's `transcript.mdx` with
+[MacWhisper](https://goodsnooze.gumroad.com/l/macwhisper), on device. It runs
+**on the Mac only**: it drives MacWhisper's `mw` command-line tool, which talks
+to the running app.
+
+One-time setup:
+
+1. MacWhisper Pro (the JSON export the script reads is a Pro feature).
+2. *MacWhisper → Settings → Advanced → Command-Line Tool → Install*. Check with
+   `mw version`.
+3. Download the **Parakeet v3** model in the app. It was faster and more
+   accurate than Whisper Large v3 Turbo on this show, and it placed the speaker
+   changes correctly where Whisper didn't. `mw models list` shows the IDs.
+
+Then:
+
+```sh
+npm run transcribe -- <slug>
+npm run transcribe -- --all --model parakeet-pro:nvidia_parakeet-v3_494MB
+```
+
+The bare `--` matters: without it npm keeps `--all`, `--model`, and `--force`
+for itself, and the script says so. `--all` takes every episode that doesn't
+have `hasTranscript: true` yet; one failed episode doesn't stop the batch.
+`--model` overrides the model selected in the app.
+
+Each run picks up where the last one stopped, keeping its work in
+`tmp-transcripts/<slug>/` (gitignored):
+
+1. `audio.mp3` — downloaded from the episode's `audioUrl`.
+2. `raw.json` — `mw transcribe --speakers --format json`.
+3. `speakers.json` — written once, then the run stops. Fill in a name for
+   each speaker label, then run again:
+
+   ```json
+   {
+     "speakers": { "Speaker 1": "Jim Ray", "Speaker 2": "Alex Garnett", "Speaker 3": "Juliet Shen" },
+     "names": ["Alex Garnett", "Juliet Shen"],
+     "samples": { "Speaker 1": "Hi, and welcome to another …" },
+     "glossary": [["Skilla", "Scylla"], ["coop", "Coop"]]
+   }
+   ```
+
+   `names` (hosts and guests from `en.mdx`) and `samples` (each speaker's first
+   ~25 words, uncorrected) are only there to help you tell the voices apart.
+   MacWhisper can't tell you who is who.
+4. `transcript.mdx` — written next to `en.mdx`. It won't overwrite a
+   transcript with real content unless you pass `--force`.
+
+The script never sets `hasTranscript`. Read the draft, fix what the model got
+wrong, then tick **Show on the episode page** in the
+[Studio](#podcast-editor) (or set `hasTranscript: true` in `en.mdx` by hand).
+
+The conversion (`scripts/lib/transcript.mjs`) produces a cleaned transcript,
+not a verbatim one, with no timestamps:
+
+- consecutive segments become speaker turns; long turns split into paragraphs
+  of about 120 words, with the name on the first;
+- "um"/"uh" and stutters ("I'm I'm I'm") are removed — real doubles like
+  "that that" stay;
+- Parakeet's artifacts are repaired: `1. 0` → `1.0`, `Roost 's` → `Roost's`,
+  and the capital it puts at the start of every segment, mid-sentence or not
+  (names keep theirs);
+- a **glossary** corrects names and protocol terms. The shared one, in
+  `GLOSSARY` in `scripts/lib/transcript.mjs`, applies to every episode
+  (Bluesky, atproto, AT Protocol, firehose, Off Protocol, …); the
+  per-episode `glossary` in `speakers.json` takes plain, case-sensitive,
+  whole-word pairs. Rule of thumb: a mistake seen in two episodes, whose fix
+  is never wrong, goes in the shared list with a test; a one-off name goes in
+  `speakers.json`.
+
+What still needs a human: repeated phrases ("side cars for side cars"),
+misheard words the glossary doesn't know, and the occasional mid-sentence
+capital on a word the transcript never uses in lowercase.
+
+**Why plain `node`:** `node_modules` may be installed from a Linux VM, and
+esbuild's native binary — which `tsx` needs — won't load on macOS. So the
+script avoids `tsx` and the TypeScript header parser, reading the few header
+fields it needs with `scripts/lib/readEpisodeHeader.mjs`; a contract test keeps
+that reader in agreement with `src/lib/studio/episodeHeader.ts` on every
+episode.
 
 #### Audio upload (R2)
 

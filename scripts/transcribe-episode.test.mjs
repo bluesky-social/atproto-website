@@ -311,5 +311,26 @@ test('runs with plain node, without tsx', () => {
   const { NODE_OPTIONS, ...env } = process.env
   const r = spawnSync(process.execPath, [script], { encoding: 'utf-8', env })
   assert.equal(r.status, 1)
-  assert.match(r.stderr, /Usage: npm run transcribe <slug>/)
+  assert.match(r.stderr, /Usage: npm run transcribe -- <slug>/)
+})
+
+// `npm run transcribe --all --model X` (no `--`) gives npm the flags: the
+// script sees only `X`, and npm exposes the flags as npm_config_* instead.
+test('explains a missing -- when npm swallowed the flags', () => {
+  const script = path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    'transcribe-episode.mjs',
+  )
+  const { NODE_OPTIONS, ...env } = process.env
+  const r = spawnSync(
+    process.execPath,
+    [script, 'parakeet-pro:nvidia_parakeet-v3_494MB'],
+    {
+      encoding: 'utf-8',
+      env: { ...env, npm_config_all: 'true', npm_config_model: '' },
+    },
+  )
+  assert.equal(r.status, 1)
+  assert.match(r.stderr, /npm kept --all, --model/)
+  assert.match(r.stderr, /npm run transcribe -- /)
 })

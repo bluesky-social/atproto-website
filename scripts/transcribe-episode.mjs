@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // scripts/transcribe-episode.mjs
 //
-// npm run transcribe <slug> [--model <id>] [--force]
-// npm run transcribe --all [--model <id>]
+// npm run transcribe -- <slug> [--model <id>] [--force]
+// npm run transcribe -- --all [--model <id>]
+//
+// The bare `--` matters: without it npm keeps the flags for itself.
 //
 // Runs on the Mac: `mw` is MacWhisper's CLI and talks to the running app.
 // Plain node only — no tsx — because node_modules comes from the Linux VM
@@ -184,13 +186,24 @@ function parseArgs(argv) {
   return opts
 }
 
-export async function main(argv = process.argv.slice(2)) {
-  const { slug, all, ...opts } = parseArgs(argv)
-  if (!slug && !all) {
+const USAGE =
+  'Usage: npm run transcribe -- <slug> [--model <id>] [--force]\n       npm run transcribe -- --all [--model <id>]'
+
+// Flags npm keeps when the `--` is missing. It hands them to the script as
+// npm_config_* variables instead, which is the only trace they leave.
+const OUR_FLAGS = ['all', 'model', 'force']
+
+export async function main(argv = process.argv.slice(2), env = process.env) {
+  const swallowed = OUR_FLAGS.filter(
+    (f) => env[`npm_config_${f}`] !== undefined,
+  )
+  if (swallowed.length) {
     throw new Error(
-      'Usage: npm run transcribe <slug> [--model <id>] [--force]\n       npm run transcribe --all [--model <id>]',
+      `npm kept ${swallowed.map((f) => `--${f}`).join(', ')} for itself. Put a bare -- before the script's flags:\n${USAGE}`,
     )
   }
+  const { slug, all, ...opts } = parseArgs(argv)
+  if (!slug && !all) throw new Error(USAGE)
   if (!all) return transcribeEpisode(slug, opts)
 
   // --all: every episode still without a published transcript. Failures are
