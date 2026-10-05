@@ -178,7 +178,73 @@ test('cleanText removes spaces before trailing punctuation', () => {
   )
 })
 
+// Parakeet writes "numergent.com" as "numergent. com".
+test('cleanText rejoins a domain split after the dot', () => {
+  assert.equal(
+    cleanText('his blog at numergent. com is a must-read'),
+    'his blog at numergent.com is a must-read',
+  )
+  assert.equal(cleanText('find us on bsky. app'), 'find us on bsky.app')
+  assert.equal(
+    cleanText('at stream. place every week'),
+    'at stream.place every week',
+  )
+})
+
+test('cleanText rejoins .network domains', () => {
+  assert.equal(
+    cleanText('go to bsky. network slash account'),
+    'go to bsky.network slash account',
+  )
+})
+
+// Joining first also stops the paragraph splitter treating "defector." as a
+// sentence end and moving "com, a wonderful website" into the next paragraph.
+test('toMdx keeps a split domain in one paragraph', () => {
+  const words = Array.from({ length: 130 }, () => 'word').join(' ')
+  const out = toMdx(
+    [
+      {
+        speaker: 'Speaker 1',
+        text: `${words} on defector. com, a wonderful website.`,
+      },
+    ],
+    { 'Speaker 1': 'Jim Ray' },
+  )
+  assert.match(out, /defector\.com, a wonderful website\./)
+})
+
+test('cleanText rejoins a domain with several dots', () => {
+  assert.equal(
+    cleanText("I'm jimray. bsky. team there"),
+    "I'm jimray.bsky.team there",
+  )
+})
+
+test('cleanText keeps a sentence end before a capitalized word', () => {
+  assert.equal(
+    cleanText('We built an app. Social apps are hard.'),
+    'We built an app. Social apps are hard.',
+  )
+  assert.equal(
+    cleanText('It went well. Com was there.'),
+    'It went well. Com was there.',
+  )
+})
+
+test('cleanText keeps a sentence end before a word that is not a TLD', () => {
+  assert.equal(cleanText('we use it. the end'), 'we use it. the end')
+})
+
 // --- applyGlossary --------------------------------------------------------
+
+test('applyGlossary maps misheard atproto.com domains', () => {
+  assert.equal(
+    applyGlossary('head to appro.com for docs'),
+    'head to atproto.com for docs',
+  )
+  assert.equal(applyGlossary('see adproto.com.'), 'see atproto.com.')
+})
 
 test('applyGlossary fixes Bluesky', () => {
   assert.equal(

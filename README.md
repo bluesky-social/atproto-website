@@ -770,6 +770,7 @@ not a verbatim one, with no timestamps:
 - "um"/"uh" and stutters ("I'm I'm I'm") are removed — real doubles like
   "that that" stay;
 - Parakeet's artifacts are repaired: `1. 0` → `1.0`, `Roost 's` → `Roost's`,
+  `numergent. com` → `numergent.com` (lowercase domain, known TLD),
   and the capital it puts at the start of every segment, mid-sentence or not
   (names keep theirs);
 - a **glossary** corrects names and protocol terms. The shared one, in

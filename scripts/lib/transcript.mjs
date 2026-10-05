@@ -98,14 +98,42 @@ export function cleanText(text) {
     .replace(/(\w) +-(?=[A-Za-z])/g, '$1-') // "Proto -specific"
     .replace(/ +([.,!?;:])/g, '$1') // "end-to-end ."
 
+  // "numergent. com" -> "numergent.com". Lowercase on both sides only, since a
+  // real sentence end is followed by a capital. Repeated for "jimray. bsky. team".
+  do {
+    prev = s
+    s = s.replace(SPLIT_DOMAIN, '$1.$2')
+  } while (s !== prev)
+
   return s.replace(/\s+/g, ' ').trim()
 }
+
+const TLDS = [
+  'com',
+  'org',
+  'net',
+  'io',
+  'dev',
+  'app',
+  'social',
+  'team',
+  'place',
+  'network',
+  'xyz',
+  'fm',
+  'tv',
+]
+const SPLIT_DOMAIN = new RegExp(
+  `\\b([a-z0-9-]+)\\. ((?:[a-z0-9-]+\\.)*(?:${TLDS.join('|')}))\\b`,
+  'g',
+)
 
 // Applied in order, so the atproto.com rule must run before the bare atproto
 // rule. Add an entry when a mistake shows up in more than one episode; pass
 // one-off fixes as `extra`.
 export const GLOSSARY = [
   [/\b(?:at|app?) ?proto ?\. ?com\b/gi, 'atproto.com'],
+  [/\b(?:appro|adproto)\.com\b/gi, 'atproto.com'],
   [/\b(?:at|app) protocol\b/gi, 'AT Protocol'],
   [/\b(?:at|app?) ?proto\b/gi, 'atproto'],
   [/\bblue ?sky\b/gi, 'Bluesky'],
