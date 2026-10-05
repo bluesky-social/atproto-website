@@ -1,1 +1,309 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Alex, welcome back again as usual. As always, we've got a very special episode this week with a special guest. We'll introduce here in just a minute. But before we get into that, let's run through the news, shall we?
+
+**Alex Garnett:** Yeah, let's do it. I can't resist wanting to unmute myself during our jingle and like invent lyrics to it. But I'm afraid that if I do that, something horrible will happen. I just want you to know that.
+
+**Jim Ray:** we should probably have a some kind of lyrics contest or something like that. And yeah. Maybe during the holidays.
+
+**Alex Garnett:** Yeah, one of these days I'm just gonna start rapping mid-jingle on what's gonna be like what in the world?
+
+**Jim Ray:** I love it. I love it. Well, we'll all stay tuned for that one.
+
+**Alex Garnett:** Yeah.
+
+**Jim Ray:** Well, like I said, we're gonna run through the news real quick. We want to leave as much time as we can for our very special guests. Couple of items. North Sky launched their social app this week. Was super excited to see that and if you haven't caught my conversation with Eve Osman from the North Sky Crew, dropped that on Monday. It was such a lovely conversation and I was so happy with the feedback that episode got, everybody seemed to really pick up the messages that Eve was dropping and Sh she's got so many fun projects. Obviously, I think most folks know who know her from North Sky. Have you used her Twinkle client much?
+
+**Alex Garnett:** Her twinkle client, I have not.
+
+**Jim Ray:** Oh, well, it's called twinkle. It's twinklewithout the e dot social. She, you know, she says it's not a throwback. It's not meant to necessarily be a nostalgia player or anything like that but you can't go to this site and not just help but relive the internet circa 2003. Between those things, and then she also launched a consultancy that she calls Escalet. which was new to me. That is the Nubian word for water wheel. And it was just such a beautiful metaphor for everything that she's trying to do with her work. So if you if you have not yet caught that episode I'll drop a link and it's a great one. But congrats to the North Sky crew.
+
+**Alex Garnett:** Yeah, big congrats. I love when I see a screenshot posted of like someone's home screen and it's all different social apps you can see like right in a row. They got like Bluesky, black sky, mu, I get north sky now, you know, there's never too many. It's very nice. Many flowers are blooming.
+
+**Jim Ray:** Exactly. What else we got? You went to Hope. How was that? And for folks who are maybe not familiar with is it Hackers on Planet Earth?
+
+**Alex Garnett:** Hackers on Planet Earth open. net. They're also the org associated with 2600 quarterly going back many, many years. Really cool conference actually. They are like a hacker org that deliberately makes you want to think about like phone freaking and like other such analog technologies from the 70s and 80s. They are modernizing the conference in a way that's also really cool. Like it used to be biannual or even less frequently at times, and they've gone to an annual event now. I'm noticing they're getting a lot more interest from like the recurse adjacent New York. open social tech scene, which is really cool because we've got the atproto event coming up next weekend in New York, and it's a lot of the same folks who I think are generally excited about what's going on in New York with open source at the moment.
+
+But hope was great. We sponsored. I was manning a booth for most of the weekend. I was between the Wikipedia table and the DSA table, which was very nice. It was good company. And just really had a great time. A lot of folks came by the booth to say, like, hey, Bluesky, nice to see you all there. I had the experience not once, not twice, but three times of someone coming by and saying, hey, I'm giving an atproto talk just down the hall in about an hour and a half or tomorrow. If you want to drop by and see it. And I said, that's great. Thank you so much. I will come by and watch your talk.
+
+So really nice to have a presence there. Really happy to support the conference. Really cool to see them growing and thriving. And also to see atproto in the Wild.
+
+**Jim Ray:** 100%. 2600 is pretty old school, so great to see that event kind of recalibrating a little bit. Between Wikipedia and the DSA feels like such a sweet spot. Like Metaphorically for a Bluesky to be there, so really I can't be able to do that. And then you mentioned our next news item here, which is the App Pro community Day. Boy, I'm seeing all the folks that are gonna be in New York this weekend. It is going to be, I believe, as the kids say, a vibe. So super excited for that. Our own Brian Newbold is flying across the country. I think he's flying out tonight or tomorrow. He's spending a few days out there. Looks like the weather is gonna be perfect.
+
+I think we're gonna get a maybe a little bit of a preview of an early fall day and maybe even some of your friends from Bluesky DevRel will show up.
+
+**Alex Garnett:** Maybe. It was nice and temperate in New York last weekend. I didn't get a nice big summer rainstorm, which I was kind of sad about. That's the one thing I missed on the West Coast is like the big East Coast rains, but it wasn't too hot. It was a balmy like 88 degrees.
+
+**Jim Ray:** Oh nice. Excellent. Yeah. Those are it August in New York is always such a such a gamble. So it can be glad I'm glad it was pretty good for you. And then our b the big news from our part of the world over here is that we launched BPS, Bluesky Protocol Services. Alex, you were instrumental in making that happen. Do you want to walk us through a little bit of your amazing work and work from folks in the team there?
+
+**Alex Garnett:** Yeah, I mean this is my third dox baby is kind of how I'm thinking of it. And you know, I had to bring three different dox babies to term over the course of the 10 months that I've so far been at this org. First was rewriting the appro. com site back in February, March to give us a new home for the atmosphere and to make sure that we were talking about our generic tooling in a way that was appropriate and powerful and useful and also getting our blog migrated over there. Next, when I started working on the old Bluesky Doc site, which had been sitting conspicuously for a while, it was like hey, are we maintaining the dedicated Bluesky docs?
+
+I don't know. Who knows? Let's find out. We done a few things with that site over time that made them need to be green fielded a little bit. So for example, we had like the entire reference API documentation there just kind of bolted in to thousands of different individual pages in a DocuSource framework that really wasn't meant for like open API endpoint reference. So Carved that out about two months ago into npoints. bsky. app to make that surface a lot more usable, and then spent the last two months turning the Bluesky docs into the BPS website. And it's a lot lighter weight now. The design's totally refreshed. And because that project wind up spanning most of the summer we got to do a lot of associated bring-up work at the same time as we were working on the BPS docs.
+
+So for example, modernizing the Bluesky SD. was a really big deal that we were overdue on. We wanted to rebase it on Lex and use all the newer patterns that we had. We were kind of telling ourselves back in May we should really do it, not sure when. And this became a really good opportunity to do that. because these are still the Bluesky SDK docs in addition to other things. And getting that done felt really good. On top of that, the banner feature, of course, is Jetstream V2, which I've seen a lot of folks talking about all weekend, cutting over to Jetstream V2, playing with the replay functionality. getting excited about the new filtering capacity it gives you.
+
+And having Jetstream V2 out there is a big, big, big deal for us. It really is emphasizing the scalability. Of the atmosphere, the kind of high-scale access to our data plane, and really talking about what you can do with all the data that's on the network without having to think about backfilling or you know putting together infrastructure just to run your own app so super duper excited about all that. I feel really, really good personally that a lot of our technical debt and our messaging is totally cleaned up. I feel like our docs are like the best surface we've ever had now. And it just feels really good from that. point of view to have everything all polished up nicely.
+
+**Jim Ray:** I could not agree more. I think the you know the migration of the Bluesky docs, I know that was something that was bugging you in particular, and it's something we've got a little bit of feedback on, but just making that understanding much more clear is great. And then of course the launch of JetStream V2. I think that's a perfect opportunity to bring in our special AMA guests. So I'm going to bring on our very own Jim Calabro. And Jim, welcome to the Off Protocol live stream. I know folks are excited to have you here. So we've got lots to discuss Jim, what is your title besides man of all things here at Blues Guy?
+
+**Jim Calabro:** I'm the head of the platform team here at Bluesky.
+
+**Jim Ray:** Head of the platform team. And what does that entail? I've been to places where platform team is like the API team, necess and obviously that's slightly different from how we think about the platform.
+
+**Jim Calabro:** Sure. So the platform team is a small but scrappy team where we are responsible for running the foundational infrastructure. So the infrastructure and services that help. the atmosphere and the Bluesky app tick, right? And so we run our hardware, we run our clouds, we are also like largely software engineers and we sort of help a bunch of other teams find success. And do a lot of software development ourselves, especially on the really high-scale, high availability, mission critical style software that we ship.
+
+**Jim Ray:** I wander into these channels and I love getting to watch y'all work because my brain does not operate in being able to configure the hardware and run all the operating systems and actual do software engineering. Getting to see you and Austin and Kodokas and the team and operate at that level is just it's a real pleasure to get to see all works. So.
+
+**Jim Calabro:** Yeah, it's pretty fun. It's a little unique compared to other like platform teams where yeah, we are this sort of like dual purpose engine. Where yeah, we are doing a lot of the sort of like traditional platform engineering, but we're also pretty deep in the weeds on a lot of the like application stacks as well.
+
+**Jim Ray:** Tell us about Jetstream V2. I th I know that there was a lot of excitement about that. I know that folks were watching the various repos and seeing your work bubbling up through there. Give us the maybe kind of the high-level overview about what people can expect with the new Jetstream.
+
+**Jim Calabro:** Sure. So if you've read the docs, which Alex did an absolutely fantastic job on. Basically Jetstream is a full network cache and sync service for atproto. And so when you start up a new Jetstream server, it actually goes out to the full network, it scrapes everything, it crawls and tries to find all the repos it can. It downloads them locally, keeps them in a very highly compressed, very high performance columnar file format, and makes those available to you once it's completed its full network backfill. And so it makes it easy to do the sort of like replay or sync style event stream backfill plus live transition that we've always talked about without like a ton of code on your end and also makes it extremely fast to run.
+
+And so really spend a lot of time trying to make sure that jetstream is like rarely the bottleneck if you're if you've set it up in a good way and tuned your settings. In an intelligent manner. And so the goal of the project is basically to enable people to sync down atproto data and do what they want more easily. So that might be building an app view. Some folks actually were making like local first clients. So you can actually just yoink all the jetstream data straight into the browser and then it's just right there for you. It's kind of interesting. I hadn't actually thought of that until it launched. Another thing would be like interesting network analysis.
+
+So if you wanted to say like how many people have posted a streamplace comment? Just like you don't get down, WC-L and count all the lines. And so yeah, it's this cool little tool that allows you to very quickly and easily just slurp up a bunch of data and do something with.
+
+**Jim Ray:** it. There was obviously a Jetstream V1. And what is it that Jetstream V2 does that developers struggled with that kind of were the impetus to really because this is kind of a ground-up rethink of how Jetstream works. And so what were the things that developers were struggling with or that we wanted to enable that they couldn't do with the previous version?
+
+**Jim Calabro:** Sure. So Jetstream V2 is indeed fully backwards compatible with V1. So the same like subscribe endpoint is there with the same JSON format on the WebSocket and everything. But the V1 was really awesome and actually like increased adoption a lot. We it's just a little bit tedious and you have to like understand a lot of relatively niche concepts to write your own like firehose consumer from scratch perhaps but anybody can just like subscribe to that web socket endpoint and immediately see the atproto data and so it's it makes it very legible and clear and easy. And so Jetstream V1 was a great success from a like developer friendliness standpoint. That being said, it had some it made some trade-offs for sure.
+
+So first off, it didn't provide any real like data interrogation mechanism. And so you basically just had to trust the Jetstream server operator. It's an open source thing and you can run it yourself, but it's not really doing authenticated transfer in the authenticated transfer protocol, right?
+
+**Jim Ray:** Right.
+
+**Jim Calabro:** And s but the other thing that we wanted to solve was and perhaps this is that even maybe even the more important one. I don't know, they're both pretty important. Was it only kept the most recent like day or two of data. I think it was 36 hours is what we had it configured to in our settings. And so you couldn't do this full resync and you couldn't like do your like long history network analysis or build a full app view off the back of Jetstream. Unless you also first did a like you went out and crawled all the PDSs, all the thousands of PDSs out there and downloaded all the data first. It was a convenient tool to build with, but it had a couple of shortcomings.
+
+**Jim Ray:** I think the other feature that I'm pretty excited about is what we've referred to alternately as kind of this idea of slicing. And I feel like that's something that developers, particularly that are building apps that go beyond just what Bluesky enables, for instance. Like, you know, if you're building a Bluesky client, then that's one thing. But if you are there is a proliferation of standard site readers that are popping up, for instance. And so if you wanted every standard site record, then that was previously kind of non-trivial to build, right?
+
+**Jim Calabro:** Yeah, like the way I would probably have done that before is there is a XRPC endpoint list repos by collection. And so you could say, hey, give me all the DIDs that have a standard site document. And then you'd actually have to go out, fetch their full repo, download it, decode it, shove their stuff in the database, and then you can start live tailing the jet stream. or live firehose instance. And so in this, in that world, it was like, okay, like finding all those repos pretty fast, doing the downloads of all those repos not quite as fast. From what we've been seeing on Jetstream, if you're running instance of it yourself on reasonably fast hardware, you can download and backfill the entirety of standard.
+
+site in like 10 seconds or less. And it's like just one like very straightforward little piece of code to write. And similarly with all those like relatively smaller data slices, it's like sort of the same story. Like if you want to just download your data. in particular your collections of that you care about there. It's like really just gonna be fast. So yeah, it enables a lot of interesting, maybe perhaps like more creative building whereas you know it just would have been totally invisible to build any local first stuff by going and fetching all the repos and decoding them within your browser or on a mobile client or something. Now you can actually do that in a reasonable way.
+
+And again, like I didn't plan for that or anything. It's just like.
+
+**Jim Ray:** Yeah.
+
+**Jim Calabro:** Somebody had the idea and it was just it's just was there and it was cool. So.
+
+**Jim Ray:** that's very cool. I love seeing all of the projects that are talking about how they're switching over. There have even been a few in the comments here. about you know hey I think Nick G was saying that he's moving Lexicon Garden over this weekend to use JetStream V2. So you know and there have been a few other of those too. So but this isn't something that you just like knocked out in a weekend, right?
+
+**Jim Calabro:** No, we all met up in January at a we did a platform slash like atmosphere team week together and you know, we did a lot of yapping that week. And one of the things we yapped about was, man, it'd be really cool if we could the term we were using was operationalize replay. So for our own internal purposes, when we're building the Bluesky App view. If we lose one of our data centers, the way that we like the disaster recovery story for that is backfill from the other data center. We're not going out to the app actual atproto network and doing a full network backfill from there, even though that's like exactly what it's good at.
+
+And there's a bunch of reasons for that, but we were just like, that's like kind of crazy. The second thing we talked about was when we add a new feature to the Bluesky app view and the social app, and we don't have the data already, it's a little bit of a pain in the butt because we don't just automatically save all the collections that we like don't we have to like manually write code for each collection we want to shove into our data plane database. And so for instance when we added the standard. site integration, we had to go out and find all the standard. site documents and download them and shove them in the database.
+
+And it's like, okay, well, what if we just had this local cache that was super fast to rip a like a data stream off of there's many purposes as to like why we actually decided to do this work, but we basically decided in January we were gonna take a swing at this. And then we just spent a lot of time like thinking about it, a lot of time in the design phase. So for most of January and February, we played around with several different design ideas for this. We actually had Claude go out and build a V0 of it. intentionally gonna throw it away, right? Like very low quality code, just like, let's go learn something.
+
+And so we actually like whipped up a initial prototype that we did like totally toss. And it was I'm glad we did because it was like a fundamentally unsound design. Like so we really did that sort of like longer upfront design work and then iterative process to try and nail down that design. And largely the design that we came up with is actually in the jetstream repo under the docs slash readme. md file. That was all our we sort of run like an internal RFD process on the platform team where we actually will write down these big files and ask for comments from folks. So like Devin gave a bunch of feedback and Paul gave a bunch of feedback and Daniel and Brian and stuff.
+
+And so it was very much like a collaborative effort, collaborative effort on what is the design of this thing. And then, you know, we started hiring some more folks. Luckily I had some more cycles to actually go attack stuff. And so we actually broke ground on it for real in like late May, early June, I'd say. It was closed source for the first few weeks, and then I open sourced it, I think probably late June just didn't really tell anybody. Lots of people noticed and were chatting about it. We actually got some design feedback from the community as well. So I chatted a lot with Fig about it because Fig is obviously building Hubble, which is sort of similar, but actually goes a little bit further as far as like the data integrity and what it's storing.
+
+So that was like super awesome. Yeah, fig rules. And yeah, so there's a lot of a lot of good lessons to learn there, I think. I think the big one for me, especially in like the AI age, is like let's make sure you like really stand by your own design decisions on this thing and take the time to think with your brain rather than just with Claude. And one of the things that we say a lot internally, this is not hot take or anything mid 2026, but like you own your work is like a big thing that's very important to me and a lot of other folks here. Yeah, it was kind of interesting because it was the first like big project that is like end-to-end green field with AI and I really wanted to not screw it up.
+
+**Jim Ray:** Yeah.
+
+**Jim Calabro:** We took that very seriously. Like you'll see in Jetstream, like the majority of the code in there is like tests. and like the full like atproto simulator harness thing.
+
+**Alex Garnett:** Yeah. Testing against it was actually really nice when I was writing some of those samples for the docs. Like those were really easy to verify end to end, and that felt really good.
+
+**Jim Calabro:** Yeah. Yeah. Do you have any other questions on that? Anything you want me to go into more detail on it? It'll be interesting.
+
+**Jim Ray:** I guess the one for me is there was there anything that surprised you about the network you obviously have a really good understanding about kind of the atmosphere writ large but did so like I know I remember as you were in development you would occasionally just pop into our Slack like I can't believe you know there would be some account that had even more likes than Patrick Singletary, for instance.
+
+**Jim Calabro:** Oh yeah, for sure. There was like yeah, there's a couple instances of that. If you're if you are doing a bunch of like backfill stuff and you'll just like notice odd things. Like, yeah, there's like a ostensibly a normal person. They're a painter, actually. And they're like, they would post all their paintings all the time, but they had like millions of likes on their and so I don't really know what was going on there. I don't even I don't remember their handle or anything either. So like I can't really explain it. I found it because all my like get repo calls were finding out were timing out. And so I was like, ah shoot, like what's going on here?
+
+But yeah, ostensibly it was like a real person. It's just they have a like bot or something running for them, or they're just the most liking is person of all time.
+
+**Alex Garnett:** or it's an untapped niche on Paint Sky and none of us are finding the next Van Gogh right under our eyes, you know? Like.
+
+**Jim Calabro:** could be.
+
+**Alex Garnett:** Yeah.
+
+**Jim Calabro:** Yeah, Jasmine had a internal metric. It was called the Stovey Peak or the Stovey limit or something like that back in the early day. It was like, how many likes could one conceivably make in a day? And I think the answer was about 5,000 because there was a Bluesky user who I since think has bounced, but they would it was like constant liking all day, every day. And it was legitimate user activity. Like they were they were clicking the button every single time. So it was I think they were beyond the Snowy Peak and I was surprised by that.
+
+**Alex Garnett:** Yeah. The rare Patrick Triple Terry.
+
+**Jim Calabro:** Yeah. Another fun one was I'm sure some folks have seen the counting sheep bot.
+
+**Jim Ray:** I was just I've just gonna mention the sheep counting bot. Yeah.
+
+**Jim Calabro:** Yeah. It's like whenever you're live tailing the firehose and you just get this like blast of white in your terminal, it's because it's just an enormous number of sheep emojis. It's kind of beautiful. No, no, no. There's just all this there's all these like goofy things out there that you find. Yeah.
+
+**Jim Ray:** The Sheep County bot is a Jen Schiffer production. If you've never had the pleasure of meeting Jen. If you'll be in New York this weekend, I believe she will be there. She's a delight and definitely one of our more fun contributors to the to the atmosphere for sure.
+
+**Jim Calabro:** Yeah, I'd be curious to know what percentage of all atproto data is sheep emojis at this point.
+
+**Jim Ray:** Somebody can run that on Gestream now and figure it out.
+
+**Jim Calabro:** Yeah, yeah. One of the things I've been noodling on in the back of my brain is I wanna write a program called AQ. It's like JQ but for atmosphere. And you have like a little like language that's like trying to select down to just the stuff, like all the slices you care about.
+
+**Alex Garnett:** So I don't know.
+
+**Jim Calabro:** I think somebody else should probably go run with that one. But trying to just plant the seed out in the universe if somebody builds it for me.
+
+**Jim Ray:** Excellent. You heard it everybody. Go build AQ, the CLI to inspect your gesture data. We did get some community questions here, so I would love to jump into those as well. There are a few questions about since you are kind of on the platform, the operation side of things, just about like how any of this works. I think it's generally pretty well known and you gave a great talk at Atmosphere Conf back in March about the fact that we're, you know, it's not like we're running on a cloud provider or something like that. Like we manage our own hardware and things like that. So to the degree that maybe things have been updated or However much you want to share about that, I do think that folks were pretty intrigued to know about how our infrastructure works.
+
+**Jim Calabro:** Yeah. So we do run our own metal. We have a couple of cages. We use I mean this is all stuff you can just go find out on like BGP tools or something, but we own our own ASM and have slash twenty two. Yeah, so we run our own network, we run our own servers. The main reason we do it is cost, actually. There's a lot of good reasons to do it. Cost is the big one for me. It would be substantially more expensive to run on Amazon or Google Cloud or other cloud providers. To a certain extent though, like just philosophically, it's kind of important to own your own destiny on a lot of things as well.
+
+I mean, that's kind of for my own personal opinions rather than perhaps the professional opinions. Yeah, so as far as like strategic strategy of running our own gear, I think it's been a smashing success. Like it's pretty important that at Preto runs in a cost effective manner, otherwise this is just gonna be hard to do. And so we've managed to keep our costs to a minimum while also being able to operate this gear with kind of a skeleton crew, if I'm being honest. Like it's just a couple of us that handle this sort of stuff. Yeah I'm very excited. We actually just landed the hire the other day Sarah she rules and so we'll have a little bit more help on board so very excited about that.
+
+It's a ton of work. It's a lot of specialized work and it is to a certain extent, the term I always use that is like sort of true, half true in this particular case is undifferentiated heavy lifting to use the corporate buzzword that everybody's buzzed about. It's it is a lot of heavy lifting and it feels undifferentiated until you look at like what your AWS bill would be if you actually were. fully in the cloud. Yeah, I think the big things that we need to improve on and we're starting to make inroads on are having it be much more hands off. So like automatically failing over certain systems if something goes amiss like if a drive dies, it should just fail over seamlessly to another machine, right?
+
+We just sort of weren't set up with that from the beginning, and now we're starting to retrofit a lot of stuff onto autoscaling systems even on prem, right? So yeah, I'd say it's been a really great success. And yeah, it's a lot of fun. It's hard to buy hardware this year though. We bought all our hardware before all the brand prices and stuff. So very much indebted to Ely.
+
+**Jim Ray:** was pointing that out, that the genius of stocking up before the ramp spike hit. So.
+
+**Alex Garnett:** I was gonna say this is all very modern and novel like the fact that like we are trying to take back our own infra at a time when that has become cost effective but is also aligned ideologically with where we're at. And then I realized that, oh, all of a sudden it's not that cost effective again. And so like it was like a narrow window where it was both. And maybe now we're just back to it being, you know, one and the other. But who knows what the future holds. Like it's really good.
+
+**Jim Calabro:** Yeah, the monetization strategy is actually just server hardware arbitrage.
+
+**Jim Ray:** Austin out there selling sticks of ram.
+
+**Jim Calabro:** Yeah, no comment.
+
+**Jim Ray:** Oh, you know, here's actually an interesting one from Andre Halili. Does the Bluesky dev team also plan to run production testing on third-party PDS implementations to help with spec conformance similar with web platform tests for browsers?
+
+**Jim Calabro:** I love that idea. We've chatted about it a million times. I've seen several people in the community already do it. And so I highly recommend checking out some initiatives from other folks. Okay, who did that? Mary? It might have been Mary.
+
+**Alex Garnett:** that'd be my first guess.
+
+**Jim Calabro:** I haven't chatted with anybody about this in a while, but I actually saw one go by just yesterday as well on Tangled. I think it's a great idea. I think it's actually like super important that we have that. I don't know about Bluesky itself doing that. I'm actually probably the wrong person to ask about that. That's probably a Devin or Brian question.
+
+**Jim Ray:** It does yeah, exactly.
+
+**Jim Calabro:** Yeah. But I think that's very, very important for sure, especially in the age of AI where it's like the better the tests, the better the agents do.
+
+**Jim Ray:** Yeah, exactly.
+
+**Jim Calabro:** So.
+
+**Jim Ray:** So we had a gaggle of questions from serial liker Patrick Singletary. So I'll try to get some of these. A lot of these are kind of spec driven questions. And so, you know, to the degree that we can get specific with things. Like how many accounts do we host on a server?
+
+**Jim Calabro:** Roughly half a million most of the time. We just had internal issues at one point and so there's two PDSs out there that are closer to like eight or nine hundred thousand and so yeah roughly half a million. Not really a great reason for that number. I think it was just a conservative estimate from the beginning. If you were running your own PDSs of that size, you could go much higher. There's some nice properties to it with like in particular with the subscribe repos. Like if you sorry, not subscribe repos. Like if you wanted to backfill and do like all the get repo rate limiting. It's kind of nice to be able to spread that out a bunch across a bunch of hosts rather than like a single host.
+
+But that's where we put our distribution at the moment.
+
+**Alex Garnett:** Those are your big mushrooms, you know, your portabellas, your humongous fungus.
+
+**Jim Calabro:** Yeah.
+
+**Jim Ray:** Do we have like a special server for massive accounts? So you've got account that's got, I guess in some ways it wouldn't be necessary because you know, just the nature of the protocol. You don't really need that in the way that you might on like Twitter or something like that, right?
+
+**Jim Calabro:** Correct. No, we don't have any special servers for massive accounts. No, it's but we do we do tend to see like a lot of the earlier servers are like super engagey and a lot of the folks who came on early are really sticky. And so like Morel, one of the earliest servers, is like super hot all the time.
+
+**Jim Ray:** Oh wow.
+
+**Jim Calabro:** Yeah, so it's just kind of like artifacts of the Bluesky user base rather than anything about App Pretto and the strategy there that sort of drives usage of all the PDSs. Yeah. Eli actually said magic is one of them instead of Cyglobin. Magic is kind of a fun one. Magic is a special snowflake in the mushroom PDS world because that one actually runs on ZFS, which is goofy. It was done as an experiment. I think we just wanted it was this was actually before I started, but it's like I think we just wanted to prove that we could use a bunch of file systems. Because ordinarily I think we run them on XFS.
+
+**Jim Ray:** I've always wanted psilocybin to just like, you know, randomize the words in your posts or something like that before it sent them out just f just for fun. Nobody's taking me up on that one yet. And Patrick had a few other questions that are a little bit goofy. Do we allow Paul to touch anything? So Paul's doing a lot more CTO level things, but you know he gets in there. He gets into the gut, he's more on the Addy side of things too.
+
+**Jim Calabro:** Yeah, for the time being, he's doing a lot of like exploration style work. But in general, yeah, like I my philosophy is like all developers should be able to touch everything they need to do their job. Like let's just put that out there. Paul's logging into our pops to do stuff for sure.
+
+**Jim Ray:** Cool, cool, cool.
+
+**Jim Calabro:** Yeah. It helps especially if you want to do like really heavy duty performance testing. You shouldn't be doing that on a MacBook. Go grab one of our big spare Linux machines and run it there. You know?
+
+**Alex Garnett:** For jet stream throughput testing, I know that came up quite a bit where it was just like, how fast can this thing go with a direct connection? Right. And the answer was very, very, very fast.
+
+**Jim Calabro:** Yeah, yeah, the numbers that I posted were definitely like ideal case scenario, right? Running on local host on an enormous server and so, you know, you're not gonna get that unless you're like on a PewJuice server. I would love if people actually like took that and beat me. I think it's I know it's possible, right? So almost all the performance of the jet stream user experience actually came from client optimizations. And so what I'm super interested in is like a Rust client or a C client. Cause like I spent a ton of time fighting the Go garbage collector. And wow. Yeah, and so I've been impressed with TypeScript as well. TypeScript has been putting up some numbers.
+
+And so, you know, like if you're so inclined, go try and write a Rust client and see if you can beat 40 million. Because I think it's entirely possible for sure.
+
+**Jim Ray:** That's the second nerd snipe today. So I fully expect both of these by the end of the week. While we're talking about configurations and things like that, like what does what does a what does a server that hosts half a million accounts look like roughly? Like if you know if somebody were spinning up their own service today and they wanted to go out and buy the hardware, what would you recommend they think about in terms of specing? Is it like, do you want to optimize more for RAM? Is it more like processor? How does how do how should folks think about that?
+
+**Jim Calabro:** In general it's pretty lightweight. So we do wildly overspect them, not for any particularly good reason. It's just only a little bit more money and so why not? The PDS fleet is really cheap to operate from a OpEx perspective. So yeah, I think our typical server is something like 64 cores, maybe 128 gigs of RAM, maybe 256. It sort of depends when we bought it, because we've like sort of increased the bar over time. Typically they have a few terabytes of RAM. Sorry. Yeah, RAM. A few terabytes of storage and a gigabit up down. As far as like network bandwidth goes, the things I'd say to optimize for are actually storage. Like and the good thing is you can always like move that around pretty easily, right?
+
+Like if you're gonna be hosting a really hot large PDS for a long time, you're eventually gonna run out of storage space. And so like a couple times now we've implemented like I didn't do this work personally or anything, but like folks have gone in and like done some like compression magic to like because like there were some times where like Morel was getting up to like 80-90% disk usage and it's like okay, we're gonna have to do something about this. And luckily there's some compression tech so we apply it on the PDS distro itself. And so it just like shrunk it down back to like 50. Someday we're gonna have to migrate again once it gets bigger.
+
+And at that time, just get a bigger disk. It doesn't really need a ton of RAM or CPU. Let's say bandwidth and storage are the main ones.
+
+**Alex Garnett:** I am curious what like the highest profile, oops, the disc filled up incident has been in like cloud computing history. Because you know they're out there, right? Where it's like, oh.
+
+**Jim Calabro:** I'm not sure off the top of my head as far as like disc fold. One of our bits of deep lore that I actually didn't even mention was one of the things about the disaster recovery and the relay scenario for Bluesky history or atproto history rather is the relay actually used to be fully archival. So like each relay kept a full copy of all the data for quite a while. We just filled that up. And we had some pretty enormous disks at the time and we just filled it. And so that's why the relay went to just keeping a few days worth of data. And then that's when we started talking sync 1.1 as well.
+
+So you could do like incremental the like proof by induction style verification of records. And so that was actually something we lost and now something we have again with Jetstream. And so I'm very excited about that. We're filling that disc gap. I think I don't know if it ever hit actually a hundred percent. We've we definitely have had some issues where servers have hit a hundred percent you know, nothing you can't solve pretty easily. I think our like o over the air server filled up one day, like the iOS and Android APK images that we like send over to clients. It's nobody was looking at it and didn't have metrics, didn't have alerts, it was a total pet.
+
+Now it's not a pet. And back by S3, so hopefully they don't run out of storage because that'd be really bad.
+
+**Jim Ray:** A few folks in the comments here are posting their Jetstream clients. And so we've got a you know, predictably, Nick G has posted a Rust version and Nate has posted a Zig version, of course and so we'll see how those end up looking performance-wise. A great question here from Ulma Siri, which is I want the failure budget story. So when a large account spike hits does the pane show up as steel timelines, slow repo sync, moderation backlog, users just call all of that? The app is slow. So you know, when we are experiencing those kind of pain points, what are some of the root causes for that?
+
+**Jim Calabro:** I'm not entirely sure what you mean by a large account spike. So are you saying like adding a lot more users all at once?
+
+**Jim Ray:** I know in various points in Bluesky history there's after the twenty-four election, I think there was a month of that, right? Or six months.
+
+**Jim Calabro:** I had joined after that, just to be clear, but for a period we were adding a million users signing up a day. And a lot of that shows up as hot shard problems. So let me go ahead and drop a jazzco. dev and so this is a lot of the story of like how we have adapted and protected ourselves from spikes. So what ends up happening is the right workload of App Credo in general can be solved by policy, so relay rate limits, right? So if there is a really big spammy dID. It's just not gonna make it through the relay at a certain point and your write workload is kind of a little bit protected when you're building an app view.
+
+That's like partially true, right? Like there's ways around that like it's a little bit more subtle. But the really hard thing actually in the AppU is the reads. We do like millions of queries a second to our SOLO database and we keep many millions more off of it with bloom filters and Memcash is enormous for us. But then the problem is like if say there's like a very popular account that shows up a lot with like AOC is like the kind of canonical example where somebody is reading AOC's posts over and over again. What ends up happening on the database is like that particular shard gets really hot. And then everybody else who is like on that shard with AOC also slows down.
+
+And it just causes like catastrophic like failure. And so we put in a lot of caches to keep load off of the database and bloom filters and stuff like that.
+
+**Jim Ray:** Got it. All right. Oh, you know, we've actually got a question here from the chat. So would we see a future in which Jetstream's WebSockets could scale out like a consumer group? This is from Emilia.
+
+**Jim Calabro:** I actually have thought about that a lot. Not in terms of like Jetstream itself, but I would love to have a high availability, horizontally scalable consumer of AppReto. Probably not anytime soon though. Like that's kind of a lot of work. I am we do run a fair bit of Kafka internally just for like shuffling bites around as well. And so probably if I was to do that, I would just say like just dump it on a Kafka and go from there. But you know, that's obviously not going to meet a lot of needs for a lot of use cases. The WebSocket one, definitely it'll work. The big long the state snapshot, like the like big backfill phase, that doesn't really map, I don't think.
+
+Yeah. So when I've been writing like consumers of the firehose or jet stream myself, what I do is I actually have this like voting scheme where a lot of my servers, like if I have five servers running, they take like a distributed lock and one of them is allowed to actually consume the firehose. And then if that process goes down, it loses the lock, automatically fails over to another one. And so you're promoting one of them to be the leader, basically.
+
+**Jim Ray:** I think I think we're getting to the end of the questions. If you had a question that I missed, go ahead and ask it now. We're also getting c close to the end of our time here, but anything else that you feel like folks should know coming into this out of this?
+
+**Jim Calabro:** One thing I'd say is like this is just like the beginning of JetStream V2, right? Like it is just shipped, right? This is how we're gonna be building internally. Pretty much everything's gonna be retooled on top of this. And so yeah, definitely if you have thoughts. Let us know.
+
+**Jim Ray:** Sweet. You know, another one familiar here, how do you consume from multiple jet stream servers at once to counter DDOS attacks and the like.
+
+**Jim Calabro:** Oh, I wouldn't I don't think Jetstream and DDoS are like if you're getting DDoS, Jetstream is probably not the like first thing you're looking at. It's usually like oh crap the sites down. In general, yeah, when you get a if you're running around hardware and you get a DDoS attack, you sort of just have to have a vendor who's bigger than the people who are attacking you. And so we partnered with a company who is basically like a layer in between us and them. There's several big players out there. Cloudflare is one, Akamai is another, Fastly we're partnered with a company called Path. net. They are fantastic to work with and they offer protection at like multiple layers of the network stack.
+
+Yeah, you sort of have to have that in place as like a defense mechanism. Or you gotta build it yourself, right? Like go stand up like 30 to 50 small pops all around the world and just like have a giant network pipe on each of them and just soak it up and pass the clean traffic through to your back ends.
+
+**Jim Ray:** Got it. Amelia's clarifying, you know, how do you fail over between jetstream hosts is maybe a better situation.
+
+**Jim Calabro:** Yeah, so one of the concessions we made in Jetstream V2 versus V1 is that when you're doing the big like snapshot phase, like the big file download phase, you can't swap between instances. If you were to go down in that limited window, you would need to just redo your whole backfill. And but then once you're on the live consumer portion and you're using the WebSocket. It's all timestamp based. So there's this funny little trick we do with the cursors that you pass into Jetstream where the Unix timestamp microseconds and the actual cursor values we assign are just like totally distinct number ranges. It maintains backwards compatibility with Jetstream V1, which was all timestamp-based. And now you can either use timestamps or assign cursor values for all your individual events.
+
+Because they're just not overlapping just numerically, which is kind of fun. And so if you account for a little bit of clock drift, you can swap between the live the subscribe events endpoint between one jet stream server and another. So you just say like, hey, like this is my timestamp right now. I'm just gonna rewind by like a second or like 10 seconds or something and just swap to a different one. And I'm gonna double up some events and just make sure that they're idempotent as you're writing them. And it should automatically like you should be able to swap from the east coast one to the west coast if you're doing a live stream very seamlessly.
+
+But not with the big backfill phase.
+
+**Alex Garnett:** How many spatio-temporal disasters would have to happen for our cursor range to overlap with Unix timestamps?
+
+**Jim Calabro:** Well the Unix timestamp advances once per microsecond, so it would have to be writing a lot more than one per microsecond.
+
+**Alex Garnett:** All right.
+
+**Jim Calabro:** We have to talk about how much like total disk space is out there in the universe. I was chatting with Devin about that last night. It's like I think that we would run out of bits before we advance to that cursor state.
+
+**Jim Ray:** We have had a couple of other questions come in. So one is about kind of like the ordering of Jetstream. And so are they always guaranteed are they always guaranteed to be first event when receiving events for a new repo, or is it somewhat random?
+
+**Jim Calabro:** The event ordering is always it's strictly ordered per repo. So all the events for a given repo are stored in the order that they were created. But there's no global ordering. Unfortunately. That would actually make things a lot easier if we had like some strips like little order. Select.
+
+**Jim Ray:** all sort by.
+
+**Jim Calabro:** Yeah, kinda. But obviously that's like not possible. So yeah, it's stored in the order of the user's repo. And so there's a lot of like interesting interleaving stuff that happens as part of that. But as if you're just writing like give me all the events for those did it's guaranteed to be in the order that they were originally created.
+
+**Jim Ray:** And then Kuba is asking if someone is using Jetstream V1 right now, is there any benefit from switching to the V2 API without implementing the backfill support part?
+
+**Jim Calabro:** Totally. So that's a great question. So the V2 API, the actual XRPC endpoint, subscribe events. It actually implements a full like sync 1.1 style consumer where if it detects that there's a skip in the event stream or something, or if there's like a signature mismatch. or if a sync event comes over the network, it will actually repair that and send those events down to the client if they desire them, right? And so if you're trying to build a really robust app view, that is kind of the way to go. One of the things that's been a little bit goofy about sync 1.1 is it hasn't seen like enormous adoption amongst the various consumers out there.
+
+Like our app view wasn't even using it, like Jetstream V1 wasn't using it. Like Tap was kind of the first thing that actually fully correctly implemented sync 1.1. And so we were using that a little bit of an example to make sure that that also was implemented correctly in Jetstream. And so it's much more like self-healing, right? So if there's just like some goofy like let's say your PDS just like has like you accidentally like I don't know, your PDS hoster has some downtime or something and you screw up your firewall or whatever and you emit like some junk events. Using the new endpoint will correctly self-heal that. Whereas the old endpoint is strictly backwards compatible with jet stream v1.
+
+And so it doesn't self-heal on purpose.
+
+**Jim Ray:** And then I think this will be a good one to end on is what are the things that you would love to see people build that don't yet exist that can now exist in a world where Jetstream V2 is here.
+
+**Jim Calabro:** I don't know. Like the atproto is like a big old goofy petri dish. And like it's really like very emergent, right? And so I don't think I can actually predict what other folks are going to go build. I don't know. Surprise me.
+
+**Jim Ray:** Surprise me. That's I think that's the perfect answer. So big old goofy petri dish. Love it.
+
+**Jim Calabro:** Yeah.
+
+**Jim Ray:** Jim, can't thank you enough for joining the AMA. And.
+
+**Jim Calabro:** thanks for having me on. That was fun.
+
+**Jim Ray:** Yeah, absolutely. You're add collaborative. io, if I remember correctly, on online. Get at Jim, be kind. Y'all have no idea how not to use a claudism, but how load-bearing Jim is to make sure that all this stuff works. So.
+
+**Jim Calabro:** yeah, I'm very tired.
+
+**Jim Ray:** Yes, it's been a week. So excellent. Really appreciate you taking the time. And we'll see everybody in a couple of weeks. We've got some more fun, exciting episodes, and we've got another AMA coming up that will be off our usual schedule. So you're gonna see us with another special guest here real soon. Thanks again.
+
+**Jim Calabro:** Thank you guys. We'll see you.
+
+**Jim Ray:** Thanks so much for listening and don't forget we live stream every other Wednesday on Streamplay. For more about AT Protocol and an archive of this show, head to atproto.com. Off Protocol is a production of the Bluesky Developer Relations team a theme music was composed and produced by Salim Rushamwall.

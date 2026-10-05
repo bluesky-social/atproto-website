@@ -1,1 +1,391 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** One of the goals of the AT Protocol is to upend so many of the assumptions of the past 25 years of how the internet works assumptions like who can control your data, what kinds of apps and experiences you can build, and how those apps all work together. Our understanding of the internet, though, isn't just the technology. that powers it, it's also the kinds of businesses that are possible and how we sustain the people and the products they are building. If that proto is going to succeed, we need to work on the business models too. My guest for this conversation is Ricardo Mendez, a technologist, privacy advocate, and investor in early stage startups who's been working with decentralized technology.
+
+for years. Ricardo is a very clear thinker about the hard problems of building a tech business and his blog at newmergent. com is a must-read. Plus, Ricardo is very funny. We get into what makes the protocol different, what kind of businesses you can build, and how sustainability is really going to work. If you're more familiar with the technical bits of the protocol, I'm certain this episode will give you plenty to think about. If you're newer to atproto, it's a great introduction Ricardo Mendes, welcome to Off Protocol. I'm delighted to have you here.
+
+**Ricardo Méndez:** Hey, good to be here, man. It's been a while since Vancouver, I think.
+
+**Jim Ray:** That's right. We met in Vancouver. We had the way that we met in Vancouver was exactly as I had hoped I would interact with somebody at the conference and you were the first one. I had done this very stupid project where I built a PDS on a on a Raspberry Pi and I had it hanging off my shirt pocket. And you looked at that and you said, what's that? And we struck up a conversation and you were actually on my list of people to find and talk to. And I looked down at your badge and I was like, Ricardo, you're on my list of people to talk to. We went and we had like an hour-long chat in a corner of the conference there.
+
+And so.
+
+**Ricardo Méndez:** yeah, that was good. I think it was like who was it? I think it was Tressy or someone who posted a picture and it's like, oh yeah, Tressy showed me your like your PDF. Like, oh, who's told me to talk to you? So.
+
+**Jim Ray:** right on. Nice. Excellent. So and all worked out. So Ricardo, one of the things that I'm trying to do here is I'm trying to talk to folks who are both protocol knowers, technology knowers, but also folks who have their head around the business side of things. Because one thing that we really need to figure out with this protocol, we're getting the technical details now. down. We are we're building out permission data, which is kind of like the biggest extension to the protocol since we first built it. But sustainability within the ecosystem is a huge part of this. And so I want to get out there and talk to some folks who have been thinking about this, who have been working on this beyond atproto.
+
+And you, of course, were at the top of my list of people to talk to. You're somebody who has been doing and thinking about these things for quite a while. And so thanks so much for joining us on this kind of like journey to figure out how we create sustainability.
+
+**Ricardo Méndez:** Please, I mean happy to talk.
+
+**Jim Ray:** Excellent. I'm glad to hear that. And you just hit publish on a post and I'll link this up in the show notes, but where you were kind of thinking through the quadrant of different options for developers. And so I think we'll start off just by kind of going through that and maybe just like lay out how you see this quadrant working.
+
+**Ricardo Méndez:** Sure, h happy to even if I realized I was laying it out that way that quadrant sounds a little bit consultant-y, but you know what you're gonna do. It's how it came out.
+
+**Jim Ray:** Sure.
+
+**Ricardo Méndez:** And the way that it came out this way was precisely because Moshley posted about how investors are looking into the protocol, but they need more businesses, right? Not just projects. And I did mention that one of the things that I had done with teams that I was talking to was the first question that I asked them was like, hey, is this a personal project or is this a company? Right, because people came to me with interesting ideas that nobody else was doing, like the stuff that has to do with uploading game data, like I mean like sports game data on the protocol and whatnot, which Sounded nice, but it didn't seem like they had any sort of company business model plan around it, right?
+
+But as I was writing it down, as I was writing down this thread replying to Marsh, I realized that just saying company is not specific enough, right? Because you can have a startup or you can have an actual known business, and it was it was good separating between these two, right? And same thing as between project and project and product. So anyway, I sat down I like writing long hand. I wrote a whole bunch of stuff out, which is what ended up on what ended up on this post. And how I separated it was in two axes, basically. One is project versus product, which is fairly straightforward, right? A project is something that is mostly for me or is something that I want to maintain and I may or may not take user requests and I don't particularly care if you use it or not.
+
+It's nice if you use it, but you know what not necessarily that's not the goal and a product is something where I'm not it's not just for me, right? I'm not the main consumer and it comes up to a point with a with a whole bunch of overhead. Products to right you need to have documentation you need to have your user experience down you need to be ready to get bugs reports you need to be willing to admit that it's not working exactly the way that random people who are not you because you know sure bail for yourself first but there are a lot of people who are not you out there using your product and if you want that if you actually want those people coming in then you need to consider all this other boring stuff.
+
+**Jim Ray:** Right, right. Support is a is another big one, right?
+
+**Ricardo Méndez:** Oh, definitely. And you need to you need to consider things that you wouldn't do if it's you yourself, right? You need to have At very least, instrumentation. You need to have a way for people to reach out to you to figure out if you have already handled their things and then we get into basically the whole kind of worms that is social media with moderation or and whatnot, which you know let's not get into right now because that's a whole lot of article.
+
+**Jim Ray:** Right. So.
+
+**Ricardo Méndez:** like the project versus product separation is fairly clear. And I think that even on at pro, it's not just that we don't have a lot of companies is that we don't even have a lot of things that look like products.
+
+**Jim Ray:** Okay.
+
+**Ricardo Méndez:** We have a lot of the interesting stuff is starting as a project and they're starting as experimental things, which is fine. It's I mean we're very early still and we're figuring we're all figuring out figuring out what this thing is. But eventually you start if you actually want this to be sustainable, you need to start migrating it towards a product. Because it can't if you want this to be sustainable, then it just can't be for you. Then the second thing is that you have basically which is why I had just lumped into companies first. Which is startups versus business.
+
+**Jim Ray:** Right. Okay. Interesting.
+
+**Ricardo Méndez:** And this is a little bit of a subtle separation, which is why I just thought company did not quite describe it. And if really like the definition of like everyone can say, oh a startup is a business. Well not really. Startups are gonna be a business eventually but what I really like is Steve Glanck's definition, which says that a startup is a temporary organization. in search of a repeatable and scalable business model.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** From basically if you're a startup, you have no idea where the money's gonna come from. Right? You're gonna you hope you have a few ideas of where it might come from, but you have no established business model. And the example that I gave up on this write-up is Bluesky. For instance, Bluesky is very clearly a startup.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Like Bruce K has no idea who is going to make money. It's tried a few things, right? Like hey, maybe let's let people register domains and this kind of stuff. But this clearly doesn't scale with the users. Conversely, if Bluesky's whole plan had been just to another thing is that Sarp Snow is just a motivation. Right. You can be innovating on a lot of things while still running on an established business pattern.
+
+**Jim Ray:** Right, exactly.
+
+**Ricardo Méndez:** Like Bluesky is running on relatively innovative rails. But if the business plan had been originally well, we grow up to X hundred million users and then we start selling ads then this is just a regular business. It's just a regular, only social media business. The selling apps online thing is very well figured out. There's 25 years into.
+
+**Jim Ray:** this.
+
+**Ricardo Méndez:** Exactly. Like that, that's a known quantity.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Whereas you could have something that's very innovative on the on the other hand, sorry, you can have something that is not necessarily as innovative, but if you still you're still looking for a business model that's different to what people are figuring out than your startup.
+
+**Jim Ray:** Yeah. Right.
+
+**Ricardo Méndez:** Anyway, on the why this was important for me to define is because startups are tricky. Like I think I think they've been very romanticized, quite frankly. I mean this is survivorship bias and whatnot, and the fact that we are basically exiting in the last what, four or five years we're exiting from a zero interesting rate regime which made people used to free money pretty much which is no longer the case right at a at this point you have to well basically the way that the market is right now is that if you have AI in your name, chances are you're gonna get money thrown at you. Otherwise, it's gonna be a little bit harder. Yeah.
+
+So the thing that I keep advocating to people, and which is the point I end up making on this on this move right up at the end, is that chances are that unless you have a very special angle for hooking investors right now, you should just be thinking business, not startup.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** And we can get into why at produce an interesting space to run businesses in. We need to figure out exactly how it that would this is gonna happen. And I think private data is actually gonna help with that because yeah the fact that everything's public constraints like cuts out a whole category applications. But businesses are tend to be much easier to reason about, they tend to be easier to test and they tend to be easier to bootstrap.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** And if you really wanna run something with like the couple three people, which is what we seem to be seeing popping up in the atmosphere right now.
+
+**Jim Ray:** Sure.
+
+**Ricardo Méndez:** Chances are that's not going to be a VC funded business for the next few years.
+
+**Jim Ray:** I really appreciate that distinction. So you had shared with me a draft. Of the post that you hit published on today, and I really appreciate that. And that it actually clarified a thing for me. I've been around this before. I've worked in startups and I've worked in things that I thought were startups that looking back were actually businesses. And so that distinction was really helpful for me. You write a bit about if you're operating a hamburger stand and if what you're doing is you're selling hamburgers. Now the way that you do it might be innovative. You might be selling vegan hamburgers or whatever it might be. But at the end of the day, your goal is to extract money from hungry people and give them a tasty treat at the end.
+
+And that's a pretty well established business as well.
+
+**Ricardo Méndez:** And the thing is, which I don't didn't go into this in the write-up because I didn't want to harp on it too much. But a lot of the cases where people get in trouble is when they try to run established business as if it was a startup or the other way around.
+
+**Jim Ray:** Yeah. I've been in a few of those. Yeah. Exactly.
+
+**Ricardo Méndez:** Yeah. Juicero was this like stupid mail order high-tech juice thing. They were raising money as if they were a tech startup. And this is basically a home delivery juice box, right? Why are you not running this as a normal business?
+
+**Jim Ray:** Yeah, exactly. Yeah, and you know, you mentioned kind of the ZERP era, which I think we are firmly, firmly out of these days. And there were a ton of things that were masquerading as startups. I worked for a media company that we build ourselves as a startup. We're like, we're gonna operate like a startup. And I think that we enjoy, you know, this was like peak. This was like 2014, so very much peak like Zert era startup days. And we liked the aesthetic of operating as a startup. We were in San Francisco. We had some VC, but at the end of the day, it was a very well-established business that we needed to be running.
+
+And it put us in a in a posture that we weren't quite ready for. And consequently, it's no longer around. Well, and you mentioned too that part of it is just given the environment that we're in, but I think also just most startups fail. This is something that even the biggest boosters of startups will tell you is that most startups fail. It just in the same way that like most restaurants fail and even, you know, new businesses and things like that, the success rate is pretty low in the grand scheme of things. And we have things like survivorship bias and all of that. And so you mentioned that, you know, particularly right now, and particularly if you're building on atproto, probably what you want to be doing is building a business.
+
+And so can you expand on that a little bit more? And Cause I do think in the in the tech industry especially we romanticize a little bit this idea of being in a startup, running a startup. But maybe what we want to encourage people to do is actually think more about running a business. And so what do you think that kind of looks like.
+
+**Ricardo Méndez:** Well it very much depends on exactly what you want to do, right? Not every not every business is going to not every business model is going to appeal to everyone.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Right, for instance, we have I'm not sure that okay, I'm gonna be talking about some projects. This is my perspective of without having any internal insight, this is my perspective of how they're going about things. Right. No, I haven't discussed in advance with any of these people. I'd they can probably tell you something entirely different if you ask them about this. First of all, you said that 90% of all startups fail. I think that's actually for businesses overall.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** Right. The real issues where your time is going to be going. And if you're running things as a venture funded startup, chances are non-insignificant amount of time is going in just to keeping your investors happy and talking to investors so that they give you money again in two years.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Right. Which is which is the main reason why I think most teams, if they don't have experience doing that, they shouldn't be wasting their time with it. They should be spending their time talking to their customers, whoever they are.
+
+**Jim Ray:** Got it. Okay.
+
+**Ricardo Méndez:** Now as for the as for what a business is likely to look like here for instance, we can take the most trivial example, which was I think you would pronounce it marquee. Mark Marquis. I mean this is a fairly straightforward business, right? You're selling domains, you're charging a markup, you're providing some effectively sugar integration with a proto. And that's it. The domain registration business is a fairly well-known one. If you are building something like atmosphere. money, I think it's what you is calling it.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Chances are you're going to want to be able to charge holding fees or you're going to be able to want to deposit this money overnight and get a percentage on what get people. These are also known businesses, right? There are things that aren't necessarily quite a business and I do think that some of and some of the things in the space you're going to have to have more of a startup mentality. For example, I suspect that Black Sky would kind of like bristle a the idea of my referring to them as a startup. But end of the day, Black Sky is looking for a repeatable, scalable way of funding themselves, right? It's not something that they have.
+
+Donations are not necessarily repeatable and scalable. And they seem to be trying out with some products like Acorn, which is something that they can then license to other to other teams that are trying to build in the atmosphere. We could argue that the software licensing thing is generally speaking a known business, but it's not quite a known business what it is like to s to license the centralization specific the centralization specific moderation tools that have zero locking.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** Like this is very much a run it as a startup, iterate and try to figure out exactly what you're doing. So again, it very much depends on exactly on exactly what you think you can get away with. An application like Flashes, for instance, it's a fairly straightforward business as well, I think. You would need you need to provide an order if enough differentiation on your application for it to be appealing to your users. And then you need to get enough users in that you charge a subscription fee. That's very much of a of a clear-cut business that a single individual can probably run. Now where I do get that that product is an interesting area to run businesses in.
+
+I guess because of something that I had mentioned on the on the taxonomy that we discussed briefly after Vancouver of at port applications. Because there's a certain arbitrage opportunity here, both on storage and on social apps. That there are a whole host of concerns that as a developer you just don't need to have.
+
+**Jim Ray:** Right. Okay.
+
+**Ricardo Méndez:** You need to think about chances are you need to think about user data storage because that's the PDS. And in 98% of cases, the storage, the stability, the replication. Whatever else is going to be Bluesky's problem and not yours. Right. Right. So hey, free data storage and free bandwidth. If you're running something social, chances are that you're also getting free moderation. Because whomever, whether it is Bluesky, Eurosky, Black Sky, whomever is taking this data in is going to have the moderation side figured out as well.
+
+**Jim Ray:** Got so.
+
+**Ricardo Méndez:** you are removing as a as a developer, you're basically getting not only a whole lot of technology, but almost a support structure. For free up to a point. So the question is how you can how can you hack how can you leverage this into building a business where otherwise you would have to pay for all of that stuff?
+
+**Jim Ray:** I know that there's been some discussion about kind of the inverse of that in some ways, which is providing some of the infrastructure to other developers. So rather than the arbitrage side of things, building out the infrastructure for other developers to build on top of.
+
+**Ricardo Méndez:** Yes, absolutely. And this is this is some this is a drum that I was banging a lot at the Atmosphere Conference. Mostly because that's my wheel barrel. I'm not a I'm not a consumer application guy. If you show me something like germ, I can tell you if I would use that or not, but I cannot evaluate the mental model of a user who would use this instead of WhatsApp. But I do think that as we get more developers in and to the ecosystem, we are going to need more support infrastructure,.
+
+**Jim Ray:** breath for.
+
+**Ricardo Méndez:** them. This goes beyond just the PDS. There's I think it was Philip Greenspoon who had this thing called Greens Green Greenspoon's tenth law, which said something like every sufficiently complex system has a jury rig half-paked implementation of commons common Lisp built in.
+
+**Jim Ray:** Yeah. And.
+
+**Ricardo Méndez:** I think that we're getting an equivalent of that with that proto applications, but for but for Happy View. Like everybody is kind of like Jewelry rigging right now, everybody's kind of jury rigging don't have you.
+
+**Jim Ray:** Yeah, yeah, yeah.
+
+**Ricardo Méndez:** And I think that applications like products like AppView are an are effectively a relatively straightforward, obvious service that that could be being run as a business right now for developers with you know relatively little cost I suspect that we're going to find others as we progress. Definitely Acorn or application acorn roost this kind of tools definitely like it. But I suspect that as things start tending towards, I think, is the ad proto angle. Which to me, the ad proto angle is not the individual application that touches one or two lexicons on a PDS.
+
+**Jim Ray:** But.
+
+**Ricardo Méndez:** to me, the Ad pro angle is basically an application built up comp of composable data of multiple lexicons. Basically, like an agglutinative sort of application. As we start trending more towards that and however that sort of application ends up looking, I think we're going to end up finding a lot more things that we actually need, like gaps. That we have in the space that we didn't really realize because we have never quite run something like this.
+
+**Jim Ray:** You know, when I talk to developers about folks that are curious, but, you know, maybe haven't read through our amazing documentation on the website or just aren't as familiar with that proto, one of the ways that I start by describing this is think of a traditional centralized web application, then break it into all of its component pieces. And we make each of those component pieces something that you can give or leave behind as you want to. And so I do think, as you were just saying, with, you know, you could use something like Happy View or a different App View implementation, I think each of those pieces is conceivably a bit of infrastructure that somebody could run.
+
+You know, Black Sky is trying it with Acorn with the moderation piece. There are there's things like the self-hosted PDS service and Miguel who runs off-print is also running like a white label PDS service. So you know, I'm optimistic that maybe each of those different component parts could be a sustainable business in itself as we bring more developers in who are going to need to pick and choose which parts of the stack they are building their own application on.
+
+**Ricardo Méndez:** Yeah, I definitely agree. And I think an opportunity that is that an opportunity that is there is that companies and have s and I've said this in Vancouver the numbers in the market have proven it to be true since and I wonder what the progression is going to be like. But what I kept telling developers in Vancouver when I was advocating for them to build infrastructure tools. is that the Facebooks, the Googles, the Microsofts are going to continue vomiting developers into the marketplace. And like it or not, it is what they're doing. They're using ASN excuse, whatever the reason is, whether true or whether the whether actually need fewer people or not, they are going to vomit developers into the market.
+
+**Jim Ray:** Sure.
+
+**Ricardo Méndez:** A lot of these developers are going to have experience with the mental model of social applications.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** And a few of them are going to find their way to experiment with that product or something. Because chances are some of them will find a job right away. But if every large company is vomiting developers, then not necessarily most of them, right?
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** So it wouldn't surprise me if in the next six to twelve months we actually do get a second wave of that product curious people.
+
+**Jim Ray:** interest.
+
+**Ricardo Méndez:** who are very much focused on the application building side of things. Yeah. Not on the I wanna build my own app view because I wanna learn about a protocol kind of thing. Just like I wanna get shit out there for users kind of people.
+
+**Jim Ray:** Yep, exactly.
+
+**Ricardo Méndez:** And when those come people do when those people come in, we need to be ready for them. Yep. Or they're gonna end up building elsewhere.
+
+**Jim Ray:** Right. Exactly. I think that's such a good point. That's when we came in and really first started designing some of the programs around developer outreach and things like that, we'd pretty well decided that everyone who's curious about building on an open decentralized protocol. They've either looked at atproto and decided that was the way to go, or you know, they might have different ideological reasons or whatever. But we've pretty well locked that in. And but there's a much, much bigger circle of developers who are, you know, your traditional web developers or as you mentioned, people who have left for whatever reason a more traditional company or have that mental model of centralized service. So trying to figure out how to capture those folks, that's been a big part of our focus.
+
+**Ricardo Méndez:** I mean and I think you even described that proto as a little bit more complicated than I would, basically.
+
+**Jim Ray:** Right. Yeah.
+
+**Ricardo Méndez:** That's an identity. And.
+
+**Jim Ray:** and then there is the identity piece too. Absolutely.
+
+**Ricardo Méndez:** Yeah. Everything else grows from there, right? Why would you need an app view? Well, because there it's a bunch of S3 buckets dispersed all over the world. You need a view instead of having to go to in and check every single one of them, right?
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** Oh, how is this composable? It's public data. You get to compose the public data any ways you want. What about security? Well, only the owner of the key gets to write to the bucket. Right. So I think the model is really easy for people to grasp if you start describing it that way.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** And I do agree with what you said that well you know we there are people who have chosen atproto and people who haven't and that's it, right. I don't think there's any point in trying to convince the you know, the activity pub diehards that think that this is a VC funded Jack Dorsey crypto bro thing to come over. Doesn't make any sense. Yeah, you're also probably not going to convince the people who are trying to still make Ethereum social sidechains work. Like those people are gonna keep doing their token thing.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** But there's a realization here from given that we are going back, we can go even further back, we can we can go into what made Microsoft which was the realization from Gates that what mattered was not how much of the current installed computer and developer base you could get. But what mattered was what you could get of the new people and developers coming into the market.
+
+**Jim Ray:** Yep.
+
+**Ricardo Méndez:** Right again. It's not the it's not the activity pop diehards, it's not everybody who's just writing their own APFS stuff it's all those other people who are going to try and have who are going to have to try and build something in the near future. Like those are the ones that you actually care about.
+
+**Jim Ray:** And it's a really interesting time for that. As you mentioned, the market is just super weird. The job market's super weird, just the market in general is super weird. But also we have all of these amazing tools that let people one developer building a right now we've got a lot of projects and then trying to figure out how to turn those projects into products and then how to turn those products into businesses.
+
+**Ricardo Méndez:** I think LMs are incredible tools, frankly. I if you had told me three years ago, we would be getting the output that we're getting out of them now. We have told you we have told you that you were smoking crack. And I started using them myself a little bit more for the development a bit over a year ago actually when I started building Winesky, mostly because I'm not a user interface developer and I don't want to touch JavaScript UI code if I can avoid it. And more of a my when I was developing all my career was by and large on the back end and data analysis stuff so I didn't want to have to touch that.
+
+So I figure like eh, the LLM is not going to do a worse job at it than I'm gonna. Right.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** But these things in a year something have progressed to the point where it sometimes catches mistakes that I make on the back end of things that I just hadn't thought about.
+
+**Jim Ray:** Yep.
+
+**Ricardo Méndez:** So there is a non-insignificant factor of speed of development now that we didn't have before. The danger then is that since it's much faster to develop things, people don't focus and go around chasing squirrels, right? And have like three different parallel tracks of random stuff that they're pursuing and no one is quite productized. It's just like small proof of concepts. That that that I think is the discipline is what people are gonna have to work at.
+
+**Jim Ray:** And the discipline, I think, people keep saying that taste is the dividing line. in app development now is like your own kind of personal sense of taste or the taste that you cultivate within your organization. And I think that along with that, a sense of discipline to Stick with something because you're absolutely right. You can you can make 10 versions of your app in an afternoon if you want to, if you've got your harness set up just right. And but having that ability to see what the app actually used to be, what people actually need. That's I don't think the AIs are gonna replace this for that part of it just yet. So this kind of brings us to another post that you wrote, and you've referenced this a couple of times.
+
+You wrote a taxonomy of atmosphere applications. And it's one that I refer to often, in part because it's like it has so much of your personal taste and style embedded within it. I don't know that I would ever have thought to refer to an application as a cuckoo. And so but can you just kind of walk us through that taxonomy real quick and then how that might mesh with the quadrant that we were just talking about, the business versus a startup and the product versus a project?
+
+**Ricardo Méndez:** Sure. Because the four properties we were discussing is basically how you app how do you approach what you're doing? Yeah. Is this for me? Is this for somebody else? Do I know where I'm getting my money or right now or do I need to find out that business model? That's how you do it. That Xony originally wrote precisely after Atmosphere Conference, after talking to a few teams, because it became very clear that atproto wasn't going to be the usual, oh, it's a new space and money's gonna flow in and we're gonna have a whole bunch of startups trying stuff. The perspective of tax of the tech of that taxonomy wasn't to as much put in categories of what is this app as much as how does this app survive like what are the what are the conditions for this app to survive and I basically separated in three large pockets.
+
+Symbions, offshoes, and cuckoos. And the symbionts are perhaps the easier ones to explain. They are applications they're traditionally well very symbiotic applications, applications that depend on Bluesky itself as a as a platform for growth. Because they are up to a point complements to Bluesky. So for instance, if I'm making an ad proto specific post queuing app, this is very much of a symbiont, right? If I'm making like Grace was my example, my shell example, if you're making something that allows you to create custom feeds, this is a symbiont. This is something that has fairly little use or would need to be several would need to be severely cost customized to be used individual from individually from ToolSky.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** These are these are things that very much depend and are tied to Bluesky's success.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Be it because they depend on their users or because they depend on Bluesky for a lot of the key functionality. You could argue for instance right now a moderation a moderation application is very symbiotic to Bluesky simply because Bluesky has the majority of the uses.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** That that may change as other communities develop their own, but that is that is right now the case. Now that application bait that that category basically dep depended on two things for survival. One was Bluesky growth. and how much of those users can you actually capture for your own business? And the second is given that what you're effectively building is could be derided up to a point as a feature, like Steve Jobs once derided Dropbox as a feature, not as a product, right?
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** How quickly can you grow before Bluesky decides to implement that feature themselves? Right. Blue Segum Click, no, this actually becomes belongs in the core. We need to integrate this into our core and our app, right?
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Can you s can you can you up can you get escape velocity in that sense?
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** So I think symbions are quite frankly the most brittle category. By and large, because growth is your growth is entirely out of your control. It is entirely dependent on Bluesky growing the user base first. And because they are they're always going to have the threat of are you a feature and how do you fundraise for that?
+
+**Jim Ray:** Sure.
+
+**Ricardo Méndez:** The second category were offshoots. Offshoots are effectively communities. They can look like Bluesky. They get to feed off of Bluesky's data because they get to interact with them. But they have their own distinctive characteristics. Right. So for instance, Black Sky was my example at the time. Or maybe it was just closed, but black sky was the more obvious one because at the time already Rudy was talking, was considering Black Sky cash, I think, and black sky only DMs the thing with offshoots for survival is a, you're going to have to figure out how to get money from your users. So you do have that issue. But growth depends entirely on you because you get to benefit from the fact that your users are gonna be able to talk to Bluesky users and to add proto users and to P2Sky and whatever else users if they want to.
+
+So this kind of like seeds content in your community. But you up to a point have a captive audience if you designed it well enough because a lot of the soft shoots are very identity driven. Right. And on top of that, they are going to provide these users features that nobody else is going to. Like Plugs can only DMs. So offshoes have a have an easier time offshoes have an easier time, I think, surviving that symbiont simply because of that sense of identity well symbions could be seen as easily interchangeable. The negative aspect of offshoots and something that they need to keep in mind is that they are effectively going to have to provide some of their own infrastructure for some of the things.
+
+Black Sky needs Snap View because it has Black Sky only posts and it's gonna internal servers because they have Black Sky DMs. They're probably going to if they actually are doing the cash thing, they're probably gonna need to have some sort of, you know, know your customers or whatever, whatever is necessary for what they're registered around it. So you do have you do have to build your infrastructure. So offshoots do come with a cost, but they're also probably easier to reason about as well.
+
+**Jim Ray:** Got it.
+
+**Ricardo Méndez:** And then the third case was the one that I found the most interesting. The ones that I call cuckoos.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** And I call this because you know the whole thing with the cuckoo is that it's it doesn't even bother making its own nest. It comes into an old bird's nest, lays its eggs there, the cuckoo is born first and actually ends up Elbowing out the other chicks and the more the mother bird thinks that this is their baby and keeps feeding it.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** This is what I was referring to earlier as the arbitrage opportunity.
+
+**Jim Ray:** That's what I.
+
+**Ricardo Méndez:** call them. Since all the data is tied to the identity and the identity is tied to a PDS, and Bluesky is providing the identity and status storage for 95% of the network. That means that there's an opportunity here for you to be building an application that does not need to worry about any of those things. This is you get to run a business where chances are you get to you get to charge for the Off Protocol parts which are going to be like the interesting ones, the specific ones, while somebody else gets to pay for all the cost.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** So to g to give an example, I think Tango was an excellent example of a cuckoo, right? Because if Tango were to do say code reviews and CI servers and whatnot they get to charge for this. It's m it's off atproto while offloading all the other stuff onto Bluesky W WineSky is up to a point an example of this, right, because I do keep a database for WineSky. It's effectively the 90% URI wrecked happy view implementation that I was mentioning earlier. A Postgres database is pretty cheap to keep to keep.
+
+**Jim Ray:** Yeah, right.
+
+**Ricardo Méndez:** There are two things that I'm that I'm paying for. I'm paying for the AS stuff, which is also relatively cheap right now. identifying like doing the OCR on the on the labels for the wines, this kind of stuff. I'm paying for it, but that's cheap. But all the all the image storage which is the part that can grow out of control because if you just get like I myself have like 2,000 wine scanned, I don't know how many how many images. If you get another person like me, then poof, another massive data volume, right? And on top of that, I have no idea what you're taking pictures of.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** Oh.
+
+**Jim Ray:** interesting. Okay.
+
+**Ricardo Méndez:** So if I'm storing those images and I'm showing those images on my servers now I have an issue with us if this, if all the image stuff is mostly handled between the user's client on their phone or the laptop and their PDS. That's much less of a problem for me. I am touching the image to do the OCR, which means I do need to keep hashes and other stuff. But this is cheap stuff, right? It doesn't really cost you as much now suppose that WineSky were to grow significantly, which interestingly doesn't even need to grow connected to Bluesky. Right, and it's probably not going to grow because I'm not a growth hacker or a sales person or anything like this.
+
+But even though I'm treating this as a product but suppose that it we're going to explode in popularity, right? The expensive part as I mentioned is say the sommelier recommendations. Those are like what hits what hits the AS of the hardest. I could just charge for that, right? If you want so many recommendations, it's gonna be this much this much of a subscription a month. I get to charge for the stuff that's of protocol, and somebody else pays for all the expenses.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** So that is kind of like the canonical example of a cuckoo.
+
+**Jim Ray:** And we should explain a little bit about what Winesky is. This is an app you've you mentioned a couple of times that you're not a product guy, but this is an app that you built. for it's kind of like a social wine database is the way that I would describe it, right?
+
+**Ricardo Méndez:** Yeah, WineSky exists because I'm a bit of a wine guy and I got really mad at how much of a piece of shit Vivino had become which was my go-to wine scanning app. Yep. And the main reason why I had not stopped using it was because I did not want to have to enter like all the wine data manually.
+
+**Jim Ray:** Got it.
+
+**Ricardo Méndez:** But then I realized OCR, like optical character recognition, is they're cheap now. Programmatic search is easy, even though Google has done its best to screw it up. There are there are providers that actually make sense.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** And once you do the programmatic search, text summarization is the chip as well. So extracting the data for the ones even with not contained on the label was very easy. So I built a few experiments and decided that yep, this can be a product and ended up converting into something. It's less of a social one app because the social aspects are not built into the app itself. It's more of a wine analysis and wine tracking application. And you can look at your reviews, your follow-ups, the whole thing. And dog gets to do things that I could never do in Vivino. So for instance, I can use both the front of the label and the back of the label that way I end up with more information up front.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** But if you do want social aspects, then what this does is that it publishes to the app dot Bluesky dot post lexicon, right? So these are like stand like the social discussion side of things lives entirely on Bluesky.
+
+**Jim Ray:** Got it. Okay.
+
+**Ricardo Méndez:** Which is again why this saves me from a whole host of issues.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** So just to give you an example. And this may be a s a stupid exaggerated example, but it is a legal concern. So you can't there are there are a whole lot of different rules across the European Union for the display of Nazi imagery.
+
+**Jim Ray:** Okay.
+
+**Ricardo Méndez:** So for instance, in Germany it is illegal to display. In France, as far as I know, you can display it as long as in a historical or critical context. So suppose that instead of a bottle of wine, somebody decides to create a up. wine sky image set with a svastika. And I have my I'm storing that on my PDS, which is in Germany. Now I'm in trouble. Yeah, right. This is the sort of thing that a lot of ad pro developers don't really even have to worry about. It is the PDS host that needs to worry about this sort of thing so anyway, that's why I think it's a good idea. Or I decide that I'm gonna post a review that says like, oh yeah, this particular visiting is great.
+
+It's just the kind of wine Hitler would have loved. Well that's on Bluesky or that's on Moodle. Social with a Eurosky PDS is not on my application.
+
+**Jim Ray:** Right. Interesting.
+
+**Ricardo Méndez:** I definitely think that Winesky is quite a good example of a cuckoo in that sense. Because it is offloading a lot of this.
+
+**Jim Ray:** risk. And you made that explicit decision not to bring the communal aspects into Winesky itself so that anytime I'm chatting about this bottle of wine or something like that that goes out to Bluesky. I think that will perhaps have ended up being a very prophetic kind of decision because with the advent of permission data and then communities being built into the app, now you can go create a community within Bluesky around WineSky wine enjoyers and you know you're still built on the infrastructure of Bluesky as we could do that part out.
+
+**Ricardo Méndez:** Exactly. And this also goes for focus, which is something that I keep advocating developers to do. Like I don't want to have to think about social stuff. I don't spend my time designing social features, I'd rather leave that in the hand of people who actually know social stuff. Right.
+
+**Jim Ray:** Right. And that's something that I personally struggle with a lot, and I know a lot of developers that I talk to, that that sense of really honing in on what it is the thing that you're building. So I that's I love that characterization a lot. I did I want to talk about one other thing since we're kind of in this space a little bit. We hear a lot of talk about motes, and I feel like it's become this term that like so many it's a thing we all kind of assume we know what it means, but can you break down what you think of when you think of a moat when it comes to building a business and maybe how developers should think about that.
+
+**Ricardo Méndez:** I tried not to be too prescriptive. Yeah. So the how developers should think about that is that it's gonna be the tricky part, but I'm gonna tell you how you think about it. I mean the definition is fairly easy. A moat is the first line of defense when attackers are trying to come into your castle or your territory. In the older style of applications, data was the moat I or the social graph was the mode. Nobody wanted to leave Facebook because that's what their where their friends were. Nobody wanted to leave Twitter because that's where their friends were you're gonna lose access to all this conversation or what have you. The tricky side on the ad proto side of things is where is the mode yeah gonna come.
+
+**Jim Ray:** exactly.
+
+**Ricardo Méndez:** Right. And this is this may sound a little bit snobbish, but quite frankly, I think that the only mode going forward is taste. All the data is public, which means that well, unless somebody unless some application creator is being a tech and starts fucking around with the lexicon, it means that anybody can take the blues the wine sky data. and make a better wine application than I'm making myself.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** And the users lose absolutely nothing.
+
+**Jim Ray:** Yeah.
+
+**Ricardo Méndez:** Right? So the only defensible thing that WineSky has, other than let's say distribution, and maybe I figure out a sticker name than somebody else, which I would argue is also taste, is taste. You build something better than anybody else is building it. Right, that's it. I suspect part of this is no I suspect is going to pervade every aspect yeah, so for instance, Black Sky has a very particular personality and tone that comes that comes out of the team.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** This is an issue of taste.
+
+**Jim Ray:** Yeah, right. Exactly.
+
+**Ricardo Méndez:** And they could just migrate to assuming they're not using any of the black scale specific features, they could just migrate to somebody else and still keep their community, right? So I don't really see any unless you do some sort of weird fuckery for your users, which is always possible. I don't really see any other mode in an ad broad right now. Well that and speed of course, but I think taste is gonna be more important.
+
+**Jim Ray:** I really do think that that is exactly right. And I think that there's this term inchidification, which I don't necessarily love, but I the curve that it describes is there was a time when the app was good when the interests of the app and the interests of the users were aligned, and then those interests that they diverged and then the app became bad. And the problem that I have with that categorization is that I don't think that you know Corey Doctor, I was just listening to an interview with him the other day and he was talking about, you know, there was a time when Facebook was good, and I personally just have a problem with that characterization, but I do think the idea that the alignment of the user interest and the company's interest is how your app stays good.
+
+You know, you go to I people send me links to Twitter or Instagram and things like that. I don't have accounts on those services. And when I go, I see how terrible the experience is because you know it's just you can't even see the content of the thing without a box taking over the entire screen. My friend John Gruber calls it a dick over. And I like I can't go in to read the comments or anything like that. It's very antithetical, but because they have that moat of the social graph then they can essentially create those really subpar user experiences where if they didn't have that, they would either need to continue to make good user experiences, which say we will about Facebook and Instagram, but for that first decade, they were pretty good at building good user experiences and they really brought along some of these conventions of social interaction.
+
+And I don't think we can necessarily say that these days. So yeah, I mean I completely agree with that characterization that the moat is taste is keeping the user central to your thinking. I guess the converse of that is it does sort of make it more difficult to build a business, to get started, to compete with the Facebooks and the Googles of the world that you know, do have hundreds of designers on board and things like that. How do we think about creating in that environment.
+
+**Ricardo Méndez:** I'm gonna take an objection to that. Having a hundred of designers on board or something that's why give you taste. Yeah, that's a fair point. That's a very good point.
+
+**Jim Ray:** And one I absolutely agree with.
+
+**Ricardo Méndez:** Yeah, so no, it's that's not the issue. And quite frankly, you never win by coming at an incumbent heron. You win by taking a side road, you win by doing something they're not doing, something they don't expect. I think that if I had tried to completely replicate Vivino with the conversation set the app and everything on WineSky, it would be completely useless, basically. Because I am taking I am expecting now users to be on my own conversation with Lexicon. I'm wasting time on the I'm wasting time on building this thing and boy I'm not it's not like I'm hyping wine sky why you keep using this as an example is because I think I'm a hands on guy.
+
+One of the ways in which I process things better is by actually experimenting so Winesky, WineSky is the more complete application that I have actually built on at Produ, but I have built a whole bunch of small stuff as well just to wrap my head around the decision space on the project. So I think that if you try to build on a proto while making the exact same decisions you would have made in an old school dApp, that's not gonna work.
+
+**Jim Ray:** Right.
+
+**Ricardo Méndez:** You're not going to compete as trivially with the letterboxed or the Metacritics or what have you, right? You need to come in and do something different, something that preferably takes advantage of the uniqueness of the space and that is the composability and the way that other applications are doing the heavy lifting for a whole host of things. Like if again I don't need to build a social network, Blues Casov rebuilt one for me. I need to figure out how to split reviews that are more than 200 characters into threads, and that's it. That's my whole concern. If somebody wants to publish reviews so no, I don't think you should be competing head on. I think that's like a full servant.
+
+**Jim Ray:** I love that. And that feels like a great place to end. Ending on a high note and giving folks a something to rally around. So Ricardo, I really appreciate you taking the time. A lot to learn here. I'm gonna link up all of your fantastic writing and so thanks for everything that you've done. I know you've got some travel coming up. So really appreciate you taking the time and thanks so much.
+
+**Ricardo Méndez:** Excellent Jim. Thanks for having me, man. It's been a blast.
+
+**Jim Ray:** Thanks so much for listening and especially thank you to my guest, Ricardo Mendez. Off Protocol is a production of the Bluesky Developer Relations team. For more about AT Protocol and an archive of this show, head to atproto.com. Our theme music was composed and produced by Celine Rushamwallin. Catch our live stream every other Wednesday on Streamplays, of course. Conversations like this one drop as often as we can.

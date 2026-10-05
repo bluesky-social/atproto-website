@@ -1,1 +1,239 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Hello and welcome to Off Protocol, a show about building a better internet. I'm Jim Ray, your host and part of the developer relations team at Bluesky, where we are working to build that better internet with the AT Protocol. If you've ever used the phrase responsive design, you're familiar with the work of my guest today, Ethan Marcotte, who coined the phrase way back in 2010. Since then, he's written two books on responsive design and built countless websites at places like ProPublica and the Boston Globe that put his ideas into practice. Based solely on these credentials, Ethan could have continued his incredible career as a writer, speaker, designer, and engineer, but a funny thing happened over the last few years.
+
+the tech industry changed in some pretty dramatic ways. In response, Ethan put his head down once again to work out how he could offer some constructive solutions. And what emerged was you deserve a tech union. a book about the labor movement within the tech industry. I'm fortunate to have known Ethan for going on two decades now, and I've admired his writing and his work for most of my career. And while we don't get into the details about AT Protocol here, Ethan has navigated some massive moments of uncertainty on the web, and I think his insights, both as an engineer and as a labor organizer, will be invaluable as we continue to build out the atmosphere.
+
+I hope you enjoyed my conversation with Ethan Marcot. Ethan Marcot, welcome to Off Protocol. I'm so excited to have you here.
+
+**Ethan Marcotte:** Jim, thank you for having me. It is so good to see you.
+
+**Jim Ray:** Well, it's it has been a second and you and I have known each other for a long time. I'm not gonna say how many years.
+
+**Ethan Marcotte:** Don't say the number. Do.
+
+**Jim Ray:** people will start to think it's maybe or maybe it's just been that we've known each other since grade school. Maybe that's the thing.
+
+**Ethan Marcotte:** I like it.
+
+**Jim Ray:** You are the coiner of the phrase responsive design. And I d I just want to know, I assume that the residuals that you're making from coining that are in the eight or nine figures? Do I have that correct?
+
+**Ethan Marcotte:** Yeah, you can't see the multiple yachts to my name behind me. Yeah. Yeah, I did not make boat money off the idea, but it's changed my design practice a little bit.
+
+**Jim Ray:** Well it changed your design practice and really can you put a price on that? Part of why I'm excited to have you here, other than just a chance to chat, catch up, and things like that, is that you know, the work that you were doing with the with responsive design. was reminiscent of kind of like a whole different era of the web. And so before we get into that, I would love for you to just kind of like walk us through how you got to this concept even of responsive design and maybe even like what you were working with, maybe what you were working against because the web was a whole different place back then.
+
+And so how did you how did you get to this concept kind of first and foremost?
+
+**Ethan Marcotte:** I realized before we hopped on this call, like I've been working on the web since the late 90s, which means that it's I can I can no longer say I've been working on the web for 20 years, like I'm getting closer and closer to 30, which is that feels like a scary cliff. I do think like a lot of the early days of my career were really responsible for how I kind of arrived at responsive design because It was a different time back then because like I got my start working at a small agency down in New York and you know, working for a bunch of clients in like entertainment and finance and working with some like folks who were like at the time trying to figure out like just what web design could be back then.
+
+Like you know, just the idea of like we were designing for a handful of browsers on basically oh desktop only machines. I mean it really does feel like in a lot of ways we were banging sticks together, but we were also like trying to figure out like how could we push this medium in a different way? And you know, when you ask about responsive design specifically, like the early days of my design career couldn't have looked more different because we were so focused on designing basically fixed width layouts. And the industry would like have a conversation every once in a while about like which screen resolution we're retargeting, right? Like is it okay we've been working on 640 for four 640 by 480 for so long but hey maybe now it's time to finally like let things loose and go to 800 by 600.
+
+Ooh you know it's just like.
+
+**Jim Ray:** I was gonna say the jump from eight hundred to six hundred to ten twenty four by seven sixty eight. Whoa, whoa, whoa. All right, you're fancy. I guess I'm like.
+
+**Ethan Marcotte:** Yeah, man, it was just it's just so weird when you know, we just sort of figured out, okay, well now is the time to like, I don't know, slightly upgrade the width of our canvases in Photoshop, but like it was a big talking point back then. And as like ingrained as that idea was, like it really just like shaped everything about the way that I thought about design for the web and a lot of us, I think. You know, contracts would come in or like client conversations would be around like, okay, well, what screen resolutions are we designing for? And then that would get kind of baked into this very like rigid waterfall process where the designers would be focusing on canvases of a specific size.
+
+Those would get handed off to engineers who'd perfectly implement those screen resolutions in a browser, but if a if a screen was too wide or a screen was too narrow, you know God help you, right? Like the experience was not gonna meet you where you were. It feels really weird to talk about that era now because I haven't had to do it in a minute, but that like pixel perfect approach to the web. worked really sort of well for us for the better part of a decade until it didn't when you know well the iPhone shut up basically and I think like here in the US and in Western markets, the iPhone was just kind of our catch-up moment because the mobile web had been exploding pretty much everywhere else for a long time.
+
+But it that was the moment where we realized and a lot of our clients and companies realized that we needed to be thinking a lot more flexibly about the web. Unfortunately the way that we did that was to start making two websites. You know, like what if we could just double our work overnight and give a worse experience to a certain class of our users? But that's effectively what the industry started doing where we invested a lot in complicated software approaches to figure out like, okay, is this a mobile user or a desktop user? And then depending on where you fell on that spectrum, getting funneled to the real website for desktop users or the stripped down website for mobile ones.
+
+And that sucked. I mean, it was bad for us. It was more work. It was more complicated. But it was also terrible for our users too, right? Like we were delivering a subpar experience to a rapidly growing subset of our audiences, right? That that were coming to us on mobile devices and then frequently having to like pogo stick out to the real website to find what it is they actually wanted. Anyway, this is all preamble to the fact that like responsive design actually kind of started back in those fixed-width days for me. Because when I was working my first studio job, like I was I was just trying to figure out like how to work on the web like everybody else It was in the middle of one of these like big client redesigns where it was focused on one-screen resolutions that I came across this article called a Dow web Design by a guy named John Alsop.
+
+Jim, your face just lit up, so I know you recognize it.
+
+**Jim Ray:** Absolutely.
+
+**Ethan Marcotte:** For anybody who's listening who hasn't read the article, I mean I can't give any of you all homework, but man, if I could, I would recommend reading that article because it wasn't just a big influence on me. I still think it's like one of the most like forward-looking pieces of writing about the web that I've ever encountered because in a Dow web design, John was talking about the web as the first truly flexible design medium and he was writing about it in the early two thousands when so many of us were practicing that fixed width design. And he was basically arguing that that was basically just an impulse that was shaped by literal centuries of graphic design tradition, right?
+
+Like we're looking for the constraints of a page, like a physical piece of paper.
+
+**Jim Ray:** Right.
+
+**Ethan Marcotte:** To know the boundaries of our design. And he was basically saying that's effectively what we've replicated on the web. That we create a canvas in Photoshop, we fill that with content and ornamentation and stuff. And then we just try to preserve that page as perfectly as possible. And he was basically saying the web by default doesn't have a shape. It doesn't care about the size of the screen. But we as practitioners, as designers, as engineers were trying to bring fixed dimensions to something that's so much more flexible and powerful than that. That's where I kind of fell in love with this idea of the web as a fluid design medium and trying to think a little bit more flexibly about design.
+
+But again, we were like banging stones together to try to make web pages happen. And honestly, like we didn't have the tools to kind of capitalize on what John was talking about back then. So fast forward back to when we finally woke up to the mobile web, when the iPhone was launched. We did finally have some things that would allow us to create flexible layouts, but also shape them a little bit more effectively. Something called media queries back then from the CSS specification. That basically we could have a design that, you know, would bend and flex depending on the size of the browser window or the size of the screen. But then we could also with Media Query sort of like intelligently reformat them to have a little bit more control over how that flexible experience shapes itself based on the size of the screen.
+
+So yeah, that's how responsive design happened.
+
+**Jim Ray:** It really is kind of crazy to try to communicate to someone living it, you know, it's like anyone who has children trying to get them to understand what like how you listened to music even not that long ago, you know, every you know every tech bit of technological progress has this. And I think having kind of come through and watched this and going from that print-based mindset to a web page is a thing that is locked in I, you know, I'm a designer who's been working in PageMaker for 10 years and now we just kind of like transition that to the web to really rethinking about what the medium was. And it was, you know, it was a full 10 years into kind of public use of the web before we really got to that as an understanding industry wide.
+
+**Ethan Marcotte:** I've said this in every venue I've ever been in and I'll say it again in this one, but like responsive design started as, well, first a conference talk, but then I wrote an article and that's where folks found it. I tell everyone like I made a publishing deadline. Like I shipped this article and I kind of thought that was going to be the end of it. I think the reception that it got, I genuinely believe like that was a signal that everyone kind of understood that the way of designing for the web back then just wasn't sustainable. Something else had to happen. And I think I just tapped into something at the moment where everyone was just kind of getting fatigued about thinking about strip down mobile experiences that weren't working for anyone.
+
+So yeah.
+
+**Jim Ray:** the m dot your domain name was such a.
+
+**Ethan Marcotte:** so.
+
+**Jim Ray:** like such an anti-pattern but so prevalent.
+
+**Ethan Marcotte:** Yeah, yeah. And it's, I don't know, you know, I'm grateful that it got us thinking about like the importance of mobile. It needed to go away, but like I think every innovation on the web, whether it's flash or jQuery, it's like there's something that happens outside of the platform that tries to move it a little bit further ahead. And then like we realize that there's a better way to kind of approach the problem in the first place. And I will be happy to never see an M website ever again. Unfortunately, I feel like in some ways they're coming back, but you know, at the same time, they did bring us to where we are today.
+
+So I'm trying to hold on to some gratitude, I guess.
+
+**Jim Ray:** So I would sit here and talk about the good old days of designing for IE6.
+
+**Ethan Marcotte:** forever.
+
+**Jim Ray:** I know, I know. Oh. One thing I'm interested in exploring a little bit is we're at kind of a similar inflection point right now. And as I was thinking through the parallels to the early days of the web and that transition, whether it was to mobile or to responsive web design and to where we are now particularly around this movement from kind of centralized platforms to decentralized platforms, the one kind of parallel I kept thinking about was this idea of designing for uncertainty. And I think that that slots into what you were talking about there with the web for the first time realizing that the web was this like truly flexible medium. But it's also, you know, there's a lot of uncertainty that came with that.
+
+And there were so often times that we keep trying to find ourselves in certainty, even when we had these tools. for building these responsive websites. I can also remember that we immediately locked into four breakpoints. We had the mobile breakpoint that was the default. iPhone home screen size, we had the breakpoint for your iPad, and then you know, maybe you had two more for like a desktop and a really wide desktop and so we were always kind of grasping for more certainty and something I've always really valued about your perspective on this is that you embrace that uncertainty and so I'm curious one like you got any pro tips for us there? I'm.
+
+**Ethan Marcotte:** I'm professionally feral, so I get the time to think about. You know, I don't have competing lines of business or competing priorities kind of like bearing down my neck every day to like, okay, well we have to get this thing out the door. It's like I'm I'm grateful that I sometimes have the time to run down rabbit holes. You know, I think like that idea of like relinquishing control I think is so important for designing for the web in general because well, even before responsive design happened, that uncertainty was always there. We were just ignoring it. We were already designing for device diversity, but we're trying to sort of like pretend it didn't exist by focusing it on, you know, a narrow view of the experience.
+
+And I think like from a layout perspective we've gotten so much better. I do think some of the asterisks you mentioned, like, yeah, I do see like a lot of teams like focus in on a couple different breakpoints and like some of the in-betweens get a little bit less attention. Todd Parker, who's a design lead of filament group, I worked with them on the Boston Globe redesign way back when he talks about those is the awkward teenage haircut breakpoints. Like, you know, something does something this is trying to grow into something. It's not quite there yet, but you know, you can you can see a glimpse of the viewport it's trying to be. But where I where I do think things tend to be a little bit more challenging is I think in a lot of ways like our industry has just focus on the visual piece of responsive design, like thinking about layout adaptation only.
+
+And where I think that falls down a little bit is that it means we spend less time thinking about other pieces of our experience that we should be designing, things like network performance or accessibility, you know, the things that like these are also dimensions by which our design can change. You know, like even thinking about like the mobile experience or the tablet experience, the words that we use to talk about our design. Those device categories get wrapped up in a lot of like broad assumptions about what that means for the user, right? Like every phone means a touch screen or laptops mean like a fine pointing device, like a trackpad or a mouse. It's really easy to like ask a couple questions to get yourself to step out of those categories.
+
+**Jim Ray:** Yeah.
+
+**Ethan Marcotte:** What if someone's using a phone but they actually have a physical keyboard that's paired to it? And they're tabbing through your design a little bit more manually. Or what if they're at a laptop but they're using voice recognition software to control their device because they don't have the same motor skills that you and I might. Like that question that's been really, I think, important for me in my design practice is like, what if someone doesn't browse the web like I do? Like it's a it's about a reminder that the way I'm encountering the web doesn't necessarily map to the way everyone encounters the web. Right. And I can't anticipate everything, but at least it lets me start thinking about ways in which my design could potentially fail a user.
+
+That's a big that's a big pro tip from me, I think. The other one, and this is this is something I've been thinking about a little bit lately, but one of the best ways to sort of like strengthen a design, I think, is just like cross-discipline collaboration. You know, for me is like someone who's comfortable in both like design and front end roles like stepping away from that idea of a handoff between disciplines. You know, this is something that was really valuable, especially in the early days of responsive design where so many of our design tools were so fixed and rigid and still baked into that idea of a page that designers and front-end folks had to work had to like literally like prototype back and forth together.
+
+to start thinking about, okay, well, this design concept doesn't really quite work at this sort of particular breakpoint, but if we sort of like change things a little bit more, that that could maybe be a more successful experience. It was a lot more back and forth and it's interesting because I think our design tools have gotten more flexible and have gotten a lot more robust, but I think as a result, we've seen a lot I've seen a lot less collaboration, I think, broadly speaking. Like things feel a little bit more siloed and.
+
+**Jim Ray:** Interesting.
+
+**Ethan Marcotte:** Yeah, I don't know. That's just one ancient designer's perspective.
+
+**Jim Ray:** That that jibes kind of with a an observation that I have limped through just again as having been around for a minute where I think our industry is particularly susceptible to this. It's almost like a sine wave where like sometimes we're in a in a place where we really prefer specialization. And then we kind of get to this point where that peaks and then we really prefer generalists. And I've been through a few different phases of that. And I've always just personally just because this is kind of my jam, but I've always kind of preferred the times where we prefer the generalists because I think that that does lead to some of that cross collaboration.
+
+And I'm actually kind of curious now with everything that's going on. I don't I actually don't know what phase we're in right now because all of these AI tools kind of dump in and it's like you can spin up a dozen specialists in any area and I'm not quite sure w what that makes for the rest of us.
+
+**Ethan Marcotte:** Yeah. Not a lot of room at the table, I think either way. Yeah, I think it I think it is hard because I think it's yeah, that that that piece about like sharing the table with large language models does make it hard for anybody, I think, to be either a specialist or a generalist.
+
+**Jim Ray:** Hand in hand with this idea of designing for uncertainty is the idea of giving up a certain amount of control. And I feel like for designers in particular, you were talking about you work both in the world of design, but also being a front-end engineer and how even within kind of your own practice, there's a lot of cross-collaboration there. I feel like one thing that's really difficult just because of the nature of the work, and you know, this was certainly true in the early days, but I think it's even still true now, is this notion of giving up a certain amount of control. And you talked a fair bit about thinking about the perspective of the users.
+
+And you know, how do you think about creating that empathetic space for other people? Because it's a real challenge. We have we have to be comfortable with that uncertainty and with giving up some of that control.
+
+**Ethan Marcotte:** You know, somebody I respect in the industry said something about like how so much of our industry expects perfection, I think. Like we're still thinking about like product design and interface design through like an engineering model that's something if it's broken, that's a defect and it needs to be repaired and addressed. And yes, and but I do think like when you understand how a design fails and why it's failing and who it's failing. I think that's an opportunity to like strengthen the experience, right? Like this is something that I hadn't considered before and like this is an opportunity to like make this thing better like an early example of that for me, I think, when I was working on the so I was working on the Boston Globe, this turned into what was the first like at the time the first like large scale responsive design.
+
+And we were working really closely with Globe's publishers to kind of like review the design. And specifically I came on board when we started building like the responsive prototype because they'd approved a whole bunch of like again Comps, you know, pictures of a website that were beautiful, but we also then had to make them work on a wide array of mobile devices. And tablet devices and everything else. And so we started doing design reviews with them in person and the folks at Filament Group that had brought me onto the project that I mentioned them before, like we started bringing a literal sack of devices to design review.
+
+**Jim Ray:** And.
+
+**Ethan Marcotte:** you know, and then we'd hand them out and so some folks would get iPhones, some folks would get iPads, some folks would get like early Kindles. One person would get the BlackBerry 4 version of the prototype and that person was never happy, but like the benefit was it's like you really reinforced the idea that there's no single canonical view of the design you know, when we're dealing with also like way back then, like Blackberry Forest were very limited devices. They had a good web browser, but they couldn't really do much. If you gave them more than like a line of JavaScript, they'd run into the wood screaming. So we had to give them something a little bit more stripped down.
+
+And again, like this I think reinforced the idea that like this is your readership. These are the people we're designing for. It gave us cover to start talking about like, okay, well, here's how we need to sort of rethink the experience based on what we're seeing, rather than, oh, this is broken because it's on a less capable device. I think that approach is really helpful whether you're an independent practitioner or you're part of a product team, like actually as soon as possible building a prototype, understanding how it works. In the wild rather than just on our devices, it's gonna better prepare you, I think, for like when users actually get in their hand The other half of this is also like having a healthy like outreach channel to your users and having conversations with them to understand like where things are falling down.
+
+But I you know I do think that they're part and parcel. Like how do you anticipate their needs and then how do you validate what their needs actually are?
+
+**Jim Ray:** Again, I see a lot of parallels to where we are with this decentralized web space where we work in the protocol and kind of the this transition time. And you know, I wonder how you thought about success during the you know those days as you were in the middle of this big transition during to that that was happening in the industry, whether it was working with clients, whether it was kind of like your own ideas of success, like what did that kind of look like? And, you know, when did you know that you hit that bar? When did you know that like, you know what, we didn't quite hit it this time? And so what were some of the lessons that you felt like you learned that you would take on?
+
+to new and subscribe projects.
+
+**Ethan Marcotte:** So starting with the caveat that I've never designed a protocol before.
+
+**Jim Ray:** Sure.
+
+**Ethan Marcotte:** You know, I put rectangles on screens. Hopefully they're good ones. I guess I have kind of a personal answer here. If that's okay. I don't know if it's useful, but like a maybe I'll start there and see if it ties back in. But.
+
+**Jim Ray:** I think it's gonna be great.
+
+**Ethan Marcotte:** Okay, all right. Well, you know, no pressure. I mean one of the things that I loved most about the early days of responsive design was just how much I mean again, like how much excitement there was around the idea tying back to that. I think folks felt like there was a better alternative that was in front of them. Yeah, they could they could start really embracing a lot of the potential of the medium and start doing some really new and exciting things. And there was so much excitement around approaching old problems and thinking about how to revisit them in a responsive mindset. Like even things like advertising, like display advertising on websites, like how do you come up with a more flexible ad unit?
+
+Like this was something that like a lot of designers and industry folks were really thinking about back then, but it was stuff like that that was like It was it was energizing to be around. Folks talking about process, folks talking about like more flexible versions of typography for the web. Like there was just like there was this like explosion of ideas you know, I miss those days, frankly. Like, and there's still a lot of that, but like still like there was it was something really especially heady about those times. On a personal front, I think like one of the things that I found I guess a lot of my idea of success for responsive design which, you know, to be clear, I don't think this is an idea I had any ownership over.
+
+Like everyone else kind of ran with it. For me at least, like it felt validating in a way. Whenever I saw like a big interesting redesign happen, it felt like the idea was moving forward, like it was growing in a really valuable way but on a personal note, I think where that started to change was around like the mid 2010s, like twenty fourteen, twenty fifteen, when I started to see a lot more like well frankly like political websites or hate speech websites that also had responsive designs, right? Like and I mentioned this because like this isn't a matter of like philosophical or policy disagreement. I mean like It felt like I'd put something out into the world that was making this kind of content more accessible to people.
+
+**Jim Ray:** Yeah.
+
+**Ethan Marcotte:** And it's hard not to see something like that as my fault in some way. Like I'd I brought this idea and made it accessible to folks and oh whoops. I've introduced something into the world that can make political violence look nicer on phones. I think I confused successful implementations.
+
+**Jim Ray:** Hmm.
+
+**Ethan Marcotte:** with the success, you know, there's a long history of well, techno optimism in our industry, right? That the technology is inherently good and we'll do good things out in the world if it's better than what came before it. Generally, I think the industry is less equipped to have conversations about p about who could put be potentially harmed by those decisions.
+
+**Jim Ray:** As you mentioned, that's certainly a pattern that has repeated itself without some kind of countervailing force that is always going to happen.
+
+**Ethan Marcotte:** Well around 2016 I like reconnected with you know Ursula Franklin?
+
+**Jim Ray:** Yeah, okay.
+
+**Ethan Marcotte:** She was she was a hell of an influence on me and still is. For listeners who might not be familiar, I mean Franklin was and she was a metallurgist, she was a physicist, she was a social historian, a social critic, a feminist, a university professor, a writer. I mean, she did like I get tired listing all of her accomplishments, but yeah. But she was she wrote this book called The Real World of Technology that I wish I'd read at the beginning of my career because it's a massive influence on me. She talks about that arc about power learning and how every technological innovation of any kind you know, whether it's industrial, automotive, aviation, whatever, it's like the personal computer.
+
+It's always viewed at first in sort of like this liberatory rhetoric. It's gonna revolutionize everything. It's gonna give us so much free time, but then over time as it becomes industrialized, right, it becomes co-opted by power structures. And, you know, the promise that's always made in the early days never actually gets realized. And so, you know, I do think about that arc with responsive design a little bit.
+
+**Jim Ray:** Well, you know, it's interesting that you mentioned that. You know, I went back and reread your original responsive design piece. Congrats on 15 years, by the way. They grow so fast. And you know, so much of it was rooted in design and architecture in particular, and it had this kind of real world foundation too.
+
+**Ethan Marcotte:** it.
+
+**Jim Ray:** And I think that's part of what resonated about the original piece so much because I think one of the things that you were able to do was kind of take all of these technologies that was kind of bubbling up. and really kind of like build a thought around it. And I'm curious, you know, since you brought up Ursula Franklin, like how much of either your own being in the world or your own politics, for lack of a better word, do you feel like either informed what you were thinking about at that time and allowed and kind of gave you the space to think in broader metaphors than just like, oh, you know, we should we should use this new CSS technology or whatever it might be.
+
+But really to kind of like bring it together into something that was a little bit more cohesive and comprehensive.
+
+**Ethan Marcotte:** Yeah. Thanks, Jim. I mean I was little baby Ethan who wrote that article, I think like I wouldn't say I was like fully politically conscious back then, but I do think like there were some political considerations that were kind of in the mix. I think first and foremost, like it was about broadening access. We were at a time where we were effectively designing two websites for every organization. And one of them was abysmal. I mean, and mobile was where all the growth was happening. So it was just like this weird counterbalancing of priorities that just didn't seem to be working well. And again, it's like we had this thing on the table, the flexibility in the web that was so much more powerful than what we were actually using it for.
+
+So like my personal design interests were kind of wrapped up in there as well. I mean there were some other considerations I think that were in the mix. They weren't primary concerns. Like there were there were n there were industries that were sort of like that had grown up around this idea of like device detection. Like you have an experience, whether it's embedded software or on the web. that will handle the routing for you, like you're on a mobile device or you're on, you know, whatever. It's like these are big complicated pieces of software some of them very expensive. At the same time, like they were still kind of like selling that same illusion of control that we'd always sort of like told ourselves about the web, right?
+
+Like these lists, these massive lists of device names were outdated the minute they were more or less shipped so it really felt like there was a more sustainable way to do things. And I think that it was going to be beneficial not just to the folks who were making the websites and maintaining the websites, but ultimately at the end of the day for the folks that were trying to access.
+
+**Jim Ray:** well we've veered into this the world of the politics and again, one thing I've always really respected about your work, Ethan, is that it's really grounded in an empathy which we've talked about for other people. I can I can always see the scenes a little bit that you're sewing into the work, that it's not just about a new technology or a new way of thinking about design. As you mentioned, you know, that it's the title of Ursa Franklin. book, how do we actually build and design these things for a real world where people live and have to use this stuff and you know aren't just meeting a KPI or something like that? I guess my next question is who deserves a tech union, Ethan?
+
+**Ethan Marcotte:** Who does deserve a tech union? Well I think I think we all do. Jim, that's the short answer.
+
+**Jim Ray:** Why would you say that, Ethan Marcot?
+
+**Ethan Marcotte:** Well, Jim, man, I should have brought like a jingle or something to start playing. Yeah. I did write a whole book about this topic. In fact, it has that title.
+
+**Jim Ray:** I was I was going back through and I was reminded that I need to buy the new beautiful version because I have the original copy, but you know, you've redesigned it and it's it looks gorgeous. So but we all deserve a tech union, I think is the message of your book. Is that right?
+
+**Ethan Marcotte:** We all deserve a tech union. Yeah. The title of the book is taken from this old phrase in labor, every worker deserves a union. union. That's the thing I was trying to tap into. Same with responsive design. Like there was a prior responsive architecture movement. I love looking back a little bit or before I start. looking forward.
+
+**Jim Ray:** Yeah.
+
+**Ethan Marcotte:** Yeah, that was that was something that I started working on in twenty one and it took me about two years. Hardest thing I've ever written and also easily the thing I'm the most proud of, I think. So.
+
+**Jim Ray:** it's not necessarily a natural path. for you know someone to go from and maybe that's the story of the labor movement real large is that like so many folks who are you know deeply part, you know, the people that we think about as part of the labor movement don't necessarily start that way. But what did that journey look like for you going from a fairly well-renowned technologist, writer, designer, and now somebody who is known as much for your activism in this space where yeah, I think it's fair to say there's not been a lot of movement and activity.
+
+**Ethan Marcotte:** Well, I appreciate that. It's a good thing we have three hours scheduled for this podcast, Jim. 'Cause yeah, no, I mean a proper answer is probably a lot more sprawling than we have time for, but I've always been like broadly sympathetic to unions. Like I was I was I was raised around unions, like nurses and teachers in a rural part of the country raised me. I was not in a union family, but they were just like always sent things I was broadly aware of as being like a n a good and necessary thing. But you know, I when I entered the industry back in the late nineties, like they just didn't seem to apply, right?
+
+Like they were just sort of like things that were reserved for other industries. And I had this great job with interesting people and I was doing new and valuable things. And I had this sense that the industry was very different. And that changed over time, I think. And that's probably changed for a lot of folks in the industry, especially in the last few years. Like the inflection point I think was after the twenty sixteen election. And that kicked off a whole bunch of conversations in tech around how our work is meant to be used, how our labor is meant to be used. used, right? There was the Tech Won't Build It movement where folks were actually signing petitions that they wouldn't be creating any technology as part of their work to build a database of Muslim citizens in the United States.
+
+There were GitHub workers who were protesting against ICE contracts. I think there was this like growing need to actively insert ourselves into a conversation about like what it is we're contributing our time and labor to. After the election, there were a bunch of like I think they were called tech solidarity events, and there were a few in Boston. And I just remember listening to a labor lawyer. Just matter-of-factly talk about the process for forming a union at your place of work. And that was like a it was it was just weird because I was like oh, of course we can do this here. Like there's nothing special about tech. Like there's nothing like legally preventing us from doing this.
+
+And I would I just like literally for almost 20 years up to that point, I was just like, well, that's not a thing that happens here, right? Like this isn't something that we need to think about. And, you know, this guy was just matter-of-factly like, you know, step one, step two, step three, and it's just like, oh okay, sure. Like this is this is something that we can we can do. And I started reading more labor histories. I started reading more labor organizers. And at that time, there was just like this growing activism across the industry. I think the walkouts at Google back in twenty eighteen were like a real crystallizing moment for me that this couldn't have happened five years ago.
+
+I wanted this book, this, you know, it's a it's a short book, but it's it tries to do a number of things. But one of the things it tries to do is to try to show that there is there is an active labor movement in tech. And anybody can be a part of it. So that's something I just felt like I wanted to write more about.
+
+**Jim Ray:** a union within a technology company. I mean, certainly up until the past few years, the idea that your workforce would need to be unionized when these are the most pampered people on earth. You know, they have amazing salaries. They've all got like all of these you know, millions of dollars worth of stock options, you can bring your laundry to work. Why would you need a union? And I think the past few years have been, as you mentioned, a pretty big wake-up call, both in terms of like how people's work gets used, but also people's jobs aren't secure in the tech industry. That was the other thing, I think. Getting a job in tech was like it was kind of a guarantee of some security because there was just there weren't enough people who knew how to write the programs to go around.
+
+And so if you could get that job, then you were you were pretty safe. And I think that that's something that has dissolved pre quickly.
+
+**Ethan Marcotte:** That's a really good way of putting it, Jim. I think like I said this before, but like I really don't think like my book anticipated anything. I think it was really just like trying to describe a movement and a moment that was already happening before I started writing about it. There was Kickstarter, Glitch, Act Blue, Google, Apple, like all there were there were unions forming at all of these companies so there was this massive upswell in organizing and unionizing that was already happening. Like working on the book made me reflect, I think, on where I'd been up to that point. And I'd I realized like retroactively I'd grown up around this idea of like precarity just being assumed in the industry.
+
+There were almost cycles that you could watch of layoffs happening and when folks didn't like their working conditions or didn't feel safe at work anymore, their best and only recourse was to get a different job. As somebody who's been like following the labor movement more closely and talking to people embedded in it and working in it, it's almost like that moment where I had a labor lawyer explaining to me that there's an alternative. Like it's just like it's night and day to think about like folks actively fighting for and winning contracts at work that like outline protections for them. It's like basic safety things, right? Like limiting on-call schedules or like having clear paths to promotion.
+
+I mean, these are things that like. Why don't we have these?
+
+**Jim Ray:** Right. Yeah, exactly.
+
+**Ethan Marcotte:** It's the single thing about the industry that I find most inspiring right now. There were there are other things. We'll we've been talking about some of them, but like just to see people like step out of what's currently happening and be like, okay, well what if what if the future was different?
+
+**Jim Ray:** Like.
+
+**Ethan Marcotte:** what if we had something better? What would that look like? And then they work collectively together to actually move to that future. I interviewed some 50 people for the book. All of them told me just how incredibly hard and in some cases heartbreaking the work was, but every single one of them told me they'd do it again. It's incredible to see happening right now. It's the single thing like when folks talk about the future of tech. You know, they tend to focus on crypto or LLMs or whatever. And it's weird to sort of like be watching this labor movement that's I think been accelerating over the last few years and not see that as the future.
+
+The last thing I'll say is like the other piece about the book, and I think you've alluded to this, I wanted to kind of expand our definition of tech worker a little bit because one of the things that were was most radicalizing for me, I think, was like actually starting to realize like there were so many like hidden classes of workers. in our industry. Like I remember reading a Wired article from like 2014 or 2015 about social media moderators, you know, the folks that quite literally keep traumatizing content off of our feeds or this BBC report a few years later about data trainers in Kenya who were basically building I mean the foundations for the modern AI movement effectively.
+
+or m AI industry. We've always relied on contracted labor and marginalized workers who are who are working under incredibly difficult conditions. And they've been organizing for many, many years. I think they have a lot of lessons to teach us and also I think if some of us are organizing from positions of relative privilege and security, I think it's easier for us to win protections for everyone, frankly.
+
+**Jim Ray:** My hope is that a lot of the folks that are listening to this are folks that are building on this new technology stack. And I think, you know, just based on the folks that I know, I think there's a s there's a strong amount of sympathy within the movement of people who want to build on a decentralized protocol that adds kind of a new layer of capability to the open web, what we used to call the open web for sure. And I'm wondering if you have any recommendations for those folks who might be starting new businesses. There's so much great work in your book about like how you organize within an organization and things like that.
+
+You know, maybe folks that are creating new companies, you know, we've seen folks that are even competing with each other that still kind of collaborate at a technical level. And I'm wondering if we can extend that to actually, how we organize our companies, organize the sites and the apps and those kinds of things that we build as well.
+
+**Ethan Marcotte:** I love that. A couple of things are coming to mind. I mean, like, I think if folks are forming new companies, I mean there are first and foremost like alternative company structures that could be worth. investigating right like cooperatives I think are something that are incredibly exciting and you can unionize a co-op but at the same time like you can build collaboration into the way that you've structured your company in a way that I think we tend don't we tend not to think of when we think about the traditional job hierarchy. And there's some resources and precedents out there. Like Boku is an agency down here in Boston that like recently converted to a co-op structure.
+
+So there's other folks thinking about this right now that I think are interesting. I will say, and again, this is like getting back to my like extreme caveat of never having worked on an open decentralized protocol before, but like there's an Ursula Franklin line that's coming up for me right now where she talks about like one of the traps we fall into when we talk about a technology is like what are the benefits and what are the risks? And her she suggests that instead of saying what benefits, what risks, we need to be asking ourselves like whose benefits and whose risks. So this is this is kind of like a it's a product organizational exercise around like how do you identify who's not in the room when you're making some of these decisions?
+
+And you know, in my practice, a lot of that like involves like accessibility and thinking about like the ways that design can fail. But like if you're building these protocols that will be adopted and used by communities. Who's not in the room when you're making some of those decisions? Like how do you actually out do outreach for them? You know, we've mentioned Aaron Kissane a few times, Erin Kissane Hive, Rise Up. But folks like her, like Sidette Harry, like those, those are the folks that I would like look to for answers on some of these things, but like that at least for me feels like a massive opportunity because as somebody who's on the extreme sidelines of it, like everything that's happening in the decentralized web space is really exciting.
+
+The web is flexible by default, but it's also decentralized by default. I love thinking about everything that's happening right now. It's like trying to reclaim some of that. But I also think it's an opportunity for us to kind of like revisit one of I think the industry's big mistakes about not involving some of those marginalized voices and thinking about like how we can empower them and provide features that are valuable to them.
+
+**Jim Ray:** I love thinking about how we do this, both not just at a technical level, but structurally and socially and all of that. That feels like a good place to wrap up. Ethan, I can't thank you enough for joining us. I got a lot out of this. I hope the folks listening do. I, you know, we didn't go super deep on details about the protocol necessarily, but I think that there's a ton to get here. And so I can't thank you enough. I appreciate it.
+
+**Ethan Marcotte:** Jim, it's good to see you again. And it's really great to be in conversation with you about this. Thanks so much for having me.
+
+**Jim Ray:** Thanks so much for listening and thank you especially to my guest, Ethan Marcot. Off Protocol is a production of the Bluesky Developer relations team. For more about AT Protocol and an archive of this show, head to atproto.com. Our theme music was composed and produced by Celine Rushamore. Catch our live stream. every other Wednesday of Streamplace of course. Conversations like this one drop as often as we can.

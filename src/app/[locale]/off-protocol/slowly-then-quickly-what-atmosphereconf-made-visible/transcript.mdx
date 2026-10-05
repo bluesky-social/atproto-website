@@ -1,1 +1,367 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Hello everyone and welcome. Okay, I see folks in the showing up in the chat here, so that means we are officially official and live. So thanks so much for showing up this week. It's just me here, except wait, I have two special guests with me. Anybody in the chat want to care to guess who they are? I'm not seeing any guesses. Okay. It's not it's not Paul and it's not Jerry. It's not Alex. So we will go ahead and add our special guests to the stage here. It is, of course, Boris and Ted, the organizers of the atmosphere conference, which I can't believe like just wrapped not even two weeks ago. The last time we saw each other, we were all literally seeing each other in the same space, not just through this intermediate space.
+
+Exactly. This horrible technology. Oh, and I'm I it's possible I'll even have a third guest here in just a sec.
+
+**Ted Han:** Ooh, exciting.
+
+**Jim Ray:** And so sorry. So Boris, Ted, hello, welcome. Introduce yourselves for anybody who might not know who you are.
+
+**Ted Han:** Sure. I'm Ted Han. I am a sort of errant product director and founder of Hangar, which Nick Joachinus and I are kicking off. And also one of the co-organizers for atmosphereConf and part of the atproto community Fund, where we've been sort of thinking about and trying to incubate the atproto Dev community. Forrest.
+
+**Boris Mann:** Hey Boris man, I am currently in Victoria when I'm usually in Vancouver taking a little bit of break, but I found some spots in the Vic Victoria Public Library to dial in. Thanks, Jim, for organizing this I helped doing some tech tip tech talks way back in 2024 and then really just wanted to support the growth of the atmosphere. community as we came to call it along the way and yes was the lead organizer on and conference producer for atmosphere conf 2026 that we just wrapped in Vancouver where it was amazing to see you all.
+
+**Jim Ray:** Amazing. And I am now adding a third special guest, our very own Paul Frazy here, who the last time you saw him, he had a beard. And so it's.
+
+**Paul Frazee:** it fell out.
+
+**Jim Ray:** now.
+
+**Paul Frazee:** Yeah, the stress was too much and just shed immediately after when.
+
+**Jim Ray:** when he showed up on Monday without a beard, I thought his account got hacked by a yeah. So Paul, hello. So yeah.
+
+**Paul Frazee:** And I'm just wandering in after a day of long meetings. So I'm super stoked to see Boris and Ted. Glad y'all could join us.
+
+**Jim Ray:** And we are we're super stoked to have him. And thanks for joining us, Paul. So as we do every time we do this, we've got a couple of news things that we want to run through. Boris and Ted, are there was there any news we're gonna get to the conference and have all kinds of discussion that but you know ever since the conference wrapped, was there any news items that you all were particularly excited about?
+
+**Boris Mann:** Well I think we're actually going to be voting live on what to call accounts. So only the people in the streamplace call are going to be able to vote so it's amazing that this comes up again and again. I think it's just an indicator that people actually really want to rally. Behind something. I think there's more to be said about the user experience of logins and other things like that. I think that atmosphere accounts is pretty nice. What the heck is the logo or various other things? Super complicated. What do you all think?
+
+**Jim Ray:** We've got one word for an unpronounceable symbol, just like prints, so pretty happy to let that one fly.
+
+**Paul Frazee:** I'm curious to hear what Ted thinks.
+
+**Ted Han:** Scientist who came to the conference. and presented on non-atmosphere related stu non-physical atmosphere related stuff instead presented about our stuff. So that was really cool. And he was not confused about where he was applying. Turns out he also made a Nigmail way back in the day, so that also came as a surprise to me. So you know I think that it's got some legs and a lot of the logos that people are jamming on have been really cool to see.
+
+**Jim Ray:** Yeah.
+
+**Paul Frazee:** I was hoping you'd say that he was totally confused. He like got, you know, he was like, what is this? This isn't what I.
+
+**Ted Han:** this is the first part of me that is super excited about confusions like that. So I was delighted.
+
+**Boris Mann:** He is the department head of atmospheric studies at Texas AM University. Just to be super clear, that was amazing.
+
+**Paul Frazee:** I actually spent a year at AM, believe it or not, in a past life, so there you go. Yeah, I'm personally a pretty big fan of the atmosphere accounts approach as well. You know it's there Often one of the counterpoints is like, Well people don't know what the atmosphere is and then my response says, Well that can be fixed, you know. So if we could just pick on something that we feel the other strike against it, I suppose is a little long. Yeah, I suppose that's true. atproto is kind of easier to toss out there, but like, you know that's very nerdy. So.
+
+**Jim Ray:** I don't know. Yeah, I mean.
+
+**Ted Han:** to me the two things really are, can you abbreviate it to something? So even if it's just abbreviated to at, it's fine. But the really important part is you look at a login, you look at a text input, do you know what to put in there or not?
+
+**Jim Ray:** Yeah.
+
+**Ted Han:** That's the most important part.
+
+**Boris Mann:** And need lots of UX and people will definitely be confused and people will create multiple atmosphere accounts and I think Bailey was the one who was talking about merging them again. As people are pointing out in the chat as well, no one gets to decide. If you're making an app you could call them Florp accounts if you want. Right? Like you know, I will say that I was really did not like the term atmosphere which and Paul took me aside, gave me a couple of gut shots and said stand in line you 're gonna use this term. And I said, okay, okay. You know, a man with this impressive of a red beard, fearful is what it makes me, so I will get in line.
+
+**Paul Frazee:** You promised you weren't gonna tell people about that.
+
+**Boris Mann:** This is I mean, this is where all the reveals come out, all of our secret cabal plans that we've been planning for so long, Paul.
+
+**Paul Frazee:** Oh, nice. Well, you know, it's about time.
+
+**Jim Ray:** And I did look this up at one point. I think for a cool 600 grand a year, we could also register the. atmtld and give that back to the community. Which would actually be a pretty dope TLD.
+
+**Boris Mann:** I think that's a really interesting one that that that did come up. And there's a whole thread about that. We should link about that later. I have wanted to buy a TLD for probably a decade now, and as they say you know, the best time to buy a new TLD was ten years ago. The next best time is today.
+
+**Jim Ray:** Today.
+
+**Boris Mann:** So I'm up for if people want to work on that, you know, meet us in the forum and we can talk about it. meow is something that just they did a Patreon. And it looks like dot meow is gonna be TLD, which I'm excited about.
+
+**Ted Han:** Wow.
+
+**Paul Frazee:** Well the dog.
+
+**Jim Ray:** equivalent.
+
+**Paul Frazee:** Ark?
+
+**Jim Ray:** Park.
+
+**Paul Frazee:** Yeah.
+
+**Jim Ray:** Yeah.
+
+**Paul Frazee:** We can figure it out. Skip we'll convene a committee on that later. Now the actually so Boris, you know, I think we're talking about the same thing. I think Sam go to was the one that kinda kicked that off. And yeah, the Sam was also even going further and saying, you know, could we kind of bless a TLD that the atmosphere could drop the TLD and just have a blank handle. That came to mixed reception. I personally love the idea. There's a but you know the in there who is it? I think it was Retroid back before we hired him, made this observation that atproto comes from a web world in the sensibility of the handles, and but it exists inside of an app world.
+
+Yeah. And so perhaps his observation was kind of that like people that are of a of a of a s of a Bluesky age.
+
+**Boris Mann:** 37.
+
+**Paul Frazee:** Yeah, 37 or hire. They understand like it resonates to them. And then like the you know the younger people are like I don't know, it's like an internet thing.
+
+**Boris Mann:** Yeah, I think I think we're gonna keep bouncing into this. I think the DNS you know Blaine always brings up that Jesus of Nazareth, that like an at sign in the middle makes sense to people and a and other things like that. You know, with Sam I was basically talking about the TLD thing and I'm like, what about scarcity? And then he's like, and then we can create subdomains. And I'm like, ah, we just reinvented DNS like again. So I think there's something interesting with bless TLDs, so like dot onion is something that is a specifically reserved for specific use cases. And we actually had Paul Siverson who created onion addresses at the c presenting at the conference.
+
+So there is there's something interesting there, but probably not at the like web layer but the like transport layer or something like that. Anyway, I'm totally down if people want to raise five hundred grand to go get a TLD. You know, we'll be stalled for like a year picking what the TLD is. So.
+
+**Jim Ray:** And then someone will swoop in and grab it from us. The price will double.
+
+**Paul Frazee:** Speaking of the Jesus of Nazareth, I always thought I should grab up the domain name Possel, P-O-S T-L-E, so that I could be Paul the at Posle.
+
+**Boris Mann:** Oh.
+
+**Paul Frazee:** yeah.
+
+**Jim Ray:** Nice. That was horrible. Did you go from Saul to Paul or Paul to Saul?
+
+**Paul Frazee:** It was Saul to Paul.
+
+**Jim Ray:** Paid attention in Bible School. Excellent. Well other news items. We had a couple of other ones. The VOD jam was something that yeah.
+
+**Ted Han:** And this is worth calling out actually for a thing that I think that the atmosphere is uniquely blessed by because of Eli and Streamplace, which we are of course streaming lab on right now. But the Eli and Streamplace sponsored the conference both this year and last year and brought the ability to actually stream all of this to everyone. Remotely both years and that is a thing that like i don't if you've never organized a conference before and you've tried to do a high a hybrid event like having somebody who knows what they're doing actually in charge of all of that stuff is so, so critical. And the fact that we are able to both bring people the streams live and also this year actually get all the VODs and put them on streamplace post them directly in the atmosphere is truly like remarkable, incredible, and I think speaks to like the infrastructure that we're collectively building here.
+
+And one of the cool things that Eli did was launch VODs and say, hey, this is actually a team project, right? Like let's actually talk about ways that people can build on top of this and launch this VOD jam, which we can drop the link into the chat here in a minute. And so people are actively building interfaces and it's been really exciting to see the types of things that people have been launching and building, both stylistically and also in terms of the UX and like fun stuff. been popping up. So I've been really excited to see those and interested to see in where that lands at the end of the competition, which is Sunday, I believe.
+
+**Boris Mann:** Yeah. Let's just let's just pause for a second. So this is a atproto native video streaming solution. that powered the conference last year, that powered the conference this year, that dumped 115 talks as now as video on demand that are served from the atmosphere on protocol. that are now being remixed with a frog interface. Right? Just one of many, just one of the and that and that a bunch of people are now like basically being like can we can we can we take on YouTube now? Which I think is like yes, let's do it. It's Paul, did you have this on your on your bingo card in twenty three.
+
+**Paul Frazee:** Actually, this goes in the category, the subcategory of things I was disastrously wrong about. Because and there are there are two of them in particular that I have on that list. The first is Bridgiefed like when Ryan first mentioned you know snarfed was like I'm gonna try that. I was like, ah it's not gonna work. Don't tell don't waste your time with that. And it totally worked. This is the other one, like when Eli first started, I was like, oh boy, you know, like that there's no way that like Streamplace gets to the level of kind of reliability that it would be useful. And now I'm like, this guy's yeah, yeah, it's great. It really works.
+
+And so yeah, I mean comment at YouTube, the challenge of course is solving the content problem in addition to all the technical work. And clearly we have seeded it sufficiently, you know, with all of our conference talks to win in the marketplace. But hey, I mean there's actually it's not a bad idea to just go after conference talks as a starting point. You need your niche, right?
+
+**Boris Mann:** I think there's lots here. JP was the head of the camera crew that that Eli brought in last year in Seattle. JP came back and did that again this year and he's you know I wouldn't actually even say like he's personally intrigued by all of our opera stuff and has been like involved with it all and has watched it all and he's like this looks like it's actually gonna work. So I think there's actually even there's other businesses here, right? What video crews around the world wanna deliver an option, right? And I think for me that's really exciting as an opportunity for other businesses to arrive, right? So in Europe, people are like, hey, we'd love to do str video streaming that doesn't have to be on an American tech provider.
+
+G great. You know, when does Eurosky set up a streamplace node that could fit right in and power a bunch more businesses? And businesses. Like I'm not I'm not saying side projects, I'm not saying like I'm like that's a business. You know, my hypothesis is that there's demand for that. How do we help JP and others like JP pick up approach tools and run great businesses.
+
+**Jim Ray:** And as folks are mentioning in the chat, the moderation of video, you know, each one of these gets successively harder. Text is one thing. You add photos, you add video. And it definitely kind of levels on. But I think that's another opportunity for community management, for we've obviously got kind of the layered stack when it comes to moderation, but also some opportunities for creating actual real sustainable businesses. So you know there's no reason that moderation as a service can't actually be something that that people spin up and create and charge for.
+
+**Ted Han:** And then that's go for it, Boris.
+
+**Boris Mann:** Go ahead. I'll I'll segue into proto protocol land afterwards. Go for it.
+
+**Ted Han:** Yeah, absolutely. I mean this is one of those things about what are the shapes of businesses that are going to come online in these spaces, right? Not all of them have to be UGC businesses, right? And that's what really one of the interesting things about creator-led spaces. If you think about something like Patreon, you think about dropout. tv, nebula, etc. right? Why can't we have more of these spaces accessible to people who want to be able to ensure the longevity of their creative platform. And there maybe some of the things that you have to moderate are comments and so forth. But that doesn't mean that you're having to do like video and image and image processing.
+
+And so I think that lots of different shapes here may fit in the coming years. W.
+
+**Boris Mann:** Two things I was gonna bring up. So one of the reasons that I'm looking at this very closely, so Eurosky ended up Eurosky live that happened last November in Berlin ended up posting their videos to Vimeo. Vimeo has now been bought by Bending Spoons, which is an Italian-based private equity. In shit of fire. Let's put it that. They bought they bought Evernote. They bought Meetup they've now bought Vimeo. I think the list might even be longer, but if we think about the usage and feelings around those things now it's like nope, we actually people would like other options, right? Vimeo itself was an alternative and it did a bunch of other things to YouTube of controlling your own video and you very quickly you're gonna be like well we can cross that off.
+
+Yeah. Segue to protocol, I think the other thing that happened specifically around video is some folks at Cisco put together a protocol over MOQ transport that I'll drop a link to and not go in super deep, but that's an example where folks have been seeing that like, oh, here's these next gen internet standards for video streaming and other stuff like that that fit really nicely with atproto. And so like Cisco put some time into working on that. Great. That's awesome. Other people are and by other people I mean one of the very large technology providers who do internet infrastructure stuff are like, hey, we should take a look at this.
+
+**Paul Frazee:** Oh, and I mean and that thing like Google open source and some Google Chrome folks were at the conference and very great chill people, very enthusiastic. Also see you know Cloudflare sponsored the parties, but Cloudflare taking it just like that. And then in their new CMS they integrated, you know, an MDASH is already some ad proto support. So some interesting trends in that direction too.
+
+**Boris Mann:** Yeah, I mean I think that's a reaction to the builder energy. Is that's what pays attention to folks is and it happens kind of slowly then quickly and a lot of things are just kind of clipping into place and being like, oh this looks like it's going somewhere. Man, I just want to pause for a second. We're only a year on from the first atmosphere conf, which already blew my mind. You know, I mean I basically said to Paul, Paul, Paul's hair was on fire, and I think I went down to Seattle. Maybe it was November 2024. I'm like, hey, I'm gonna do a conference. He's like, what? We don't have time. I'm like, don't worry about it.
+
+I'm just gonna literally do it on your doorstep and then you guys have to come. And we had a 180 people show up in person. And like the actual total that we should keep in mind, so there were we were sold out 350 plus, like at 350 was the catering limit, but we gave out more in person. And then with online, roughly we had a thousand people register.
+
+**Paul Frazee:** All right, three things I was disastrously wrong about.
+
+**Jim Ray:** Well, you know, I want to make sure we have plenty of time to talk about the conference, but I absolutely wanna sing the praises of both Boris and Ted here. Y'all did such a fantastic job of getting everything organized as the interface between what we were getting organized on our side of the Bluesky and what y'all were doing organizing getting the conference ready. I like I've worked a lot of conferences in my career doing developer relations, many of them with budgets that are in the eight and nine figures and nine, seven and eight figures. We'll go there. And like the level of organization that y'all brought to it, but also just the just the passion and seeing all the folks there, like every single person who was there both in person and online.
+
+wanted to be there, they brought their best. Y'all did such a good job of like making sure that we had we had too many people almost. Like I, you know, the big complaint was that like you know, it's the classic complaint when you go see a music festival or something. It's like every band you want to see is playing at the same time. And so you know, but we've got the videos on demand that everybody can go back. So I can't say enough great things about just the conference in general. It was also my first one of these, so I you know I got to meet everybody in the ecosystem. So many people that were just avatars are now real flesh and blood human beings for me.
+
+Super all of it.
+
+**Boris Mann:** Absolutely. I'm still processing. Seeing this outpouring, which is great, right? Like we did the hosting. I do want to say like this happened with Bluesky as a title sponsor, but not just as a title sponsor. But because, you know, post the conference last year you know, I'd been talking to the Bluesky team for a while and was saying, like, you know, put me in coach. There's a bunch of things I can do. It's gonna be more helpful if I'm outside the org. I'm not looking for a job. You know, I think we can do something on the on the like growing the ecosystem and community side. And I had all sorts of things. I actually was like the main thing that I ended up settling on really trying to push Paul into is I'm like Paul you know give me some funding so that I can make lexicon embeds happen.
+
+And he's like, oh yeah, yeah, yeah, no, no, we're not gonna do that. Can you please, you know, can we fund you? Can we support you in putting on the 2026 conference. Right. And we had some of those discussions at the conference as well of like we do have to have and we talked a little bit about building businesses and so on. I think that's the next turn that we're gonna have and do different ways. It's definitely something we would think about. And you know, so that enabled me to do a bunch of other things. We ended up forming the community fund, which itself had some money left over that let us pay it forward.
+
+Freer Feeds, as it was still called at the same time, came through with a really big grant that was specifically for IndieSky stuff and that specifically you know written into that was like make sure that folks who work on indie sky can get paid so in part some of that went to pay Ted to be able to do that work. We have more work to do to basically the community fund is super behind in talking about the stuff that we've done you know, we just kind of like went up on stage at the end of the conference and we're like, by the way, here's some grants we're giving out that we have not posted about or put freaking anywhere yet.
+
+That's how far behind we are. But I just want to like really say that like there's a bunch more people who put into that, but a bunch more people that volunteered, and really blown away by so many people who came up. And really took the time, right? I mean that's the big thing. This isn't a paid conference speaker thing. I think it'll come out. We did end up a big chunk of the budget was travel support. On purpose because we do think that meeting in person, Jim, as you said, the flesh and blood version of things is really important, right?
+
+**Jim Ray:** Absolutely. And you did mention lexicon embeds, and so now that's what the chat is just gonna want to talk about the rest of the time.
+
+**Paul Frazee:** That's funny because that's where my brain would do. That's everybody immediately just blocked out everything else that you said as they start to dwell.
+
+**Ted Han:** when he was like, hey, maybe we should put on a conference. I'm like, okay, but who are we gonna actually get there? So that is actually a thing I want to call out in terms of the sponsors that we got and the things that we were able to bring all of the speakers who said, hey, I could use some help getting to Vancouver. We were able to do that. And that's a really important thing in terms of the way that the community is structured and that we can actually bring people together and a thing that we're thinking about when it comes to where should people be meeting up? How can we get into a place together?
+
+Because ultimately this is like, yeah, you know, this was a community conference with volunteers helping to run things. The speakers were volunteering their times. This is a thing that we are doing together.
+
+**Jim Ray:** Yeah, absolutely. Great, great, great, great point. Before we do too much further on the conference or a couple other news items I wanted to get to. The first we announced it at the conference, but atproto is now an IETF working group. And so this is this is very exciting news for folks. Anyone who's well, I guess for folks who've never been through the standardization process, so the IETF is obviously they are the internet standards body, they're the ones who manage standards like HTTP and WebSockets and things that we use all the time. And so we submitted atproto to the ITF. It's been officially accepted as a working group, which is one of many steps in order to be accepted as a part of the standards body.
+
+Paul, you probably know more about this part of it than I do. But Brian and Daniel from the Atmosphere team have been spearheading that process. They've been doing an absolutely fantastic job. Daniel talked about it during his talk. And we're just we're super excited about it. And it's part of the commitment that we're making to make sure that the protocol outlives all the rest of us.
+
+**Paul Frazee:** Yeah. ITF is kind of like a nerd dream for me, actually. I couldn't kind of couldn't believe it when it even became a possibility. And like now that it's happened, I'm just so excited about that. And yeah, it's such a stable home is that the I mean like it's a great place for bringing in more people across the industry, but in particular it's I just it's very comforting to me to know that there's a place with that kind of a history.
+
+**Boris Mann:** I think it's definitely one of the things that not a lot of people know about still. Right? When we think about the growth of the tech industry generally and other things like that, I was involved with the IETF in the late 90s. When I worked for a Cisco competitor in Canada called Nortel and worked on early voiceover IP standards. And so I was like one of the like younger people in the room then. The sad part is I'm still one of the younger people in the room when I go to ITF. So that's something the ITF is thinking about. The main thing for people to know is that everyone participates in the ITF as individuals and it is a bottoms up org as opposed to other things that are more consortia and you have various companies.
+
+Now, I'm not hand waving over the part where like literally people get paid to work at companies. to do that and actually the ticket fees are very high and then some other things like that. But it is a bottoms-up org that I think like meshes very well and it might be something that we work with the ITF and be like, would you like more people getting involved we have a large community of enthusiastic builders that you might draw in. So that's something in that that I have in mind.
+
+**Ted Han:** And there's probably a lot to learn both back and forth around this too, which is like what is the purpose of the standardization process and what parts of that proto are actually being standardized? Because some of this is not like all of the infrastructure that underlies atproto is gonna get standardized and then like set in stone, then anybody can build on it. And because one of the things I really like about the atmosphere and the atproto ecosystem is the permissionless nature, right? People are building and trying lots of things. And some of that requires having really stable core, but that doesn't mean that like everything is going to get shoved into standard cut.
+
+**Paul Frazee:** Yeah. To expand on it even more, the like the lexicons are not in scope at the moment of like what the IETF governs. There is some discussion that I don't read too much into this, but like perhaps maybe some of the com. add proto schemas ought to be pulled into the core standard and taken out of the NSID system. But beyond that, there it isn't doing the lexicon governance and I suppose that's my way of speaking and bringing it back to the lexicon embeds to say that like I do think that there is space for some kind of a community like an atmosphere community for like us, this community to be building up and designing processes around that actually the real trigger for that for me was seeing standard site and just seeing like, you know, there's a real opportunity to have some kind of a thing that those groups like the standard side crew, which was Leaflet, Pocket, and Offprint, getting together.
+
+Having something that they can feel safe within. It's not trying to steer what they're doing. It's enabling them to do it, but also know that there's perhaps something that could come in if there's ever a dispute. or if it ever goes like becomes unmaintained, that there could be something to maintain a continuity or to resolve the disputes, which for something like standard site could actually become quite important. as we're starting to see that get adopted more widely.
+
+**Ted Han:** Yeah, and you know, I think the pattern here, and what's exciting is having some core stuff in the IETF. the sort of permissionless picture and then you know these are all places that people can get involved from the fund foundational layer on up through all of the other pieces. Right. Like having the core technology where you can do permissionless building is great. But ultimately, this like we're all in this together, even when we're like competing. So having places where we can convene and talk about these things end up being really critical.
+
+**Boris Mann:** Yeah, I think definitely that's one of the things that that that came out is even just talking about the community fund, which is fiscally hosted. By the RAF Foundation in the US, you know, ultimately we are an entity that can like sign up for conferences and other stuff like that. Modal Foundation now exists. And the way that I've been thinking about it is sort of a governance layering. So first of all, the ITF is going to take its path. It's going to take a while. And all of the new stuff that the community on will mostly not be ITF stuff. It'll be the next new thing. So what does it look like to come together with things like standard site at like different layers basically.
+
+And one of those are things are gonna be like I need a bank account, I need an entity, that can collaborate with Fig's house as being a major like node in the in the in the network had some really good discussions about this. I've been on record as against the single foundation model. I'm still against the single foundation model. But I think there's interested in from some the conference day five and day six happened by the way. So people stayed longer and hung out at the co-working space that I'm in Vancouver called Z Space and we're having some early discussions. We're gonna do a call for participation about maybe putting together an atmosphere community co-op.
+
+As a structure that both individuals and organizations can join. Again, nothing set in stone. What does that look like exact exactly? complicated, but basically that there are some more stable entities that can do some sort sorts of things like that. Less governance, but more like you have to touch the rest of the world of someone has to own domain names and servers and stuff like that, right? Fun stuff.
+
+**Paul Frazee:** Well I mean it's important, you know, like just having something to like I said, like from my perspective, looking at it just like a backstop to enable people to take these risks and move quickly with each other, but then know that there's something that's gonna make sure you know provide stability behind it. Feels like the sweet spot in my in my mind. Yeah.
+
+**Boris Mann:** Yeah.
+
+**Jim Ray:** And somewhat related, we are putting together, you know, we're all of these different foundational pieces so the IETF standardization, but then also you know the PLC board. So the PLC is obviously a hot topic of conversation and so adding some governance to that that goes beyond just Bluesky. And so all of these pieces are starting to come into place so that the decentralization becomes a much more real thing and not just a theoretical thing.
+
+**Boris Mann:** Yep.
+
+**Paul Frazee:** Yeah. No, and the PLC news was good too.
+
+**Boris Mann:** oh actually I had a question which is maybe so th so there's we've got we've got Bluesky PBC, we've got the PLC directory board in Switzerland. Swiss ass, I think is how it's shortened. Association. Yeah, right. Daniel revealed on stage the vast tendrils of the Bluesky org tree, which is him and Brian being on protocol. I've heard that there is an atmosphere team. Who is on the atmosphere team?
+
+**Jim Ray:** Well, so yeah, Bluesky the company, there are dozens of us. And for the atmosphere team, literally. And so the atmosphere team is so Paul is officially unofficial on the team. So CTO, he's you know kind of up there. And then but we have Matou, Brian, Daniel, Divey, David Buchanan, aka Retroid, David, we I as far as I know, we hired him at the last conference, right? It.
+
+**Paul Frazee:** was around then. Yeah.
+
+**Jim Ray:** Yeah, yeah, yeah. And then and then myself and Alex on the Deborah side. And I think that's it. Yeah, I think that is the answer team. Yeah, yeah. We're it's funny. We're offici we're officially unofficially we're the team that is that cares about everything that is not the app, right? And so like, you know, we're obviously we care about the app too, you know, a lot of the features that go into that, but like our kind of broad remit is making sure that the atmosphere itself grows and flourishes.
+
+**Boris Mann:** Awesome. Yeah, yeah. It was it's it was just one of those interesting things that that kind of came out at the conference and then everyone's like, okay, but like who else are these other people? So it's again, it's not like you're publishing your org chart or something like that, but it's exactly the kind of thing that people are like, who's on that team?
+
+**Jim Ray:** And we were all there. Everybody in the atmosphere was at the conference too.
+
+**Ted Han:** Yeah, actually I'm super curious about who all Bluesky had come to the conference and also like why. It wasn't just the atmosphere team, right?
+
+**Paul Frazee:** No, it was what, about half the company?
+
+**Jim Ray:** Yeah, it was about half the company. I was actually really proud and really happy at the ways we showed up. So Jim Calabro, he you might have seen his post that went around today talking about we had a bit of a blip earlier this week, but Jim presented all about kind of building and managing the infrastructure. And so Jim works on what we call the platform team. We had our entire legal team. Both of them were there. We had our comms team there. So we had the executive team there. So it was a really good cross-section of folks. And the thing that I was excited about, one, obviously great for people in the ecosystem to get to meet folks at Bluesky, but it's also really great.
+
+And Paul, I know you and Rose were really excited about this. It was really great to get people at Bluesky out to meet all of you because everybody came back so excited. And so energized. And you know, that was some of the feedback that we got from the last conference. And so, you know, we set it as kind of an internal mission to say anybody who wants to go to the conference can come. We'll take care of your travel, all of that. And because, you know, it was all about building that energy and excitement even within the company too. Yeah.
+
+**Paul Frazee:** Yeah. Yeah, Tony also gave a talk, who's our interrupt CEO and it's a it's a worthwhile talk actually. He was sharing kind of what he was thinking about talking about with me prior to it and I was like I would listen to that even if you weren't my boss it's actually pretty good. So you know it's real. You know, that's a that's a genuine feeling. The his history in the WordPress organization and that history that they went through of a very similar adoption curve of a somewhat, you know, you really gotta turn the pages of your brain back to the time when blogging was not a considered to be a thing really, like all the journalism industry was looking down on it and it was it was kind of like probably around the era where people were saying that Wikipedia shouldn't be trusted, right?
+
+Like blogging was not a thing and they were out there trying to sing the praises of it. And then and doing it in an open ecosystem. And they found not just a story of getting into becoming something which was widely adopted. But also finding the business model for a company that is anchored on something that is fundamentally open. And that's what he talks about. And it's I very much like hearing the story of somebody that's been through it before because it's becomes it helps contextualize where on that map we are. And I like trying to think of it in terms of inevitability, not you know, not a struggle.
+
+**Boris Mann:** Yeah, I think that I think that's a really good point, right? Like so in some ways a there are questions about slower or faster acceleration, let's be really like what is the like shape of the curve? I'm definitely looking at the at the curves. And even just thinking back so that time when that was first SaaS hosting, you know, Amazon S3 only launched in 2006, just as the very first service to put it in context. And the kind of open source was the precursor to that that made servers cheaper and everything else like that. And then you know it was trucking along at a certain pace. And then mobile came along. and made the curve much steeper.
+
+I'm looking at things like appro and open distribution and then I'm looking at whatever the heck is going to happen with AI as the equivalent of mobile, basically, that that are the two curve curves that are overlapping and seeing how they interact, basically. And you know, there I think there's some secondary curves around encryption. Encryption Breaking. That might be news from the last week that is thing of that maybe we need to move to quantum encryption sooner rather than later. And I think of my own journey of the last ten years from 2016 to 2026 of waiting to have better crypto in browsers and PASKIS and stuff like that, and then being like, oh shit, here we go again right.
+
+But I think it's very, very interesting to think of it in terms of curves and how they overlap, right? So we know that there will be more businesses. We know that right now, as far as I know, there are only two consultancies, so as in more than one person with an entity who say that they do can be hired to do app pearl work and that's Haifa co-op. And drumroll, they're both worker-owned co-ops, which is super interesting and different than last time around. So Haifa Co-op in Toronto. They've got folks everywhere, but they've got server space there. And then Lime Leaf Co-op in the US. And likely if this thing works out, we think it will, right?
+
+So more shape of curve, as you said, inevitably, there will be more co-ops. Some of them will be from inside the community, some will see that there's opportunity coming from outside, how do we tune them in with the community and norms that we have, right? So all of that is ahead. Oh, I'm gonna Paul, this is really great. I'm gonna change my it is ahead. When and how quickly are the main things to think about?
+
+**Paul Frazee:** Yeah.
+
+**Ted Han:** And you know, I'll just call this thing out, which is that I talk with people who have already built apps and are thinking about how, you know, they're maybe approcurious. And I talked with one founder, I'm like, have you ever thought about running a PDS? And got through the conversation and they were like Well, you were much more convincing than the internet randos, and I'm like, hey man, I'm not here to convince you of anything. I'm here to remove the roadblocks for you to convince yourself. And that's kind of the phase that we need to get through with the technology, which is other people need to look at this and be like, that's the right decision for me.
+
+And how do we get to that place?
+
+**Paul Frazee:** Nice. Boris, you tapped on a lot of juicy topics there. We'll just say regarding the information security apocalypse that got laid on everybody's feet over the course of this week.
+
+**Ted Han:** Which.
+
+**Paul Frazee:** one? Yeah. I you know what was killing me about that is that both the like AI that can break systems and quantum computing have been described as maybe those are the nuclear moments for software engineering and they both kind of became a thing at the same time why not? Of course they would. Anyway, the I will say that the atmosphere team of Bluesky is paying attention to the cryptography. story and that is getting picked up on the roadmap. I'm gonna say after permission spaces is probably the sequencing on that. But we've actually been in touch with Flipo for a little bit and getting some good advice on that. And so it's Philippo is something that's being picked up.
+
+Yes.
+
+**Ted Han:** Yeah.
+
+**Jim Ray:** With amazing things.
+
+**Ted Han:** Y'all should explain who Philippo is as well, because like it's great that he is interested in this space because of not only his credentials but the things that he's built and that he cares about going forward too.
+
+**Paul Frazee:** It is great that that he's in the space. Filippo has been working on transparency logs as kind of the biggest claim to fame that I'm aware of, which was he involved in circuit certificate transparency in the original form? I yeah, okay. So the certificate transparency is one of my favorite, or just transparency logs is one of my favorite technologies. It's a way of creating auditable logs for state transitions inside of a system. to the events that have come out of the log and then see do they match or not. So you can kind of audit from externally. There are particularities of the construction of the log that make it possible to do that. This has been used in SSL or TLS.
+
+The all the certificates now go on these transparency logs so that people can watch the issuances of transparency logs. And in theory, you could see like, oh that's interesting. They just issued a certificate for my domain that I didn't ask for. So somebody has compromised us. I believe I don't know if revocations are done on the CT logs. I can't recall now. They might be. Anyway, revocations are a whole bucket.
+
+**Ted Han:** Right. So generations are generally not a thing. The industry has moved towards just letting certificates expire and making them shorter and shorter.
+
+**Paul Frazee:** Anyway, so Filippo has been generalizing transparency logs for other use cases through something called sunlight, I think it is. And I believe also Flippo has been involved in Google Golang's crypto implementations. Yeah.
+
+**Ted Han:** He's standard.
+
+**Boris Mann:** leverage. Yeah.
+
+**Paul Frazee:** Yeah. Okay. So you know, some good creds to say the least. And yeah, just has been it's been funny actually, he's been sort of privately warning us about his take on the post-quantum thing we're going, oh yeah, okay, interesting that he posted that. And we kind of see the other recommendations come along and went, oh yeah, okay. Sounds like he was right.
+
+**Ted Han:** Yeah. Yeah, and this is one of the things that oh sorry, go for it, Boris.
+
+**Boris Mann:** I was just gonna say Paul, you're not disastrously wrong. On this one. You're ahead of the game.
+
+**Paul Frazee:** One point, three points. We'll get the tally going.
+
+**Ted Han:** Yeah.
+
+**Paul Frazee:** Yeah, for anybody that's just like not totally caught up on this, it's just a it's a number like it's a game of risks. And there was some back and forth about like, well, you know, they just because the possibility got more likely doesn't mean that you necessarily have to buy 2029. And I don't know. My position is if both Google and Cloudflare have smart people out there saying, yeah, we think 2029 is the smart play. Then that's I'm gonna go with their calls on this. And the problem as I understand it is that you don't get any warning really. What recently got proved is that the difficulty level of achieving these cryptography breaks is lower than was expected.
+
+I don't know if they made any advancements necessarily recently in actually achieving kind of like scaling up the quantum computers, but realizing that the target is lower was sufficient for them to get worried. And that makes a lot of sense because if somebody figures it out, then you're right there and you don't want to be late.
+
+**Ted Han:** Yeah, well, one of the other things to think about here is the ecosystem piece to this. If you have other people running your gear. How long is it going to take them actually to pick that up and get to a point where they too are also safe? And so how far ahead of the curve do you need to be in order to sort of ensure that people don't get popped?
+
+**Boris Mann:** I think there's a really interesting thing here where a lot of people complain at how complex the many different pieces of atproto R. For starters I would say that distributed systems are complicated. And if you've been living in a single server Lamp stack world, literally anything else will ex seem extremely weird. And there are various distributed systems jokes like you know oh we'll just put a timestamp on something and then everyone who knows distributions laughs and goes, you can't trust a clock. You wouldn't trust a clock. And that's just the tip of the iceberg when you start going down to cryptography and content addressing and so on, right? And then people who have now gone through that a little bit because of approval right, like let's put it this way, like people aren't jumping to do this as a bundle of things by themselves and now going down the slope of learning a bunch of those things and then going like, oh, here are the some new building blocks.
+
+that I have that I can do things, right? I can actually segue back to AI for this and generally using like coding assistant tools. I've watched a number of people, Mini Morbius is one of them. And active working on a bunch of different really interesting things, building tools mostly for themselves. And at one point and using Bluesky and mo mostly just Bluesky the app as a Twitter replacement kind of like that and then making the transition to actually being like oh wait Dan Abernoff social file system. There's a file system in here. Can I plug it into my own stuff? Oh, this works for me, but because the way it's built I can now just let anyone log into it and I don't have to host the data and that's gonna keep happening as people realize the building blocks that we do have.
+
+And I think that segues all the way into new crop of builders. Commercial hosting and cloud providers starting to react to how do we make our systems fit well into those sorts of different patterns, right? And that's another one of those curves that I see happening of like slowly then quickly of like, oh great. I don't, you know, just like GitHub pages before it, here's an active account with auth and storage built in that can just be plugged in anywhere. Exciting.
+
+**Paul Frazee:** Yeah, regarding the AI stuff, so I'll try to pull it back and not get into that. But regarding the complexity story, I do think one of the interesting things is abstraction levels have to kind of move up to get to a point of comfort. It I won't say that the system is, you know, yes, complexity comes with a decentralized and open network, and to some degree that does get surfaced. in a way that is just necessary. The only open other choice would be to underspecify in my opinion. But there's also because we're having to communicate like every kind of the just design decisions to a lot of protocol engineers at the same time that we're trying to speak to application engineers, we sometimes explain too much of the wrong thing.
+
+Like the nobody almost nobody in the world needs to understand what a Merkle search tree is. They just don't. It's kind of I have made this point on Maine. Like it's like explaining SQLite by describing a B tree to them, you know and it's like, do they need to know that? No. It's a database you can write you what you need to understand is SQL and the tables and stuff like that, not the B tree mechanics. Unless you're you know doing some kind of more under the hood or like really fine-tuning the performance and stuff like that. So I'm I do think that the stack is gonna mature more and more. We're gonna see more services like what fig has been doing.
+
+Eventually getting to the point where that perceived complexity flips, I believe. And in particular, I think that things like Lexicon will end up being a really nice advantage. In the AI coding world because we could be specify so much that that will help the agents make better decisions and make coding even easier, truthfully.
+
+**Boris Mann:** Yeah, I think I think the these are segueing in a lot of different directions, right? So Gershta did an experiment last year called GroundMist, GroundMist. xyz, of using lexicons to connect offline local first using auto merge which is created by my other job at Inc and Switch and showing that if we use lexicons as a common data structure you could work on it offline, local first, peer-to-peer, and then you could also publish it. Continue to edit it and things like that, right? And I think ultimately having similar data shapes. Oh, I mean pan proto is the other thing that we should at least we shouldn't dig into, but basically drop as something for people to look at that Blaine ended up figuring out.
+
+I forget the name of the other person that he worked with of basically being able to translate I'm just gonna say anything to anything which is one of those really hard problems or that you have to do integrations one at a time and you know, as of like last week, we're like, no, don't even worry about what flavor the data is. We can just shuffle it back and forth.
+
+**Ted Han:** Yeah. Aaron Stephen White is the collaborator from University of Rochester. And yeah, I mean, you know, Jim, you tell me whether we want to get to other things before or not. But you know, I've been thinking back on what my sort of like takeaways and like highlight, you know, what were my themes out of the conference last year? And this was one of the ones that I didn't expect, which was the shape of data and its accessibility in terms of translating things in and out of lexicons was one of the ones that surprised me. I had sort of and I don't know if it's worth kind of calling out, like my philosophy around which talks we really wanted to see at Atmosphere Compare they should ideally have three qualities, one of which is they should provide a vision for the future, they should be actionable, and they should be participatory.
+
+And you know, maybe they don't hit all three, but they should have like two of the three of those because what you really want is to say this is a space that we are both actively building in and that we can build together. And things like Pan Proto blew my mind from having talked with Blaine about this stuff for years. And then also just seeing this like suddenly take root in the space and being like, holy shit, this is like this is like technology from the future that has just dropped into our laps where you know, you could say we have structured data, but like data cleaning is the hardest and gnarliest part of literally any project.
+
+And now we just have tools to be able to translate between different shapes arbitrarily. The capability, I like I haven't actually fully processed all of the directions that we could take that. It's such a big surface area for us to be able to explore. And once you've got that, right, you're actually more limited by how can you conceive of the interfaces for the data more than it is like, you know, creating data pipelines and having to munge stuff through.
+
+**Paul Frazee:** Yeah my perception was that it attacked two different surfaces. One was kind of a universal schema system, so it could handle like structs, it could handle database tables, it can handle lexicon, and then on top of that, achieving the lensing. of like migrations between, which is ambitious. I wouldn't have gone after both. It was quite funny as you know I spent I was the person that put lexicon together and there were earlier iterations that were already F-based. And if I think if we had had another year of time for me to work, it would have stayed RDF based but there was so much that I had to get through that it was like I'm not getting enough here.
+
+I would love to be a supportive of RDF so then sitting down a patent proto and saying it's a graph was a funny moment.
+
+**Ted Han:** Sure.
+
+**Boris Mann:** We should we should definitely cover a couple of other things I which I think actually goes in the news category really well but comes out of the conference. So Ted and I and Jim have been talking about we're gonna collab on a post on appHero. com with a few things coming out of the conference. So bringing one of those things up live is regional meetups, y'all. I'm on a call with Paul, so I'm now saying y'all. Anyway. So at Protodoc Camp is literally already scale stale. I think there's eleven on there and I think atproto dot to at prototo is the Toronto version that's happening. Two regional meetups already happened. Portland and Boston. So Tynan, who's in Boston, put together a little on conference session at the conference.
+
+And so now there's this blooming of a bunch of things that people are super excited to like take back to their home region, which is really exciting to see. Thoughts, feelings, opinions on regionals?
+
+**Jim Ray:** I love it. If yeah, I was I was mentioning there's a there's an atproto nyc meetup and I was mentioning on Maine the other day that you know with a little bit of head up you know, I like we've got folks that can very easily get to New York City. We had there was an ad proto LA meetup right before the conference. Devrell Alex attended that one. So we're happy to support these in any way that we can, but also just like I could not be happier to see them flourishing and seeing folks take the rain there. And I imagine you.
+
+**Ted Han:** do.
+
+**Jim Ray:** are excited about that as well.
+
+**Ted Han:** Let me put you on the spot there, Jim. I know in the past Bluesky had a pizza fund. Are y'all still doing a pizza fund?
+
+**Jim Ray:** I you know what? If there is pizza that can be purchased, we've probably got a budget for that. So get at me.
+
+**Ted Han:** Yeah, awesome. Yeah, th this is one of those things that atproto the Bay Area atproto group has met up a couple of times. We've been switching back and forth between sides of the Bay Bridge and are probably gonna continue to do that. But it's been really exciting seeing other folks pop up. Partly also because there are other events that are showing up in various regions. Boris shouted out Vienna and then also San Francisco for IETF, but if there are other events where they're atproto-related or adjacent topics, it's worth having people around to be able to coalesce and like show up and represent.
+
+**Boris Mann:** Yeah, I think so this is probably another good segue is so at the beginning of the year kind of put together you know what are some 2026 events. I'll drop them in the stream. And a bunch of those are already like happening. There's more coming. They grow all the time. There will be atproto content at localfirstconf, localfirstconf. com in July in Berlin. That's adjacent to DWebcamp. in Berlin that will also have atproto content in different ways. I think one of the things that I floated is that the atmosphereconf. org you know atproto native website it was an amazing example of the community building together. And we don't have to stop. So as an example, I'd love to take the archive of talks from last year.
+
+So we have all of the videos for both Atmosphere Comp in Seattle and Ahoy. We could bring those onto the website in now that we have a bit of a format for that and actually have all that that video and all the content there. I think a no-brainer is like basically all of the community lexicon events calendar folks. Like it just happened with no peer coordination, everybody adopted the same lexicon, and then for the conference we kind of like shoved some extra data. in there, it might be useful to start being like, oh, we should actually go back to the Lexicon community and settle on a couple of extensions to that or a pattern for conferences and shared calendars so I think that's one of the things we can do for the locals for sure, is having an upcoming events page on atmospherecomp.
+
+org. That that is a place that you can come together. You know, lots of other things to figure out all of the things that are classically related to groups. Maybe we can actually tag Brittany Ellick and use her groups work and use that to make an actually atproto calendar events org or something like that. But I'm excited that we both have a momentum, we have real need and we have real use cases. And shout out to Flo FlowBit in Berlin and I don't know what your name is because I haven't met you in person. Gersha who did a bunch of work on atmospherecomp. org and around events so I like we can keep going just like the VOD jam next up is like shared calendar jam so stoked.
+
+**Paul Frazee:** Love that.
+
+**Ted Han:** Yeah, and you know, shout out Nick Jarkinis as well for Smoke Signal and also for Lexicon community, which are sort of the foundational pieces here. that have allowed us to actually build out the rest of the pieces. And you know it's it's important to remember that like the whole point of Lexicon community is to be able to start to iterate on these things. And now that we've got all of the layers coordinating, we can actually start to iterate on this and try out these processes, like we're talking about with IETF. And then additional structures on top of this that we want to drive. So I'm really excited about all of that.
+
+**Jim Ray:** We're a couple minutes over, so but you know things are going great here. Anything else from the conference, any other follow-ups from the conference that you, Boris, or Ted, want to make sure that folks that are tuning in are aware of? Anything that to watch out for the.
+
+**Boris Mann:** Yeah so we still have various wrap ups to do Luca who is our conference producer on the ground has done an inventory of t-shirts and stickers. Anyone remote who bought a t-shirt, we're gonna get those packed up. And with a bunch of extra stickers, maybe even extra t-shirts. There were a couple Jim of the atmosphere conf ones left over not that many actually I know that Ted I think has done a amazing. Ted has done a draft of a feedback form. So as I said we've got about a thousand people to email as well as emailing everybody who registered, we'll also put a little bit of a wrap-out. We've already said, you know, please add stuff to Semble, lots of different ways to give us feedback.
+
+And we'd love to hear like literally anything. Good, bad, ugly, all the above, always room for improvement. And let's see what we do next altogether.
+
+**Paul Frazee:** I want to give a couple of talk shout-outs. Dan Abramov's inlay talk, very cool to see. If you want to hear some of the details of how we maintain our data plane, check out Jim Calabros talk. That one is actually pretty valuable. And then I didn't get to see their talk, but Miss Boba I got to ch talk to and I think she pronoun prefer for pronoun has been doing just like awesome stuff with community and I think I'm sure that she talked about that in her talk and definitely somebody that I would recommend to hear what she's up to because it's pretty inspired stuff.
+
+**Ted Han:** Yeah and actually on that front like I didn't get to see most of the talks. But that's true for actually most people. Like we should straight up just have watch parties. Like if somebody wants to put together a lexicon or like we could use the events lexicon around like doing watch parties together. Like we should do that.
+
+**Paul Frazee:** You know what? Meetups are so easy to run. You just pick up one of the VODs, maybe two, put it on. You know, you don't even need to organize speakers. Just use the.
+
+**Boris Mann:** I think that's a great idea or s almost like book club where like hey this meetup you know watch these three and then we can get together and talk about it live. or something like that, right? Yeah, I think there's a bunch more there about kind of get people who wanna talk about App Pro out into other communities. That's the two modes. That's us gathering together and kind of like hyper focusing on and here's what's comes next and the other part is to like dial it down a couple of notches and be like here's what we worked on six months ago that we can go out into other related communities who are asking to hear about this stuff.
+
+So Oradev in as an example of the lead of the architecture track. put out a post and said, hey, we'd love to have C of P submissions around Aper architectures. Yes. Yeah.
+
+**Jim Ray:** Yeah, yeah. Eli's in the stream say we've got forty-six hours of VODs. We could do one a week and that would pretty much take us until the next conference. So.
+
+**Paul Frazee:** my God.
+
+**Jim Ray:** Amazing. Boris is I cannot thank you both enough. Thanks for coming on. Thanks for all of the organization. And I'll just pre-thank you for all the work that I know is gonna go into this next year. And really, really appreciate it. Pleasure to work with you both. Looking forward to doing some more. And thanks for everything. Really, really thank you so much.
+
+**Boris Mann:** Absolutely. Happy to do it and yeah, again, thanks for supporting us and so happy to be part of this super energized community.
+
+**Ted Han:** Yeah, as I've been telling everybody, the fact that we had all these talks were not my was not my fault. It's all y'all's fault. So thank you for all showing up and being amazing, genuinely. So very happy to get to be in community with everybody.
+
+**Jim Ray:** Amazing. All right. Thanks y'all.
+
+**Paul Frazee:** All right. Have a good weekend, everybody.
+
+**Ted Han:** Yeah. Cheers.

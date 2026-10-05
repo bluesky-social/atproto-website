@@ -1,1 +1,377 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Hello and welcome to Off Protocol, a show about building a better internet. I'm Jim Ray, your host, and part of the developer relations team at Bluesky, where we are working to build that better internet with the AT Protocol. My guest today is Eve Osman, a prolific contributor to the atproto ecosystem, notably in helping to build the North Sky Cooperative. In our conversation, we talk about the motivations that went into creating North Sky and also her other projects like the delightful Twinkle Bluesky client, her contributions to the upcoming permission spaces feature. and her new software consultancy for building community technology, Escalae. I thoroughly appreciate her perspective on building for the atmosphere and recovering the fun of a bygone internet.
+
+I hope you enjoy my conversation with Eve Osman Eve Osman, welcome to Off Protocol. It's so lovely to have you here.
+
+**Eve Osman:** Thank you, Jim. I'm really happy to also be here. I've been it's been a while since we last spoke, so it's great to get in touch again.
+
+**Jim Ray:** Absolutely. We got to meet in person at the atmosphere conference where I got to meet so many folks in the ecosystem. And that was but that's been several months now. So I'm really excited to hear what you've been up to, but before we get into all of your various mini projects, I would love it if you could introduce yourself in your own words to our audience here.
+
+**Eve Osman:** Yeah, so I as I kind of tend to tell people, I've been in tech for too long, as how I kind of describe it. So as I kind of describe people like I kind of like group in America, went to college, and then I had to kind of work to pay for college at the same time. So by the time I finished by a degree, I was actually already working in the career. So that's kinda always how I say I've been for tech for salon because it's just been since the very beginning, in a way and I really kind of worked across a lot of different industries. So things like automotive, insurance, online listings, also automotive, and then energy trade.
+
+It's like real-time data streaming data analytics, it kind of goes all over the place. And then I kind of landed here in the atproto space. Where I've just kind of been doing a lot of a lot of work and I never really thought I'd be doing. If I looked if I looked at myself in like three years in the past, I wouldn't expect myself to be here.
+
+**Jim Ray:** So what was it that kind of initially attracted you to atproto that's you know that career trajectory? I think a lot of folks have sort of similar ideas. I love the idea of going from energy trading to online listings and now you're working in the appro space. So what was it about the protocol that attracted you and decided to get you building?
+
+**Eve Osman:** So I would say so actually I joined Bluesky may 2023 with an invite. And it was like, I got I got the invite, I signed up for an account, I log in, and the first thing I see is basically a bunch of sex weaker, sex workers, and trans people. like posting pictures of their butts and complimenting each other.
+
+**Jim Ray:** I think that was a pretty common experience back in the day.
+
+**Eve Osman:** Yeah, and I was like, this is amazing. And then it was just like seeing how everything sort of evolved from there and just how like accessible the Bluesky team was. But then also kind of like seeing like all the different hurdles, you know, like the lot of issues. Like I talk about a lot about when I'm referring to like in the North Sky capacity about like the issues that there were. But the one thing I really kind of the signaled it was like a positive signal to me was sort of like this whole concept around data portability and decentralization. I was actually Mastodon before that. And with Mastodon, you know, it was like I kept like being on a server and then the admins are like, we can't afford it, or you know what, we don't like this anymore.
+
+And I'm like, great, I gotta find a new space. And that wasn't really the case here. So I kind of like started to like look closer, what we could do in the protocol. Tried one venture to start a platform with some other people. It didn't really quite work out. And then and then that's really kind of when we started to see the issues in America, like you know, like the queer community and blue scan protocol, it wasn't so much like a, oh crap, we have to leave we have to leave Bluesky for a new platform. It was a actually we can just start building on the protocol. And just stay on it. And that was kind of like what kind of was really, really interesting to me.
+
+**Jim Ray:** I think that you are certainly most well known for your work with North Sky. And I would love to get your perspective on some of the origins of North Sky. You were talking a little bit about there, this idea that you could just kind of build out your own network, but would love to know a little bit more about how North Sky came to be and how you got involved.
+
+**Eve Osman:** There is no like beautiful motivational story about how I got involved. It was really one person messages me on Discord with an invite link and I was like, okay, what is this? And they're like, join, because we're trying to figure things out. I'm like, okay, so I joined it and there was a whole conversation happening. Because it essentially what it was is that Trump had just been re-elected. And then we saw a huge, you know, migration from Twitter and elsewhere to Bluesky. And with that, we saw like a huge jump in hate speech against LGBT plus people, particularly trans people in America. And then Bluesky's moderation was very slow to act. So like, okay, we need to actually do something about this because we can't just you know, have to suffer through every wave of migration, every spike and things, and Bluesky kind of like suspends trans people.
+
+just straight people alike, without really having much context of what the actual damage they're doing. And so Unfortunately at the time I also just started a job as a head of. So I was kind of like in the Discord and I joined a couple of meetings. I was like, guys, I'm too busy right now. Sorry, I can't help. But I sort of kept the top kept aware of the awareness of it. And then when I was able to participate, I joined a session. And the thing is that At the time, what North Sky was doing was, hey, people have created labelers before, you know, so we can use that to see things. But there's never much governance.
+
+around the labeler, how it's managed or who's behind it. So the thing that I loved is that actually at the time we were kind of discussing like let's actually start most guy with the proper like a real structure. Where it's not operated, that's not just one person in charge of it. It's actually more of like a group. So that's what we kind of settled on. Let's actually create a cooperative. And then that's when I was like there. I was like, oh, you know, like I've been like I'm very corp pilled. So I know how to do like mission strategy workshops. And then I was given five minutes to prepare one. So that actually was where we kind of like we did like an hour dive through, frame what we're actually trying to do, what our vision is.
+
+And then that kind of started to like build the shape that became North Sky that it is today.
+
+**Jim Ray:** And where do things stand with North Sky today? So that's a little bit of the history. And so how has that how have things changed since that time? It's been, you know, almost two years, I think, since those early foundational times. How are things situated right now?
+
+**Eve Osman:** Yeah. So what I see is so when North Sky first started, there was nobody running really any real infrastructure.
+
+**Jim Ray:** Right. This was before Black Sky and before Eurosky and some of the other kind of bigger infrastructure projects, right?
+
+**Eve Osman:** Yeah, so like Box Sky was effectively just a feed with a moderation layer and like the membership and everything. And then as we and at the time it basically everybody was trying to figure out, okay, how do we know we have a PDS. And we know this is there's these like these the protocol allows data portability. So like and that's actually one of the first things we did was like kind of sit down and like, let's actually figure out what it means to have a migrator. How does that work? And that took us like six months. To get working properly. And then when we finished ours, you know, PDS mover had just like just started operating like a month or beforehand.
+
+So actually Bailey even kind of like helped us fix some bugs we're encountering because he kind of me was learning the lessons behind it. And then Black Sky came out with theirs. Then a couple months later, Eurosky came out with theirs. So it's kind of incredible. It's like, it's basically like three migrators all launched within a few months of a few months of each other. At the same time, all these communities launched their PDS and so sort of like early on it was very much like, let's just start with getting this tech. Let's actually have at least have like the data sovereignty of saying, hey, you're in Canada, your data is safe in Canada. And now is where for the last like four or five months we've invested very heavily in trust and safety.
+
+And now we've kind of gotten to the point where, you know, we took our labeler from like this alpha mode, so it's actually rolled out and fully functional, working with Black Sky to use Acorn, which actually makes things so much easier to moderate. And actually we see we actually see now is like, you know, we always see like reports come in constantly every day. And we're very quickly reacting to them and processing them. We know exactly what we're doing behind it. So I'd say now we have like a fair a fairly mature moderation process. And so that's kind of where like North Sky today is very much like, you know, we know what it means to actually kind of protect the community and moderate the content and make us reported to us.
+
+And so then really What I see is our tech strategy is much more mature than last year. We're kind of like just like just started to figure it out. We have this very high-level phase one, phase two, phase three, and beyond. But now I think we have real confidence around how we're doing it.
+
+**Jim Ray:** I love that idea of all of these things kind of emerging simultaneously. Talk a little bit about that time because it seemed like it was a pretty heady time. I know it you know it wasn't that long ago and it was it feels like it was a pretty compressed time, but it seemed like it was a small group of people, folks were communicating back and forth between each other. What was that? I mean it seemed like it wasn't really competitive so much as it was how was that were y'all mostly just mission aligned and saying hey you know this these are the tools that we need in order to make sure that our communities are able to thrive in ways that we want to.
+
+**Eve Osman:** Yeah. I'd say we definitely was very much aligned. Because we did kind of like be like, okay, like VDS migrator labeler. Okay. And then we kept saying like app view, big question mark. So it was basically where back in October, I think it was, I just sat down and just spent two weeks figuring out what it means to do a full a full stack. So to think I'm doing quotes right now. You know, like running everything. And I think this is when people started to get to know me because I was just rage posting. the whole time. That's what I say. Like I'm well known because I just rage post when I'm figuring things out.
+
+I'd like.
+
+**Jim Ray:** to What were you rage posting about at that point? Was it just like this doesn't work or you know that this part of the protocol is broken or I don't I don't like, you know, this PDS migration isn't happening correctly or.
+
+**Eve Osman:** I was I was honest, it was just it was just like it was just like it was like this relay is insane, I have an index, so the index is being weird, labelers are being ingested, this is all funky crap, I just threadlocked my server. I had to convert my desktop into a second server so I could actually split like the relay from like the app view so it actually would run properly. And then there was like, what the fuck is a cursor? You know, I was like, I was like, I was tracking it and then I lost it and then the relay threw up because of it and the indexer was all messed up and I was like, what's going on?
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** So that was that was a lot of it. And then with the migrator, the migrator raction I was actually pretty quiet about it because I felt like I think we felt like a bit of pressure to get this out. And we're like we're and we always feel like we're just we're just like one week away. And then we'd run into like some weird like throttling issue or race condition or something going on, you know, with like the PLC signing. And so that's where it was sort of like Bailey had his, and I know he was on Touchers Discord, and I was like in there occasionally like writing messages, and he was pretty chatty. So then I finally just messaged him directly.
+
+We keep running all these ridiculous issues, like race condition popping up. Can you help us out? And he was very happy to. And he sort of jumped in, looked at the code, pointed out some issues, resolved these like blocking problems. And then that's really when like, you know, like it was really a group effort, you know, because we have like we actually have like front-end developers, you know, we have an infrastructure person who's also like did a bit of work also to get across the finish line. And that's when we kind of like it was basically then we had our migrator life, and that's when we actually started bathe sort of bringing users over onto North Sky.
+
+And that was actually a huge milestone for us because we feel like before that it was sort of like mostly theoretical with us sending out a lot of newsletters with updates on what we're doing. And that's really where I feel like North Sky sort of like started to become something tangible to everyone.
+
+**Jim Ray:** I think we kind of jumped right into your involvement with North Sky. Could you give us for folks who are maybe less familiar with North Sky as a service and as a mission and then as a purpose what's the what's the kind of headline of North Sky and why do you feel like it's important for North Sky to exist?
+
+**Eve Osman:** For the people that are not aware, North Sky's social is a community platform for LGBTQIA plus two spirit individuals and other marginalized identities built on the protocol we're fully established in Canada and we basically minimize the US services, the US-based service we leverage. The intent is sort of like to create a space that prioritizes them. As what we've sort of seen, you know, over the past like since the inception of social media really, that they're sort of catering to the largest, most common audience, which is generally gonna be like straight, cisgender, white people, you know, middle class, upper class, sort of. Like I always like to think of like, you know, whenever there's like a new research study being put up by a university, like, oh, we see this behavior in individuals you have to remember that they're always interviewing students.
+
+**Jim Ray:** It's the 19-year-old undergrad problem, right?
+
+**Eve Osman:** Yeah, exactly. So it's like unless they're accounting, unless they're kind of like, you know, correcting for that bias, their studies are always going to be inherently biased. And so that's what we see like on social media platforms. It's like, you know, that's sort of catering towards that group. So as a result, their platform and their moderation is gonna be inherently biased at the same time. And when Trump was elected, like within weeks of his inauguration day. So I remember you like this one famous picture, you know, basically, you see like the heads of like Google, Meta, like everybody, all the big players, Amazon's there, like sitting front row at the inauguration. And then within weeks, every single social media platform removes protections around hate speech against these groups.
+
+And this is the this is like something that is actually like repeating over many, many, many years. Like it whether it's intentional or not. Like I remember like Twitter at one point, somebody noticed that if you post a picture with two people, white and black, it always like changes the thumbnail to the white person, even if they're not the subject in it. So even they just think you know if they put like a picture of like, you know, black person at top of the picture, white person at the bottom, crops of the white person. And so this sort of like you know you see like algorithmic bias, all these different things. And it's really because like the developers, they're not building their solutions with minorities in mind.
+
+And so that's really where like that's actually one of the reasons North Sky exists. They see where like we are putting you front and center. This is a priority. We're always thinking like, you know, sort of like what are the needs of this community? How do we prioritize them? And how do we actually provide a platform that can provide those protections that you need so you can actually be yourself. Because what we see is on every other platform, Bluesky included, they're always sort of like in this fight or flight mode.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** Just so like they know like every single time they pull something, somebody can just drive by and just do something just like attack them or target them or anything like that.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And that's really where Nurse guy is coming in. It's like how do we actually prevent those things from happening?
+
+**Jim Ray:** And how developed is the North Sky stack at this point? People listening will be at least casually familiar with the various pieces that go into creating the infrastructure, but there's a PDS where your data gets stored. There's the app view that actually handles the logic. There's the composable moderation pieces. So what are the what are the pieces that North Sky maintains?
+
+**Eve Osman:** So the two main ones is really is basically the PDS, the moderation service. We have some other tooling to help us out with you know basically the migrations we also have like a wait list where we do we've we effectively we do a vetting right now. And the vetting is there for us to actually kind of go through, we sort of like we sort of like do like check the users to make sure that they actually would comply with the community guidelines they've established. That was actually one thing we published early this year where we actually we spent multiple weeks refining these guidelines, put it out, clicked feedback, and then like adjusted it based off that feedback.
+
+And so and that's kind of where we're at, because like it's sort of like not the scale to be able to say like, hey it's open, come on in, because we know our moderation will take care of it. It's those critical pieces. And then we have a social app that is coming very, very, very, very soon. Like I promise it is. I'm like activ we're actually actively working on it and then after that is actually then coming the private data. Pretty s pretty soon after the social app. Because technically the private data is ready, but you can't really use it without a social app.
+
+**Jim Ray:** You know, it's so interesting that, and I think that this is maybe pretty obvious if you're at all kind of familiar with how the protocol works. But you can kind of see these patterns where a community shows up, they start, you know, there starts maybe a labeler or a list or a feed or something like that. and then branch into some of these other forms of building out infrastructure. And it does seem like because Black Sky literally just yesterday released the beta for their app. And you know, they built a version of the App view. They released Acorn, which I believe you mentioned North Sky is using for things like moderation. So it does seem like, and in some ways it kind of validates some of the ideas that go into the protocol where you can essentially kind of break apart the monolith that people have typically thought of that go into building a website into all of these different component pieces.
+
+But as somebody who was there in the early days building that out is that what were the decisions that went into how you built out the various pieces of what have become North Sky today?
+
+**Eve Osman:** So one thing is like the app view has sort of always been like priority has been very high in the list.
+
+**Jim Ray:** Okay.
+
+**Eve Osman:** But effort has been higher.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And that's.
+
+**Jim Ray:** the app view is maybe the most complicated piece of that stack to build. And that.
+
+**Eve Osman:** and the I say this if is if you take the current way people operate them. And so this is something where like I've I actually kind of spec this out. We've kind of got a good model in place of how we can actually design a new app view because it's something where I was kind of doing some experimentations for this year. Like I called it the gastronomic reduction of a app view. What's the essence of it? And how do we build that up from scratch? And that's when I was like, I was like, I looked really close at it. I spent like a few just like breaking down the app fee. I'm like, okay, so it's got like the labeler side of it, it's got this hydration, it's got this resolution side of it's got a notification so at one point like I built a notification service just as a test to see like okay what's like the minimum we'd actually need to operate that and based off that we come up, I've actually modeled some things with it.
+
+And so that's why last year we're saying, okay, we need an app view. And then all my testing back in October showed that to operate it would require a huge amount of data. And I know that Black Sky, they have a dedicated server for just for just for running the relay and the indexer in the app via.
+
+**Jim Ray:** itself. The piece is it's not necessarily the complexity of the technology, but the expense of running those things, where you can run a ra a PDS on your Raspberry Pi, but once you start moving up the stack of the complexity, then you really do need to build out some real infrastructure.
+
+**Eve Osman:** Yeah. Yeah, because I think it's sort of like the challenge is always like if I want to build a thing that can interact with the entire atmosphere.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** I need to be accessing the entire atmosphere. I think Fake person from Microsoft, they sort of showed you can you can you can run a relay for like five dollars a month.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** But you also have to be thinking like what do you actually need to index with through that relay? And so that's sort of where like, you know, that's what's sort of like the question for us, like, okay, what's like what's the things that we need what's the bare minimum that we need to operate this?
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And I've got a pretty good design in mind. I'm not going to spoil it, but I know we've got a it's a it's a very interesting, compelling way to operate the app view on the protocol, is what I'd say.
+
+**Jim Ray:** Amazing. We'll keep an eye out for that. And for everybody with their bingo cards at home, we've mentioned Bailey, we've mentioned Black Sky, we've mentioned Fig, we've mentioned EuroSky. So we're almost out of bingo.
+
+**Eve Osman:** Yeah.
+
+**Jim Ray:** One more question about North Sky and then I g I wanna talk about some of the other projects that you've worked on. So you mentioned that there's this vetting process. I imagine going into that vetting process is a very strong community government piece. And I think community governance in some ways fits very well with what we're trying to do with the protocol, but it feels maybe a little bit foreign for somebody who's coming from either a traditional tech company or really any kind of company or organization. And certainly folks that are coming from more centralized technology stacks, if you're coming from Instagram or Facebook or Twitter or something like that, this whole idea that community governance is even a thing is I would s I would think pretty foreign, especially these days.
+
+So I'm curious if you can open the door a little bit into how community governance works at North Sky.
+
+**Eve Osman:** So we are a social cooperative. Established in BC Canada and what that means as a social cooperative is that we are fully member operated and governed. And we've structured our bylaws. So that can basically requires we have like a minimum of three directors. We have three directors. But our bylaws basically do not give us any power. So we basically what we can do, we can basically we can ratify decisions that the members vote for. And we can step in if there is some violation of our of our bylaws. But otherwise it's really where every decision every major decision is kind of put to a vote.
+
+**Jim Ray:** Okay.
+
+**Eve Osman:** And we need to hit quorum and a minimum to actually to say this, yes, this is how it's gonna go. And oftentimes we disagree. Like there's been proposals that I have put forth that then get rejected. Which I'm like, okay, I understand why. I'm not gonna push for it further. What that means is like even our members is actually are also members of this community that we're building to protect. You know, North Sky community itself. And so what that means is that every person has a relevant experience and they understand why we're doing this and how it benefits people because it also benefits them on a personal level. Because what I've seen, you know, like you know, like typical you know company model, you know, where you just have like, you know, you have they call it a flat hierarchy, which really just means social capital.
+
+**Jim Ray:** Yeah, exactly.
+
+**Eve Osman:** Or you know, you have like very hierarchical setup where it ends up always being like a few people sort of hold the power.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And they can dictate the decisions. But in our setup we actually we structure actually so like when we grow to a certain size, we begin establishing member operating groups.
+
+**Jim Ray:** Okay.
+
+**Eve Osman:** You know, focused on like moderation, development, community, so on and so forth. And then they are then actually empowered to make the decisions independently. And then basically then the directors ratify it, so to speak. So it's so we're sort of like building for autonomy with a consent-based model.
+
+**Jim Ray:** Outside of tech, but the notion of a co-op, and it's so interesting. Like in some ways, there's this original ethos of the internet that I think really pushes us towards a cooperative model, but very quickly got overtaken by the ravages of let's call it capitalism. Is there anything that you that you think about AT Protocol specifically that makes this cooperative model more likely or easier or more difficult? Or is it just the two are not necessarily intertwined?
+
+**Eve Osman:** I think there's a huge potential for it to be intertwined. What I what I find is that a lot of people start building on the protocol without failing to realize that they're building in a collaborative protocol. Yeah, right. That's what I call it. Kitchio. It's this recipe platform. And so it was basically like I discovered it. I was using it. I was like, holy crap, this is great. But then I noticed if I go through the platform, I can only import so many recipes at a time that are like uses like a model to like to help like parse it. And I was like, okay, I don't like it. So then I just sat down and I wrote a script to just do it locally and then just publish all the records.
+
+And then I realized that when I did that, the kids didn't actually wasn't actually ingesting it. So I wrote a post like, oh, this doesn't work properly. And then the guy behind it like wrote me, he's like, oh shit, let me look into it. They fixed some stuff and it's working. In that case, that was actually a positive experience because they were like super excited. And now I see like every couple of days they post one of my recipes that I've like bookmarked. Because I literally I had like I had like a hundred recipes in my bookmarks.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And now it's on this awesome website that I can just use really easily.
+
+**Jim Ray:** So you were writing the records to your PDS for these recipes using the lexicon that they had put forward, but their app view was not ingesting it. Was that essentially what was happening?
+
+**Eve Osman:** Yeah, it basically came down so like tap wasn't working like it's supposed to be.
+
+**Jim Ray:** Oh, okay. Interesting.
+
+**Eve Osman:** Yeah. And so it's like this is where I think like it's something where like people don't realize like when they design sometimes like somebody can just come along and start just start creating the records and just experimenting with it themselves.
+
+**Jim Ray:** Yeah, exactly.
+
+**Eve Osman:** And.
+
+**Jim Ray:** I think TLFM is maybe the canonical exception.
+
+**Eve Osman:** Oh yes. Yes. What was it last year we started rate limit the bunch of PSs started getting rate limited because they just started ingesting all their last FM history.
+
+**Jim Ray:** Yeah, right.
+
+**Eve Osman:** Like I haven't done it yet because I have like 300,000 scrables in Last FM and I'm like, I don't know how to import that safely.
+
+**Jim Ray:** Yeah, right, exactly. And you know, Teal specifically, it's the most successful lexicon that doesn't have an app.
+
+**Eve Osman:** Yes.
+
+**Jim Ray:** I think it's three, I think they were they were saying just the other day, 3.3 million records. that are using a lexicon that they're actually modifying because it was still kind of like an alpha lexicon. So.
+
+**Eve Osman:** yeah, yeah precisely. And then we also see like that also like is like there is a community governance aspect like the community lexicons, like standard site is one great example. It's really kind of like taken off quite a bit. But then you sort of have like this friction coming in where people are like now building apps. to browse these.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And then it's like, oh, you're taking traffic away from the website. We're like, well, like it's on the protocol. This is sort of how we're supposed to be interacting with it. And that's why I see like this friction kind of comes in where it's like or like, well, you know, I'm trying to like move my business on here, but then people aren't using my business to access what I'm creating.
+
+**Jim Ray:** Everything that's happening with Sanderside is really exciting, but I think it's also it really demonstrates where some of those tensions are. And I think we've got to kind of figure out some community governance rules, how we manage that at an ecosystem layer, because I think in order for this to succeed, we need to we need to see those success stories happen, but also we need to see them happen in a way that people can be sustainable.
+
+**Eve Osman:** Yeah, precisely. It's something where we say like, you know, the protocol means you can have like things with algorithms, open access to data, so there's no paywalls. But then also we're sort of sacrificing things at the same time. You know, we're like being able to like monetize becomes a bit more difficult if you just think if you do if you're just trying to think in like in this traditional model.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** You know, where it's like I publish an article, you pay to access it. That's not viable on here. So we really have to kind of like change your perspective, you know, on what it means to actually be successful on it.
+
+**Jim Ray:** I think that leads us into a project that you've been pretty involved with and have had some suggestions around, which is what we call permission data. I think another way that people think about it is like private data on the protocol. Is your interest, does it start with North Sky with the ability to kind of create private spaces within the North Sky community? Is that kind of how you came to the private data space?
+
+**Eve Osman:** Yes. Yeah, it really was like a we just want a place, you know, where people can just like do their weird bit, you know, that's like super stupid and silly and not have others get upset about it, vent about what they're dealing with, or just celebrate, you know, I just want to take a take a take a stupid selfie and post it without somebody taking that selfie and just seriously using AI to do something with it.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And so that's and that's really where like we kind of saw like it's like private data is critical to North Sky. It was basically last year. I knew there was a working group around it, and I chatted with Boris a bit at Eurosky in Berlin back in November. And we're kind of like discussing it. And he's like, oh, there's different proposals, but nobody really figured out a good way to do it. It's really difficult. And I was dumb enough just tell Boris, I'll prove it's possible by demoing a functional alpha at AtmosphereConf. And that's kind of where I then basically sat down, read through all the proposals, talked to some people. Settled on one that I thought looked pretty good and then basically spent two and a half months iterating and then working on working on that.
+
+And that's basically when I published the proposal our proposal. I believe end of January.
+
+**Jim Ray:** And so where does your proposal where do you where do you feel like it kind of dovetails, where do you feel like it diverges from the activity that's been happening? Just with the work that Daniel Holman's been doing on the permission data piece that's extending the protocol. Is that are you all kind of waiting for that to land and are going to be using that? Or are you sort of going forward with your own kind of private space that will live exclusively inside of Nordsky. How are you thinking about that?
+
+**Eve Osman:** When well we started or I started basically like modeling it. The first step was actually to just kinda implement it inside the PDS. And then I basically I actually, I did it. I had a functional prototype. I looked at it and I decided this is hideous. I can't maintain it. And I threw it away for two reasons. One was it was a pretty invasive modification to the Bluesky reference PDS as we as we call it. I know Bluesky doesn't like us calling it reference PDS, but tough luck, it's there.
+
+**Jim Ray:** I call it the reference PDS all the time.
+
+**Eve Osman:** Yeah. And it's because it's sort of like we're like, we're not ready to say we're gonna run our own PDS. or may or maintain our own, you know, developing it. It was like, it was that. And then seeing what we needed was where we're like, okay, let's actually kind of like split this off to have like a dedicated service, you know, service and not calling it not really sidecars, like actually like a fully independent service that operates. And then figure out how can we actually kind of establish a trust from that to a user rather than from that to the user's PDS.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** The way we designed it was pretty much through threat modeling. of figuring out what are the different ways a person can break into a private space. What are the different ways a person can exploit. weaknesses or you know do social engineering to gain access like what are the different levels of degrees of it and then what are the different threats you know, to a PS that would actually we would actually have more resilience by having a separate service. And that's where it kind of like settled on, you know, building a dedicated service for it that can kind of like host all the data and there's a whole trust relationship. And this is when I kind of started hitting a bit of friction points with how the protocol is designed.
+
+**Jim Ray:** So how are you all thinking about kind of moving forward? Is it, you know, are there things that you think will be in the pr in the spaces proposal? Are there things that you'll continue to do in your own unique way and then you know obviously then there will be the everything that lives on the public protocol.
+
+**Eve Osman:** The way that Stratus was designed was to have sort of like a multi-dimensional domains, as I call it. So you have a domain or a boundary, so to speak, where you create a record and you sign it to one. So that means that the address for a record is actually just reflects of the same record that you see at a user's repository. And then the domains are those are those are fully addressable. And so we use those basic kind of like then define the permissions associated to the domain and then whether or not a user can actually create a record that's a that's a party of it and so that the concept for there was actually to be able to have like overlapping permission domains that then no a record can just be part of multiple very easily.
+
+So we could create one, you know, for like one space, ground called space is actually pretty good. You know, for cosplay. All right. And then within that, you have all the different facets of cosplay, you know, different phantoms and so on and so forth. And so you can basically you can just make one pulse that goes into the full Cosplay circle and then also into your small little one. So anybody can like look subscribe to Cosplay can see everything happening there. And so, and that was sort of like the concept of kind of like be able to have like those granular access controls with it.
+
+**Jim Ray:** Cool.
+
+**Eve Osman:** And that's actually it's still kind of designed that way. But then we still had this issue of like how do I trust the PDS? And that's where I started taking some friction points, because like with the way Bluesky uses the AP protocol uses OAuth, it doesn't give many allowances for verifying a person's identity. for from the access side.
+
+**Jim Ray:** Got it. Okay.
+
+**Eve Osman:** It all kind of comes down to trust the PDS, trust the service it's definitely that person because the PDS said it is. And I'm like, I want the person to say they are who they are. With the new permission spaces, is the introduction of a space token it is the token that is unique to each space. And when a user is authenticating, they use a space token to generate another token and they give that token to the service and that allows the service to access their data. And I love that because now I can actually take this token and verify it against the against the space token, be like, yes, these are connected. And that's actually what convinced me that like, okay, let's actually go back to Stratos and see if we can do like sort of like an alignment with the space specification so we can actually take advantage of those verification layers great.
+
+And then if we're doing that, let's also see how we can actually massage the addressing to sort of align with the permission spaces. We know the serialization format is still kind of being like refined a bit. And so that's sort of like the goals are you know like so now it's sort of like Stratos is the space host and the data and the data custodian. And then later in the future, when the reference PDS gets it. get gets like permission spaces natively, then we can kind of like you know shift things where then actually now it's kind of like it does kind of align with the full protocol with compatibility. But for me like the real benefit is just that that verification step.
+
+**Jim Ray:** Well that's great. I love hearing the ways that these things are coming together because we're seeing a number of different implementations, whether it's something like our private data, Black Sky's got their Black Sky only posts, Eurosky's been building a lot of features that aren't necessarily sidecar features, but are features that kind of go beyond what you can do natively with the protocol now. So super excited to see. And that's always been kind of the ethos of the protocol is like here are the things that you can do on the protocol. If you want to do something off the protocol, then that's totally okay too. You can even start a podcast called Off Protocol.
+
+**Eve Osman:** Yeah, no, exactly. Yeah, I wanted to add a comment about that because I've seen this thing as kind of drive me nuts. Like over the past two weeks, actually even months, there's been a lot of services who are just like, oh, we're doing this great thing, but this is gonna come once permission space lands.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And I look at that and I'm like, you know this thing called the database, right? Like you can just store it there and then you can if you want you can just create you know a stub record which is the hydration model that Nick forth for smoke signals. That's actually what Stratus was originally modeled on was a hydration approach where we just like say hey public stub we can reference it source it you have access to the private you get it and this is sort of one of my complaints I guess with the community or the atmosphere community, is there's a lot of waiting for PBC, you know, as I call it, to develop the thing and say, here, use this.
+
+When we can just work with the protocol and build this.
+
+**Jim Ray:** I think that's a fantastic lesson. I would absolutely encourage folks to go get building things now. There's definitely if you're building something that you feel like would be a good fit for permission data and you don't want to wait for permission data to drop, the migration story will definitely be a thing that we'll have to contend with. But yeah, you're absolutely right. Databases exist and they're pretty good these days.
+
+**Eve Osman:** I feel like Paul's gonna be like waking up as I say this and be like, she said what?
+
+**Jim Ray:** You know, I would say Paul is probably the biggest proponent internally of telling folks like, hey, if the thing that we have built isn't suiting your needs, go build something that does, and then we'll figure out how to merge them together at some point down the road. So I think that one thing that I love about everything that we're trying to do here is there's a real ethos of practicality built into it. And I see that from the developers, but I also see it from my colleagues at Bluesky too. I think we really try to kind of live out that that practicality ethos too. I want to shift gears and I want to talk about twinkle.
+
+Eve, what is Twinkle?
+
+**Eve Osman:** I can't.
+
+**Jim Ray:** I look at it. Is it an art project? Is it a throwback to a more innocent time on the web? Is it a crazy Bluesky client? Help us understand what is Twinkle.
+
+**Eve Osman:** It is all of them. That's what I'm gonna say. Actually, I was I was like I was chatting with Alex yesterday and I just casually asked him if you heard a twinkle and he just let out like this like this deep laugh. Which was just it was just amazing to hear it. Yeah, so the Twinkle is it's I'm gonna say everybody like you know, twinkle without the E on the end dot social visit it. you're gonna be overwhelmed with like nostalgia and longing and you're just gonna feel this peace as you work as you use it. And I really call like my love letter to not a web long gone, but just like a web before we were thinking about algorithms, you know, and user retention.
+
+Because it's really kind of like well, you know, now we see there's a lot of like UX Dart patterns. Or choose to like, how do we get people to stay on this website or stay in this app? And that's kind of resulted in a lot of broken experiences or negative ex negative experiences for a user where they're like I need to come to this app and I just need to flip through everything and like scroll and see if I can find something I like. I'm gonna keep scrolling until I find it. I don't know if I found it. Oh crap, I saw it's gone. I gotta keep scrolling again to find it again and so this was really the kind of like, I want to take every good, good UX pattern once again close in the air, that's been designed for the last 20 years and just ignore it.
+
+**Jim Ray:** -huh.
+
+**Eve Osman:** And what I've discovered is people love it. Is it's just it's just like you log in and everything's glowing and sparkling. You can adjust everything. The feed of the replies are like intentionally crooked. You mouse over it, it wiggles. You know, I added a thing where you upload a picture and it turns into a Polaroid and alt text shows up on the Polaroid. Like it's all these all these little things. And it's sort of just like just sort of an experiment of like what happens when we kind of like bring back this interactive experience. And then also when we kind of return the agency back to the people, you know, where it's like, hey, tailor your experience.
+
+And then other people can then also see that experience.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And then also that's also sort of like where like the my page, you know, is sort of like a f it's the goal is to have a fully composable page where you kind of design it. Kind of like Blento, but I kinda say like Blento on acid.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** That's what I'll say. This is where I feel like What I want to do is sort of like bring this fully composable experience as a MyPage. So it's sort of like a sandbox where you can kind of experiment and using Dazzle tiles.
+
+**Jim Ray:** Oh interesting.
+
+**Eve Osman:** Yeah. And so yeah, so you know what dazzle tiles. Great. Yeah, and so and so basically Dazzle tiles are sort of like they're effective like sort of like composable tiles. Where it just sort of has like a manifest that defines what it is. At the most basic, you know, sort of just like an HTML document but then you can also have like bi-directional communication with it. And so that means you can actually embed these tiles in any web page. They're very similar. They're fully addressable on the protocol also. And they also kind of come with their own like security model built in and they're sandboxed, which is really nice. And so that means that I defined one that's basically like shows a user's top eight.
+
+You know, you can kind of and then kind of like passes in like the theming that's supposed to be used with it. It can kind of communicate back with you. We can actually do tiles that are actually also video games that two people can play across different machines. And so that's kind of where like it is the bringing that experience like basically like you know each little box you add in is a tile.
+
+**Jim Ray:** Cool.
+
+**Eve Osman:** You can actually create your own. You give it the address and then it shows up in there. So it's not, it's not raw HTML like it wasn't MySpace.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And that's why I said it's a love letter to this to like, you know, the early 2000s.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** While bringing in this new technology. In a way that actually is like, screw these corporate UX patterns.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** Let's lie to create something new and interesting as the way we should have from the very beginning.
+
+**Jim Ray:** I love that so much as an ethos because when you when you first bring up the website, and again it's twinklewithouthe. social, there'll be a link in the in the show notes. Your immediate thought is like, oh, this is just a nostalgia play. You know, there's the under construction GIF and lots of sparkles everywhere and things like that. But this idea that it could almost be a branch point and we could recreate a f of a future history of the web that could have existed you know, starting in the early two thousands, which really is where a lot of I think the dark patterns or just the way that social media kind of constructed itself in that period so I really love this idea of not just a pure nostalgia play, but actually something that is really kind of rethinking the web in some different ways.
+
+And we have all these new technology tools too. So people who were building websites in the early 2000s, we didn't have even just the CSS patterns that we have today.
+
+**Eve Osman:** Like the thing that's crazy to me is like almost everything on that site is CSS.
+
+**Jim Ray:** Yeah, cool.
+
+**Eve Osman:** There's like there's all there's barely any JavaScript in there. And I'm just constantly blown away by how much I can do there.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** Yeah. And like so I can think of like you think of like Anisota, hey there, another one from Bingo card. That's that site is like Dame created that. So it's very much like focused on like you know having a calming experience, you know, one card at a time. And then Twinkle's sort of like Tosses that on its head.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** Where it's like, let's just like take this like you know typical, you know, clean feed and everything, and let's just like bring a bit more chaos to it in a satisfying manner. So even like even now, you know, like there are bugs on it and sometimes I'm going through it, I'm like, okay, is this is this a real bug or is this something that actually should stay? Like it's always it's always a question I have, you know, when I'm when I'm cleaning things up. And so I 'm and so when I say like, you know, it's like bringing back the old web in a new way is like I started tinkering with like okay how do I actually bring it how do I bring back the blogosphere using standard site what are the interesting ways to kind of like explore everything on the atmosphere that can also kind of be brought in there?
+
+And so right now it's sort of like a little section is like a little you know, microplogging feed with my page, we'll enrich it and then you kind of have otherwise kind of start exploring things and working with it. And that's why I say like it's sort of like MySpace. GeoCities, Neo Cities, and then Neo Pets throw it in there somewhere. I'm still waiting for somebody to create a pets thing on protocol. 'Cause I just want to be able to bring that in. And the RPG actor is also going to be involved in this at some point. So like there's a there's a lot of interesting things. So it's like creating a new experience that's sort of just like unifying what's being done out there.
+
+**Jim Ray:** So I wanna I wanna finish up and I wanna talk about a new project that you just launched. This was very fortuitous because we had scheduled this and then just earlier this week. You launched this new project called Escalet. And tell us about what that is and what you're hoping to accomplish there.
+
+**Eve Osman:** So Escale is the Nubian word for water wheel. The water wheel is basically it's built from parts that can be found along the Nile or near the village. And it is basically powered by cattle. And so that means that they can always repair it easily with parts that are right next to them. And everybody knows how to maintain it. And so that's sort of like, you know, like that's like since it's like it's the best example I can think of when it comes to like sustainable technology. Now, it seems like a it's like a very simple thing that provides a very critical function.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** And it doesn't depend on any outside force to take care of it.
+
+**Jim Ray:** I think that's it's such a brilliant and perfect metaphor. When I read that, it was one that was just kind of consciousness expanding. I was like, this is great. She's I love this. So.
+
+**Eve Osman:** Throughout my entire career, you know, there's always been this thing of where like, okay, I'm going to work, I'm working on a project, it's a fun project, the people are fun, and then I go home. And then I have no idea what the project actually, the impact it has. You know, or even some people have like head experience, like they're working in a project, they go on leave for a month, they come back, and then that project has just been like completely perverted and turned into something else you know, it's like, oh, I need more ownership of these projects. You know, I want to see the impact of it. And then also at the same time doing this whole like career ladder of like, you know, I'm an engineer, now I'm like a senior, now I'm a principal, an architect, and then I was like a head of it as a saw some but the whole time there's sort of like this missing like tangible impact of benefit to the work I was doing.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** And then I started working with North Sky and I was like, oh, this is kind of what I've been missing. It's like, oh, this work matters and then atmosphere conf was like the very first conference, and I've been going to conferences for like 10, 15 years or something, usually huge ones from like Amazon elsewhere, but also smaller ones. But this was the first one where everybody cared so much about people, about the mental health. About how to grow together collectively. And that was just like, I wouldn't call it a light bulb. Epiphany is actually better. But I sort of realized in like the work I have been doing and the work I'm doing today is not the work that I should be doing.
+
+And I want to work into spaces where these people also exist. Where I can collaborate with these people who have the exact same ethos that I have, where it's not about you know, turning a profit or increasing revenue or seeing, you know, what's the new way to increase user retention, but it's sort of like how can it do something that lasts that benefits the community? And then it was sort of like, and then from there sort of having conversations with people, you know, talking about like different avenues. And that kind of like culminated in sort of this decision where I was like, I can't continue working in corporate tech.
+
+**Jim Ray:** Yeah.
+
+**Eve Osman:** Corporate software. And so and that's when I kind of decided, like, you know what? I'm saying I want to be working with these people. Somebody should be doing this. Let me do it myself. And so then we're kind of like sat down and thought, okay, what does that what does that actually mean? You know, community technology. And so my experience, like so I'm Sudanese, like both of my parents are from Sudan. I was born and raised in America. We're Nubian, so from the very northern part of Sudan, along the Nile. And so I was very familiar with like with like NGOs and how they operate. Because in Sudan we had quite a few. And then sanctions came about, they all had then they all kind of withdrawed.
+
+And when they when they withdrew, a lot of the programs they have put in place that have been existing for like 20 years or longer, just a lot of them fell apart because they weren't actually sustainable without the continued involvement of these organizations. And we see this a lot with a lot of like nonprofits doing work and like all over the world they're always like working in a way where it's not truly sustainable. And I see this a lot with technology where I see like a lot of the corporations like, oh, we're doing this with this grant or this program, working with people to kind of like to run these things. But we also kind of see like where the end user is very much just an end user.
+
+They're not the true operator. And then that kind of took me to the okay, how do I actually how do I actually build technology that can actually be fully owned and operated. And that's where I was like, okay, how do we actually build technology that is sustainable? And how do we make it where it's actually focused on the community? And that kind of then eventually we just sort of think like, okay, local first, what does that mean? And then also, surprise, I've been working with AT Protocol for so long. And it's like, okay, so we need something that is that can be fully operated and owned by a community anywhere in the world, but it need but it cannot be isolated from the rest of the world.
+
+So therefore it should be Prioritizing local first, but also in a manner that can be somewhat decentralized. And then that's kind of where like AD protocol kind of like starts to native naturally kind of like slip into that quite a bit where it's like okay they need to own their data know how to operate it know how to build things in a way they can actually own and control and that's when I kind of like okay it's like okay so then I want to build technology that is sustainable that a community can continue to own and operate when I walk away from it, and that does not leave the community to isolate it from the rest of the ecosystem and that's kind of became like sort of like the driving mission between like basically creating this venture.
+
+No, it's basically a software consultancy, it's just of me, where it is basically we want to build community technology that lasts in an open manner where it is not a, we're going to build this thing and license it to you. It is, we're going to build this with you. And then you can operate it and own it for as long as you need.
+
+**Jim Ray:** And so the idea is that you'll be working with communities, people who want to build products that kind of align with this ethos and people who might have ideas but maybe not the technical shops or maybe just they've never even heard of atproto or any of the other kind of open source community projects. Is that that the idea? And then you'll be helping them figure out how to build those things out and how to make it possible.
+
+**Eve Osman:** Yeah. Exactly. Yeah. And so this is where like you know like earlier I was kind of saying you know like kind of like breaking down the app view down to down to like it's essential components. And that's where I say like operating on the protocol doesn't mean that we're gonna, you know, I'll be like, okay, here's a relay, here's an indexer. Okay, there you go. Now interact with it. Here's a PDS.
+
+**Jim Ray:** Right.
+
+**Eve Osman:** It's really gonna be like, okay, what is your use case and what are you trying to build? And how do you want that to actually be resilient? We can actually operate it locally or abroad or elsewhere. And that's and that's kind of where it's like, I feel the protocol can do so many things. Like we call it a social networking protocol. But I feel that it's actually more of a community protocol.
+
+**Jim Ray:** Yeah. One thing that I was really struck by from your announcement post is that you really centered your family there. And even the name of even SQL a has this, it you talk about the water wheels. that were important to the communities where your family grew up. I'm curious what, you know, why was it so important for you to make that front and center to your announcement?
+
+**Eve Osman:** Whenever I think about like what's the community, how does community operate? You know, it's like when I was when I was growing up, my parents and I were like, we're always like, you know, like you know, like I said, like my mom listening to music, you know, singing along to it. My dad would be like teaching us Arabic and losing patience. I couldn't read a word. and so there's like there's a very strong sense of like, you know, this is our culture. We need to want to preserve it and carry it on. But also is where there's this big focus for my father in particular of we want to always support the community and help those who need it.
+
+And that's kind of like, you know, that's kind of where like this all kind of like drives back to, you know. Sure. Yeah. Sort of like it's sort of like we want to be able to support a community and make sure that they can thrive. And so I basically like whenever I go back, you know, I basically go back home, spend time with people, you know, a lot of the time like with my father, we just start, we'd end up in some sort of project. Remember like I went back there when I was like 15 and helped him to build like a solar power to actually to like electrify a house in a village. First house there to get electricity fully with a solar panel and everything.
+
+Like we actually we bought the panels the alternator to everything in America and then we brought it there with us. We bought some batteries, filled with battery acid, you know, at a at a s at a shop. And I took that and then we rode like 16 hours into the desert and built everything with the people there. and that was a comedic effort. So it was really, it wasn't us like flying in there saying, we're gonna do this thing for you and then say bye and run away. It was like the community is gonna come together and build this. And so when I started thinking about you're like, okay, community technology, how do I do something that actually impacts people?
+
+I immediately go back towards how do I bring the people together to build this?
+
+**Jim Ray:** I love that so much. And I that feels like a great place to end. All right, Eve, I can't thank you enough for sitting down with us and such a really wonderful the personal journey through all of this. And I'm so excited that we had a chance to talk and I hope we get a chance to see each other soon.
+
+**Eve Osman:** Thank you, Jim. This is a pleasure.
+
+**Jim Ray:** Thanks so much for listening and especially thank you to my guest, Eve Osman. Off Protocol is a production of the Bluesky Developer relations team. For more about AT Protocol and an archive of this show, head to atproto.com our theme music was composed and produced by Celine Russian Wall. Catch our live stream every other Wednesday on Street place, of course. Conversations like this one drop as often as we can.
