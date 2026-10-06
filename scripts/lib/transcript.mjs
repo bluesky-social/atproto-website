@@ -145,6 +145,8 @@ export const GLOSSARY = [
   [/\bLOM\b/g, 'LLM'],
   [/\bautomob\b/gi, 'automod'],
   [/\bone point oh\b/gi, '1.0'],
+  // Every "Tony" on the show so far has been Toni Schneider, Bluesky's CEO.
+  [/\bTony\b/g, 'Toni'],
   // The show name. Lowercase "off protocol" with no hyphen is left alone,
   // because "going off protocol" is an ordinary idiom.
   [/\boff-protocol\b/gi, 'Off Protocol'],

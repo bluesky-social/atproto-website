@@ -369,6 +369,22 @@ test('applyGlossary leaves lowercase unhyphenated "off protocol" alone', () => {
   )
 })
 
+// Every "Tony" on the show so far has been Toni Schneider, Bluesky's CEO.
+test("applyGlossary spells Toni Schneider's name with an i", () => {
+  assert.equal(
+    applyGlossary("Tony's interview with The Verge"),
+    "Toni's interview with The Verge",
+  )
+  assert.equal(
+    applyGlossary('a meeting with Tony, our CEO'),
+    'a meeting with Toni, our CEO',
+  )
+})
+
+test('applyGlossary leaves words that only start with Tony alone', () => {
+  assert.equal(applyGlossary('the Tonys were great'), 'the Tonys were great')
+})
+
 test('applyGlossary accepts extra per-episode entries after the defaults', () => {
   assert.equal(
     applyGlossary('Skilla is optional', [[/\bSkilla\b/g, 'Scylla']]),
@@ -548,15 +564,28 @@ test('toMdx drops a final turn that is only the outro', () => {
 
 test('toMdx keeps the real ending that shares a turn with the outro', () => {
   const out = toMdx(
-    [{ speaker: 'Speaker 1', text: `A perfect place to end. So thank you for that, Erin. ${OUTRO}` }],
+    [
+      {
+        speaker: 'Speaker 1',
+        text: `A perfect place to end. So thank you for that, Erin. ${OUTRO}`,
+      },
+    ],
     { 'Speaker 1': 'Jim Ray' },
   )
-  assert.match(out, /\*\*Jim Ray:\*\* A perfect place to end\. So thank you for that, Erin\.\n$/)
+  assert.match(
+    out,
+    /\*\*Jim Ray:\*\* A perfect place to end\. So thank you for that, Erin\.\n$/,
+  )
 })
 
 test('toMdx also cuts an outro that starts "Thank you so much for listening"', () => {
   const out = toMdx(
-    [{ speaker: 'Speaker 1', text: 'Bye now. Thank you so much for listening, and see you soon.' }],
+    [
+      {
+        speaker: 'Speaker 1',
+        text: 'Bye now. Thank you so much for listening, and see you soon.',
+      },
+    ],
     { 'Speaker 1': 'Jim Ray' },
   )
   assert.match(out, /\*\*Jim Ray:\*\* Bye now\.\n$/)
@@ -565,7 +594,10 @@ test('toMdx also cuts an outro that starts "Thank you so much for listening"', (
 test('toMdx leaves "thanks so much for listening" before the final turn alone', () => {
   const out = toMdx(
     [
-      { speaker: 'Speaker 1', text: 'Thanks so much for listening to my rant, Alex.' },
+      {
+        speaker: 'Speaker 1',
+        text: 'Thanks so much for listening to my rant, Alex.',
+      },
       { speaker: 'Speaker 2', text: 'Any time.' },
     ],
     { 'Speaker 1': 'Jim Ray', 'Speaker 2': 'Alex Garnett' },
@@ -574,9 +606,8 @@ test('toMdx leaves "thanks so much for listening" before the final turn alone', 
 })
 
 test('toMdx leaves an episode without an outro unchanged at the end', () => {
-  const out = toMdx(
-    [{ speaker: 'Speaker 1', text: 'Take care, everybody.' }],
-    { 'Speaker 1': 'Jim Ray' },
-  )
+  const out = toMdx([{ speaker: 'Speaker 1', text: 'Take care, everybody.' }], {
+    'Speaker 1': 'Jim Ray',
+  })
   assert.match(out, /\*\*Jim Ray:\*\* Take care, everybody\.\n$/)
 })
