@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readShowNotesFlag } from './podcast-feed-content'
+import { readShowNotesFlag, readTranscriptFlag } from './podcast-feed-content'
 
 const header = (body: string) => `export const header = {
   episodeNumber: 1,
@@ -29,5 +29,28 @@ describe('readShowNotesFlag', () => {
 
 In this episode we discuss hasShowNotes: true and how feeds work.`
     expect(readShowNotesFlag(mdx)).toBe(false)
+  })
+})
+
+describe('readTranscriptFlag', () => {
+  it('is true when the MDX header sets hasTranscript: true', () => {
+    expect(readTranscriptFlag(header('  hasTranscript: true,'))).toBe(true)
+  })
+
+  it('is false when the MDX header sets hasTranscript: false', () => {
+    expect(readTranscriptFlag(header('  hasTranscript: false,'))).toBe(false)
+  })
+
+  it('is false when the header omits the flag', () => {
+    expect(readTranscriptFlag(header('  hasShowNotes: true,'))).toBe(false)
+  })
+
+  it('reads the header, not matching text in the notes body', () => {
+    const mdx = `export const header = {
+  hasTranscript: false,
+}
+
+We set hasTranscript: true once the transcript is reviewed.`
+    expect(readTranscriptFlag(mdx)).toBe(false)
   })
 })

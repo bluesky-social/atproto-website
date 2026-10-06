@@ -53,6 +53,32 @@ describe('parseDraft', () => {
     expect(parsed?.mode).toBe('edit')
   })
 
+  // A restored transcript edit must still conflict with a transcript.mdx that
+  // `npm run transcribe` rewrote since, just as `revision` does for en.mdx.
+  it('carries transcriptRevision when the draft has one', () => {
+    const parsed = parseDraft(serializeDraft(envelope({ transcriptRevision: 'def456' })), {
+      slug: '2026-08-06-shinkansen-mindset',
+    })
+    expect(parsed?.transcriptRevision).toBe('def456')
+  })
+
+  // Drafts written before the studio edited transcripts have no such field.
+  // They carry no transcript either, so there is nothing to protect.
+  it('still restores a draft written without transcriptRevision', () => {
+    const parsed = parseDraft(serializeDraft(envelope()), {
+      slug: '2026-08-06-shinkansen-mindset',
+    })
+    expect(parsed).not.toBeNull()
+    expect(parsed?.transcriptRevision).toBeUndefined()
+  })
+
+  it('drops a transcriptRevision that is not a string', () => {
+    const parsed = parseDraft(serializeDraft(envelope({ transcriptRevision: 7 })), {
+      slug: '2026-08-06-shinkansen-mindset',
+    })
+    expect(parsed?.transcriptRevision).toBeUndefined()
+  })
+
   it('returns null when there is no draft', () => {
     expect(parseDraft(null, { slug: 'x' })).toBeNull()
     expect(parseDraft('', { slug: 'x' })).toBeNull()

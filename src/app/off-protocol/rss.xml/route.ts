@@ -12,6 +12,7 @@ import { buildPodcastFeed, type FeedEpisode } from '@/lib/podcast-feed'
 import {
   mdxBodyToHtml,
   readShowNotesFlag,
+  readTranscriptFlag,
   stripMdxFrontmatter,
 } from '@/lib/podcast-feed-content'
 
@@ -44,19 +45,21 @@ function xmlEscape(s: string): string {
 // notes when present, otherwise the episode summary as a fallback.
 async function resolveFeedFields(
   episode: Episode,
-): Promise<{ hasShowNotes: boolean; contentHtml: string }> {
+): Promise<{ hasShowNotes: boolean; hasTranscript: boolean; contentHtml: string }> {
   const summaryHtml = `<p>${xmlEscape(episode.description)}</p>`
   let raw: string
   try {
     raw = await fs.readFile(episodeMdxPath(episode.slug), 'utf-8')
   } catch {
-    return { hasShowNotes: false, contentHtml: summaryHtml }
+    return { hasShowNotes: false, hasTranscript: false, contentHtml: summaryHtml }
   }
+  const hasTranscript = readTranscriptFlag(raw)
   if (!readShowNotesFlag(raw)) {
-    return { hasShowNotes: false, contentHtml: summaryHtml }
+    return { hasShowNotes: false, hasTranscript, contentHtml: summaryHtml }
   }
   return {
     hasShowNotes: true,
+    hasTranscript,
     contentHtml: await mdxBodyToHtml(stripMdxFrontmatter(raw)),
   }
 }

@@ -645,3 +645,166 @@ describe('setEpisodeAudio duration pairing', () => {
     expect(f.audioSizeBytes).toBe(99)
   })
 })
+
+describe('episode transcript', () => {
+  const STUB =
+    '{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}\n'
+  const transcriptPath = () => path.join(paths.podcastDir, 'my-ep', 'transcript.mdx')
+  const enPath = () => path.join(paths.podcastDir, 'my-ep', 'en.mdx')
+
+  beforeEach(async () => {
+    await createEpisode(paths, baseInput())
+  })
+
+  it('reads the placeholder-only transcript as empty', async () => {
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe(STUB)
+    expect((await readEpisode(paths, 'my-ep')).transcript).toBe('')
+  })
+
+  it('reads a real transcript as-is, comments included', async () => {
+    const src = '{/* Generated. */}\n\n**Jim Ray:** Hi.\n'
+    fs.writeFileSync(transcriptPath(), src)
+    expect((await readEpisode(paths, 'my-ep')).transcript).toBe(src)
+  })
+
+  it('writes the transcript on update', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      transcript: '**Jim Ray:** Hi.\n',
+      transcriptRevision: ep.transcriptRevision,
+    })
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe('**Jim Ray:** Hi.\n')
+  })
+
+  it('writes the placeholder back when the transcript is cleared', async () => {
+    fs.writeFileSync(transcriptPath(), '**Jim Ray:** Hi.\n')
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: ep.fields,
+      body: ep.body,
+      transcript: '  \n',
+      transcriptRevision: ep.transcriptRevision,
+    })
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe(STUB)
+  })
+
+  // A tab opened before this feature, or a CLI, sends no transcript at all.
+  it('leaves transcript.mdx alone when the save does not include one', async () => {
+    fs.writeFileSync(transcriptPath(), '**Jim Ray:** Hi.\n')
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', { fields: ep.fields, body: 'New notes.' })
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe('**Jim Ray:** Hi.\n')
+  })
+
+  it('stores hasTranscript when the transcript has content', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const saved = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, hasTranscript: true },
+      body: ep.body,
+      transcript: '**Jim Ray:** Hi.\n',
+    })
+    expect(saved.fields.hasTranscript).toBe(true)
+    expect(fs.readFileSync(enPath(), 'utf-8')).toContain('hasTranscript: true')
+  })
+
+  it('stores hasTranscript false when the box is unticked', async () => {
+    fs.writeFileSync(transcriptPath(), '**Jim Ray:** Hi.\n')
+    const ep = await readEpisode(paths, 'my-ep')
+    await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, hasTranscript: true },
+      body: ep.body,
+    })
+    const saved = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, hasTranscript: false },
+      body: ep.body,
+    })
+    expect(saved.fields.hasTranscript).toBe(false)
+    expect(fs.readFileSync(enPath(), 'utf-8')).toContain('hasTranscript: false')
+  })
+
+  // Otherwise the page would render an empty "Transcript" disclosure.
+  it('refuses hasTranscript for an empty transcript', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const saved = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, hasTranscript: true },
+      body: ep.body,
+      transcript: '',
+    })
+    expect(saved.fields.hasTranscript).toBe(false)
+    expect(fs.readFileSync(enPath(), 'utf-8')).toContain('hasTranscript: false')
+  })
+
+  it('refuses hasTranscript when no transcript is sent and the file is a placeholder', async () => {
+    const ep = await readEpisode(paths, 'my-ep')
+    const saved = await updateEpisode(paths, 'my-ep', {
+      fields: { ...ep.fields, hasTranscript: true },
+      body: ep.body,
+    })
+    expect(saved.fields.hasTranscript).toBe(false)
+  })
+
+  // `npm run transcribe --force` can rewrite the file while a tab is open.
+  it('refuses a transcript save whose base revision is stale, writing nothing', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    fs.writeFileSync(transcriptPath(), '**Jim Ray:** Regenerated.\n')
+    const enBefore = fs.readFileSync(enPath(), 'utf-8')
+
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: { ...opened.fields, title: 'Renamed' },
+        body: opened.body,
+        revision: opened.revision,
+        transcript: '**Jim Ray:** Old tab.\n',
+        transcriptRevision: opened.transcriptRevision,
+      }),
+    ).rejects.toThrow(RevisionConflictError)
+
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe('**Jim Ray:** Regenerated.\n')
+    expect(fs.readFileSync(enPath(), 'utf-8')).toBe(enBefore)
+  })
+
+  it('refuses before writing the transcript when en.mdx is stale', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    fs.writeFileSync(enPath(), fs.readFileSync(enPath(), 'utf-8').replace('My Episode', 'Moved On'))
+
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: opened.fields,
+        body: opened.body,
+        revision: opened.revision,
+        transcript: '**Jim Ray:** Hi.\n',
+        transcriptRevision: opened.transcriptRevision,
+      }),
+    ).rejects.toThrow(RevisionConflictError)
+    expect(fs.readFileSync(transcriptPath(), 'utf-8')).toBe(STUB)
+  })
+
+  it('returns the new transcript revision so consecutive saves work', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    const first = await updateEpisode(paths, 'my-ep', {
+      fields: opened.fields,
+      body: opened.body,
+      revision: opened.revision,
+      transcript: 'One.\n',
+      transcriptRevision: opened.transcriptRevision,
+    })
+    expect(first.transcriptRevision).toBe(fileRevision('One.\n'))
+    await expect(
+      updateEpisode(paths, 'my-ep', {
+        fields: opened.fields,
+        body: opened.body,
+        revision: first.revision,
+        transcript: 'Two.\n',
+        transcriptRevision: first.transcriptRevision,
+      }),
+    ).resolves.toMatchObject({ slug: 'my-ep' })
+  })
+
+  it('an audio upload does not change the transcript revision', async () => {
+    const opened = await readEpisode(paths, 'my-ep')
+    await setEpisodeAudio(paths, 'my-ep', { audioUrl: 'https://media/new.mp3', audioSizeBytes: 9 })
+    expect((await readEpisode(paths, 'my-ep')).transcriptRevision).toBe(opened.transcriptRevision)
+  })
+})

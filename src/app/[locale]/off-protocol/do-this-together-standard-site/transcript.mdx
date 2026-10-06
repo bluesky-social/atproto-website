@@ -1,1 +1,291 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Hey there and welcome back to Off Protocol. Before we get going with today's episode, I just want to offer a huge thanks for all of the support from our kind of official launch or maybe relaunch of what we were previously doing with office hours. I really hope that this is going to be an opportunity to not just spotlight the work that all of you in the ecosystem are doing. but to introduce this amazing work to a whole new audience of people. So thank you so much for all of the posts, all of the DMs, all of the reposts. I see almost all of them and I really appreciate it. So in today's episode, I'm talking to some of the core contributors to a project called standard.site.
+
+Now, standard.site is a pretty unique project, even in this kind of crazy world of open decentralization that we work with because it's not a collaboration around a specific site or a specific app, but a data format. And that might sound a little bit too nerdy, but it's actually really critical to how apps on AT Protocol work. So much like the apps on your computer or your phone work with a specific file type, apps on the protocol define what we call lexicons. And a lexicon is really just a way to define the shape of a file. If you've worked with databases or database schemas, they're basically the same thing. And so I talked to three of the core contributors on the standard.site project, all of whom have built their own long-form writing applications on the protocol.
+
+Brooke is the creator of pckt, which is a blogging app that you can find at pckt.blog. Miguel is behind the Offprint email newsletter app that you can find at Offprint.app and Jared is an engineer working on Leaflet at leaflet.pub. So my background is in media and in publishing, and when the standard.site project launched at the beginning of the year, it really piqued my and it was a real pleasure to get to meet this team at Atmosphere conf back in March and then to have a chance to talk with them today. So our conversation offers a lot of insight into what goes into creating a collaborative project. And how you might even do that when you're in competition with each other.
+
+So I really hope you'll enjoy this episode of Off Protocol with the standard.site team. standard.site core Team, welcome to Off Protocol. I am so excited to have the three of you joining today for one of our first conversation episodes. I'm particularly excited just as a bit of luck, we're talking the same week that we're actually launching a standard.site integration into the Bluesky app. So we can talk about that a little bit later. But maybe by way of introduction, I would love to just kind of talk to each of you individually about your different projects, and then we'll get into the standard.site lexicon. So Jared from Leaflet, could you tell us a little bit about the Leaflet project, how it got started, and maybe how you became this blogging platform built on atproto?
+
+**Jared:** Yeah, so Leaflet came out of a bunch of work that my two co-founders and I had been doing for a while around social spaces on the internet specifically for learning. We were making software that people could form groups and do collaborative work to try and learn things and do projects together. And so thinking about social environments and identity and multiple people interacting in one place was a big thing on our minds. And that we tried a lot of different ways to slice that problem and leaflet came out of this idea of like, what if we just try and drop the friction on collaborating to zero? what is the like simplest possible way that two people can do something together on the internet.
+
+And so we ended up with this really, really minimalist document sharing platform where you just send people links and you can do different stuff there. But from the start, we always had this kind of like focus on identity and people together in one place. And I've been following atproto for a while and have seen various iterations of protocols trying to do social infrastructure and thought that atproto got a lot of things right. And so when the Bluesky team started doing the early days of the OAuth implementation, and it seemed like the protocol was getting to a more stable place. It kind of was a no-brainer to think about how can we extend the social functionality that we'd wanted to build in kind of previous iterations of our products and things like that with atproto.
+
+we through the course of our company and the things we made, we've sort of increasingly become more blogging pilled. Just the kind of it's really interesting how blogs can be this like driver of learning, projects, communities, et cetera, things on the internet. And so extending it into publishing blogs was kind of another no-brainer.
+
+**Jim Ray:** And situate us in time a little bit. So y'all are building Leaflet. You have this idea of kind of a social documents app. It hadn't quite fully pivoted into the blogging app that I think we think of today. And where is Bluesky in this, just kind of in terms of the timing of it?
+
+**Jared:** Yeah, so I think we decided to do the atproto integration. So I'd been really annoying about this to my co-founders for like a long time. Where I was like, we gotta, atproto is so cool, we gotta do something here. And they, I think, very pragmatically were pushing back against me for that. But I finally overcame that hurdle. I think like two-ish months before the atmosphere conf in Seattle. So my date and time is totally, I don't know when that was anymore, but around then and At the conference, I had this like super early demo of like, here's a special screen where you can sign in with your PDS and you can hit something and it'll publish to your publish a record to your PDS and it had none of the blogging-shaped things that we have right now.
+
+It was just like basically a proof of, you know, just like, look, we can put data on your PDS in this particular shape.
+
+**Jim Ray:** Got it. Okay. Yeah. So early 2025, y'all are starting to get a little bit more into the protocol.
+
+**Jared:** Yes. And then after the conf conference, we yeah, flesh that whole thing out and I think of a month or two later, hat the kind flick polished thing out there.
+
+**Jim Ray:** Oh very cool. Excellent and so Brooke, I want to move on to you. So you're the proprietor of pckt.blog, pckt.blog. Make sure we get that pronunciation right, everybody. Maybe give us a little bit of the origin story of pckt.blog, maybe starting with the name.
+
+**Brooke:** Yeah, so the name itself, basically the idea is just having a blog in your pocket so I just wanted to make something that was really simple and easy for anybody to get started with. And like even if you don't sit down at a computer to write your blog. Like I feel like you should just be able to be writing on your blog from wherever you are. So pckt.blog, blog in your pocket, pull out your phone, everything should work smooth. And easy. But of course it's more than just like you know a mobile situation. So it is a full-fledged like application that you can use on your computer, on your phone, wherever you are. And basically I'm a Laravel developer, so PHP primarily.
+
+So I actually started working on pckt.blog. before I even knew about atproto, big mistake. So and then I finally had like sort of a first draft ready and I was like, okay, where do I go to tell people about this? Kind of over like Twitter or whatever. So I was like, I'll go on Bluesky. So I go to Bluesky to kind of spread the word of pckt.blog and this new thing that I'm that I'm working on. And I come to find that Leaflet is already here, you know, taking up space in the atmosphere. And I'm like, oh, okay. And then everyone's like. Well why aren't you why isn't this an atmosphere project? And I'm like, oh I honestly I didn't even know that atproto was a thing.
+
+So time for me to get educated and figure it out. And so that was kind of a hurdle to go through. you know, figuring that out and getting everything together and making it work in the atmosphere.
+
+**Jim Ray:** And so that's pretty interesting too. A little similar to kind of Leaflet where you were trying something a little bit more direct with a with a direct kind of social connection and the blogging connection. What were some of the things about atproto once you started getting into the details of it that were attractive to you from the perspective of a developer?
+
+**Brooke:** Mm-hmm. So I liked basically the community aspect of it. I like that, you know like we're seeing here with us, the three of us, is that we can go beyond just one platform and really be able to work together and tie things in. To be more of like a shared experience, even if you're on, you know, if you're on Offprint or if you're on leaflet or if you're on pckt we all kind of can mingle and interact and still be involved without like you know, I just like being able to have like our audiences spread between each other. Just more readers, more writers. It's all connected and beneficial, I think.
+
+**Jim Ray:** Excellent. That makes a ton of sense. And Miguel from Offprint. Offprint's kind of the newest of the three on the block here. And you launched Offprint right before Atmosphere conf in Vancouver this year, is that right?
+
+**Miguel:** Yeah, it launched back in February.
+
+**Jim Ray:** Okay, excellent. And so what were your how were you thinking when you were kind of coming into this space? There were a few players already, obviously, but what were you thinking about when you decided that you wanted to launch kind of another long form platform on the protocol.
+
+**Miguel:** Yeah, so initially, I knew about Leaflet. I didn't know about pckt at the time when I initially started working or announced that I was working on Offprint. I decided that seeing what Leaflet at the time was offering, I wanted something a little bit more Substack like so my whole I guess idea was to just clone Substack on the atproto ecosystem and then move on from there. But yeah, I was if I guess I'm the only one here that kind of started with atproto in mind.
+
+**Jim Ray:** And what advantages do you feel like that that kind of conferred? Was it easier to get started? Did was it kind of a big hurdle to kind of figure out this new protocol? Since that was one of the design goals.
+
+**Miguel:** Yeah, so I joined Bluesky back in November of 2025. I just like had no job for a long while. My friend kind of bullied me into creating a project for like as a portfolio item. And we built it on atproto. Because I'd had just found out about it. So I have came from kind of already dipping my toes into it. I think it was very important for me to have known a little bit about the protocol and already like implemented it in a different project. Offprint's gotten pretty big and now or big as in like code base wise. And it's very hard to maintain because yeah, I'm also a Laravel developer, so coming from coming from that, it I feel like things don't map very well from like the Laravel ecosystem to atproto.
+
+So I built a lot of my own packages to try to alleviate some of that stuff because there's like nothing in for Laravel in the ecosystem.
+
+**Jim Ray:** I feel like we've got the core PHP contributors to atproto right here in this room. Well, so part of the reason I'm excited to talk to the three of y'all is that what you've created with standard.site is, I'm gonna say it's the most successful, at least the one that I'm aware of. kind of community originated lexicon that is in the ecosystem right now. And I know bits and pieces, but I don't actually have the full origin story of how y'all came together to create this shared lexicon. So I would I would love to know and y'all will have to kind of help me out here. Like, you know, where do we even get started? Who sent the like first message?
+
+**Brooke:** So I messaged Leaflet, like just the Leaflet account on Bluesky. I didn't know like anyone at Leaflet. I was just like, hey, you know, I love what you guys are building. I'm building something similar and I'm just really excited about the community that's like you know around atproto. And basically I just want to make sure like I'm not stepping on any toes here and like Leaflet was very welcoming right off the bat and we started talking about Offprint and how it could be really useful for all of us to collaborate on something that's shared for like long form protocols. And it sounds like at that point leaflet was already talking to Offprint about things. So I kind of reached out to Leaflet and Leaflet was like, hey, we're talking Offprint.
+
+Do you even know them? And I was like, no, I don't know. I didn't know Miguel at this point. And then I think Jared must have said something to Miguel and then Miguel reached out to me and we just kind of hit it off and started talking about collaboration right off the bat.
+
+**Jared:** And then as I recall it, this was like it was a little bit before we actually like maybe a couple months before we started talking about the standard.site stuff. And then things kind of lay quiet for a while and then I think I saw maybe on UFOs, maybe just somewhere else, like the pckt.blog records start turning up and then was like, oh, okay, things are happening now. And then reached out again. I think to you, Brooke. And then you were like, oh, you and Miguel were already talking about some lexicon stuff, and that's when we started a group chat and kind of started scheming everything together.
+
+**Brooke:** Yeah, and well, we had one like kind of community meeting with a few more people about sort of like shared long form lexicon type things without really anything set in stone or any clear direction. But I think really after that, we kind of got together and were like, okay, like, where do we go from here? What should we do next? And how do we make this into something that's actually going to be real and useful?
+
+**Jim Ray:** And so what in as I recall, the so I was actually working on something myself because I come from a publishing background. And I wasn't even necessarily thinking about it in terms of like a shared lexicon, but I was thinking about what my presentation at my atmosphere conf was going to be and so I was kind of targeting publishers and was kind of interested in what was happening in some of the CMS space. And so I sat down and was like, okay, you know, I need to kind of come up with a proof of concept of what it would look like to publish native records and then I swear like the next day I saw the announcement of standard.site.
+
+And it was either right before or right after the new year between 20 years.
+
+**Jared:** Right after the new year.
+
+**Jim Ray:** Right after the new year.
+
+**Brooke:** We were crunching like literally like New Year's Eve. We were like, okay, is this ready?
+
+**Jim Ray:** Nice. And it was such a like relief for me, honestly, in some ways. I was like, I don't have to think through all this stuff. I don't have to figure out these lexicon details. And so and you know, I didn't even end up presenting. And so I was really happy that y'all were there and able to do that. No, no, no. It's in some ways it's such a perfect kind of validation of what we want to do with the protocol in so many ways. So I continue to be excited about the work. I'm kind of curious because y'all aren't exactly the first community lexicon. There have been some efforts at this. But none of them have really quite taken off in the same way.
+
+And I'm curious if you have some thoughts about what do you think it is that managed to make standard sites successful? you know, were there lessons from some of the other community lexicon projects that y'all saw and kind of explicitly kept in mind, like, oh, let's not go down this road or hey, let's kind of move in this direction?
+
+**Miguel:** Yeah, I think there's a few things that we learned from Lexicon community and just like the first attempt to try to get something going. We had some trouble initially because everybody kind of assumed someone else was going to take charge of what was happening with the like the working group. But once we kind of all figured that we could probably just handle it ourselves, we were able to collab a lot quick a lot quicker and yeah just we just launched pretty quick honestly.
+
+**Brooke:** Yeah. But my thought process really was like, you know, from like the lexicon structure to the documentation. That if we want to have something that's really going to take off, we needed to like implement it in a way that was really simple and easy to understand. So I think really like kind of parring down what we're thinking of as a standard to be and starting with really just like the basics to begin. That way it's easy to adopt, easy to understand, really like from like I said, from the documentation to the lexicon structure itself. I think that was beneficial to us and to the community to have something that works.
+
+**Jared:** I think on like a just on a high level, the fact that we had like three relatively serious contexts of use right from the start made it enormously easier, right? Like we had projects that we were trying to fit this into and we had from day one the pckt lexicons and the leaflet lexicons to kind of compare and contrast against each other and see their what is what a standard should look like. And we had the experience of implementing against those. Yeah, I think that that was enormously valuable. And then I think also just on a pragmatic level, like probably our first longest conversation in the group chat for this was like, what should the name be for this?
+
+And from there on, I think like having a name and having a identity around it makes a pretty big difference for people being able to talk about this thing and point people to it and CAFI be able to build up, you know, a certain kind of community around it yeah, and then I think lastly, and this was honestly a big impetus for why. I think we had some initial conversations on like whether we need a consistent lexicon in the first place? Like is there a world where every project just has its own like pckt, Leaflet and Offprint just do their own lexicon?
+
+**Jim Ray:** for this.
+
+**Jared:** And I think the conclusion was that this kind of blogging has a very diverse community of consumers and publishers. There are going to be a large amount of people publishing blog related content and there's going to be a large amount of different applications consuming them. And so you don't want to have this kind of cognitorial explosion of all these different things happening. And so I think the dynamics of the problem space are just like needed a singular solution. And so having something that I think there was a certain amount of like latent demand there. for lexicon like this that made it go off.
+
+**Brooke:** I feel like that brings us to one of what I think is one of like the biggest points of friction for us in developing the Lex you know, what does the actual content part look like? And what we ended up doing is just deciding that like since there's so much diversity in this space and since there's so many different kinds of platforms with you know, different types of content blocks and formats, really just deciding to make all of the like metadata information unified and then having a content Property that can be more open and be adapted for whatever your needs may be. That that was something that we thought a lot about like, you know, should we have like a standard format for our content?
+
+**Jim Ray:** Yeah.
+
+**Brooke:** But at the end of the day, it's like then if somebody wants to implement something different or if somebody wants to format their content in a different way, like just plain markdown, or you know, if they want it to be in JSON or whatever it is, like I that was the hardest thing to think about, I think. But I think that just having it open and just having it be like you know, bring your own content, put it in there, and then sort of standard.site will help you surface your content to the right audience.
+
+**Jim Ray:** Yeah. One thing that I think is really interesting about the decisions that you made, and you can kind of see it just in the shape of the lexicons themselves. And also I think this drives some of the success of the Lexicons too is that they are quite simple and they're also quite extensible. And so do you think that that was more of an explicit design decision when you went into it? Or as you were talking about because you had at least a couple of existing projects that you kind of backed into? Did that help to give you a sense of like, okay, pckt does it one way, leaflet does another way, let's figure out what are the commonalities between all of them, and then what are the spaces where it makes sense to you know, allow the publishers to make their own choices.
+
+**Jared:** Yeah, I think definitely having those examples like there just was a diversity of things we had to fit in here. Like Leaflet has a kind of weird multiple pages structure that would be enormously annoying to represent in Markdown or some other format. And but at the same time is like we don't think it is like some kind of fundamental thing. It is just kind of a niche feature. We want to be able to represent it, but we don't want to force that onto some kind of standard because just most platforms are not going to use that. And so yeah, I think it just kind of fell out of trying to make these things fit together.
+
+**Jim Ray:** Yeah. And Miguel, did you encounter either the opposite problem or you know was it useful for you to have standard.site already existing and to be able to kind of design around that or was it constraining in a way that you have some different choices?
+
+**Miguel:** Honestly it was a lot easier to get Offprint ready. I did have some existing Lexicon schemas already built into the app, but I never published them because I was waiting. I knew something like this would eventually pop up. And so I just waited for standard.site to pop up, honestly. That yeah, that was very like I said, that was very helpful with getting Offprint going a lot faster. A lot of the choices that Brooke and Jared made with m most of the lexicon shape was very good in my opinion. Kept a lot of things very easy, very simple and just getting the content blocks was like the harder hardest part but that's just that I think that's why we went with that honestly.
+
+And then also yeah, sorry.
+
+**Jim Ray:** Yeah, no, no.
+
+**Brooke:** formatted, sort of bouncing all of our ideas off of each other with three different platforms that do everything a little bit differently. To really kind of solidify more of like an average like solution to whatever our problems are because I think in our heads we each had our own idea of how each part of the lexicon should look, but then sort of like putting all our ideas out on the table and then just kind of breaking those down into like, okay, where do we cross paths and what is going to be like you know, the best kind of average of all of our ideas together. And it I feel like it was it was really helpful to be able to do that.
+
+**Jim Ray:** And oh, Jared, did you have something else?
+
+**Jared:** I just think like in extension to, you know, we each had our platforms as they were, but I think one of the nice things here is like all three of us, I think, have a fairly strong vision of like where we are trying to go with the platforms and so be able to talk down the line of the things that we are gonna want to be able to support and those like diverging as well I think really led to a rich context here that helped a lot.
+
+**Jim Ray:** Well, so this all kind of leads us into a conversation about governance. And that is emerging as one of the I mean, I guess it's kind of always been the case for as long as one of the interesting things about working on decentralized protocols is there's always a governance layer. And I think that's one of the things that's great. But it also just creates new challenges when you're building things on a decentralized protocol. And we've talked a little bit about how it is that you came together, but you know, it's been six months now almost since launch. And how have you managed when there have been differences of opinion, when you know, you've had some either some disagreements or, you know maybe even like a product direction that wanted to go in one way and kind of wanted to push or pull the lexicon one way or the other.
+
+How does the governance piece work?
+
+**Jared:** In terms of product direction, I think one of the really nice things about the lexicon system we have here is that there's a lot of open-endedness and like we talked about that with the content feel, but also with like the way multiple sets of lexicons can integrate. And so I feel like we're I feel very little constrained by what is already in standard.site. If Leaflet wants to try something out, Leaflet can create some lexicons and put those out there and create those around there. And if and when those things are in standard.site, like we can figure out a way to migrate to them. I think there's a lot of flexibility that means that we don't have to coordinate too early, which I think has been really useful.
+
+**Jim Ray:** That sounds super practical as well. And Jared, I think you've written that the migration from the leaflet lexicon to the standard.site lexicon, I haven't verified this myself, but I think you're probably correct. That was probably the biggest migration in the atmosphere so far. And I understand it was maybe non-trivial as well.
+
+**Jared:** Yeah, I mean it I think you can kind of read it both ways, right? Like on one hand, it's really cool that we can pull it off at all in this like big decentralized ecosystem moving from like data in lots and lots of people's PDSs to this new format I think that there are lots of different protocol worlds where that wouldn't have been possible at all, perhaps. And then on the other side, it did totally suck for like three weeks of my life.
+
+**Brooke:** Yeah.
+
+**Jared:** It was pretty gnarly. But like that's, you know, data migrations are always like that. And we have the added benefit of a very like we do not have complete control over the system. There are still leaflet records out there to this day that we could not migrate. There are we have to make our system handle both of those existing side by side because there are tools and publishing CLIs and things like that that people made against the Leaflet lexicons that we didn't want to break. And so we just had to, you know, sit down and think through the logistics of how to make all of those things. But it was immediately very possible, which was exactly and meant that we could like us knowing that we could migrate like that meant that we could then engage in all of these discussions, right?
+
+It means that we can come up with standards and do all this kind of work together. together if that's a possibility.
+
+**Jim Ray:** Cool. And Brooke, you also had to migrate pckt over to standard.site as well. Were there any issues that you ran into?
+
+**Brooke:** Thankfully, we didn't have a ton to migrate at the time that we did. So but yeah, it definitely wasn't easy. I wish that I would have just started with atproto from the beginning because I still have like a lot of sort of legacy infrastructure in my project which is like not a very old project at all. So it kind of sucks to have it. So like, yeah, we started off with just like regular accounts, you know. So there's still a few of those struggling around. I had to build infrastructure to be able to connect an atmosphere account and then sort of do like a backfill to the PDS. And also kind of just convert to the standard.site like format, of course.
+
+But it's going pretty smoothly now. I still would like to if I can, and I've been moving in the direction of trying to kind of get rid of the old accounts and not necessarily get rid of them, but try and get people onto you know on into the atmosphere and off of those like legacy accounts. So like right now our landing page is very atproto-forward. You sign in immediately you're greeted with like you know, like an input for your handle and the email login is like off to the side like don't look at that, but it's there. So but I right now what I'm thinking about is like how can I Transition these old accounts into an atmosphere account.
+
+So if they have one already, make it easy for them to add an account, which they already can. So maybe some sort of prompting to sort of initiate that flow and then if they don't have an atmosphere account how can I help them convert into having an atmosphere account you know, just some sort of account creation process after the initial login for these old users. So.
+
+**Jim Ray:** And you actually went to the step of setting up your own PDS, is that correct?
+
+**Brooke:** Yeah. And.
+
+**Jim Ray:** was that part of that migration as well? Part.
+
+**Brooke:** I'm sorry, what?
+
+**Jim Ray:** Was that part of that migration as well?
+
+**Brooke:** It was it will be. So right now we don't have a way to you know convert your account from an old legacy account to an atproto account. But you could create an account on pckt.cafe with our PDS just by signing up and then link those two accounts together and then they would merge. So it's complicated. I would like to make it more simple. I'd like to make it so you can just log into your legacy account and just press a button and you're good to go. But I'm still thinking about how to get that worked out? Or if it's even worth it, because there's not that many of those legacy accounts, but there are still some that I would like to be you know, on the atmosphere so that they can get all of the atmosphere features that that are available.
+
+**Jim Ray:** That's great. And I think I talked over you the first minute there. So that's pckt.cafe, right? What's your PDS?
+
+**Brooke:** Yes.
+
+**Jim Ray:** Amazing. Well I l I just I love the many varied ways that people are using and abusing the domain name system in so many fun ways and that's a really good one.
+
+**Brooke:** Yeah the idea is that like pckt.cafe is like the social sort of grounds for pckt. So like pckt.blog is like your blog, but pckt.cafe is like, I don't know, maybe there's some sort of community spaces that we build on pckt where we can have community writers or when eventually we have comments, like I feel like building this kind of cafe narrative where you're hanging out with people, being social, interacting, and like you're not just blogging or you're not just having a website or whatever, it's you know it's more social than that. The atmosphere lets you kind of stretch the boundaries.
+
+**Jim Ray:** I love that. I really love that idea about technology, especially social technology that doesn't have to feel like just lists of feeds and kind of how we think of these social graphs, but Tend to be a little bit cosier. The governance piece, right now, you have a few lexicons that you have out there that define a publication, that define a document that define a subscription. I think that one was added kind of after the fact, which is pretty interesting. And we'll talk a little bit about kind of reader applications in a minute. But there are these other primitives that exist. So things like likes and follows and so you know comments are another one. So how are y'all thinking as you're continuing to evolve the spec?
+
+I imagine this is something that you're working on together collaboratively to kind of figure out how that works in the various interfaces that you've all built as well.
+
+**Miguel:** So we've been trying to focus primarily on things that would actually make the spec like specific to blogging. So if there like for example there's a lot of suggestions to add things that wouldn't necessarily fall under blogging like podcasts or I don't know just different types of media, I guess. So we've talked a lot about making sure that we stay focused on blogging. But yeah a.
+
+**Jared:** like rough heuristic I have in my head. And I think this might have come up in our signal chats, but it's like the amount of existing implementations we want should be like proportional to the complexity of the new lexicon. So like when we were implementing the you know document of the publications, it was really, really good to have two competing implementations and that made a lot of conversations a lot easier when we were adding the recommendations lexicon which we have in there and should be coming in a release soon or a docs release soon. We had those implemented in Leaflet already. And because they're it's like a relatively simple thing, it's just a single lexicon with one reference to something else, that was kind of enough data in the real world to have a conversation about how this should go and add to the lexicon.
+
+For something like comments, that's actually pretty complicated and has a lot of implications for content and various moderation things and all this kinds of stuff. Leaflet has a comment lexicon, but we're not like super happy with it or anything like that. And so that would be, I think, a thing we would want to see some, you know, like we should all try things and get some more just real-world concrete evidence of how these things go and what the pain points are and how we want to work with them. And then we can move those into the standard over time. I think there's like the if you know all the things that make if we if we're having a hard time having a conversation about it, it probably means like we should just wait until it becomes easier to have that conversation.
+
+Yeah. Right. Like there's I think very little impetus to move quickly with these things. Unless given that we have all these other tools that the products can use. to iterate with as well.
+
+**Jim Ray:** Yeah. Comments are particularly interesting because you get into this world where if I'm leaving a comment on your blog, the comment would in theory be stored on my PDS. And so there are some technical implementation questions. How do I actually gather up all of the different comments that have been left? Through some kind of backlinks mechanism. But then, you know, what happens if that PDS disappears? And how does that kind of look down the line? These are issues that I think a lot of developers, certainly issues that we run into as well. And you know, how do you show a tombstone comment? Again, how do you handle things like moderation? Who does the moderating is the person who owns the blog?
+
+So it's not just necessarily like what should the lexicon look like, but there are all these I think for lack of a better word, kind of like social and governance kind of issues as well.
+
+**Jared:** I think it really points to how we like, you know, so far we have chosen the easy parts of the problem. Like the you know, documents and publications and subscriptions and likes are like, yeah, I think the we've carved out them sort of maximally useful and least gnarly set of the problems. And there's yeah, still.
+
+**Brooke:** the bare necessities.
+
+**Jared:** Yeah.
+
+**Jim Ray:** Well, I want to move a little bit into kind of like what's missing and what y'all think is are would be necessary for standard.site to continue to move beyond just the existing atmosphere. Something I am kind of motivated around is trying to get publishers who are not necessarily native to Bluesky. They might have an account where they do some cross-posting or things like that. And I feel like we're in this moment where in order to encourage more people to publish a standard.site, we need to show some value to that. And those, in my mind, those kind of look like applications that are built on standard.site records. Like a reader type application. And I know that both pckt and Leaflet have you all have built reader apps that have kind of a subscription mechanism.
+
+They don't look anything like, thank goodness they don't look anything like the Google Reader of old. We've kind of moved beyond that just everything's an inbox. But you know what are some of the things that people listening or people out there in the ecosystem would build on top of standard set? What are the things that you're hoping will exist? on top of the lexicons that exist.
+
+**Brooke:** Something I'd like to see is we talk about like how content gets surfaced, who's in control of like what you're reading. I'd love to see more like user generated feeds, sort of like Bluesky feeds. So I think it would be great if like anybody can make a feed for standard.site and you can integrate that with your app view. community feeds really cool. I think we're already trying starting to see some really great new ways of surfacing news and media. Like with SIL, SIL is really cool. I'd love to see some atproto, I'm sorry, some standard.site integration and collaboration there. But yeah, I think it's interesting to think about like how when you have access to all of this content, you're able kind of browse through it in ways that you wouldn't necessarily think of.
+
+Like we're so used to like algorithms that are by these big corporations, like feeding us things, whatever it is, and I think really building different tools to give users back some more control over what they're seeing and what kind of things they're discovering is something that's on my mind.
+
+**Jim Ray:** I like that idea of creating more discovery. I've talked a lot internally, just as I is my own kind of coming to understand how all of these pieces work and you know, there's a world in which the semantic web of 2003 actually took off, right? And but that world is not the world that we live in. And so one thing that's really interesting about standard.site in particular is you're creating all of that kind of semantic grammar around articles, blog posts, news items, and things like that. But then there's also this mechanism of the relays and the firehose that give you the capability to do things like build those custom feeds.
+
+**Jared:** Yeah, I think the I have always been enamored by the things the semantic web was trying to do. It was a little bit before my time, but I definitely have gone down those rabbit holes a lot and I think comparing and contrasting that to lexicons, I think what is clear is all the practical benefits you get from building on this. It's not just a ontological system, but it is a technological system that lets you actually do things that were hard to do before. You can't very easily crawl this entire network and process all this data and have these strong links to identity. And yeah, I think I'm thinking I'm excited a lot of for a lot of similar things.
+
+as Brooke. I think specifically I'm really hoping that we see some kinds of community constructs for aggregating these things so that multiple people can build communities, collections, networks, little ecosystems that are blogging, writing, referencing each other's work and doing that together. And I think there are yeah interesting affordances both we can do in the lexicon itself and in the tooling around that to enable that kind of stuff. Yeah, and I hope that can be like a really visible benefit of this, of if you are publishing with these lexicons, you're getting, you can participate in these communities.
+
+**Jim Ray:** Cool. Miguel, Offprint is kind of launched explicitly. You m you mentioned it was it was a bit of a substack competitor but it launched explicitly also with the email primitive, which I you know, I think maybe five years ago the idea that newsletters were going to be as popular as they are was maybe not something that we would have predicted, but and I think one thing that's interesting about newsletters is it on the surface at least it seems like it creates kind of a tension between, you know, you think of your individual email inbox as this kind of siloed experience. And then but then there's also the act of publishing that in public. A lot of the newsletter providers, they have mechanisms to kind of gate the content.
+
+And then of course you're also publishing these standard.site records. So I'm curious, like, you know, has that tension kind of arisen with the folks that are using Offprint right now? How do you think about resolving that? Are there features that you are looking at building that will kind of help with that a little bit?
+
+**Miguel:** Yeah, so like you said, email and having atproto records is a very wild thing. I think it's very difficult to, at least right now, have some sort of way to gate these like articles or sections of articles, unfortunately, but it is part of the roadmap that I'm actively working on right now to try to get monetization features built into Offprint as well as trying to get like more interoperable ways to gate content. But it's it's not an easy thing because I think I'm the only one tackling it right now or at least in my silo I haven't noticed anybody else tackling it so yeah, I'm not too sure when that will come out, but it's definitely something that users have been wanting.
+
+So there's a few people that are have are waiting for that specifically before they join Offprint.
+
+**Jim Ray:** And is that, are y'all kind of waiting on the permissioned data project that we're working on, this addition to the protocol that will allow you to essentially create those fences around the records that you create. Is it is that something that you are kind of like hanging out waiting to figure out what the like on protocol version of that looks like. I think there are a few off protocol versions that that are also kind of whether they're sidecarring content or other things like that. So are you thinking that that the permissioned data is going to be what unlocks that for you?
+
+**Miguel:** Most of the time. I think for most of us it's it will do that, but I personally haven't been waiting for it. But I'm so excited when it comes out because I don't have to have to figure out how to host this stuff and explain to users that you know this article's technically not hosted on your PDS.
+
+**Jim Ray:** Yeah.
+
+**Miguel:** So.
+
+**Jared:** yeah, I do think there's a surprising diversity in both user expectation and user behaviors around different types of private data. And I think paywalled content is one where the existing affordances and patterns actually work. like relatively well or at least they I think the they map that there's like users are expect Expecting to go somewhere to receive their paywall content, right? Like you don't have this idea necessarily that you can be like going into a diversity of applications and viewing as interesting as that would be.
+
+**Jim Ray:** Yeah.
+
+**Jared:** That's not what people are doing right now. And so I think the model that you like go to a website hosted by something and you sign in to see the content works pretty well. And that's yeah, so I don't I don't think the standard permissioned data proposal is sort of a necessary component, but I do think it opens up hopefully a lot more interesting. kind of like new novel interfaces that we could be explaining.
+
+**Jim Ray:** Yeah, totally. And so one thing with permissioned data is like one of the use cases, and this is one we think about a lot internally, is obviously the ability to kind of like quickly and easily set up the paywalls, you know, you can kind of allow these people in, give them access to this tier of content or whatever it is. But as Jared was just kind of talking about, like it also potentially uncorks new experiences around things like communities. And Brooke, I'm curious, as you've been working on Pockets, which you know in some ways feels like well you know, I always kind of equate pckt to kind of like more of a Tumblr-y kind of experience.
+
+It's got, you know, it reminds me of the Heyday of Tumblr just it aesthetically more than anything. And but I'm also curious.
+
+**Brooke:** pckt is a very serious platform.
+
+**Jim Ray:** pckt is a very serious platform, exactly. Well, but I am curious about the other thing. Yes. But how have you thought about like some of the more kind of like communal use cases beyond just like a typical paywall?
+
+**Brooke:** Yeah, so I'm not I generally am not very interested in paywalled writing. You know I feel like if you're going to be putting something on the internet, you should be doing it because you want people to read it and you want people to see it. But that does not mean that I'm against writers getting paid. I think that you should definitely get paid for your work. But I think that I'd like to see some more types of like mutual aid systems. I personally would love to have the ability to like just leave a tip after reading a good blog post. So I'm like, okay, I give you your recommend, but I'm like what now? I want to give you like, I don't know, just a little bit of money or something to like tell you that I really enjoyed what you wrote and you know I found benefit in this and I think that like having I don't want to say content, but like having access to like writing and having access to like educational material, whatever it is, like I think that that's important and it's good to share and not everybody can afford that.
+
+So I want I want to build something that like you still can monetize like your work, but I don't think that like gating people off is the right way to do it. Not that there's anything wrong with like Offprint doing that, because there's definitely like a market for that in people that that's their whole thing, you know. But for me personally and my philosophy, I just like I think that there should be better ways to share the wealth and share your support and contribute and share your writing too. So.
+
+**Jim Ray:** I just genuinely love that you've got these two kind of both equally valid approaches to how you peep you know people are going to present their writing or whatever it is they're working on, and they are both using essentially the same file format, which I think is you know really fantastic. I want to kind of finish up a little bit with some advice to folks that might be listening that might be interested in building first and foremost, just how would you encourage people to approach this idea of collaboration and building, you know whether it's things like lexicons or other types of infrastructure. You know, one of the things that's really great about the protocol is we took like the traditional web stack and we blew it up, right?
+
+And so now you get it kind of get to pick and pick your pieces. And so, Brooke, you've not only provided like the blogging platform, but also a PDS. And so when it comes to thinking about collaborating with other people, and I, you know, I should just say this explicitly, you know, y'all are collaborating on this lexicon, but you are all ostensibly competitive competing with each other. And so, you know, maybe that's actually a pretty good place to start is like how to think about this co-opetition to use a really horrible MBA kind of word.
+
+**Brooke:** I d I don't want to steal the mic, but I do have something to say on this, if that's okay.
+
+**Jim Ray:** Go for it.
+
+**Brooke:** Yeah, so I mean, yeah, we technically we are all competitors, but the interesting thing with atproto is that we share a community. So the more that each one of us grows, the more eyes are going to be on our own platforms. And I just think it's like a really positive thing that we're able to grow together in an open space and also through that process, we grow discovery of our own platforms. And I think really like we're not building the same thing, even though they overlap in a lot of ways. So I think that writers and people who use our platforms are going to choose whichever one feels right. And they're also going to benefit from us all sharing the same lexicon, sharing the same sorts of discovery features.
+
+And the same community. So it's just, I think it's beneficial for everybody. The more that leaflet grows, the more we grow, the more that the community grows, the more that people will be able to find each other and find more platforms.
+
+**Miguel:** Well said.
+
+**Jared:** I think that last piece on the you know it's kind of what our customers or users want is a really important part of it of like and I think that goes to like advice I would have for anyone trying to do this is like working backwards from the things that people are actually doing, right? If a writer is publishing the thing that they want is to be participating in a bigger ecosystem. system is to get the.
+
+**Brooke:** scene.
+
+**Jared:** Yeah. If a reader is reading things, the thing that they want is to be able to read the most things out there in the on the internet. I think if we're starting from those kinds of things that people want to be able to do, then that motivates the design of the lexicons, how we work together, all of this kind of stuff. And I think finding those kinds of shared goals and ideals, I think, makes yeah, the this kind of collaboration and these kind of communities possible.
+
+**Jim Ray:** That sounds great. Any advice on any you know have there been pitfalls, have there been things that you might steer people away from as they get into doing some of these collaborative efforts. I really love the approach that y'all are taking to this. But surely there have been some mistakes along the way, right?
+
+**Miguel:** Don't buy a premium domain.
+
+**Jim Ray:** Don't buy a premium domain. Got it.
+
+**Miguel:** Yeah, we all have to chip in a decent chunk of changes to make sure we can renew our domain.
+
+**Jim Ray:** Nice. All right, excellent.
+
+**Jared:** Yeah, I'm trying to think. I don't think we have any like I don't think we've had any lexicon mistakes that we've had to roll back or anything like that. I there are maybe things I don't know. There are things that we could have done differently that would have been fine, but that's always true. Yeah, I don't know. I think maybe the honest one is like that early conversation, that early working group. Like sort of didn't work out, partially because it was just too early. And so like waiting for the right time when people want to do the thing. and are motivated and have enough context is like, you know, a smart move. Don't there's no need to prematurely try and do a project like this.
+
+**Brooke:** And I think that oh go ahead. I was just gonna say I think that keeping the scope limited to start has really helped us navigate this. If you start with something small, it's much harder to screw it up. So.
+
+**Jared:** Yeah, I think also like a practical statement of that would be like someone implementing your thing should get the benefit from by publishing one lexicon. And what we, you know, we sort of you can technically publish documents on their own. You might need to publish two to get the full experience. But like I think there's a real temptation when doing this stuff towards maximalism and extensibility and being able to like, oh, if you can compose these three things, you can represent all kinds of different states and types of things. Yeah.
+
+**Brooke:** And I feel like every time every time that something new is being introduced, I feel like I'm always the one to be like, okay, but like is this gonna get too complicated? Like it's always a back and forth between all of us, like trying to figure it out, like, is this something that like is really core to the experience or is this something that is like an add-on that like people could do on their own that we don't need to add to the standards. So I think, yeah, really it is definitely a back and forth between like what do we want and what do we need?
+
+**Jim Ray:** Yeah.
+
+**Miguel:** I think it's important for platforms or anybody that are trying to do stuff like standard.site for their own niches to remember that when you're wanting to standardize something, make sure that it's something you guys have actually converged on. That there is like, you know, actually like how Jared puts it like actual use or use usage examples out in the real world and not just like from one platform. That will help a lot in figuring out what should be adopted by the spec. And then what should just continue to be like iterated on by the individual platforms, making sure I you know build things open enough to allow for that.
+
+**Jared:** And then maybe one thing we haven't really touched on is like we one of the things we actually I think did go back and forth on a lot was the like verification implementation in standard sites. Right. Between different mechanisms. And I think that comes from like when you're making a lexicon, you are caring about sort of two different constituents at minimum, the like end user of the products that is going to be hosting this data in their PDS and creating it and expressing these actions, and the developers who are implementing all of these lexicons in various places. And so caring about the experience of both those constituents, I think, is a, or thinking explicitly about the experience of both those constituents.
+
+constituents makes a lot of sense. And so when we were talking about the verification stuff, we were talking a lot about, you know, the difficulty of parsing HTML documents and how easy it is to resolve a specific dot well-known route versus these other things and thinking about those trade-offs in anyone who's writing code that's going to be interacting with these, I think was a helpful exercise.
+
+**Jim Ray:** And I think y'all made a very practical decision there. One thing I continue to be impressed with on the protocol writ large, but definitely the ecosystem that's being built around it is there's a real bias towards action and a real bias towards practicality. And I feel like that that is absolutely something that y'all are demonstrating here as well.
+
+**Brooke:** I was just going to say I think it's important to, you know, look at what are people already doing and then ask yourself like, you know, why don't we just do this together when it comes to those sort of practical applications? A lot of the work is already done by the community.
+
+**Jim Ray:** Yeah.
+
+**Miguel:** Yeah, you definitely want to find a group of people or platforms in our case that are already building in a specific niche. No reason in creating a standard if you're the only one that's gonna use it. So yeah.
+
+**Jim Ray:** Absolutely. Well, I really appreciate you taking the time. And this was a fantastic conversation. I'm also just so excited to see the standard.site integration into the Bluesky app. And so just could not be more excited for the work that y'all are doing. I don't know if this was a goal when you first started, but super happy to make that happen. It's been really great to collaborate with you all on this part as well and to make sure that this was you know, something that was that was going to be you know the needs of people that are using Bluesky, but also y'all's needs as well and the people that are using your various platforms as well.
+
+So I hope we strike a right balance there. This is, you know, obviously just a very first step. We want to continue to integrate the incredible work that you and everybody in the ecosystem is doing. And so I'm I really want folks to understand that you know, standard.site is a success story and because it's been so successful, it's something that we're able to take and build on top of, something y'all are able to build without in the initial permission from us. And then now we're coming to you and saying like, hey, can we, you know, put this into the app because so many people are using it. So really, really happy about that.
+
+**Brooke:** Yeah, I think we're very happy about that too. We're excited to see how it grows. And, you know, the more introduction to standard.site, the more people are exposed to it, the better it'll become. So.
+
+**Jim Ray:** absolutely all right. Well, thanks again, and we'll talk soon. Real pleasure to see you all and looking forward to seeing you all again soon.
+
+**Brooke:** Thanks.
+
+**Jared:** Good to see you all.

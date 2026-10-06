@@ -43,6 +43,11 @@ export type Draft<T = unknown> = {
    * conflicts with a file that changed on disk rather than overwriting it.
    */
   revision: string
+  /**
+   * The same, for an episode's transcript.mdx. Optional: drafts written before
+   * the studio edited transcripts have neither this nor a transcript.
+   */
+  transcriptRevision?: string
   form: T
 }
 
@@ -103,6 +108,9 @@ export function parseDraft(
     mode: parsed.mode,
     savedAt: parsed.savedAt,
     revision: parsed.revision,
+    ...(typeof parsed.transcriptRevision === 'string'
+      ? { transcriptRevision: parsed.transcriptRevision }
+      : {}),
     form: parsed.form,
   }
 }

@@ -1,1 +1,339 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Paul Frazee:** Okay, we're live. Hey everybody, how's it going? Welcome to Office Hours with Paul and Daniel. We'll be standing in for Jim today. See, we got about 20 viewers on the stream, so that's a good start. How are you doing today, Daniel?
+
+**Daniel Holmgren:** Not too bad. Happy to be here.
+
+**Paul Frazee:** Nice. Okay, well it's.
+
+**Daniel Holmgren:** a podcasting mic.
+
+**Paul Frazee:** Yeah, it's kind of it's kind of sad for you. I'm try not to be embarrassed.
+
+**Daniel Holmgren:** I'll be comedic relief.
+
+**Paul Frazee:** I've discovered this is what I've been kinda telling everybody, I've discovered that actually ninety-five percent of the impulse to start a podcast could be satisfied by just getting a podcast mic and using it on a zoom, you know.
+
+**Daniel Holmgren:** Yeah.
+
+**Paul Frazee:** And you just kind of, while you're talking, you know, you just kind of adjust it. It really gives you that that energy you're looking for.
+
+**Daniel Holmgren:** Yeah, yeah.
+
+**Paul Frazee:** All right. Well we have nice roundup of news for this week to be talking through. So that's what we're gonna Go ahead and kick off starting with a standard.site integration into the Bluesky application that launched I think just yesterday in the application. And I got a blog post here. I'm going to screen share this thing and we'll read through it together. But this was a real collaboration between the AT Protocol team, or excuse me, the Bluesky team and members of the community that have been you know, working on standard sites. So let's do a little blog post read. So now in your timeline, standard. site. So at the end of the last year, three excellent ad protocol-based publishing apps, Leaflet, pckt.blog, and Offprint, got together and decided to collaborate and create their own lexicon for publishing longer record.
+
+Like blog posts, articles, and newsletters on the protocol. They called it standard.site, and it has since emerged as one of the most successful community-generated lexicons in the atmosphere. I think by volume is it at that, Dan? Do you know? Like have we checked the I think it's pretty up there.
+
+**Daniel Holmgren:** I haven't I haven't actually verified that, but I would believe.
+
+**Paul Frazee:** Definitely in the in the up here for you. Yeah.
+
+**Daniel Holmgren:** I don't think you're sharing your screen if you were trying to share your screen.
+
+**Paul Frazee:** Oh no, really? Oh gosh. You're right. So that's a weird thing about there we go.
+
+**Daniel Holmgren:** Nice.
+
+**Paul Frazee:** We have to use StreamYard to stream to Streamplace, which is very easy to keep up with. And I shared my screen and it had to stage it. Okay. Thank you for the update. There. All right. So starting today, standard. site links will have an enhanced reader in the Bluesky app with extra actionable metadata about the post, including the publication and the author. And here's a little screenshot of it. There's it actually pulls the color information, I think, from the metadata that gets published inside of the standard.site like publication records. So you get a little customization there, which looks awesome in these examples they pulled together.
+
+**Daniel Holmgren:** This is the first place where you can influence the colors in the Bluesky app.
+
+**Paul Frazee:** Yeah. So we're breaking huge new ground with this one. For people using the Bluesky app, this means that when they come across a link published on a stand with a standard set record, they get this enhanced preview. For developers and publisher building on approach, we hope this provides more encouragement to use the exciting community-built format on your site. We worked with the core standards iT to make sure we struck the right balance between making the Bluesky posts more interesting and also supporting their projects. And then you can read up on the Bluesky implementation to get to your site ready for this. Just pause really quick there. There was some conversation back and forth about like how far we want to go with this.
+
+And the interesting balance is like we want to bring in as much as we can. Kind of from the atmosphere, taking advantage of like what we can learn from the network. But we also want to make sure that we're not eating the traffic for the other applications in the atmosphere. And so the balance that we that there was that the blog post talks about is that exactly like how do we make sure that what we're doing sends people to other applications in the atmosphere. While still doing something interesting.
+
+**Daniel Holmgren:** I love the approach that the app team took with the subscribe button on it because it makes these embeds feel really living and dynamic. While also doing what you're saying, actually sending traffic to the site and letting the action occur over there. So it gives this feeling of dynamism and like kind of a deeper native integration than you might get with like a web embed while still directing the traffic over to other applications.
+
+**Paul Frazee:** Exactly. Yeah. I imagine that's kind of the pattern that we're gonna be going for. It certainly sets a good template of like if we do anything like this, if we're ever reflecting, you know, actually kind of s Leaflet does this, right? Like whenever you're on Leaflet, you can see Bluesky post. in there and it's like these are Bluesky posts. I like that pattern, you know, of like you've got the native thing that the application does. You can represent activity from the other applications, but when you do that, you just kind of aggressively push towards the native, you know, place for that kind of interaction. That might be a good like way to do this moving forward.
+
+All right. So what does the standard lexicon standard outside lexicons do? The core, a core component of every atproto app is what we call the lexicon, which is a way of defining the shape of data. Another term for that is a schema. Lexicons are essential for building custom apps on atproto because they are interoperable by default. Any app can read any other app's public records. So we use the lexicons to help people. Coordinate around that. So if you give an app permission, you can even write records using another app's lexicons. Standard. site defines a few lexicons for publishing websites, such as a publication, which is like a website or a blog, a document. which is like an article or a blog post.
+
+And then there's a subscriptions lexicon, which is for tracking which publications to follow if you wanted to make a reader style experience. Taken together, these describe the long form writing in an atmospheric way, similar to how the Bluesky lexicons describe a social network because the standards. lex lexicons are open source, anybody is free to use them and publish to the web. WordPress, the CMS that powers over 40% of the internet, is that still right? Do we have is that.
+
+**Daniel Holmgren:** I also was like that damn.
+
+**Paul Frazee:** WordPress George is an outlier and shouldn't be included in the count. Okay, well, 40%. J they just released a plug-in that publishes a standard set record for every post, and which is huge. MDash, a ground-up reimagining of a content management system, also baked standard.site into their publishing tool chain and they did it from right from the beginning. MDash, I think, is Cloudflare's project. And then SQA is a command line tool for publishing blog posts from static site generators like Eleventy, Hugo, Astro, and Jekyll. And I assume also SQA has that. tooling. So yeah obviously we're pretty big on the standard.site lexicon and the and the value of it i mean it lets us start to make the web atmospheric which is yeah.
+
+Kind of an exciting room.
+
+**Daniel Holmgren:** This is so cool. It's such a good success story for the ecosystem. It's awesome to see the three projects that kind of drove it forward come together. Do that, that was pckt, Offprint. and leaflet. Also, there's a long form interview with folks from those three projects with Jim on the off protocol podcast feed so it's a really good conversation it's awesome to hear how this all came together and to me it's just like such a success story and like a very atmospheric success story people built their particular products, came together on a like more universal like standard, and then that kicked off a whole range of apps that are building on that. Even just last night, I think Samuel on the app team through he wanted to get his hands dirty with like the new Claude model and he threw it at making a composer site for standard.site and just Overnight did that.
+
+You can you can really only do that in a useful way whenever you have these universal schemas like this. So.
+
+**Paul Frazee:** You gotta get me going on autocoding point from the schemas. That's a whole nother topic. Yeah. LLM's, you know, coding agents loves love lexicon.
+
+**Daniel Holmgren:** Yep. They love a structured description of the data.
+
+**Paul Frazee:** Phil, we're so there's this is veering off a little bit, but we could talk about Jetstream V2, right? That's like public knowledgeable. Yeah. So we're working on Jetstream V2, which is this is something that Jim Calabro has been working on that'll give us better you know, internal tooling but also external tooling for everybody. For us internally, we actually don't have a way to quickly do backfills. So Dan, did you know the story about how we did the backfill for this?
+
+**Daniel Holmgren:** I actually don't know. I wasn't.
+
+**Paul Frazee:** We had to we turns out that we had a complete archive inside of essentially an analytics database somewhere else. So we had to do this like incredibly jank backfill off of a completely secondary source to populate the standards. So just I don't know if that's a proud story to tell, but here we are. Moving on. All right, the universe of apps and lexicons. The team building the Bluesky app is hard at work on deeper protocol integrations that sh showcase the full range of everything that can be built on the A Proto and standard.site is the first step in that direction. When the standard.site project launched earlier this year, no one at Bluesky knew it was coming.
+
+Yeah, no heads up. But we were surprised and delighted to, as anyone, to see it. And that's one of the wonderful, many wonderful things you can about working on an open permissionless protocol is anyone can just do things all right, that's probably enough of that. So yeah, what else we got in the show notes here? So yes, shared the podcast interview with the standard.site crew. I haven't actually gotten a chance to listen to it, so definitely check that out. And I think we're actually getting into Apple Podcast soon with off protocol. Oh, so is this is also now officially called off protocol. I think I called this off protocol.
+
+**Daniel Holmgren:** This is off protocol. This is off protocol live.
+
+**Paul Frazee:** Oh man. Oh man. I'm off I'm off balance. I'm off the program. Okay. Right. So live versus I get it. I get it. That's cool. All right, moving on. What else we got here? Talked about the WordPress. Oh yeah. I got a note here and I don't know why it's here, but we also have I've been asked to plug that we're looking for a lead product designer, which I suppose kind of connects to you know frankly, I don't even know if I think it's a good time to mention it I really like the design work the crew did on the standard set integration. But if you want to do more great design work like that, there's the job listing right there, please.
+
+**Daniel Holmgren:** Yeah. This is just to me this is just a really fun, interesting design problem. Like we're trying to surface all everything happening from this hot heterogeneous like network of all of this data in the Bluesky app in a way that isn't really disordered orienting to users. That's like a really cool, interesting, kind of hard design problem. And we're gonna keep doing that over the next months and years and whatnot. So if you want to be involved in that, shoot over an application.
+
+**Paul Frazee:** And decades and centuries.
+
+**Daniel Holmgren:** Decades. Yeah.
+
+**Paul Frazee:** All right. Well now it's time for Daniel's favorite part of off Protocol live, which is the latest on permissioned data.
+
+**Daniel Holmgren:** Yes. Yeah, I've been working on permissioned data. I put out a permissioned data diary, when was it? Maybe two weeks ago. Or something like that on the URI schema and kind of use that to motivate a lot of the design of the broader system. I'm currently working on one on the auth system and I will promise us when that'll be out but maybe next week hopefully. I also finally I finally did like a longer pass over all the lexicons for the PDS and tighten those up, clean those up. I posted to the discourse forum with those lexicons. I'm looking for feedback on those if anybody has any. I'm sure that there's still some things that'll change in it as we get as I get forward.
+
+going to have specifying details on this, but I wanted to get those in front of people while the paint's still wet so I can get some feedback on it. So please take a look at those. Let me know what you're thinking on it. You can see the code on that same branch right there. The code is the lexicons are like 70 to 80% confidence level. The code is much lower than that. A lot of it is kind of vibe slap still. that needs to be tightened up. But you can you can get a sense for the general shape of it by looking at the code. And it all works. It just might not be the best.
+
+**Paul Frazee:** I do enjoy that the diff immediately goes into the superpowers.
+
+**Daniel Holmgren:** Yeah, I know. I wanna I don't I don't think I even meant to oh.
+
+**Paul Frazee:** never. I'd be disappointed in you if you weren't. Yeah, right on.
+
+**Daniel Holmgren:** Sorry, go ahead.
+
+**Paul Frazee:** Oh no, I was just gonna say I'm very excited for this to keep moving forward. So yeah, like what do you.
+
+**Daniel Holmgren:** think I put out a I'm holding myself to something of a timeline. I'm hoping to have a like somewhat formal proposal in our proposals repository of basically the entire protocol, as well as an alpha version of the PDS by the end of June. We probably won't release that to Bluesky PDSs at that time, but you can, if you're self-hosting, you can run it your PDS and start using this with the caveat that you should not build like or I don't know you can data will either have to be migrated or deleted like so don't build things that you're not comfortable migrating the data or losing on it.
+
+**Paul Frazee:** Yeah.
+
+**Daniel Holmgren:** Check.
+
+**Paul Frazee:** this out. Discourse is showing that I can quote you on this.
+
+**Daniel Holmgren:** Damn. Boy, they got me.
+
+**Paul Frazee:** Anyway, I didn't erupt to do that. What was your what was your what were you about to say?
+
+**Daniel Holmgren:** No, the last thing I was going to point out is I do recommend I also want to make another post in the on the discourse forum probably next week, kind of talking about some like data modeling stuff. For permissioned spaces, basically like how universal should these things be versus modality specific? I kind of have like an opinionated take on that. And this is just something that like we as an ecosystem have to start thinking through. And then if they are modality specific and one community is represented by a bunch of spaces, you start needing ways to like really juggle those. And one of the things I'm drawing a lot of in on that thinking from is the work that that Zicklag has been doing over with the Roomy crew on the arbiter service.
+
+So I really recommend people check out the stuff that Zicklag is doing. I think this like really resonates with how I'm thinking about stuff, which is you have a you simplify the representation at the protocol as much as possible. There's an owner and there's a list of people. That's it. And then for all of the more complex community management and governance and authorization management, all of those details, they get encapsulated in a service that drives these spaces. these communities, which is what the arbiter service does. So I really recommend people check that out. I need to dive in a little bit deeper on the exact specifics of the lexicons, but the general shape of it jives pretty nicely with what I'm what I'm thinking.
+
+**Paul Frazee:** Nice. Yeah, the this is this is definitely the kind of it seems to me this is one of the biggest remaining kind of questions is you're introducing this idea of space types, right? And what all does a space type mean? And I think that's what you're talking about with like the different modalities. Yeah.
+
+**Daniel Holmgren:** Yeah.
+
+**Paul Frazee:** And the for sure the thing one of the things that forces it I guess there's kind of two things that really force it in one of them is that each individual space encodes this a group of people, which is kind of the most important thing about a space. And it sort of depends on like how difficult it is to set up like a another group of people in a separate like a sister space. Like if that requires everybody involved to like make a take a step or something like that, then like, okay, that's like a precious resource. You know what I mean? So that's an interesting one I'll be I'm curious about. The other, of course, is the permission screen where this which I as I understand it was one of the biggest motivators of the space type.
+
+is being able to say like I want access to all of my Bluesky group spaces, which is a hypothetical. That's what the space types enable. And I think this question of like, okay, now what kind of records are allowed to go into a space, what how like defining is that modality kind of all falls downstream from some of those like hard, like almost, you know, like more.
+
+**Daniel Holmgren:** Yep, that's exactly right. It stems all the way from the OAuth screen all the way up into what types of apps can you build and what can you do here? And really it this all comes from like a pretty fundamental tension and like in the problem space of what we're trying to do, which is like we want this really fluid universal data network where you can just kind of do stuff across modality and across and all of this, but we also want it to be permissionless, which means it's a really low trust environment, which means that you need to understand what capabilities that you're giving an app. And so the consent screen for OAuth is very important because these are permissionless apps, right?
+
+Anyone can build one of these. And you as a user can use can you're running your own data, you're using another ad. Like you need some way to like gate what they can do. But we also want this thing to be very fluid and flexible. And so those two things but against each other and they meet up in the OAuth screen and you just need a way to express to users what are these what are these things that I'm giving access to? What are these spaces in a way that can understand that doesn't un that doesn't know what's going on under the hood with the protocol. And the space type is really the thing that that hinges off of.
+
+So.
+
+**Paul Frazee:** Yeah. Yeah. I mean, it's one of those things this will fall out over time. I would characterize this from my impression as like an interesting question that requires thought, but is also not a scary question that's like slowing things down.
+
+**Daniel Holmgren:** Yes, exactly. I think this is all this is all tractable. And yeah, I just want to make sure that we have like that we have a decent idea of like maybe a starting design principle for how to structure these spaces and make sure that we're that the protocol allows for all of the things that you need in order to do this like Safely and interestingly. You know.
+
+**Paul Frazee:** Yeah. Yeah. Yeah. Well, all right. I and we remind us again what that that timeline hard promise that's absolutely happened.
+
+**Daniel Holmgren:** was. Yeah, written in stone. Having a proposal and a alpha version of the PDS implementation by end of June is the goal.
+
+**Paul Frazee:** Got it. Okay, writing we have write that down.
+
+**Daniel Holmgren:** Yes, setting an alert on your phone.
+
+**Paul Frazee:** Yeah. Or Daniel is fired.
+
+**Daniel Holmgren:** All right.
+
+**Paul Frazee:** Next topic. Something for the TypeScript enjoyers out there. There is a blog post that we published about the TypeScript SDK update upgrades, not just updates. That's how you know it's good, right?
+
+**Daniel Holmgren:** Oh yeah.
+
+**Paul Frazee:** All right. So first of all, we have modernize the SDK. I guess I'll do so we're very happy to announce some overdue TypeScript SDK improvements. Over the last few days, every package in the ad proto namespace has been rebuilt and republished. You can see the full freshly updated set on NPMX. And you know what? Let's take a look at what that looks like. Like, oh, well hang on share this tab instead. You know, I gotta I gotta give the shout out to NPMX, right? So here all they here they all are, easy to find. And why don't I actually just drop that link in? Now back to the blog host. All right. So that covers the packages most TypeScript developers depend on directly, like atproto API, @atproto/tap, and atproto OAuth client node, as well as the lower level packages that sit under them, like @atproto/crypto.
+
+And which kind of crypto is that? Is how much how much is that crypto worth? This is why it's a problem that I'm being allowed to do this.
+
+**Daniel Holmgren:** I'm supposed to.
+
+**Paul Frazee:** Yeah, my bad. Alright. The biggest user-facing change is that all these packages are now shipping as ES modules. That's right. No more common JS. And I imagine that's going to help a lot of people's build tool chain. So we have also drop support for Node 18 and 20. And going forward, we'll officially commit to supporting Node's current LTS release. We have been doing this on a best effort basis for a while, but in practice we can run behind, so we're making it part of our published support policy instead. Depending on your bundler and how aggressively your existing workarounds were, you may be able to delete some build config and possibly a couple patches when you upgrade.
+
+You can keep using require for these packages in node 22 plus because you can apparently require ES modules in Node22 Plus. I didn't know that. Did you know that?
+
+**Daniel Holmgren:** I don't know, kind of.
+
+**Paul Frazee:** It's not exactly been the easiest area to keep track of.
+
+**Daniel Holmgren:** I generally don't ignore all the JavaScript module.
+
+**Paul Frazee:** Yeah.
+
+**Daniel Holmgren:** Scream at my dueling whenever it bites me.
+
+**Paul Frazee:** I guess we should all be celebrating the word we've gotten to the point where we could even make this change. Like the reason we couldn't do this previously when we first started building this package.
+
+**Daniel Holmgren:** Yeah, the yeah, the entire ecosystem starting to shake out more.
+
+**Paul Frazee:** And now it can tree shake out better. Under the hood, we've also done a general modernization path on our build tooling. We've adopted TypeScript 6 across the code base, which will be ready for the much faster TypeScript 7 compiler, which yes is written in Go. Bundle sizes for downstream consumers should be noticeably smaller as well since the new S ESM builds tree shake far better than the common JS output did. If you're still in an old Node. js version, you'll need to upgrade, but for most projects, the rest of the migration should be straightforward. Frankly, you ought to be upgrading your Node. js. So you know, come on. Use that nvm. All right. Now that covers the existing packages, let's also talk about the new Lex SDK.
+
+And this is actually, if you're half-listening but you're a TypeScript developer, you should pay attention to this because this is actually a shift in what the kind of primary SDK is. So when we shipped the atproto.com box, we rewrote all of our existing samples and guides to use the Lex SDK. Since then, Lex has officially remained in preview with a feature subject to change warning on its readme, meaning that we've been making breaking changes. We're now removing that warning. So we're committing. And we are recommending Lex and the corresponding Lex server package for all new development. We're also adding recommendations to use Lex to all of our other package readmes to ensure that anyone in the ecosystem is directed to the newest and best so Lex is now tagged 0.1.0.
+
+That that shows confidence, doesn't it, that we're ready, you know, the 0.1.
+
+**Daniel Holmgren:** The zero version, not zero.
+
+**Paul Frazee:** Yeah. Zero point one means that we could break make breaking changes, but we don't have to feel bad about it. That's really what that comes down to. I think that's the logic of it. We officially consider it to be in a stable preview state. I suppose that's actually what we're trying to communicate. In fact, Lex itself may not receive any changes on the way to 1.0, but what will be changing is the ecosystem around it as we polish the developer experience and build out Lex-friendly helper packages. Yeah, do we does this does this have a description of like what Lex is and does? I'm gonna just in case. So like the difference between Lex and what was previous is that Lex just is designed kind of with the same level of neutrality that you would expect out of the AT Protocol.
+
+It doesn't assume any particular lexicons that you're gonna be using it didn't assume that like the approach package the API package was very kind of Bluesky tilted because we built it in the early days and we had to move quickly Lex now basically has is built for any kind of lexicon and it includes tooling for installing lexicons and generating the code. And kind of it has its own almost like lexicon package management sort of thing, a lexicon. json. And so it really makes it much better for literally everybody. including us, but it makes it just a lot easier to be doing atproto work on TypeScript you know with something that is just not Bluesky.
+
+**Daniel Holmgren:** Yep. Lex is very select to use. If you haven't used it, I'd highly recommend it. Also prompt your claws to do it. I think they're getting better at grabbing Lex instead of the API package. And we're trying to give little hints that you should be using this. when it's the updated client now, but sometimes it still goes back to API. So but highly recommend using Lex. And this is kind of the state of the art going forward. Package will get critical security updates. But probably not a lot of new features in it.
+
+**Paul Frazee:** Yeah. Yeah, there's also some, let's see, I don't know if we yeah. There's still a couple of things that haven't made its way over, which a lot of this blog rest of this blog post is talking about, like some of the kind of the labeler handling label handling some of the helpers that we have around dealing with preference. stuff like that hasn't yet made its way over. Honestly that has ended up because we're now doing agentic coding as I have been using Lex, I just keep on just having the agent like look at the example code and just redefine it inside my project. So we'll kind of see what ends up happening with that. There's one other potentially gnarly change for brownfield projects as that is anybody that's like migrating over.
+
+The Lex tooling brings comprehensive typings to lexicon and that extends all the way to distinguish different string formats. Okay, this is actually legit. And it's confusing at first, but once you wrap your head around it, it's actually pretty great. So for example, Lex will differentiate a string representing a DID from a string representing an aturi using the type system. What this also means in practice is that if you use to pass like string types into your lexicon SDK, you'd now have to recast them as did string or as at URI string. Course casting it like that is actually I mean you can do that if you're sure that it's a valid one, but probably the smarter thing to do is to use some of the helpers inside of the Lex SDK to actually validate that it is a correct at UI string or correct did string and that that once it validates it'll return back to cast.
+
+Date type strings as well. And yeah, it actually like at first you're gonna be like, what? What is this? Why is this happening? And then once you kind of like rack your head around what it's doing, it's actually very much worth it. It's a it's a great utility and not that bad once you kind of figure out the patterns for working with it. Okay. Why don't we check in where are we at here? So okay, now we have a fun one here, and that is an update to PDS MOOver. And how are we doing on time? I think we're supposed to go to the 45, right? Was that right?
+
+**Daniel Holmgren:** I actually think we were trying to keep these shorter. Like thirty.
+
+**Paul Frazee:** Okay, so thirty-five. Okay, so we got about.
+
+**Daniel Holmgren:** my hosts. I think we can take a little more leisurely if we want.
+
+**Paul Frazee:** We could just do things. Okay, so I think we'll make it though. I think 35 is still pretty we're on target. So yeah, big update. Dan, are you up to speed on this one?
+
+**Daniel Holmgren:** Not super up to speed. I know Bailey put together this new version of PDS MOOver. It kind of pulls everything under one big brand. Like all of the different features that PDS MOOver offers which is account migration but also working with recovery keys backing up your repository things like that like that.
+
+**Paul Frazee:** Yeah. That's the headline. It's actually the backup stuff is actually pretty awesome. So PDS MOOver can now handle backups, backs up. for your own approach account and recovery. So like now it's kind of it goes beyond just being a migrating tool and also is becoming kind of like a safety mechanism for moving to a PDS that you might have like might be concerned isn't gonna stick around.
+
+**Daniel Holmgren:** Yep.
+
+**Paul Frazee:** So let's.
+
+**Daniel Holmgren:** that's like it's honestly really nice for yeah I even if you even like myself I get nervous about my self-hosted PD PDS sometimes.
+
+**Paul Frazee:** As you should.
+
+**Daniel Holmgren:** Yeah, there's just a lot of ways that like you can shoot yourself in the foot and if you're migrating to a PDS that you don't like fully trust, not even in a sense of wrong you of something just trust operationally. It's really nice to have like a backup for that. So this is yeah, that's great. I love that.
+
+**Paul Frazee:** Yeah. So let's give it a read here. So the next generation of PDS MOOver is here. While PDS MOOver started out as a very simple index. html page to help users migrate to a new PDS. It's evolved a bit beyond that. We still handle all your ad proto events like migrating, finding missing blobs, etc. client side. So your sir their server never sees your passwords but I had to build a whole back-end XRPC service like an AppView to handle the biggest and newest feature. PDS MOOver can now handle backups for your App Pro account and recovery in the event your PDS goes down or in an adversarial event. This is by far the biggest new feature, but it's not the only one.
+
+Give us a lovely little shout-out. I believe we did yeah, we gave a grant to Bailey to do this. So thanks for the shout-out there, Bailey. So here is the beautiful new homepage and I still love the logo. It's gotten witchy. That's new. Right on. Maybe that's the backups, you know, dark arts are involved. So straight to the point, let's do the PDS MOOver Kingdom has been united. This was your time out, Dan. All of the one-off tools are under the same roof within that bar of RD findings. You can now create rotation keys during migration and manually enter any that you already have. We should probably give an overview for rotation keys in case anybody doesn't know about it already.
+
+Why don't you tell the folks?
+
+**Daniel Holmgren:** Yeah, your DID or your identity, you can set up backup key material on it that can basically, you know, override your current PDS host, any anything that they do to muck about. with your identity. So this is just like an extra check that you can have both for if you accidentally slip up somewhere in the account migration process or if your PDS host tries to muck about in your with your identity in a way that you didn't want them to. you can override that. So recovery keys are kind of like your final recourse of ownership over your over your account.
+
+**Paul Frazee:** Right. Yeah. The general logic is it would should you want to like write it down. So it's a it's a paper key, stick it in a it's you know safe drawer. something like that. All right. Backups. These happen every 24 hours on sign up. That was a part that actually surprised me that it's actually a continuous backup. They're completely free to you as a user. Can sign in as well to see stats about your backups and if you have any missing blobs. On the backups, sign up, you can also register the rotation key, which you can use for recovery. PDS MOOver also supports PDS level backups. This will check the PDS every day for new accounts and back them up.
+
+So this is great for PDS operators out there. There will be a future update as well to allow PDS admin to restore the accounts. That's interesting. Huh. Well I imagine we're working together with them on that. If you're interested in this, please let me know. All I ask for is a small monthly sponsorship to help cover server costs. Most cases is $2. But please let me know how big your blob directory slash S3 is for pricing. Restore and recovery, no longer need to fear if your PDS goes down or is beyond recovery. You can now use PDS MOOver to restore your account from our backup service and migrate to a new PDS with your rotation key.
+
+And we now speak XRPC. You can view all of the support at Lexicons, and that includes Git repo and git blob. So you can use our other use other popular ed proto tools to access your backups. And if you don't trust me, oh wow, check that out. You can self-house your own PDS mover. Along with the source code being open source, I've also provided a single Docker Compose file to allow you to run your own PDS mover stack to handle your backups. Well, brilliant stuff as always, Bailey. Such a key contribution really to the entire ecosystem.
+
+**Daniel Holmgren:** Yes, it is. And as like the tools Bailey's been the person that's pushing forward most on all this stuff, and as the tools get better, just becomes easier and safer for people to migrate to alternate PDS infrastructure or self-host their account. So I just I'm always so excited to see stuff like this coming.
+
+**Paul Frazee:** Yeah. All right. Next up on the news, we have Latinsky and Medsky. I don't have a lot of links in the show notes here, but you can find medsky at medsky.network, and I wonder if Latinsky would just be latinsky.net, maybe? Let's find out. No. I don't know where Latinsky is, but Medsky is there. And this is both from Rich Ferro. And these have launched. They are built on Acorn, which is Blacksky's community toolkit. This is a Acorn is a project that Blacksky announced. Like right around the Atmosphere Conference, right?
+
+**Daniel Holmgren:** A couple months ago.
+
+**Paul Frazee:** Yeah. So I don't know if meds if Richard is the first to pick up on this or to put advantage to it, but certainly the first that I've caught. So it's great to see somebody putting this to work. And I know Richard has been really keen to get these communities put together. So very excited to see that moving forward.
+
+**Daniel Holmgren:** Yep. And Acorn just makes all this much more approachable to be able to spin up kind of these full stack community infrastructure things. So that's just that's just really fun and cool to see.
+
+**Paul Frazee:** Yeah, and here's the announcement blog post for Acorn and I'll go ahead and put that in the chat as well. Oh, it's latinsky.social, thank you. All right. Next up. So this is getting kind of adjacent to us, but still pretty interesting to cover. And that is that Zentropi or Zentropi not really sure how you say this just released a new small language model for content classification so this is a part of roost Dan, why don't you hit us with a summary of what ROOST is?
+
+**Daniel Holmgren:** I'll be honest, I actually I'm super red in on this one.
+
+**Paul Frazee:** I'm trying to be good and like bounce things over to you. Mm-hmm. Yeah, ROOST was created as a kind of like industry consortium project to create trusted safety tools for that are open source and available to everyone the we actually you know have collaborated with them and use osprey which is from roost which is an auto moderator tool that is quite handy. Zinch what Zentropi did here is created a self-hostable small LLM that is designed to help you enforce moderation policies I have not yet gotten a chance to try this, but I'm really excited by their claims, which are kind of big. So it's a their next gen small language model for policy adaptive content.
+
+the classification. They have two very variations of it, a text-only one, which is open weights under Apache 2 free to use, and then a multimodal one. When we're talking about models, multimodal means it handles like media. That one seems to only be available to Zentropi or Zentropi subscribers. So bit of a shame actually that that's I'd have to look into. I mean I'm not gonna be too critical or anything like that, but I'm certainly curious to find out what the subscriber requirement is there because the being able to handle media is a huge boon for automated infrastructure. Now they claim that both deliver at or better than Frontier classification quality in a self-hostable package that's lower latency and far cheaper to run.
+
+Those are three kind of huge claims. I could tell from tell y'all from experience. First of all, to claim at our better than frontier classification quality is already like that's a big one to make that claim. But then lower latency and lower cost are also like if you gave me one of those things in a self-hosted model, I'd be excited. So the latency thing is no joke, right? Like we've explored, we use you know models in various ways throughout the stack. We've explored it to create personal moderators that are like personal auto mods. We use it inside of our actual Bluesky trust and safety system. And so one would for sure like the speed that is handled.
+
+Matters quite a bit. Like that, that shows up all over the place. Being cheaper matters quite a bit. And then quality, right? Like accuracy matters quite a bit.
+
+**Daniel Holmgren:** Yep.
+
+**Paul Frazee:** So these are big claims. And so I'm very excited to try this out and see how it goes. They have some stats demonstrating their claims and comparing to some of the alternatives out there. So like, you know, Gemma is something that we did press on recently. They're claiming better results than Gemma. I believe this is done by, I don't know what their base weights are, actually. Probably something related to COPE. I'm not familiar with the base model, but it's they apparently, as I understand it, have done this through fine-tuning a pre-existing weight.
+
+**Daniel Holmgren:** set.
+
+**Paul Frazee:** So yeah, very interesting. If anybody in the community, let me share the link. If anybody in the community tries this out and has results to share, I would love to hear about it. But oh, and it looks like, oh, Miss M is in the chat talking about this and Miss M. Okay, right on. So Ms. M is just sharing some details on what I was asking about with the media oriented model and saying that the image video moderation is very expensive and that's a big factor in how this works. But anyway, yeah. If anybody in the community tries this out, please share your results. I imagine we will once we get the time. Very exciting you know bit of news here.
+
+So okay. Now it's time to just talk about a couple community things. First of all, local events are continuing to pop off. In fact, I was just at the atproto. Seattle meetup last night. And so atmosphere. community slash events is your place to go. To find these events and let's take a look. Krakow? I off the top of my head do not know where Krakow is. Do you what country is that? Do you know? That's the kind of honesty that really shouldn't be.
+
+**Daniel Holmgren:** I was right in pull on the.
+
+**Paul Frazee:** nice. Nice. Cascadia JS, which is actually is that a meetup or is that actually that's a full event, right? Like.
+
+**Daniel Holmgren:** Yeah, yeah. on this page.
+
+**Paul Frazee:** Yeah. We got the NYC, we got Portland,.
+
+**Daniel Holmgren:** Chicago, Belgium,.
+
+**Paul Frazee:** Austin. This is popping off Chicago. Yeah.
+
+**Daniel Holmgren:** Yeah. Portland. You already said that.
+
+**Paul Frazee:** Yeah. Yeah.
+
+**Daniel Holmgren:** It's awesome. Oh well that's like I don't know, every day talking about the approval meetups on the timeline. Yeah. It's one of my regrets being in the Ozark. We don't have any meetups, but.
+
+**Paul Frazee:** at Ozarks.
+
+**Daniel Holmgren:** At Ozark. If there's any Ozark tests, give me a shout.
+
+**Paul Frazee:** You are able to add your own events. It looks like we're doing this in a really classic way, which is that you PR into a tangled hosted repository with your event, which is that's a that's classic. You know, that's the it's the classic engineer solution. Yeah, very ex very excited about all the meetups that are happening. And then we got one last news item for today. And that is that aturi.to just launched or relaunched, updated. And this is by.
+
+**Daniel Holmgren:** Yeah.
+
+**Paul Frazee:** Yeah. This is by Dame, it's got the classic Dame aesthetic going on here and it is a kind of a another multi-tool for exploring AT Protocol data I think the there's a particular logic to aturi, which is to be you know, it's like almost like a link tree for Aperta Records. Have you gotten a chance to play with this?
+
+**Daniel Holmgren:** No, it's more of like a browser extension for like giving native functionality for aT URIs.
+
+**Paul Frazee:** Okay.
+
+**Daniel Holmgren:** For navigating the atmosphere. And so you can it like it lets you put in these universal URIs. And then resolve it to the client of your choice, view it in the context that you want to view it in. All in this like very slick way. I'm just like consistently impressed. by the stuff that Dame puts out. It's just like it's very slick. It doesn't look or feel like kind of with these tools you always don't run the risk of it feeling like some like duct taped like straws put together or something, you know, and it just has this like very sleek universal feel to it.
+
+**Paul Frazee:** Yeah. Yeah. This is actually a fun listing right here is like all of the different apps in the atmosphere that would have a profile viewer. It's all taking me off of my own tab so that not everybody's getting to see it. But it's actually kind of a nice enumeration of everything that's on there. Like I did you know PinkLeap? I wasn't familiar with Pink Leap.
+
+**Daniel Holmgren:** Nope. I'm not I don't know that one.
+
+**Paul Frazee:** Oh, it's kind of an image. Actually wanted a share the screen. So it's kind of Insta style.
+
+**Daniel Holmgren:** Yeah, nice.
+
+**Paul Frazee:** Yeah, that's cool. Wait a minute, created by App Potato. Is that isn't that isn't that the mascot? Yeah. Wait a minute. Who's oh wait a minute. Is PinkLeap Dame then?
+
+**Daniel Holmgren:** Oh, is it? No, no, no. You were on the you were on the aturi profile on PinkLeap.
+
+**Paul Frazee:** Yeah, well now I'm at the you're seeing this, right? You're seeing App Potato.
+
+**Daniel Holmgren:** and aturi is created by App Potato, I think.
+
+**Paul Frazee:** No, it was saying, oh right.
+
+**Daniel Holmgren:** Yeah, yeah, yeah.
+
+**Paul Frazee:** Thanks. Woo! All right. That's all the news that we had prepped. Is there anything else that we want to talk about before we call it an off proto?
+
+**Daniel Holmgren:** No, I think that that's the big things, I think. I'm still we already talked about it for a while, but I'm still reeling from the standard.site thing. There's so much, there's just so much excitement around that one and but the integration in the app the chat with them wordpress pulling it in I saw that like Google open source is migrating their blog to it there's just like real momentum behind this standard like super fun to super fun to see. And all of them just happened organically and like yeah, just people coming together and making something happen so yeah, plus.
+
+**Paul Frazee:** one. Yeah, the we are we're we are just you know we're inches away from bringing back Google Reader. We really work hard. I think it could happen. All right. So yeah. I guess we'll go ahead and close it up then. So thanks for joining me, Daniel. And thanks to everybody in the audience for joining us as well. Always a fun time. And I do we do these weekly? Is it is Jim doing these every week? Or are we the live ones?
+
+**Daniel Holmgren:** Yeah. Yeah.
+
+**Paul Frazee:** It's alternating, you said?
+
+**Daniel Holmgren:** Yes. Yeah.
+
+**Paul Frazee:** Okay, right. Cool. All right. Well then next week you'll you should have your more professional dedicated Jim Ray host back in action, unless again something goes horribly wrong and I have to step in. So.
+
+**Daniel Holmgren:** I think Jim knows what probably off the top of his head.
+
+**Paul Frazee:** You just you can't buy that level of professionalism. You know, it's you either have it or you don't.
+
+**Daniel Holmgren:** Yeah, that's why, yeah.
+
+**Paul Frazee:** All right. Well, have a great weekend, everybody, and I'll see you out on the atmosphere. So peace out.
+
+**Daniel Holmgren:** See y'all.

@@ -72,6 +72,8 @@ type Snapshot = {
   slug: string
   fields: Fields
   body: string
+  /** transcript.mdx; '' while it only holds the placeholder. */
+  transcript: string
   hostsText: string
   guestsText: string
   authorDids: Record<string, string>
@@ -140,6 +142,7 @@ export function EpisodeEditor() {
   const [slug, setSlug] = useState('')
   const [fields, setFields] = useState<Fields>(emptyFields(1))
   const [body, setBody] = useState('')
+  const [transcript, setTranscript] = useState('')
   const [ogImage, setOgImage] = useState<string | null>(null)
   const [ogVersion, setOgVersion] = useState(0)
   const [status, setStatus] = useState('')
@@ -147,6 +150,8 @@ export function EpisodeEditor() {
   // the server can refuse to overwrite changes made since. Empty means "no
   // precondition" — a new episode has no file yet.
   const [revision, setRevision] = useState('')
+  // The same for transcript.mdx, which `npm run transcribe` writes on its own.
+  const [transcriptRevision, setTranscriptRevision] = useState('')
   const [conflict, setConflict] = useState(false)
   const [git, setGit] = useState<GitState | null>(null)
   const [makeBranch, setMakeBranch] = useState(true)
@@ -220,7 +225,7 @@ export function EpisodeEditor() {
 
   // The form as it stands. Rebuilt every render; `snapshotKey` is what the draft
   // effect watches, since the object itself is a new identity each time.
-  const snapshot: Snapshot = { mode, slug, fields, body, hostsText, guestsText, authorDids }
+  const snapshot: Snapshot = { mode, slug, fields, body, transcript, hostsText, guestsText, authorDids }
   const snapshotKey = JSON.stringify(snapshot)
 
   // Which document's draft this form owns. The new-episode form keys off '' — the
@@ -232,6 +237,7 @@ export function EpisodeEditor() {
     setSlug(s.slug)
     setFields(s.fields)
     setBody(s.body)
+    setTranscript(s.transcript)
     setHostsText(s.hostsText)
     setGuestsText(s.guestsText)
     setAuthorDids(s.authorDids)
@@ -246,6 +252,7 @@ export function EpisodeEditor() {
       slug: '',
       fields: { ...emptyFields(nextNumber), ...nowDates() },
       body: '',
+      transcript: '',
       hostsText: '',
       guestsText: '',
       authorDids: {},
@@ -257,6 +264,7 @@ export function EpisodeEditor() {
     applySnapshot(s)
     setBaseline(s)
     setRevision('')
+    setTranscriptRevision('')
     setBranchName(branchNameFor('podcast', { pubDate: s.fields.pubDate }))
     return s
   }
@@ -268,8 +276,12 @@ export function EpisodeEditor() {
    * still reads as changed and keeps its draft until it's saved. The revision
    * comes from the draft too — a restored draft conflicts with a file that moved
    * on rather than overwriting it.
+   *
+   * `loaded` is what was just read from disk. A draft written before the studio
+   * edited transcripts has no transcript, so it keeps the one on disk — and that
+   * file's revision, since the draft never saw any other.
    */
-  function restoreDraft(s: string): boolean {
+  function restoreDraft(s: string, loaded?: Snapshot): boolean {
     const key = draftKey('podcast', s)
     const draft = readDraft(key, s)
     if (!draft) return false
@@ -280,8 +292,13 @@ export function EpisodeEditor() {
       clearDraft(key)
       return false
     }
-    applySnapshot(form as Snapshot)
+    const hasTranscript = typeof form.transcript === 'string'
+    applySnapshot({
+      ...(form as Snapshot),
+      transcript: hasTranscript ? (form.transcript as string) : (loaded?.transcript ?? ''),
+    })
     setRevision(draft.revision)
+    if (hasTranscript) setTranscriptRevision(draft.transcriptRevision ?? '')
     setRestored(describeDraft(draft))
     return true
   }
@@ -291,9 +308,9 @@ export function EpisodeEditor() {
   // create, and never from the conflict reload, where discarding the form is
   // exactly what was asked for.
   async function openEpisode(s: string): Promise<boolean> {
-    const ok = await loadEpisode(s)
-    if (ok) restoreDraft(s)
-    return ok
+    const loaded = await loadEpisode(s)
+    if (loaded) restoreDraft(s, loaded)
+    return Boolean(loaded)
   }
 
   function discardDraft() {
@@ -365,13 +382,14 @@ export function EpisodeEditor() {
         mode,
         savedAt: new Date().toISOString(),
         revision,
+        transcriptRevision,
         form: snapshot,
       })
     }, 300)
     return () => window.clearTimeout(timer)
     // snapshotKey stands in for `snapshot`, which is a fresh object each render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [snapshotKey, baseline, docSlug, mode, revision])
+  }, [snapshotKey, baseline, docSlug, mode, revision, transcriptRevision])
 
   // A draft only lives as long as the tab, so closing it — or navigating off
   // /studio — loses work that a reload would have brought back. This is the one
@@ -399,13 +417,13 @@ export function EpisodeEditor() {
     loadGit()
   }
 
-  // Returns whether the episode loaded, so the mount effect can fall back to the
+  // Returns what loaded, or null, so the mount effect can fall back to the
   // new-episode form when the slug in the URL no longer names one.
-  async function loadEpisode(s: string): Promise<boolean> {
+  async function loadEpisode(s: string): Promise<Snapshot | null> {
     const res = await fetch(`/api/studio/podcast/${s}`)
     if (!res.ok) {
       setStatus(`Error loading ${s}`)
-      return false
+      return null
     }
     const data = await res.json()
     const loaded: Snapshot = {
@@ -413,6 +431,7 @@ export function EpisodeEditor() {
       slug: s,
       fields: data.fields,
       body: data.body,
+      transcript: data.transcript ?? '',
       hostsText: (data.fields.hosts ?? []).join(', '),
       guestsText: (data.fields.guests ?? []).join(', '),
       authorDids: {},
@@ -424,9 +443,10 @@ export function EpisodeEditor() {
     setOgImage(data.ogImage ?? null)
     setOgVersion((v) => v + 1)
     setRevision(data.revision ?? '')
+    setTranscriptRevision(data.transcriptRevision ?? '')
     setConflict(false)
     setStatus('')
-    return true
+    return loaded
   }
 
   const setF = <K extends keyof Fields>(k: K, v: Fields[K]) =>
@@ -572,7 +592,7 @@ export function EpisodeEditor() {
       const res = await fetch(`/api/studio/podcast/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields, body, revision, authorDids }),
+        body: JSON.stringify({ fields, body, revision, authorDids, transcript, transcriptRevision }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -585,8 +605,14 @@ export function EpisodeEditor() {
       if (!res.ok) return setStatus(`Error: ${data.error}`)
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
+      // hasTranscript too: the server turns it off when there is no transcript.
       const stored: Fields = data.fields
-        ? { ...fields, title: data.fields.title, description: data.fields.description }
+        ? {
+            ...fields,
+            title: data.fields.title,
+            description: data.fields.description,
+            hasTranscript: data.fields.hasTranscript,
+          }
         : fields
       if (data.fields) setFields(stored)
       // What's on disk now is what's on screen, so this becomes the baseline and
@@ -597,6 +623,7 @@ export function EpisodeEditor() {
       // Adopt the revision this save created, or the next save from this same
       // open tab would conflict with its own write.
       if (data.revision) setRevision(data.revision)
+      if (data.transcriptRevision) setTranscriptRevision(data.transcriptRevision)
       setConflict(false)
       setAuthorDids({})
       setStatus(data.warning ?? `Saved ${data.slug}`)
@@ -942,6 +969,25 @@ export function EpisodeEditor() {
               <div className="mt-8">
                 <p className={label}>Show notes — MDX</p>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} spellCheck={false} placeholder="Write the show notes here…" className="min-h-[20rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 outline-none focus:border-neutral-500" />
+              </div>
+
+              <div className="mt-8">
+                <div className="flex items-baseline justify-between">
+                  <p className={label}>Transcript — MDX</p>
+                  {/* Separate from the text on purpose: a generated transcript
+                      is a draft until someone has read it. The server keeps
+                      this off while the transcript is empty. */}
+                  <label className="flex items-center gap-2 text-sm text-neutral-600">
+                    <input
+                      type="checkbox"
+                      checked={fields.hasTranscript && transcript.trim() !== ''}
+                      disabled={transcript.trim() === ''}
+                      onChange={(e) => setF('hasTranscript', e.target.checked)}
+                    />
+                    Show on the episode page
+                  </label>
+                </div>
+                <textarea value={transcript} onChange={(e) => setTranscript(e.target.value)} spellCheck={false} placeholder={`Paste a transcript, or run  npm run transcribe ${slug}  on the Mac`} className="min-h-[12rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 outline-none focus:border-neutral-500" />
               </div>
             </>
           )}

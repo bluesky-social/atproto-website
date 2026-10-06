@@ -14,6 +14,11 @@ export function EpisodeTranscript({ Transcript }: EpisodeTranscriptProps) {
         Transcript
       </summary>
       <div className="border-t border-zinc-200 p-6 dark:border-zinc-800">
+        {/* Transcripts come from `npm run transcribe` (MacWhisper) and are
+            read before publishing, but not proofed word by word. */}
+        <p className="mb-4 text-sm italic text-zinc-500 dark:text-zinc-400">
+          This transcript was generated automatically and may contain transcription errors.
+        </p>
         {/*
           Plain `prose prose-sm` + max-w-none mirrors the show-notes layout
           (see EpisodePage). The MdxPassthrough wrapper suppresses the

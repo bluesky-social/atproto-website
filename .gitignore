@@ -8,3 +8,6 @@ docs/superpowers
 oauth-test
 src/lexicons
 tsconfig.tsbuildinfo
+
+# Raw MacWhisper output for podcast transcripts
+/tmp-transcripts/

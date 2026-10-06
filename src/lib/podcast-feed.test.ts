@@ -34,6 +34,7 @@ function makeEpisode(overrides: Partial<FeedEpisode> = {}): FeedEpisode {
     audioSizeBytes: 12345,
     audioMimeType: 'audio/mpeg',
     hasShowNotes: false,
+    hasTranscript: false,
     contentHtml: '<p>A one sentence summary.</p>',
     ...overrides,
   }
@@ -211,5 +212,44 @@ describe('buildPodcastFeed — episode footer', () => {
   it('renders the livestream URL as a link, not bare text', () => {
     const xml = buildPodcastFeed(show, [makeEpisode({ hasShowNotes: true })])
     expect(cdataOf(itemBlock(xml), 'content:encoded')).toContain(STREAM_HREF)
+  })
+})
+
+describe('buildPodcastFeed — archive link', () => {
+  const URL = 'https://example.com/off-protocol/my-slug'
+
+  it('points to the episode page, with the full URL as the link text', () => {
+    const content = cdataOf(itemBlock(buildPodcastFeed(show, [makeEpisode()])), 'content:encoded')
+    expect(content).toContain(
+      `<p>The archive for this episode is available at <a href="${URL}">${URL}</a>.</p>`,
+    )
+  })
+
+  it('mentions the transcript only when the episode shows one', () => {
+    const content = cdataOf(
+      itemBlock(buildPodcastFeed(show, [makeEpisode({ hasTranscript: true })])),
+      'content:encoded',
+    )
+    expect(content).toContain(
+      `<p>The archive for this episode, including a generated transcript, is available at <a href="${URL}">${URL}</a>.</p>`,
+    )
+  })
+
+  it('no longer says "Listen and read more"', () => {
+    const content = cdataOf(itemBlock(buildPodcastFeed(show, [makeEpisode()])), 'content:encoded')
+    expect(content).not.toContain('Listen and read more')
+  })
+
+  it('comes after the notes and before the show footer', () => {
+    const content =
+      cdataOf(
+        itemBlock(
+          buildPodcastFeed(show, [makeEpisode({ hasShowNotes: true, contentHtml: '<p>Notes.</p>' })]),
+        ),
+        'content:encoded',
+      ) ?? ''
+    const archive = content.indexOf('The archive for this episode')
+    expect(archive).toBeGreaterThan(content.indexOf('Notes.'))
+    expect(archive).toBeLessThan(content.indexOf(FOOTER_OPENING))
   })
 })

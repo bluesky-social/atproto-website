@@ -44,11 +44,20 @@ export async function mdxBodyToHtml(rawMdxBody: string): Promise<string> {
  * notes prose can't flip it on.
  */
 export function readShowNotesFlag(rawMdx: string): boolean {
+  return readHeaderFlag(rawMdx, 'hasShowNotes')
+}
+
+/** The same, for `hasTranscript` — the feed mentions the transcript when set. */
+export function readTranscriptFlag(rawMdx: string): boolean {
+  return readHeaderFlag(rawMdx, 'hasTranscript')
+}
+
+function readHeaderFlag(rawMdx: string, key: string): boolean {
   const headerMatch = rawMdx.match(
     /export\s+const\s+header\s*=\s*\{[\s\S]*?\n\}/,
   )
   const headerScope = headerMatch ? headerMatch[0] : ''
-  return /\bhasShowNotes:\s*true\b/.test(headerScope)
+  return new RegExp(`\\b${key}:\\s*true\\b`).test(headerScope)
 }
 
 export function stripMdxFrontmatter(rawMdx: string): string {

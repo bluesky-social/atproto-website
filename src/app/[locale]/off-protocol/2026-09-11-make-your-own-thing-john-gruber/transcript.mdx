@@ -1,1 +1,505 @@
-{/* Paste the episode transcript here, then flip hasTranscript: true in en.mdx. */}
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** It's a pretty short list of people who started blogging way back in 2002. And the ones who managed to make a career out of it is more auspicious still, so it was a real treat to host John Gruber, who's been writing at Daring Fireball for over 24 years now. We talked about those early days of blogging, what it felt like to discover new writers and feel like you'd read everything you could want to read instead of just endlessly scrolling. We talked about the origins of Markdown and the rise, an even more spectacular rise, of the company that John has chronicled as closely as anyone, Apple. I've been a daring fireball reader since the earliest days, and along with a whole generation of internet enthusiasts, continue to find it indispensable reading.
+
+I hope you enjoyed my conversation with John Gruber. John Gruber, welcome to Off Protocol. I'm just pleased as I could be to have you here.
+
+**John Gruber:** Well, I'm happy to be here. I feel I feel like I should have when you first proposed this I should have jumped at the chance and I feel like I drugged my heels at least slightly.
+
+**Jim Ray:** It's actually perfect 'cause it given me a chance to kind of get my act together just ever so slightly. I won't claim that I'm there yet, but so John, I think most of the folks listening know who you are. I think most people will recognize you either as a Perl aficionado or Philadelphia's worst sports fan. Do I have that roughly correct?
+
+**John Gruber:** I am a Sixers fan, and the Sixers I think have a bright future ahead. So I don't know about worst, but.
+
+**Jim Ray:** Sign LeBron. So that's.
+
+**John Gruber:** let's not talk about football.
+
+**Jim Ray:** John Gruber, you are of course the proprietor of the long running Apple and internet commentary website Daring Fireball, which I think known as and read by many folks in and around the tech industry. You're the co-creator of Markdown. You host a few podcasts. You offer a bit of an interesting and a unique perspective because I am hopeful, I'm optimistic that we are maybe at the very start of the post-platforms internet era. We're not quite there yet, but trying to get there. That's a lot of what we're trying to build with this protocol of ours. And you were there for the pre-platforms. internet era. And so you know, not to dwell too much on the history of things, but I'd love to kind of get your perspective on maybe how things look today and if there is a not a repetition, but maybe history rhyming a little bit with how things look when you launched Daring Fireball back in 2002.
+
+**John Gruber:** You know, I was thinking about it. I don't know how much of it is the difference between being in my twenties versus being in my early fifties, which is the beginning and now. I don't know if it's my personal perspective and bias, but I don't think it is because I wasn't that young when I started Daring Fireball. I was twenty-nine. I wasn't a kid.
+
+**Jim Ray:** You'd seen a few things.
+
+**John Gruber:** Yeah.
+
+**Jim Ray:** And you'd had real jobs. And it and it wasn't like the internet was like the obvious path at that point, right?
+
+**John Gruber:** Right. But so I think it really is more the nature of the medium itself, which is that in 2002, as much and the funny part is that I felt at the time that I was so late to start Daring Fireball. So many of the sites that had inspired me, like Kottke's eponymous Kottke.org and Dave Winer's scripting.com and others I can recall reading them when 9-11 happened in September 2001.
+
+**Jim Ray:** Right.
+
+**John Gruber:** And it's just because everybody, no matter what your beat was, and no matter how much your blogs stuck to its topic. Kottke, of course, is j super and Dave Winer's sort of whatever's on their mind, but I don't think there was a single blog on the internet that after September 11th, 2001 wasn't at least acknowledging to some degree what had happened on September 11, 2001 and it's so it's in my head and I thought, ah man, I wish I had a I wish I had started this blog that I'm already thinking about. You know, I have thoughts on this. And so in 2002, 2002 felt to me like, God damn it, I might be too late.
+
+And which is funny in hindsight. It's it does not seem too late. It's only, you know, I forget when Tim Berner Lee started the actual original WWW with one web server, ninety-three, I think somewhere around there.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** You know, and the m Mosaic and other browsers that started popularizing it ninety-four, ninety-five. So you know, six, seven years after that is when I started doing fireballs. So it's not, you know, it's not that many years. It all was so clearly new. This is where I'm going, is that this idea that there is a networking protocol that anybody can join. You'd you know, you might have to pay 10 bucks a month to connect with your modem or whatever, but anybody can get on it and then you type something into a field and for a reasonable amount of money, five, ten bucks a month. You know, and again you kinda had to pay something. There was no the idea that you had to pay something just to publish on the internet under your own name or under your own shingle seems a little cute now.
+
+But that anybody could do this and anybody could go that and the and the protocols were all so simple. Everything was so relatively simple HTTP itself, you know, is pretty simple. HTML, you know, famously, I mean we don't have to regurgitate it, but that you could learn to make a web page. You're using a web browser and you'd like, I'd like to make one of these and every browser had like a view menu with a view source command and you could like look at the HTML and you even if you're not a technical person or a programmer, you could kind of figure out what the tags meant and be like, oh, I could do this.
+
+It was so much simpler and it was so much more decentralized and there was, you know, the biggest and most popular sites and the places that's that collected the most aggregate attention from the people who were on the internet had such smaller slices you know, like just to say Yahoo at the time or I don't know who else was a big player in the late nineties, but how much time people spend at the very biggest things was so much smaller compared to now. where the major platforms from Facebook, from Meta, like Facebook and Meta. It just wasn't like that. And getting from there to here was such a slow boil. Right.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** Whereas that original time, it was like boom, a thunderclap. Nothing at all like the web and the internet was almost even imagined by most by me at least, like you know, graduating high school in nineteen ninety one and ten years later it was like, this is what I want to do.
+
+**Jim Ray:** Right.
+
+**John Gruber:** And the there was no moment, I mean the closest to a oh, that's a seminal moment was the introduction of the iPhone in 2007. But I don't think anybody, including me, who saw that as I instantly when Steve Jobs took it out of his pocket and held it up like, oh, this is gonna be a I thought this is gonna be a huge deal. I didn't imagine it as a huge deal for the media landscape.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** I didn't see that. And I don't think Apple did either.
+
+**Jim Ray:** And I none of us did, right? And we thought that this was a cool gadget. We were like, yes, this will absolutely replace my phone, but the way that would completely upend. how everybody communicated with each other and like you said, how we get our information about the world, how we broadcast now everybody's broadcasting out that information, even in just kind of like little micro tweet sized bits. It you mentioned the smallness and the smallness is something that I really remember as well. We all read the same blogs and it was almost as if and the folks who decided to go out and write on the internet that was kind of the niche. And now the internet is just full of little sub-niches.
+
+And that explosion, that as you mentioned, was a slow boil that happened over 15, 20 years is now it's all it's also the water that we all swim in. And of course it's just kind of obvious around us. It's so it's so hard to even like get somebody who wasn't around during that time. A lot of the folks that work in our ecosystem are a little younger. And so it they don't necessarily remember what it was like. I at some point you could have read all the blogs and you were like done for the afternoon, right?
+
+**John Gruber:** Or at least you felt like you could, or you could read all the you might like, right?
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** Like I remember feeling like I don't know that I read the entire blogosphere, but I remember feeling like I'm pretty sure I got to about nine I'm reading at least ninety-five percent of the blogs that I might want to read that are being written daily. Exactly. And I have a really good chance of discovering the other five percent because the ones I read are going to find them and link to them. You know.
+
+**Jim Ray:** Right.
+
+**John Gruber:** And there was a very satisfying near completionist mindset. And I'm not particularly obsessive about that. But I am a little and so as another way as the internet has grown, it's like you have to become more comfortable with the fact that you can't possibly see everything you want to see. But that's you know, that's certainly always been true in art. I would say centuries when it comes to books, right? Like nobody can read all of the books that they want to read or think, you know, that they might enjoy. But it is kind of unusual. Like if you're really into movies, you could easily see every movie you might want to see, if that's like your main passion you know, and certainly for me it even through the cable era, you could watch the T all the TV shows you really wanted to watch.
+
+You know, and every once in a while there'd be actual technical problems like what happens if two of your favorite shows are on at the same time? And you and you it was pre-DVR, right? Like going back far enough, you were kinda screwed. But that was rare. And it was the famous complaint about television was that most of it was crap, which was true.
+
+**Jim Ray:** In some ways, like that like that classic definition of a Renaissance man, right, is the person who's read all of the books worth reading. And now like you can't, that's not even possible today. And that's something I've also had to kind of get comfortable with in my life. I much like yourself, I think we're both Net Newswire readers, users, and Mine just perpetually has far too many feeds that I can't even dip into as much as I might like. So yeah, getting comfortable with that notion that there's gonna be more out there that's published in an hour, let alone a day or a week, than I'm ever going to be able to get to is that's been a real mind shift for me, for sure.
+
+I want to talk a little bit about kind of like your approach to blogging. I think one thing as I was again kind of thinking through that era a little bit too is I can remember there was that brief time when blogging felt really new and different and interesting and it felt like its own thing. And then that felt very short-lived and then it became kind of this jumping off point for other people, whether it was I'm gonna start a blog and then I'm gonna, you know, get hired as a columnist at my local paper or maybe like one of the big national papers or I'm gonna get a book deal out of it or something like that.
+
+I think one thing that always struck me about you is it really did feel like you were one of the few. for whom it felt like blogging was the goal. Or, you know, maybe not even blogging, but just like writing on the internet under your own name. Like that was the goal from the beginning. And I know for the first few years you were doing that while you were doing other jobs. And then there's your wonderful. I went I just I took a chance to go reread your Independence Day post. And that was you kind of putting a stake in the ground saying, like, this is the thing that I want to do. Obviously been pretty successful with that.
+
+But I the even at the time that felt kind of rare. And I think one thing that we're seeing now is a bit of a return to that, where it's a lot easier for people in some ways. Like you can go start a Substack or Beehive or something like that. The pathway, the monetization is there, but then those are also kind of emerging as their own platforms where you've been at this for 25 years now almost, and you've remained remarkably consistent down to the website, the way that you monetize it, the things that you write about. Other than I think it's you, it's Kotke, it's Dave, folks like Josh Marshall, but it's a pretty small group of folks that have managed to make that work, right?
+
+**John Gruber:** Well, and Josh is you know, obviously expanded. You know, T PM is not just by far and away is not just him, right? Like he can go on vacation and T PM you may not even notice he's on vacation. You know, there was Heather Armstrong, you know, who's sadly gone, but with Deuce dot com, you know, it was definitely in some d ways the most successful. But no, there's not that many. And I d definitely thought I mean I'm no longer surprised by it, but I thought at the time and there was a shared background like me and Kotke and Heather in particular, who've all been together and talked about it at times I think it was XOXO at one year in Portland where we just sort of you know, and our significant others were like, let those three just go off.
+
+But we all shared to varying degrees backgrounds in design. some technical proficiency. Like Heather was more of a designer and less technical. And Jason and I are a little bit less designery than Heather but you know, but all of us could code our own sites and we all could install movable type or WordPress or something, although I think we all use movable type at some point and a combination and of course primarily that we could write and wanted to write.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** And d and could but there was a bit of well, you have to you have to know, you have to be at least enough of a nerd and a designer to put the thing together to do it. You know, that you've got to like maybe what you really want to do is be a barber and cut people's hair. But at a certain level you had to like build the barber shop. You had to actually do some carpentry and put it together and you had to actually like install the chairs and the mirror yourself. You know, and there wasn't like a sort of turnkey opportunity that eventually, you know, that you could do in today's world where you can just actually have the ability to cut and style hair and just pay money to get a barbershop in a, you know, without doing any of the carpentry or electrical work yourself.
+
+And I just thought, well, eventually those problems will be solved, and more people who aren't writing about technology or come from a technology background will be able to do this. And in some degree, it's sort of it disappeared for a while and has come back, like you said, with Substack and Beehive and Ghost and some other platforms. And I'm very, very happy about that. I think it's one of the best. I was about to say the best, but I realize we're we should mention things like Bluesky and Macedon. Which I do think are part of it. We can come to them. But you know, I shouldn't forget who I'm talking to here. But the newsletter Renaissance has helped and has made me feel a little less I don't think I was ever depressed about it, but I would say maybe ten years ago it just felt like, Jesus Christ, there is, you know, no independent marketplace for people doing what I do.
+
+Everybody has either gone who rose to some level of prominence doing something similar to what I do has gone to institutional publications. Most of them predating the web, you know, places like newspapers like the New York Times or magazines like The Atlantic. Or, you know, collected themselves into bigger places like the Vox media.
+
+**Jim Ray:** Sure.
+
+**John Gruber:** Ecosystem where they're not individuals who are doing it on their own, but have formed new collectives. And it's like this seems like an opportunity that's missing and it's important and it's valuable and it's much a much better way for someone who wants to do this to do it without the dependency or fewer dependencies. You know, I think it just speaks to human nature, you know, it and a little bit of projection, I guess. That me personally, I s had such a fierce desire to establish myself and be able to do what I do. full time and say this is what I want you know, I need to make a living at this because I know that it's what I want to spend my working hours doing.
+
+And if I'm spending my working hours doing it, it's gotta be the source of my income. And it I so fiercely desired it that I just was it became obsession to make it happen. And I think I projected the ferocity with which I felt that desire to make it happen for myself that I thought others must share it too. And I think it's just not true. I think more people are it's not laziness, but it's just that they don't have the desire to do it independently and they're more open to, oh, but that sounds like, you know, that actually would be easier if I joined a collective or joined an established thing or especially if you join an established publication and they can offer you more money than you r were making or could imagine making on your own.
+
+Whereas for me it was never even a temptation. Like somebody could have offered to double or triple my salary to join another publication and I it I just would have dismissed it. Without talking to my wife.
+
+**Jim Ray:** Yeah, right. I try to remind myself that that people respond to incentives as I get grumpy about similar sorts of things. I wonder we've had this kind of Cambrian explosion of different platforms. And they all kind of they have different shapes. You've got Apps like Button down, which is one of my favorite of the newsletter platforms, but it's really, really focused on being a like an email newsletter platform. And then there's all the way up to something like Substack, which has more features than I can think of at this point. You know, they've podcasting and video and all these community features and things like that. And then there's ghost, which is a little bit more of a DIY thing.
+
+I'm curious if you mentioned like if you want to be a barber, you've got to go build the barber shop. That's what it was kind of like in the early days of blogging. Obviously the gain there is that people who just want to write, who don't want to have to futz with HTML, that's great. But like what are maybe some of the things that are lost there?
+
+**John Gruber:** Let's change the analogy from barbering to restauranting, which I think is a better metaphor because that you really want to run your own restaurant and you have a vision for it because there's a, you know, a such a wide spectrum of restaurants that you can go to. At least me when I think and I do, I like certain chain restaurants. I'm not some kind of purely independent-minded if it's not an individually one-off mom and pop corner restaurant, I don't want to go there, right? I go, but I do like those places, right? And the variety of restaurants that I enjoy is just better than it's ever been in my life. I don't think we see that with independent media, right?
+
+That we really have gone to. And it is overall, I think it is better than ever before, but it's wound up with everybody. who wants to do video being on YouTube.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** And there is a sameness to YouTubers. There is The personalities are obviously different and the topics aren't, but it's like, you know, like and install or like and tap the button and you know, there's just dcause it is to some degree you're within these constraints that are defined by YouTube and you're you don't get to define your own algorithm for success, right? And you know, and Substack for r for the written word, which is certainly much more in line with what I do, you know, and I've written a lot about it. I don't hate Substack, and I think Substack, I still think overall it's been a net win for the world you know, of taking the Ben Thompson model.
+
+I forget how it Ben at some point had their.
+
+**Jim Ray:** technique as a service, I think is what they 're doing.
+
+**John Gruber:** Yeah, Stretectory is a service. That's it. That was their slide deck. And it's a great idea. But a big part of my beef with Substack is this it's a layer below. My first take is this has been a net win for the world because it has made more people who want to write. professionally on their own, be able to write professionally on their own. And that's great overall. First, that's number one. This is an ordered list, not an unordered list. Number one, Substack has enabled that, and that's great. And it has provided a framework for other competing services like Beehive and Ghost, and I'm missing some others, I think. But I know Beehive is sort of maybe my maybe the closest in ambition to Substack.
+
+And it's given them a framework of, oh, it's like Substack. But not Substack.
+
+**Jim Ray:** Sure.
+
+**John Gruber:** Right?
+
+**Jim Ray:** Right.
+
+**John Gruber:** Is easier to understand than Substack's initial strategy as a service, where it's like, oh well, that was just one off. How can you productize that it's like, oh well they've already established that it's possible. Now others can do it. You know, Henry Ford had the Model T and then all of a sudden there were multiple companies making cars that were available to people. Right. But my problem with Substack in particular is the sameness. Right. And Substack almost takes it, it's almost like sometimes when I want to argue about it, it's almost like I can't believe how much they lean into the sameness. That there's only, you know, there's like that one font. I don't even want to know the name because it's so awful.
+
+But it's so distinctively Substack. I've never seen this font anywhere else. I d I don't I don't wanna know the name 'cause I don't like it. It's and it's like I always say it's like the letter spacing is so wide. It's like teeth that need to see an order.
+
+**Jim Ray:** Like didn't they change that or something? I don't know. Yeah.
+
+**John Gruber:** But I don't I think they've done it deliberately though because it does give a visual brand. Like I just know somebody says names a writer who I've never heard of. And it's like, oh, you know, if I'd never heard of Jim Ray and you happen to have a substack. And Jim Ray said this, and I clicked the link, and as soon I don't know you, I've never seen your site, I've never heard it, but it sounds like an interesting article. I opened it in a tab. And the second I look at it, I think, oh, it's a Substack. I know it.
+
+**Jim Ray:** Exactly. Yeah.
+
+**John Gruber:** Now, that's great for Substack. I clearly is something they want. They w and they like it when people say, oh, this guy, Paul Krugman left the New York Times and now he has a Substack. You know. They like that. That is very deliberate. And I think it is detrimental to the whole idea. And I think it's crazy that Krugman in particular has done it, given you know, that he could i he's so well known that he could do anything. And so it just it's like if they were restaurants, there was like a sameness to it that I would find d I would find depressing. Like, oh man, Krugman was somewhere else. And now I've always liked him, but now he's got his own restaurant.
+
+I can't wait to go there. And I go there and it's like, God damn it, it looks exactly like 20 other restaurants I go to already because it's a Substack restaurant, right?
+
+**Jim Ray:** And they have the same supplier for their ingredients and.
+
+**John Gruber:** Right. And it's like, yeah, the food is different because the food, the actual words are the Kruitman words, right?
+
+**Jim Ray:** Right.
+
+**John Gruber:** You know, but it's so maybe the ingredients isn't the right thing, right? The food is actually distinctively Krugman, but it's like the same tables, the same chairs, the menu is set in the same god awful typeface, the lighting's the same, right? You know, it's like some of the charm of going to restaurants is like you know, and for me being here in Center City, Philadelphia, where, you know, I think when you're in the suburbs in America and everything can be new construction. It's a little different. But part of the charm of being in a city, big or small, but when you're in a city, is that restaurants have to conform to the odd spaces of the buildings that already exist.
+
+And you just, you know, it's like, oh well, that's kind of weird when you come into this restaurant. That it's just like a weird little L shape you've got to. But oh, I see why they do that because there's, you know, this is the way it is. But that it's charming right. It's the constraints, you know, lead to surprises. And Substack is the opposite. It is, oh, this is exactly the same right down to the bad typeface.
+
+**Jim Ray:** I'm really glad we switched analogies. I've got a draft, a year-old draft, and someday I'll reboot my blog and publish it. The idea of kind of digital franchisees is where I see a lot of this stuff having gone. And so particularly, you know, there's like every McDonald's is the same, but then there's also yeah, well, i because you know the person who runs them has a little bit of leeway to change things a little bit, but ultimately you're still working within the constraints of the franchise. I think YouTube is an even more direct example of that than Substack in a lot of ways because the incentives are so determined by the platform that you're I mean every single video is gonna have those same features.
+
+**John Gruber:** Yeah. And you know, I don't want to distract you, but there is a wider cultural and other people have written about it, but there's a wider cultural emblandoning.
+
+**Jim Ray:** I was just reading about this yesterday, on somebody's Substack, of course.
+
+**John Gruber:** But McDonald's is a good example. And what I mean about them not being the same is it depends when they were made. Right. And that as the years go on and maybe it's an old one, but then they redecorate. But like a brand new McDonald's that is put in right now. Is has a decor, a color scheme, a type of seating that if I just blindfolded you and took you inside and didn't let you couldn't see the menu, but we're facing just the rest of the to had your back to the counter. What restaurant are you in? You may not know if you're in a Taco Bell or a McDonald's right, a brand new Taco Bell or a brand new McDonald's.
+
+Whereas 20 years ago or 30 years ago, you'd freaking know if you were in a McDonald's. Right. And you'd know if you were in a Wendy's, right? Because Wendy's had these crazy tables that looked like they were made out of 1880s newspapers, right?
+
+**Jim Ray:** -huh. Or the Pizza Hut. The classic 80s Pizza Huts are my favorite example of this, right?
+
+**John Gruber:** Right. I can show you. I can tell you. Oh, remember the plastic glasses they put the soda in at a pizza hut? What color were they?
+
+**Jim Ray:** They were they were red, they had that kind of pebbled texture to them. They were.
+
+**John Gruber:** Yeah, I knew you knew.
+
+**Jim Ray:** Yeah, of course.
+
+**John Gruber:** Fantastic. And every once in a while you'll stumble across somebody's blog or a social media post where they're like, I was at a yard sale and if somebody had a whole stack of these and I knew they came from Pizza Hut, you know and I bought them and now I've got them in my house, right? And it's like, yes, those are definitely Pizza Hut glasses, right? So even at the corporate level, we've lost some of the charm. Right. And that you and I could have grown up in very different places. And yes, Pizza Hut is not the pinnacle of even pizza right?
+
+**Jim Ray:** -huh.
+
+**John Gruber:** But it used to be better. And it was distinctively Pizza Hut. And there was something curiously 20th century about the fact that you could grow up in North Carolina and I could grow up in Pennsylvania and we both know what it was like to be in a pizza hut in 1988.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** And that's kind of cool, right? And now it's like they all freaking look the same, right? They're all.
+
+**Jim Ray:** And that sameness is Starbucks, basically, right?
+
+**John Gruber:** Yeah. Right. Or that's another one, right? You go into a brand new Starbucks. And again, you might smell the Starbucks because the coffee is so goddamn burnt. But if you could take out the if you hold your nose, you may not know if you're in a Starbucks or a McDonald's.
+
+**Jim Ray:** -huh.
+
+**John Gruber:** And that's crazy and sad to me.
+
+**Jim Ray:** I agree with like the text of what we're talking about, the kind of like blanding of everywhere we're going. I think the internet is in many ways responsible for that, but I also think it makes a really perfect metaphor for what we're seeing in terms of people's writing, the videos they make, vertical or horizontal or otherwise. And then all of this is of course being accelerated by all these new AI tools that are learning from all of that and they're spitting out a million copies a minute.
+
+**John Gruber:** Right. I think it goes back to the blank as a service mindset. And overall it is great and overall, even with the bland in blanding, I think overall it is a net win for the world and for people who want to whatever you want to do, open a restaurant, open a hair salon. Be a writer on the internet. But it's it and again it speaks to me missing the fact of what more people's mindset is like. Is it's like, oh, it used to be that if you wanted to be a writer on your own yeah and it was the print world. There was just this inherent limitation of how f how far your reach could be because printing was so ungodly expensive.
+
+And even after you printed you had to distribute it, and how would people ever hear of it? And you had these enormous marginal costs, and you think, oh, well, what if you could get to that like early blogging era where you can, oh, you don't have to print. You your marginal costs go to zero. And you can install something like movable type or WordPress or whatever. And then you could make it look however you want if you just know a little bit of HTML and have a copy of Photoshop and you can make it look however you want and you think ah and for me it's like that's the end point of oh this is amazing.
+
+I can't wait till everybody can do this. But what happens is more people start thinking, well, what if we can just package up exactly how it looks too and you don't even have to do that? And that's a that's a step that I wanted to do and couldn't imagine not doing. But then you when you package up the blancas of service and take it even further to what if you get the whole restaurant? And you could just plop the restaurant down and you decide whether you're selling hamburgers or tacos or coffee. And it all but it but you've already got a restaurant that looks exactly the same. Right.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** Or you've already got a website that looks the same. And it's like that does broaden the appeal of the number of people who want to do it because there's people who want to own a restaurant, but they don't even want to design the interior all. They don't want to pick materials or colors or lighting. They're like, yeah, just give me the whole thing and I'll just make the hamburgers. And I don't care if it looks exactly like the taco place across the street and the other thing too I should mention is that even people who weren't driven to create of their own distinctive visual identity, whether it's the interior of a restaurant or the in the design of a publication.
+
+When you had to do it, even if you didn't want to, even if you would have made the choice at the time to take an entire pre-existing template. If you if that wasn't available, you still had to come up with something original. And so we just had so much more variety in the colors and the sh the textures and the feel of everything we experienced.
+
+**Jim Ray:** And there was a there was a kind of I don't want to say pressure. Pressure's maybe the right word, but I there was a moment there where when like as soon as movable type launched, we had movable type templates. I mean there was the default template and then people started building them. But it was a little embarrassing to use somebody else's template on your blog. And it and that's like that's obviously changed with like the Substack model, but building WordPress templates is its own like or at least used to be a kind of lucrative business there for a minute. It just doesn't seem like the kind of thing we sound like old men here, but like it doesn't sound like the kind of thing that somebody comes along and takes pride in the fact that like they designed their own templates.
+
+They didn't just like go grab one off the shelf.
+
+**John Gruber:** Yeah. And I don't want to name names because I don't want to shame anybody. But if I think back to the era and think of some of the higher people I remember who had the default template, even though they were very successful. And then what they did with their subsequent careers, they tend to be people who went to, oh I'll just go to a publication and write for them because they didn't have that drive. You know again, I don't even mean it in a pejorative sense. I really don't. It's that's who they are. But you could it's like, oh yeah. And even when you could have done anything because you were on your own, you just use the default template and maybe you just change the color.
+
+**Jim Ray:** So I want to get into The main topic of what you write about here in a minute. But before we get there, I do want to talk about Markdown. Markdown is interesting to me because it feels like the thing that's going to outlive us all in some ways. And so Markdown is going to be the thing that continues to exist. And I'm I don't think we've ever had a chance to chat about this, but like when you were kind of working on that, was that e did that even approach your thinking at all? Was this like this is going to be how everybody on the internet writes at some point? Because I know it was very much a personal project for you in a lot of ways too, right?
+
+**John Gruber:** Oh, very much so. I could talk about it at length. I will go I'll go back to very early in this podcast. You said I was the co-creator. And I would say I'm the creator, right? And I know what you're talking about. You're talking about Aaron Swartz again talking about somebody who lost. That the whole co-creator thing didn't happen until afterwards. And then I'd s it's like and then as it rose that we created it together, I didn't want to like I don't know, I felt bad objecting to that because he's gone and I don't you know, it's like it just seems unpleasant. He was the first person to get it, right? Like where I had this idea, like, this is such a pain in the ass writing everything in HTML.
+
+for Daring Fireball. And there was Movable Type had a thing, I forget what they called it, but you could just it was effectively you were writing in HTML using HTML tags, except that you could leave off the p tags for paragraphs and just leave two blank lines between paragraphs and it would just add it was like convert line breaks they called it but it didn't really mean convert line breaks it meant make things that look like paragraphs, paragraphs. That was it. And I didn't use that. I just wrote an HTML. But I ha it was like more but it's like what a pain in the ass to write the tags for everything. And again, it wasn't because I didn't understand it.
+
+I knew HTML. I was actually making my living at least to some extent as a web developer. So it wasn't that I couldn't do it. And HTML by nature originally was meant to be human editable and readable, but it just it doesn't look great, right? And it's like, I don't know. And so I just had this increasingly complicated series. I it might have been one I don't even remember. It might have been one script, but it was like I'd write fewer and fewer of the HTML tags. in BB edit. And then when as I was writing a draft of a story, and then I got to the end and I'd run this script and it would put the tags in and then I, you know, give it another look over and then publish it.
+
+And then, you know, but I edit my articles after publishing all the time. And every time I do that, it'd be like, now I'm stuck looking at HTML again. And it's like, I would rather just have it without the tags the whole time. And Dean Allen, and again, I keep bringing up people who have died, but Dean Allen, who wrote textism.com, which is are in my opinion, maybe the single greatest blog anybody has ever written had a thing that he invented called textile, which was like Markdown. vaguely, but with a very different approach to how it used publication and was more like and you hear we get real nerdy, like T Roth or N Roth from the Unix days, which is what you use to make man pages.
+
+It's uglier. And it's a little bit more terse and it's mostly about putting little ugly things that are very short at the beginning of lines to say this one is code, this one's a header, this one's a regular paragraph, this one's a block quote or something. It wasn't as punctuation based. It was like little abbreviations. And Brad Chote, Brad was an employee at Six Apart and worked on Movable Type. And Brad wrote a plug-in for movable type so that you could use textile and movable type. And I thought, well, maybe I should use that. And I thought I tried it and I was like, I don't like this. And so but I knew Brad and I knew Dean and I'd had some ideas and they were working together on it and I had these ideas to make textile better in my opinion and sent them to Dean.
+
+It was like a little three-way chat or email chat with me, Dean, and Brad. And Dean wrote back to me at one point and was like, these are great ideas, but you should just make your own thing. You know, it wasn't snotty at all. It was just sort of like and I was like I was like apologetic because I realized they were breaking they would have broken what textile already is because they were so significant. And he was just like, you know, these are great ideas, but I can't really do this because it's people are already using textile. And, you know, you should just make your own thing like this. And it's like, oh. Yeah, I should.
+
+And that's when I started working on Markdown. And then I just shared it with a few people. It was like at the end of t two thousand three, I started write making it and then I shared it with a few people who I thought be interested. And Aaron Swartz was one of them because he I a I knew Aaron and was friends with him and he was a reader of Daring Fireball and I was a reader of his stuff. But Aaron had made a thing called ATX, which very few people remember, and even he kind of never really pushed. But ATX, if you look at it, if you just Google Aaron Swartz's ATX, you'll see it and it's a lot more like Markdown than textile is.
+
+I said and I took a bunch of ideas from it. I showed him Markdown, and Aaron was the one who looked at it and was like, oh, this is this is way better than ATX. This is great. And was the only one of my beta testers who I could tell was actually using it. Other people were like, yeah, that's good, you know. And I could tell from their answers that they were just being polite and they didn't get it. Because if you just look at it, looked at it, it was like, ah, what's the point? And there were a zillion of these little forum languages, BB text, I think was one of them. Ways to not write HTML while you're writing text for the web.
+
+But like at the end of 2003, I had a version of Markdown that worked in movable type that I started using without telling anybody. for all of my articles a daring fireball, but I was still working on it. And so I'd come up with changes to it. And it was a bit of a pain in the ass because I and I tried to be the opposite of lazy, where if I came up with an idea of oh, this syntax should be this instead of that, I should use this character instead of that, I would change it, but then I would have to go back to the last four weeks of Daring Fireball articles and change all of them so that they use the syn you know, because every time I change the syntax, it would break the previous articles.
+
+And as the weeks went on, it was more I was I thankfully it was sort of like two things converging. Whereas the weeks went on the language or the syntax was getting more and more stable, so there were fewer changes, but there were more and more articles because more time had gone on that I had to go back and make sure that they no longer that they weren't using the old syntax, they were using the new syntax. But the fact that I did it that way made it so much better. It was, I don't think markdown, I don't think we'd be talking about markdown today. I might still be using it.
+
+**Jim Ray:** Right.
+
+**John Gruber:** But I think I don't think anybody else would have heard about it if I had just stopped when I first started using it to write Daring Fireball. You know, it was the fact that there were at least three or four months where I was writing with it and all of the pro all of the changes that came were through the actual action of writing Daring Fireball while using it. Where I'm like, oh I didn't think about that, but this sucks. You know, this should be like this. And I could change it because the only people who were using it in the world were me and Aaron Swartz. Right. And Aaron, you know, was using it too.
+
+And he didn't have he I think he'd homegrown his he didn't use a CMS. He certainly didn't use mobile type. So I think he was just pre-processing. He was just writing in Markdown, then running markdown. pl and then copying and pasting the HTML into his blog. But he had some you know, but he was using it too. The two of us were actually writing our blogs in Markdown. before anybody else in the world had really heard of Markdown. I hadn't announced it. And then it was done and I announced it. I thought, man, this is really good. I am so happy. I've been because I've been using it. It's not just that I thought it was a great idea.
+
+It's that I had this m three, four months experience of this is now how I write my site. And it's so much better. Like this is really I could see this might be this might be how I write for the rest of my life. You know, and it maybe it's true. Here we are twenty years later and it's so far it is. And Aaron was very excited about it too. And Aaron was more willing because it wasn't his and he didn't have I was a little more I don't want to brag about it. Aaron went out and was like telling people, use it, you know, Gruber announced this thing markdown. Go use it. Go use it.
+
+Go use it. Right. And then like there was like crickets chirping. Like it just did not I thought it was gonna be a b bigger deal instantly. I was like, this is better than I'm sorry, this is better than textile, better than all the other things that are like it. It's sure as shit is better than writing raw HTML. This is like the way people should write for the web. And it was like, eh nobody really I mean it wasn't nothing. Six apart had a this is like you know how much money have I made from Markdown? Six apart had a contest like a plug-in contest for movable type and I entered markdown. pl in it and I won.
+
+I got an iPod. By making the best plug-in for movable type.
+
+**Jim Ray:** I love that. Somehow in all of my Gruber stored Gruber lore, I didn't know that. Fantastic.
+
+**John Gruber:** I think it was Markdown. It might have been SmartyPants, but which is way less. Smarty Pants is just my plug-in that just does the curly quotes. But there were years afterwards where it just seemed not as popular as it should have been to me. And then but it was growing in popularity. And then I don't know that was 2004 when I announced it. And then by like 2010, 2011. it felt like, oh, you know, it's been a long, slow boil, but now it seems like Markdown is about as popular as it should be. Just in terms of like platforms that supported it and things like GitHub embracing it. I forget what year that was, but that was a big deal.
+
+And it was like, oh, and this is perfect for them. And they came up with their own, they and I even gave it a perfect name, GitHub Flavored Markdown. And they made some syntax changes that made total sense for the GitHub context. But it's like, oh, that's a neat idea. And I'd never thought of using Markdown for something like this. I'd never really thought of, you know, GitHub is just sort of a unique beast. And the fact that you can write everything submitting a bug report to a developer, you can use Markdown. It's like, oh yeah, that's perfect for that. And then but then it kept getting more popular and more popular. And there came a point towards the end of the twenty tens where I think it crossed the line and still to this day is now too popular.
+
+I really do believe it. I think that markdown is exposed in more places to more users than who should be exposed to something that can be formatted wrong. Right. It's certainly easier than HTML. But the fact is that you, you know, there is no you don't get an error message if you have the wrong number of asterisks in a paragraph and you've left. a run of italicized text until the end of the document. You don't get an error message, it just it just runs italics till the end of the text. Like I don't think most people should be exposed to that. And it's like, well that's a curious problem. And now we're in this AI era where it's used in context GitHub is a little bit like blogging.
+
+Right? Like submitting a blog report or commenting on a blog re blog report is a little bit like blogging. But the idea that markdown is now the lingua franca for almost everything that LLMs do you know, and that you oh, you wanna create a new agent to do something? Here, just write an agent. md file and put all of your instructions in it and that's the that's the instructions to your agent. Well that's kind of crazy. And I guess the way I've described it to people who ask about it is this isn't a case where I think it's too popular. I think exposing Markdown to normal users in nor in contexts where they should have a WYSIWYG editor, that's where I see it is over the line.
+
+But this AI context is for nerds. And so I'm very happy about it. And it's very gratifying. And the way I see it is it's not really Markdown itself. It's just that my personal preferences for how to decorate plain text. It's plain text files that have won. That's what's really won. It's not even Markdown. I shouldn't get credit for that. It's The fact that plain text files as a thing that everybody can read and will be readable 200 years from now, 500 years from now, as long as humanity exists, people would be able to read plain text files, but how should you decorate them within it? Like if you have a long document with section headings, how do you mark the section headings?
+
+Well, guess what? Everybody marks them my way. Man, that's kind of awesome.
+
+**Jim Ray:** I kind of feel like Markdown is such a perfect name that the branding is at least 20% responsible.
+
+**John Gruber:** I you know what? That's it, you know.
+
+**Jim Ray:** You had to be proud of yourself, right?
+
+**John Gruber:** Oh yeah. I was like, that's it. But that's also partly why I thought it is great, no matter w even if I hadn't come up with the name, but it's got such a great name. It this is gonna be an instant hit. Because it's got a great name, it's got a perfect name, and it's a good idea. You know. Because I really do like the name.
+
+**Jim Ray:** I think you've made this comment before. It's like how unlikely is it that Bruce Wayne is both the world's greatest detective, a superhuman athlete, and an incredible icon designer that he designed the bath symbol.
+
+**John Gruber:** Yes, yes, exactly. You know, while we're talking about it, Jim, I d I'll mention this because and I haven't written about it yet. Because again, it's it seems a little I don't know what the word is, but something I don't want to be. I have noticed over the last two to three years, more and more people writing about Markdown lowercasing the m. Including in like, you know, and there's so many new like markdown editors, you know, like and with vibe coding and stuff. You go to the app store and search for markdown editor. And it's not just text editors. It's mo you know, right there in the app description, markdown editor. Well you're talking about the Python programming language, nobody lowercases the P, right?
+
+I mean the command line tool is a l but that's not the name of the language. The language you know, when s when somebody says, hey, do you speak Spanish? Nobody lowercases the word Spanish. To me, markdown should be capitalized in the same way. And so I'm irritated by it. But I don't want to complain because I feel like, well then, you know, I look like a big baby.
+
+**Jim Ray:** Is that not a sign of Markdown's success? The cleanization, the Xeroxization of it?
+
+**John Gruber:** That is the other thing though, is that while I am annoyed, it does to me, like I think I don't think anybody who's doing it is doing it out of disrespect. I think it actually is a reflection of its place in the firmament, you know, that it kind of is you know, like I see it as a set of guidelines for styling plain text. Right. But when I say, hey, how do you when I say to you, you say to me, hey, you have to send me something and I say send it to me in a just send it to in a plain text file. You know what I mean. But you would never capitalize the P and the T plain text file, right?
+
+That's not a format. That's you would spell that lowercase plain text and that is how people see Markdown. They don't even see it as a variant or a set of guidelines for writing plaintext files. I think now there's a lot of people with. md files who don't even really realize that they are plain text files. That they think a. md file is a thing like a JPEG and a ping, you know. And you know, that it's as different from other things as a dot JPG is from a dot PNG it's not at a technical level, but it's the way people think about it. And I think lower casing markdown is a reflection of that. And so it is, that's another reason I don't want to complain about it in writing.
+
+And maybe I'll just stick to talking about it here on podcasts.
+
+**Jim Ray:** Nice. Would it irk you more if it was capital m, capital d, like Apple would have done that?
+
+**John Gruber:** Absolutely. 100%. Yes.
+
+**Jim Ray:** Yeah. Okay.
+
+**John Gruber:** Yeah.
+
+**Jim Ray:** Well that I think leads us inexorably to the thing that you've written about most, which is Apple Computer. I think one thing I was maybe going to mention this up top, but I'll talk about it now. When you were, I think when I think you've said before, when you first registered daringfirewall.net, you were thinking you're either going to write about Apple or you're going to write about politics. As I was thinking about this, it struck me that over the twenty-five years that you have been writing, both of those things have become so much bigger in our everyday lives than they were in 2002. And I mean, we've both witnessed the rise of the politicization of kind of everyday life.
+
+mostly in ways that I'm not super happy with. And but Apple is of course obviously it went from its beleaguered era to this unstoppable richest company in the world, depending on the week. Do you go back and think about, oh, if only I'd gone down and was writing about politics? Because it feels like, you know, both of those things were in a very different place than they are right now. It seems like you're probably pretty happy having made the choice that you did.
+
+**John Gruber:** There were the two things I thought about writing about, but if I had decided to launch a blog that was political first it wouldn't have been called Daring Fireball. And I can't explain why. But that's ne I guess neither here nor there. And w you know, it wasn't really a coin flip though. I think it was ultimately letting the water run downhill and this is c I you know, I don't think it's just hindsight that this is what I have done and have had some degree of success when I really, really contemplate like however much it might have felt fifty on some days, which one I should do first. 'Cause that's the other thing I had.
+
+I had the idea that I could do both, you know, that I could have two blogs. Wasn't sure. On any given day, or and there might have been some days. And especially, you know, me not having started Daring Fireball until August two thousand two, obviously in the wake of nine eleven two thousand one, I thought, Oh, politics, you know, it's you know, all of a sudden it felt more like current events was more I had more thoughts about them. I spent m maybe more of that year more tempted to do something in that bent because of that, because it was I had more thoughts and there was more going on in the world and people were more interested.
+
+But averaged over time before I had Daring Fireball and I didn't have a political blog, more you know, but something would come into my head where I wish I did and I want to write about X, which one was more likely? It was more likely the stuff that was Daring Fireball. Right. Like I kind of went this way because I could tell, oh, more often than not when I when I find myself wishing I had already started a blog. Which one do I which way do I wish I had already started it? It was what is daring fire?
+
+**Jim Ray:** Well, so this is not a general technology show. We're, as I like to say, we're all about building a better internet and Apple has obviously been a big part of the internet. As you mentioned, the iPhone was this big inflection point. There's been this long-standing critique, and maybe it's not one that we hear much these days, but it's one I certainly remember from kind of the early days of during Fireball, there was and it always felt incomplete and unfair. But also there's maybe a kernel of truth to it. You would hear things like Apple doesn't get the internet. And in one way, like the internet it's big and messy and sprawling and it's very bottoms up, and Apple is a very kind of top-down, loves its design, that's what makes the company the company.
+
+And so I'm curious if you have a take on that. And is somebody who has obviously covered the company for half of his existence. And like, first of all, like is that a critique that you have also heard or shared? And like where does that where does that kind of land both maybe historically and today?
+
+**John Gruber:** Well, I think today it's clarified people are I think people are before I even answer, they've heard your question and are already thinking, no, isn't it AI? That they don't get.
+
+**Jim Ray:** Yeah. Right? Right.
+
+**John Gruber:** It has shifted. But I think that's clarifying. There's two reasons to get into something. There's it's because this is the thing you're obsessed about and you want you've you just need to do it, or because this is the thing that you perceive as being hot and lucrative and you want to do something hot and lucrative, whatever it is, right? And in the when I was a kid, I was too young to realize it, but when I when I look back and see what most of the twentieth century was like, having a job on Wall Street was considered boring right. Like through the 70s. And it was more regulated and it wasn't computer driven. And it was like being a stockbroker was like s being an accountant.
+
+And then the 80s happened. And, you know, like the Oliver Stone's movie literally called Wall Street, that whole thing, greed is good, and that whole mindset, there's n that that couldn't have happened ten years earlier. Like that wasn't the world of Wall Street in nineteen seventy-six, but in nineteen eighty-six it was. And all of a sudden you had like the math graduates from MIT instead of going to Bell Labs or to just stay in academia, they were going to Wall Street and becoming quants. Because and it wasn't because they wanted to be in finance, it was because this is where that that was what was hot and what was lucrative. And if you just want to make a lot of money that's where you went.
+
+Right. And t tech wasn't that, right? The only people who were in tech were people who were obsessed with tech and computers. Eventually and now and possibly for a sustained period of time, tech is where those people go. Right. And so I have a degree in computer science. And when I went to Drexel University in the from nineteen ninety one to nineteen ninety-six, you know, i there was a department of computer science, you know, but it was part of the department of math and computer science. Now I think it's an entire college at Drexel. There's like a college of computer science and something else. I forget the exact term. It's a whole college. There were like thirty to thirty-five other compsi majors in my year that I graduated with, I think.
+
+You know, I don't know, maybe forty at the most 30 to 40? And I've seen pictures and I know I casually know because he's a reader during Fireball, a guy who's a comp sci professor at Penn here in Philadelphia. And he showed me a picture from his fresh freshman lecture a couple of years ago and it was like four hundred students. You know, like literally an order of magnitude difference, you know, from dozens to hundreds each year. And it's not because more people are obsessed with computers. And I'm not saying they shouldn't be computer science majors. It's just it's this is hot and this is a good job, or you know, before AI was considered.
+
+It just draws people. And I think Apple, to go back to write this large, Apple fundamentally is a company that knows what it is obsessed about. It isn't a company that is in anything or shouldn't be. Maybe there's some exceptions and this is where the company goes off the rails. But they are a company that is obsessed. with making great computers and delivering great computer experiences, personal computer experiences to users. It is a company that was meant to make the computer for the rest of us. And anything astray from that is off of their interests. And so the internet at large, to use the internet, you have to use a computer so it wasn't that they weren't interested, but what we think of as internet companies, Amazon and Yahoo and Google.
+
+**Jim Ray:** Right, Google's the obvious foil there, right?
+
+**John Gruber:** Right. That they were doing things and had an obsession that was not foreign to Apple. It was related, but it wasn't directly what they were particularly at. They just were they and they s not stick to their knitting, but they didn't get distracted from that, you know. And so I think what people saw is oh they don't get the internet, is they didn't turn the whole company around to become an internet company. Because they knew what they were doing was the right thing for them to be doing and that there was a place and a need for it. And I think it is, and I think the AI moment were extended AI moment we're going through right now and the similar complaint like oh Apple doesn't get AI.
+
+That's not their thing. And it would be it would be a disaster. Not any kind of anti-AI polemic. It would be a disaster for Apple to shift its interest from anything from making the best computing devices. That's the that's what the company's meant for. It's who the company is hired. It's who it's run by. Anything else is a distraction. And AI, again, just like how to use the internet you have to have a computer. You to use AI you have to have a computer. So it's not unrelated. But of course they shouldn't be obsessed with AI. And I think it is it I think it should be seen, and I think it will. I think more and more people are like, oh, maybe they do know what they're doing.
+
+I think the fact that Apple alone amongst the big tech companies is completely unchanged in their Capex expenditures. They're not doing any of this. Not just like, oh, they're doing less of it than the other companies. The other companies are spending this massive, unfathomable amount of money building out data centers specifically for AI, and Apple isn't doing any of it. It's not because they don't get it, it's because they know that that's not their business.
+
+**Jim Ray:** In my head, when you think of the big pre-internet tech companies, obviously Apple and Microsoft are The two, at least in terms of mind share, that come to mind. In my head, Google is kind of more equivalent to Apple, and Facebook is more obviously this is a terrible analogy in many ways, but Facebook is more of the Microsoft and you can also you can maybe even make the argument that Google spending all this money on AI is part of their original mission, which is to organize the world's information. And when you look and you see it, oh it's Apple and Google there, they're working on this work together to integrate I'm I've got the iOS 27 beta.
+
+the new series actually really quite good and amazing. And then you see all of the others that to your point don't really quite know what they are as much, and so they are chasing after this new thing.
+
+**John Gruber:** Well and I really do think it's an interesting they're very different things. The internet bubble and the AI bubble, you know, and to some extent they're both clearly bubbles, right? And a bubble doesn't mean it's nonsense. It's not always like the tulip bubble from the Netherlands in the 1600s where there was no there. It's you know the internet is still a thing. So when the bubble popped, it didn't leave nothing, it just left what the market should have been. And I think the simil something similar will happen to AI, but I don't know that it's quite as big as quote unquote the internet. But I'll push back on your analogies a little. I think it's interesting to see the companies in frame.
+
+But I think in some ways the two companies that are most alike are Microsoft and Google. And I think I think that Google's original don't be evil motto was clearly in reference to Microsoft, right? Like in 1999 and 2000 when you said evil tech company. Everybody'd be like, you mean Microsoft, Microsoft, Microsoft, Microsoft. And they did wield their monopoly in ways that no other company with a monopoly share has ever, you know, they were more forceful about it, more brazen you know, than anybody else. And I think Google recognized that it was so much like Microsoft that they set that motto to be like, it's sort of like a reminder, like you know, we do kind of hate them in certain ways, so we should kind of remind ourselves not to be like them.
+
+But and to me, but ultimately they do have their obsessions, right? Microsoft and this is where I think Microsoft and Apple are alike, right? They have very different levels of taste, but they both were very interested, you know, Microsoft specifically, right? They're in the name on software. You know it that's the thing. And they know what they were obsessed about. And they've kind of stuck to it, right? Microsoft in a way does the is still doing the same thing it's always done. They make software. Google really is, you know, put the don't be evil thing aside, but organizing the world's information is sort of really ultimately what they do, right? Oh, everybody, 80, 65% of the of Americans use Gmail for email right well that's organizing an important source of everybody's information is their email.
+
+To me, it's meta that stands out and meta and Zuckerberg are the, ah, there's no nothing that they do is what they really love. They just want to do whatever's hot and whatever they think is lucrative. Right. And it was.
+
+**Jim Ray:** so much especially right now, right?
+
+**John Gruber:** It was social media, it was Facebook, and then it was Instagram and then the whole like renaming the company Meta as because and it was metaverse, metaverse, metaverse. It was the metaverse is the next big thing because they thought maybe it was the next big thing and then it was like, nope, it's not or they don't think it is and they just sort of they don't even talk about it. They renamed the whole company for it and they never even talk about it anymore and they had the massive layoffs and then now it's AI, AI, AI. And is it because they really love AI or because they think AI is the next big thing and that's where the hotness is, right?
+
+**Jim Ray:** Well and it's not even AI that is exemplary to me for that one, is it's that this story came out a couple of weeks ago that they're gonna build a polymarket clone. That to me is just completely emblematic of how much they're just chasing after something.
+
+**John Gruber:** Right. You know, and there are other ways. I think they all hate each other for the ways that they're most alike. Right. And so you there are other ways that you could say, and I know Ben Thompson has better examples of the ways that meta and Apple are alike. But ultimately that that's the biggest difference. And the whole idea that like when the internet exploded 25 years ago and hey, Apple doesn't seem to be doing anything on this. And then internet services that you know that became the other narrative in between Apple doesn't get the internet and Apple doesn't get AI, it was Apple doesn't get services.
+
+**Jim Ray:** Right. And.
+
+**John Gruber:** they you know, and they were, they were kind of bad. You know, there was the whole thing with mobile me and the story about Steve Jobs, you know, taking this team and saying what is this supposed to do? And somebody in the meeting, you know, in the town hall described what mobile me was supposed to do. And he goes, Well, why the hell doesn't it do it? Except he didn't say hell.
+
+**Jim Ray:** Exactly.
+
+**John Gruber:** You know, that it was supposed to sync these things. But now iCloud works really well. It does. They get it eventually. But fundamentally that's when people say, hey, I like Apple and Apple is big and people are just like, hey, my, you know, lick your finger, put it in the wind. Which way is the wind blowing? And it was blowing towards the web. And then oh it's blowing towards internet services. And now it's blowing towards AI. And some people just think, well, you're a tech company, you're big. You need to go, you need to just every time the wind changes direction like this, the right thing to do is to turn the whole company on a dime and go chase that direction.
+
+Apple never does that. They never do it. And I think it's to their credit and it's why they've been consistently successful and the experience they deliver to customers is very, very consistent. If you're a longtime Apple user, it's been a very consistent ride. And I think Meta is exactly the example of what happens if you do chase the which way the wind's blowing every time it turns. And I think people's the public opinion people have of meta reflects that. And again, put it aside things that might be illegal or things that might be ethically sketchy. I think just the fact that they that they don't really have any consistent backbone about what they are and what they want to do is actually more fundamental about it.
+
+And I think it reveals it comes across in the long run as institutional phoniness that people can kind of detect.
+
+**Jim Ray:** You've written a lot about the taste of these various companies. And I think it goes back to this interview that Steve Jobs did about how Microsoft, this was in the 90s, Microsoft just fundamentally not having any taste. And that feels like something that we can extrapolate out, but it really does feel like Apple's superpower as a company is both their taste. But also they have the war chest to be able to do that this these days, but they're pretty patient. They can wait this out. They can see how these things go. And those things work in it hand in hand with each other.
+
+**John Gruber:** Yeah, I think so. But I do think they've been a lesson both ways. You know, it used to be when Microsoft was at its most dominant and it which coincidentally, I don't think it was directly related. But the rise of Windows in the mid nineties and the decline of Apple coincided, but Apple had such poor management and was so strategically and engineering what you know, that they really had these internal projects to have next modernized the operating system. It wasn't like they didn't know they needed to modernize it. They had the projects that and they failed. They were a poor engineering company and a poor managed poorly managed company. And so Microsoft's rise and Apple's decline happened at the same time.
+
+And so many people drew the conclusion that design didn't matter and taste didn't matter.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** Because even at the peak of Microsoft and the decline of Apple, you could still tell that Apple, that Mac OS was better designed than Windows. It just looked better and had more consistency. And the computers, even when the computers from Apple were the most boring and the most beige, literally. They still look better than PCs. They really did.
+
+**Jim Ray:** -huh.
+
+**John Gruber:** And so the conclusion was, well, design clearly doesn't matter because Apple's on the verge of bankruptcy and Microsoft is on the verge of multiple monopoly situations.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** And that was the wrong conclusion, obviously. And then I think the opposite conclusion could happen when Apple, you know, after the iPhone and everything, you could say, oh, design is all that matters. And that's not true either, right? A design is always it's good to have, and it's better to have a good design product than a poorly designed product but it's not enough either, right? It's you know, it's just one factor among many, but it's a good one. But it's also what makes Apple distinct in that regard is it's the rarest in the industry. Right. Being fast is better than being slow. And so lots of people try to make their computers or their software as fast as possible.
+
+But making it as elegant and as well designed as possible is much rarer to have as a top priority of the company. And that's where Apple stands out.
+
+**Jim Ray:** You know, we talk a lot about within the Apple ecosystem, a lot about business models and moats and all of those things that get talked about in kind of strategy conversations in large part because nobody has figured it out yet. And it seems like for the longest time, Apple's moat, to use that kind of weird business school term, was their whether you call it design, their user experience, their taste. And as you were talking about in the 90s, other business models emerged that they weren't really able to respond to, but then being consistent with making the user experience primary is in many ways, you could argue, what saved the company when Steve Jobs came back and they went on that amazing run in the late 90s and the 2000s to really redefine what the company is.
+
+And all the other big tum tech companies, they have their own kind of approach that's very different. But I think you could argue that the user experience is very fundamental to what Apple is as a company, even still today, very different company than it was 10, 20, 30 years ago.
+
+**John Gruber:** You know, there's handful of quotes that are my favorite. A, I'll just say that I don't think moat is I think moat's a great business school term. I know it's w Warren Buffett's one of his favorite things to look for in a business because it's not abstract. It is a very concrete metaphor that people can understand and you're not you know you either have a moat or you don't. But one of my favorite aphorisms was from Walt Disney and I think I'm I might get it because it's simple enough, but it's close enough is that he said, we don't make movies to make money. We make money to make more movies. You know, that if the top two priorities of your company in an unordered list are making money to be profitable and making good movies.
+
+It is a fundamentally different company which one in you when you have to Prioritize them in order which one's number one and which one's number two. If your top priority is the money and making movies to make the money, and yes, you'd love to make the movies as good as possible, but the number one priority is making the most money from them. You end up making different movies and the movies are not as good. And if your number one priority is making the best movies possible and number two is making a profit. It's in the and the longer you go and maintain that order, that priority order, the more different and the company is. And you know, Disney is a great example of how you could be a Italy for an entire century.
+
+And I think it's still true for them. And I think that under different CEOs they've maybe lost a little bit of a sight of that. But that the reason Disney still is an independent company, it still means what it did 50 years ago primarily, even though the world has changed is because they've m largely kept to that prioritization. And I think that's true for Apple too. And I think it's true that the second priority of the company is to make as much money as possible. But it's the second priority. And it's every time it kind of creeps ahead. Again, it could be a whole second hour of the show, you know, with the way that they've shepherded the app store and the commissions they charge from it.
+
+You know, is arguably an area where they're driven more by let's make as much money as possible because we control the app store rather than let's make the app store as good for users and developers as possible. And I think that's the reason we complain about it. Of all the things Apple makes the most, the reason the thing that people who enjoy the company's products the most still complain about the most is that area of the company because the priorities are clearly in the other order.
+
+**Jim Ray:** It just feels like rent seeking and feels in so many ways antithetical. And I'm sure they've got their justifications, you know, the App Store allows us to we're never going to be the company that was weeks away from bankruptcy again because we're going to make sure and that'll help us make the best computers.
+
+**John Gruber:** Yeah. And there was a remark from I've written about it recently from Steve Jobs. about why when they launched iCloud email or maybe it was me.com email or something and they said, you know, somebody said, well how could you know, does your free it's free for everybody to use for email. Does it have ads? And job said something like, Well, we do we build things to use ourselves and when we ask ourselves, do we want ads in our email? The answer is no. So we don't add and I think, you know, you know, that they've lost a little bit of that clarity in that particular regard during the Tim Cook era.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** But it's still largely there, right? They're not they're not unrecognizable by and large. You know, the fact that throughout the entire Intel era of Macs, there were never Intel inside stickers on MacBooks, no matter how much Intel might have been whoop you know. love to have paid them to do it.
+
+**Jim Ray:** I want to finish up here a little bit. As I mentioned before your writing has just been hugely influential in my own thinking, how I think about this industry that I work in and things like that. And I wanted to see if you had any takes or questions about what we're building here at Bluesky. I know a number of people who for whom this is true. You are the reason that I got on Twitter initially. You post about it on Daring Fireball. And I signed up immediately as I've clicked many a link through the years and signed up for many a service that was recommended by John Gruber. That had a huge influence on my life.
+
+You and I became friends because of that. Yeah,.
+
+**John Gruber:** I guess that's true.
+
+**Jim Ray:** I mean, there's a good I 'm close to a decade there where every one of my business connections, my wife I met on Twitter. So obviously, you know, a pretty big influence on me. So I always love kind of getting your take on things. We're in a very different world today. Twitter is obviously in a very different place. I feel like one of the things that you have written about less over the years because social media got kind of baked in some ways. And then you know the topics that you do maybe more enjoy writing about a little bit have become so much more central to how the world works. I you know, I guess I'm curious, do you know, do you have any questions about Bluesky or what we're trying to build on the protocol, which is the side of the house that I work on.
+
+**John Gruber:** You know, and again, it's weird because Twitter slash X still exists, but it's central role as the only Twitter like service that mattered is no longer true. You know, I mean it's that's I mean that's almost axiomatic at this point, right? And in some ways, ultimately, it proved to be a bad idea to have one Twitter-like service. But that mattered. But at its inception, it was wonderful, right? It is sort of the benevolent dictator is the best form of government, right? It's true. A benevolent dictator is the most effective best form of government because they can the benevolent dictator can make these good things happen at a pace that in any other system either can't happen or happens slower.
+
+The problem is you've established it's not the benevolence that gets established, it's the dictatorship.
+
+**Jim Ray:** Sure.
+
+**John Gruber:** Right. And it's sort of exactly what happened with Twitter in some ways. Like squint your eyes. And it's like, man, Twitter was like you said you met your wife there, right? And it's like my wife and I met so many of our best friends from all over, I was gonna say America, but in some cases the world. It's like and we thought, well, what's the problem with Twitter? Well, the problem is we spend too much time working on our jokes. We're wasting time on jokes. That was we're seriously what we thought like I don't know like around like twenty eleven or twenty ten or so. It's like what is the problem with Twitter is I don't know, I think I spend too much I waste too much time thinking of jokes because I'm trying to impress my friends.
+
+**Jim Ray:** I remember thinking even in the early days, it was just like my too much of my thinking is tweet-shaped now. And I just don't have that problem.
+
+**John Gruber:** Right, and you start thinking like, well, how can I cram this into at the time a hundred and forty characters?
+
+**Jim Ray:** Right.
+
+**John Gruber:** And obviously nobody thinks that's the problem with the Twitter like social media today. And so it's in the you know it's better overall to have the variety of them, but it's worse that our attention is strewn across them. You know, and so for me personally, I try to be spending just less time, even though I'm very active on Mastodon and Bluesky and to some degree threads. And I go to Twitter, but I very seldom post there. And when I do, I think it's only a reply. And for multiple reasons. I think in the aggregate though I spend less time on all of them. And it's partly deliberate because it's like, hey, I should just be focusing on my work.
+
+And I think it has shown itself in a sort of increase in my productivity at Daring Fireball, which is where my I think my time and attention is best spent. But part of it is it's like it's like there's only one way to handle it with multiple networks you want to stay attention to, you know, you can either spend too much time with them or spend less time overall on all of them. I guess my question would be d to me, Bluesky is interesting because it is clearly trying to carve out a m a middle ground where it is more centralized but not officially centralized. And but there is that the age old complaint of, well, if an existing open thing exists, you should just use it because it's already there and exists, right?
+
+Why not just stick to mastodon and the mastodon APIs. What are they called?
+
+**Jim Ray:** Activity Pub.
+
+**John Gruber:** Activity Pub. Why so why does atproto that would be the first question, why does it exist? I think I know the answer, but I'll ask you, why do you why does it exist rather than just building on activity pub?
+
+**Jim Ray:** Well you're gonna get letters because there's a long how do we pronounce this thing and we've settled atproto. So just Well.
+
+**John Gruber:** yeah, but I have a I have a longer history of mispronouncing anything and everything that can possibly be mispronounced.
+
+**Jim Ray:** That is absolutely true. So yeah, but.
+
+**John Gruber:** the T is uppercase.
+
+**Jim Ray:** John, don't even get me started. It took like literally my first two months on the job were just like, how are we not going to do that?
+
+**John Gruber:** No, it's.
+
+**Jim Ray:** not your fault and I'm actually really excited we got a patented grouber mispronunciation. At.
+
+**John Gruber:** protocol.
+
+**Jim Ray:** That's great. It's a it's a good question. It's one that comes up a lot. And in the I don't want to talk too much about the kind of like the history of things. atproto was and Bluesky were kind of incubated within Twitter and the pre-musk days. Jay actually took a look at Activity Pub. And when we started, when they started to kind of like figure out what are the goals that we have here it probably helps to kind of like understand there's a there's really kind of a fundamental difference between how atproto works and ActivityPub works. People think that we're at war about these things. I don't think we need to be at war. I think that they're both very good protocols for what they do.
+
+They just they start to kind of serve different purposes in some ways. And ActivityPub works much closer to a model that you might be familiar with if you understand the fundamentals of like email or something like that, where like you have a server but then baked into that server is how you do all of the communication back and forth. And so when somebody sends me an email, I get a copy of that, it stays on my server. And when I need to send an email to somebody. And so we have SMTP, we have IMAP, we have POP3, we have those protocols for passing those messages back and forth. And I think the fundamental difference of what atproto tries to do is instead say, what we want to do is primarily one, we want to allow people to big, like build these like big world social networks.
+
+And just having people set up their own server along the way, we're going to run into problems immediately if this thing succeeds in the way that we want it to. And so when you have hundreds of thousands, certainly millions or even billions of people, you're gonna have a hard time like keeping track of all of those records if you want to be part of like the big world social network that was incubating at the time. And so the approach that they took with atproto, and as I got to understand it, I really appreciate both like the ethos of practicality, then also really wanting this to exist in an open source way is that it's more like you take that stack, the you know the traditional web development stack that you might think of.
+
+You sign in with your username or your email address, there's a database. And we kind of exploded that out. And then developers can pick the pieces of that that they want. And then that allows us to keep those individual pieces much smaller, much easier to manage. And so it's like you can run your own, we call them personal data servers. You can run that on a $5 a month VPS.
+
+**John Gruber:** Right.
+
+**Jim Ray:** And your server's not going to get filled up with every other message on the network?
+
+**John Gruber:** You know, that answer jibes with what I expected. But it was that was coherent, Jim. You should you should consider becoming a spokesperson for the ad protocol. Oh wait.
+
+**Jim Ray:** Excellent. I'll put that on my list.
+
+**John Gruber:** Yeah. Yeah, consider it. But I think it circles back to what I was saying about why did I make markdown when textile already existed. Right. It wasn't because I was against textile, but I had ideas that I thought were better. Not that Markdown is better, but although I think it kind of is. But it's not about being in opposition, right? It's not zero sum. It but if I want to pursue what I think are these good ideas, it needs to be a new thing.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** And it can't just build. Sometimes you can't just build on the old thing. And there are aspects of what at pro I that's gonna be a tough one. AT Protocol. AKA AT Protocol and Bluesky are doing that simply are not compatible with the fundamental nature of ActivityPub, right?
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** That's you know, it doesn't mean that you're arguing it's better overall, although privately you might think, yeah, it's better overall, but that these ideas are and again, prioritization of the ideas. And if we want if we th if we think this is more important than ActivityPub does, we have to build our own thing to make it that way. There is a different middle ground between centralization what threads is, right? Like, you know, and threads, you know, shows that you can make a new thing and have it grow in popularity, but it, you know, and it can be exactly as centralized as Twitter ever was. But there's a lot of room in between. Where yes, you can just easily sign up for Bluesky on and get an name at BSky.
+
+app address. But like just the namespace for users is such an interesting idea. And it's like, oh, you're nobody I really do think. How could anybody come up with a better idea than, hey, if you register, we'll build on DNS and go all the way back. Like that's all the way back. To whatever point the internet shifted from only having IP addresses to, hey, remembering all these numbers sucks. Can't we assign names? Like, you know, stand for edu instead of remembering all these goddamn numbers. DNS is here to stay, right? And it is a system that works. And going all the way back to literally amongst the very first principles of the internet and saying a DNS domain name can be your user ID on AT Protocol gives ownership.
+
+And again, it goes back to that independence, right? And yes, you can just do the easier thing and get a username at BSky. app. I mean, how do you pronounce that one?
+
+**Jim Ray:** Yeah. You got it. You nailed it.
+
+**John Gruber:** And again, that's what most people are going to do. And it speaks to human nature, right? But of course I've got Gruber dot foo, right? Because of course I wanted my own, right? Here, I'll tell you this. If you want, if you want a little John Gruber flavor. I've I was down to two names. I registered both and I've got the other one. But I've got grouber. foo, where foo, I thought, I didn't even know that was a top-level domain, but it's kind of fun can't get Gruber. com. Gruber some asshole in Arizona, not asshole. I don't know the company. But there's a Gruber Industries in Arizona that registered Gruber. com in like 1994. Oh.
+
+**Jim Ray:** let me tell you about gymnasi.com. Yeah.
+
+**John Gruber:** So but I was down to two. I got grouber. foo, because I thought that's just fun. And I got grouber. blue. Dot b-L-U-E. Because I thought, oh, grouber. blue for Bluesky.
+
+**Jim Ray:** -huh.
+
+**John Gruber:** And the reason I didn't go with grouber. blue is I thought. Yeah, but this ad protocol has more uses there's than just Bluesky itself. It's not they're the ones telling me there's more uses for it.
+
+**Jim Ray:** Yeah.
+
+**John Gruber:** So maybe you know, as clever as the dot blue is, and more memorable it is that Gruber on Bluesky is Gruber dot blue. And which still gives me second thoughts every once in a while. I thought, I better go with dot foo because who knows what I might use this same identity for 10 years from now, 15 years from now, 20 years from now. Yeah. And so I think it is at least, you know, I think I kind of get it that it's thinking bigger than Bluesky in particular.
+
+**Jim Ray:** That's such a perfect example. And the kinds of things that we're building on the network, you know, when the protocol was prototyped. the team was like, we need to have a essentially a sample app that will showcase how the protocol works. And of course, because it was being incubated inside of Twitter. They built Bluesky, this kind of like Twitter-like thing. They didn't have to think too hard about what all the primitives needed to be. But of course, you can build. There are some amazing blogging platforms. And one thing that I love about this, and I'm going to try to convince you by the end of the week. is that they created a what we call lexicons, but they're essentially file formats of the protocol.
+
+And we've got these three like competing blogging platforms, and they've got they've all got their fun flavors to them and but they collaborated and they created this lexicon, this file format called standard.site. If you go to standard. site, that's an easy one. then anybody who writes a blog, so there's plugins for WordPress, our friends at Button down just added this integration into their thing. You, John Gruber, at Daring Fireball. There's even a there is a Pearl SDK for atproto. So you can start to write these records and they'll live on the PDS where you sign into, and you'll sign in with your grouber. foo. And so this is where we start to put together this like this massive firehose of all the information.
+
+Right now, most of the records in the in the firehose are of course Bluesky records. Most of them are Bluesky likes because people like things more than they post things. But we're starting to bring in more and more different types of information. And that that part is where it starts to get pretty exciting.
+
+**John Gruber:** That's why I'm more excited. I really am. I'm not just saying it because I'm talking to you again. I'm not just blowing smoke up your ass here, Jim. But I like Bluesky and I'm I like using it as if it were if that's all there was, I'd still be there. Right. But I'm more excited about it because in a weird, in a counterintuitive way. Or maybe a way that you have to kind of dig into the details to get. In a certain sense, the whole idea is more open in terms of open-endedness than activity pub. Because ActivityPub, as open as it is in terms of the federation aspect and that anybody can start their own site and their own node or whatever they call them, the whole idea, the scope of what it covers is more defined.
+
+Whereas AT Protocol and the things you're talking about are a little bit more lower in the stack, right down to the fact that the username space is at the DNS level. So like I said, it's open in the sense, you know, like in the old free is in beer, you know, versus free as in freedom. It's open in the sense of being open-ended, in a way that Activity Pub is not, right? And again, nothing against ActivityPub, and I'm very active there on Mastodon too. But it's very clearly defined what the scope of activity pub activity is.
+
+**Jim Ray:** And that was honestly the reason that I got excited about this when I started learning more about it. It's really it's why I keep doing this. So I'm pretty excited about the open-endedness of it too. Been at this for a minute. You are famously.
+
+**John Gruber:** terrible.
+
+**Jim Ray:** happy to chat. I really appreciate you taking the time.
+
+**John Gruber:** I'm glad you had me and I've and forgive me for taking up more, as always, way more time than we expected to. Thank you, Jim.
+
+**Jim Ray:** Thanks so much.
