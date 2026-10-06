@@ -611,3 +611,60 @@ test('toMdx leaves an episode without an outro unchanged at the end', () => {
   })
   assert.match(out, /\*\*Jim Ray:\*\* Take care, everybody\.\n$/)
 })
+
+// --- recurring names and house style (review of 2026-10-06) -----------------
+
+const RECURRING = [
+  ['our very own Paul Frazy here', 'our very own Paul Frazee here'],
+  ["you're pfrazy.com", "you're pfrazee.com"],
+  ['Brian and Daniel presented', 'Bryan and Daniel presented'],
+  ['not our first ITF', 'not our first IETF'],
+  ['the team at Black Sky', 'the team at Blacksky'],
+  ['Rishi from BlackSky', 'Rishi from Blacksky'],
+  ['black site-only posts', 'Blacksky-only posts'],
+  ['Block site only posts', 'Blacksky only posts'],
+  ['a relaunch of Addy, our AI', 'a relaunch of Attie, our AI'],
+  ['I use ADI every day', 'I use Attie every day'],
+  ['Brittany Ellick gave a talk', 'Brittany Ellich gave a talk'],
+  ['Brittany Aleck, who', 'Brittany Ellich, who'],
+  ['the magic of StreamClays', 'the magic of Streamplace'],
+  ['how much we love Streamplays', 'how much we love Streamplace'],
+  ['Twitch or Screamplace', 'Twitch or Streamplace'],
+  ['to Stream Place', 'to Streamplace'],
+  ['Lawrence Hoff of Connected Places', 'Laurens Hof of Connected Places'],
+  ['Laurent Hoff is noting', 'Laurens Hof is noting'],
+  ['the Rumi crew', 'the Roomy crew'],
+  ['Mr. Daniel Holmgrid', 'Mr. Daniel Holmgren'],
+  ['with Dan Holgram last week', 'with Dan Holmgren last week'],
+  ["Daniel Holngren's diaries", "Daniel Holmgren's diaries"],
+  ['Dan Abramoff', 'Dan Abramov'],
+  ['Dan Amberw', 'Dan Abramov'],
+  ['Dan Abernoff social file system', 'Dan Abramov social file system'],
+  ['that Divey put out', 'that Divy put out'],
+  ['Nick Joachinus and I', 'Nick Gerakines and I'],
+  ['Nick Jerichenis', 'Nick Gerakines'],
+  ['these permission data projects', 'these permissioned data projects'],
+  ['Permission data is next', 'Permissioned data is next'],
+  ['the standard site lexicon', 'the standard.site lexicon'],
+  ['I think standard side is', 'I think standard.site is'],
+  ['Standard Sight launched', 'standard.site launched'],
+  ['Go sign up for Pocket, sign up', 'Go sign up for pckt, sign up'],
+  ['runs pocket blog. Launched', 'runs pckt.blog. Launched'],
+  ['the proprietor of pocket. blog', 'the proprietor of pckt.blog'],
+  ['PocketBlog launched', 'pckt.blog launched'],
+  ['an account on Pocket Cafe', 'an account on pckt.cafe'],
+  ['great work at Pocket. cafe', 'great work at pckt.cafe'],
+  ['sign up for off-print', 'sign up for Offprint'],
+  ["Hoffprint's gotten pretty big", "Offprint's gotten pretty big"],
+  ['leaflet and off prints', 'leaflet and Offprint'],
+]
+
+test('applyGlossary corrects recurring names and house-style terms', () => {
+  for (const [heard, want] of RECURRING) assert.equal(applyGlossary(heard), want, heard)
+})
+
+test('applyGlossary leaves ordinary pockets and black sites alone', () => {
+  assert.equal(applyGlossary('in our back pocket for now'), 'in our back pocket for now')
+  assert.equal(applyGlossary('a blog in your pocket'), 'a blog in your pocket')
+  assert.equal(applyGlossary('a smart aleck'), 'a smart aleck')
+})

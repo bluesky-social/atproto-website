@@ -147,6 +147,30 @@ export const GLOSSARY = [
   [/\bone point oh\b/gi, '1.0'],
   // Every "Tony" on the show so far has been Toni Schneider, Bluesky's CEO.
   [/\bTony\b/g, 'Toni'],
+  // Recurring names, from the review of the first 22 episodes (2026-10-06).
+  [/\bFrazy\b/g, 'Frazee'],
+  [/\bpfrazy\b/g, 'pfrazee'],
+  [/\bBrian\b/g, 'Bryan'], // every one so far is Bryan Newbold
+  [/\bITF\b/g, 'IETF'],
+  [/\b(?:Black|Block) ?(?:Sky|side|Sci|site)\b/gi, 'Blacksky'],
+  [/\b(?:Addy|ADI)\b/g, 'Attie'],
+  [/\b(?:Ellick|Aleck)\b/g, 'Ellich'],
+  [/\b(?:Stream ?(?:[Pp]lays|[Cc]lays|Place)|Screamplace)\b/g, 'Streamplace'],
+  [/\b(?:Lawrence|Laurent) Hof+\b/g, 'Laurens Hof'],
+  [/\bRumi\b/g, 'Roomy'],
+  [/\bHol(?:gram|mgrid|ngren|man)\b/g, 'Holmgren'],
+  [/\b(?:Abr?am(?:off|ow)|Abernoff|Amberw)\b/g, 'Abramov'],
+  [/\bDivey\b/g, 'Divy'],
+  [/\b(?:Joachinus|Jarkinis|Jerichenis)\b/g, 'Gerakines'],
+  // House style.
+  [/\b([Pp])ermission data\b/g, '$1ermissioned data'],
+  [/\bstandard[ .]?(?:site|side|sight)\b/gi, 'standard.site'],
+  // pckt is spoken "pocket". Only the capitalized or blog/cafe forms are safe
+  // to change everywhere; a lowercase "pocket" is often a real pocket.
+  [/\b(?:pocket|placket|pcckt|pcct|pckt)\.? ?blog\b/gi, 'pckt.blog'],
+  [/\b(?:pocket|pcckt|pckt)\.? ?cafe\b/gi, 'pckt.cafe'],
+  [/\bPocket\b/g, 'pckt'],
+  [/\b(?:off[- ]?prints?|hoffprint|off-bridge|offcrit)\b/gi, 'Offprint'],
   // The show name. Lowercase "off protocol" with no hyphen is left alone,
   // because "going off protocol" is an ordinary idiom.
   [/\boff-protocol\b/gi, 'Off Protocol'],
