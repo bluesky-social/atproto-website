@@ -162,6 +162,9 @@ export const GLOSSARY = [
   [/\b(?:Abr?am(?:off|ow)|Abernoff|Amberw)\b/g, 'Abramov'],
   [/\bDivey\b/g, 'Divy'],
   [/\b(?:Joachinus|Jarkinis|Jerichenis)\b/g, 'Gerakines'],
+  [/\bnorth ?sky\b/gi, 'Northsky'],
+  [/\bTre(?:zi|ssy|zzy)\b/g, 'Trezy'], // trezy.codes, who makes HappyView
+  [/\bHappy View\b/g, 'HappyView'],
   // House style.
   [/\b([Pp])ermission data\b/g, '$1ermissioned data'],
   [/\bstandard[ .]?(?:site|side|sight)\b/gi, 'standard.site'],

@@ -657,6 +657,12 @@ const RECURRING = [
   ['sign up for off-print', 'sign up for Offprint'],
   ["Hoffprint's gotten pretty big", "Offprint's gotten pretty big"],
   ['leaflet and off prints', 'leaflet and Offprint'],
+  ['North Sky launched their social app', 'Northsky launched their social app'],
+  ['I get north sky now', 'I get Northsky now'],
+  ['the NorthSky crew', 'the Northsky crew'],
+  ['Trezi was showing off Happy View', 'Trezy was showing off HappyView'],
+  ['oh yeah, Tressy showed me', 'oh yeah, Trezy showed me'],
+  ['something like Happy View or', 'something like HappyView or'],
 ]
 
 test('applyGlossary corrects recurring names and house-style terms', () => {
