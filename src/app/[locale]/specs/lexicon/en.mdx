@@ -163,7 +163,7 @@ Type-specific fields:
 
 Strings are Unicode. For non-Unicode encodings, use `bytes` instead. The basic `minLength`/`maxLength` validation constraints are counted as UTF-8 bytes. Note that Javascript stores strings with UTF-16 by default, and it is necessary to re-encode to count accurately. The `minGraphemes`/`maxGraphemes` validation constraints work with Grapheme Clusters, which have a complex technical and linguistic definition, but loosely correspond to "distinct visual characters" like Latin letters, CJK characters, punctuation, digits, or emoji (which might comprise multiple Unicode codepoints and many UTF-8 bytes).
 
-`format` constrains the string format and provides additional semantic context. Refer to the Data Model specification for the available format types and their definitions.
+`format` constrains the string format and provides additional semantic context. The various format types are described in the "String Formats" section below.
 
 `const` and `default` are mutually exclusive.
 
