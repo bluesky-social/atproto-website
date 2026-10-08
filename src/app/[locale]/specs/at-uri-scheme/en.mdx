@@ -74,7 +74,7 @@ The full syntax for AT URIs is flexible to a variety of future use cases, includ
     - Note that none of the current "blessed" DID methods for atproto allow these characters in DID identifiers
 - An optional path section may follow the authority. The path may contain multiple segments separated by a single slash (`/`). Generic URI path normalization rules may be used. Tailing slashes are not allowed.
 - An optional query part is allowed, following generic URI syntax restrictions
-- An optional fragment part is allowed, using JSON Path syntax
+- An optional fragment part is allowed, using JSON Pointer syntax
 
 
 ### Restricted AT URI Syntax
@@ -142,7 +142,7 @@ When a *strong* reference to another record is required, best practice is to use
 
 In Lexicons (APIs, records, and other contexts), sometimes a specific variant of an AT URI is required, beyond the general purpose `at-uri` string format. For example, references to records from inside records usually require a DID in the authority section, and the URI must include the collection and rkey path segments. URIs not meeting these criteria will fail to validate.
 
-Do not confuse the JSON Path fragment syntax with the Lexicon reference syntax. They both use `#`-based fragments to reference other fields in JSON documents, but, for example, JSON Path syntax starts with a slash (`#/key`).
+Do not confuse the JSON Pointer fragment syntax with the Lexicon reference syntax. They both use `#`-based fragments to reference other fields in JSON documents, but, for example, JSON Pointer syntax starts with a slash (`#/key`).
 
 
 ### Possible Future Changes
