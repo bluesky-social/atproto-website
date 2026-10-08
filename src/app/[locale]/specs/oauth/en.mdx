@@ -72,7 +72,7 @@ The Client ID Metadata Document specification ([`draft-parecki-oauth-client-id-m
 
 Clients must publish a "client metadata" JSON file on the public web. This will be fetched dynamically by Authorization Servers as part of the authorization request (PAR) and at other times during the session lifecycle. The response HTTP status must be 200 (not another 2xx or a redirect), with a JSON object body with the correct `Content-Type` (`application/json`).
 
-Authorization Servers need to fetch client metadata documents from the public web. They should use a hardened HTTP client for these requests (see "OAuth Security Considerations"). Servers may cache client metadata responses, optionally respecting HTTP caching headers (within limits). Minimum and maximum cache TTLs are not currently specified, but should be chosen to ensure that auth token requests predicated on stale confidential client authentication keys (`jwks` or `jwks_uri`) are rejected in a timely manner.
+Authorization Servers need to fetch client metadata documents from the public web. They should use a hardened HTTP client for these requests (see "Security Considerations"). Servers may cache client metadata responses, optionally respecting HTTP caching headers (within limits). Minimum and maximum cache TTLs are not currently specified, but should be chosen to ensure that auth token requests predicated on stale confidential client authentication keys (`jwks` or `jwks_uri`) are rejected in a timely manner.
 
 The following fields are relevant for all client types:
 
@@ -96,7 +96,7 @@ These fields are optional but recommended:
 - `tos_uri` (string, optional): URL to human-readable terms of service (ToS) for the client. Only `https:` URIs are allowed.
 - `policy_uri` (string, optional): URL to human-readable privacy policy for the client. Only `https:` URIs are allowed.
 
-See "OAuth Security Considerations" below for when `client_name`, `client_uri`, and `logo_uri` will or will not be displayed to end users.
+See "Security Considerations" below for when `client_name`, `client_uri`, and `logo_uri` will or will not be displayed to end users.
 
 Additional optional client metadata fields are enumerated with [IANA](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#client-metadata). Note that these are shared with the "Dynamic Client Registration" standard, which is not used directly by the atproto OAuth profile.
 
@@ -343,7 +343,7 @@ When a client redirects to the Authorization Server’s authorization URL (the d
 
 The authorization approval prompt should identify the client app and describe the scope of authorization that has been requested.
 
-The amount of client metadata that should be displayed may depend on whether the client is "trusted" by the Authorization Server; see the "Client" and "Security Concerns" sections. The full `client_id` URL should be displayed by default.
+The amount of client metadata that should be displayed may depend on whether the client is "trusted" by the Authorization Server; see the "Client" and "Security Considerations" sections. The full `client_id` URL should be displayed by default.
 
 See the "Authorization Scopes" section for a description of scope options.
 
