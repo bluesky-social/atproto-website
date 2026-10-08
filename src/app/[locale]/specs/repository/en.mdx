@@ -69,7 +69,7 @@ For the atproto MST implementation, the hash algorithm used is SHA-256 (binary o
 
 - hash the key (a byte array) with SHA-256, with binary output
 - count the number of leading binary zeros in the hash, and divide by two, rounding down
-- the resulting positive integer is the depth of the key
+- the resulting non-negative integer is the depth of the key
 
 Some examples, with the given ASCII strings mapping to byte arrays:
 
