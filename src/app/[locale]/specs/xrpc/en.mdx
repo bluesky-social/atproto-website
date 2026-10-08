@@ -113,7 +113,7 @@ The audience field (`aud`) is the DID and service endpoint identifier (as a frag
 The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As TypeScript pseudo-code, this looks like:
 
 ```
-const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))
+const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonStringify(body))
 const signature = hashAndSign(accountSigningKey, utf8Bytes(headerPayload))
 const jwt = headerPayload + '.' + bytesToBase64Url(signature)
 ```
