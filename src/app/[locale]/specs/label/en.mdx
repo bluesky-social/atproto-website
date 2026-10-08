@@ -130,7 +130,7 @@ Depending on the application, the identity may also have an atproto repository c
 
 Two Lexicon endpoints are defined for labeler services to distribute labels:
 
-`com.atproto.label.subscribeLabels`: an event stream (WebSocket) endpoint, which broadcasts new labels. Implements the `seq` backfill mechanism, similar to repository event stream, but with some small differences: the "backfill" period may extend to `cursor=0` (meaning that the full history of labels is available via the stream). Labels which have been redacted have the original label removed from the stream, but the negation remains.
+`com.atproto.label.subscribeLabels`: an event stream (WebSocket) endpoint, which broadcasts new labels. Implements the `seq` backfill mechanism, similar to repository event stream, but with some small differences: the "backfill" period may extend to `cursor=0` (meaning that the full history of labels is available via the stream). Labels which have been negated have the original label removed from the stream, but the negation remains.
 
 `com.atproto.label.queryLabels`: a flexible query endpoint. Can be used to scroll over all labels (using a cursor parameter), or can filter to labels relating to a specific subject. 
 
