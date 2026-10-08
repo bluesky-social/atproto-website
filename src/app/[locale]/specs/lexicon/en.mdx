@@ -450,6 +450,9 @@ Lexicons are allowed to change over time, within some bounds to ensure both forw
 - Non-optional fields can not be removed. A best practice is to retain all fields in the Lexicon and mark them as deprecated if they are no longer used.
 - Types can not change
 - Fields can not be renamed
+- Required fields can not be removed
+- Closed unions can not change (types can not be added or removed)
+- Size and length limits (eg, `maxLength`) can not be added, removed, or changed
 
 If larger breaking changes are necessary, a new Lexicon name must be used.
 
