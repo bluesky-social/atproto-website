@@ -113,7 +113,7 @@ The audience field (`aud`) is the DID and service endpoint identifier (as a frag
 The signature is computed using the regular JWT process, using the account's signing key (the same used to sign repo commits). As TypeScript pseudo-code, this looks like:
 
 ```
-const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonString(body))
+const headerPayload = utf8ToBase64Url(jsonStringify(header)) + '.' + utf8ToBase64Url(jsonStringify(body))
 const signature = hashAndSign(accountSigningKey, utf8Bytes(headerPayload))
 const jwt = headerPayload + '.' + bytesToBase64Url(signature)
 ```
@@ -195,8 +195,6 @@ Only HTTPS should be used over the open internet.
 Care should be taken with personally identifiable information in blobs, such as EXIF metadata. It is currently the *client's* responsibility to strip any sensitive EXIF metadata from blobs before uploading. It would be reasonable for a PDS to help prevent accidental metadata leakage as well; see future changes section below.
 
 ## Possible Future Changes
-
-The auth system is likely to be entirely overhauled.
 
 Lexicons should be able to indicate whether auth is required.
 

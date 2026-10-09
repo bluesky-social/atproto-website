@@ -135,6 +135,8 @@ Type-specific fields:
 
 When included as an HTTP query parameter, should be rendered as `true` or `false` (no quotes).
 
+`const` and `default` are mutually exclusive.
+
 ### `integer`
 
 A signed integer number.
@@ -146,6 +148,8 @@ Type-specific fields:
 - `enum` (array of integers, optional): a closed set of allowed values
 - `default` (integer, optional): a default value for this field
 - `const` (integer, optional): a fixed (constant) value for this field
+
+`const` and `default` are mutually exclusive.
 
 ### `string`
 
@@ -163,7 +167,7 @@ Type-specific fields:
 
 Strings are Unicode. For non-Unicode encodings, use `bytes` instead. The basic `minLength`/`maxLength` validation constraints are counted as UTF-8 bytes. Note that Javascript stores strings with UTF-16 by default, and it is necessary to re-encode to count accurately. The `minGraphemes`/`maxGraphemes` validation constraints work with Grapheme Clusters, which have a complex technical and linguistic definition, but loosely correspond to "distinct visual characters" like Latin letters, CJK characters, punctuation, digits, or emoji (which might comprise multiple Unicode codepoints and many UTF-8 bytes).
 
-`format` constrains the string format and provides additional semantic context. Refer to the Data Model specification for the available format types and their definitions.
+`format` constrains the string format and provides additional semantic context. The various format types are described in the "String Formats" section below.
 
 `const` and `default` are mutually exclusive.
 
@@ -450,6 +454,9 @@ Lexicons are allowed to change over time, within some bounds to ensure both forw
 - Non-optional fields can not be removed. A best practice is to retain all fields in the Lexicon and mark them as deprecated if they are no longer used.
 - Types can not change
 - Fields can not be renamed
+- Required fields can not be removed
+- Closed unions can not change (types can not be added or removed)
+- Size and length limits (eg, `maxLength`) can not be added, removed, or changed
 
 If larger breaking changes are necessary, a new Lexicon name must be used.
 

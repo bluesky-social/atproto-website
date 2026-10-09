@@ -34,7 +34,7 @@ This document describes version `3` of the repository binary format. Version `2`
 
 Repo paths are strings, while MST keys are byte arrays. Neither may be empty (zero-length). While repo path strings are currently limited to a subset of ASCII (making encoding a no-op), the encoding is specified as UTF-8.
 
-Repo paths currently have a fixed structure of `<collection>/<record-key>`. This means a valid, normalized [Namespace ID (NSID)](/specs/nsid), followed by a `/`, followed by a valid [Record Key](/specs/record-key). The path should not start with a leading `/`, and should always have exactly two path segments. The ASCII characters allowed in the entire path string are currently: letters (`A-Za-z`), digits (`0-9`), slash (`/`), period (`.`), hyphen (`-`), underscore (`_`), and tilde (`~`). The specific path segments `.` and `..` are not valid NSIDs or record keys, and will always be disallowed in repo paths.
+Repo paths currently have a fixed structure of `<collection>/<record-key>`. This means a valid, normalized [Namespace ID (NSID)](/specs/nsid), followed by a `/`, followed by a valid [Record Key](/specs/record-key). The path should not start with a leading `/`, and should always have exactly two path segments. The ASCII characters allowed in the entire path string are currently: letters (`A-Za-z`), digits (`0-9`), slash (`/`), period (`.`), hyphen (`-`), underscore (`_`), colon (`:`), and tilde (`~`). The specific path segments `.` and `..` are not valid NSIDs or record keys, and are disallowed in repo paths.
 
 Note that repo paths for all records in the same collection are sorted together in the MST, making enumeration (via key scan) and export efficient. Additionally, the [Timestamp ID (TID)](/specs/tid) record key scheme was intentionally selected to provide chronological sorting of MST keys within the scope of a collection. Appends are more efficient than random insertions/mutations within the tree, and when enumerating records within a collection they will be in chronological order (assuming that TID generation was done correctly, which cannot be relied on in general).
 
@@ -69,7 +69,7 @@ For the atproto MST implementation, the hash algorithm used is SHA-256 (binary o
 
 - hash the key (a byte array) with SHA-256, with binary output
 - count the number of leading binary zeros in the hash, and divide by two, rounding down
-- the resulting positive integer is the depth of the key
+- the resulting non-negative integer is the depth of the key
 
 Some examples, with the given ASCII strings mapping to byte arrays:
 
@@ -109,7 +109,7 @@ The CARv1 format is very simple. It contains a small metadata header (which can 
 - The first element of the CAR `roots` metadata array must be the CID of the most relevant Commit object. For a generic export, this is the current (most recent) commit. Additional CIDs may also be present in the `roots` array, with (for now) undefined meaning or order
 - For full exports, the full repo structure must be included for the indicated commit, which includes all records and all MST nodes
 - The preferred order of blocks within the CAR file is described below. At this time, this order is not required, and parsing implementations (and services) must be tolerant of CAR files with arbitrary block ordering.
-- Additional blocks, including records, may or may not be included in the CAR file
+- Additional blocks may be included in the CAR file
 
 When importing CAR files, note that there may existing dangling CID references. For example, repositories may contain CID Links to blobs or records in other repositories, and the blocks corresponding to those blobs or references would likely not be included in the CAR file.
 

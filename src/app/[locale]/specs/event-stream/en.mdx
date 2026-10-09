@@ -73,7 +73,7 @@ If a client can not keep up with the rate of messages, the server may send a "to
 
 Streams can optionally make use of per-message sequence numbers to improve the reliability of transmission. Clients keep track of the last sequence number they received and successfully processed, and can specify that number after a re-connection to receive any missed messages, up to some roll-back window. Servers persist no client state across connections. The semantics are similar to [Apache Kafka](https://en.wikipedia.org/wiki/Apache_Kafka)'s consumer groups and other stream-processing protocols.
 
-Subscription Lexicons must include a `seq` field (integer type), and a `cursor` query parameter (integer type). Not all message types need to include `seq`. Errors do not, and it is common to have an `#info` message type that is not persisted.
+Subscription Lexicons wanting to use this system must include a `seq` field (integer type) in schemas for all sequenced message, and a `cursor` query parameter (integer type). Not all message types need to include `seq`. Errors do not, and it is common to have an `#info` message type that is not persisted.
 
 Sequence numbers are always positive integers (non-zero), and increase monotonically, but otherwise have flexible semantics. They may contain arbitrary gaps. For example, they might be timestamps.
 
@@ -131,5 +131,3 @@ Ambiguities in this specification may be resolved, or left open. For example:
 - HTTP redirects
 - CORS and other issues for browser connections
 - maximum message/frame size
-
-Authentication schemes may be supported, similar to those for regular HTTP XRPC endpoints.
