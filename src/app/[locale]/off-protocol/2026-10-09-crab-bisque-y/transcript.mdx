@@ -1,0 +1,203 @@
+{/* Generated from a MacWhisper transcript by scripts/lib/transcript.mjs. Edit freely: the script will not overwrite this file without --force. */}
+
+**Jim Ray:** Alex, welcome back. I know you've been on the road, and we were also just talking about how we haven't really done one of these in it's been a few sessions now, so it's nice to just be back. Have the have the usual palaver.
+
+**Alex Garnett:** It's very nice to be back and excellent use of the term palaver. I had one of those months where I feel like I was maybe home for about half of the nights, which is always A bit of a commitment, but it's very nice to get on the road, preach the at gospel, and even nicer to be home now.
+
+**Jim Ray:** Where all were you?
+
+**Alex Garnett:** I was, let's see. First, we had a team-wide offsite about a month ago, so we were gone for a week, both you and I. When I got back, I was first in San Jose at the We Are Developers Conference giving a talk about our approach to moderation and open models. That's a neat one. Used to be US DockerCon and they've sort of merged with a German developer conference called We Are Developers, so it's a nice generalist event and San Jose is also the one place I can fly to and back from in the same day, which makes me feel very fancy. It's commuting by Southwest.
+
+**Jim Ray:** I've done that once in my life from San Francisco to LA. And it felt so excessive and indulgent and I was like, oh, I c I can I can't get used to this.
+
+**Alex Garnett:** No, it's a real power move and made possible only through like the very convenience of the Burbank and San Jose airports. So that was a good talk good turnout for that one. Went from there to Cleveland Tech Week in support of Beacon, which is an app I think we've talked about on the stream before that we're helping to support. Really like what they're doing there. Then after Cleveland, I was just in Vancouver for Software You Can Love, which is a Zig affiliated generalist tech conference, and just got back from that yesterday.
+
+**Jim Ray:** And you saw a couple friendly faces up there in Vancouver too?
+
+**Alex Garnett:** Quite a few friendly faces. Got to give atproto Zig SDK developer Nate five minutes from my talk to talk to the Zig crowd in attendance and it was great to see Nate. Great to get good batch of atproto knowers in the crowd for the talk too. I asked before I got going. how many people had heard of atproto. And it was like 40 out of 80 in the audience, which pretty darn good. That felt that felt like a nice audience to speak to.
+
+**Jim Ray:** I think one thing I think you and I want to do a little bit more of is try to find the right talks and communities that are beyond just what we're doing in atproto. We also we all love to show up in the atproto spaces. We'll run through the upcoming events here towards the end as we always do. But folks in the chat or just get at us online or whatever, if there are events, if there are talks that you think intersect with what we do, let us know. And maybe it'll be new to us and we'll come up with a justification to go there and talk about the protocol.
+
+**Alex Garnett:** Absolutely. I really like the generalist tech conference scene. And you know, I was at Hope in New York in August before this. And it's funny, Hope has changed a lot over the years, but I think it's now settling into that kind of a conference too, where it used to be like going way back in the day, like 2600 magazine, like the real hacker mindset. But because some of the generalist conferences have folded, like RIP Strange Loop, for example. It's really nice to just get more of the good open source energy. And that always has a good gathering of folks too, because it's like the real commercial open source Linux ball knowers versus people who are just really happy to be in progressive tech circles, for example.
+
+Always really nice. And I do think there is typically a line in the atproto community where it's like we gotta go out and talk to people who aren't on that aren't in the atmosphere our on our platforms. And this is a really good way of doing that that I take a lot of satisfaction from. It's true that like DevRel being on the road 24-7 is not. that much fun and we've been lucky to not have to live that life too much.
+
+**Jim Ray:** Yeah.
+
+**Alex Garnett:** One of my favorite terrible jokes to tell before one of these talks is always like, what's DevRel? Well you go out and have relations with developers, which would be a really dangerous lifestyle for Amelia Bedelia.
+
+**Jim Ray:** Yeah.
+
+**Alex Garnett:** But not a lot of Amelia Bedelia jokes these days.
+
+**Jim Ray:** No. Yeah, it's always good to land one when you can't.
+
+**Alex Garnett:** Appreciate that.
+
+**Jim Ray:** Well, because it's been so long since we've done this, we actually have we've got quite a bit of news to get through. And so maybe we'll just get right into it. Some big news. There was a little bit of conversation yesterday about the new top-level domains that are being proposed. The process for this kind of winds its way through varying standard bodies, but folks who had a sharp eye or just followed Toni Schneider will know that we have applied for a. bsky TLD. You are you looking forward to being Alex that dot beast guy.
+
+**Alex Garnett:** Alex. beast Guy, forget the team. There's no Beast Guy in team. Gotta workshop that one. But no, I am pretty psyched about this like we've been all in on DNS from day one. Like we're a domain registrar, right? Like at one point that was, I think, our primary revenue generating product in the early days of Bluesky when you were just trying this out before you and I came on board, right? Like I like how DNS native we are. I think this is a really nice step in that direction. It also, I believe like over the long term, really saves on DNS registration costs too, because if it's your own TLD, you don't wind up, I don't think, incurring the same cost as you do to have to go outside of it.
+
+So it seems like a good sustainability play. It's a good community play over the long term it's I do like, you know, vanity sort of punny top-level domains. It's hard to fit. beast guy into one of those. You know, you can't have like pickat. it, for example, for an Italian domain. There's nothing that ends in B Sky, but we'll have to figure something out.
+
+**Jim Ray:** Well, I'm sure this will kick off a new round of discourse about how we pronounce this. Anyone who wants to pronounce it, pronounce it biscuit, I think you might have a long road to go there.
+
+**Alex Garnett:** Crab bisque-y. Crab bisque-y!
+
+**Jim Ray:** Crab. Bisque-y. Okay. Nice.
+
+**Alex Garnett:** Yes.
+
+**Jim Ray:** I think Boston atproto Group, this is your chance. So.
+
+**Alex Garnett:** All right.
+
+**Jim Ray:** Okay. Yeah. We're not getting invited to that one. Speaking of things that take the take a while to get through, the at I think we still got a little bit of work to do there, depending on how we handle other parts of those URIs. But You know, that's just part of the ongoing IETF standardization process. So nice to see that one kind of working its way through.
+
+**Alex Garnett:** Indeed. I know that we've had more pain than we intended to with the at URIs, which we wanted to be regular URIs and turned out not. quite to be due to the way we use the did syntax in there.
+
+**Jim Ray:** Yeah.
+
+**Alex Garnett:** But you know, we're very standards forward, very spec forward, and I think this is the next best thing at the rate we're going. So kudos to Bryan for being so proactive and for the IETF for being great partners in this kind of work.
+
+**Jim Ray:** Boy, what I don't know about you when I first started, one of the first thing I did is I subscribed to that IETF newsletter and I was like, oh boy, this is this is a lot. And so Bryan and Daniel in particular are doing the yeoman's work of managing that process because it's as you said, it's really important and there's a lot of things that work out there oh, you know, this is a really fun one. You and I got a little bit of a preview of this one. So atproto knower Lou, Lou. gg, who is part of the Calibri team. put together a survey of the ecosystem. And I think you and I were particularly excited about this, not just because he's doing our work for us.
+
+But it's super great to actually get some of this some of this feedback from the ecosystem. So, and I just love the title, where we're at. You know, another great opportunity to use an at pun. But if you haven't had a chance to take the survey yet, please take the survey. Your friends here in Developer Relations, the entire atmosphere team, all of Bluesky, in fact, we're gonna be taking a close look at it. And yeah, what how did you f I'm I know you've taken the survey. How did you how did you find that one.
+
+**Alex Garnett:** I was really grateful for it. We were talking about doing this ourselves at some point, and we may yet, but this really has a lot of the same questions that we would like to ask in terms of, you know, where is the DevX landing for you right now? Where do you want to go next? I think people are very enthusiastically receiving it and I think it's going to give us a good amount of insight to take forward from here. So super grateful for it. We will definitely be keeping a close eye on the results.
+
+**Jim Ray:** 100%. And as you mentioned, this is something we've kind of talked about over the course of the past year. I think you know we'll probably figure out if there's something else that we can contribute maybe leading up to AtmosphereConf, which I think would be a good opportunity to talk about some of this stuff in person as well. But I think it's also just a great reminder that the nature of our ecosystem is such that people can just go do things, as we like to say. So You know, even if it's not like you're contributing to the protocol or you're building an app, like these are the kinds of things that build a viable ecosystem. So if you have these kinds of ideas, then one, let us know.
+
+We'll see how we can help contribute and support, but also, you know, just throw it out there and we're happy to boost it and let folks know about it. All right. So the permissioned data post-alpha plan is officially live. So Mr. Daniel Holmgren has posted to the discourse. We have kind of an official plan in place. And so we launched the alpha this summer. We're continuing to work and iterate on that. We've got some changes along the edges, but I think we're all pretty excited. to see that there they're not gonna have to be any huge, massive changes. I think maybe a couple of smaller breaking changes along the way, but there's nothing like huge or conceptual that we're gonna have to.
+
+**Alex Garnett:** No, it's primarily details at this point. And the timing has been really good. I remember we were talking, I think just at our offsite a month ago about whether we should start doing these consults on a really regular basis as soon as we got back, and sure enough we got one in the calendar for the very next week, got a huge turnout and was really actively engaged and was exactly what we wanted to see in terms of developer engagement around this spaces work. A lot of folks turned up, a lot of familiar faces, a lot of new faces, and asked really constructive questions. So given that we gave ourselves a pretty tight timeline to finalize this spec, like as far as I know, we're still targeting November this has moved it exactly the way you'd want to see for community consultation.
+
+Speaking selfishly for myself, I have been looking at my own calendar being like okay when the travel marathon is done it's time to start doing some spaces docs and some spaces samples and that's the next thing I'm going to transition on to probably starting right after this call. So it's great to see that like those moving parts are just starting to settle down right in time. And I think we'll be able to start publishing some pretty good spaces docs. Before the end of this month. And that's a very good thing to see.
+
+**Jim Ray:** Trezy's pointing out that the breaking changes are for people who aren't using HappyView. So always be promoting there, Trezy. But I know that Jezusie's been following the spec pretty closely and keeping HappyView up to date. But you're exactly right. This is the thing that the entire atmosphere team is focused on for the rest of the year, really. And I know that folks have been paying attention to what other Alex, Alex Benzer, has been posting. So he's been talking a little bit about how we're thinking about implementing spaces within the app and he had a great thread this week with some previews from our design team about how that might look. And we've gotten some really great feedback.
+
+We've gotten some feedback from folks on the atmosphere team. Also just A lot of good feedback from kind of general users. And of course, the community slash spaces project that's being built into the app is of course going to be built on atproto spaces as well. So we're once again building these things in parallel, coordinating with each other, trying to make it all happen.
+
+**Alex Garnett:** Yeah, I was glad Benzer got that post out yesterday because I was starting to get some folks in my DMs being like, what's Bluesky space is going to look like? And I was like Hold please let me check in. Oh there it is. Okay, here's some posts. Yeah.
+
+**Jim Ray:** Yep. And they're obviously, you know, continuing to think through this. There's a lot of design work. I think there's a vision for this, and we'll see how it kind of all shakes out, but there's a vision for this where you can start in the Bluesky app and you can create a space that you bring people that you maybe you're You all talk about, you know, you and I, we didn't start this conversation, but we are obviously we hu we love to talk about sports. And so maybe you bring in folks from your favorite team or whatever it is. But the thing that I'm actually really excited about, and I the thing I hope that folks that are on the stream and listening to this later will get excited about, is the opportunity to build really unique experiences around your space.
+
+And that's the kind of thing that I know that our exploration team and the, you know, folks in the app and folks that we've talked to in the ecosystem are talking about. Using the Bluesky app as a way to kind of start your space, but then really expanding out and creating something unique to your community that you care about.
+
+**Alex Garnett:** Well said. And speaking of sports, by the way, if I can just completely steal the topic for a second.
+
+**Jim Ray:** Let's do it.
+
+**Alex Garnett:** Really not happy that the Vegas Aces are down two to the Golden State Valkyries. I know, you know, it's typical for me living in LA, working in tech. I just find new ways to be aggrieved by the Bay Area, but this one is up there A'ja Wilson is great. She's the best player in the league. I don't like this. They came this close to tying it up last night in the series. That was very upsetting for me. Thought they were gonna pull it out, they didn't. Let's go Las Vegas Aces. They really need our support right now. WNBA Watcher. That's an official position of Bluesky.
+
+**Jim Ray:** I never made it. I have I've I have yet to make it to a Valkyries game. They look like they're a lot of fun. I don't know if the home games for the Aces are as fun, but I do know I have a bunch of friends in the Bay Area and they all love going to Valkyries games. So.
+
+**Alex Garnett:** don't care for it. What are those Valhalla? Valkyrie? Norse iconography? Who uses Norse iconography, Jim? I think you know. Don't care about.
+
+**Jim Ray:** Yeah, well we're getting into some dangerous territory there. So right on. Well there's your bit of sports, you know, especially with the devastating baseball season that you and I had to endure and the fact that hockey is for some reason already started again, I think that could be the total of our sports conversation. Hockey is somehow the only league that has a 13-month season throughout the year.
+
+**Alex Garnett:** Yeah, they just play hockey forever.
+
+**Jim Ray:** They just keep in hockey. Yeah. So anyway, we'll start a space for your anti-hockey talk. We've also shipped some long-standing updates to the PDS's. And a little bit of focus on the PDSs themselves this summer. So I've got a blog post that I need to ship this week. I'm really excited about the community contributions that we're getting to our PDSs. So we've been working with Chad Miller of grain fame to we shipped those this summer and then brookie made some contributions to kind of tighten up some of the design work we've also been working with Amelia on some of the OAuth work as well. And then we shipped a lot of that OAuth work to the mushrooms recently.
+
+And so You know, we put those in the distribution earlier this year and now they're actually shipped. So if you've had to OAuth into another application and your PDS is hosted. by Bluesky, then you've noticed some of those design updates and changes. And so yeah, really happy to see that. We're gonna kind of keep iterating on that work. Matou on the atmosphere team who folks here will know. has also been doing a great job kind of leading and coordinating that development work too.
+
+**Alex Garnett:** Yeah, I had a lot of fun working with Matue over the summer, I think in like July and August. it was now on getting some of the PDS observability stuff shipped, like getting the Grafana dashboard and the reference PDS distribution was a really nice lift. And I can say, you know, without a commitment, that this has really helped advance the conversation around using OAuth in Bluesky, the app. And I know that's something that we've been kicking down the road for quite some time. I also think that as we talk about trying to get more and more community apps using cross-auth, like this came up in the context of B Sky38, that it was initially untuitive to folks who aren't used to seeing an OAuth screen for Bluesky proper.
+
+**Jim Ray:** Yeah.
+
+**Alex Garnett:** we're getting closer to being able to advance that. We don't have an exact date yet, but those conversations have been taking a notable step up internally, and that is something that I know that we really have to ship. For the developer ecosystem in the short to medium term, and I think we're getting much closer. So stay tuned on that one.
+
+**Jim Ray:** I w I was pleasantly surprised to see how many people Alex Benzer had another post earlier this week about, or maybe it was last week, about what are some things that the Bluesky app can do to make the experience of using the atmosphere more legible to folks? And a lot of people, some folks from the ecosystem, but a lot of folks mentioned OAuth specifically. And I think the points that you just made are really, really good ones where you know if you're coming in and you're used to logging in via the normal login flow and then all of a sudden you get this kind of third party flow, then it breaks your mind. And in some ways, we've all been on the internet for a while.
+
+It's like, is this thing trying to steal my password? Is this a scam? So making that a little bit more consistent will help with that a lot.
+
+**Alex Garnett:** Yeah, I think we decided at some point that it wasn't a technical blocker, but we're at a point where I think it is a legitimate UX blocker, and that's something that we are taking seriously. So hope to have more news to share there soon.
+
+**Jim Ray:** Speaking of things that have been shipping, the EmDash crew shipped 1.0 of their app. You and I were really excited about this one then when they previewed it on April 1st. Listeners to the podcast will be interested to know that if you are also a fan of EmDash or Mr. Matt Kane, who has been leading that effort within Cloudflare. Make sure you are subscribed to the podcast is all that I will say. I'm just personally so excited to see EmDash hit that 1.0. In fact it hit 1.0 a couple of weeks ago. Cloudflare does this thing where for their birthday they ship a whole bunch of stuff. I think they had to like 40 things shipped that week.
+
+And EmDash was one of them. In the intervening time, they've shipped a 1.1 and a 1.2 in the last couple of weeks. And so super, super happy to see that. It's just such a cool project, you know, super ambitious. Not to not to give away my conversation with Matt, but it's it really kind of it starts with this idea of like if we were gonna build WordPress today, how would we do that? And they kind of went through, they didn't bring a lot of the assumptions that you might necessarily bring, but they were they took it very, very seriously. And there's A bunch of atmospheric features to it, you can publish standard.site records. You can log in with your atproto handle if you want to but they also built this plugin registry that is built on atproto.
+
+And that part I think is very, very cool. And it solves a number of both technical and some of the kind of philosophical churn that's been happening inside of WordPress land. And they've been getting, you know, one of the things that I was saying is that one of the big differences between when the beta launched in April and when they shipped the 1.0 is they've had over 200 external contributors. So this is a really thriving open source project.
+
+**Alex Garnett:** That's fantastic. And like you said, it does touch on so many of the abstract concepts that we really care about, both in atproto and elsewhere, like using the AT Protocol for the plug in registry lets them do things with trust signals and with an established social graph that we often talk about being really useful across the internet, but we don't always have that many concrete examples of them being used at scale. So I think this is a really nice move in that direction. To emphasize the social trust aspects of trying to do a scalable and trustworthy plug-in registry in 2026 in a novel way.
+
+**Jim Ray:** Yeah.
+
+**Alex Garnett:** I also I don't want to knock WordPress. Like I worked at DigitalOcean back when like $5 WordPress hosts were their entire revenue generator. And so like I have such a long time going back with this software. But I also, like, irrespective of governance changes, I personally can say I have looked at all the PHP that I want to look at for the rest of my life. life. I don't want to see it anymore. I've had enough. I maxed out somewhere in my late twenties. And you know, it's a great piece of software. I have spent probably a decade now like try to proactively migrate people a static site frameworks that I was super excited about when they first came around.
+
+Like I got my poor wife to move her portfolio off of WordPress onto a static site framework, right? And that involved a lot of, you know, like build tooling, what's this Netlify? Like this isn't as easy. And what you do realize is that like a lot of people like to have a CMS to draft then right like yeah static sites are not the same affordances as like proper CMSs and blogging platforms and WordPress is really sticky like I really like that EmDash is taking like a real run at what this can be At the point. We are at in tech right now. So all my love, all my best wishes there. I hope we can do more to support them going forward.
+
+**Jim Ray:** Yeah, could not agree more. So what a very cool project. And like I said, subscribe to the podcast for more information about EmDash. You have been working with a couple of folks on a pretty cool project that I don't have as much insight into. So I'm just gonna let you take this away. So tell us about the tolerance group. Alex.
+
+**Alex Garnett:** Yeah, sure thing. I am super pumped about this one. For any fans of, let's see, the SCP wiki. The paranoid style in American observation, as recently evidenced in the video game Control Resident, out now from Remedy Software. For any fans of classical ARGs like I Love Bees. For any fans of spooky hidden camera pop-up games like Five Nights at Freddy's, now a major motion picture, and a universal Halloween horror nights destination. You might be interested in the Tolerance Group. The Tolerance Group is a new game that is coming out on Steam relatively soon. It is spooky and thematic for Halloween. And they also have an ARG that they are shipping ahead of the Steam release that is available now on tolerance.group, where you can go and you can contribute sightings of paranormal phenomena. And you can do that using an atproto PDS. And those records that you publish to create this sort of exquisite corpse style narrative about your spooky SCP wiki style sightings are gonna get saved to your PDS. And what that means is you might start to see them popping up on Bluesky over this spooky month, which is a nice time to promote a launch of a cool game that has some atproto features. And I think it's both really cool from a creative writing point of view. It's cool from a taking your identity across the internet point of view. And I like that this is sort of double barreled where we have like the written aspect and then we have the Steam game video release aspect because there's lots of ways for those to cross-pollinate one another.
+
+as we get closer to the Steam Game launch and also wonderful to work with rpg. actor atproto games enthusiast extraordinaire on helping to get this into the stratosphere. So take a look. tolerance.group.
+
+**Jim Ray:** You did such a good job of previewing that I thought that maybe we had started interjecting ads into the live stream, but it turns out there is an actual atproto angle here. And I am not a gamer person. And when you first started throwing all these terms at me, I was like, yes, A-R-G, and had to figure out what that actually is. But it's like it does it seems like the kind of like super fun thing that the protocol is actually not to be too much of a nerdy dad about this, but like but in some ways it seems like the protocol is actually pretty uniquely suited for doing exactly this kind of thing because it's you know it's all about like being able to take your stuff with you and your like your identity and creating these games that have like a real-world component, but then also you know, you need a place to like put your stuff, it seems like there's a lot of potential there.
+
+**Alex Garnett:** Yeah, it's an open graph, it's a shared space, it's a collaborative writing exercise, it's public art. It's a lot of things at once. And it's you know, I whenever you start talking about video games, everyone's like, oh god, I gotta be caught up on the steam, I gotta get the graphics card, I don't wanna do any of that. And like there's always such a divide between like sort of familiarity with a game versus familiarity with like a gamer game, right? And I am very highly aware of that. I think RPG Actor is also very highly aware of that and our approach to talking about this. And so having the ARG component, I think, is a lot more accessible up front.
+
+And, you know, if you decide that you want to watch some spooky videos that might pop up supernatural phenomena, you can wish list the game on Steam as well.
+
+**Jim Ray:** Very, very cool. I love that that kind of mix a little bit. And also it just it reminds me of, you know, like I was saying, I'm I'm not a knower about these things, but it does remind me of some of the more fun things that were popping up in the kind of like pre and early social media days where You know, we like I'm gonna say the word flash mob and that's really going to expose exactly how old I am to.
+
+**Alex Garnett:** Adobe Flash Mob, Jim?
+
+**Jim Ray:** Adobe Flash Mob. But you know, those were the kind of things that we were doing in those early days when we s when we started connecting to each other before You know, back when we actually used to separate IRL from online, I know that they've blurred to the point of being indecipherable at this point, but yeah so I love this kind of stuff and please do more fun game things and use a protocol to do it. A few other things that that I've just been kind of noticing, I think within a day of each other. Both Blacksky and community fan favorite brookie of pckt.blog launched some interesting poll implementations. So Blacksky launched their version of polls that you can see in the Blacksky app.
+
+And so they're doing some pretty fun things, you know, because they own the full stack on their end, they can make some really cool tweaks and kind of push the boundaries there. And then Brookie, she was kind of trying to push within the limits of what you can do on the just within this kind of stock Bluesky app. But I feel like polls are one of these like long requested feature. They feel like they are a big opportunity. For you know a way to kind of like bring more atmospheric things into the app. I know it's a long-requested user feature.
+
+**Alex Garnett:** This is one of those things too where I think it's right on the line of like, do we prioritize it for direct app integration? It's kind of in that community note space where it's pretty close to some people's idea of an MVP for a microblogging app. And I'm encouraged to see the Blacksky implementation for that reason. I'm also really encouraged to see Brookies. And so this is something that we are keeping a really close eye on. I do think polls are one of those things that like everybody'd be happy to have them. It's one of those sort of, you know, just you know baseline good stuff.
+
+**Jim Ray:** Yep. Yeah, yeah, yeah. I would say I'm just gonna throw this out here, that if we can all agree on a single polling lexicon, then that would make it easier for you and me to take recommendations back to the team. It's just like look at this cool lexicon, let's figure out how we can support this. So you know, standard.site is the canonical example of it's got an integration that's built into the app folks are familiar with, and but because that lexicon was able to succeed so well on its own, it would it would be great if folks wanted to get together and create a community lexicon.
+
+**Alex Garnett:** Community data modeling.
+
+**Jim Ray:** All right, a couple more things here. We had a blog post about this MySky. I know you were working with that team a little bit. Pretty cool team. So Jonathan Stray and Renée DiResta were working on that one. You were working on that one for a bit. What's the what's the pitch for MySky, Alex.
+
+**Alex Garnett:** MySky is a feed that exposes the knobs directly to you. So you can tweak them and you can immediately see a result in the topic modeling that comes out. So if you want to minimize your politics content, for example. You have a knob that you can directly adjust and then, you know, in the sense of the dril tweet, look back at the audience for approval. Except it's you, you're the audience. It works really nicely. It's a good academic research project. This is a multi-university collaboration. So it has like a real robust approach to what they want to do with the data. They are actually tri testing some hypotheses by this. We bumped them up in our suggested feeds ranking just to make sure more people get a chance to try this out.
+
+We posted on the atproto.com blog recently about this. So do take a look. Try out MySky, formerly green earth, and see if you get something out of being able to interact with your feed weighting directly. This is one of those things where it's like, okay. How many knobs do you actually want? I think from a UX point of view, it's a really interesting thing to test and to push on.
+
+**Jim Ray:** Yeah. Boy, this is like, you know, this goes back in so many ways to kind of the origin of Bluesky. Like one of the whole reason we have this pick your own feed infrastructure is like one of the original ideas was like people hate the black box algorithms that drive them insane. And so what if we just let people you know, pick their own feed and then that feed could be algorithmically generated. I think we there's just a little bit of discourse about this in my feed today. And like I think we need to kind of rethink some of those assumptions a little bit. This is one of those like expressed versus revealed preferences things.
+
+**Alex Garnett:** Exactly.
+
+**Jim Ray:** I do think people want they want they want an algorithm they can control in their default feed is maybe one way that I would think about it. As soon as you make people kind of pick their own feed, I think that, you know, as soon as you put them into an interface where they have to tweak an infinite number of buttons, we kind of lose folks. And so there's still a lot of opportunity there to think about how we do this in some interesting and proactive ways. Doesn't disorient people either.
+
+**Alex Garnett:** Actually, I just saw Bryan in the chat here saying don't forget to shout out the new Graze work for elections. And I did just see Devin of Graze talking about this morning where the hypothesis is not necessarily that every single person is going to want to, you know, have their own feed that's hyper-customized down to the level of the individual person, right? It's just that we're opening up this category for there to be more than one feed maintainer, you know, as in the case of Instagram or TikTok, right? It's one of these things where sure. Like we're we don't think there's gonna be, you know, 500 million unique customized feeds. That's like a very AI maximalist point of view, I think, that doesn't necessarily get at any kind of commons in a proactive way necessarily.
+
+But for there to be several providers, you know, for it to be more bottom-up is a really good thing that we've been all in on from the start. So just shared midterms.graze.social in the chat. That's Graze's midterms feed as well. And yeah, we always like talking about feed content. There's still lots of work to do in that space. So MySky, Graze, check him out.
+
+**Jim Ray:** And that that midterms app is pretty cool. You can log in with your handle and it'll try to figure out what are the stories that would be interesting to you in the races. Obviously, this is about the US political midterms, but and you know the races that are interesting to you. So great work. As always from the Graze team. A couple of other things here there is a little bit of conversation on the discourse about Mapping web pages to canonical AT Protocol records. And so this is something that we are keenly interested in. And so head on over to the discourse and make some contributions to that conversation if you haven't had a chance to do that already.
+
+This is part of our ongoing work to bring some of the atmosphere into the app. One thing that we recognize is that we do need a way to link our websites to at records. And so there's a great proposal in place at tags and so we're trying to figure out how we support that inside of the app and but also throw at tags into your app and make them make them work.
+
+**Alex Garnett:** Yeah, this is one of those things again that it's great to have EmDash in the ecosystem now to lead on because you know theoretically if a CMS reaches escape velocity, then that's one of those things that's a really good route who was dictating what kind of meta tags you might want to publish. So it's nice to be able to see the vision for where we could be on this a few months from now.
+
+**Jim Ray:** Yeah. And Bryan is mentioning shout out to Chris Schenk. Absolutely. I should have put Chris's name on there. Chris was the one who recognized using the meta tag would actually help bypass some of the issues that we were previously talking about with the at URI spec. Chris has also just been really good at kind of pushing that has been pushing us to integrate this into the app. So thanks for all your work pushing there. Another great example of how you can contribute to the ecosystem without having to, you know, like get in there and necessarily like write protocol specs or what it is. Hear, hear. So okay, I think that brings us to pretty much the end of the talk here.
+
+And as always, I want to kind of shout out some of the upcoming events and things that have been happening. You mentioned that you've been on the road. Our last one of these live streams was with the folks that were organizing the AtmosphereConf. So don't forget that that is happening on April 29th through May 2nd in beautiful Amsterdam. So you know circle that one in red on your calendar. There FOSDEM is coming up.
+
+**Alex Garnett:** FOSDEM is coming up with a dev room proposal submitted, which would be very cool for us. I was at FOSDEM just this year and we shared our room very happily with some of the folks from IPFS and from Matrix and from ROOST. It would be great to give atproto its own room home at FOSDEM next year too. So keep an eye on that one.
+
+**Jim Ray:** The PDX meetup just happened the other day. With a with I'm gonna say there was a PSA from our fearless leader, Paul Frazee. He apparently tried to smoke a cigarette on stage. And I think the lesson from that one is don't smoke kids, you know, just like not even once. And then Toronto just happened yesterday. And that was in coordination with the protocols for publishers event. I was I ran smack into some work travel karma and my flights got all Lunged up and I did not get to make it to Toronto. I was supposed to be in Toronto this week. And so I'm so sorry to have missed the protocol for publisher crew. Chad Kahalik does a great job of getting that one organized.
+
+There were some great, great folks there, so I'm looking forward to catching up with Chad and figuring out what that one was all about. But there was also an atproto Toronto meeting yesterday as well. And then.
+
+**Alex Garnett:** I heard a Canadian sorry in that apology, very nicely done. That was a great little code switch.
+
+**Jim Ray:** let's see here. Happening tonight is Boston. So if you are in New England, head on over to Boston and get yourself some crab bisque-y. And I was they would call that a callback. And then in your neck of the woods we've got an atproto LA happening this weekend.
+
+**Alex Garnett:** Yep. Sunday and Cover, Crash Base.
+
+**Jim Ray:** Yep. Yep. Yep. And then coming up we've got atproto NYC on the nineteenth. Chicago is happening on the 22nd. And then another in Colorado on the 27th. And of course you can always head over to atmosphere. community slash events to find an atmosphere conf event happening near you, an atmosphere community event. happening near you. There's only one that happens for conf. And as always, if you're interested in starting one, if you and if you're looking for support or anything that we can do, just let us know. Really happy to see everybody. In the chat as always. Alex, always a pleasure to stream with you, friend. And we'll see everybody the next time we do one of these.
+
+**Alex Garnett:** Great getting back to it. And I should mention actually right at the end here, you made some steps toward getting us transcripts for our live audio sessions, which can now be found. on the podcast section of atproto.com, which is great if you are the kind of person tends to consume these sorts of things asynchronously. So Jim, nice work on that. I think that'll be a big improvement and didn't want to let it go unmentioned.
+
+**Jim Ray:** Thank you so much. I totally forgot to mention that too. Now, people were complaining that these are machine generated. They are, but in a way you might not expect. I actually handwrite. I listen and I handwrite them all down. Then I take pictures. And then I put them through a machine translator. And so it's they are machine generated and that that's a joke, of course. We run everything through Whisper. It's kind of magical and I'm really happy that we can get the transcripts going. It was part of the plan from the beginning. It was just didn't have it into the workflow yet. So now it is.
+
+**Alex Garnett:** Amelia Bedelia and Rube Goldberg coming at you next time.
+
+**Jim Ray:** Exactly.

@@ -674,3 +674,30 @@ test('applyGlossary leaves ordinary pockets and black sites alone', () => {
   assert.equal(applyGlossary('a blog in your pocket'), 'a blog in your pocket')
   assert.equal(applyGlossary('a smart aleck'), 'a smart aleck')
 })
+
+// --- more recurring names (review of episode 23, 2026-10-09) ----------------
+
+const RECURRING_23 = [
+  ['really happy to see Ad Proto getting', 'really happy to see atproto getting'],
+  ['the ad proto angle is', 'the atproto angle is'],
+  ['a spokesperson for the ad protocol', 'a spokesperson for the AT Protocol'],
+  ['If that proto is going to succeed', 'If atproto is going to succeed'],
+  ['the Black Sai implementation', 'the Blacksky implementation'],
+  ['the M dash crew shipped', 'the EmDash crew shipped'],
+  ['a fan of MDASH or', 'a fan of EmDash or'],
+  ['And MDash was one of them', 'And EmDash was one of them'],
+  ['I really like that m dash is', 'I really like that EmDash is'],
+  ['more information about MDAS.', 'more information about EmDash.'],
+  ['There FOSTEM is coming up', 'There FOSDEM is coming up'],
+  ['Fostum is coming up', 'FOSDEM is coming up'],
+  ['great work from the Grays team', 'great work from the Graze team'],
+]
+
+test('applyGlossary corrects names first heard wrong in episode 23', () => {
+  for (const [heard, want] of RECURRING_23) assert.equal(applyGlossary(heard), want, heard)
+})
+
+test('applyGlossary leaves the punctuation mark and plain "that protocol" alone', () => {
+  assert.equal(applyGlossary('use an em dash here'), 'use an em dash here')
+  assert.equal(applyGlossary('the benefits of using that protocol'), 'the benefits of using that protocol')
+})

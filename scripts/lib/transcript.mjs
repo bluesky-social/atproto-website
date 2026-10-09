@@ -165,6 +165,15 @@ export const GLOSSARY = [
   [/\bnorth ?sky\b/gi, 'Northsky'],
   [/\bTre(?:zi|ssy|zzy)\b/g, 'Trezy'], // trezy.codes, who makes HappyView
   [/\bHappy View\b/g, 'HappyView'],
+  // From the review of episode 23 (2026-10-09). "that protocol" is ordinary
+  // English, so only the clipped "that proto" is changed.
+  [/\bad protocol\b/gi, 'AT Protocol'],
+  [/\b(?:ad ?|that )proto\b/gi, 'atproto'],
+  [/\bBlack Sai\b/g, 'Blacksky'],
+  // Case-sensitive, so the punctuation mark ("an em dash") is left alone.
+  [/\b(?:M ?[Dd]ash|m dash|MDASH|MDAS)\b/g, 'EmDash'],
+  [/\b(?:FOS[DT]EM|Fost[eu]m)\b/gi, 'FOSDEM'],
+  [/\bGrays\b/g, 'Graze'],
   // House style.
   [/\b([Pp])ermission data\b/g, '$1ermissioned data'],
   [/\bstandard[ .]?(?:site|side|sight)\b/gi, 'standard.site'],

@@ -101,6 +101,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-10-09-crab-bisque-y',
+    episodeNumber: 23,
+    title: 'Crab Bisque-y',
+    description: 'Jim and Alex are back on the livestream for the first time in a while to cover the latest news in the Atmosphere.',
+    date: 'October 9, 2026',
+    pubDate: '2026-10-09T13:16:47.994Z',
+    duration: '00:39:41',
+    durationSeconds: 2381,
+    format: 'livestream',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-10-09-live/2026-10-08-live.mp3',
+    audioSizeBytes: 48088863,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-10-02-the-only-moat-is-taste-ricardo-m-ndez',
     episodeNumber: 22,
     title: 'The Only Moat is Taste',
