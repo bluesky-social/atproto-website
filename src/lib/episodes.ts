@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-10-14-the-code-is-the-easy-part-matt-kane',
+    episodeNumber: 24,
+    title: 'The Code is the Easy Part',
+    description: 'Lessons from building the EmDash CMS, a “spiritual successor to WordPress” from principal engineer Matt Kane.',
+    date: 'October 14, 2026',
+    pubDate: '2026-10-14T18:46:00.000Z',
+    duration: '01:06:48',
+    durationSeconds: 4008,
+    guests: ['Matt Kane'],
+    format: 'conversation',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-10-14-matt-kane/2026-10-09-matt-kane.mp3',
+    audioSizeBytes: 80626115,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-10-09-crab-bisque-y',
     episodeNumber: 23,
     title: 'Crab Bisque-y',
