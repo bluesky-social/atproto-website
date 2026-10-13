@@ -25,7 +25,10 @@ A common pattern when signing data in atproto is to:
 
 - encode the data in a strict CBOR format ([DRISL](https://dasl.ing/drisl.html))
 - hash the resulting CBOR bytes using SHA-256, resulting in raw bytes (not a hex-encoded string)
-- sign the hash bytes.
+- sign the hash bytes
+- encode the signature bytes
+
+For both `p256` and `k256`, compact binary signature encoding is used, resulting in 64 byte signatures.
 
 
 ## ECDSA Signature Malleability
@@ -34,7 +37,7 @@ Some ECDSA signatures can be transformed to yield a new distinct but still-valid
 
 For `k256` specifically, the distinction is between "low-S" and "high-S" signatures, as discussed in [Bitcoin BIP-0062](https://github.com/bitcoin/bips/blob/master/bip-0062.mediawiki).
 
-In atproto, use of the "low-S" signature variant is required for both `p256` and `k256` curves.
+In atproto, use of the "low-S" signature variant is required for both `p256` and `k256` curves when signing CBOR bytes. Receiving parties MUST reject non-low-S signatures when verifying repo commit signatures, label signatures, and any other future signatures over CBOR-encoded data objects. This does not impact JWT signature validation, for example service auth tokens or OAuth tokens.
 
 In atproto, signatures should always be verified using the verification routines provided by the cryptographic library, never by comparing signature values as raw bytes.
 

@@ -144,9 +144,7 @@ The older `verificationMethod` for atproto signing keys contained:
 - `controller` (string, required): DID controlling the key, which in the current version of atproto must match the account DID itself
 - `publicKeyMultibase` (string, required): the public key itself, encoded in multibase format (*without* multicodec, and *uncompressed* key bytes)
 
-Note that the `EcdsaSecp256r1VerificationKey2019` type is not a final W3C standard.
-
-The `EcdsaSecp256r1VerificationKey2019` `verificationMethod` is not a final W3C standard. We will move to whatever ends up standardized by W3C for representing P-256 public keys with `publicKeyMultibase`. This may mean a transition to `Multikey`, and we would transition K-256 representations to that `type` as well.
+Note that the `EcdsaSecp256k1VerificationKey2019` type is not a formal W3C standard.
 
 A summary of the multibase encoding in this context:
 

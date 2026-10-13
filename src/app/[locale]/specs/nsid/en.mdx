@@ -83,7 +83,7 @@ The overall NSID is case-sensitive for display, storage, and validation. However
 
 It is common to use "subdomains" as part of the "domain authority" to organize related NSIDs. For example, the NSID `com.atproto.sync.getRecord` uses the `sync` segment. Note that this requires control of the full domain `sync.atproto.com`, in addition to the domain `atproto.com`.
 
-Lexicon language documentation will provide style guidelines on choosing and organizing NSIDs for both record types and XRPC methods. In short, records are usually single nouns, not pluralized. XRPC methods are usually in "verbNoun" form.
+The [Lexicon Style Guide](/guides/lexicon-style-guide) gives guidance on chosing NSID names.
 
 Interop test vectors are available from the [atproto-interop-tests](https://github.com/bluesky-social/atproto-interop-tests) repository.
 
@@ -92,5 +92,3 @@ Interop test vectors are available from the [atproto-interop-tests](https://gith
 It is conceivable that NSID syntax would be relaxed to allow Unicode characters in the final segment.
 
 The "glob" syntax variation may be modified to extended to make the distinction between single-level and nested matching more explicit.
-
-No automated mechanism for verifying control of a "domain authority" currently exists. Also, not automated mechanism exists for fetching a lexicon schema for a given NSID, or for enumerating all NSIDs for a base domain.

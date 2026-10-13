@@ -1,4 +1,4 @@
-export const metadata = {
+export const header = {
   title: 'Permissions',
   description:
     'Auth Permissions for Account Resources.',
@@ -245,12 +245,12 @@ The below is an example permission set Lexicon. The full syntax is described in 
         {
           "type": "permission",
           "resource": "repo",
-          "collection": ["app.example.post"]
+          "collection": ["com.example.post"]
         },
         {
           "type": "permission",
           "resource": "repo",
-          "collection": ["app.example.like"],
+          "collection": ["com.example.like"],
           "action": ["delete"]
         },
         {
@@ -258,11 +258,11 @@ The below is an example permission set Lexicon. The full syntax is described in 
           "resource": "rpc",
           "inheritAud": true,
           "lxm": [
-            "app.example.getFeed"
-            "app.example.getProfile",
-            "app.example.getPreferences",
-            "app.example.putPreferences",
-            "app.example.getAuthorFeed",
+            "com.example.getFeed",
+            "com.example.getProfile",
+            "com.example.getPreferences",
+            "com.example.putPreferences",
+            "com.example.getAuthorFeed",
             ...
           ]
         },
@@ -270,7 +270,7 @@ The below is an example permission set Lexicon. The full syntax is described in 
           "type": "permission",
           "resource": "rpc",
           "aud": "*",
-          "lxm": ["app.example.getFeedSkeleton"]
+          "lxm": ["com.example.getFeedSkeleton"]
         }
       ]
     }
