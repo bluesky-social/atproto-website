@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'devex-goals-for-spaces',
+    title: 'Developer Experience Goals for Atproto Spaces',
+    description: 'A new series nailing down the moving parts of building on Spaces',
+    date: 'October 14, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'mysky-feed-infrastructure',
     title: 'MySky: Open, Controllable Feed Infrastructure for the Atmosphere',
     description: 'MySky is an algorithmic feed running on Bluesky, with a settings panel that shows you the whole ranking pipeline exactly as it runs.',

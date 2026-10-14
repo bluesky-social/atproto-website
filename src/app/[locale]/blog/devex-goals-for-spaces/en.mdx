@@ -1,0 +1,57 @@
+import jetstreamSpaces from "./jetstream-spaces.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3mxuaqh7tj72n',
+  title: 'Developer Experience Goals for Atproto Spaces',
+  description: 'A new series nailing down the moving parts of building on Spaces',
+  date: 'October 14, 2026',
+  author: 'AT Protocol Team',
+}
+
+We announced the Atproto Spaces alpha about [seven weeks ago](https://atproto.com/blog/atproto-spaces-alpha), on August 20. Since then, we've:
+
+- Run some public Spaces [office hours](https://bsky.app/profile/atproto.com/post/3mw4xvekkw62z)
+- Released a couple rounds of breaking changes, reflected in our [demo Spaces app](https://bulletin.my/), along with some great discussion in the [atproto Community Forum](https://discourse.atmosphere.community/t/atproto-spaces-alpha-updates/1129/5)
+- Seen some great early community projects pop up built on Spaces, like [airspace](https://getair.space/) from [Daniel Roe](https://bsky.app/profile/danielroe.dev/post/3mviimz36cc2e) of [npmx](npmx.org); and [reams](reams.ink) from [sōm](https://bsky.app/profile/hyl.st/post/3mxpe6d7yic2t)
+
+We expect to launch atproto Spaces this year. And that means that we're starting to lock in the core primitives for Spaces, because we're confident that most pieces are going to stop churning from here. As the protocol matures, we're working in parallel on fleshing out the Developer Experience for building with Spaces.
+
+Starting right now, we're going to be publishing new Spaces code samples and app examples on this blog **every week until we launch**. This is, of course, to get everyone hyped up for the release — we want to have lots more Spaces apps from the community to show off by launch and beyond — but it's also an opportunity for us to re-state and clarify our Spaces designs on the way there. In other words… it's Devex time!!!
+
+## Spaces App Modalities
+
+Atproto Spaces support many different app modalities, and these can overlap. We had a few specific categories in mind as we developed the protocol:
+
+**Personal-private data** (e.g. notetaking apps). These are the smallest spaces; usually one member, with your own DID as the space authority. Bookmarks, drafts, settings, and notes all fit here. [Airspace](https://getair.space/) uses a space this way, keeping drafts private until you publish them to your public repo. An app only has to request a scope like `space:com.example.notes` to read and write there.
+
+**Syndicated/gated data** (e.g. subscriber-only articles). The publisher's DID (account) is the **authority**, and the publisher does most or all of the writing. Readers need a **credential**, and the authority can hand the decision of who gets one to your app. This is a Patreon-style or Substack-style use case.
+
+Finally, there's **Groups/shared data** (e.g. intra-community posts and other content). Here, the authority might be a group DID(!) that belongs to the group rather than to any one person, so the group can change hands without anyone migrating their own account. Every member writes into their own space repo on their own PDS, and apps aggregate those repos into one view, the same way they aggregate public repos today. The [opensocial.group](https://tangled.org/opensocial.group/proposal/) proposal is an ecosystem led effort to specify how atmospheric groups should work. Think of it as [standard.site](https://standard.site/) for communities!
+
+We'll show more examples of this last category soon. For now, the important thing is clarifying how these differ, and what they have in common.
+
+## Spaces in the Network
+
+This is a big one, and it's the main focus of this week's post. Atproto Spaces is the biggest update to the protocol to date, and a natural question is how that fits into the existing developer experience. You might naturally ask questions like “wait, so is the [new Jetstream](https://atproto.com/blog/introducing-bluesky-protocol-services) going to work for Spaces?”
+
+Our colleague Bryan Newbold wrote a great post on his [personal blog](https://bnewbold.leaflet.pub/3mxkqukqp322j) over the weekend about this, but essentially — it's a fair question! A lot of the tooling in the atproto ecosystem as well as the openness guarantees of the protocol relate to the fact that all of the data is public and rebroadcastable. Spaces change the calculus of this. But they don't change the principles. Users remain the authority for their data, developers and users can opt to use Bluesky's services on a piecemeal basis, and though some data may require “permission” to access, the network as a whole remains permissionless to participate in. 
+
+The **Group Host** is a new role in the network. It's the service that answers for a group's Spaces as a whole: it holds the group's identity, manages membership and roles, provides moderation tooling for the group, and facilitates sync for apps that need access to group data. Members sign in with their own accounts and act according to roles the Host enforces, so a group can have stewards who manage membership without anyone sharing a password. See [What is a Group Host](https://bnewbold.leaflet.pub/3mw5al7ocuk2t) for more details.
+
+A group host does for groups what a PDS does for users. Users in the atmosphere can take their accounts around to many different apps. It's the same account, with the same presence! Atmospheric groups work the same way. It's the same group across many different apps. Communities no longer have to be splintered across a dozen different platforms. We'll soon provide some [sample apps](https://atproto.com/guides/tutorials) showing an MVP Group Host running behind the app layer.
+
+## Keeping Atproto Devex Consistent
+
+When first talking to the team here about Spaces several months ago — "are they permissions, or what?" the single most clarifying conversation we had was along the lines of "**Spaces are miniature atproto networks.**"
+
+An atproto record is still an atproto record no matter what, meaning that our read/write primitives and Lexicon handling won't change with Spaces. The "use atproto for data modeling and for your data backend" argument remains exactly the same. But the data routing is different. Spaces sync without a relay. When syncing spaces, you don't comb through the global firehose of all public broadcast content. Rather, each space functions as a sync boundary. You subscribe to a space, receive realtime notifications of writes, and sync all of the data within that space.
+
+But — hang on, this is still atproto! One thing we've always focused on is keeping our self-hosting narrative simple, by not requiring any individual user's PDS to be load-bearing in app infrastructure. The PDS is a truth source, but it's very much not supposed to provide just-in-time application scale infrastructure. That goes in the app layer.
+
+Similarly, there’s a reason Jetstream is featured so heavily in our examples and [landing pages](https://atproto.com/). JSON-from-a-websocket is some of the cleanest devex in atproto; it reinforces our “no steps backwards” philosophy in building decentralized applications by helping you consume that distributed network over [one API endpoint](https://endpoints.bsky.app/#jetstream). Now, you might see where this is going… what if Spaces could still support Jetstream client semantics?
+
+<Image src={jetstreamSpaces} alt="Terminal output from using a Jetstream client with Spaces" />
+
+We have some working prototypes in this area that we're looking forward to sharing. Remember that [Jetstream](https://github.com/bluesky-social/jetstream) is designed to be self-hostable — while most developers shouldn't need to host their own Jetstream for working with public data from an atproto Relay, the hosting story for per-Space Jetstreams could be much more interesting!
+
+We'll leave it here for now. Stay tuned for more Space exploration next week!
