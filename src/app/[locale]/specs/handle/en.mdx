@@ -113,7 +113,7 @@ For this resolution method, a DNS TXT record is registered for the `_atproto` su
 
 For example, the handle `user.example.com` would have a TXT record on the name `_atproto.user.example.com`, and the value would look like `did=did:plc:ewvi7nxzyoun6zhxrhs64oiz`.
 
-Any TXT records with values not starting with `did=` should be ignored. Only a single valid record should exist at any point in time. If multiple valid records with different DIDs are present, resolution should fail. In this case resolution can be re-tried after a delay, or using a recursive resolver.
+Any TXT records with values not starting with `did=` should be ignored. Only a single valid record should exist at any point in time. If multiple valid records with different DIDs are present, resolution should fail. In this case resolution can be re-tried after a delay, or using a recursive resolver. Clients MUST strip any trailing space on the record value.
 
 Note that very long handles can not be resolved using this method if the additional `_atproto.` name segment pushes the overall name over the 253 character maximum for DNS queries. The HTTPS method will work for such handles.
 
@@ -136,7 +136,7 @@ did:plc:ewvi7nxzyoun6zhxrhs64oiz
 
 The response `Content-Type` header does not need to be strictly verified.
 
-The web server's response body should not contain any prefix or suffix whitespace, but clients should strip small amounts of prefix or suffix whitespace from the response body before attempting to parse as a DID.
+The web server's response body should not contain any prefix or suffix whitespace, but clients MUST strip small amounts of prefix or suffix whitespace from the response body before attempting to parse as a DID, following [Postel's Law](https://en.wikipedia.org/wiki/Robustness_principle).
 
 Secure HTTPS on the default port (443) is required for all real-world handle resolutions. Unsecured HTTP can only be used for local development and testing.
 
