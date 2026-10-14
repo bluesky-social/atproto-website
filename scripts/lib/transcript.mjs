@@ -170,8 +170,11 @@ export const GLOSSARY = [
   [/\bad protocol\b/gi, 'AT Protocol'],
   [/\b(?:ad ?|that )proto\b/gi, 'atproto'],
   [/\bBlack Sai\b/g, 'Blacksky'],
-  // Case-sensitive, so the punctuation mark ("an em dash") is left alone.
-  [/\b(?:M ?[Dd]ash|m dash|MDASH|MDAS)\b/g, 'EmDash'],
+  // Case-sensitive, so the punctuation mark ("an em dash") is left alone. The
+  // hyphenated forms are from episode 24; "em-dash" has no boundary before
+  // its "m", so it is safe too.
+  [/\b(?:M[ -]?[Dd]ash|m[ -]dash|MDASH|MDAS|InDash)\b/g, 'EmDash'],
+  [/\bMD CMS\b/g, 'EmDash CMS'],
   [/\b(?:FOS[DT]EM|Fost[eu]m)\b/gi, 'FOSDEM'],
   [/\bGrays\b/g, 'Graze'],
   // House style.

@@ -697,7 +697,23 @@ test('applyGlossary corrects names first heard wrong in episode 23', () => {
   for (const [heard, want] of RECURRING_23) assert.equal(applyGlossary(heard), want, heard)
 })
 
+// --- EmDash, as heard in episode 24 (2026-10-14) ---------------------------
+
+const EMDASH_24 = [
+  ['taking part in the M-dash development', 'taking part in the EmDash development'],
+  ['the future of M-Dash hold', 'the future of EmDash hold'],
+  ['a lot of what m-dash has had to be', 'a lot of what EmDash has had to be'],
+  ['InDash is an exciting new CMS', 'EmDash is an exciting new CMS'],
+  ['creating the MD CMS project', 'creating the EmDash CMS project'],
+]
+
+test('applyGlossary corrects the hyphenated and other EmDash forms from episode 24', () => {
+  for (const [heard, want] of EMDASH_24) assert.equal(applyGlossary(heard), want, heard)
+})
+
 test('applyGlossary leaves the punctuation mark and plain "that protocol" alone', () => {
   assert.equal(applyGlossary('use an em dash here'), 'use an em dash here')
+  assert.equal(applyGlossary('use an em-dash here'), 'use an em-dash here')
+  assert.equal(applyGlossary('an MD file'), 'an MD file')
   assert.equal(applyGlossary('the benefits of using that protocol'), 'the benefits of using that protocol')
 })
