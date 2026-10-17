@@ -27,6 +27,36 @@ function excludeObjectExpressions(tree) {
   return filter(tree, (node) => !isObjectExpression(node))
 }
 
+function getJsxAttr(node, name) {
+  let attr = node.attributes?.find((a) => a.name === name)
+  if (!attr) return undefined
+  // Expression attributes like level={2} have an object value with .value as string
+  if (typeof attr.value === 'object' && attr.value?.value != null) {
+    return attr.value.value
+  }
+  return attr.value
+}
+
+// Translated pages write section headings as `<Heading level={2} id="...">`
+// so they keep the English anchor. On its own line that parses as a flow
+// element, but written inline it parses as a paragraph wrapping a text
+// element. Returns the JSX node in either case.
+function getJsxHeading(node, level) {
+  let candidate =
+    node.type === 'paragraph' && node.children.length === 1
+      ? node.children[0]
+      : node
+  if (
+    (candidate.type === 'mdxJsxFlowElement' ||
+      candidate.type === 'mdxJsxTextElement') &&
+    candidate.name === 'Heading' &&
+    getJsxAttr(candidate, 'level') === String(level)
+  ) {
+    return candidate
+  }
+  return null
+}
+
 function extractHeaderExport(tree) {
   let headerTitle = null
   let headerDescription = null
@@ -80,6 +110,12 @@ function extractSections() {
     const excludedHeadings = ['Further Reading and Resources']
 
     visit(tree, (node) => {
+      let jsxHeading = getJsxHeading(node, 2)
+      if (jsxHeading) {
+        let content = toString(excludeObjectExpressions(jsxHeading))
+        sections.push([content, getJsxAttr(jsxHeading, 'id') ?? null, []])
+        return SKIP
+      }
       if (node.type === 'heading' || node.type === 'paragraph') {
         let content = toString(excludeObjectExpressions(node))
         if (node.type === 'heading' && node.depth <= 2) {
@@ -100,6 +136,17 @@ function extractSections() {
       }
     })
   }
+}
+
+/**
+ * Splits an MDX page into the `[title, hash, content]` sections that the
+ * search index stores.
+ */
+export function extractSearchSections(mdx) {
+  let sections = []
+  let vfile = { value: mdx, sections }
+  processor.runSync(processor.parse(vfile), vfile)
+  return sections
 }
 
 export default function Search(nextConfig = {}) {
@@ -130,13 +177,12 @@ export default function Search(nextConfig = {}) {
               if (!url) url = '/'
               let mdx = fs.readFileSync(path.join(appDir, file), 'utf8')
 
-              let sections = []
+              let sections
 
               if (cache.get(file)?.[0] === mdx) {
                 sections = cache.get(file)[1]
               } else {
-                let vfile = { value: mdx, sections }
-                processor.runSync(processor.parse(vfile), vfile)
+                sections = extractSearchSections(mdx)
                 cache.set(file, [mdx, sections])
               }
 
