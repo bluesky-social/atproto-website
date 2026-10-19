@@ -17,7 +17,7 @@ export const header = {
 
 これはATプロトコルでOAuthがどう動くかを理解するための良い出発点です。本番向けウェブアプリを作る場合は、完全版の[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
 
-<Heading level={2} id="prerequisites">前提条件</Heading>
+## 前提条件
 
 このチュートリアルでは、TypeScriptアプリケーションをゼロから構築します。TypeScriptとNode.jsの基本的な理解を前提としています。
 
@@ -30,7 +30,7 @@ export const header = {
 
 テスト用atprotoハンドルも用意しておいてください。
 
-<Heading level={2} id="part-1-project-setup">パート1：セットアップ</Heading>
+## パート1：セットアップ
 
 新しいプロジェクトディレクトリを作成し、[SDK](https://www.npmjs.com/package/@atproto/lex)とその他の依存関係をインストールします。
 
@@ -42,7 +42,7 @@ export const header = {
 
 これによりプロジェクト内にLexicon用のTypeScriptの型が生成され、後で認証済みユーザーのプロフィールを読む際に利用します。
 
-<Heading level={2} id="part-2-build-the-o-auth-client">パート2：OAuthクライアントを作る</Heading>
+## パート2：OAuthクライアントを作る
 
 `src/index.ts`に新しいファイルを作成してください。このファイルにCLIツールのコードをすべて記述します。
 
@@ -56,7 +56,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 `stateStore`と`sessionStore`はメモリ上のMapです。前者はOAuthハンドシェイク中の一時データを保持し、後者はDIDをキーに認証済みセッションを保持します。本番アプリではこれらにデータベースを使います。
 
-<Heading level={2} id="part-3-login-flow">パート3：ログインフロー</Heading>
+## パート3：ログインフロー
 
 次にログインフローを追加します。OAuthコールバックを受け取る一時HTTPサーバーを起動し、ユーザーのブラウザを開いてアプリ認可を行います。
 
@@ -69,7 +69,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 3. ユーザーが承認すると、PDSが認可コード付きで`http://127.0.0.1:3000/callback`にリダイレクトします。
 4. `oauthClient.callback(params)`がそのコードを認証済みセッションに交換します。
 
-<Heading level={2} id="part-4-use-the-session">パート4：セッションを使う</Heading>
+## パート4：セッションを使う
 
 セッションが取得できたら、ATプロトコルとやり取りするためにlexの`Client`を作成できます。これらをまとめる`main()`関数を追加しましょう。
 
@@ -77,7 +77,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 `@atproto/lex`の`Client`はOAuthセッションを直接受け取れます。これは[エージェント作成チュートリアル](/guides/bot-tutorial)で`PasswordSession`を受け取るのと同じです。ここから先は、インストール済みLexiconに対して`.get()`、`.list()`、`.create()`、`.call()`を使えます。
 
-<Heading level={2} id="part-5-run-it">パート5：実行する</Heading>
+## パート5：実行する
 
 `npx tsx`でCLIツールを実行し、引数に自分のハンドルを渡します。
 
@@ -87,7 +87,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 <S08 />
 
-<Heading level={2} id="conclusion">結論</Heading>
+## 結論
 
 ATプロトコルで認証する最小構成のOAuth CLIツールが完成しました。ソースコード全体はおよそ80行です。
 

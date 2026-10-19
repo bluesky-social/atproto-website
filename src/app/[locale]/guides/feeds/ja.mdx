@@ -9,7 +9,7 @@ export const header = {
   description: 'カスタムフィードジェネレーターの作成と利用',
 }
 
-<Heading level={2} id="custom-feeds">カスタムフィード</Heading>
+## カスタムフィード
 
 カスタムフィード（フィードジェネレーター）は、ATプロトコルを通じてユーザーにカスタムアルゴリズムを提供するサービスです。これにより、ユーザーは自分のタイムラインを選択でき、フィードビルダーはレコードの[専門的なビューを作成して組み込む](https://graze.leaflet.pub/3m4yjmbnyec2c)ことができます。
 
@@ -54,7 +54,7 @@ export const header = {
 
 ユーザーにとって、これはアプリのページを訪問するような感覚です。カスタムアルゴリズムを登録すると、ホームインターフェースで利用可能なフィードの一つとして表示されます。
 
-<Heading level={2} id="feed-generator-templates">フィードジェネレーターテンプレート</Heading>
+## フィードジェネレーターテンプレート
 
 TypeScriptフィードジェネレーターの例を提供しています。[チュートリアル](/guides/custom-feed-tutorial)を参照してください。
 
@@ -62,7 +62,7 @@ TypeScriptフィードジェネレーターの例を提供しています。[チ
 
 いくつかの機械学習機能を追加して、フィードアルゴリズムをさらに調整することもできます。例については、[tri-bsky-feed](https://tangled.org/cuducos.me/tri-bsky-feed)を参照してください。
 
-<Heading level={2} id="implementing-feeds">フィードの実装</Heading>
+## フィードの実装
 
 `getFeedSkeleton`リクエストに対してフィードジェネレーターがどのように埋めるかは完全にその裁量に任されています。最も単純な場合、フィードジェネレーターはハードコードされた投稿のみを含むフィードを提供できます。
 
@@ -70,24 +70,24 @@ TypeScriptフィードジェネレーターの例を提供しています。[チ
 
 フィードのアルゴリズムによっては、長い間投稿を保持する必要がないかもしれません。フィードが「見逃した投稿」のようなものの提供を目的としていない限り、48時間以上前のデータはおそらくガベージコレクションしてよいでしょう。
 
-<Heading level={2} id="language-handling">使用言語対応</Heading>
+## 使用言語対応
 
 `getFeedSkeleton`にリクエストを送信する際、クライアントは`Accept-Language` HTTPヘッダーにカンマ区切りのBCP-47言語コード（例：`en`、`pr-BR`）を含めることが推奨されます。フィードジェネレーターはこの言語コンテキストを使用して投稿をフィルタリングまたはランク付けできます。言語フィルタリングが適用される場合、フィードジェネレーターはパースされた言語コードを示す`Content-Language`レスポンスヘッダーを使用する必要があります。
 
-<Heading level={2} id="feed-feedback">フィードのフィードバック</Heading>
+## フィードのフィードバック
 
 フィードジェネレーターは`app.bsky.feed.sendInteractions`エンドポイントを実装することでユーザーからの入力を受け取ることができます。これにはいいね、リポスト、共有などのインタラクションが含まれます。完全な一覧は[app.bsky.feed Lexicon](https://github.com/bluesky-social/atproto/blob/main/lexicons/app/bsky/feed/defs.json#L247)を参照してください。
 
 フィードフィードバックの実装は任意ですが、ユーザー体験の向上に役立つことがあります。
 
-<Heading level={2} id="example-feeds">フィードの例</Heading>
+## フィードの例
 
 - コミュニティフィード：そのコミュニティ内のDIDのリストをコンパイルし、そのリスト内のユーザーからのすべての投稿についてfirehoseをフィルタリングします。
 - トピックフィード：アルゴリズムが返す投稿に対して、投稿本文をフィルタリングメカニズム（LLM、キーワードマッチャーなど）に渡して、選択したトピック用にフィルタリングします。
 - [graze.social](https://www.graze.social/)はatprotoフィードのアプリケーションモデルを提供します。
 - コミュニティが作成したその他のフィード例は[https://bsky.app/feeds](https://bsky.app/feeds)で見つけることができます。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [同期](/guides/sync)
 - [バックフィル](/guides/backfilling)

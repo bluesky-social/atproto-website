@@ -11,11 +11,11 @@ export const header = {
 
 Lexiconスキーマは、コード生成、リクエストの検証、およびATプロトコルスタック全体のクライアント型付けを推進します。
 
-<Heading level={2} id="installing-lexicons-with-lex">lexによるLexiconのインストール</Heading>
+## lexによるLexiconのインストール
 
 SDKには、各ATエンドポイントが期待するパラメータを知っている型安全なクライアントを生成できる`lex`ツールがインストールされています。
 
-<Heading level={3} id="type-script">TypeScript</Heading>
+### TypeScript
 
 まず、`@atproto/lex`パッケージをインストールします。
 
@@ -40,7 +40,7 @@ SDKには、各ATエンドポイントが期待するパラメータを知って
 
 `lex`の使用方法に関する詳細については、[readme](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex#lexicon-schemas)を参照してください。
 
-<Heading level={2} id="xrpc-methods">XRPCメソッド</Heading>
+## XRPCメソッド
 
 Lexiconの`main`定義がメソッドである場合、3種類のXRPC呼び出しのいずれかを示します。
 
@@ -52,7 +52,7 @@ Lexiconの`main`定義がメソッドである場合、3種類のXRPC呼び出�
 
 パラメータ、入力ボディ、および出力はすべて、コンパイル時に型検査され、実行時にLexiconの形状に対して検証されます。
 
-<Heading level={2} id="using-the-internal-tld">.internal TLDの利用</Heading>
+## .internal TLDの利用
 
 NSIDは逆引きDNSを使用します。例えば、`app.bsky.*`は`bsky.app`の下で解決され、`com.atproto.*`は`atproto.com`の下で解決されます。しかし、**同じオペレーターのコンポーネント間のサービス間呼び出し**では、発行して解決する公開スキーマはありません。
 
@@ -65,7 +65,7 @@ NSIDは逆引きDNSを使用します。例えば、`app.bsky.*`は`bsky.app`の
 
 XRPCメソッドが自分のインフラストラクチャの配管である場合は、`internal.*`を使用してください。特定の呼び出し元に固有の最適化、管理または運用クエリ、またはサードパーティの実装者がサポートする責任を感じるべきでないものなどです。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [Lexiconの公開](/guides/publishing-lexicons)
 - [Lexiconスタイルガイド](/guides/lexicon-style-guide)

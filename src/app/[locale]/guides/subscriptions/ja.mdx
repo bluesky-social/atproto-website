@@ -9,7 +9,7 @@ export const header = {
   description: 'ラベラーサービスの登録',
 }
 
-<Heading level={2} id="labeler-subscriptions">ラベラー登録</Heading>
+## ラベラー登録
 
 ラベラーサービスはそれぞれサービスIDを持ち、DIDドキュメントを意味します。これはラベルのソース（**`src`**）フィールドに表示されるDIDです。
 
@@ -21,7 +21,7 @@ TypeScript SDKを使用してラベラーを追加することもできます。
 
 <LabelerConfigTs />
 
-<Heading level={2} id="use-labelers-in-your-app">アプリでラベルを使う</Heading>
+## アプリでラベルを使う
 
 ラベルはアカウントやレコードに紐付けられます。アプリはターゲットを異なる方法で解釈できます。
 
@@ -29,7 +29,7 @@ TypeScript SDKを使用してラベラーを追加することもできます。
 - プロフィールに対して：プロフィールレコード（例：ユーザーアバター）にのみ影響し、一覧からアカウントを隠すことはありません。
 - コンテンツに対して：コンテンツ毎に固有の影響があります（投稿レコード、リスト、フィードなど）。
 
-<Heading level={2} id="reporting">報告</Heading>
+## 報告
 
 ラベラーに報告を送信するには、`com.atproto.moderation.createReport`を使用します。ユーザーはどのラベラーにでも報告を送信できます。
 
@@ -37,7 +37,7 @@ TypeScript SDKを使用してラベラーを追加することもできます。
 
 <CreateReportTs />
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [モデレーション](/guides/moderation)
 - [ラベル](/guides/labels)

@@ -42,7 +42,7 @@ export const header = {
 
 動作デモはこちら [https://nextjs-oauth-tutorial.up.railway.app/](https://nextjs-oauth-tutorial.up.railway.app/)
 
-<Heading level={2} id="prerequisites">前提条件</Heading>
+## 前提条件
 
 このOAuthチュートリアルではatprotoの概念や依存関係をあまり使いません。Next.jsとTypeScriptの実用的な理解があることを前提とします。
 
@@ -54,7 +54,7 @@ export const header = {
 
 <S01 />
 
-<Heading level={2} id="part-1-project-setup">パート1：セットアップ</Heading>
+## パート1：セットアップ
 
 まず`create-next-app`コマンドで新しいNext.jsプロジェクトを作成します。
 
@@ -82,7 +82,7 @@ Next.jsのスターターページが表示されるはずです。
 
 次に、基本となるOAuth機能を実装します。
 
-<Heading level={2} id="part-2-implementing-o-auth">パート2：OAuthの実装</Heading>
+## パート2：OAuthの実装
 
 まず、インメモリストレージを使うローカルの*ループバック*クライアントでOAuthを実装します。
 
@@ -159,7 +159,7 @@ http://127.0.0.1:3000/oauth-client-metadata.json にアクセスすると、ク�
 
 おめでとうございます。これで動作するOAuthの土台ができたので、次はより発展的な機能に進めます。
 
-<Heading level={2} id="part-3-adding-database-persistence">パート3：データベース永続化の追加</Heading>
+## パート3：データベース永続化の追加
 
 ここまで使ってきたインメモリ方式はローカル開発には十分ですが、本番では適切なデータベースが必要です。SQLiteとその依存関係を追加しましょう。
 
@@ -201,7 +201,7 @@ http://127.0.0.1:3000/oauth-client-metadata.json にアクセスすると、ク�
 
 "Migrations complete."と表示され、`app.db`ファイルが作成されるはずです。これで再起動しても状態とセッションが保持されます。
 
-<Heading level={2} id="part-4-deploying-to-production">パート4：本番環境へのデプロイ</Heading>
+## パート4：本番環境へのデプロイ
 
 本番環境では、これまでのループバッククライアントではなく「機密クライアント」が必要です。必要なものは次の通りです。
 - 公開URL
@@ -238,7 +238,7 @@ http://127.0.0.1:3000/oauth-client-metadata.json にアクセスすると、ク�
 
 これらはRailwayの[デプロイガイド](https://github.com/bluesky-social/nextjs-oauth-tutorial/blob/main/RAILWAY_DEPLOY.md)に沿って設定できます。手順どおり進めれば、このアプリは[デモインスタンス](https://nextjs-oauth-tutorial.up.railway.app/)と同様に公開URLで動作するはずです。
 
-<Heading level={2} id="conclusion">結論</Heading>
+## 結論
 
 これで永続ストレージ付きの本番デプロイ済みアプリが完成しました。ただし、まだATプロトコルを使った具体的な機能は実装していません。ここから機能を追加する際は、OAuthフローで追加の権限スコープを要求する必要があります。
 

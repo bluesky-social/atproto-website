@@ -5,13 +5,13 @@ export const header = {
   description: 'ATプロトコルのソーシャルグラフの操作',
 }
 
-<Heading level={2} id="querying-social-graphs">ソーシャルグラフの取得</Heading>
+## ソーシャルグラフの取得
 
 ATプロトコル上に構築された新しいアプリケーションは、既存のソーシャルグラフデータ（`app.bsky.graph.getFollows` Lexicon RPCエンドポイントで得られるようなもの）を活用して、新しいユースケースを構築し、既存のユーザーベースでブートストラップできます。これにより、[A Social Filesystem](https://overreacted.io/a-social-filesystem/)のようなatproto特有の概念が得られます。
 
 このアプローチの別の例として、[『Exploring AT Protocol with Python』](https://davidgasquez.com/exploring-atproto-python/)も参照してください。
 
-<Heading level={2} id="backlinks">バックリンク</Heading>
+## バックリンク
 
 ATプロトコルからソーシャルグラフデータを取得する強力な方法として、**バックリンク**があります。バックリンクを取得すると、特定のレコードまたはIDへとリンクしているすべてのレコードを解決できます。
 
@@ -19,11 +19,11 @@ ATプロトコルからソーシャルグラフデータを取得する強力な
 
 Claude codeプラグインでバックリンクを実装するには、[protopack](https://tangled.org/zzstoatzz.io/protopack.git)を参照してください。
 
-<Heading level={2} id="reusing-lexicons">Lexiconの再利用</Heading>
+## Lexiconの再利用
 
 atproto上で新しい体験を構築する際には、ネットワーク上の人気のあるLexiconから既存のソーシャルグラフをどれだけ再利用するかはあなた次第です。例えば、あるアプリはMicrocosmを統合することで`app.bsky.graph`の「フォロー」や「ブロック」関係を再利用することを選択するかもしれませんし、他のアプリは独自に実装するかもしれません。また、既存の投稿からメディアblobを再利用して、既存のコンテンツでブートストラップする画像掲示板や動画共有アプリを構築することもできます。これは、[バックフィル](/guides/backfilling)に必要なデータ量や、[AppView](/guides/the-at-stack#app-views)を駆動するために必要なホスティングインフラストラクチャの量に影響します。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [読み取りと書き込み](/guides/reads-and-writes)
 - [データ読み取り](/guides/reading-data)

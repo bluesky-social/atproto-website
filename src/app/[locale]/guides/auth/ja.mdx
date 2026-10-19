@@ -8,7 +8,7 @@ export const header = {
   description: 'atprotoアプリケーション開発者向けの認証・認可ガイド',
 }
 
-<Heading level={2} id="getting-started">はじめましょう</Heading>
+## はじめましょう
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -35,7 +35,7 @@ export const header = {
 
 続いて、[SDK](/guides/sdk-auth)を使って認証します。
 
-<Heading level={2} id="about-authorization">認証について</Heading>
+## 認証について
 
 **認証が最初のドキュメントであることには理由があります**。[レコードを読み出す](/guides/reading-data#unauthenticated-reads)ために認証が必要というわけではありませんし、[firehoseからデータをストリーム](/guides/streaming-data)する場合も同じです。ただしAtmosphereに統合されるアプリケーションを構築する場合は、認証から始めることになります。
 
@@ -49,7 +49,7 @@ export const header = {
 
 アプリケーションにOAuthを実装するには、一般的なユースケースについては[OAuthについて](/guides/about-oauth)を、権限モデルの理解については[権限セット](/guides/permission-sets)を参照してください。独自のプロトコル実装またはOAuthクライアアントSDKを構築している場合は、[OAuth仕様](/specs/oauth)を参照してください。
 
-<Heading level={2} id="what-is-o-auth">OAuthとは？</Heading>
+## OAuthとは？
 
 OAuthは、ユーザーがパスワードを渡すことなく、開発者がアカウントへのアクセスをリクエストできるようにする認可フレームワークです。OAuthがなければ、サードパーティアプリケーションにアカウントへのアクセスを許可したい場合、ユーザー名とパスワードをそのアプリケーションに入力するしかありません。これはさまざまな理由で問題があり、一番の理由はサードパーティアプリケーションがパスワードを見て、ともすれば保存してしまうという点です。アプリケーションがユーザー名とパスワードを持つと、アプリケーションはアカウントへの*完全な*アクセスを持つことになります。
 
@@ -57,7 +57,7 @@ OAuthはこれらの問題を、個人のユーザー名とパスワードを必
 
 開発者からすると、個人のアカウントへの限定的なアクセスをリクエストできます。つまり、誰かのパブリックタイムラインにメッセージを投稿するだけでよい場合、プライベートメッセージの閲覧まで要求する必要はありません。これはあなたのアプリケーションにとって素晴らしいことです。なぜなら、必要のないデータを管理することについて心配する必要がないからです。また、あなたのアプリケーションを使う人にとっても素晴らしいことです。なぜなら、DMが漏洩することについて心配する必要がないからです。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 まずは[SDKによる認証](/guides/sdk-auth)を読んでください。アプリケーションにOAuthを実装するには、一般的なユースケースについては[OAuthについて](/guides/about-oauth)を、権限モデルを理解するには[権限セット](/guides/permission-sets)を参照してください。
 

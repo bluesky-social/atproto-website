@@ -16,7 +16,7 @@ export const header = {
   description: 'ATプロトコルレコードを書き込む',
 }
 
-<Heading level={2} id="writing-data">データ書き込み</Heading>
+## データ書き込み
 
 Blueskyフィードに投稿するなどのデータ書き込みは、[読み取り](/guides/reading-data)に似ていますが、少しやり方が変わります。
 
@@ -63,7 +63,7 @@ Blueskyフィードに投稿するなどのデータ書き込みは、[読み取
 
 データの読み書き両方を行うクライアント等のインターフェースを構築している場合は、この応答を使用して書き込んだものを確実に読み取ることが重要です。
 
-<Heading level={2} id="read-after-write">read-after-write</Heading>
+## read-after-write
 
 ATアプリフロントエンドの設計によっては、ユーザーが何らかのアクション（プロフィールの更新など）を実行し、ビューを迅速に更新すると、直近の変更が更新後の応答にすぐに反映されないことがあります。
 
@@ -75,7 +75,7 @@ AppViewは`Atproto-Repo-Rev`応答ヘッダーを設定することで、現在�
 
 このread-after-write動作は、リクエストを行ったユーザーからのレコードに*のみ*適用されます。偶然同じPDS上に存在するだけの他のユーザーからのレコードは、要求側ユーザーの応答に影響を与えません。
 
-<Heading level={2} id="updating-records">レコードの更新</Heading>
+## レコードの更新
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -100,7 +100,7 @@ AppViewは`Atproto-Repo-Rev`応答ヘッダーを設定することで、現在�
   </TabPanels>
 </TabGroup>
 
-<Heading level={2} id="deleting-records">レコードの削除</Heading>
+## レコードの削除
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -123,7 +123,7 @@ AppViewは`Atproto-Repo-Rev`応答ヘッダーを設定することで、現在�
   </TabPanels>
 </TabGroup>
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [読み取りと書き込み](/guides/reads-and-writes)
 - [データ読み取り](/guides/reading-data)

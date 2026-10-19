@@ -7,7 +7,7 @@ export const header = {
   description: 'Atmosphereのモデレーション',
 }
 
-<Heading level={2} id="about-moderation">モデレーションについて</Heading>
+## モデレーションについて
 
 atprotoのモデルでは、*スピーチ*と*リーチ*は別個の層として設計され、相互に連携して動作します。スピーチ層は寛容で権限を分散し、誰もが発言できることを重視します。リーチ層はその上に位置し、柔軟性とスケーラビリティのために設計されています。atprotoのモデレーションは[ラベル](/guides/labels)を用いて実装されています。
 
@@ -19,7 +19,7 @@ atprotoのモデルでは、*スピーチ*と*リーチ*は別個の層として
 
 Blueskyのブログでモデレーションに関する[詳細な解説](https://docs.bsky.app/blog/blueskys-moderation-architecture)をご覧ください。
 
-<Heading level={2} id="algorithmic-moderation">アルゴリズムによるモデレーション</Heading>
+## アルゴリズムによるモデレーション
 
 [Osprey](https://github.com/bluesky-social/osprey-atproto)は、持続可能な大規模モデレーションを可能にするために調査と自動対応を行う、イベントストリーム判定エンジンおよび分析用UIです。内部で[Kafka](https://kafka.apache.org/)と独自の[ルールエンジン](https://github.com/roostorg/osprey/blob/main/docs/rules.md)を利用します。
 
@@ -27,7 +27,7 @@ Blueskyのブログでモデレーションに関する[詳細な解説](https:/
 
 Ospreyは、オープンソースモデレーションツールを開発している[Roost](https://roost.tools/)によって管理されています。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 モデレーション用[ラベル](/guides/labels)の種類と形式について詳しく学んでください。その後、モデレーションラベラーを[登録](/guides/subscriptions)して、アプリにラベルを適用できます。また、ラベルを発行するために[独自のラベラーを作成](/guides/creating-a-labeler)することも可能です。コンテンツを手動でモデレーションする必要がある場合は、ラベリング用のウェブインターフェースとして[Ozone](/guides/using-ozone)を使用できます。
 
