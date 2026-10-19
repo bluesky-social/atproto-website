@@ -15,7 +15,7 @@ description:
 
 [リポジトリ仕様](/specs/repository)で詳細に説明されています。
 
-<Heading level={2} id="data-layout">データレイアウト</Heading>
+## データレイアウト
 
 リポジトリの内容は[Merkle探索木（MST）](https://hal.inria.fr/hal-02303490/document)にレイアウトされ、状態が単一のルートハッシュに縮小されます。これは次のレイアウトとして視覚化できます。
 
@@ -29,7 +29,7 @@ description:
 
 データリポジトリへの「コミット」は、ルートノードのCIDに対する鍵ペア署名にすぎません。リポジトリが変更されるたびに、新しいコミットノードが生成されます。
 
-<Heading level={2} id="identifier-types">識別子の種類</Heading>
+## 識別子の種類
 
 個人データリポジトリ内では、複数の種類の識別子が使用されます。
 

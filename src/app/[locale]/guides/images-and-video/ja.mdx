@@ -12,7 +12,7 @@ export const header = {
   description: '画像と動画blobの活用',
 }
 
-<Heading level={2} id="using-blobs">blobの利用</Heading>
+## blobの利用
 
 「blob」はアカウントのリポジトリと共に保存されるメディアファイルです。画像、動画、音声データを含みますが、他のファイル形式も可能です。blobは個別のレコードからLexiconの **`blob`** データ型によって参照され、blobのコンテンツハッシュ（CIDまたは`ref`）を含みます。
 
@@ -53,7 +53,7 @@ CDNから提供される場合、この美しいblobのURLは次のようにな�
 
 URLをよく見てください。blobはCDNから提供されていますが、パスにはblobのCIDだけでなく、アップロードしたアカウントのDIDが含まれています。
 
-<Heading level={2} id="blob-object">blobオブジェクト</Heading>
+## blobオブジェクト
 
 blobはアカウントのPDSインスタンスに権威的に保存されますが、ビューは通常、PDSトラフィックを削減するために個別のアプリケーション（AppView）に関連付けられたCDNによって提供されます。CDNは元のblobの変換版（リサイズ、トランスコード等）を提供することがあります。
 
@@ -65,7 +65,7 @@ blobを作成するには権限スコープ **`blob:*/*`** が必要です。
 
 自分自身のPDSをホストしている場合、blobを操作するにはオブジェクトストレージ実装の利用を一般的にお勧めします。詳細は[本番環境への移行](/guides/going-to-production#object-storage)を参照してください。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [blobライフサイクル](/guides/blob-lifecycle)
 - [blobのセキュリティ](/guides/blob-security)

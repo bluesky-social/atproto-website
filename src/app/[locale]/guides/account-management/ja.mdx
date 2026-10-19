@@ -11,11 +11,11 @@ export const header = {
     'Atmosphereアカウントの管理方法',
 }
 
-<Heading level={2} id="account-creation">アカウント作成</Heading>
+## アカウント作成
 
 Atmosphericアプリは、なるべく「Log in or sign up」のような独自のアカウント作成フローを実装するべきです。新しいアカウントのホームとして独自の[PDS](/guides/the-at-stack#pds)を運用する場合もあれば、そうでない場合もあります。Bluesky PDSを含む、いずれかのPDSでユーザーがアカウントを作成すると、そのアカウントを使用してどのatprotoアプリにもログインできるようになります。これは[DID解決](/guides/the-at-stack#did-plc)を通じて動作し、アプリが対象アカウントをホストしているPDSを見つけて、そのPDS上で[認証フロー](/guides/permission-requests)を開始できるようにします。
 
-<Heading level={2} id="account-management">アカウント管理</Heading>
+## アカウント管理
 
 アカウントを作った後は、ホストPDSを通じて管理できます。私たちの[リファレンスPDS](https://github.com/bluesky-social/pds)には、`https://pds.example.com/account`からアクセスできる基本的なアカウント管理インターフェースが含まれています。このインターフェースから、次の操作ができます。
 
@@ -77,7 +77,7 @@ brew install goat
 
 詳細は[goat](https://github.com/bluesky-social/goat)のリポジトリを参照してください。
 
-<Heading level={2} id="account-migration">アカウント移行</Heading>
+## アカウント移行
 
 アカウントを別のPDSに移行する場合は、[アカウント移行](/guides/account-migration)を参照してください。
 

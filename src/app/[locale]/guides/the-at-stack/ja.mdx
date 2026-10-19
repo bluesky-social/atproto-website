@@ -10,13 +10,13 @@ export const header = {
     'ATプロトコルスタックを構成するもの',
 }
 
-<Heading level={2} id="the-authenticated-transfer-protocol">Authenticated Transfer Protocol</Heading>
+## Authenticated Transfer Protocol
 
 ATプロトコル（Authenticated Transfer Protocol）は公開会話の標準であり、ソーシャルアプリを構築するためのオープンソースフレームワークです。
 
 ソーシャルアプリ上のユーザーID、フォロー、データの標準形式を作成し、アプリの相互運用とユーザーの自由なアプリ間移動を可能にします。これは、アカウントのポータビリティを備えたフェデレーションネットワークです。
 
-<Heading level={2} id="decentralized-architecture">分散アーキテクチャ</Heading>
+## 分散アーキテクチャ
 
 ATはフェデレーションネットワークモデルでリポジトリを同期します。フェデレーションにより、ネットワークが使いやすく、確実に利用できることが保証されます。リポジトリデータは、標準のウェブテクノロジー（HTTPおよびWebSocket）を介してサーバー間で同期されます。
 
@@ -32,7 +32,7 @@ ATプロトコルは、オープンウェブそのものをモデルにした「
 
 技術的には、単一のPDSだけでATアプリケーションを実装できます。リレーは仕様上必須の要素ではありませんが、大規模なソーシャルネットワーク向けにエコシステムをスケールさせます。
 
-<Heading level={2} id="pds">PDS</Heading>
+## PDS
 
 PDSインスタンスはユーザーのアカウントをホストし、他のネットワークサーバーが行うようなアカウント管理とライフサイクル制御を求められます。ATのID（DIDとハンドル）は理論上PDSから完全に分離できますが、実用上はPDSがユーザーのID管理を支援することが期待されています。 
 
@@ -68,7 +68,7 @@ PDSは以下を担います。
 
 PDSは多くのATエンドポイントを実装しており、デフォルトでリクエストを他のサービスにプロキシします。キャッシュやCDNなどは通常、[AppView](#app-views)レイヤーで実装されます。 ATスタックの他の大半のコンポーネントは、PDSに直接負荷をかけないように設計されているため、ユーザーデータのホスティングが経済的に維持できます。
 
-<Heading level={2} id="relays">リレー</Heading>
+## リレー
 
 **リレー**はリアルタイムであなたのすべてのイベントを処理します。リレーはPDS単位のレート制限やネットワーク乱用も処理して、ネットワーク全体からの可用性を確保します。重要なこととして、リレー自体はリポジトリ内のレコードを解釈せず、単に一時的に保存し、消費者に転送するだけです。リレーは複数のリポジトリやPDSからの[イベントストリーム](/specs/event-stream)を組み合わせた[**firehose**](/guides/streaming-data)を生成します。
 
@@ -85,7 +85,7 @@ PDSは多くのATエンドポイントを実装しており、デフォルトで
 
 [Bluesky PBC](https://docs.bsky.app/docs/advanced-guides/firehose)が運用するリレーは、PDSサーバーリファレンス実装のデフォルトリレーであり、多くのPDSホストが使用しているため、おそらく最も広く使用されているリレーです。ウェブサイトで[レート制限](https://docs.bsky.app/docs/advanced-guides/rate-limits)が公開されています。
 
-<Heading level={2} id="tap">Tap</Heading>
+## Tap
 
 TapはATネットワークのPDSから既存のレコードを同期し、その後リレーのfirehoseから新しいレコードを継続的に受信するために使用されます。
 
@@ -102,7 +102,7 @@ Tapはfirehose接続、検証、バックフィル、フィルタリングを処
 
 Tapを扱うためのTypeScriptライブラリは[@atproto/tap](https://www.npmjs.com/package/@atproto/tap)にあります。
 
-<Heading level={2} id="app-views">AppView</Heading>
+## AppView
 
 **AppView**は、広域的な指標（いいね数、リポスト数、フォロワー数）の取得、コンテンツ発見（アルゴリズム）、ユーザー検索など、アプリケーション固有のロジックを処理します。
 
@@ -114,7 +114,7 @@ AppViewはATプロトコルに固有の部品ではなく、アプリケーシ�
 
 他のAppView実装のよく文書化された例は、[The Blacksky Architecture](https://blackskyweb.xyz/overview/#blacksky-architecture)で見つけられます。各Atmosphereアプリケーションによって実装上の判断が異なる場合があります。
 
-<Heading level={2} id="did-plc">DID PLC</Heading>
+## DID PLC
 
 デフォルトでは、新しいatproto IDは`did:plc`ドキュメントとして作成されます。
 
@@ -124,7 +124,7 @@ PLCオペレーションはディレクトリ（現在は[plc.directory](http://
 
 PLCミラーリングのガイダンスは[この開発者ブログ](https://dholms.leaflet.pub/3m6zswymcqk2p)を参照してください。
 
-<Heading level={2} id="feeds">フィード</Heading>
+## フィード
 
 ウェブ検索エンジンがそうであるように、ユーザーはアグリゲーターを自由に選べます。フィード、検索インデックス、そしてAppView全体を独立した第三者が提供でき、リクエストはユーザー設定に基づきPDSによってルーティングされます。
 
@@ -140,11 +140,11 @@ PLCミラーリングのガイダンスは[この開発者ブログ](https://dho
 
 [カスタムフィードを探す](https://blueskydirectory.com/feeds/all)
 
-<Heading level={2} id="osprey-and-ozone">OspreyとOzone</Heading>
+## OspreyとOzone
 
 モデレーションはスタックの2箇所で処理されます。[*Osprey*](https://github.com/roostorg/osprey)はイベントストリームの判定エンジンと分析用UIで、自動的な調査と措置の実行を目的としています。[*Ozone*](/guides/using-ozone)はラベリングサービスとモデレーション判断のためのウェブフロントエンドです。
 
-<Heading level={2} id="tools-and-sdks">ツールとSDK</Heading>
+## ツールとSDK
 
 ATの主要なツール群はGoとTypeScriptで実装されています。
 

@@ -2,6 +2,8 @@ import { mdxAnnotations } from 'mdx-annotations'
 import remarkGfm from 'remark-gfm'
 import remarkSmartypants from 'remark-smartypants'
 
+import { remarkTranslatedHeadingIds } from './headingIds.mjs'
+
 // Smart typography applies ONLY to blog posts and Off Protocol podcast content.
 // All other MDX (docs, specs, lexicons) must render straight quotes/dashes
 // verbatim, so we gate on the VFile path segment.
@@ -29,6 +31,7 @@ export function remarkSmartTypographyScoped(options) {
 
 export const remarkPlugins = [
   mdxAnnotations.remark,
+  remarkTranslatedHeadingIds,
   remarkGfm,
   [remarkSmartTypographyScoped, SMART_TYPOGRAPHY_OPTIONS],
 ]

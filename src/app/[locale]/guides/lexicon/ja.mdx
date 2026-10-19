@@ -13,7 +13,7 @@ export const header = {
   description: 'スキーマによる相互運用性フレームワーク',
 }
 
-<Heading level={2} id="about-lexicons">Lexiconとは</Heading>
+## Lexiconとは
 
 Lexiconはデータ型とRPCメソッドを定義するためのスキーマシステムです。すべてのLexiconスキーマはJSONで書かれており、[JSON-Schema](https://json-schema.org/)に近い形式で制約を定義します。
 
@@ -29,7 +29,7 @@ Lexiconはデータ型とRPCメソッドを定義するためのスキーマシ�
 
 スキーマの種類、定義言語、および制約検証は[Lexicon仕様](/specs/lexicon)で説明されており、JSONおよびCBORでの表現は[データモデル仕様](/specs/data-model)で説明されています。
 
-<Heading level={2} id="http-api-methods">HTTP APIメソッド</Heading>
+## HTTP APIメソッド
 
 atprotoのHTTP APIメソッドは、それぞれ特定のLexiconセットに対して実装します。ATプロトコルのAPIシステムである[XRPC](/specs/xrpc)は、本質的にHTTPSの薄いラッパーです。例えば、次の呼び出しを考えます。
 
@@ -43,7 +43,7 @@ atprotoのHTTP APIメソッドは、それぞれ特定のLexiconセットに対�
 
 <SchemaQueryExample />
 
-<Heading level={2} id="record-types">レコード型</Heading>
+## レコード型
 
 スキーマはレコードが取りうる値を定義します。すべてのレコードは"type"を持っており、これはスキーマにマップされ、レコードのURLも決めます。
 
@@ -59,13 +59,13 @@ atprotoのHTTP APIメソッドは、それぞれ特定のLexiconセットに対�
 
 <FollowSchemaExample />
 
-<Heading level={2} id="versioning">バージョニング</Heading>
+## バージョニング
 
 Lexiconが発行されたら、その制約を変更することはできません。制約を緩和（取りうる値を追加）すると、古いソフトウェアが新しいデータの検証に失敗し、制約を厳しく（取りうる値を削減）すると、新しいソフトウェアが古いデータの検証に失敗します。その結果、Lexiconsはそれまで制約が無かったフィールドにはオプションの制約しか追加できません。
 
 Lexiconで以前に発行された制約を変更する必要がある場合は、新しいNSIDの下で新しいLexiconとして発行する必要があります。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 Lexiconは、Lexiconレジストリから各SDK用に[ローカルにインストール](/guides/installing-lexicons)できます。また、[スタイルガイド](/guides/lexicon-style-guide)に従って[独自のLexiconsを公開](/guides/publishing-lexicons)することもできます。
 

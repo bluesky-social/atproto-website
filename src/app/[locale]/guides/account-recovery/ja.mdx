@@ -7,7 +7,7 @@ export const header = {
 
 このガイドでは、`did:plc` IDに独自の暗号ローテーション鍵を事前登録する方法を説明します。PDSが非協力的になったりオフラインになった場合でも、アカウントを復旧できるようになります。
 
-<Heading level={2} id="do-you-need-this">必要な場合</Heading>
+## 必要な場合
 
 **ほとんどのユーザーはこれを行う必要はありません**。Blueskyの公式ホスティングのような信頼できるPDSプロバイダーを利用している場合、アカウントはメールベースの復旧を含むセキュリティ対策によってすでに保護されています。
 
@@ -19,7 +19,7 @@ export const header = {
 
 PDSがオフラインになり、自己管理されたローテーション鍵を持っていない場合でも、PDS運営者を通じて、あるいは[72時間復旧ウィンドウ](#recovery-keys)中に[PLCディレクトリ](/guides/the-at-stack#did-plc)と連携することでアカウントを復旧できる可能性があります。ローテーション鍵の事前登録は追加の保護策であり、PDSプロバイダーを信頼することの代替ではありません。
 
-<Heading level={2} id="how-identity-works">IDの仕組み</Heading>
+## IDの仕組み
 
 ATプロトコルアカウントには、人間が読める**ハンドル**（`@alice.bsky.social`等）と永久的な**DID**（`did:plc:ewvi7nxzyoun6zhxrhs64oiz`等）の2つの識別子があります。DIDが真のIDであり、ハンドルは変更できますがDIDは変わりません。
 
@@ -27,7 +27,7 @@ ATプロトコルアカウントには、人間が読める**ハンドル**（`@
 
 PDSの鍵よりも優先度の高い独自のローテーション鍵を追加することで、必要に応じて新しいPDSを指すなど、独立して自分のIDを更新できるようになります。
 
-<Heading level={2} id="rotation-keys">ローテーション鍵</Heading>
+## ローテーション鍵
 
 各DIDドキュメントは、署名鍵とローテーション鍵の2種類の公開鍵を利用します。
 
@@ -36,7 +36,7 @@ PDSの鍵よりも優先度の高い独自のローテーション鍵を追加�
 
 署名鍵はPDSに委託され、ユーザーのデータを管理できるようにします。ローテーション鍵はユーザーが保存することもできます（紙に印刷するなど）。これにより、ユーザーは元のホストの助けを借りずにアカウントを新しいPDSに更新できます。
 
-<Heading level={2} id="pre-registering-a-key">鍵の事前登録</Heading>
+## 鍵の事前登録
 
 必要なもの
 
@@ -87,7 +87,7 @@ goat account plc add-rotation-key --token YOUR_TOKEN did:key:YOUR_PUBLIC_KEY
 
 これにより、あなたの鍵がPDSの鍵より高い優先度でローテーション鍵リストに追加されます。
 
-<Heading level={2} id="verifying-your-setup">セットアップ完了の確認</Heading>
+## セットアップ完了の確認
 
 ローテーション鍵が追加されたことを確認してください。
 
@@ -103,7 +103,7 @@ goat account plc current
 https://plc.directory/{your-did}/log/audit
 ```
 
-<Heading level={2} id="using-your-key-for-recovery">鍵を使った復旧</Heading>
+## 鍵を使った復旧
 
 PDSが非協力的になったりオフラインになってアカウントを復旧する必要がある場合、ローテーション鍵を使って以下のことができます。
 
@@ -129,7 +129,7 @@ goat bsky prefs export > prefs.json  # export your private bluesky preferences
 
 冗長性のために複数のローテーション鍵を登録し、異なる安全な場所に保管できます。
 
-<Heading level={2} id="further-reading">関連資料</Heading>
+## 関連資料
 
 - [Self-Custody of PLC Rotation Keys](https://whtwnd.com/bnewbold.net/3lj7jmt2ct72r)：この文書の元になったオリジナルガイド
 - [Adversarial PDS Migration](https://www.da.vidbuchanan.co.uk/blog/adversarial-pds-migration.html)：最悪の復旧ケースの詳細なウォークスルー

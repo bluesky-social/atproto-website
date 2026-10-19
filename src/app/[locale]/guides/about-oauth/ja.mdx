@@ -15,11 +15,11 @@ export const header = {
 
 atprotoにおけるOAuthコンセプトの概要（他のOAuthシステムとの違いを含む）については、[OAuthについて](/guides/auth#what-is-o-auth)を参照してください。
 
-<Heading level={2} id="sdk-libraries">SDKライブラリ</Heading>
+## SDKライブラリ
 
 次のライブラリは、[DPoP](/guides/oauth-patterns#understanding-d-po-p)、トークンリフレッシュ、セッション管理などのOAuthフローを処理します。
 
-<Heading level={3} id="type-script">TypeScript</Heading>
+### TypeScript
 
 - [@atproto/oauth-client-browser](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-browser#readme)（[npmx](https://www.npmx.dev/package/@atproto/oauth-client-browser)）- フロントエンドのみのアプリケーション（例：SPA）に適しています。
 - [@atproto/oauth-client-node](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client-node#readme)（[npmx](https://www.npmx.dev/package/@atproto/oauth-client-node)）- Electronデスクトップアプリやサーバーサイドデプロイメントに適しています。
@@ -28,11 +28,11 @@ atprotoにおけるOAuthコンセプトの概要（他のOAuthシステムとの
 - [@fujocoded/authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) ([npmx](https://www.npmx.dev/package/@fujocoded/authproto)) - Astroアプリ用のコミュニティ実装
 - [@atcute/oauth-browser-client](https://github.com/mary-ext/atcute/tree/HEAD/packages/oauth/browser-client) ([npmx](https://npmx.dev/package/@atcute/oauth-browser-client)) - ブラウザクライアントのコミュニティ実装
 
-<Heading level={3} id="go">Go</Heading>
+### Go
 
 - [Indigo](https://github.com/bluesky-social/indigo/tree/main/atproto/auth/oauth)（[APIドキュメント](https://pkg.go.dev/github.com/bluesky-social/indigo/atproto/auth/oauth)）- ネイティブアプリまたはサーバーサイドデプロイメントに適しています
 
-<Heading level={2} id="atproto-oauth-example-apps">atproto OAuthサンプルアプリ</Heading>
+## atproto OAuthサンプルアプリ
 
 これらのシンプルなサンプルアプリは、各SDKの使用方法を示しています。
 
@@ -52,7 +52,7 @@ atprotoにおけるOAuthコンセプトの概要（他のOAuthシステムとの
 PythonのサンプルではSDKを使用していないことに注意してください。[OAuthクライアント実装ガイド](https://docs.bsky.app/docs/advanced-guides/oauth-client)と共に、OAuth SDKを一から構築する際の参考として役立つかもしれません。
 </Note>
 
-<Heading level={2} id="how-the-o-auth-flow-works">OAuthフローの仕組み</Heading>
+## OAuthフローの仕組み
 
 1. あなたのアプリは要求したスコープと共にユーザーをPDSの認可エンドポイントに[リダイレクト](/guides/permission-requests)します
 2. ユーザーは権限を確認し、アクセスを承認または拒否します
@@ -62,7 +62,7 @@ PythonのサンプルではSDKを使用していないことに注意してく�
 
 SDKは手順3〜5を自動的に処理します。コールバックエンドポイントではSDKのコールバックハンドラを呼び出すだけで、トークン交換が完了し認証済みセッションが返されます。そこからAPI呼び出しが可能です — [読み取りと書き込み](/guides/reads-and-writes)を参照してください。
 
-<Heading level={2} id="types-of-app">アプリケーションの種類</Heading>
+## アプリケーションの種類
 
 *最もシンプル*な種類のアプリケーションは、[cookbook/vanillajs-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/vanillajs-oauth-web-app#readme)の例に示されているように、ユーザーのデバイスとPDSの間でOAuthセッションが直接確立されるものです。専用のバックエンドサービスが不要で、静的リソースをホストするだけでよいため、シンプルです。
 
@@ -78,7 +78,7 @@ SDKは手順3〜5を自動的に処理します。コールバックエンドポ
 
 この3つのうち、BFFパターンが機密クライアントアプリケーションを構築するための現在推奨されているアプローチです。これは[cookbook/go-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/go-oauth-web-app#readme)と[cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app#readme)の例で示されています。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [認証](/guides/auth)
 - [SDKによる認証](/guides/sdk-auth)

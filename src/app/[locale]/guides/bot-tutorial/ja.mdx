@@ -25,7 +25,7 @@ export const header = {
 
 このチュートリアルでは、[アプリパスワード](/guides/sdk-auth)で認証し、ネットワークとやり取りするボットを作成します。
 
-<Heading level={2} id="prerequisites">前提条件</Heading>
+## 前提条件
 
 このチュートリアルでは、TypeScriptアプリケーションをゼロから構築します。TypeScriptとNode.jsの基本的な理解を前提としています。
 
@@ -46,7 +46,7 @@ export const header = {
 
 既存アカウントから投稿するつもりでなければ、ボット用に[新しいアカウントを作成](https://bsky.app/)してください。また、そのアカウント用の[アプリパスワード](/guides/sdk-auth)も生成してください。
 
-<Heading level={2} id="part-1-lexicons">パート1：Lexicon</Heading>
+## パート1：Lexicon
 
 [Lexicon](/guides/lexicon)はatprotoのレコードを定義します。ボットは[app.bsky.feed.post](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post) Lexiconを使ってBluesky投稿を作成します。`lex`を使えば、このLexiconをダウンロードしてプロジェクトに組み込めます。
 
@@ -58,7 +58,7 @@ export const header = {
 
 生成されたコードは`src/lexicons`に配置されます。これでボットスクリプトを作成できます。
 
-<Heading level={2} id="part-2-create-a-bot">パート2：ボット作成</Heading>
+## パート2：ボット作成
 
 `src/index.ts`に新しいファイルを作成してください。このファイルにボットのコードを書きます。
 
@@ -76,7 +76,7 @@ export const header = {
 
 これでボットに必要なコードはすべて揃いました。次はボットとしてラベル付けします。
 
-<Heading level={2} id="part-3-label-as-a-bot">パート3：ボットとしてラベル付け</Heading>
+## パート3：ボットとしてラベル付け
 
 ベストプラクティスとして、ボットアカウントはプロフィールにセルフラベルを追加して自分を識別すべきです。これにより、ユーザーやモデレーションツールが自動化されたアカウントを認識しやすくなります。`src/index.ts`に以下の関数を追加してください。
 
@@ -84,7 +84,7 @@ export const header = {
 
 ボットを初めてセットアップする際に、`labelAsBot(session)`を呼び出します。これは一度だけ行えば十分です。ラベルはプロフィールに永続的に保存されます。cronジョブを開始する前に`main()`から呼び出したら、初回実行後はその呼び出しを削除できます。
 
-<Heading level={2} id="part-4-run-the-bot">パート4：ボット実行</Heading>
+## パート4：ボット実行
 
 ボットのホスト（PDS）、ユーザー名、パスワードを`.env`ファイルに保存します。
 
@@ -98,7 +98,7 @@ export const header = {
 
 ボットはネットワークのレート制限を守る必要がある点に注意してください。例えば、[Blueskyには独自のレート制限があります](https://docs.bsky.app/docs/advanced-guides/rate-limits)。
 
-<Heading level={2} id="part-5-from-bot-to-agent">パート5：ボットからエージェントへ</Heading>
+## パート5：ボットからエージェントへ
 
 ここまでは、一定間隔で投稿するボットを作成してきました。ここからは、他のユーザーとやり取りできる、より高度なエージェントへ拡張していきます。
 
@@ -134,7 +134,7 @@ APIキーを取得したら、プロジェクトにAI SDKを追加します。
 アカウントへ定期的に投稿するボットは、このネットワークでは歓迎されています。ボットが他のユーザーとやり取りすること（いいね、リポスト、リプライなど）は、そのユーザーがボットアカウントをタグ付けしたときだけにしてください。オプトイン型のやり取りであるべきで、そうでない場合はスパムとして報告される可能性があります。
 </Note>
 
-<Heading level={2} id="conclusion">結論</Heading>
+## 結論
 
 これで、ネットワーク上にレコードを作成する自動化されたatprotoアプリを構築できました。
 

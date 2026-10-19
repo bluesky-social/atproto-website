@@ -7,7 +7,7 @@ export const header = {
   description: 'ATプロトコルデータの同期',
 }
 
-<Heading level={2} id="handles-and-dids">ハンドルとDID</Heading>
+## ハンドルとDID
 
 ATでは、ハンドルは[DID](/specs/did)（[分散型識別子](https://en.wikipedia.org/wiki/Decentralized_identifier)）を通じて解決されます。現在、2つの異なるDIDプレフィックスがサポートされています。
 - `did:web`（W3C DID標準に基づく）
@@ -16,7 +16,7 @@ ATでは、ハンドルは[DID](/specs/did)（[分散型識別子](https://en.wi
 
 Atmosphereアプリを使用して新しいアカウントを登録すると、そのアプリはPDSと通信し、PDS管理下のドメイン名（例：`*.bsky.social`）を使用して新しいハンドルを登録します。
 
-<Heading level={2} id="data-repositories">データリポジトリ</Heading>
+## データリポジトリ
 
 データリポジトリは、単一のユーザーによって公開されたデータのコレクションです。リポジトリは自己認証データ構造であり、各更新は署名され、誰でも検証できます。
 
@@ -39,13 +39,13 @@ AT APIエンドポイントに書き込みリクエストを行うとき（新�
 
 これが、個々のレコードがATデータリポジトリ内で一意に識別され、保存される方法です。
 
-<Heading level={2} id="pds">PDS</Heading>
+## PDS
 
 PDS（パーソナルデータサーバー）は、ユーザー個々人のデータリポジトリ（投稿、フォロワー、プロフィール情報など）をホストするサーバーです。PDSは、ホストされたユーザーアカウントのアカウントライフサイクル機能、アイデンティティ管理、および鍵解決を処理します。
 
 [自分のPDSをホスト](/guides/self-hosting)したり、あるPDSから別のPDSに[アカウントを移行](/guides/account-migration)したりできます。詳細については[ATスタック](/guides/the-at-stack#pds)を参照してください。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 ATデータを同期およびストリーミングする方法は多数あります。[Jetstream](/guides/streaming-data)を使ってリアルタイムの更新をストリーミングしたり、ネットワーク上に既に存在するデータをローカルに[バックフィル](/guides/backfilling)したりできます。
 

@@ -34,7 +34,7 @@ export const header = {
 
 [ストリーム処理](https://milinda.pathirage.org/kappa-architecture.com/)を使用してバックエンドを構築したことがある場合は、これから説明する種類のシステムに精通していることになります。そうでない場合も心配しないでください。順を追って説明します。{{className: 'lead'}}
 
-<Heading level={2} id="scaling-the-traditional-web-backend">従来のウェブバックエンドのスケーリング</Heading>
+## 従来のウェブバックエンドのスケーリング
 
 従来の、使いやすいウェブアーキテクチャは、アプリサーバーの背後にある「1つの大きなSQLデータベース」です。アプリはデータベースと通信し、フロントエンドからのリクエストを処理します。
 
@@ -86,7 +86,7 @@ export const header = {
 
 ある意味、私たちが行ったのは[データベースを裏返しにして](https://www.youtube.com/watch?v=fU9hR3kiOK0)、データベースをカスタム構築したことです。標準ストレージをNoSQLクラスターに簡素化し、ビューサーバーを使用して独自のクエリエンジンを構築しました。構築の利便性は大幅に低下しますが、拡張性があります。
 
-<Heading level={2} id="decentralizing-our-high-scale-backend">大規模バックエンドの分散化</Heading>
+## 大規模バックエンドの分散化
 
 ATプロトコルの目標は、アプリケーションを相互接続して、バックエンド間でユーザーアカウントやコンテンツなどの状態を共有することです。
 
@@ -114,7 +114,7 @@ ATプロトコルの目標は、アプリケーションを相互接続して、
 
 では、これらすべてのサービスを連携させるにはどうすればよいでしょうか?
 
-<Heading level={2} id="unifying-the-data-model">データモデルの統合</Heading>
+## データモデルの統合
 
 [ユーザーデータリポジトリ](/guides/data-repos)と呼ばれる共有データモデルを確立します。
 
@@ -164,7 +164,7 @@ ATプロトコルの目標は、アプリケーションを相互接続して、
   <Image src={image16} alt="" className="w-full dark:invert max-w-lg mx-auto" />
 </Container>
 
-<Heading level={2} id="charting-the-flow-of-data">データフローを図に表す</Heading>
+## データフローを図に表す
 
 大規模な分散型バックエンドをセットアップしたので、atprotoでアプリケーションが実際にどのように動作するかを図にしてみましょう。
 
@@ -218,7 +218,7 @@ ATプロトコルの目標は、アプリケーションを相互接続して、
   <Image src={image24} className="w-full dark:invert max-w-2xl" />
 </Container>
 
-<Heading level={2} id="building-practical-open-systems">実用的なオープンシステムの構築</Heading>
+## 実用的なオープンシステムの構築
 
 ATプロトコルは、P2Pテクノロジーと大規模システムの実践を融合します。atprotoの原型を作ったエンジニアは、[IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System)および[Dat](https://en.wikipedia.org/wiki/Dat_(software))のコアエンジニアであり、[Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)の著者であるMartin Kleppmannは、アクティブな技術アドバイザーです。
 

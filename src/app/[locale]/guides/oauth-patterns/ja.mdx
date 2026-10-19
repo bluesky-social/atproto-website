@@ -9,7 +9,7 @@ export const header = {
 
 OAuthの入門については、[OAuthについて](/guides/about-oauth)をご覧ください。権限スコープの理解については、[権限セット](/guides/permission-sets)をご覧ください。完全な仕様については、[OAuth仕様](/specs/oauth)をご覧ください。
 
-<Heading level={2} id="how-is-o-auth-different-in-at-protocol">ATプロトコルのOAuthは何が違う？</Heading>
+## ATプロトコルのOAuthは何が違う？
 
 atprotoは[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.html)を基盤として、OAuth標準の特定の「プロファイル」を[仕様として定めています](/specs/oauth)。
 
@@ -21,7 +21,7 @@ atprotoは[OAuth 2.1](https://www.ietf.org/archive/id/draft-ietf-oauth-v2-1-13.h
 
 - **クライアントID**：他のOAuthエコシステムでは、クライアントアプリケーションがリソースサーバーに事前登録が必要なことがよくあります。これは分散型システム（多数のクライアントと多数のリソースサーバーがある）では実行できないため、atprotoは[Client ID Metadata Documents](/specs/oauth#client-id-metadata-document)を使用してこれに対処しています。
 
-<Heading level={2} id="understanding-d-po-p">DPoPを理解する</Heading>
+## DPoPを理解する
 
 [DPoP（Demonstrating Proof of Possession）](https://datatracker.ietf.org/doc/html/rfc9449)はOAuthトークンをクライアントが保持する鍵に暗号学的に紐付けます。攻撃者がアクセストークンを傍受しても、秘密鍵なしでは使用できません。これ、長期セッション（最大2年）を持つ機密クライアントにとって特に重要です。
 
@@ -35,7 +35,7 @@ DPoPはatproto OAuthで必須です。**SDKを使用している場合**、自�
 
 [cookbook/python-oauth-web-app](https://github.com/bluesky-social/cookbook/tree/main/python-oauth-web-app)の`atproto_oauth.py`には完全な手書きDPoP実装が含まれています。完全な仕様については[OAuth仕様のDPoPの記述](/specs/oauth#demonstrating-proof-of-possession-d-po-p)を参照してください。
 
-<Heading level={2} id="pkce-and-par">PKCEとPAR</Heading>
+## PKCEとPAR
 
 atproto OAuthでは、さらにあと2つのセキュリティ機構が必須です。
 
@@ -45,7 +45,7 @@ atproto OAuthでは、さらにあと2つのセキュリティ機構が必須で
 
 DPoPと同様に、両方ともSDKで自動的に処理されます。OAuthを自分で実装する場合は、要件について[OAuth spec](/specs/oauth)を参照してください。
 
-<Heading level={2} id="token-refresh">トークンリフレッシュ</Heading>
+## トークンリフレッシュ
 
 atprotoのOAuthアクセストークンには有効期限があります。トークンが期限切れになった場合、リフレッシュトークンを使用して新しいアクセストークンを取得する必要があります。SDKはこれを自動的に処理しますが、自分で実装する場合は次の点に注意してください。
 
@@ -53,7 +53,7 @@ atprotoのOAuthアクセストークンには有効期限があります。ト�
 - API呼び出しが401で失敗した場合、再試行前にトークンリフレッシュを試みる
 - 新しいアクセストークンは同じDPoP鍵ペアに紐付けられる
 
-<Heading level={2} id="session-storage">セッションストレージ</Heading>
+## セッションストレージ
 
 BFFパターンを使用するウェブアプリケーションでは、OAuthセッションをユーザーセッションと関連付ける必要があります。一般的なアプローチには以下があります。
 
@@ -62,11 +62,11 @@ BFFパターンを使用するウェブアプリケーションでは、OAuthセ
 
 アーキテクチャパターンについては、[アプリの種類](/guides/about-oauth#types-of-app)をご覧ください。
 
-<Heading level={2} id="progressive-scope-requests">段階的なスコープ要求</Heading>
+## 段階的なスコープ要求
 
 アプリケーションは常にサインイン時にすべての権限を必要とするわけではありません。[クライアントメタデータドキュメント](/specs/oauth#client-id-metadata-document)の`scope`パラメータはアプリケーションが要求できるスコープの最大セットを宣言しますが、個々の認可フローはそのサブセットを要求できます。これにより、最小限のスコープから始めて、機能が必要になった際にユーザーが追加で同意する形で後から要求できます。
 
-<Heading level={3} id="selecting-scopes-before-authorization">認可前のスコープ選択</Heading>
+### 認可前のスコープ選択
 
 ユーザーによって異なるニーズを持つクライアントサイドアプリケーションの場合、OAuthリダイレクト前にユーザーが付与する[権限](/specs/permission)を選択できるようにするアプローチもあります。アプリケーションはユーザーの選択から[スコープ文字列](/specs/permission#scope-string-syntax)を構築し、[`authorize()`](https://github.com/bluesky-social/atproto/tree/main/packages/oauth/oauth-client#readme)に渡します。
 
@@ -100,7 +100,7 @@ const url = await oauthClient.authorize(handle, {
 
 コールバック後、アプリケーションはセッションで付与されたスコープを追跡し、それに応じて機能を表示または非表示にします。
 
-<Heading level={3} id="upgrading-scopes-for-an-existing-session">既存セッションのスコープアップグレード</Heading>
+### 既存セッションのスコープアップグレード
 
 オプションの統合機能（アプリケーションの主要な[名前空間権限](/specs/permission#namespace-authority)外のスコープを必要とする機能）を持つ[BFFパターン](/guides/about-oauth#types-of-app)を使用するアプリケーションでは、ユーザーがサインインした後にスコープのアップグレードが行えます。アプリケーションはユーザーの設定を保存し、拡張されたスコープセットで新しいOAuthフローを開始し、コールバックで古いセッションを置き換えます。
 
@@ -123,7 +123,7 @@ const url = await oauthClient.authorize(handle, {
 
 [権限セット](/specs/permission#permission-sets)は明示的なスコープアップグレードの必要性を減らせることに注意してください。クライアントがトークンをリフレッシュする際、計算された権限が解決されたセットの変更を反映して更新される場合があります。新しい機能が既存の権限セットの[名前空間権限](/specs/permission#namespace-authority)内に収まる場合、公開されたセットを更新するだけで十分です。再認可は不要です。名前空間をまたぐ統合については、引き続き明示的なアップグレードが必要になります。スコープの変更をアプリケーションのリリースと調整するためのガイダンスについては、[変更のロールアウト](/guides/permission-requests#rolling-out-changes)をご覧ください。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [認証](/guides/auth)
 - [OAuthについて](/guides/about-oauth)

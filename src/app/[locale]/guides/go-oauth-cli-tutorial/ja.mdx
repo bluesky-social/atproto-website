@@ -18,7 +18,7 @@ export const header = {
 
 これはATプロトコルでOAuthがどう動くかを理解するための良い出発点です。TypeScript版は[OAuth with Nodeチュートリアル](/guides/oauth-cli-tutorial)、本番向けウェブアプリ構築は[OAuth with NextJSチュートリアル](/guides/oauth-tutorial)を参照してください。
 
-<Heading level={2} id="prerequisites">前提条件</Heading>
+## 前提条件
 
 Goの基本的な理解を前提としています。
 
@@ -31,7 +31,7 @@ Goの基本的な理解を前提としています。
 
 テスト用atprotoハンドルも用意しておいてください。
 
-<Heading level={2} id="part-1-project-setup">パート1：セットアップ</Heading>
+## パート1：セットアップ
 
 新しいGoモジュールを作成し、[Go SDK](https://github.com/bluesky-social/indigo)をインストールします。
 
@@ -39,7 +39,7 @@ Goの基本的な理解を前提としています。
 
 以上です。Go SDKにはOAuthに必要なものがすべて含まれており、開発用のインメモリセッションストアも利用できます。
 
-<Heading level={2} id="part-2-build-the-o-auth-client">パート2：OAuthクライアントを作る</Heading>
+## パート2：OAuthクライアントを作る
 
 `main.go`を作成します。まずはインポートとOAuthクライアントのセットアップから始めます。
 
@@ -55,7 +55,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 `NewMemStore`は開発向けのインメモリセッションストレージを提供します。
 
-<Heading level={2} id="part-3-login-flow">パート3：ログインフロー</Heading>
+## パート3：ログインフロー
 
 引き続き`run`関数にログインフローを実装します。ここではハンドルを解決し、ブラウザを開き、コールバックを待ちます。
 
@@ -67,7 +67,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 2. ユーザーのブラウザで同意画面が開きます。
 3. ユーザーが承認すると、PDSが認可コード付きで `http://127.0.0.1:<port>/callback` にリダイレクトします。
 
-<Heading level={2} id="part-4-use-the-session">パート4：セッションを使う</Heading>
+## パート4：セッションを使う
 
 コールバックをセッションに交換し、認証付きAPI呼び出しを行う処理を追加して`run`関数を完成させます。
 
@@ -75,7 +75,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 `ProcessCallback`は認可コードをトークンに交換します。`ResumeSession`はそのトークンを、DPoP署名とトークン更新を自動処理するセッションとしてラップします。`APIClient()`はユーザー資格情報で事前設定済みのHTTPクライアントを返し、任意の[XRPC](/specs/xrpc)呼び出しに利用できます。
 
-<Heading level={2} id="part-5-helper-functions">パート5：ヘルパー関数</Heading>
+## パート5：ヘルパー関数
 
 コールバックサーバーとブラウザ起動のヘルパー関数を追加します。
 
@@ -83,7 +83,7 @@ OAuthループバックは、特別なリダイレクトURI（例：`http://127.
 
 コールバックサーバーは`127.0.0.1:0`でリッスンします。これはOSに利用可能な任意ポートの割り当てを指示します。コールバックが届くと、クエリパラメーターをチャネル経由でメインフローへ渡し、自身をシャットダウンします。
 
-<Heading level={2} id="part-6-run-it">パート6：実行する</Heading>
+## パート6：実行する
 
 CLIツールを実行し、引数に自分のハンドルを渡します。
 
@@ -93,7 +93,7 @@ CLIツールを実行し、引数に自分のハンドルを渡します。
 
 <S09 />
 
-<Heading level={2} id="conclusion">結論</Heading>
+## 結論
 
 ATプロトコルで認証する最小構成のGo製OAuth CLIツールが完成しました。ソースコード全体はおよそ120行です。
 

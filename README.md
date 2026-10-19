@@ -145,6 +145,15 @@ prefers `header` and falls back to `metadata`, so both conventions work, includi
 former page also renders its MDX directly, with no `<Page>` wrapper, because its
 content supplies its own heading.
 
+**Heading anchors follow English.** Translators write plain `##` / `###`
+headings. `src/mdx/headingIds.mjs` gives each one the anchor of the English
+heading in the same position, so `/ko/guides/auth#getting-started` works and
+the table of contents and search agree. If a translation has a different number
+of headings at some level than `en.mdx`, that level falls back to slugs of the
+translated text (or `section-<level>-<n>` for non-Latin text) rather than
+failing the build. Any heading can pin its anchor with an annotation:
+`## データ移行 {{ id: 'migrating-data' }}`.
+
 `mdx.d.ts` types the named MDX exports. `@types/mdx` only types the default
 export, and nothing surfaced that before, because the dynamic import resolved to
 `any`.

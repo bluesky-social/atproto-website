@@ -21,7 +21,7 @@ export const header = {
 
 このチュートリアルでは、前のチュートリアルで作成したStatusphereアプリを[Ozone](https://github.com/bluesky-social/ozone)のラベラーサービスに接続します。ユーザーはフィード上でモデレーターが付与したラベルを確認でき、ステータスをラベラーに報告して審査を依頼できるようになります。
 
-<Heading level={2} id="prerequisites">前提条件</Heading>
+## 前提条件
 
 このチュートリアルは、[ソーシャルアプリの作成](/guides/statusphere-tutorial)チュートリアルの完了を前提としています。始める前にそちらのチュートリアルを動作させてください。
 
@@ -39,7 +39,7 @@ curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*
 
 インストールしたばかりのOzoneでは、`{"labels":[]}`が返るはずです。
 
-<Heading level={2} id="part-1-wiring-the-labeler-into-your-app">パート1：ラベラーをアプリと接続</Heading>
+## パート1：ラベラーをアプリと接続
 
 ラベラーのDIDを環境に追加します。
 
@@ -55,7 +55,7 @@ curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*
 
 新しいスコープを既存セッションに反映させるには、ログアウトして再度ログインしてください。
 
-<Heading level={2} id="part-2-querying-labels">パート2：ラベルの照会</Heading>
+## パート2：ラベルの照会
 
 ラベルはラベラーサービス上に保存され、各ユーザーのリポジトリには保存されません。フィードをレンダリングするたびにラベラーに直接問い合わせます。
 
@@ -75,7 +75,7 @@ curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*
 
 3つのヘルパー（`isHidden`, `isWarned`, `displayLabels`）は値を解釈します。`!hide`と`!warn`はシステムレベルのラベルで、UI上の挙動が定められています。それ以外は`spam`や`joke`のような説明的ラベルで、任意の方法でレンダリングできます。
 
-<Heading level={2} id="part-3-capturing-record-cids">パート3：レコードCIDの取得</Heading>
+## パート3：レコードCIDの取得
 
 レポート対象の指定には、報告されるレコードのURIとCIDの両方が必要です。TapのwebhookイベントはCIDを含んでいますが、既存スキーマではそれを破棄しています。`status`テーブルを拡張してCIDを保持するようにします。
 
@@ -99,7 +99,7 @@ curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*
 
 `getRecentStatuses`は既に`selectAll()`を使用しているため、新しいカラムは他の変更なしにフィードページへ反映されます。
 
-<Heading level={2} id="part-4-reporting-statuses">パート4：ステータスの報告</Heading>
+## パート4：ステータスの報告
 
 `app/api/report/route.ts`を作成します。
 
@@ -111,7 +111,7 @@ curl "https://<your-ozone-host>/xrpc/com.atproto.label.queryLabels?uriPatterns=*
 
 <S09 />
 
-<Heading level={2} id="part-5-displaying-labels-in-the-feed">パート5：フィードにラベルを表示</Heading>
+## パート5：フィードにラベルを表示
 
 ここで全てを連携させます。`app/page.tsx`を更新して表示されているステータスのラベルを取得し、非表示ラベルなら除外、警告ラベルは表示を薄くし、残りのラベル値をバッジとしてレンダリングして、各行に`ReportButton`を表示するようにします。以下には変更されたセクションのみを示しています。ヘッダー、セッションブロック、トップステータスブロックは前のチュートリアルから変更ありません。
 
@@ -146,7 +146,7 @@ OzoneのUIを開き、キュー内のレポートを見つけてラベルを適�
 
 親指を立てる絵文字は非常に残虐（graphic）だとみなされたようです。
 
-<Heading level={2} id="conclusion">結論</Heading>
+## 結論
 
 これで、ラベラーサービスから署名付きラベルを取得し、ユーザーがレポートを送信できるatprotoアプリができました。小さなアプリではレンダリングごとにクエリする方法でも動作しますが、本番環境向けには`com.atproto.label.subscribeLabels`のWebSocketストリームを利用してローカルキャッシュを最新に保つことを推奨します。これが次のステップです。
 

@@ -7,13 +7,13 @@ export const header = {
   description: 'firehoseとJetstreamの使用',
 }
 
-<Heading level={2} id="streaming-data">データストリーミング</Heading>
+## データストリーミング
 
 ATプロトコルのコアプリミティブの一つは*firehose*です。これは、ユーザーの更新（投稿、いいね、フォロー、ハンドル変更など）を効率的に同期するために使用される署名付きイベントストリームです。
 
 ストリーミングデータ受信を必要とする多くのATアプリケーションは、フィードジェネレーターからラベラー、ボット、検索エンジンに至るまで、firehoseを利用します。ATエコシステムには、これらのfirehose APIを提供する多くの異なるエンドポイントがあります。各PDSは、担当するリポジトリ上のすべてのアクティビティのストリームを提供します。そこから、リレーは参加している各PDSのストリームを単一の統合ストリーム（firehose）に集約します。
 
-<Heading level={2} id="firehose">firehose</Heading>
+## firehose
 
 誰でも認証なしでfirehoseに接続できます。これはプロトコルのコア機能です。開始するには、`com.atproto.sync.subscribeRepos`エンドポイントのプロバイダーへのWebSocket接続を開きます。
 
@@ -23,7 +23,7 @@ ATプロトコルのコアプリミティブの一つは*firehose*です。こ�
 
 firehose出力形式はatprotoの特に複雑な部分の一つであり、バイナリ[CBOR](/specs/data-model)データと[CAR](/specs/repository#car-file-serialization)ファイルのデコードが含まれることに注意してください。さらに、ネットワークが成長するにつれてデータの量は急速に増加しています。完全な同期firehoseはコアネットワークインフラストラクチャですが、[フィード開発者](/guides/feeds)などのエンドユーザーのために、**Jetstream**という代替ストリーミングソリューションを提供しています。
 
-<Heading level={2} id="jetstream">Jetstream</Heading>
+## Jetstream
 
 Jetstreamにはいくつかの大きな利点があります。
 
@@ -39,7 +39,7 @@ Pythonの例を次に示します。
 
 <JetstreamPython />
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [同期](/guides/sync)
 - [バックフィル](/guides/backfilling)

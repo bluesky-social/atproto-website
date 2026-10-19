@@ -12,7 +12,7 @@ atproto 리소스에 대한 제어는 "권한(permissions)"을 사용하여 설�
 
 각 리소스 유형에는 권한을 세분화할 수 있는 정의된 매개변수 세트가 있습니다. 권한은 문자열 형식(OAuth 스코프로 직접 사용) 또는 JSON 객체(권한 세트에서 사용)로 표현될 수 있습니다. 권한 세트는 공개 Lexicon 스키마로 게시되며, 권한 세트 자체의 NSID와 동일한 NSID 계층 구조 아래에 있는 명명된 리소스로 범위가 제한됩니다.
 
-<Heading level={2} id="resource-types">리소스 유형</Heading>
+## 리소스 유형 {{ id: 'resource-types' }}
 
 PDS 인스턴스에서 사용자 소유 리소스와 관련된 권한:
 
@@ -176,7 +176,7 @@ account:repo?action=manage
 identity:handle
 ```
 
-<Heading level={2} id="scope-string-syntax">스코프 문자열 구문</Heading>
+## 스코프 문자열 구문 {{ id: 'scope-string-syntax' }}
 
 [OAuth](/specs/oauth) 스코프로 직접 요청될 때 권한은 간단한 문자열로 표현되어야 합니다. 이 섹션에서는 권한 스코프 문자열의 구문을 설명합니다.
 
@@ -217,7 +217,7 @@ resource:positional?key=québec
 emoji:☺️
 ```
 
-<Heading level={2} id="permission-sets">권한 세트</Heading>
+## 권한 세트 {{ id: 'permission-sets' }}
 
 전체 기능을 갖춘 클라이언트 앱은 작동하기 위해 수십 개 또는 수백 개의 개별 권한이 필요합니다. 이는 긴 권한 목록을 주의 깊게 검토할 가능성이 낮아 사용자 경험 및 보안 문제를 야기하며, 개발자에게는 이러한 목록을 정의하고 유지 관리하는 것이 번거로운 작업입니다.
 
@@ -293,7 +293,7 @@ include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview
 
 인증 서버와 리소스 서버는 권한 세트 내의 개별 권한 선언이 알 수 없는 리소스를 설명하거나 예상치 못한 매개변수 이름 또는 값을 포함하는 경우 해당 선언을 무시해야 합니다. 이러한 동작의 이유는 권한 시스템이 시간이 지남에 따라 발전할 것으로 예상되며, 새로운 클라이언트 권한 요청이 전체적으로 거부되어서는 안 되기 때문입니다. 동시에, 새로운 매개변수(필드)가 권한을 더 세분화할 수 있으므로 부분적으로 이해된 권한을 부여하는 것은 안전하지 않습니다.
 
-<Heading level={2} id="namespace-authority">네임스페이스 권한</Heading>
+## 네임스페이스 권한 {{ id: 'namespace-authority' }}
 
 권한 세트는 세트 자체와 동일한 NSID 네임스페이스 아래의 리소스를 참조하는 권한을 표현하는 것으로 제한됩니다.
 
@@ -304,7 +304,7 @@ include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview
 
 예를 들어, `app.example.feed.authOnlyPost` 세트는 `app.example.feed.post` 레코드에 대한 권한과 원격 서비스에 `app.example.feed.getPostThread` API 엔드포인트 요청을 보내는 권한을 포함할 수 있습니다. 하지만 `app.example.actor.profile`에 대한 권한은 부여할 수 없습니다. 계층 구조에서 한 단계 위에 있는 `app.example.authFull` 권한 세트는 이러한 모든 리소스 또는 계층 구조 더 아래에 있는 리소스에 대한 권한을 포함할 수 있습니다.
 
-<Heading level={2} id="resolution-and-caching">해결 및 캐싱</Heading>
+## 해결 및 캐싱 {{ id: 'resolution-and-caching' }}
 
 권한 세트 Lexicon은 인증 서버(예: PDS 인스턴스)에서 해결해야 합니다. 기존 [Lexicon 게시 및 해결 시스템](/specs/lexicon)은 스키마가 게시되고 검증되는 방법을 설명합니다.
 
@@ -314,13 +314,13 @@ include:com.example.authBasicFeatures?aud=did:web:api.example.com%23svc_appview
 
 세션 시작 시 권한 세트를 해결할 수 없고(로컬 캐시에 이미 없는 경우) 인증 요청은 실패합니다.
 
-<Heading level={2} id="usage-and-implementation-guidelines">사용 및 구현 가이드라인</Heading>
+## 사용 및 구현 가이드라인 {{ id: 'usage-and-implementation-guidelines' }}
 
 현재 정의된 리소스와 매개변수는 모든 구문의 유연성을 활용하지는 않습니다. 구현체는 일반 구문 대신 현재 사용되는 구문에 집중하기로 결정할 수 있습니다.
 
 인증 서버는 권한 세트의 lexicon 해결을 오프로드하기 위해 "Lexicon Aggregator" 서비스를 사용하기로 선택할 수 있습니다. 이러한 서비스는 업데이트된 권한 세트를 감지하기 위해 전체 네트워크 파이어호스를 모니터링합니다. NSID 도메인 하이재킹이나 권한 세트 범위에 대한 적대적 변경을 방지하기 위한 보안 로직을 포함할 수 있습니다.
 
-<Heading level={2} id="possible-future-changes">가능한 향후 변경 사항</Heading>
+## 가능한 향후 변경 사항 {{ id: 'possible-future-changes' }}
 
 리소스 세트는 프로토콜에 새로운 기능이 추가됨에 따라 시간이 지남에 따라 확장될 것으로 예상됩니다.
 

@@ -22,7 +22,7 @@ atprotoのIDシステムには、いくつかの要件があります。
 
 atprotoのIDシステムを採用すると、エンドツーエンドの暗号化、署名されたユーザーデータ、サービスサインイン、および一般的な相互運用のためのツールがアプリケーションに提供されるはずです。
 
-<Heading level={2} id="identifiers">識別子</Heading>
+## 識別子
 
 私たちは、*ハンドル*と*DID*という2つの相互に関連する識別子形式を使用します。ハンドルはDNS名ですが、DIDは安全で安定したIDとして機能する[新しいW3C標準](https://www.w3.org/TR/did-core/)です。ATプロトコルはDID PLCとDID Webの2種類に対応しています。
 
@@ -50,7 +50,7 @@ DNSハンドルはユーザー向けの識別子です。UIに表示され、ユ
 </DescriptionList>
 
 
-<Heading level={2} id="did-methods">DIDメソッド</Heading>
+## DIDメソッド
 
 [DID標準](https://www.w3.org/TR/did-core/)は、DIDを公開し、[DIDドキュメント](https://www.w3.org/TR/did-core/#core-properties)に解決する「メソッド」を、ただ一つに定めず多様に定義できるフレームワークを設けています。さまざまな既存のメソッドが[公開](https://w3c.github.io/did-spec-registries/#did-methods)されおり、それぞれ異なる機能や特徴を持ちます。atprotoでの使用に際して、以下の基準を設定しました。
 
@@ -64,14 +64,14 @@ DNSハンドルはユーザー向けの識別子です。UIに表示され、ユ
 
 プロジェクト開始時点で、DIDメソッドのいずれもこれらの基準を完全には満たしていませんでした。そのため、私たちは[did-web](https://w3c-ccg.github.io/did-method-web/)と、私たちが作成した[DID PLC](https://github.com/bluesky-social/did-method-plc)という新規メソッドをサポートすることを選択しました。
 
-<Heading level={2} id="handle-resolution">ハンドル解決</Heading>
+## ハンドル解決
 
 atprotoのハンドルは、DIDに解決されるドメイン名です。DIDは、ユーザーの署名公開鍵とホスティングサービスを含むDIDドキュメントに解決されます。
 
 ハンドル解決には、DNSのTXTレコードか、HTTPSのwell-knownエンドポイントを利用します。詳細は[ハンドル仕様](/specs/handle)を参照してください。
 
 
-<Heading level={3} id="example-hosting-service">例：ホスティングサービス</Heading>
+### 例：ホスティングサービス
 
 ホスティングサービスがPLCを使用していて、ユーザーのハンドルをサブドメインとして提供しているシナリオを考えてみましょう。
 
@@ -87,7 +87,7 @@ atprotoのハンドルは、DIDに解決されるドメイン名です。DIDは�
 
 これで、`https://pds.com`と通信してAliceのデータにアクセスできるようになりました。
 
-<Heading level={3} id="example-self-hosting">例：セルフホスト</Heading>
+### 例：セルフホスト
 
 セルフホストのシナリオを考えてみましょう。`did:plc`を使用している場合は、次のようになります。
 

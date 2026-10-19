@@ -2,6 +2,7 @@ import { slugifyWithCounter } from '@sindresorhus/slugify'
 import glob from 'fast-glob'
 import * as fs from 'fs'
 import { toString } from 'mdast-util-to-string'
+import { mdxAnnotations } from 'mdx-annotations'
 import * as path from 'path'
 import { remark } from 'remark'
 import remarkMdx from 'remark-mdx'
@@ -11,9 +12,14 @@ import { SKIP, visit } from 'unist-util-visit'
 import * as url from 'url'
 
 import i18nConfig from '../../i18nConfig.js'
+import { remarkTranslatedHeadingIds } from './headingIds.mjs'
 
 const __filename = url.fileURLToPath(import.meta.url)
-const processor = remark().use(remarkMdx).use(extractSections)
+const processor = remark()
+  .use(remarkMdx)
+  .use(mdxAnnotations.remark)
+  .use(remarkTranslatedHeadingIds)
+  .use(extractSections)
 const slugify = slugifyWithCounter()
 
 function isObjectExpression(node) {
@@ -91,7 +97,10 @@ function extractSections() {
           if (excludedHeadings.includes(content)) {
             return SKIP
           }
-          let hash = node.depth === 1 ? null : slugify(content)
+          let hash =
+            node.depth === 1
+              ? null
+              : (node.data?.hProperties?.id ?? slugify(content))
           sections.push([content, hash, []])
         } else {
           sections.at(-1)?.[2].push(content)
@@ -100,6 +109,18 @@ function extractSections() {
       }
     })
   }
+}
+
+/**
+ * Splits an MDX page into the `[title, hash, content]` sections that the
+ * search index stores. `file` is the page's path, used to resolve anchors for
+ * translated pages.
+ */
+export function extractSearchSections(mdx, file) {
+  let sections = []
+  let vfile = { value: mdx, path: file, sections }
+  processor.runSync(processor.parse(vfile), vfile)
+  return sections
 }
 
 export default function Search(nextConfig = {}) {
@@ -130,13 +151,12 @@ export default function Search(nextConfig = {}) {
               if (!url) url = '/'
               let mdx = fs.readFileSync(path.join(appDir, file), 'utf8')
 
-              let sections = []
+              let sections
 
               if (cache.get(file)?.[0] === mdx) {
                 sections = cache.get(file)[1]
               } else {
-                let vfile = { value: mdx, sections }
-                processor.runSync(processor.parse(vfile), vfile)
+                sections = extractSearchSections(mdx, path.join(appDir, file))
                 cache.set(file, [mdx, sections])
               }
 

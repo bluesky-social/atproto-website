@@ -16,7 +16,7 @@ export const header = {
   description: 'ATプロトコルレコードを読み取る',
 }
 
-<Heading level={2} id="listing-records">レコードの列挙</Heading>
+## レコードの列挙
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -41,7 +41,7 @@ export const header = {
 
 完全なLexiconについては[`app.bsky.feed.post`](https://lexicon.garden/lexicon/did:plc:4v4y5r3lwsbtmsxhile2ljac/app.bsky.feed.post)を参照してください。
 
-<Heading level={2} id="getting-records">レコードの取得</Heading>
+## レコードの取得
 
 <TabGroup defaultValue="ts">
   <TabList>
@@ -63,7 +63,7 @@ export const header = {
 </TabGroup>
 
 
-<Heading level={2} id="did-resolition">DID解決</Heading>
+## DID解決
 
 atprotoでは、ユーザーデータは[DID](/guides/sync#data-repositories)（別名[分散型識別子](https://en.wikipedia.org/wiki/Decentralized_identifier)）を通じて解決されます。ほとんどのATプロトコルアプリケーションはユーザーアカウント登録時に[`did:plc` DID](/guides/the-at-stack#did-plc)を使用します。
 
@@ -77,7 +77,7 @@ TypeScript SDKは、現在認証されているユーザーのDIDを`client.did`
 
 <ClientDidTs />
 
-<Heading level={2} id="unauthenticated-reads">認証無しの読み取り</Heading>
+## 認証無しの読み取り
 
 一部のAPIエンドポイントは認証無しでアクセスできます。公開APIのURLを新しい`Client`に渡して、認証無しのクライアントを作成できます。
 
@@ -110,7 +110,7 @@ TypeScript SDKは、現在認証されているユーザーのDIDを`client.did`
 
 次は、ユーザーのデータリポジトリに[書き込み](/guides/writing-data)を試してみるとよいでしょう。
 
-<Heading level={2} id="further-reading-and-resources">関連・参考資料</Heading>
+## 関連・参考資料
 
 - [読み取りと書き込み](/guides/reads-and-writes)
 - [データ書き込み](/guides/writing-data)
