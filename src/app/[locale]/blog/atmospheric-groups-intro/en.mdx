@@ -18,13 +18,13 @@ export const header = {
   author: 'AT Protocol Team',
 }
 
-Hot on the heels of our first [Devex Goals for Spaces](https://atproto.com/blog/devex-goals-for-spaces) blog post last week, I want to talk this week about the atmospheric group spec that the ecosystem has been working on. This post will see it in action in an existing atproto app (Grain), and over the coming weeks we'll describe the fuller vision for an interoperating network of atmospheric groups. .
+Hot on the heels of our first [Devex Goals for Spaces](https://atproto.com/blog/devex-goals-for-spaces) blog post last week, I want to talk this week about the atmospheric group spec that the ecosystem has been working on. This post will see it in action in an existing atproto app (Grain), and over the coming weeks we'll describe the fuller vision for an interoperating network of atmospheric groups.
 
 The [opensocial.group proposal](https://tangled.org/opensocial.group/proposal/) is a community effort to standardize what a group looks like on top of Spaces, and it starts from a short definition: "An atmospheric group is a DID with a bunch of permissioned spaces under it." Because the group has its own DID, no individual member's account has to own it. Like atproto accounts, groups can migrate across hosts.
 
 More importantly, **you can use the same groups across applications,** the same way you can use your atproto account across applications. In other words, if you create a group in an app that supports a particular modality — event scheduling, real-time communication, promotional comms — you can use that exact same group in another app, without having to recreate it, re-invite everybody, or repeat other social maintenance.
 
-We're really stoked on this ecosystem standard and want to show off what we've been working on related to it. We are here to make Open Social Groups take root online. We are also **not focusing** on prototyping this first in Bluesky — rather, we are going builder-first, and trying to nail down which hooks might be needed in Bluesky to drive users toward Open Social Group experiences across the Atmosphere. That makes this a great fit to **delve** into on this blog! We're going to feature several different apps that have so far added support for Spaces, and show off what that UX looks like so far.
+We're really stoked on this ecosystem standard and want to show off what we've been working on related to it. We are here to make Open Social Groups take root online. We're going to feature several different apps that have so far added support for Spaces, and show off what that UX looks like so far.
 
 ## Open Social Group Patterns
 
@@ -99,8 +99,6 @@ The proposed spec provides a way to generically structure a group, while letting
 You can see the members side of this in the Spaces listing from earlier, where my account also has a repo in a `fyi.opensocial.members` space under the group DID. The proposal defines membership in both directions: the group writes a `membership` record granting a member their roles, and the member writes an `acceptance` record in the same space.
 
 Permissions in the proposal are flat role-based access control. A group defines roles, assigns one or more to each member, and roles have access to different actions. Each space has an `access` record listing which roles can read, and the group host enforces that when it issues space credentials. Rules about who can write to a space, post to an announcements channel, or pin a thread are left to each app's own Lexicons, which can still refer to the group's roles. Some records need to come from the group DID itself, like a pinned post at the top of a forum. For this, the group host also acts as an OAuth authorization server for the group DID. An admin signs in with their own account and receives a credential scoped to what their roles allow, so nobody has to share a password for the group account.
-
-Each group also acts as a moderation service for its own content. Reports come in through a `createReport` method, and labels are written as records into the same space as the content they apply to, so they stay inside the group's access boundary. This also helps us figure out where Bluesky might hook in. A group that wants to be found can publish a `declaration` record to its public repo pointing at its `meta` space, which Bluesky or any other app could use to show a group's profile and link out to the apps where it's active.
 
 The [opensocial.group proposal](https://tangled.org/opensocial.group/proposal/blob/main/proposal.md) is the place to follow along and give feedback on the group model, and the [Spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data) covers the protocol underneath it. We'll have more examples of apps building on Atmospheric Groups in the coming weeks!
 
