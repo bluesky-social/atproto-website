@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'atmospheric-groups-intro',
+    title: 'An Intro to Atmospheric Groups',
+    description: 'Atmospheric Groups, part of the Spaces blog series',
+    date: 'October 22, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'devex-goals-for-spaces',
     title: 'Developer Experience Goals for Atproto Spaces',
     description: 'A new series nailing down the moving parts of building on Spaces',
