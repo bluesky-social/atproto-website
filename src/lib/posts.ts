@@ -8,6 +8,13 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'open-social-groups-vision',
+    title: 'Open Social Groups — the Vision',
+    description: 'Showcasing the full vision for Open Social Groups, from the Spaces blog series',
+    date: 'October 28, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'atmospheric-groups-intro',
     title: 'An Intro to Atmospheric Groups',
     description: 'Atmospheric Groups, part of the Spaces blog series',

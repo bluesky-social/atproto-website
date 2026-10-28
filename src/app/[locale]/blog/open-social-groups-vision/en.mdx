@@ -1,0 +1,68 @@
+import molemanFancam from "./moleman-fancam.png"
+import moleGuestbook from "./mole-guestbook.png"
+import groupAdmin from "./group-admin.png"
+import pcktAuth from "./pckt-auth.png"
+import pcktLanding from "./pckt-landing.png"
+import groupRoles from "./group-roles.png"
+
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3myx6mnmtuc2b',
+  title: 'Open Social Groups — the Vision',
+  description: 'Showcasing the full vision for Open Social Groups, from the Spaces blog series',
+  date: 'October 28, 2026',
+  author: 'AT Protocol Team',
+}
+
+Many popular apps aim for synonymity with their function. The name Duolingo practically describes the entire ecosystem of language learning apps; WhatsApp is globally associated with messaging. You know what this reminds us of? That's right, [**the Unix philosophy**](https://en.wikipedia.org/wiki/Unix_philosophy)!
+
+That's right, I know what you're thinking: “you probably bring this up every chance you get!” Well, so what, it's very useful! The Unix philosophy says that programs — or user-facing apps — should try to **do one thing well**. That's why, on a modern Linux system, what we think of as key OS functionality is provided by entirely different programs: `df` for checking disk space, `curl` for making web requests, and so on. Some of these we take for granted as more like core *verbs* than applications per se, but, really, that's just evidence of the philosophy working well; you can `curl` a thousand different ways, but no matter what, you know when to use that particular muscle.
+
+There are varying opinions about how well this philosophy maps onto modern application development, but it is generally true that committing to making a *dedicated* event planning app, or a dedicated marketplace-style app, is both sticky for a user base and clarifying in terms of scope. These are two very good things to be, and they are, of course, supported by the bet we're making on the Atmosphere — that identity and data should be portable, and switching between applications should not come with the high cost it currently does elsewhere, i.e., needing to recreate your presence and your social graph in a proprietary network.
+
+So far, though, we've only borne that out for *individuals*: individuals' followers, individuals' data, individuals' individually created calendar events or web presences. This is powerful in its own right, but doesn't really map onto the way that we expect organizational continuity, or delegation, or simply shared work to actually *work* in practice. Open Social Groups change that, and they do it in a way that's native to the Atmosphere.
+
+## Opensocial.fyi
+
+On last week's blog, we created the **Democratic Assembly of Mole People**. This gave us a somewhat awkward group identity name of [democratic-assembl.opensocial.fyi](democratic-assembl.opensocial.fyi). If you go to that URL, you will have your mind *absolutely blown*.
+
+<Image src={molemanFancam} alt="Mole fanpage delights" />
+
+Welcome to my Mole Facts Page!
+
+[Last week](https://atproto.com/blog/atmospheric-groups-intro), we used [grain.social](https://atproto.com/blog/atmospheric-groups-intro) to create our new group. This was for two reasons: one, Grain has already added support for creating Groups directly, and two, it was simpler to initially showcase it within a single app, in the photo sharing mode of Grain.
+
+[opensocial.fyi](https://opensocial.fyi/) is more of a dedicated web app *for atproto Groups*. Rather than filling one particular user-facing function, it provides a way to administer your Groups, as well as letting you create a landing page. And what a landing page it is!
+
+By default, [opensocial.fyi](https://opensocial.fyi/) provides an MCP interface to create landing pages, so you can get up and running quickly (the Moleman fancam and associated fun facts actually came from a single prompt of mine). This MCP interface also includes also includes Atmosphere account integration, so that your Mole Guestbook (or other equivalent login UX) will include an “Ask to join” button that automatically triggers a PDS login flow:
+
+<Image src={moleGuestbook} alt="Mole Guestbook link" />
+
+And when other users do ask to join, you can currently browse and approve pending requests from the group management interface of [opensocial.fyi](https://opensocial.fyi/):
+
+<Image src={groupAdmin} alt="Group administration interface" />
+
+Try it out yourself! If you're on a Spaces-enabled PDS (don't forget you can sign up on [bsky.network](https://bsky.network/account)), you can create your own Group, or apply to join the esteemed ranks of Mole People.
+
+And, Geocities fever dreams aside, here's the real meat of these group identities: with this Spaces protocol standard, you can *also use them to log into other Atmosphere apps*.
+
+## Group Atmosphere Logins
+
+Let's demonstrate that with [pckt.blog](pckt.blog), a popular blogging app that implements [standard.site](https://standard.site/).
+
+<Image src={pcktAuth} alt="Pckt authentication interface" />
+
+Signing in gets us the usual [pckt.blog](pckt.blog) interface and feature set — this is early days for Spaces support across the Atmosphere — but as a starting point, from a group's point of view, this is a good thing. It means that drafts and publications can be owned by shared identities rather than individuals, and it eliminates any need for pckt to implement group management on its own; it only has to support the Spaces features of the protocol, so it can offload the management interface to sites like [opensocial.fyi](opensocial.fyi).
+
+<Image src={pcktLanding} alt="Pckt landing page" />
+
+You can also see how this could provide a solid foundation for subscriber-only or gated content. Again, the actual role management can be handled off-Pckt — [opensocial.fyi](opensocial.fyi) has a preliminary interface for this right now:
+
+<Image src={groupRoles} alt="Group roles management interface" />
+
+This way, you can manage subscription flows and subscriber-only channels the way that other platforms need an additional SaaS layer for; e.g., to ensure that paying members get access to both paywalled content, and a chat channel, and so on, all using the same accounts on the Atmosphere.
+
+## Moving Forward
+
+In the last two weeks, we've shown off Grain for photo sharing, PDSls for data management, opensocial.fyi for group administration, and pckt.blog for authoring. These are all implementing the Spaces APIs as they stand now, and showcasing part of the vision for Open Social Groups. Each of them does one thing well — and, considering that many of them are the product of a solo developer, this is crucial for sustainability. The Atmosphere, in turn, makes it possible for each of these apps to get to critical mass on their own, by letting them leverage first that existing social graph and now the ability to further annotate it with mutually shared, overlapping, enforceable boundaries.
+
+Get excited!! We're still releasing breaking changes to Spaces on a weekly basis, but we're just about finished with the major churn. In the next few weeks, this blog will drill into solutions for syncing Spaces at scale, and provide some best practices and implementation patterns.
