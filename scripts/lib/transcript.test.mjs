@@ -717,3 +717,30 @@ test('applyGlossary leaves the punctuation mark and plain "that protocol" alone'
   assert.equal(applyGlossary('an MD file'), 'an MD file')
   assert.equal(applyGlossary('the benefits of using that protocol'), 'the benefits of using that protocol')
 })
+
+// --- Recurring forms, as heard in episode 25 (2026-10-28) ------------------
+
+const RECURRING_25 = [
+  ['a nice turnout at Fossdem last year', 'a nice turnout at FOSDEM last year'],
+  ['coming out of FOSSDIM.', 'coming out of FOSDEM.'],
+  ['And so Foss Dem we have been', 'And so FOSDEM we have been'],
+  ['The first time I went to Fostime,', 'The first time I went to FOSDEM,'],
+  ['But Fostim is gonna be', 'But FOSDEM is gonna be'],
+  ['planning on going to Fosdin,', 'planning on going to FOSDEM,'],
+  ['the community from FOSDIM was great', 'the community from FOSDEM was great'],
+  ['the typical appro you know', 'the typical atproto you know'],
+  ['about the atmosphere, about appro, and', 'about the atmosphere, about atproto, and'],
+  ['And Treza here is a slight correction', 'And Trezy here is a slight correction'],
+  ['hoping Beast Guy does not', 'hoping Bluesky does not'],
+  ['Blues Guy', 'Bluesky'], // from episode 18's per-episode list
+]
+
+test('applyGlossary corrects names first heard wrong in episode 25', () => {
+  for (const [heard, want] of RECURRING_25) assert.equal(applyGlossary(heard), want, heard)
+})
+
+test('applyGlossary leaves "approach", "approve" and a lowercase "blues guy" alone', () => {
+  assert.equal(applyGlossary('a novel approach to payment'), 'a novel approach to payment')
+  assert.equal(applyGlossary('we approve of it'), 'we approve of it')
+  assert.equal(applyGlossary('he is a blues guy'), 'he is a blues guy')
+})

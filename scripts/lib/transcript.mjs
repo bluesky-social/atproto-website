@@ -136,6 +136,7 @@ export const GLOSSARY = [
   [/\b(?:appro|adproto)\.com\b/gi, 'atproto.com'],
   [/\b(?:at|app) protocol\b/gi, 'AT Protocol'],
   [/\b(?:at|app?) ?proto\b/gi, 'atproto'],
+  [/\bappro\b/gi, 'atproto'], // episodes 17 and 25; after the .com rules
   [/\bblue ?sky\b/gi, 'Bluesky'],
   [/\bfire ?hos[et]\b/gi, 'firehose'],
   [/\bRoost?\b/g, 'ROOST'],
@@ -163,7 +164,7 @@ export const GLOSSARY = [
   [/\bDivey\b/g, 'Divy'],
   [/\b(?:Joachinus|Jarkinis|Jerichenis)\b/g, 'Gerakines'],
   [/\bnorth ?sky\b/gi, 'Northsky'],
-  [/\bTre(?:zi|ssy|zzy)\b/g, 'Trezy'], // trezy.codes, who makes HappyView
+  [/\bTre(?:zi|ssy|zzy|za)\b/g, 'Trezy'], // trezy.codes, who makes HappyView
   [/\bHappy View\b/g, 'HappyView'],
   // From the review of episode 23 (2026-10-09). "that protocol" is ordinary
   // English, so only the clipped "that proto" is changed.
@@ -175,7 +176,10 @@ export const GLOSSARY = [
   // its "m", so it is safe too.
   [/\b(?:M[ -]?[Dd]ash|m[ -]dash|MDASH|MDAS|InDash)\b/g, 'EmDash'],
   [/\bMD CMS\b/g, 'EmDash CMS'],
-  [/\b(?:FOS[DT]EM|Fost[eu]m)\b/gi, 'FOSDEM'],
+  // Episode 25 added Fossdem, FOSSDIM, Foss Dem, Fostim(e), Fosdin, FOSDIM.
+  [/\b(?:Fos?s ?D[ei][mn]|Fost[eiu]me?)\b/gi, 'FOSDEM'],
+  // Case-sensitive, so "a blues guy" is left alone. Episodes 18 and 25.
+  [/\b(?:Blues|Beast) Guy\b/g, 'Bluesky'],
   [/\bGrays\b/g, 'Graze'],
   // House style.
   [/\b([Pp])ermission data\b/g, '$1ermissioned data'],
