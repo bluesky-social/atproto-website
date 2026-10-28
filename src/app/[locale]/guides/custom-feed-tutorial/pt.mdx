@@ -19,7 +19,7 @@ export const header = {
 
 Feeds personalizados, ou geradores de feeds, são serviços que fornecem algoritmos aos usuários. Isso lhe dá muita liberdade: escolher sua própria visualização da linha do tempo ou criar um feed incorporável para outros usuários.
 
-Neste tutorial, você criará um servidor de feed personalizado consumindo postagens do [firehose](/guides/streaming-data), classificando-as algoritmicamente e [transmitindo-as como um feed XRPC](/guides/feeds).
+Neste tutorial, você criará um servidor de feed personalizado consumindo postagens do [Jetstream](https://bsky.network/docs/jetstream), classificando-as algoritmicamente e [transmitindo-as como um feed XRPC](/guides/feeds).
 
 ## Pré-requisitos
 
@@ -79,19 +79,19 @@ Há alguns pontos importantes aqui. `DEFAULT_REPO` define o filtro DID do Jetstr
 
 Você está classificando esse feed procurando por postagens que contenham determinados termos. Você pode configurar esses termos com a variável de ambiente `FEED_SEARCH_TERMS`. Neste caso, você está procurando por postagens que mencionem "alf".
 
-Em seguida, você configurará a lógica para consumir postagens do Jetstream v2.
+Em seguida, você configurará a lógica para consumir postagens do Jetstream.
 
-## Parte 3: Consumindo o Jetstream v2
+## Parte 3: Consumindo o Jetstream
 
 Você armazenará as postagens que deseja servir em uma matriz.
 
-O Jetstream v2 envia eventos filtrados e decodificados como JSON por WebSocket. O SDK `@bsky/jetstream` gerencia a conexão e as reconexões. Adicione o seguinte conteúdo ao `src/index.ts`:
+O Jetstream envia eventos filtrados e decodificados como JSON por WebSocket. O SDK `@bsky/jetstream` gerencia a conexão e as reconexões. Adicione o seguinte conteúdo ao `src/index.ts`:
 
 <S09 />
 
 Isso abre uma assinatura ao vivo para commits de `app.bsky.feed.post`. Por padrão, ela acompanha a conta definida por `DEFAULT_REPO`. Defina `FEED_INITIAL_REPOS` como uma lista de DIDs separados por vírgula para acompanhar outras contas, ou como uma string vazia para receber postagens de toda a rede.
 
-Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando um evento de conta marca a conta como inativa. Os registros chegam como JSON decodificado; não é necessário executar o Tap nem decodificar o firehose.
+Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando um evento de conta marca a conta como inativa. Os registros chegam como JSON decodificado; você pode processá-los diretamente, sem executar o Tap nem adicionar outra etapa de decodificação.
 
 Este exemplo acompanha apenas o fluxo ao vivo e indexa postagens recebidas após a inicialização. Para obter postagens históricas, consulte a [documentação do Jetstream Replay](https://bsky.network/docs/jetstream-replay).
 
@@ -120,7 +120,7 @@ Você iniciará o consumidor do Jetstream e, em seguida, o servidor. Adicione a 
 
 <S12 />
 
-Isso inicia o consumidor do Jetstream v2 (a entrada do feed) e o servidor XRPC (a saída do feed). O SDK reconecta o fluxo ao vivo.
+Isso inicia o consumidor do Jetstream (a entrada do feed) e o servidor XRPC (a saída do feed). O SDK reconecta o fluxo ao vivo.
 
 Execute-o com `npx tsx src/index.ts`. Novas postagens correspondentes serão indexadas à medida que chegarem:
 

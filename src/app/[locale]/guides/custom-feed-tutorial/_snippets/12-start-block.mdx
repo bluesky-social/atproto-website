@@ -7,7 +7,7 @@ const jetstreamAbort = new AbortController()
 const indexer = indexJetstream(jetstreamAbort.signal).catch((err) => {
     if (!jetstreamAbort.signal.aborted) console.error('Jetstream error:', err)
 })
-console.log('Connecting to Jetstream v2...')
+console.log('Connecting to Jetstream...')
 
 serve(router, { port: config.port }).then((server) => {
     const feedParam = encodeURIComponent(FEED_URI)
@@ -19,7 +19,7 @@ Feed Generator Running
 Server: http://localhost:${config.port}
 Feed: ${config.feedName}
 Terms: ${config.searchTerms.join(', ')}
-Jetstream: v2 (US East)
+Jetstream: US East
 DID filter: ${repoFilter}
 
 To test (generate a JWT with goat):

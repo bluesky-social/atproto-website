@@ -19,7 +19,7 @@ export const header = {
 
 Custom feeds, or feed generators, are services that provide algorithms to users. This gives you lots of freedom: to choose your own timeline view, or to [create a embeddable feed for other users](https://graze.leaflet.pub/3m4yjmbnyec2c).
 
-In this tutorial, you'll create a custom feed server by consuming posts from the [firehose](/guides/streaming-data), algorithmically sorting them, and [broadcasting them as an XRPC feed](/guides/feeds).
+In this tutorial, you'll create a custom feed server by consuming posts from [Jetstream](https://bsky.network/docs/jetstream), algorithmically sorting them, and [broadcasting them as an XRPC feed](/guides/feeds).
 
 ## Prerequisites
 
@@ -79,19 +79,19 @@ There are a few things to note here. `DEFAULT_REPO` sets the Jetstream DID filte
 
 You're sorting this feed by searching for posts that contain certain terms. You can configure these terms with the `FEED_SEARCH_TERMS` environment variable. In this case, you're searching for posts that mention "alf".
 
-Next, you'll set up the logic to consume posts from Jetstream v2.
+Next, you'll set up the logic to consume posts from Jetstream.
 
-## Part 3: Consuming Jetstream v2
+## Part 3: Consuming Jetstream
 
 You'll store the posts you want to serve in an array.
 
-Jetstream v2 streams filtered, decoded JSON events over a WebSocket. The `@bsky/jetstream` SDK handles the connection and reconnects while your code processes new events. Add the following contents to `src/index.ts`:
+Jetstream streams filtered, decoded JSON events over a WebSocket. The `@bsky/jetstream` SDK handles the connection and reconnects while your code processes new events. Add the following contents to `src/index.ts`:
 
 <S09 />
 
 This opens a live subscription for `app.bsky.feed.post` commits. By default, it follows the single account configured by `DEFAULT_REPO`; set `FEED_INITIAL_REPOS` to a comma-separated list of DIDs to follow other accounts, or an empty string to receive posts from the whole network.
 
-For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when an account event marks the account inactive. The record is already decoded JSON, so you do not need to run Tap or decode the firehose yourself.
+For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when an account event marks the account inactive. The records are already decoded JSON, so you can process them directly without running Tap or adding a separate decoding step.
 
 This example follows the live stream only, so it indexes posts as they arrive after startup. For historical posts, see the [Jetstream replay documentation](https://bsky.network/docs/jetstream-replay).
 

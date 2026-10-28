@@ -19,7 +19,7 @@ export const header = {
 
 사용자 지정 피드 또는 피드 생성기는 사용자에게 알고리즘을 제공하는 서비스입니다. 이를 통해 타임라인 보기를 자유롭게 선택하거나 [다른 사용자를 위한 임베드 가능한 피드를 생성](https://graze.leaflet.pub/3m4yjmbnyec2c)할 수 있는 등 다양한 자유를 누릴 수 있습니다.
 
-이 튜토리얼에서는 [파이어호스](/guides/streaming-data)에서 게시물을 가져와 알고리즘으로 정렬한 후 [XRPC 피드로 브로드캐스팅](/guides/feeds)하는 커스텀 피드 서버를 만들 것입니다.
+이 튜토리얼에서는 [Jetstream](https://bsky.network/docs/jetstream)에서 게시물을 가져와 알고리즘으로 정렬한 후 [XRPC 피드로 브로드캐스팅](/guides/feeds)하는 커스텀 피드 서버를 만듭니다.
 
 ## 필수 조건
 
@@ -79,19 +79,19 @@ export const header = {
 
 특정 용어가 포함된 게시물을 검색하여 이 피드를 정렬하고 있습니다. 이러한 용어는 `FEED_SEARCH_TERMS` 환경 변수로 구성할 수 있습니다. 이 예제에서는 "alf"를 언급한 게시물을 검색합니다.
 
-다음으로, Jetstream v2에서 게시물을 가져오는 로직을 설정합니다.
+다음으로, Jetstream에서 게시물을 가져오는 로직을 설정합니다.
 
-## 파트 3: Jetstream v2 사용하기
+## 파트 3: Jetstream 사용하기
 
 제공할 게시물을 배열에 저장합니다.
 
-Jetstream v2는 필터링된 이벤트를 디코딩된 JSON으로 WebSocket을 통해 전송합니다. `@bsky/jetstream` SDK가 연결과 재연결을 처리합니다. `src/index.ts`에 다음 내용을 추가하세요:
+Jetstream은 필터링된 이벤트를 디코딩된 JSON으로 WebSocket을 통해 전송합니다. `@bsky/jetstream` SDK가 연결과 재연결을 처리합니다. `src/index.ts`에 다음 내용을 추가하세요:
 
 <S09 />
 
 이 코드는 `app.bsky.feed.post` 커밋을 라이브 구독합니다. 기본적으로 `DEFAULT_REPO`에 지정된 계정을 추적합니다. `FEED_INITIAL_REPOS`에 쉼표로 구분한 DID 목록을 지정해 계정을 바꾸거나, 빈 문자열을 지정해 전체 네트워크의 게시물을 받을 수 있습니다.
 
-게시물을 생성하거나 업데이트할 때 코드는 설정된 검색어를 찾고 일치하는 게시물을 `postIndex`에 추가합니다. 더 이상 일치하지 않는 게시물과 삭제된 게시물을 제거하며 계정 이벤트에서 계정이 비활성 상태로 표시되면 해당 계정의 게시물도 제거합니다. 레코드는 디코딩된 JSON으로 전달되므로 Tap을 실행하거나 firehose를 디코딩할 필요가 없습니다.
+게시물을 생성하거나 업데이트할 때 코드는 설정된 검색어를 찾고 일치하는 게시물을 `postIndex`에 추가합니다. 더 이상 일치하지 않는 게시물과 삭제된 게시물을 제거하며 계정 이벤트에서 계정이 비활성 상태로 표시되면 해당 계정의 게시물도 제거합니다. 레코드는 이미 디코딩된 JSON으로 전달되므로 Tap을 실행하거나 별도로 디코딩할 필요가 없습니다.
 
 이 예제는 라이브 스트림만 사용하므로 시작한 이후 도착한 게시물을 인덱싱합니다. 과거 게시물은 [Jetstream Replay 문서](https://bsky.network/docs/jetstream-replay)를 참조하세요.
 
@@ -120,7 +120,7 @@ Jetstream 소비자를 시작한 후 서버를 시작합니다. `src/index.ts`�
 
 <S12 />
 
-이 코드는 Jetstream v2 소비자(피드 입력)와 XRPC 서버(피드 출력)를 시작합니다. SDK가 라이브 스트림을 재연결합니다.
+이 코드는 Jetstream 소비자(피드 입력)와 XRPC 서버(피드 출력)를 시작합니다. SDK가 라이브 스트림을 재연결합니다.
 
 `npx tsx src/index.ts`로 실행하세요. 새 게시물이 도착하면 조건에 맞는 게시물을 색인합니다:
 
