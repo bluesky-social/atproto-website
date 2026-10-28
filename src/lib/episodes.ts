@@ -101,6 +101,20 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-10-28-the-path-of-honor',
+    episodeNumber: 25,
+    title: 'The Path of Honor',
+    description: 'All the news from around the Atmosphere, including FOSDEM, a CFP for next year’s Atmosphere Conf, atmospheric integrations, and more.',
+    date: 'October 28, 2026',
+    pubDate: '2026-10-28T13:48:05.615Z',
+    duration: '00:30:01',
+    durationSeconds: 1801,
+    format: 'livestream',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-10-28-live/2026-10-21.mp3',
+    audioSizeBytes: 29272971,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-10-14-the-code-is-the-easy-part-matt-kane',
     episodeNumber: 24,
     title: 'The Code is the Easy Part',
