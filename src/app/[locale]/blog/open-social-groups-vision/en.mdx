@@ -41,9 +41,11 @@ And when other users do ask to join, you can currently browse and approve pendin
 
 <Image src={groupAdmin} alt="Group administration interface" />
 
-Try it out yourself! If you're on a Spaces-enabled PDS (don't forget you can sign up on [bsky.network](https://bsky.network/account)), you can create your own Group, or apply to join the esteemed ranks of Mole People.
+<Note>
+Creating a group directly on opensocial.fyi is not currently supported — last week, we created the group on Grain, and then used that group identity to log into opensocial.fyi. Opensocial.fyi is a set of prototypes that we're building as we develop Spaces protocol features.
+</Note>
 
-And, Geocities fever dreams aside, here's the real meat of these group identities: with this Spaces protocol standard, you can *also use them to log into other Atmosphere apps*.
+If you're on a Spaces-enabled PDS (don't forget you can sign up on [bsky.network](https://bsky.network/account)), you can  apply to join the esteemed ranks of Mole People. And, Geocities fever dreams aside, here's the real meat of these group identities: with this Spaces protocol standard, you can *also use them to log into other Atmosphere apps*.
 
 ## Group Atmosphere Logins
 
@@ -64,5 +66,7 @@ This way, you can manage subscription flows and subscriber-only channels the way
 ## Moving Forward
 
 In the last two weeks, we've shown off Grain for photo sharing, PDSls for data management, opensocial.fyi for group administration, and pckt.blog for authoring. These are all implementing the Spaces APIs as they stand now, and showcasing part of the vision for Open Social Groups. Each of them does one thing well — and, considering that many of them are the product of a solo developer, this is crucial for sustainability. The Atmosphere, in turn, makes it possible for each of these apps to get to critical mass on their own, by letting them leverage first that existing social graph and now the ability to further annotate it with mutually shared, overlapping, enforceable boundaries.
+
+Developing opensocial.fyi has been a great way to explore the Spaces APIs and show off what end-to-end application support might look like. On a fundamental level, building real stuff to exercise protocol designs is important! As we finalize the protocol, our prototypes will change, but the vision for Open Social Groups is here now: a way to create shared identities, with shared data and shared access control, that can be used across the Atmosphere.
 
 Get excited!! We're still releasing breaking changes to Spaces on a weekly basis, but we're just about finished with the major churn. In the next few weeks, this blog will drill into solutions for syncing Spaces at scale, and provide some best practices and implementation patterns.
