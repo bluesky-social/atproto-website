@@ -28,11 +28,11 @@ async function indexJetstream(signal: AbortSignal) {
         signal,
     })) {
         if (evt.kind === 'account') {
-            if (evt.account.active || evt.account.status !== 'deleted') continue
+            if (evt.account.active) continue
             const removed = postIndex.filter(p => p.uri.startsWith(`at://${evt.did}/`)).length
             if (removed > 0) {
                 postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.startsWith(`at://${evt.did}/`)))
-                console.log(`Account ${evt.did} deleted: removed ${removed} posts`)
+                console.log(`Account ${evt.did} inactive: removed ${removed} posts`)
             }
             continue
         }

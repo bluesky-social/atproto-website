@@ -91,7 +91,7 @@ Jetstream v2 streams filtered, decoded JSON events over a WebSocket. The `@bsky/
 
 This opens a live subscription for `app.bsky.feed.post` commits. By default, it follows the single account configured by `DEFAULT_REPO`; set `FEED_INITIAL_REPOS` to a comma-separated list of DIDs to follow other accounts, or an empty string to receive posts from the whole network.
 
-For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when Jetstream reports that an account was deleted. The record is already decoded JSON, so you do not need to run Tap or decode the firehose yourself.
+For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when an account event marks the account inactive. The record is already decoded JSON, so you do not need to run Tap or decode the firehose yourself.
 
 This example follows the live stream only, so it indexes posts as they arrive after startup. For historical posts, see the [Jetstream replay documentation](https://bsky.network/docs/jetstream-replay).
 

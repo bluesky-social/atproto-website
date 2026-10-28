@@ -1,6 +1,6 @@
 ```ts
 import { Jetstream } from '@bsky/jetstream'
-import { AtUriString, DidString } from '@atproto/lex'
+import { AtUriString, DidString, isDidString } from '@atproto/lex'
 import { LexError, LexRouter, serviceAuth } from '@atproto/lex-server'
 import { serve } from '@atproto/lex-server/nodejs'
 import * as app from './lexicons/app.js'
@@ -20,8 +20,13 @@ interface FeedConfig {
 
 const DEFAULT_REPO = 'did:plc:ragtjsm2j2vknwkz3zp4oxrd' // pfrazee.com
 
+const publisherDid = process.env.FEED_PUBLISHER_DID || 'did:example:alice'
+if (!isDidString(publisherDid)) {
+    throw new Error('FEED_PUBLISHER_DID must be a valid DID')
+}
+
 const config: FeedConfig = {
-    publisherDid: (process.env.FEED_PUBLISHER_DID || 'did:example:alice') as DidString,
+    publisherDid,
     feedName: process.env.FEED_NAME || 'whats-alf',
     searchTerms: (process.env.FEED_SEARCH_TERMS || 'alf').split(',').map(s => s.trim()),
     maxPosts: parseInt(process.env.FEED_MAX_POSTS || '1000', 10),

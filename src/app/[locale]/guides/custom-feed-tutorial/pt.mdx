@@ -91,7 +91,7 @@ O Jetstream v2 envia eventos filtrados e decodificados como JSON por WebSocket. 
 
 Isso abre uma assinatura ao vivo para commits de `app.bsky.feed.post`. Por padrão, ela acompanha a conta definida por `DEFAULT_REPO`. Defina `FEED_INITIAL_REPOS` como uma lista de DIDs separados por vírgula para acompanhar outras contas, ou como uma string vazia para receber postagens de toda a rede.
 
-Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando uma conta é excluída. Os registros chegam como JSON decodificado; não é necessário executar o Tap nem decodificar o firehose.
+Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando um evento de conta marca a conta como inativa. Os registros chegam como JSON decodificado; não é necessário executar o Tap nem decodificar o firehose.
 
 Este exemplo acompanha apenas o fluxo ao vivo e indexa postagens recebidas após a inicialização. Para obter postagens históricas, consulte a [documentação do Jetstream Replay](https://bsky.network/docs/jetstream-replay).
 
