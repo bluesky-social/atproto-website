@@ -2,6 +2,8 @@
 mkdir my-agent
 cd my-agent
 npm init -y
-npm i -D typescript @types/node dotenv @atproto/lex @atproto/lex-server @atproto/tap
+npm pkg set type=module
+npm i -D typescript @types/node dotenv @atproto/lex @atproto/lex-server
+npm i @bsky/jetstream
 npx tsc --init --verbatimModuleSyntax false
 ```

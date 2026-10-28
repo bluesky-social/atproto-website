@@ -2,18 +2,15 @@ import {Container} from "@/components/Container"
 import bsky from "./feeds-bsky.png"
 import S01 from './_snippets/01-install-deps.mdx'
 import S02 from './_snippets/02-install-lex.mdx'
-import S03 from './_snippets/03-install-tap.mdx'
 import S04 from './_snippets/04-project-setup.mdx'
 import S05 from './_snippets/05-lex-install.mdx'
 import S06 from './_snippets/06-lex-build.mdx'
-import S07 from './_snippets/07-tap-run.mdx'
 import S08 from './_snippets/08-config-and-imports.mdx'
 import S09 from './_snippets/09-post-index-and-indexer.mdx'
 import S10 from './_snippets/10-xrpc-routes.mdx'
 import S11 from './_snippets/11-feed-server.mdx'
 import S12 from './_snippets/12-start-block.mdx'
 import S13 from './_snippets/13-terminal-output.mdx'
-import S14 from './_snippets/14-tap-signal-collection.mdx'
 
 export const header = {
   title: 'Write a Custom Feed',
@@ -29,10 +26,9 @@ In this tutorial, you'll create a custom feed server by consuming posts from the
 This tutorial involves building a TypeScript application from scratch. You should have a working understanding of TypeScript and Node.js.
 
 You should have installed:
-- Node.js 18+
-- Go 1.25+
+- Node.js 22.15+
 
-On platforms supported by [homebrew](https://brew.sh/), you can install them with:
+On platforms supported by [homebrew](https://brew.sh/), you can install it with:
 
 <S01 />
 
@@ -40,17 +36,13 @@ You should also have our `lex` CLI tool and `tsx` installed globally:
 
 <S02 />
 
-You'll also need to install [`tap`](/guides/the-at-stack#tap) to consume the firehose of posts from the network.
-
-<S03 />
-
 Now, create a new TypeScript project directory and initialize your project:
 
 <S04 />
 
 You'll begin by adding Lexicons to your project.
 
-## Part 1: Lexicons and Tap
+## Part 1: Lexicons
 
 [Lexicons](/guides/lexicon) define atproto records. A baseline feed generator requires the `app.bsky.feed.describeFeedGenerator` and `app.bsky.feed.getFeedSkeleton` Lexicons. You can use `lex` to download and build these Lexicons into your project:
 
@@ -62,9 +54,7 @@ From here, you can run `lex build` to generate TypeScript types for all of your 
 
 The generated code will live in `src/lexicons`.
 
-You'll also need to run `tap` in a separate terminal to index posts from the network. Start `tap` with:
-
-<S07 />
+The project setup also installs the [`@bsky/jetstream`](https://www.npmjs.com/package/@bsky/jetstream) SDK, which you'll use in Part 3.
 
 Now you can start building your feed generator.
 
@@ -85,25 +75,25 @@ For this example, you'll be creating our entire app in a single file at `src/ind
 
 <S08 />
 
-There are a few things to note here. You've supplied a `DEFAULT_REPO` to fetch with `tap`. In this case, you're following a single user, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com). This will keep the tutorial example manageable.
+There are a few things to note here. `DEFAULT_REPO` sets the Jetstream DID filter. In this case, you're following a single user, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com), to keep the tutorial example manageable. You can change the accounts with the `FEED_INITIAL_REPOS` environment variable.
 
 You're sorting this feed by searching for posts that contain certain terms. You can configure these terms with the `FEED_SEARCH_TERMS` environment variable. In this case, you're searching for posts that mention "alf".
 
-Next, you'll set up the logic to consume posts from the firehose.
+Next, you'll set up the logic to consume posts from Jetstream v2.
 
-## Part 3: Consuming the Firehose
+## Part 3: Consuming Jetstream v2
 
 You'll store the posts you want to serve in an array.
 
-As `tap` discovers posts from the network, this feed server will search their text for our configured search terms. If it finds a match, it'll add the post to your array. Add the following contents to `src/index.ts`:
+Jetstream v2 streams filtered, decoded JSON events over a WebSocket. The `@bsky/jetstream` SDK handles the connection and reconnects while your code processes new events. Add the following contents to `src/index.ts`:
 
 <S09 />
 
-Here, you connect to `tap`, and use the `SimpleIndexer` function provided by the `@atproto/tap` library to process incoming records from the `app.bsky.feed.post` Lexicon — i.e., Bluesky posts.
+This opens a live subscription for `app.bsky.feed.post` commits. By default, it follows the single account configured by `DEFAULT_REPO`; set `FEED_INITIAL_REPOS` to a comma-separated list of DIDs to follow other accounts, or an empty string to receive posts from the whole network.
 
-When a new post is discovered, you check if its text matches your search terms. If it does, you add it to your `postIndex` array. You'll also handle deletions and identity status changes to keep your index accurate.
+For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when Jetstream reports that an account was deleted. The record is already decoded JSON, so you do not need to run Tap or decode the firehose yourself.
 
-Essentially, you're building an in-memory search index of posts that match your criteria. You'll then serve this index as a feed.
+This example follows the live stream only, so it indexes posts as they arrive after startup. For historical posts, see the [Jetstream replay documentation](https://bsky.network/docs/jetstream-replay).
 
 ## Part 4: Serving the Feed
 
@@ -126,20 +116,18 @@ Finally, you'll add the runtime logic to start the server.
 
 ## Part 5: Running the Server
 
-You'll connect to tap with `channel.start()` then initiate your server. Add the runtime logic to `src/index.ts`:
+You'll start the Jetstream consumer and then initiate your server. Add the runtime logic to `src/index.ts`:
 
 <S12 />
 
-This kicks off both your connection to `tap` (your feed input) and your XRPC server (your feed output). It also provides some logging to help you test your feed generator.
+This starts your Jetstream consumer (your feed input) and your XRPC server (your feed output). The SDK handles reconnecting the live stream.
 
-Run it with `npx tsx src/index.ts`. You should see some initial posts being indexed:
+Run it with `npx tsx src/index.ts`. New matching posts will be indexed as they arrive:
 
 <S13 />
 
 <Note>
-Remember that this example fetches only a single user's data repository. To fetch the entire network, stop and re-run `tap` with the `--signal-collection` flag:
-
-<S14 />
+Remember that this example follows only one account by default. Set `FEED_INITIAL_REPOS` to an empty string to receive posts from the whole network.
 </Note>
 
 ## Conclusion

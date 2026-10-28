@@ -2,18 +2,15 @@ import {Container} from "@/components/Container"
 import bsky from "./feeds-bsky.png"
 import S01 from './_snippets/01-install-deps.mdx'
 import S02 from './_snippets/02-install-lex.mdx'
-import S03 from './_snippets/03-install-tap.mdx'
 import S04 from './_snippets/04-project-setup.mdx'
 import S05 from './_snippets/05-lex-install.mdx'
 import S06 from './_snippets/06-lex-build.mdx'
-import S07 from './_snippets/07-tap-run.mdx'
 import S08 from './_snippets/08-config-and-imports.mdx'
 import S09 from './_snippets/09-post-index-and-indexer.mdx'
 import S10 from './_snippets/10-xrpc-routes.mdx'
 import S11 from './_snippets/11-feed-server.mdx'
 import S12 from './_snippets/12-start-block.mdx'
 import S13 from './_snippets/13-terminal-output.mdx'
-import S14 from './_snippets/14-tap-signal-collection.mdx'
 
 export const header = {
   title: 'Write a Custom Feed',
@@ -29,10 +26,9 @@ Neste tutorial, você criará um servidor de feed personalizado consumindo posta
 Este tutorial envolve a criação de um aplicativo TypeScript do zero. Você deve ter um conhecimento prático de TypeScript e Node.js.
 
 Você deve ter instalado:
-- Node.js 18+
-- Go 1.25+
+- Node.js 22.15+
 
-Em plataformas compatíveis com [homebrew](https://brew.sh/), você pode instalá-los com:
+Em plataformas compatíveis com [homebrew](https://brew.sh/), você pode instalar o Node.js com:
 
 <S01 />
 
@@ -40,17 +36,13 @@ Você também deve ter nossa ferramenta CLI `lex` instalada globalmente:
 
 <S02 />
 
-Você também precisará instalar o [`tap`](/guides/the-at-stack#tap) para consumir o fluxo de postagens da rede.
-
-<S03 />
-
 Agora, crie um novo diretório de projeto TypeScript e inicialize seu projeto:
 
 <S04 />
 
 Você começará adicionando léxicos ao seu projeto.
 
-## Parte 1: Léxicos e Tap
+## Parte 1: Léxicos
 
 [Léxicos](/guides/lexicon) definem registros Atproto. Um gerador de feed de linha de base requer os léxicos `app.bsky.feed.describeFeedGenerator` e `app.bsky.feed.getFeedSkeleton`. Você pode usar o `lex` para baixar e construir esses lexicons em seu projeto:
 
@@ -62,9 +54,7 @@ A partir daqui, você pode executar o `lex build` para gerar tipos TypeScript pa
 
 O código gerado ficará em `src/lexicons`.
 
-Você também precisará executar o `tap` em um terminal separado para indexar as postagens da rede. Inicie o `tap` com:
-
-<S07 />
+A configuração do projeto também instala o SDK [`@bsky/jetstream`](https://www.npmjs.com/package/@bsky/jetstream), que será usado na Parte 3.
 
 Agora você pode começar a criar seu gerador de feed.
 
@@ -85,25 +75,25 @@ Para este exemplo, você criará todo o nosso aplicativo em um único arquivo em
 
 <S08 />
 
-Há algumas coisas a serem observadas aqui. Você forneceu um `DEFAULT_REPO` para buscar com `tap`. Neste caso, você está seguindo um único usuário, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com). Isso manterá o exemplo do tutorial gerenciável.
+Há alguns pontos importantes aqui. `DEFAULT_REPO` define o filtro DID do Jetstream. Neste caso, o exemplo acompanha um único usuário, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com), para ser mais simples. Use `FEED_INITIAL_REPOS` para alterar as contas acompanhadas.
 
 Você está classificando esse feed procurando por postagens que contenham determinados termos. Você pode configurar esses termos com a variável de ambiente `FEED_SEARCH_TERMS`. Neste caso, você está procurando por postagens que mencionem "alf".
 
-Em seguida, você configurará a lógica para consumir postagens do firehose.
+Em seguida, você configurará a lógica para consumir postagens do Jetstream v2.
 
-## Parte 3: Consumindo o Firehose
+## Parte 3: Consumindo o Jetstream v2
 
 Você armazenará as postagens que deseja servir em uma matriz.
 
-À medida que o `tap` descobre postagens da rede, este servidor de feed pesquisará seu texto pelos termos de pesquisa configurados. Se encontrar uma correspondência, ele adicionará a postagem à sua matriz. Adicione o seguinte conteúdo ao `src/index.ts`:
+O Jetstream v2 envia eventos filtrados e decodificados como JSON por WebSocket. O SDK `@bsky/jetstream` gerencia a conexão e as reconexões. Adicione o seguinte conteúdo ao `src/index.ts`:
 
 <S09 />
 
-Aqui, você se conecta ao `tap` e usa a função `SimpleIndexer` fornecida pela biblioteca `@atproto/tap` para processar os registros recebidos do Lexicon `app.bsky.feed.post` — ou seja, as postagens do Bluesky.
+Isso abre uma assinatura ao vivo para commits de `app.bsky.feed.post`. Por padrão, ela acompanha a conta definida por `DEFAULT_REPO`. Defina `FEED_INITIAL_REPOS` como uma lista de DIDs separados por vírgula para acompanhar outras contas, ou como uma string vazia para receber postagens de toda a rede.
 
-Quando uma nova postagem é descoberta, você verifica se o texto corresponde aos seus termos de pesquisa. Se corresponder, você o adiciona à sua matriz `postIndex`. Você também lidará com exclusões e alterações de status de identidade para manter seu índice preciso.
+Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando uma conta é excluída. Os registros chegam como JSON decodificado; não é necessário executar o Tap nem decodificar o firehose.
 
-Essencialmente, você está criando um índice de pesquisa na memória de postagens que correspondem aos seus critérios. Em seguida, você servirá esse índice como um feed.
+Este exemplo acompanha apenas o fluxo ao vivo e indexa postagens recebidas após a inicialização. Para obter postagens históricas, consulte a [documentação do Jetstream Replay](https://bsky.network/docs/jetstream-replay).
 
 ## Parte 4: Servindo o feed
 
@@ -126,20 +116,18 @@ Por fim, você adicionará a lógica de tempo de execução para iniciar o servi
 
 ## Parte 5: Executando o servidor
 
-Você se conectará ao tap com `channel.start()` e, em seguida, iniciará seu servidor. Adicione a lógica de tempo de execução a `src/index.ts`:
+Você iniciará o consumidor do Jetstream e, em seguida, o servidor. Adicione a lógica de tempo de execução a `src/index.ts`:
 
 <S12 />
 
-Isso inicia sua conexão com o `tap` (sua entrada de feed) e seu servidor XRPC (sua saída de feed). Ele também fornece alguns registros para ajudá-lo a testar seu gerador de feed.
+Isso inicia o consumidor do Jetstream v2 (a entrada do feed) e o servidor XRPC (a saída do feed). O SDK reconecta o fluxo ao vivo.
 
-Execute-o com `npx tsx src/index.ts`. Você deverá ver algumas postagens iniciais sendo indexadas:
+Execute-o com `npx tsx src/index.ts`. Novas postagens correspondentes serão indexadas à medida que chegarem:
 
 <S13 />
 
 <Note>
-Lembre-se de que este exemplo busca apenas o repositório de dados de um único usuário. Para buscar toda a rede, pare e execute novamente o `tap` com o sinalizador `--signal-collection`:
-
-<S14 />
+Por padrão, este exemplo acompanha apenas uma conta. Defina `FEED_INITIAL_REPOS` como uma string vazia para receber postagens de toda a rede.
 </Note>
 
 ## Conclusão
