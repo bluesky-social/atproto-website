@@ -75,9 +75,9 @@ Para este exemplo, você criará todo o nosso aplicativo em um único arquivo em
 
 <S08 />
 
-Há alguns pontos importantes aqui. `DEFAULT_REPO` define o filtro DID do Jetstream. Neste caso, o exemplo acompanha um único usuário, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com), para ser mais simples. Use `FEED_INITIAL_REPOS` para alterar as contas acompanhadas.
+Há alguns pontos importantes aqui. `FEED_INITIAL_REPOS` define o filtro DID do Jetstream. Ele fica vazio por padrão, então você receberá postagens de toda a rede. Defina-o como uma lista de DIDs separados por vírgula para acompanhar contas específicas.
 
-Você está classificando esse feed procurando por postagens que contenham determinados termos. Você pode configurar esses termos com a variável de ambiente `FEED_SEARCH_TERMS`. Neste caso, você está procurando por postagens que mencionem "alf".
+Você está classificando esse feed procurando por postagens que contenham determinados termos. Você pode configurar esses termos com a variável de ambiente `FEED_SEARCH_TERMS`. Neste caso, você está criando um feed `goblin-mode` com postagens que mencionam goblins (goblin), gremlins (gremlin), magos (wizard) ou caos (chaos).
 
 Em seguida, você configurará a lógica para consumir postagens do Jetstream.
 
@@ -89,7 +89,7 @@ O Jetstream envia eventos filtrados e decodificados como JSON por WebSocket. O S
 
 <S09 />
 
-Isso abre uma assinatura ao vivo para commits de `app.bsky.feed.post`. Por padrão, ela acompanha a conta definida por `DEFAULT_REPO`. Defina `FEED_INITIAL_REPOS` como uma lista de DIDs separados por vírgula para acompanhar outras contas, ou como uma string vazia para receber postagens de toda a rede.
+Isso abre uma assinatura ao vivo para commits de `app.bsky.feed.post`. Por padrão, ela recebe postagens de toda a rede. Defina `FEED_INITIAL_REPOS` como uma lista de DIDs separados por vírgula para acompanhar apenas essas contas.
 
 Para cada criação ou atualização, o código procura os termos configurados no texto e adiciona correspondências a `postIndex`. Ele remove postagens que deixaram de corresponder, processa exclusões e remove postagens quando um evento de conta marca a conta como inativa. Os registros chegam como JSON decodificado; você pode processá-los diretamente, sem executar o Tap nem adicionar outra etapa de decodificação.
 
@@ -127,7 +127,7 @@ Execute-o com `npx tsx src/index.ts`. Novas postagens correspondentes serão ind
 <S13 />
 
 <Note>
-Por padrão, este exemplo acompanha apenas uma conta. Defina `FEED_INITIAL_REPOS` como uma string vazia para receber postagens de toda a rede.
+Este exemplo só recebe postagens criadas depois que ele inicia, então pode levar cerca de um minuto para as primeiras correspondências aparecerem. Se você limitar `FEED_INITIAL_REPOS` a poucas contas, as correspondências serão bem menos frequentes.
 </Note>
 
 ## Conclusão

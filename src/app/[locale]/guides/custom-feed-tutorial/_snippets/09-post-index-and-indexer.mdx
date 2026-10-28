@@ -23,7 +23,7 @@ const searchPattern = new RegExp(
 async function indexJetstream(signal: AbortSignal) {
     for await (const evt of jetstream.live({
         collections: ['app.bsky.feed.post'],
-        dids: config.initialRepos.length > 0 ? config.initialRepos : undefined,
+        ...(config.initialRepos.length > 0 && { dids: config.initialRepos }),
         kinds: ['commit', 'account'],
         signal,
     })) {

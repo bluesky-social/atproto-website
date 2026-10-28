@@ -75,9 +75,9 @@ For this example, you'll be creating our entire app in a single file at `src/ind
 
 <S08 />
 
-There are a few things to note here. `DEFAULT_REPO` sets the Jetstream DID filter. In this case, you're following a single user, [`pfrazee.com`](https://bsky.app/profile/pfrazee.com), to keep the tutorial example manageable. You can change the accounts with the `FEED_INITIAL_REPOS` environment variable.
+There are a few things to note here. `FEED_INITIAL_REPOS` sets the Jetstream DID filter. It's empty by default, so you'll receive posts from the whole network. You can set it to a comma-separated list of DIDs to follow specific accounts.
 
-You're sorting this feed by searching for posts that contain certain terms. You can configure these terms with the `FEED_SEARCH_TERMS` environment variable. In this case, you're searching for posts that mention "alf".
+You're sorting this feed by searching for posts that contain certain terms. You can configure these terms with the `FEED_SEARCH_TERMS` environment variable. In this case, you're building a `goblin-mode` feed of posts that mention goblins, gremlins, wizards, or chaos.
 
 Next, you'll set up the logic to consume posts from Jetstream.
 
@@ -89,7 +89,7 @@ Jetstream streams filtered, decoded JSON events over a WebSocket. The `@bsky/jet
 
 <S09 />
 
-This opens a live subscription for `app.bsky.feed.post` commits. By default, it follows the single account configured by `DEFAULT_REPO`; set `FEED_INITIAL_REPOS` to a comma-separated list of DIDs to follow other accounts, or an empty string to receive posts from the whole network.
+This opens a live subscription for `app.bsky.feed.post` commits. By default, it receives posts from the whole network. Set `FEED_INITIAL_REPOS` to a comma-separated list of DIDs to follow only those accounts.
 
 For each create or update, the code searches the post text for your configured terms and adds matches to `postIndex`. It removes posts that no longer match, processes deletions, and removes posts when an account event marks the account inactive. The records are already decoded JSON, so you can process them directly without running Tap or adding a separate decoding step.
 
@@ -127,7 +127,7 @@ Run it with `npx tsx src/index.ts`. New matching posts will be indexed as they a
 <S13 />
 
 <Note>
-Remember that this example follows only one account by default. Set `FEED_INITIAL_REPOS` to an empty string to receive posts from the whole network.
+This example only sees posts created after it starts, so it may take a minute for the first matches to appear. If you limit `FEED_INITIAL_REPOS` to a few accounts, matches will be much less frequent.
 </Note>
 
 ## Conclusion

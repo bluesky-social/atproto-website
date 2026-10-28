@@ -4,20 +4,20 @@ Connecting to Jetstream...
 Feed Generator Running
 
 Server: http://localhost:3000
-Feed: whats-alf
-Terms: alf
+Feed: goblin-mode
+Terms: goblin, goblins, gremlin, gremlins, wizard, wizards, chaos
 Jetstream: US East
-DID filter: 1
+DID filter: all accounts
 
 To test (generate a JWT with goat):
 goat account service-auth --aud did:example:alice
 
 Then:
-curl -H "Authorization: Bearer <jwt>" "http://localhost:3000/xrpc/app.bsky.feed.getFeedSkeleton?feed=at%3A%2F%2Fdid%3Aexample%3Aalice%2Fapp.bsky.feed.generator%2Fwhats-alf"
+curl -H "Authorization: Bearer <jwt>" "http://localhost:3000/xrpc/app.bsky.feed.getFeedSkeleton?feed=at%3A%2F%2Fdid%3Aexample%3Aalice%2Fapp.bsky.feed.generator%2Fgoblin-mode"
 
-Listening for posts matching: alf
+Listening for posts matching: goblin, goblins, gremlin, gremlins, wizard, wizards, chaos
 
-CREATE at://did:plc:ragtjsm2j2vknwkz3zp4oxrd/app.bsky.feed.post/3jux6xlrdb42v
-  "Run?? Alf was the date I struck out with ☹️"
+CREATE at://did:plc:q6gjnaw2blty4crticxkmujt/app.bsky.feed.post/3myxs2zcgjk2a
+  "entering my goblin era. do not perceive me"
   ⭐ Added to index (1 total)
 ```

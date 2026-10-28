@@ -18,8 +18,6 @@ interface FeedConfig {
     initialRepos: DidString[]
 }
 
-const DEFAULT_REPO = 'did:plc:ragtjsm2j2vknwkz3zp4oxrd' // pfrazee.com
-
 const publisherDid = process.env.FEED_PUBLISHER_DID || 'did:example:alice'
 if (!isDidString(publisherDid)) {
     throw new Error('FEED_PUBLISHER_DID must be a valid DID')
@@ -27,11 +25,11 @@ if (!isDidString(publisherDid)) {
 
 const config: FeedConfig = {
     publisherDid,
-    feedName: process.env.FEED_NAME || 'whats-alf',
-    searchTerms: (process.env.FEED_SEARCH_TERMS || 'alf').split(',').map(s => s.trim()),
+    feedName: process.env.FEED_NAME || 'goblin-mode',
+    searchTerms: (process.env.FEED_SEARCH_TERMS || 'goblin,goblins,gremlin,gremlins,wizard,wizards,chaos').split(',').map(s => s.trim()),
     maxPosts: parseInt(process.env.FEED_MAX_POSTS || '1000', 10),
     port: parseInt(process.env.FEED_PORT || '3000', 10),
-    initialRepos: (process.env.FEED_INITIAL_REPOS ?? DEFAULT_REPO).split(',').map(s => s.trim()).filter(Boolean).map(s => s as DidString),
+    initialRepos: (process.env.FEED_INITIAL_REPOS || '').split(',').map(s => s.trim()).filter(Boolean).map(s => s as DidString),
 }
 
 const FEED_URI: AtUriString = `at://${config.publisherDid}/app.bsky.feed.generator/${config.feedName}` as AtUriString
