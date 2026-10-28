@@ -1,0 +1,71 @@
+export const header = {
+  title: 'A Jetstream for Spaces',
+  description: 'Syncing Spaces with Jetstream semantics, part of the Spaces blog series',
+  date: 'November 5, 2026',
+  author: 'AT Protocol Team',
+}
+
+In our [Devex Goals for Spaces](https://atproto.com/blog/devex-goals-for-spaces) post last month, we asked whether Spaces could still support Jetstream client semantics, and showed a screenshot of a Jetstream client reading from a space. Since then, we've written about [Atmospheric Groups](https://atproto.com/blog/atmospheric-groups-intro) and the role of the **Group Host**, the service that answers for a group's spaces as a whole.
+
+We're building a reference Group Host, and this week we want to show one part of the prototype: sync. It reads records from a set of spaces and combines updates from all of them into one Jetstream-compatible stream. If you've built an app that consumes public atproto data from Jetstream, consuming space data should look very familiar.
+
+## Why Spaces Need Their Own Sync
+
+Public atproto data flows through relays. Every PDS broadcasts its commits, a relay aggregates them into the firehose, and services like Jetstream turn that into JSON you can filter by collection. Spaces don't work that way. Each space is its own sync boundary, and there's no relay carrying space records across the network.
+
+To build a view of a space without help, an app has to get a credential for the space, find out which repos have written into it, backfill each of those repos from whichever PDS hosts it, register for notifications about new writes, and keep track of account changes like deactivations and deletions. That's a lot of work to repeat in every app, and most of it has nothing to do with what the app does. The sync service handles all of it and gives the app a single stream.
+
+## Consuming the Stream
+
+Your app reads from the sync service with a Jetstream client. The stream uses the same replay-then-live model as the [new Jetstream](https://atproto.com/blog/introducing-bluesky-protocol-services): you start from a saved cursor, read through the archive, and the client cuts over to live events without a gap.
+
+```go
+client, err := jetstream.Subscribe(syncURL,
+	jetstream.WithCollection("com.example.note"),
+	jetstream.WithAfterSeq(cursor),
+)
+if err != nil {
+	return err
+}
+defer client.Close()
+
+for batch, err := range client.Events(ctx) {
+	if err != nil {
+		return err
+	}
+	for _, event := range batch.Events() {
+		// event.Space is the space the record belongs to.
+		// event.DID is still the record's author.
+		if err := applyEvent(ctx, event); err != nil {
+			return err
+		}
+	}
+	if err := saveCursor(ctx, batch.LastCursor()); err != nil {
+		return err
+	}
+}
+```
+
+The main difference from public Jetstream is the `space` field on each event. One stream covers every space the service follows, so the same author can write a record with the same collection and record key into two different spaces. Key your records by space as well as author, collection, and record key. There are also a couple of new event kinds for space-level changes, like a writer being removed from a space or a space being deleted.
+
+The stream is meant for your app's backend, not for browsers. It contains records from every space the service follows, so your app still decides which viewers can see what.
+
+## Identity on the Server Side
+
+A Jetstream for public data doesn't need anyone's permission to read the firehose. A sync service for Spaces does, and the way it gets that permission is what makes it possible to run one without changing the trust model of the network.
+
+The sync service doesn't have an account or a password of its own, and it never holds users' OAuth tokens. When it needs to read a space, it asks for a short-lived delegation from a user who already has read access to that space. It exchanges that delegation with the space's authority for a space credential, and the authority still makes the final call on whether that user is a member. If the user signs out or loses access, the sync service has to find another eligible reader or stop syncing that space.
+
+Write notifications work through identity as well. The service publishes its own service identity in a DID document, and space authorities send signed notifications to it when new records are written. Those signatures are checked against the authority's DID keys, so the service only acts on notifications that actually came from the authority for that space. Account-level changes, like deactivations, come from the public Jetstream, so when a member deactivates their account, the stream tells your app to hide their records in every space.
+
+TK: anything we want to say here about writer keys or how records are verified on read
+
+## Part of the Reference Group Host
+
+In the current prototype, the sync service runs alongside an app and borrows read access from that app's signed-in users. That's enough to prove out the Jetstream interface, but it still leaves each app running its own sync infrastructure.
+
+The Group Host is a better home for it. As we described in [An Intro to Atmospheric Groups](https://atproto.com/blog/atmospheric-groups-intro), the group host already tracks each space's writer set and routes write notifications. Our reference Group Host will include this sync functionality out of the box, so an app building on atmospheric groups can subscribe to a group's data over a familiar Jetstream interface without running its own sync service.
+
+TK: how apps will authenticate to a group host's stream, and when we expect to have something people can try
+
+The [Spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data) covers the protocol underneath all of this. More Space exploration next week!
