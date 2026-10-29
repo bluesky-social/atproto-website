@@ -23,7 +23,7 @@ So far, though, we've only borne that out for *individuals*: individuals' follow
 
 ## Opensocial.fyi
 
-On last week's blog, we created the **Democratic Assembly of Mole People**. This gave us a somewhat awkward group identity name of [democratic-assembl.opensocial.fyi](democratic-assembl.opensocial.fyi). If you go to that URL, you will have your mind *absolutely blown*.
+On last week's blog, we created the **Democratic Assembly of Mole People**. This gave us a somewhat awkward group identity name of [democratic-assembl.opensocial.fyi](https://democratic-assembl.opensocial.fyi). If you go to that URL, you will have your mind *absolutely blown*.
 
 <Image src={molemanFancam} alt="Mole fanpage delights" />
 
@@ -42,22 +42,22 @@ And when other users do ask to join, you can currently browse and approve pendin
 <Image src={groupAdmin} alt="Group administration interface" />
 
 <Note>
-Creating a group directly on opensocial.fyi is not currently supported — last week, we created the group on Grain, and then used that group identity to log into opensocial.fyi. Opensocial.fyi is a set of prototypes that we're building as we develop Spaces protocol features.
+Creating a group directly on opensocial.fyi is not currently supported — last week, we created the group on Grain, and then used that group identity to log into opensocial.fyi. Opensocial.fyi is a set of prototypes that we're building as we develop Spaces protocol features, not their final form.
 </Note>
 
-If you're on a Spaces-enabled PDS (don't forget you can sign up on [bsky.network](https://bsky.network/account)), you can  apply to join the esteemed ranks of Mole People. And, Geocities fever dreams aside, here's the real meat of these group identities: with this Spaces protocol standard, you can *also use them to log into other Atmosphere apps*.
+If you're on a Spaces-enabled PDS (don't forget you can sign up on [bsky.network](https://bsky.network/account)), you can apply to join the esteemed ranks of Mole People. And, Geocities fever dreams aside, here's the real meat of these group identities: with this Spaces protocol standard, you can *also use them to log into other Atmosphere apps*.
 
 ## Group Atmosphere Logins
 
-Let's demonstrate that with [pckt.blog](pckt.blog), a popular blogging app that implements [standard.site](https://standard.site/).
+Let's demonstrate that with [pckt.blog](https://pckt.blog), a popular blogging app that implements [standard.site](https://standard.site/).
 
 <Image src={pcktAuth} alt="Pckt authentication interface" />
 
-Signing in gets us the usual [pckt.blog](pckt.blog) interface and feature set — this is early days for Spaces support across the Atmosphere — but as a starting point, from a group's point of view, this is a good thing. It means that drafts and publications can be owned by shared identities rather than individuals, and it eliminates any need for pckt to implement group management on its own; it only has to support the Spaces features of the protocol, so it can offload the management interface to sites like [opensocial.fyi](opensocial.fyi).
+Signing in gets us the usual [pckt.blog](https://pckt.blog) interface and feature set — this is early days for Spaces support across the Atmosphere — but as a starting point, from a group's point of view, this is a good thing. It means that drafts and publications can be owned by shared identities rather than individuals, and it eliminates any need for pckt to implement group management on its own; it only has to support the Spaces features of the protocol, so it can offload the management interface to sites like [opensocial.fyi](https://opensocial.fyi).
 
 <Image src={pcktLanding} alt="Pckt landing page" />
 
-You can also see how this could provide a solid foundation for subscriber-only or gated content. Again, the actual role management can be handled off-Pckt — [opensocial.fyi](opensocial.fyi) has a preliminary interface for this right now:
+You can also see how this could provide a solid foundation for subscriber-only or gated content. Again, the actual role management can be handled off-Pckt — [opensocial.fyi](https://opensocial.fyi) has a preliminary interface for this right now:
 
 <Image src={groupRoles} alt="Group roles management interface" />
 
@@ -69,4 +69,4 @@ In the last two weeks, we've shown off Grain for photo sharing, PDSls for data m
 
 Developing opensocial.fyi has been a great way to explore the Spaces APIs and show off what end-to-end application support might look like. On a fundamental level, building real stuff to exercise protocol designs is important! As we finalize the protocol, our prototypes will change, but the vision for Open Social Groups is here now: a way to create shared identities, with shared data and shared access control, that can be used across the Atmosphere.
 
-Get excited!! We're still releasing breaking changes to Spaces on a weekly basis, but we're just about finished with the major churn. In the next few weeks, this blog will drill into solutions for syncing Spaces at scale, and provide some best practices and implementation patterns.
+Get excited!! We're still releasing breaking changes to Spaces on a [weekly basis](https://discourse.atmosphere.community/c/wg/privatedatawg/16), but we're just about finished with the major churn. In the next few weeks, this blog will drill into solutions for syncing Spaces at scale, and provide some best practices and implementation patterns.

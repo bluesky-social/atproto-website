@@ -11,7 +11,7 @@ export const posts: BlogPost[] = [
     slug: 'open-social-groups-vision',
     title: 'Open Social Groups — the Vision',
     description: 'Showcasing the full vision for Open Social Groups, from the Spaces blog series',
-    date: 'October 28, 2026',
+    date: 'October 29, 2026',
     author: 'AT Protocol Team',
   },
   {
