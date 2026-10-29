@@ -36,14 +36,14 @@ TID string syntax parsing rules:
 
 - length is always 13 ASCII characters
 - uses base32-sortable character set, meaning `234567abcdefghijklmnopqrstuvwxyz`
-- the first character must be one of `234567abcdefghij`
+- the first character must be one of `234567ab`
 
 Early versions of the TID syntax allowed hyphens, but they are no longer allowed and should be rejected when parsing.
 
 A reference regex for TID is:
 
 ```
-/^[234567abcdefghij][234567abcdefghijklmnopqrstuvwxyz]{12}$/
+/^[234567ab][234567abcdefghijklmnopqrstuvwxyz]{12}$/
 ```
 
 ### Examples
@@ -75,7 +75,10 @@ Invalid TIDs:
 # legacy dash syntax *not* supported (TTTT-TTT-TTTT-CC)
 3jzf-cij-pj2z-2a
 
+# greater than 64 bits
+kjzfcijpj2z2a
+
 # high bit can't be set
 zzzzzzzzzzzzz
-kjzfcijpj2z2a
+djzfcijpj2z2a
 ```
