@@ -28,6 +28,9 @@ const { standard } = siteModule.default ?? siteModule
 import authors from '../src/lib/authors.json' with { type: 'json' }
 import { resolveBskyPostRef } from './lib/resolveBskyPostRef.mjs'
 import { normalizeBlogTags } from '../src/lib/blogTags.mjs'
+import * as postsModule from '../src/lib/posts.ts'
+const { posts } = postsModule.default ?? postsModule
+import { findDocumentByPath, assertListingTags } from './lib/blogPublishing.mjs'
 import { buildContributors } from './lib/buildContributors.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -177,6 +180,7 @@ export async function main(slug) {
   const mdxContent = fs.readFileSync(mdxPath, 'utf-8')
   const { header } = parseHeaderExport(mdxContent)
   const tags = normalizeBlogTags(header.tags)
+  assertListingTags(slug, tags, posts)
 
   console.log(`  Title: ${header.title}`)
   console.log(`  Date: ${header.date}`)
@@ -239,12 +243,10 @@ export async function main(slug) {
   const postPath = `/${slug}`
   console.log('\n🔍 Checking for existing document...')
 
-  const existingRecords = await client.list(standard.document.main, {
-    limit: 100,
-  })
-
-  const existingRecord = existingRecords.records.find(
-    (r) => r.value.path === postPath,
+  const existingRecord = await findDocumentByPath(
+    client,
+    standard.document.main,
+    postPath,
   )
   if (existingRecord) {
     console.log(`  Found existing record: ${existingRecord.uri}`)

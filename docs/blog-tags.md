@@ -19,6 +19,7 @@ results. Topic-only searches work without text. The blog preserves topic filters
 and lists each matching post
 once in newest-first order. Topic counts describe the complete archive.
 
+Publishing refuses mismatched MDX/listing tags before making a network request.
 Saving/publishing preserves the tags and includes them in the standard.site
 record. Backfilling this repository does not republish existing records; those
 receive tags on their next publish.
