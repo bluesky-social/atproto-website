@@ -11,11 +11,12 @@ hand, update both; the archive consistency test checks for drift. Blog routes
 currently use English content in every locale; tags belong to the post, not a
 translation. Search indexing also reads the English tags for translated entries.
 
-Readers can select topics on `/blog`, follow topic links on posts, or type
+The blog listing has topic filters without a separate search field. Readers can
+select topics on `/blog`, follow topic links on posts, or type
 `tag:spaces` in the existing sitewide search. Combine text and topics, for example
 `oauth tag:spaces`. Multiple tags require all topics. Unknown tags produce no
-results. Topic-only searches work without text. The blog preserves the complete
-query in `?q=`, supports back/forward navigation, and lists each matching post
+results. Topic-only searches work without text. The blog preserves topic filters in `?q=`, supports back/forward navigation,
+and lists each matching post
 once in newest-first order. Topic counts describe the complete archive.
 
 Saving/publishing preserves the tags and includes them in the standard.site

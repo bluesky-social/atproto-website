@@ -1,5 +1,5 @@
 import FlexSearch from 'flexsearch'
-import { parseBlogQuery } from './blogTags.mjs'
+import { parseBlogQuery, matchesBlogTags } from './blogTags.mjs'
 
 // Shared by the sitewide dialog and the blog listing. Retrieve candidates before
 // applying locale/topic filters, then limit: filtering a short list loses hits.
@@ -44,7 +44,7 @@ export function createSearch(data, nonDefaultLocales = ['pt', 'ja', 'ko']) {
       if (!page) return false
       const isBlog = page.url.includes('/blog/')
       if ((blogsOnly || tags.length) && !isBlog) return false
-      if (!tags.every((tag) => (page.tags ?? []).includes(tag))) return false
+      if (!matchesBlogTags(page.tags, tags)) return false
       if (
         locale === 'en' &&
         nonDefaultLocales.some((l) => page.url.startsWith(`/${l}/`))

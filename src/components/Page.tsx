@@ -1,4 +1,3 @@
-import { BlogTags } from './BlogTags'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import {
   PageSectionsNavigation,
@@ -16,7 +15,6 @@ const BSKY_CONVERSATION_HEADER =
 interface PageProps {
   default: React.FunctionComponent
   header?: PageHeaderProps & {
-    tags?: string[]
     standardSiteUri?: string
     blueskyPostUrl?: string
     blueskyHeaderTemplate?: string
@@ -46,7 +44,6 @@ export function Page(page: PageProps) {
         </>
       )}
       {page.header && <PageHeader {...page.header} />}
-      <BlogTags tags={page.header?.tags} />
       <SubpageLinks />
       <div className="flex flex-wrap items-start">
         <page.default />

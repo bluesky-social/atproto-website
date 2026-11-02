@@ -53,3 +53,8 @@ export function formatBlogQuery(text, tags) {
 export function blogSearchHref(query) {
   return query ? `/blog?${new URLSearchParams({ q: query })}` : '/blog'
 }
+
+/** @param {string[] | undefined} tags @param {string[]} selected */
+export function matchesBlogTags(tags, selected) {
+  return selected.every((tag) => (tags ?? []).includes(tag))
+}

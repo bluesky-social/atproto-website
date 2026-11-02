@@ -1,3 +1,4 @@
+import { BlogTags } from './BlogTags'
 import { DotPatternBackground } from './DotPattern'
 import { Button } from './Button'
 import clsx from 'clsx'
@@ -8,6 +9,7 @@ export interface PageHeaderProps {
   description?: string
   date?: string
   author?: string
+  tags?: string[]
   primaryCTA?: CtaProps
   secondaryCTA?: CtaProps
   fullwidth?: boolean
@@ -23,6 +25,7 @@ export function PageHeader({
   description,
   date,
   author,
+  tags,
   primaryCTA,
   secondaryCTA,
   fullwidth,
@@ -70,6 +73,7 @@ export function PageHeader({
             )}
           </div>
         )}
+        <BlogTags tags={tags} />
         {(primaryCTA || secondaryCTA) && (
           <div className="mt-4 flex gap-2 max-md:w-full">
             {primaryCTA && (

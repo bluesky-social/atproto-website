@@ -9,7 +9,7 @@ export function BlogTags({ tags = [] }: { tags?: string[] }) {
         <li key={tag}>
           <Link
             href={blogSearchHref(`tag:${tag}`)}
-            className="rounded-full border border-zinc-300 px-3 py-1 text-sm hover:border-blue-500 dark:border-zinc-700"
+            className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-sm hover:border-blue-500 dark:border-zinc-700 dark:bg-zinc-900"
           >
             {blogTopics.find((topic) => topic.id === tag)?.label ?? tag}
           </Link>
