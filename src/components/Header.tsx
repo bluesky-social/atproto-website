@@ -28,12 +28,19 @@ function TopLevelNavItem({
   label?: string
   children: React.ReactNode
 }) {
+  const active = stripLocalePrefix(usePathname()) === href
   return (
     <li className={className}>
       <Link
         href={href}
         aria-label={label}
-        className="text-sm leading-5 text-slate-700 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+        aria-current={active ? 'page' : undefined}
+        className={clsx(
+          'text-sm leading-5 transition',
+          active
+            ? 'text-emerald-700 dark:text-[#7fd1ae]'
+            : 'text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white',
+        )}
       >
         {children}
       </Link>
@@ -46,7 +53,7 @@ export const Header = forwardRef<
   React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
 >(function Header({ className, minimal, ...props }, ref) {
   const pathname = usePathname()
-  const isHome = stripLocalePrefix(pathname) === '/'
+  const isHome = ['/', '/ai'].includes(stripLocalePrefix(pathname))
 
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
@@ -92,11 +99,12 @@ export const Header = forwardRef<
         </Link>
       </div>
       <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-zinc-900/10 lg:dark:bg-white/15" />
-      <ul role="list" className="flex items-center gap-8">
+      <ul role="list" className="flex items-center gap-4 sm:gap-8">
         <TopLevelNavItem href="/docs">Docs</TopLevelNavItem>
         <TopLevelNavItem href="/sdks" className="hidden sm:block">
           SDKs
         </TopLevelNavItem>
+        <TopLevelNavItem href="/ai">AI</TopLevelNavItem>
         <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
         <TopLevelNavItem href="/off-protocol" className="hidden sm:block">
           Podcast
@@ -108,10 +116,16 @@ export const Header = forwardRef<
       <div className="ml-auto flex items-center gap-5">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-6">
-            <TopLevelNavItem href="https://bsky.app/profile/atproto.com" label='AT Protocol on Bluesky'>
+            <TopLevelNavItem
+              href="https://bsky.app/profile/atproto.com"
+              label="AT Protocol on Bluesky"
+            >
               <BlueskyIcon className="h-5 w-5 fill-slate-900 dark:fill-slate-50" />
             </TopLevelNavItem>
-            <TopLevelNavItem href="https://github.com/bluesky-social/atproto" label='AT Protocol on GitHub'>
+            <TopLevelNavItem
+              href="https://github.com/bluesky-social/atproto"
+              label="AT Protocol on GitHub"
+            >
               <GithubIcon className="h-6 w-6 fill-slate-900 dark:fill-slate-50" />
             </TopLevelNavItem>
             <li>

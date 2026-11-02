@@ -1,0 +1,472 @@
+.page {
+  background: #19191c;
+  color: #e9e9ec;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  --muted: #b4b4bc;
+  --accent: #7fd1ae;
+  --border: #34343a;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.page h1,
+.page h2,
+.page h3,
+.page p,
+.page figure {
+  margin: 0;
+}
+.page h1,
+.page h2,
+.number,
+.page pre,
+.page code,
+.actions a,
+.badge,
+.profile {
+  font-family: 'IBM Plex Mono', monospace;
+}
+.page h1,
+.page h2,
+.page h3 {
+  font-weight: 500;
+}
+.page h2 {
+  font-size: 36px;
+  line-height: 1.25;
+}
+.page h3 {
+  font-size: 26px;
+  line-height: 1.3;
+}
+.page p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.page a {
+  text-decoration: none;
+}
+.page a:hover {
+  filter: brightness(1.2);
+}
+.page a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+  padding: 96px 0 104px;
+}
+.intro {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.intro h1 {
+  font-size: clamp(42px, 5.4vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.intro > p {
+  font-size: 20px;
+  line-height: 1.55;
+  max-width: 30em;
+}
+.announcement {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border: 1px solid #3a3a40;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #c9c9d0;
+}
+.announcement > span {
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 22px;
+  border: 1px solid #3a3a40;
+  border-radius: 4px;
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.actions .primary {
+  border-color: #3d5a8f;
+  background: #1f2b45;
+  color: #8fb3ff;
+}
+.secondary {
+  color: #e9e9ec;
+}
+.chat {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #141417;
+  overflow: hidden;
+}
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #2a2a2f;
+  font-size: 16px;
+}
+.chatHeader > span {
+  font-size: 13px;
+  color: #a3a3ad;
+}
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 22px 20px;
+}
+.message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.avatar {
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+.alice {
+  background: #3a2f52;
+  color: #d9cdf5;
+}
+.robot {
+  border-radius: 10px;
+  background: #1f2b45;
+  color: #8fb3ff;
+}
+.bob {
+  background: #2b3f2f;
+  color: #bfe6c9;
+}
+.carol {
+  background: #4a3324;
+  color: #f2d2bb;
+}
+.messageBody {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.page .sender {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 14px;
+  color: #e9e9ec;
+}
+.sender > span {
+  color: #a3a3ad;
+  overflow-wrap: anywhere;
+}
+.sender .badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.page .bubble {
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  background: #232328;
+  color: #e9e9ec;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.identity {
+  margin-top: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #1c1c20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.person .avatar {
+  flex-basis: 32px;
+  height: 32px;
+}
+.person > div {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.person > div > span {
+  color: #a3a3ad;
+  font-size: 13px;
+}
+.identity p {
+  font-size: 13px;
+  color: #c9c9d0;
+}
+.check {
+  color: var(--accent);
+  margin-right: 5px;
+}
+.profile {
+  font-size: 13px;
+  color: #8fb3ff;
+  text-transform: uppercase;
+}
+.composer {
+  padding: 14px 20px;
+  border-top: 1px solid #2a2a2f;
+}
+.composer > span {
+  display: block;
+  padding: 10px 14px;
+  border: 1px solid #3a3a40;
+  border-radius: 999px;
+  color: #a3a3ad;
+  font-size: 15px;
+}
+.section {
+  padding-bottom: 112px;
+}
+.section > h2 {
+  margin-bottom: 40px;
+}
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.step {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: center;
+  gap: 24px 48px;
+  padding: 32px;
+  border: 1px solid var(--border);
+}
+.step > div {
+  min-width: 0;
+}
+.number {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--accent);
+}
+.step h3 {
+  margin-bottom: 12px;
+}
+.step p {
+  font-size: 17px;
+}
+.step pre {
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  background: #141417;
+  border: 1px solid #2a2a2f;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #c9c9d0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.explanation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  padding: 56px 0 112px;
+  border-top: 1px solid #2a2a2f;
+}
+.explanation h2 {
+  font-size: 30px;
+  margin-bottom: 14px;
+}
+.explanation p,
+.benefits p {
+  font-size: 18px;
+}
+.explanation code {
+  font-size: 16px;
+  color: #e9e9ec;
+}
+.benefits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.benefits article {
+  padding: 36px 30px;
+  border: 1px solid var(--border);
+  background: radial-gradient(#2c2c32 1px, transparent 1px) 0 0 / 12px 12px
+    #1c1c20;
+}
+.benefits h3 {
+  margin: 30px 0 14px;
+}
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 40px;
+  border: 1px solid #3d5a8f;
+  background: #1a2236;
+  margin-bottom: 120px;
+}
+.cta > div:first-child {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+.cta h2 {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.cta p {
+  font-size: 17px;
+}
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 48px 0 64px;
+  }
+  .intro > p {
+    max-width: none;
+  }
+  .step {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .container {
+    padding: 0 20px;
+  }
+  .intro h1 {
+    font-size: 42px;
+  }
+  .intro > p {
+    font-size: 18px;
+  }
+  .page h2 {
+    font-size: 28px;
+  }
+  .page h3 {
+    font-size: 24px;
+  }
+  .announcement {
+    border-radius: 16px;
+    align-items: flex-start;
+    padding: 10px 12px;
+  }
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .actions a {
+    font-size: 16px;
+    min-height: 52px;
+    padding: 10px 12px;
+  }
+  .section {
+    padding-bottom: 64px;
+  }
+  .section > h2 {
+    margin-bottom: 28px;
+  }
+  .step {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+  .step pre {
+    padding: 16px;
+    font-size: 12px;
+  }
+  .explanation {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 0 64px;
+  }
+  .explanation h2 {
+    font-size: 24px;
+  }
+  .explanation p,
+  .benefits p {
+    font-size: 16px;
+  }
+  .benefits {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .benefits article {
+    padding: 28px 24px;
+  }
+  .cta {
+    padding: 28px 20px;
+    margin-bottom: 64px;
+  }
+  .cta h2 {
+    font-size: 24px;
+  }
+  .cta p {
+    font-size: 16px;
+  }
+  .messages {
+    padding: 20px 14px;
+    gap: 18px;
+  }
+  .message {
+    gap: 10px;
+  }
+  .identity {
+    padding: 12px;
+  }
+}

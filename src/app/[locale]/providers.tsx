@@ -25,9 +25,7 @@ function ScrollToTop() {
     }
 
     function scrollToHash() {
-      const target = document.getElementById(
-        decodeURIComponent(hash.slice(1)),
-      )
+      const target = document.getElementById(decodeURIComponent(hash.slice(1)))
       target?.scrollIntoView()
     }
 
@@ -65,13 +63,13 @@ function ThemeWatcher() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isHome = stripLocalePrefix(pathname) === '/'
+  const isLanding = ['/', '/ai'].includes(stripLocalePrefix(pathname))
 
   return (
     <ThemeProvider
       attribute="class"
       disableTransitionOnChange
-      forcedTheme={isHome ? 'dark' : undefined}
+      forcedTheme={isLanding ? 'dark' : undefined}
     >
       <ThemeWatcher />
       <ScrollToTop />
