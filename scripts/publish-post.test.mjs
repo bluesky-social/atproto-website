@@ -17,7 +17,8 @@ test('throws when credentials are missing', async () => {
       /Missing required environment variables/,
     )
   } finally {
-    if (ATPROTO_HANDLE !== undefined) process.env.ATPROTO_HANDLE = ATPROTO_HANDLE
+    if (ATPROTO_HANDLE !== undefined)
+      process.env.ATPROTO_HANDLE = ATPROTO_HANDLE
     if (ATPROTO_APP_PASSWORD !== undefined)
       process.env.ATPROTO_APP_PASSWORD = ATPROTO_APP_PASSWORD
   }
@@ -39,4 +40,12 @@ test('throws when the post does not exist', async () => {
     if (prevP === undefined) delete process.env.ATPROTO_APP_PASSWORD
     else process.env.ATPROTO_APP_PASSWORD = prevP
   }
+})
+
+test('publishing parses literal tag arrays and preserves them in the header', async () => {
+  const { parseHeaderExport } = await import('./publish-post.mjs')
+  const { header } = parseHeaderExport(
+    "export const header = { title: 'Post', tags: ['spaces', 'oauth'] }\n\nBody",
+  )
+  assert.deepEqual(header.tags, ['spaces', 'oauth'])
 })

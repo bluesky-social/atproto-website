@@ -1,3 +1,4 @@
+import { BlogTags } from './BlogTags'
 import { PageHeader, PageHeaderProps } from './PageHeader'
 import {
   PageSectionsNavigation,
@@ -9,11 +10,18 @@ import { AtprotoPublicationLink } from './AtprotoPublicationLink'
 import { SubpageLinks } from './SubpageLinks'
 import { BlueskyConversation } from './BlueskyConversation'
 
-const BSKY_CONVERSATION_HEADER = "This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
+const BSKY_CONVERSATION_HEADER =
+  'This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}.'
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string; hideSectionNav?: boolean }
+  header?: PageHeaderProps & {
+    tags?: string[]
+    standardSiteUri?: string
+    blueskyPostUrl?: string
+    blueskyHeaderTemplate?: string
+    hideSectionNav?: boolean
+  }
   sections?: PageSectionProp[]
 }
 
@@ -38,6 +46,7 @@ export function Page(page: PageProps) {
         </>
       )}
       {page.header && <PageHeader {...page.header} />}
+      <BlogTags tags={page.header?.tags} />
       <SubpageLinks />
       <div className="flex flex-wrap items-start">
         <page.default />
@@ -49,7 +58,9 @@ export function Page(page: PageProps) {
           <BlueskyConversation
             uri={page.header.blueskyPostUrl}
             documentUri={page.header.standardSiteUri}
-            headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER}
+            headerTemplate={
+              page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER
+            }
           />
         )}
       </div>

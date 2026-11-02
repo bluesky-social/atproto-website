@@ -1,3 +1,6 @@
+import { parseExpressionAt } from 'acorn'
+import { normalizeBlogTags } from '../blogTags.mjs'
+
 export type HeaderEntry = { key: string; rawValue: string }
 export type ParsedMdx = {
   preamble: string
@@ -10,6 +13,7 @@ export type OwnedFields = {
   date: string
   author: string
   blueskyPostUrl: string
+  tags?: string[]
 }
 
 export const OWNED_KEYS = [
@@ -59,7 +63,11 @@ const ESCAPES: Record<string, string> = { n: '\n', r: '\r', t: '\t' }
 export function decodeStringLiteral(raw: string): string {
   const trimmed = raw.trim()
   const q = trimmed[0] // opening quote char
-  if ((q === "'" || q === '"' || q === '`') && trimmed.endsWith(q) && trimmed.length >= 2) {
+  if (
+    (q === "'" || q === '"' || q === '`') &&
+    trimmed.endsWith(q) &&
+    trimmed.length >= 2
+  ) {
     const inner = trimmed.slice(1, -1)
     let out = ''
     for (let i = 0; i < inner.length; i++) {
@@ -101,7 +109,11 @@ function findHeaderBraces(content: string): { open: number; close: number } {
     }
     if (ch === '/' && content[i + 1] === '*') {
       i += 2
-      while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++
+      while (
+        i < content.length &&
+        !(content[i] === '*' && content[i + 1] === '/')
+      )
+        i++
       i += 1 // sits on '*'; the for-loop's i++ moves past the '/'
       continue
     }
@@ -171,7 +183,8 @@ function splitEntries(inner: string): HeaderEntry[] {
     }
     if (ch === '/' && inner[i + 1] === '*') {
       i += 2
-      while (i < inner.length && !(inner[i] === '*' && inner[i + 1] === '/')) i++
+      while (i < inner.length && !(inner[i] === '*' && inner[i + 1] === '/'))
+        i++
       i += 1 // sits on '*'; the for-loop's i++ moves past the '/'
       continue
     }
@@ -252,6 +265,9 @@ export function getOwnedFields(parsed: ParsedMdx): OwnedFields {
     date: get('date'),
     author: get('author'),
     blueskyPostUrl: get('blueskyPostUrl'),
+    ...(parsed.headerEntries.some((e) => e.key === 'tags')
+      ? { tags: readHeaderTags(parsed) }
+      : {}),
   }
 }
 
@@ -274,6 +290,15 @@ export function applyOwnedFields(
     if (existing) existing.rawValue = rawValue
     else headerEntries.push({ key, rawValue })
   }
+  if (owned.tags !== undefined) {
+    const tags = normalizeBlogTags(owned.tags)
+    headerEntries = headerEntries.filter((e) => e.key !== 'tags')
+    if (tags.length)
+      headerEntries.push({
+        key: 'tags',
+        rawValue: `[${tags.map(quoteSingle).join(', ')}]`,
+      })
+  }
   return { ...parsed, headerEntries }
 }
 
@@ -292,9 +317,31 @@ export function newPostMdx(owned: OwnedFields, body: string): string {
     key,
     rawValue: quoteSingle(owned[key]),
   }))
+  const tags = normalizeBlogTags(owned.tags)
+  if (tags.length)
+    headerEntries.push({
+      key: 'tags',
+      rawValue: `[${tags.map(quoteSingle).join(', ')}]`,
+    })
   return serializeMdxFile({
     preamble: '',
     headerEntries,
     body: normalizeBodySeparation(body),
   })
+}
+
+// Parse literal arrays without evaluating author-controlled JavaScript.
+export function readHeaderTags(parsed: ParsedMdx): string[] {
+  const raw = parsed.headerEntries.find((e) => e.key === 'tags')?.rawValue
+  if (!raw) return []
+  const node = parseExpressionAt(raw, 0, { ecmaVersion: 2020 })
+  if (node.type !== 'ArrayExpression' || raw.slice(node.end).trim())
+    throw new Error('Tags must be a literal array')
+  return normalizeBlogTags(
+    node.elements.map((e) => {
+      if (e?.type !== 'Literal' || typeof e.value !== 'string')
+        throw new Error('Tags must contain strings')
+      return e.value
+    }),
+  )
 }

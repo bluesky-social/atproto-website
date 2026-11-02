@@ -38,7 +38,10 @@ beforeEach(() => {
   const postsFile = path.join(root, 'posts.ts')
   const authorsFile = path.join(root, 'authors.json')
   fs.writeFileSync(postsFile, POSTS_SRC)
-  fs.writeFileSync(authorsFile, JSON.stringify({ 'Jim Ray': 'did:plc:jim' }, null, 2))
+  fs.writeFileSync(
+    authorsFile,
+    JSON.stringify({ 'Jim Ray': 'did:plc:jim' }, null, 2),
+  )
   paths = { blogDir, postsFile, authorsFile }
 })
 
@@ -78,7 +81,10 @@ describe('smart typography', () => {
       author: 'Jim Ray',
       body: 'Body.\n',
     })
-    const page = fs.readFileSync(path.join(paths.blogDir, 'hello', 'page.tsx'), 'utf-8')
+    const page = fs.readFileSync(
+      path.join(paths.blogDir, 'hello', 'page.tsx'),
+      'utf-8',
+    )
     expect(page).not.toContain('Distinctive Title')
     expect(page).not.toContain('export const metadata')
     expect(page).toContain('mdxRouteMetadata(content)')
@@ -126,7 +132,10 @@ describe('smart typography', () => {
       },
       body: 'Body.\n',
     })
-    const mdx = fs.readFileSync(path.join(paths.blogDir, 'hello', 'en.mdx'), 'utf-8')
+    const mdx = fs.readFileSync(
+      path.join(paths.blogDir, 'hello', 'en.mdx'),
+      'utf-8',
+    )
     expect(mdx).toContain('“Quoted”')
     expect(mdx).toContain('It’s fine')
     const posts = fs.readFileSync(paths.postsFile, 'utf-8')
@@ -230,7 +239,9 @@ describe('createPost', () => {
       JSON.parse(fs.readFileSync(paths.authorsFile, 'utf-8'))['Typo Person'],
     ).toBeUndefined()
     // The post itself still exists — authors.json is best-effort.
-    expect(fs.existsSync(path.join(paths.blogDir, 'bad-did', 'en.mdx'))).toBe(true)
+    expect(fs.existsSync(path.join(paths.blogDir, 'bad-did', 'en.mdx'))).toBe(
+      true,
+    )
   })
 })
 
@@ -300,7 +311,9 @@ describe('read/update/list/delete', () => {
 
   it('lists posts by scanning for en.mdx', async () => {
     const list = await listPosts(paths)
-    expect(list).toEqual([{ slug: 'hello', title: 'Hello', date: 'June 1, 2026' }])
+    expect(list).toEqual([
+      { slug: 'hello', title: 'Hello', date: 'June 1, 2026' },
+    ])
   })
 
   it('lists posts newest-first (reverse-chronological)', async () => {
@@ -336,7 +349,9 @@ describe('read/update/list/delete', () => {
     const mdxPath = path.join(paths.blogDir, 'hello', 'en.mdx')
     fs.writeFileSync(
       mdxPath,
-      fs.readFileSync(mdxPath, 'utf-8').replace("date: 'June 1, 2026'", "date: 'July 4, 2026'"),
+      fs
+        .readFileSync(mdxPath, 'utf-8')
+        .replace("date: 'June 1, 2026'", "date: 'July 4, 2026'"),
     )
 
     await expect(
@@ -402,7 +417,9 @@ describe('read/update/list/delete', () => {
     expect(mdx).toContain("title: 'Hello (edited)'")
     expect(mdx).toContain("standardSiteUri: 'at://x'")
     expect(mdx).toContain('New body.')
-    expect(fs.readFileSync(paths.postsFile, 'utf-8')).toContain("title: 'Hello (edited)'")
+    expect(fs.readFileSync(paths.postsFile, 'utf-8')).toContain(
+      "title: 'Hello (edited)'",
+    )
   })
 
   it('keeps a blank line between header and body when the body has no leading newline', async () => {
@@ -416,7 +433,10 @@ describe('read/update/list/delete', () => {
       },
       body: 'Body with no leading newline',
     })
-    const mdx = fs.readFileSync(path.join(paths.blogDir, 'hello', 'en.mdx'), 'utf-8')
+    const mdx = fs.readFileSync(
+      path.join(paths.blogDir, 'hello', 'en.mdx'),
+      'utf-8',
+    )
     // Must NOT glue the closing brace to prose (that is invalid MDX).
     expect(mdx).toContain('}\n\nBody with no leading newline')
     expect(mdx).not.toMatch(/}\S/)
@@ -426,7 +446,9 @@ describe('read/update/list/delete', () => {
     const res = await deletePost(paths, 'hello')
     expect(res.dirRemoved).toBe(true)
     expect(fs.existsSync(path.join(paths.blogDir, 'hello'))).toBe(false)
-    expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain("slug: 'hello'")
+    expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain(
+      "slug: 'hello'",
+    )
   })
 
   it('deletePost is idempotent — tolerates missing dir and absent entry', async () => {
@@ -438,7 +460,12 @@ describe('read/update/list/delete', () => {
 
   it('saveOgImage writes opengraph-image.<ext> and findOgImage reports it', async () => {
     expect(findOgImage(paths.blogDir, 'hello')).toBeNull()
-    const res = await saveOgImage(paths.blogDir, 'hello', Buffer.from('fake-png-bytes'), 'png')
+    const res = await saveOgImage(
+      paths.blogDir,
+      'hello',
+      Buffer.from('fake-png-bytes'),
+      'png',
+    )
     expect(res.filename).toBe('opengraph-image.png')
     expect(findOgImage(paths.blogDir, 'hello')).toBe('opengraph-image.png')
     expect(
@@ -477,12 +504,18 @@ it('writes blueskyPostUrl on update, keeps it out of posts.ts, and removes it wh
     body: opened.body,
     revision: opened.revision,
   })
-  expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(`blueskyPostUrl: '${POST_URL}'`)
-  expect((await readPost(paths, 'thread-test')).owned.blueskyPostUrl).toBe(POST_URL)
+  expect(fs.readFileSync(mdxPath, 'utf-8')).toContain(
+    `blueskyPostUrl: '${POST_URL}'`,
+  )
+  expect((await readPost(paths, 'thread-test')).owned.blueskyPostUrl).toBe(
+    POST_URL,
+  )
 
   // The blog index has no column for it and must not gain one — the MDX header is
   // its single home, which is why there's nothing to keep in sync.
-  expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain('blueskyPostUrl')
+  expect(fs.readFileSync(paths.postsFile, 'utf-8')).not.toContain(
+    'blueskyPostUrl',
+  )
 
   // Re-read: the update above moved the revision on.
   const withUrl = await readPost(paths, 'thread-test')
@@ -517,13 +550,20 @@ describe('post images', () => {
     const slug = await makePost()
     const { filename } = await savePostImage(paths, slug, PNG, 'My Chart.PNG')
     expect(filename).toBe('my-chart.png')
-    const written = fs.readFileSync(path.join(paths.blogDir, slug, 'my-chart.png'))
+    const written = fs.readFileSync(
+      path.join(paths.blogDir, slug, 'my-chart.png'),
+    )
     expect(written.equals(PNG)).toBe(true)
   })
 
   it('adds the import to the MDX preamble and reports the identifier', async () => {
     const slug = await makePost()
-    const { identifier } = await savePostImage(paths, slug, PNG, 'pds-chart.png')
+    const { identifier } = await savePostImage(
+      paths,
+      slug,
+      PNG,
+      'pds-chart.png',
+    )
     expect(identifier).toBe('pdsChart')
     expect(mdxFor(slug)).toContain('import pdsChart from "./pds-chart.png"')
   })
@@ -535,7 +575,9 @@ describe('post images', () => {
     const before = mdxFor(slug)
     await savePostImage(paths, slug, PNG, 'chart.png')
     const after = mdxFor(slug)
-    expect(after.endsWith(before.slice(before.indexOf('export const header')))).toBe(true)
+    expect(
+      after.endsWith(before.slice(before.indexOf('export const header'))),
+    ).toBe(true)
   })
 
   it('reads back through readPost, header intact', async () => {
@@ -552,7 +594,13 @@ describe('post images', () => {
     const slug = await makePost()
     const { revision } = await savePostImage(paths, slug, PNG, 'chart.png')
     await updatePost(paths, slug, {
-      owned: { title: 'Hello', description: 'Desc', date: 'June 1, 2026', author: 'Jim Ray', blueskyPostUrl: '' },
+      owned: {
+        title: 'Hello',
+        description: 'Desc',
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+        blueskyPostUrl: '',
+      },
       body: 'Edited.\n',
       revision,
     })
@@ -578,9 +626,9 @@ describe('post images', () => {
   })
 
   it('refuses a post that does not exist', async () => {
-    await expect(savePostImage(paths, 'nope', PNG, 'chart.png')).rejects.toThrow(
-      /not found/i,
-    )
+    await expect(
+      savePostImage(paths, 'nope', PNG, 'chart.png'),
+    ).rejects.toThrow(/not found/i)
   })
 
   it('lists images with the identifier each one is bound to', async () => {
@@ -614,5 +662,69 @@ describe('post images', () => {
   it('lists nothing for a post with no images', async () => {
     const slug = await makePost()
     expect(await listPostImages(paths, slug)).toEqual([])
+  })
+})
+
+describe('blog topic persistence', () => {
+  it('round-trips tags through create, read, update and clear', async () => {
+    await createPost(paths, {
+      slug: 'topics',
+      title: 'Topics',
+      description: 'Desc',
+      date: 'June 1, 2026',
+      author: 'Jim Ray',
+      tags: [' Spaces ', 'oauth', 'spaces'],
+    })
+    let post = await readPost(paths, 'topics')
+    expect(post.owned.tags).toEqual(['spaces', 'oauth'])
+    expect(fs.readFileSync(paths.postsFile, 'utf8')).toContain(
+      "tags: ['spaces', 'oauth']",
+    )
+    await updatePost(paths, 'topics', {
+      owned: { ...post.owned, tags: ['sync'] },
+      body: post.body,
+      revision: post.revision,
+    })
+    post = await readPost(paths, 'topics')
+    expect(post.owned.tags).toEqual(['sync'])
+    expect(fs.readFileSync(paths.postsFile, 'utf8')).toContain("tags: ['sync']")
+    const beforeInvalid = fs.readFileSync(paths.postsFile, 'utf8')
+    await expect(
+      updatePost(paths, 'topics', {
+        owned: { ...post.owned, tags: ['unknown'] },
+        body: post.body,
+        revision: post.revision,
+      }),
+    ).rejects.toThrow('Unknown blog tag')
+    expect(fs.readFileSync(paths.postsFile, 'utf8')).toBe(beforeInvalid)
+    expect((await readPost(paths, 'topics')).revision).toBe(post.revision)
+    const { tags: _tags, ...legacyOwned } = post.owned
+    await updatePost(paths, 'topics', {
+      owned: legacyOwned,
+      body: post.body,
+      revision: post.revision,
+    })
+    post = await readPost(paths, 'topics')
+    expect(post.owned.tags).toEqual(['sync'])
+    await updatePost(paths, 'topics', {
+      owned: { ...post.owned, tags: [] },
+      body: post.body,
+      revision: post.revision,
+    })
+    expect((await readPost(paths, 'topics')).owned.tags ?? []).toEqual([])
+    expect(fs.readFileSync(paths.postsFile, 'utf8')).not.toContain('tags:')
+  })
+  it('rejects unknown tags before writing any files', async () => {
+    await expect(
+      createPost(paths, {
+        slug: 'bad',
+        title: 'Title',
+        description: 'Desc',
+        date: 'June 1, 2026',
+        author: 'Jim Ray',
+        tags: ['unknown'],
+      }),
+    ).rejects.toThrow('Unknown blog tag')
+    expect(fs.existsSync(path.join(paths.blogDir, 'bad'))).toBe(false)
   })
 })

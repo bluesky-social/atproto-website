@@ -1,3 +1,4 @@
+import { normalizeBlogTags } from '../blogTags.mjs'
 import * as fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import * as path from 'node:path'
@@ -44,6 +45,7 @@ export type CreateInput = {
   description: string
   date: string
   author: string
+  tags?: string[]
   /**
    * Name → DID for authors authors.json doesn't know yet. A map rather than a
    * single DID so the same shape works for episodes, which have several names.
@@ -72,6 +74,7 @@ function entryFor(slug: string, owned: OwnedFields): PostEntry {
     description: owned.description,
     date: owned.date,
     author: owned.author || undefined,
+    tags: owned.tags,
   }
 }
 
@@ -85,7 +88,9 @@ export async function listPosts(
     const mdxPath = path.join(paths.blogDir, d.name, 'en.mdx')
     if (!existsSync(mdxPath)) continue
     try {
-      const owned = getOwnedFields(parseMdxFile(await fs.readFile(mdxPath, 'utf-8')))
+      const owned = getOwnedFields(
+        parseMdxFile(await fs.readFile(mdxPath, 'utf-8')),
+      )
       out.push({ slug: d.name, title: owned.title || d.name, date: owned.date })
     } catch {
       out.push({ slug: d.name, title: d.name, date: '' })
@@ -304,6 +309,9 @@ export async function createPost(
     description: input.description,
     date: input.date,
     author: input.author,
+    ...(input.tags !== undefined
+      ? { tags: normalizeBlogTags(input.tags) }
+      : {}),
     // A new post has no Bluesky thread yet; it's added from the editor once the
     // post is live and the thread exists. newPostMdx omits the key when empty.
     blueskyPostUrl: '',
@@ -359,11 +367,14 @@ export async function updatePost(
   // Re-read from disk so preamble + unknown header fields reflect the current
   // file (supports concurrent hand-edits). That only ever protected the fields
   // the editor doesn't own; the revision check is what protects the rest.
-  const owned = smartenTitleAndDescription(input.owned)
   const raw = await fs.readFile(mdxPath, 'utf-8')
   // Check before the first write, so a refusal leaves both files untouched.
   assertRevision(input.revision, fileRevision(raw), 'This post')
   const parsed = parseMdxFile(raw)
+  const owned = smartenTitleAndDescription({
+    ...input.owned,
+    tags: normalizeBlogTags(input.owned.tags ?? getOwnedFields(parsed).tags),
+  })
   const next = applyOwnedFields(parsed, owned)
   next.body = normalizeBodySeparation(input.body)
   const serialized = serializeMdxFile(next)

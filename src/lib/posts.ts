@@ -4,11 +4,13 @@ export interface BlogPost {
   description: string
   date: string
   author?: string
+  tags?: string[]
 }
 
 export const posts: BlogPost[] = [
   {
     slug: 'open-social-groups-vision',
+    tags: ['spaces', 'ecosystem'],
     title: 'Open Social Groups — the Vision',
     description: 'Showcasing the full vision for Open Social Groups, from the Spaces blog series',
     date: 'October 29, 2026',
@@ -16,6 +18,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atmospheric-groups-intro',
+    tags: ['spaces', 'tutorials'],
     title: 'An Intro to Atmospheric Groups',
     description: 'Atmospheric Groups, part of the Spaces blog series',
     date: 'October 22, 2026',
@@ -23,6 +26,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'devex-goals-for-spaces',
+    tags: ['spaces', 'sdks'],
     title: 'Developer Experience Goals for Atproto Spaces',
     description: 'A new series nailing down the moving parts of building on Spaces',
     date: 'October 14, 2026',
@@ -30,6 +34,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'mysky-feed-infrastructure',
+    tags: ['feeds', 'ecosystem'],
     title: 'MySky: Open, Controllable Feed Infrastructure for the Atmosphere',
     description: 'MySky is an algorithmic feed running on Bluesky, with a settings panel that shows you the whole ranking pipeline exactly as it runs.',
     date: 'September 24, 2026',
@@ -37,6 +42,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-spaces-alpha',
+    tags: ['spaces', 'hosting', 'sdks'],
     title: 'The Atproto Spaces Alpha is Live',
     description: 'Atproto Spaces, formerly known as “the permissioned data protocol,” is a new extension to atproto that enables non-public data. The alpha is now officially open. Here’s how to develop with it and what to expect as we work towards the full release.',
     date: 'August 20, 2026',
@@ -44,6 +50,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'introducing-bluesky-protocol-services',
+    tags: ['sync', 'sdks', 'hosting'],
     title: 'Introducing Bluesky Protocol Services',
     description: 'A new home for the infrastructure Bluesky runs on the open network — including Jetstream v2 with network replay, a new Jetstream SDK, and a lex-based TypeScript SDK',
     date: 'August 13, 2026',
@@ -51,6 +58,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'pds-customization-and-metrics',
+    tags: ['hosting', 'identity'],
     title: 'Make the PDS Your Own: Customization and Metrics',
     description: 'Branding, observability, and a session-list fix in the newest reference PDS.',
     date: 'August 7, 2026',
@@ -58,6 +66,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'at-protocol-trademark',
+    tags: ['governance'],
     title: 'AT Protocol Trademark',
     description: 'Bluesky now owns the trademark for AT Protocol to shield the ecosystem and make sure it can be used as widely as possible.',
     date: 'July 15, 2026',
@@ -65,6 +74,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'pds-account-management',
+    tags: ['identity', 'hosting', 'oauth'],
     title: 'The Reference PDS Gets an Account Management Page',
     description: 'Now anyone can easily manage their atproto account on the web.',
     date: 'June 24, 2026',
@@ -72,6 +82,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'going-off-protocol',
+    tags: ['ecosystem'],
     title: 'Going Off Protocol',
     description: 'We’re expanding our office hours livestream. Look for it wherever you get your podcasts.',
     date: 'June 18, 2026',
@@ -79,6 +90,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'rpg-actor',
+    tags: ['ecosystem', 'lexicons'],
     title: 'What if your RPG character could log in to any game?',
     description: 'Carrying your adventures through many worlds with the AT Protocol',
     date: 'June 11, 2026',
@@ -86,6 +98,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atmospheric-website',
+    tags: ['tutorials', 'ecosystem'],
     title: 'Build an Atmospheric Website (with CodeTV)',
     description: 'Watch the episode and follow along to build a website on AT Protocol.',
     date: 'June 4, 2026',
@@ -93,6 +106,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'standard-site-bluesky-timeline',
+    tags: ['lexicons', 'ecosystem'],
     title: 'Now in your timeline: Standard.site',
     description: 'Articles from across the open web published with this community-built format now receive richer treatment in the Bluesky app',
     date: 'May 27, 2026',
@@ -100,6 +114,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'ts-sdk-upgrades',
+    tags: ['sdks', 'lexicons'],
     title: 'TypeScript SDK Upgrades',
     description: 'Modernizing our TS packages and moving the lex SDK closer to 1.0',
     date: 'May 21, 2026',
@@ -107,6 +122,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'report-based-moderation',
+    tags: ['moderation'],
     title: 'Report-Based Moderation in Ozone',
     description: 'A report-centric workflow for Ozone with new queues, assignments, real-time collaboration, and a per-report activity log.',
     date: 'May 11, 2026',
@@ -114,6 +130,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'serving-the-for-you-feed',
+    tags: ['feeds', 'hosting'],
     title: 'Serving the For You Feed',
     description: 'How the maintainer of the popular For You feed serves it from their living room!',
     date: 'April 21, 2026',
@@ -121,6 +138,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'indexing-standard-site',
+    tags: ['tutorials', 'sync', 'lexicons'],
     title: 'Indexing Standard Site',
     description: 'This guest post from Steve Simkins, creator of Sequoia and docs.surf, outlines the strategy he used to index standard.site records.',
     date: 'April 14, 2026',
@@ -128,6 +146,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'kicking-off-the-atp-working-group',
+    tags: ['governance'],
     title: 'Kicking off the ATP Working Group at the IETF',
     description: 'The Authenticated Transfer Protocol working group has been created at the IETF. Now that we have a charter, we are looking forward to participation from the broader ATP ecosystem. ',
     date: 'April 2, 2026',
@@ -135,6 +154,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2026-spring-roadmap',
+    tags: ['roadmap', 'spaces', 'identity'],
     title: 'AT Protocol Roadmap (Spring 2026)',
     description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
     date: 'March 24, 2026',
@@ -142,6 +162,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
+    tags: ['hosting', 'sync', 'ecosystem'],
     title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
     description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
     date: 'March 20, 2026',
@@ -149,6 +170,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'working-to-decentralize-fedcm',
+    tags: ['identity', 'governance', 'ecosystem'],
     title: 'Working to Decentralize FedCM',
     description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
     date: 'March 9, 2026',
@@ -156,6 +178,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'npmx-alpha-launch',
+    tags: ['ecosystem', 'sdks'],
     title: 'Supporting the npmx Alpha Launch',
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
     date: 'March 3, 2026',
@@ -164,6 +187,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'plc-replicas',
+    tags: ['identity', 'hosting'],
     title: 'PLC Read Replicas',
     description: 'Introducing a self-hostable did:plc read-replica service.',
     date: 'February 18, 2026',
@@ -172,6 +196,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'new-site-2026',
+    tags: ['ecosystem'],
     title: 'Welcome to the New atproto.com',
     description: 'We’ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 17, 2026',
@@ -180,6 +205,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'relay-rollout',
+    tags: ['sync', 'hosting'],
     title: 'Upcoming Relay Transition',
     description: 'What the new relay rollout means for consumers of the firehose.',
     date: 'January 24, 2026',
@@ -187,6 +213,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'introducing-tap',
+    tags: ['sync', 'sdks'],
     title: 'Introducing Tap: Repository Synchronization Made Simple',
     description:
       'We recently released Tap, a tool designed to handle the hard parts of repo synchronization, so you can focus on building your application.',
@@ -196,6 +223,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-check-in-fall-2025',
+    tags: ['roadmap', 'governance', 'spaces'],
     title: 'Protocol Check-in (Fall 2025)',
     description: "The Atmosphere is thriving, here's a closer look",
     date: 'October 20, 2025',
@@ -203,6 +231,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'taking-at-to-the-ietf',
+    tags: ['governance'],
     title: 'Taking AT to the IETF',
     description:
       'We recently posted two drafts to the IETF Data Tracker. This is the first major step towards standardizing parts of AT in an effort to establish long-term governance for the protocol.',
@@ -211,6 +240,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'plc-directory-org',
+    tags: ['identity', 'governance'],
     title: 'Creating an Independent Public Ledger of Credentials (PLC) Directory Organization',
     description:
       'As the next step of maturing governance of the PLC identity system, Bluesky Social PBC is supporting the creation of an independent organization to operate the PLC directory.',
@@ -219,6 +249,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'oauth-improvements',
+    tags: ['oauth', 'identity'],
     title: 'OAuth Improvements',
     description:
       "We've been making improvements to the end-user and developer experiences with atproto OAuth.",
@@ -227,6 +258,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'network-account-management',
+    tags: ['identity', 'oauth', 'hosting'],
     title: 'Network Account Management',
     description:
       "We recently shipped new functionality to the PDS reference implementation (and Bluesky's hosting service) which provides a web interface to create and manage accounts directly on the PDS itself.",
@@ -235,6 +267,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'relay-updates-sync-v1-1',
+    tags: ['sync', 'hosting'],
     title: 'Relay Updates for Sync v1.1',
     description:
       'Updates to our reference implementation of the relay support sync version 1.1',
@@ -243,6 +276,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2025-protocol-roadmap-spring',
+    tags: ['roadmap', 'sync', 'oauth', 'spaces'],
     title: '2025 Protocol Roadmap (Spring and Summer)',
     description:
       'Updates to the AT Protocol roadmap, including Sync v1.1, auth scopes, PDS account management, and more.',
@@ -251,6 +285,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'looking-back-2024',
+    tags: ['roadmap', 'lexicons', 'oauth', 'sync'],
     title: 'Looking Back At 2024 AT Protocol Development',
     description:
       "A lot of progress was made on the protocol in 2024, here's a look at the big milestones",
@@ -259,6 +294,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'relay-ops',
+    tags: ['sync', 'hosting'],
     title: 'Relay Operational Updates',
     description:
       'Updates on changes to Bluesky relay servers and guidance for firehose consumers.',
@@ -267,6 +303,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'pinned-posts',
+    tags: ['lexicons'],
     title: 'Lexicons, Pinned Posts, and Interoperability',
     description:
       'A discussion of Lexicons, schema extensions, and lessons learned from the pinned posts feature collision.',
@@ -275,6 +312,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'jetstream',
+    tags: ['sync', 'sdks'],
     title: 'Introducing Jetstream',
     description:
       'Introducing Jetstream, an alternative streaming solution with simple JSON encoding and reduced bandwidth.',
@@ -283,6 +321,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'oauth-atproto',
+    tags: ['oauth', 'identity'],
     title: 'OAuth for AT Protocol',
     description:
       'Releasing the initial specification of OAuth for AT Protocol, the primary authentication and authorization system going forward.',
@@ -291,6 +330,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'label-grants',
+    tags: ['moderation', 'ecosystem'],
     title: 'Labeling Services Microgrants',
     description:
       'Launching microgrants for labeling services on Bluesky to support moderation and community safety.',
@@ -299,6 +339,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2024-protocol-roadmap',
+    tags: ['roadmap', 'governance'],
     title: '2024 Protocol Roadmap',
     description:
       'An update on our progress and our general goals and focus for the coming months.',
@@ -307,6 +348,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants-recipients',
+    tags: ['ecosystem'],
     title: 'Meet the second batch of AT Protocol Grant Recipients',
     description:
       'Announcing the second batch of AT Protocol grant recipients, distributing $4,800 total in grants.',
@@ -315,6 +357,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants',
+    tags: ['ecosystem'],
     title: 'Announcing AT Protocol Grants',
     description:
       'Announcing the AT Protocol Grants program, aimed at fostering the growth and sustainability of the atproto developer ecosystem.',
@@ -323,6 +366,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'self-host-federation',
+    tags: ['hosting', 'identity'],
     title: 'Early Access Federation for Self-Hosters',
     description:
       'Releasing an early-access version of federation intended for self-hosters and developers.',
@@ -331,6 +375,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'repo-export',
+    tags: ['tutorials', 'sync'],
     title: 'Download and Parse Repository Exports',
     description:
       'How to export and parse a data repository as a CAR file.',
@@ -339,6 +384,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-roadmap',
+    tags: ['roadmap', 'hosting', 'governance'],
     title: '2023 Protocol Roadmap',
     description:
       'The current AT Protocol development plan through to a version one release.',
@@ -347,6 +393,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'building-on-atproto',
+    tags: ['ecosystem', 'tutorials'],
     title: 'Building on the AT Protocol',
     description:
       'What you can already build on atproto, and what you can expect soon.',
@@ -355,6 +402,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'bgs-and-did-doc',
+    tags: ['sync', 'identity', 'hosting'],
     title: 'Bluesky BGS and DID Document Formatting Changes',
     description:
       'Protocol and infrastructure changes including the BGS firehose and DID document formatting updates.',
@@ -363,6 +411,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'repo-sync-update',
+    tags: ['sync'],
     title: 'Updates to Repository Sync Semantics',
     description:
       'Announcing updates to atproto repositories that remove history and replace it with a logical clock.',
@@ -371,6 +420,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'create-post',
+    tags: ['tutorials', 'lexicons'],
     title: 'Posting via the Bluesky API',
     description:
       'A guide to creating posts via the Bluesky API, including mentions, links, replies, quote posts, and image embeds.',
@@ -379,6 +429,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'call-for-developers',
+    tags: ['ecosystem'],
     title: 'Bluesky Call for Developers',
     description:
       "Bluesky is an open social network built on the AT Protocol. If you're a developer interested in building on atproto, we'd love to hear from you.",
@@ -387,6 +438,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'federation-sandbox',
+    tags: ['hosting', 'tutorials'],
     title: 'Federation Developer Sandbox Guidelines',
     description:
       'Guidelines for the atproto federation developer sandbox environment.',
@@ -395,6 +447,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'block-implementation',
+    tags: ['moderation'],
     title: 'Why are blocks on Bluesky public?',
     description:
       'The technical implementation of public blocks and some possibilities for more privacy preserving block implementations.',
