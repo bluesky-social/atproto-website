@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { createSearch } from './blogSearch.mjs'
 import {
   normalizeBlogTags,
+  blogTopics,
   parseBlogQuery,
   formatBlogQuery,
   blogSearchHref,
@@ -22,17 +23,37 @@ const page = (
 })
 const search = createSearch([
   ...Array.from({ length: 12 }, (_, i) => page(`/guides/oauth-${i}`)),
-  page('/blog/spaces', ['spaces', 'oauth']),
-  page('/blog/auth', ['oauth']),
+  page('/blog/spaces', ['spaces', 'identity']),
+  page('/blog/auth', ['identity']),
   page('/blog/other', ['sync'], 'Streaming', 'events'),
-  page('/pt/blog/spaces', ['spaces', 'oauth']),
+  page('/pt/blog/spaces', ['spaces', 'identity']),
 ])
 
 describe('blog query and vocabulary', () => {
+  it('combines OAuth with identity and removes format/catch-all topics', () => {
+    expect(
+      blogTopics.some((topic) =>
+        ['oauth', 'tutorials', 'ecosystem'].includes(topic.id),
+      ),
+    ).toBe(false)
+    expect(normalizeBlogTags(['identity', 'oauth', 'OAUTH'])).toEqual([
+      'identity',
+    ])
+    expect(parseBlogQuery('tag:oauth tag:identity')).toEqual({
+      text: '',
+      tags: ['identity'],
+    })
+    expect(search('tag:oauth', { locale: 'en' })).toEqual(
+      search('tag:identity', { locale: 'en' }),
+    )
+    for (const tag of ['tutorials', 'ecosystem'])
+      expect(() => normalizeBlogTags([tag])).toThrow('Unknown blog tag')
+    expect(normalizeBlogTags(['grants'])).toEqual(['grants'])
+  })
   it('normalizes and deduplicates author input, rejects invalid data', () => {
     expect(normalizeBlogTags([' Spaces ', 'spaces', 'OAUTH'])).toEqual([
       'spaces',
-      'oauth',
+      'identity',
     ])
     expect(normalizeBlogTags(undefined)).toEqual([])
     for (const invalid of [null, 'spaces', [1], ['made-up']]) {
@@ -42,12 +63,12 @@ describe('blog query and vocabulary', () => {
   it('parses multiple case-insensitive filters and preserves free text', () => {
     expect(
       parseBlogQuery('OAuth TAG:Spaces login tag:oauth tag:spaces'),
-    ).toEqual({ text: 'OAuth login', tags: ['spaces', 'oauth'] })
+    ).toEqual({ text: 'OAuth login', tags: ['spaces', 'identity'] })
     expect(parseBlogQuery('tag:')).toEqual({ text: 'tag:', tags: [] })
-    const query = formatBlogQuery('login', ['spaces', 'oauth'])
+    const query = formatBlogQuery('login', ['spaces', 'identity'])
     expect(parseBlogQuery(query)).toEqual({
       text: 'login',
-      tags: ['spaces', 'oauth'],
+      tags: ['spaces', 'identity'],
     })
     expect(
       new URL(blogSearchHref(query), 'https://atproto.com').searchParams.get(

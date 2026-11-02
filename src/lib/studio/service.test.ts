@@ -673,12 +673,12 @@ describe('blog topic persistence', () => {
       description: 'Desc',
       date: 'June 1, 2026',
       author: 'Jim Ray',
-      tags: [' Spaces ', 'oauth', 'spaces'],
+      tags: [' Spaces ', 'identity', 'spaces'],
     })
     let post = await readPost(paths, 'topics')
-    expect(post.owned.tags).toEqual(['spaces', 'oauth'])
+    expect(post.owned.tags).toEqual(['spaces', 'identity'])
     expect(fs.readFileSync(paths.postsFile, 'utf8')).toContain(
-      "tags: ['spaces', 'oauth']",
+      "tags: ['spaces', 'identity']",
     )
     await updatePost(paths, 'topics', {
       owned: { ...post.owned, tags: ['sync'] },

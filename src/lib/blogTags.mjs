@@ -1,19 +1,23 @@
 // Stable IDs are used in metadata, queries and URLs; labels can change independently.
 export const blogTopics = [
   { id: 'spaces', label: 'Spaces' },
-  { id: 'identity', label: 'Identity & accounts' },
-  { id: 'oauth', label: 'OAuth' },
+  { id: 'identity', label: 'Identity & auth' },
   { id: 'sync', label: 'Sync & streaming' },
   { id: 'hosting', label: 'Hosting & infrastructure' },
   { id: 'sdks', label: 'SDKs & tooling' },
   { id: 'lexicons', label: 'Lexicons & records' },
   { id: 'moderation', label: 'Moderation' },
   { id: 'feeds', label: 'Feeds' },
-  { id: 'ecosystem', label: 'Ecosystem' },
   { id: 'governance', label: 'Standards & governance' },
   { id: 'roadmap', label: 'Roadmaps & progress' },
-  { id: 'tutorials', label: 'Tutorials' },
+  { id: 'grants', label: 'Grants' },
 ]
+
+// OAuth is part of Identity & auth; retain existing query links as an alias.
+function canonicalTag(tag) {
+  const id = tag.trim().toLowerCase()
+  return id === 'oauth' ? 'identity' : id
+}
 
 /** @param {unknown} value @returns {string[]} */
 export function normalizeBlogTags(value) {
@@ -21,7 +25,7 @@ export function normalizeBlogTags(value) {
   if (!Array.isArray(value) || value.some((tag) => typeof tag !== 'string')) {
     throw new Error('Tags must be an array of topic IDs')
   }
-  const tags = [...new Set(value.map((tag) => tag.trim().toLowerCase()))]
+  const tags = [...new Set(value.map(canonicalTag))]
   for (const tag of tags) {
     if (!blogTopics.some((topic) => topic.id === tag))
       throw new Error(`Unknown blog tag: ${tag}`)
@@ -34,7 +38,7 @@ export function parseBlogQuery(query) {
   const tags = []
   const text = query
     .replace(/(?:^|\s)tag:([^\s]+)/gi, (_, tag) => {
-      tags.push(tag.toLowerCase())
+      tags.push(canonicalTag(tag))
       return ' '
     })
     .trim()

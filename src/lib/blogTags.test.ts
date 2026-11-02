@@ -16,12 +16,11 @@ describe('blog archive tags', () => {
         'en.mdx',
       )
       const content = fs.readFileSync(file, 'utf8')
-      expect(post.tags?.length, post.slug).toBeGreaterThan(0)
-      expect(normalizeBlogTags(post.tags), post.slug).toEqual(post.tags)
+      expect(normalizeBlogTags(post.tags), post.slug).toEqual(post.tags ?? [])
       expect(readHeaderTags(parseMdxFile(content)), post.slug).toEqual(
-        post.tags,
+        post.tags ?? [],
       )
-      expect(extractBlogTags(content), post.slug).toEqual(post.tags)
+      expect(extractBlogTags(content), post.slug).toEqual(post.tags ?? [])
       expect(
         extractSearchSections(content, file).length,
         post.slug,

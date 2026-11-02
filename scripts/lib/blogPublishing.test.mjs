@@ -53,9 +53,9 @@ test('stops pagination as soon as the matching document is found', async () => {
 })
 
 test('requires the MDX and listing to contain the same tags before publishing', () => {
-  const posts = [{ slug: 'post', tags: ['spaces', 'oauth'] }]
+  const posts = [{ slug: 'post', tags: ['spaces', 'identity'] }]
   assert.doesNotThrow(() =>
-    assertListingTags('post', ['oauth', 'spaces', 'spaces'], posts),
+    assertListingTags('post', ['identity', 'spaces', 'spaces'], posts),
   )
   assert.throws(
     () => assertListingTags('post', ['sync'], posts),
