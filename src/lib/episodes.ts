@@ -101,6 +101,21 @@ export const SHOW: ShowMeta = {
 
 export const episodes: Episode[] = [
   {
+    slug: '2026-11-02-somewhere-we-have-some-agency-edward-niedermeyer',
+    episodeNumber: 26,
+    title: 'Somewhere We Have Some Agency',
+    description: 'Edward Niedermeyer joins to share his insight into how covering Elon Musk for a decade-and-a-half prepared him to go all-in on atproto.',
+    date: 'November 2, 2026',
+    pubDate: '2026-11-02T20:45:00.000Z',
+    duration: '00:41:45',
+    durationSeconds: 2505,
+    guests: ['Edward Niedermeyer'],
+    format: 'conversation',
+    audioUrl: 'https://media.atproto.com/off-protocol/2026-11-02-edward-niedermeyer/niedermeyer-somewhere-we-have-some-agency-lev-18lufs.mp3',
+    audioSizeBytes: 40548531,
+    audioMimeType: 'audio/mpeg',
+  },
+  {
     slug: '2026-10-28-the-path-of-honor',
     episodeNumber: 25,
     title: 'The Path of Honor',
