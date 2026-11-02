@@ -11,6 +11,7 @@ export const blogTopics = [
   { id: 'governance', label: 'Standards & governance' },
   { id: 'roadmap', label: 'Roadmaps & progress' },
   { id: 'grants', label: 'Grants' },
+  { id: 'news', label: 'News & announcements' },
 ]
 
 // OAuth is part of Identity & auth; retain existing query links as an alias.

@@ -45,14 +45,17 @@ Use one tag when one topic is enough; an empty array is valid when no topic fits
 - **SDKs & tooling** covers SDKs and tools for developing atproto apps, not every
   application or service that happens to be software.
 
-## Editorial decisions to confirm
+## News and remaining editorial decision
 
-Four posts are provisionally untagged rather than forced into a technical topic:
-Going Off Protocol (podcast announcement), Welcome to the New atproto.com (site
-redesign), Bluesky Call for Developers (beta invites), and Building on the AT
-Protocol (a broad introductory overview of several kinds of apps). They remain
-visible in the unfiltered archive and in text search. A general News or
-Announcements topic would be an editorial choice, not a technical requirement.
+Use **News & announcements** (`news`) for site, podcast, and community
+announcements such as Going Off Protocol, Welcome to the New atproto.com, and
+Bluesky Call for Developers. This is an editorial category approved for these
+posts, not an additional label on every technical release announcement.
+
+Building on the AT Protocol remains provisionally untagged: it is a broad
+introductory overview of bots, clients, and feeds rather than an announcement or
+a focused technical topic. It remains visible in the unfiltered archive and in
+text search.
 
 ## Reviewed archive assignments
 
@@ -70,7 +73,7 @@ the main-subject rationale for each; post prose is unchanged.
 | pds-customization-and-metrics                               | hosting, identity              | PDS observability and configuration, plus account/auth screen branding and connected-session fixes.                                |
 | at-protocol-trademark                                       | governance                     | Trademark stewardship and usage policy; not a technical standards implementation.                                                  |
 | pds-account-management                                      | identity                       | Account management and OAuth session revocation. Running on a PDS alone does not warrant Hosting.                                  |
-| going-off-protocol                                          | — (pending editorial decision) | Editorial decision pending: podcast/livestream announcement, without a specific technical subject.                                 |
+| going-off-protocol                                          | news                           | Podcast and livestream launch announcement.                                                                                        |
 | rpg-actor                                                   | lexicons                       | Portable game characters, interoperable records, and validation/provenance of game data.                                           |
 | atmospheric-website                                         | lexicons, hosting              | Publishing Standard.site records and a substantial section on PDS self-hosting and migration.                                      |
 | standard-site-bluesky-timeline                              | lexicons                       | Standard.site schemas, record verification, and interoperability with Bluesky previews.                                            |
@@ -84,7 +87,7 @@ the main-subject rationale for each; post prose is unchanged.
 | working-to-decentralize-fedcm                               | identity, governance, grants   | Federated browser sign-in, W3C standards advocacy, and the grant supporting that work.                                             |
 | npmx-alpha-launch                                           | identity, grants               | Independent atproto signup/portable accounts and a grant announcement. An npm browser is not an atproto SDK release.               |
 | plc-replicas                                                | identity, hosting              | DID-directory replication, auditability, and running an independent replica.                                                       |
-| new-site-2026                                               | — (pending editorial decision) | Editorial decision pending: website/documentation redesign, not a release of every technology linked from the page.                |
+| new-site-2026                                               | news                           | Website and documentation redesign announcement.                                                                                   |
 | relay-rollout                                               | sync, hosting                  | Relay cutover, firehose cursors, consumer recovery, and operator impact.                                                           |
 | introducing-tap                                             | sync, sdks                     | Repository backfill/recovery tooling and its CLI/client integration.                                                               |
 | protocol-check-in-fall-2025                                 | roadmap                        | Broad progress report spanning developer experience, governance, hosting, identity, and private data.                              |
@@ -110,6 +113,6 @@ the main-subject rationale for each; post prose is unchanged.
 | bgs-and-did-doc                                             | sync, identity, hosting        | Two explicit changes: BGS/firehose infrastructure rollout and DID-document key formatting.                                         |
 | repo-sync-update                                            | sync                           | Repository revisions, logical clocks, ordering, and synchronization semantics.                                                     |
 | create-post                                                 | lexicons                       | Post-record structures, facets, references, and embeds; authentication is a prerequisite rather than the main topic.               |
-| call-for-developers                                         | — (pending editorial decision) | Editorial decision pending: a historical beta invite/recruitment announcement, not technical guidance.                             |
+| call-for-developers                                         | news                           | Historical beta invite and developer recruitment announcement.                                                                     |
 | federation-sandbox                                          | hosting                        | Operating PDSes and other services in the federation testing network; remove format-based Tutorials.                               |
 | block-implementation                                        | moderation                     | Public-block implementation, enforcement, and privacy tradeoffs.                                                                   |

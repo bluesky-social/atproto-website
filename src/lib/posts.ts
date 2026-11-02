@@ -82,7 +82,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'going-off-protocol',
-    tags: [],
+    tags: ['news'],
     title: 'Going Off Protocol',
     description: 'We’re expanding our office hours livestream. Look for it wherever you get your podcasts.',
     date: 'June 18, 2026',
@@ -196,7 +196,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'new-site-2026',
-    tags: [],
+    tags: ['news'],
     title: 'Welcome to the New atproto.com',
     description: 'We’ve updated just about everything about atproto.com to make it easier for developers to just build things.',
     date: 'February 17, 2026',
@@ -429,7 +429,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'call-for-developers',
-    tags: [],
+    tags: ['news'],
     title: 'Bluesky Call for Developers',
     description:
       "Bluesky is an open social network built on the AT Protocol. If you're a developer interested in building on atproto, we'd love to hear from you.",
