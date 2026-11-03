@@ -44,7 +44,7 @@ export function BlogListing({ topic }: { topic?: string }) {
         <form
           method="get"
           action="/blog/topic"
-          className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200 pb-4 text-sm dark:border-zinc-800"
+          className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-4 text-sm dark:border-zinc-800"
         >
           <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
             Latest posts
