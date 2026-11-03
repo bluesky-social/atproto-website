@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { posts } from '@/lib/posts'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -10,6 +11,29 @@ export const metadata: Metadata = {
 
 // Uses the blog topic-filter URL format, available when this page ships.
 const agentBlogHref = '/blog?q=tag%3Aai'
+
+// Keep the designed feature visible until its post and AI tags are published.
+// Published AI posts use archive metadata and appear newest first.
+const taggedPosts = posts
+  .filter((post) => post.tags?.includes('ai'))
+  .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+const aiPosts =
+  taggedPosts.length > 0
+    ? taggedPosts.map((post) => ({
+        ...post,
+        href: `/blog/${post.slug}`,
+      }))
+    : [
+        {
+          title: 'AI on Atproto: Our Approach',
+          description:
+            'We built the AT Protocol so that people, not platforms, hold the keys to their online lives. That same commitment shapes how we think about AI.',
+          detail:
+            ' This post lays out the values behind our approach, how they show up in what we build, and why we think atproto is well suited to a web where AI agents are everywhere.',
+          date: undefined,
+          href: agentBlogHref,
+        },
+      ]
 
 const steps = [
   {
@@ -167,6 +191,46 @@ export default function AIPage() {
           </div>
           <ChatExample />
         </section>
+        <section
+          className={`${styles.section} ${styles.blog}`}
+          aria-labelledby="from-the-blog"
+        >
+          <h2 id="from-the-blog">Blog posts</h2>
+          <Link href={agentBlogHref} className={styles.viewAll}>
+            View all posts <span aria-hidden="true">→</span>
+          </Link>
+          <div className={styles.postList}>
+            {aiPosts.map((post, index) => (
+              <article key={post.href} className={styles.featuredPost}>
+                <div className={styles.postHeading}>
+                  {index === 0 && <span className={styles.latest}>Latest</span>}
+                  <h3>
+                    <Link href={post.href}>{post.title}</Link>
+                  </h3>
+                </div>
+                <p className={styles.postDescription}>
+                  {post.description}
+                  {'detail' in post && (
+                    <span className={styles.postDetail}>{post.detail}</span>
+                  )}
+                </p>
+                {post.date ? (
+                  <time
+                    className={styles.postDate}
+                    dateTime={new Date(post.date).toISOString().slice(0, 10)}
+                  >
+                    {post.date}
+                  </time>
+                ) : (
+                  <span className={styles.postDate}>[Date]</span>
+                )}
+                <Link href={post.href} className={styles.readPost}>
+                  Read post <span aria-hidden="true">→</span>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
         <section className={styles.section} aria-labelledby="how-it-works">
           <h2 id="how-it-works">How ident.link works</h2>
           <ol className={styles.steps}>
@@ -258,41 +322,7 @@ export default function AIPage() {
             </article>
           </div>
         </section>
-        <section className={styles.section} aria-labelledby="from-the-blog">
-          <h2 id="from-the-blog">From the blog</h2>
-          <div className={styles.blogTopics}>
-            {[
-              {
-                tag: 'ai',
-                title: 'AI & agents',
-                description:
-                  'Explore agents on atproto and the people behind them.',
-              },
-              {
-                tag: 'identity',
-                title: 'Identity & auth',
-                description:
-                  'Learn about portable identities, authentication, and account ownership.',
-              },
-              {
-                tag: 'spaces',
-                title: 'Spaces',
-                description:
-                  'Follow the development of permissioned data and shared spaces on atproto.',
-              },
-            ].map((topic) => (
-              <article key={topic.tag}>
-                <Link href={`/blog?q=tag%3A${topic.tag}`}>
-                  <h3>{topic.title}</h3>
-                  <p>{topic.description}</p>
-                  <span className={styles.blogTopicLink}>
-                    Read the posts <span aria-hidden="true">→</span>
-                  </span>
-                </Link>
-              </article>
-            ))}
-          </div>
-        </section>
+
         <section className={styles.cta} aria-labelledby="get-started">
           <div>
             <h2 id="get-started">Show who’s behind your agent</h2>

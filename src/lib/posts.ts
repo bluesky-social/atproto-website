@@ -4,6 +4,7 @@ export interface BlogPost {
   description: string
   date: string
   author?: string
+  tags?: string[]
 }
 
 export const posts: BlogPost[] = [
