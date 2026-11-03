@@ -2,17 +2,15 @@
 // Order is the display order: News first, then alphabetical by label.
 export const blogTopics = [
   { id: 'news', label: 'News & Announcements' },
+  { id: 'identity', label: 'Accounts & Auth' },
   { id: 'feeds', label: 'Feeds' },
-  { id: 'grants', label: 'Grants' },
-  { id: 'hosting', label: 'Hosting & Infrastructure' },
-  { id: 'identity', label: 'Identity & Auth' },
-  { id: 'lexicons', label: 'Lexicons & Records' },
+  { id: 'governance', label: 'Governance' },
+  { id: 'lexicons', label: 'Lexicons & Data Schemas' },
   { id: 'moderation', label: 'Moderation' },
-  { id: 'roadmap', label: 'Roadmaps & Progress' },
-  { id: 'sdks', label: 'SDKs & Tooling' },
-  { id: 'spaces', label: 'Spaces' },
-  { id: 'governance', label: 'Standards & Governance' },
-  { id: 'sync', label: 'Sync & Streaming' },
+  { id: 'sync', label: 'Network Data' },
+  { id: 'sdks', label: 'SDKs & Tools' },
+  { id: 'hosting', label: 'Self-Hosting' },
+  { id: 'spaces', label: 'Spaces & Permissioned Data' },
 ]
 
 /** @param {unknown} value @returns {string[]} */

@@ -7,7 +7,7 @@ const params = (topic: string) => ({ params: Promise.resolve({ topic }) })
 describe('blog topic page', () => {
   it('renders the topic label as the page subject', async () => {
     const html = renderToStaticMarkup(await TopicPage(params('sync')))
-    expect(html).toContain('Sync &amp; Streaming')
+    expect(html).toContain('Network Data')
   })
 
   it('returns a 404 for an unknown topic', async () => {

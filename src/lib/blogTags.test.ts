@@ -35,6 +35,21 @@ describe('blog archive tags', () => {
 })
 
 describe('blog topic vocabulary order and labels', () => {
+  it('matches the approved topic list', () => {
+    expect(blogTopics).toEqual([
+      { id: 'news', label: 'News & Announcements' },
+      { id: 'identity', label: 'Accounts & Auth' },
+      { id: 'feeds', label: 'Feeds' },
+      { id: 'governance', label: 'Governance' },
+      { id: 'lexicons', label: 'Lexicons & Data Schemas' },
+      { id: 'moderation', label: 'Moderation' },
+      { id: 'sync', label: 'Network Data' },
+      { id: 'sdks', label: 'SDKs & Tools' },
+      { id: 'hosting', label: 'Self-Hosting' },
+      { id: 'spaces', label: 'Spaces & Permissioned Data' },
+    ])
+  })
+
   it('lists News & Announcements first', () => {
     expect(blogTopics[0].id).toBe('news')
   })
@@ -70,7 +85,14 @@ describe('normalizeBlogTags', () => {
 
   // Removed topics, and the old oauth query alias, are errors for authors.
   it('rejects IDs outside the vocabulary', () => {
-    for (const tag of ['made-up', 'tutorials', 'ecosystem', 'oauth'])
+    for (const tag of [
+      'made-up',
+      'tutorials',
+      'ecosystem',
+      'oauth',
+      'roadmap',
+      'grants',
+    ])
       expect(() => normalizeBlogTags([tag]), tag).toThrow('Unknown blog tag')
   })
 })

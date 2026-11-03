@@ -154,7 +154,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2026-spring-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'AT Protocol Roadmap (Spring 2026)',
     description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
     date: 'March 24, 2026',
@@ -162,7 +162,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
-    tags: ['hosting', 'sync', 'grants'],
+    tags: ['hosting', 'sync'],
     title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
     description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
     date: 'March 20, 2026',
@@ -170,7 +170,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'working-to-decentralize-fedcm',
-    tags: ['identity', 'governance', 'grants'],
+    tags: ['identity', 'governance'],
     title: 'Working to Decentralize FedCM',
     description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
     date: 'March 9, 2026',
@@ -178,7 +178,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'npmx-alpha-launch',
-    tags: ['identity', 'grants'],
+    tags: ['identity'],
     title: 'Supporting the npmx Alpha Launch',
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
     date: 'March 3, 2026',
@@ -223,7 +223,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-check-in-fall-2025',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'Protocol Check-in (Fall 2025)',
     description: "The Atmosphere is thriving, here's a closer look",
     date: 'October 20, 2025',
@@ -276,7 +276,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2025-protocol-roadmap-spring',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2025 Protocol Roadmap (Spring and Summer)',
     description:
       'Updates to the AT Protocol roadmap, including Sync v1.1, auth scopes, PDS account management, and more.',
@@ -285,7 +285,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'looking-back-2024',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'Looking Back At 2024 AT Protocol Development',
     description:
       "A lot of progress was made on the protocol in 2024, here's a look at the big milestones",
@@ -330,7 +330,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'label-grants',
-    tags: ['moderation', 'grants'],
+    tags: ['moderation'],
     title: 'Labeling Services Microgrants',
     description:
       'Launching microgrants for labeling services on Bluesky to support moderation and community safety.',
@@ -339,7 +339,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2024-protocol-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2024 Protocol Roadmap',
     description:
       'An update on our progress and our general goals and focus for the coming months.',
@@ -348,7 +348,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants-recipients',
-    tags: ['grants'],
+    tags: ['news'],
     title: 'Meet the second batch of AT Protocol Grant Recipients',
     description:
       'Announcing the second batch of AT Protocol grant recipients, distributing $4,800 total in grants.',
@@ -357,7 +357,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants',
-    tags: ['grants'],
+    tags: ['news'],
     title: 'Announcing AT Protocol Grants',
     description:
       'Announcing the AT Protocol Grants program, aimed at fostering the growth and sustainability of the atproto developer ecosystem.',
@@ -384,7 +384,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2023 Protocol Roadmap',
     description:
       'The current AT Protocol development plan through to a version one release.',
