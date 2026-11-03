@@ -2,12 +2,13 @@ import Link from 'next/link'
 import { blogTopicHref, findBlogTopic } from '@/lib/blogTags.mjs'
 
 // Shown at the end of a post. Low emphasis by design: small, muted, round-rect.
+// -mt-12 halves the gap left by the MDX article's pb-24 (shared with all pages).
 export function BlogTags({ tags = [] }: { tags?: string[] }) {
   if (!tags.length) return null
   return (
     <nav
       aria-label="Topics"
-      className="flex max-w-2xl basis-full flex-wrap items-center gap-2 px-4 pb-12 md:px-16 lg:max-w-3xl"
+      className="-mt-12 flex max-w-2xl basis-full flex-wrap items-center gap-2 px-4 pb-12 md:px-16 lg:max-w-3xl"
     >
       <span className="font-mono text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         Topics

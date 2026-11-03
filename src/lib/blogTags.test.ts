@@ -3,8 +3,35 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { posts } from './posts'
 import { blogTopics, normalizeBlogTags } from './blogTags.mjs'
-import { parseMdxFile, readHeaderTags } from './studio/mdxHeader'
+import {
+  getHeaderField,
+  parseMdxFile,
+  readHeaderTags,
+} from './studio/mdxHeader'
 import { extractSearchSections } from '../mdx/search.mjs'
+
+// posts.ts copies each post's MDX header for the listing and feeds. Until it
+// is generated from the headers, check every copied field for drift.
+describe('blog listing metadata', () => {
+  for (const field of ['title', 'description', 'date', 'author'] as const) {
+    it(`matches the MDX header ${field} for every post`, () => {
+      for (const post of posts) {
+        const content = fs.readFileSync(
+          path.join(
+            process.cwd(),
+            'src/app/[locale]/blog',
+            post.slug,
+            'en.mdx',
+          ),
+          'utf8',
+        )
+        expect(getHeaderField(parseMdxFile(content), field), post.slug).toBe(
+          post[field] ?? '',
+        )
+      }
+    })
+  }
+})
 
 describe('blog archive tags', () => {
   it('covers every listed post and keeps listing and MDX metadata consistent', () => {

@@ -21,6 +21,7 @@ import { BlogIndex, BLOG_DESCRIPTION } from '@/components/BlogListing'
  *      title: 'Your Post Title',
  *      description: 'Your post description',
  *      date: 'January 20, 2026',
+ *      tags: ['news'], // topic IDs from src/lib/blogTags.mjs; may be []
  *    }
  *
  *    # Your Post Title
@@ -28,7 +29,9 @@ import { BlogIndex, BLOG_DESCRIPTION } from '@/components/BlogListing'
  *    Your markdown content here...
  *    ```
  *
- * 4. Add the post to the `posts` array in src/lib/posts.ts (newest first)
+ * 4. Add the post to the `posts` array in src/lib/posts.ts (newest first),
+ *    copying title, description, date, author and tags exactly from the
+ *    header. src/lib/blogTags.test.ts fails if the two differ.
  *
  * 5. (Optional) Add translations: pt.mdx, ja.mdx, ko.mdx
  */
