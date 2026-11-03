@@ -1,24 +1,17 @@
-// Stable IDs are used in metadata, queries and URLs; labels can change independently.
+// Stable IDs are used in metadata and URLs; labels can change independently.
+// Order is the display order: News first, then alphabetical by label.
 export const blogTopics = [
-  { id: 'spaces', label: 'Spaces' },
-  { id: 'identity', label: 'Identity & auth' },
-  { id: 'sync', label: 'Sync & streaming' },
-  { id: 'hosting', label: 'Hosting & infrastructure' },
-  { id: 'sdks', label: 'SDKs & tooling' },
-  { id: 'lexicons', label: 'Lexicons & records' },
-  { id: 'moderation', label: 'Moderation' },
+  { id: 'news', label: 'News & Announcements' },
+  { id: 'identity', label: 'Accounts & Auth' },
   { id: 'feeds', label: 'Feeds' },
-  { id: 'governance', label: 'Standards & governance' },
-  { id: 'roadmap', label: 'Roadmaps & progress' },
-  { id: 'grants', label: 'Grants' },
-  { id: 'news', label: 'News & announcements' },
+  { id: 'governance', label: 'Governance' },
+  { id: 'lexicons', label: 'Lexicons & Data Schemas' },
+  { id: 'moderation', label: 'Moderation' },
+  { id: 'sync', label: 'Network Data' },
+  { id: 'sdks', label: 'SDKs & Tools' },
+  { id: 'hosting', label: 'Self-Hosting' },
+  { id: 'spaces', label: 'Spaces & Permissioned Data' },
 ]
-
-// OAuth is part of Identity & auth; retain existing query links as an alias.
-function canonicalTag(tag) {
-  const id = tag.trim().toLowerCase()
-  return id === 'oauth' ? 'identity' : id
-}
 
 /** @param {unknown} value @returns {string[]} */
 export function normalizeBlogTags(value) {
@@ -26,7 +19,7 @@ export function normalizeBlogTags(value) {
   if (!Array.isArray(value) || value.some((tag) => typeof tag !== 'string')) {
     throw new Error('Tags must be an array of topic IDs')
   }
-  const tags = [...new Set(value.map(canonicalTag))]
+  const tags = [...new Set(value.map((tag) => tag.trim().toLowerCase()))]
   for (const tag of tags) {
     if (!blogTopics.some((topic) => topic.id === tag))
       throw new Error(`Unknown blog tag: ${tag}`)
@@ -34,32 +27,12 @@ export function normalizeBlogTags(value) {
   return tags
 }
 
-/** @param {string} query */
-export function parseBlogQuery(query) {
-  const tags = []
-  const text = query
-    .replace(/(?:^|\s)tag:([^\s]+)/gi, (_, tag) => {
-      tags.push(canonicalTag(tag))
-      return ' '
-    })
-    .trim()
-    .replace(/\s+/g, ' ')
-  return { text, tags: [...new Set(tags)] }
+/** @param {string} id */
+export function blogTopicHref(id) {
+  return `/blog/topic/${id}`
 }
 
-/** @param {string} text @param {string[]} tags */
-export function formatBlogQuery(text, tags) {
-  return [text.trim(), ...tags.map((tag) => `tag:${tag}`)]
-    .filter(Boolean)
-    .join(' ')
-}
-
-/** @param {string} query */
-export function blogSearchHref(query) {
-  return query ? `/blog?${new URLSearchParams({ q: query })}` : '/blog'
-}
-
-/** @param {string[] | undefined} tags @param {string[]} selected */
-export function matchesBlogTags(tags, selected) {
-  return selected.every((tag) => (tags ?? []).includes(tag))
+/** @param {string} id */
+export function findBlogTopic(id) {
+  return blogTopics.find((topic) => topic.id === id)
 }

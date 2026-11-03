@@ -10,12 +10,7 @@ declare module '@/mdx/search.mjs' {
 
   export type LocalizedSearchOptions = SearchOptions & {
     locale?: string
-    blogsOnly?: boolean
-    distinctPosts?: boolean
   }
 
-  export function search(
-    query: string,
-    options?: LocalizedSearchOptions,
-  ): Array<Result>
+  export function search(query: string, options?: LocalizedSearchOptions): Array<Result>
 }

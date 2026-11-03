@@ -45,7 +45,7 @@ test('throws when the post does not exist', async () => {
 test('publishing parses literal tag arrays and preserves them in the header', async () => {
   const { parseHeaderExport } = await import('./publish-post.mjs')
   const { header } = parseHeaderExport(
-    "export const header = { title: 'Post', tags: ['spaces', 'oauth'] }\n\nBody",
+    "export const header = { title: 'Post', tags: ['spaces', 'identity'] }\n\nBody",
   )
-  assert.deepEqual(header.tags, ['spaces', 'oauth'])
+  assert.deepEqual(header.tags, ['spaces', 'identity'])
 })

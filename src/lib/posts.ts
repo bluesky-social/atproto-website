@@ -60,7 +60,7 @@ export const posts: BlogPost[] = [
     slug: 'pds-customization-and-metrics',
     tags: ['hosting', 'identity'],
     title: 'Make the PDS Your Own: Customization and Metrics',
-    description: 'Branding, observability, and a session-list fix in the newest reference PDS.',
+    description: 'Branding, observability, and a session-list fix in the newest reference PDS',
     date: 'August 7, 2026',
     author: 'AT Protocol Team',
   },
@@ -76,7 +76,7 @@ export const posts: BlogPost[] = [
     slug: 'pds-account-management',
     tags: ['identity'],
     title: 'The Reference PDS Gets an Account Management Page',
-    description: 'Now anyone can easily manage their atproto account on the web.',
+    description: 'Now anyone can easily manage their atproto account on the web',
     date: 'June 24, 2026',
     author: 'AT Protocol Team',
   },
@@ -133,7 +133,7 @@ export const posts: BlogPost[] = [
     tags: ['feeds', 'hosting'],
     title: 'Serving the For You Feed',
     description: 'How the maintainer of the popular For You feed serves it from their living room!',
-    date: 'April 21, 2026',
+    date: 'April 22, 2026',
     author: 'spacecowboy',
   },
   {
@@ -148,13 +148,13 @@ export const posts: BlogPost[] = [
     slug: 'kicking-off-the-atp-working-group',
     tags: ['governance'],
     title: 'Kicking off the ATP Working Group at the IETF',
-    description: 'The Authenticated Transfer Protocol working group has been created at the IETF. Now that we have a charter, we are looking forward to participation from the broader ATP ecosystem. ',
+    description: 'The Authenticated Transfer Protocol (ATP) working group has been created at the IETF, and we are seeking participation from the broader Atmosphere ecosystem.',
     date: 'April 2, 2026',
     author: 'AT Protocol Team',
   },
   {
     slug: '2026-spring-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'AT Protocol Roadmap (Spring 2026)',
     description: 'Updates to the AT Protocol roadmap, including Permissioned Data and Account Experience.',
     date: 'March 24, 2026',
@@ -162,7 +162,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'introducing-hubble-a-public-mirror-for-the-whole-atmosphere',
-    tags: ['hosting', 'sync', 'grants'],
+    tags: ['hosting', 'sync'],
     title: 'Introducing Hubble: A Public Mirror for the Whole Atmosphere',
     description: 'Bluesky is providing a grant to the creator of Microcosm to build a full mirror of public data on the Atmosphere to help make the network more resilient.',
     date: 'March 20, 2026',
@@ -170,7 +170,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'working-to-decentralize-fedcm',
-    tags: ['identity', 'governance', 'grants'],
+    tags: ['identity', 'governance'],
     title: 'Working to Decentralize FedCM',
     description: 'Bluesky Social PBC have given a grant to Emelia Smith, an Invited Expert with the FedID Working Group, to work on FedCM with the goal of making FedCM really work for the decentralized web.',
     date: 'March 9, 2026',
@@ -178,7 +178,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'npmx-alpha-launch',
-    tags: ['identity', 'grants'],
+    tags: ['identity'],
     title: 'Supporting the npmx Alpha Launch',
     description: 'The launch of npmx is an incredible showcase for how open source communities can build quickly on top of atproto.',
     date: 'March 3, 2026',
@@ -223,9 +223,9 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-check-in-fall-2025',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'Protocol Check-in (Fall 2025)',
-    description: "The Atmosphere is thriving, here's a closer look",
+    description: 'The Atmosphere is thriving, here’s a closer look',
     date: 'October 20, 2025',
     author: 'AT Protocol Team',
   },
@@ -251,8 +251,7 @@ export const posts: BlogPost[] = [
     slug: 'oauth-improvements',
     tags: ['identity'],
     title: 'OAuth Improvements',
-    description:
-      "We've been making improvements to the end-user and developer experiences with atproto OAuth.",
+    description: 'We’ve been making improvements to the end-user and developer experiences with atproto OAuth.',
     date: 'June 12, 2025',
     author: 'AT Protocol Team',
   },
@@ -260,8 +259,7 @@ export const posts: BlogPost[] = [
     slug: 'network-account-management',
     tags: ['identity'],
     title: 'Network Account Management',
-    description:
-      "We recently shipped new functionality to the PDS reference implementation (and Bluesky's hosting service) which provides a web interface to create and manage accounts directly on the PDS itself.",
+    description: 'We recently shipped new functionality to the PDS reference implementation (and Bluesky’s hosting service) which provides a web interface to create and manage accounts directly on the PDS itself.',
     date: 'May 9, 2025',
     author: 'AT Protocol Team',
   },
@@ -276,7 +274,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2025-protocol-roadmap-spring',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2025 Protocol Roadmap (Spring and Summer)',
     description:
       'Updates to the AT Protocol roadmap, including Sync v1.1, auth scopes, PDS account management, and more.',
@@ -285,10 +283,9 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'looking-back-2024',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: 'Looking Back At 2024 AT Protocol Development',
-    description:
-      "A lot of progress was made on the protocol in 2024, here's a look at the big milestones",
+    description: 'A lot of progress was made on the protocol in 2024, here’s a look at the big milestones',
     date: 'January 10, 2025',
     author: 'AT Protocol Team',
   },
@@ -330,7 +327,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'label-grants',
-    tags: ['moderation', 'grants'],
+    tags: ['moderation'],
     title: 'Labeling Services Microgrants',
     description:
       'Launching microgrants for labeling services on Bluesky to support moderation and community safety.',
@@ -339,7 +336,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: '2024-protocol-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2024 Protocol Roadmap',
     description:
       'An update on our progress and our general goals and focus for the coming months.',
@@ -348,7 +345,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants-recipients',
-    tags: ['grants'],
+    tags: ['news'],
     title: 'Meet the second batch of AT Protocol Grant Recipients',
     description:
       'Announcing the second batch of AT Protocol grant recipients, distributing $4,800 total in grants.',
@@ -357,7 +354,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'atproto-grants',
-    tags: ['grants'],
+    tags: ['news'],
     title: 'Announcing AT Protocol Grants',
     description:
       'Announcing the AT Protocol Grants program, aimed at fostering the growth and sustainability of the atproto developer ecosystem.',
@@ -384,7 +381,7 @@ export const posts: BlogPost[] = [
   },
   {
     slug: 'protocol-roadmap',
-    tags: ['roadmap'],
+    tags: ['news'],
     title: '2023 Protocol Roadmap',
     description:
       'The current AT Protocol development plan through to a version one release.',
@@ -431,8 +428,7 @@ export const posts: BlogPost[] = [
     slug: 'call-for-developers',
     tags: ['news'],
     title: 'Bluesky Call for Developers',
-    description:
-      "Bluesky is an open social network built on the AT Protocol. If you're a developer interested in building on atproto, we'd love to hear from you.",
+    description: 'Bluesky is an open social network built on the AT Protocol. If you’re a developer interested in building on atproto, we’d love to hear from you.',
     date: 'August 3, 2023',
     author: 'AT Protocol Team',
   },

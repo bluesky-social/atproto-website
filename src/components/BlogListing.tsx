@@ -1,104 +1,102 @@
-'use client'
-
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { posts } from '@/lib/posts'
-import {
-  blogTopics,
-  parseBlogQuery,
-  formatBlogQuery,
-  matchesBlogTags,
-} from '@/lib/blogTags.mjs'
-import { BlogTags } from './BlogTags'
+import { blogTopics } from '@/lib/blogTags.mjs'
+import { TopicSelectLoader } from './TopicSelect/TopicSelectLoader'
+import { AtprotoPublicationLink } from './AtprotoPublicationLink'
 
-export function BlogListing() {
-  const params = useSearchParams()
-  const pathname = usePathname()
-  const router = useRouter()
-  const query = params.get('q') ?? ''
-  const { tags } = parseBlogQuery(query)
-  function navigate(next: string) {
-    const updated = new URLSearchParams(params.toString())
-    if (next) updated.set('q', next)
-    else updated.delete('q')
-    router.push(`${pathname}${updated.size ? `?${updated}` : ''}`, {
-      scroll: false,
-    })
-  }
-  function toggle(tag: string) {
-    navigate(
-      formatBlogQuery(
-        '',
-        tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag],
-      ),
-    )
-  }
-  const visible = posts.filter((post) => matchesBlogTags(post.tags, tags))
+export const BLOG_DESCRIPTION =
+  'News, updates, and insights from the AT Protocol team.'
+
+// Shared by /blog and /blog/topic/[topic].
+export function BlogIndex({
+  topic,
+  subtitle = BLOG_DESCRIPTION,
+}: {
+  topic?: string
+  subtitle?: string
+}) {
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-16">
+      <AtprotoPublicationLink />
+      <header className="mb-8">
+        <h1 className="font-mono text-4xl font-bold uppercase tracking-tight md:text-5xl">
+          Blog
+        </h1>
+        <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+          {subtitle}
+        </p>
+      </header>
+      <BlogListing topic={topic} />
+    </div>
+  )
+}
+
+// Server-rendered: the selected topic comes from the route, not the query
+// string, so the full list is in the static HTML. <topic-select> enhances the
+// form to navigate on change; without JS it submits to /blog/topic.
+export function BlogListing({ topic }: { topic?: string }) {
+  const visible = topic
+    ? posts.filter((post) => post.tags?.includes(topic))
+    : posts
   return (
     <>
-      <fieldset className="mb-6">
-        <legend className="mb-2 font-medium">Filter by topic</legend>
-        <div className="flex flex-wrap gap-2">
-          {blogTopics.map((topic) => (
-            <button
-              key={topic.id}
-              type="button"
-              aria-pressed={tags.includes(topic.id)}
-              onClick={() => toggle(topic.id)}
-              className={`rounded-full border px-3 py-1 text-sm ${tags.includes(topic.id) ? 'border-blue-600 bg-blue-600 text-white' : 'border-zinc-300 dark:border-zinc-700'}`}
-            >
-              {topic.label} (
-              {posts.filter((post) => post.tags?.includes(topic.id)).length})
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      {query && (
-        <div className="mb-4 flex flex-wrap gap-3">
-          {tags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => toggle(tag)}
-              className="text-sm text-blue-600 dark:text-blue-400"
-            >
-              Remove {tag} ×
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => navigate('')}
-            className="text-sm underline"
+      <topic-select>
+        <form
+          method="get"
+          action="/blog/topic"
+          className="mb-10 flex items-center gap-3 font-mono text-sm"
+        >
+          <label
+            htmlFor="blog-topic"
+            className="text-zinc-500 dark:text-zinc-400"
           >
-            Clear all
+            Topic
+          </label>
+          <select
+            id="blog-topic"
+            name="topic"
+            defaultValue={topic ?? ''}
+            className="rounded border border-zinc-300 bg-white px-2 py-1 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+          >
+            <option value="">All topics</option>
+            {blogTopics.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            className="rounded border border-zinc-300 px-2 py-1 text-zinc-700 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-300 [@media(scripting:enabled)]:hidden"
+          >
+            Go
           </button>
-        </div>
-      )}
-      <p role="status" className="mb-6 text-sm text-zinc-500">
-        {`${visible.length} ${visible.length === 1 ? 'post' : 'posts'}`}
-      </p>
+        </form>
+      </topic-select>
+      <TopicSelectLoader />
       <div className="space-y-8">
-        {!visible.length && (
-          <p>No posts match these topics. Remove a topic to see more posts.</p>
-        )}
+        {!visible.length && <p>No posts on this topic yet.</p>}
         {visible.map((post) => (
           <article
             key={post.slug}
-            className="group rounded-lg border border-zinc-200 p-6 dark:border-zinc-800"
+            className="group rounded-lg border border-zinc-200 p-6 transition hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700"
           >
             <Link href={`/blog/${post.slug}`} className="block">
-              <time className="text-sm text-zinc-500">{post.date}</time>
-              <h2 className="mt-2 text-xl font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
+              <time className="text-sm text-zinc-500 dark:text-zinc-500">
+                {post.date}
+              </time>
+              <h2 className="mt-2 text-xl font-semibold text-zinc-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
                 {post.title}
               </h2>
               <p className="mt-2 text-zinc-600 dark:text-zinc-400">
                 {post.description}
               </p>
               {post.author && (
-                <p className="mt-4 text-sm text-zinc-500">By {post.author}</p>
+                <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">
+                  By {post.author}
+                </p>
               )}
             </Link>
-            <BlogTags tags={post.tags} />
           </article>
         ))}
       </div>
