@@ -1,8 +1,13 @@
-import { describe, expect, it } from 'vitest'
+// These tests check server markup outside Next's mounted client router.
+import { describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { posts } from '@/lib/posts'
 import { blogTopics } from '@/lib/blogTags.mjs'
 import { BlogListing } from './BlogListing'
+
+vi.mock('@/components/TopicSelect/TopicSelectLoader', () => ({
+  TopicSelectLoader: () => null,
+}))
 
 const render = (topic?: string) =>
   renderToStaticMarkup(<BlogListing topic={topic} />)
@@ -40,7 +45,9 @@ describe('BlogListing', () => {
   })
 
   it('selects only the current topic', () => {
-    const selected = [...render('feeds').matchAll(/<option[^>]*selected[^>]*>/g)]
+    const selected = [
+      ...render('feeds').matchAll(/<option[^>]*selected[^>]*>/g),
+    ]
     expect(selected).toHaveLength(1)
     expect(selected[0][0]).toContain('value="feeds"')
   })

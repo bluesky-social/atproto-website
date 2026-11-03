@@ -1,18 +1,23 @@
-import { topicSelectHref } from './topicHref'
-
-// Progressive enhancement for the server-rendered topic <form>: navigate as
-// soon as the selection changes. Without JS, the form still submits to
-// /blog/topic, which redirects. The submit button is hidden by CSS
-// (@media (scripting: enabled)), not here, so it does not flash on load.
+// Signal the React navigation bridge rather than assigning window.location:
+// topic pages use client navigation while retaining the no-JS form fallback.
 class TopicSelect extends HTMLElement {
+  private handleChange = () => {
+    this.dispatchEvent(new Event('topic-select:change', { bubbles: true }))
+  }
+
   connectedCallback() {
-    const select = this.querySelector('select')
-    if (!select) return
-    select.addEventListener('change', () => {
-      window.location.assign(topicSelectHref(select.value))
-    })
+    this.querySelector('select')?.addEventListener('change', this.handleChange)
+  }
+
+  disconnectedCallback() {
+    this.querySelector('select')?.removeEventListener(
+      'change',
+      this.handleChange,
+    )
   }
 }
 
 if (!customElements.get('topic-select'))
   customElements.define('topic-select', TopicSelect)
+
+export {}

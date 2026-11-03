@@ -1,6 +1,11 @@
-import { describe, expect, it } from 'vitest'
+// These tests check server markup outside Next's mounted client router.
+import { describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import TopicPage, { generateMetadata } from './page'
+
+vi.mock('@/components/TopicSelect/TopicSelectLoader', () => ({
+  TopicSelectLoader: () => null,
+}))
 
 const params = (topic: string) => ({ params: Promise.resolve({ topic }) })
 

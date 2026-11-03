@@ -52,19 +52,36 @@ export function BlogListing({ topic }: { topic?: string }) {
           >
             Topic
           </label>
-          <select
-            id="blog-topic"
-            name="topic"
-            defaultValue={topic ?? ''}
-            className="rounded border border-zinc-300 bg-white px-2 py-1 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-          >
-            <option value="">All topics</option>
-            {blogTopics.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              key={topic ?? 'all'}
+              id="blog-topic"
+              name="topic"
+              defaultValue={topic ?? ''}
+              className="appearance-none rounded border border-zinc-300 bg-white py-1 pl-3 pr-9 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+            >
+              <option value="">All topics</option>
+              {blogTopics.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              fill="none"
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
+            >
+              <path
+                d="m6 8 4 4 4-4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
           <button
             type="submit"
             className="rounded border border-zinc-300 px-2 py-1 text-zinc-700 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-300 [@media(scripting:enabled)]:hidden"
