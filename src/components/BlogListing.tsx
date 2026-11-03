@@ -46,21 +46,16 @@ export function BlogListing({ topic }: { topic?: string }) {
           action="/blog/topic"
           className="mb-10 flex items-center gap-3 font-mono text-sm"
         >
-          <label
-            htmlFor="blog-topic"
-            className="text-zinc-500 dark:text-zinc-400"
-          >
-            Topic
-          </label>
           <div className="relative">
             <select
               key={topic ?? 'all'}
               id="blog-topic"
+              aria-label="Filter blog posts"
               name="topic"
               defaultValue={topic ?? ''}
-              className="appearance-none rounded border border-zinc-300 bg-white py-1 pl-3 pr-9 text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+              className="appearance-none rounded-lg border border-zinc-200 bg-white py-1 pl-3 pr-9 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
             >
-              <option value="">All topics</option>
+              <option value="">Filter</option>
               {blogTopics.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.label}
