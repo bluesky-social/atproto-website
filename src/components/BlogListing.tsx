@@ -52,9 +52,6 @@ export function BlogListing() {
             </button>
           ))}
         </div>
-        <p className="mt-2 text-sm text-zinc-500">
-          Posts must match every selected topic.
-        </p>
       </fieldset>
       {query && (
         <div className="mb-4 flex flex-wrap gap-3">
