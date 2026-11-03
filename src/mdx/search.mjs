@@ -12,7 +12,6 @@ import { SKIP, visit } from 'unist-util-visit'
 import * as url from 'url'
 
 import i18nConfig from '../../i18nConfig.js'
-import { normalizeBlogTags } from '../lib/blogTags.mjs'
 import { remarkTranslatedHeadingIds } from './headingIds.mjs'
 
 const __filename = url.fileURLToPath(import.meta.url)
@@ -35,7 +34,6 @@ function excludeObjectExpressions(tree) {
 }
 
 function extractHeaderExport(tree) {
-  let headerTags = []
   let headerTitle = null
   let headerDescription = null
 
@@ -55,27 +53,10 @@ function extractHeaderExport(tree) {
             decl.init?.type === 'ObjectExpression'
           ) {
             for (const prop of decl.init.properties) {
-              if (prop.key?.name === 'tags') {
-                if (prop.value?.type !== 'ArrayExpression')
-                  throw new Error('Tags must be a literal array')
-                headerTags = normalizeBlogTags(
-                  prop.value.elements.map((e) => {
-                    if (e?.type !== 'Literal')
-                      throw new Error('Tags must contain strings')
-                    return e.value
-                  }),
-                )
-              }
-              if (
-                prop.key?.name === 'title' &&
-                prop.value?.type === 'Literal'
-              ) {
+              if (prop.key?.name === 'title' && prop.value?.type === 'Literal') {
                 headerTitle = prop.value.value
               }
-              if (
-                prop.key?.name === 'description' &&
-                prop.value?.type === 'Literal'
-              ) {
+              if (prop.key?.name === 'description' && prop.value?.type === 'Literal') {
                 headerDescription = prop.value.value
               }
             }
@@ -85,7 +66,7 @@ function extractHeaderExport(tree) {
     }
   })
 
-  return { headerTitle, headerDescription, headerTags }
+  return { headerTitle, headerDescription }
 }
 
 function extractSections() {
@@ -142,10 +123,6 @@ export function extractSearchSections(mdx, file) {
   return sections
 }
 
-export function extractBlogTags(mdx) {
-  return extractHeaderExport(processor.parse(mdx)).headerTags
-}
-
 export default function Search(nextConfig = {}) {
   let cache = new Map()
 
@@ -183,26 +160,105 @@ export default function Search(nextConfig = {}) {
                 cache.set(file, [mdx, sections])
               }
 
-              // Tags belong to the post, shared by every translation.
-              const isBlog = file.startsWith('[locale]/blog/')
-              let tags = []
-              if (isBlog) {
-                const canonical = path.join(
-                  appDir,
-                  path.dirname(file),
-                  'en.mdx',
-                )
-                this.addDependency(canonical)
-                tags = extractBlogTags(fs.readFileSync(canonical, 'utf8'))
-              }
-              return { url, sections, tags }
+              return { url, sections }
             })
 
             // When this file is imported within the application
             // the following module is loaded:
             return `
-              import { createSearch } from '@/lib/blogSearch.mjs'
-              export const search = createSearch(${JSON.stringify(data)}, ${JSON.stringify(i18nConfig.locales.filter((l) => l !== i18nConfig.defaultLocale))})
+              import FlexSearch from 'flexsearch'
+
+              let sectionIndex = new FlexSearch.Document({
+                document: {
+                  id: 'url',
+                  index: [
+                    {
+                      field: 'title',
+                      tokenize: 'forward',
+                      resolution: 9,
+                    },
+                    {
+                      field: 'content',
+                      tokenize: 'full',
+                      resolution: 3,
+                    }
+                  ],
+                  store: ['title', 'pageTitle'],
+                },
+                context: {
+                  resolution: 9,
+                  depth: 2,
+                  bidirectional: true
+                }
+              })
+
+              let data = ${JSON.stringify(data)}
+
+              for (let { url, sections } of data) {
+                for (let [title, hash, content] of sections) {
+                  sectionIndex.add({
+                    url: url + (hash ? ('#' + hash) : ''),
+                    title,
+                    content: content.join('\\n'),
+                    pageTitle: hash ? sections[0][0] : undefined,
+                  })
+                }
+              }
+
+              const nonDefaultLocales = ${JSON.stringify(i18nConfig.locales.filter(l => l !== i18nConfig.defaultLocale))}
+
+              export function search(query, options = {}) {
+                const { locale, ...searchOptions } = options
+                let results = sectionIndex.search(query, {
+                  ...searchOptions,
+                  enrich: true,
+                })
+
+                const seen = new Map()
+
+                for (const fieldResult of results) {
+                  const boost = fieldResult.field === 'title' ? 0 : 1000
+                  fieldResult.result.forEach((item, idx) => {
+                    const id = item.id
+                    const urlPath = id.split('#')[0]
+
+                    // Filter by locale if specified
+                    if (locale) {
+                      if (locale === 'en') {
+                        // English: exclude URLs that start with other locale prefixes
+                        if (nonDefaultLocales.some(l => urlPath.startsWith('/' + l + '/'))) {
+                          return
+                        }
+                      } else {
+                        // Other locales: only include URLs that start with this locale prefix
+                        if (!urlPath.startsWith('/' + locale + '/')) {
+                          return
+                        }
+                      }
+                    }
+
+                    // Check if this is a blog post and apply penalty
+                    const isBlog = urlPath.includes('/blog/')
+                    const blogPenalty = isBlog ? 500 : 0
+
+                    const score = boost + idx + blogPenalty
+
+                    if (!seen.has(id) || seen.get(id).score > score) {
+                      seen.set(id, {
+                        url: id,
+                        title: item.doc.title,
+                        pageTitle: item.doc.pageTitle,
+                        isBlog,
+                        score
+                      })
+                    }
+                  })
+                }
+
+                return [...seen.values()]
+                  .sort((a, b) => a.score - b.score)
+                  .map(({ url, title, pageTitle, isBlog }) => ({ url, title, pageTitle, isBlog }))
+              }
             `
           }),
         ],

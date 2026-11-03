@@ -1,4 +1,4 @@
-# Blog topics and search
+# Blog topics
 
 Tags are stable topic IDs from `src/lib/blogTags.mjs`. Use Studio's Topics
 checkboxes or the comma-separated prompt in `npm run blog create`. A new topic
@@ -22,9 +22,6 @@ The order of `blogTopics` is the display order: News & Announcements first,
 then alphabetical by label. Labels use title case. IDs never change when labels
 do.
 
-The sitewide search also accepts `tag:spaces`, alone or with text, for example
-`oauth tag:spaces`. Multiple tags require all topics.
-
 Publishing refuses mismatched MDX/listing tags before making a network request.
 Saving/publishing preserves the tags and includes them in the standard.site
 record. Backfilling this repository does not republish existing records; those
@@ -37,8 +34,8 @@ resource, or a technology used by an example does not automatically warrant a ta
 Use one tag when one topic is enough; an empty array is valid when no topic fits.
 
 - **Identity & Auth** (`identity`) combines DIDs, PLC, accounts, migration,
-  authentication, OAuth, and authorization. There is no separate OAuth topic;
-  `tag:oauth` remains a query alias for `tag:identity`.
+  authentication, OAuth, and authorization. There is no separate OAuth topic,
+  and `oauth` is not accepted as a tag.
 - **Grants** (`grants`) is a focused replacement for funding announcements that
   previously had only the overly broad Ecosystem tag. It includes announcements
   where the funding arrangement is a substantial part of the article.

@@ -4,7 +4,7 @@ import path from 'node:path'
 import { posts } from './posts'
 import { blogTopics, normalizeBlogTags } from './blogTags.mjs'
 import { parseMdxFile, readHeaderTags } from './studio/mdxHeader'
-import { extractBlogTags, extractSearchSections } from '../mdx/search.mjs'
+import { extractSearchSections } from '../mdx/search.mjs'
 
 describe('blog archive tags', () => {
   it('covers every listed post and keeps listing and MDX metadata consistent', () => {
@@ -20,7 +20,6 @@ describe('blog archive tags', () => {
       expect(readHeaderTags(parseMdxFile(content)), post.slug).toEqual(
         post.tags ?? [],
       )
-      expect(extractBlogTags(content), post.slug).toEqual(post.tags ?? [])
       expect(
         extractSearchSections(content, file).length,
         post.slug,
@@ -31,7 +30,6 @@ describe('blog archive tags', () => {
     for (const tags of ['getTags()', "['spaces', ...other]", '[1]']) {
       const content = `export const header = { title: 'Example', tags: ${tags} }\n\nBody`
       expect(() => readHeaderTags(parseMdxFile(content))).toThrow()
-      expect(() => extractBlogTags(content)).toThrow()
     }
   })
 })
@@ -50,5 +48,29 @@ describe('blog topic vocabulary order and labels', () => {
     for (const { label } of blogTopics)
       for (const word of label.split(' ').filter((w) => w !== '&'))
         expect(word[0], `${label}`).toBe(word[0].toUpperCase())
+  })
+})
+
+describe('normalizeBlogTags', () => {
+  it('normalizes case and whitespace and removes duplicates', () => {
+    expect(normalizeBlogTags([' Spaces ', 'spaces', 'IDENTITY'])).toEqual([
+      'spaces',
+      'identity',
+    ])
+  })
+
+  it('treats a missing tags field as no tags', () => {
+    expect(normalizeBlogTags(undefined)).toEqual([])
+  })
+
+  it('rejects data that is not an array of strings', () => {
+    for (const invalid of [null, 'spaces', [1]])
+      expect(() => normalizeBlogTags(invalid)).toThrow()
+  })
+
+  // Removed topics, and the old oauth query alias, are errors for authors.
+  it('rejects IDs outside the vocabulary', () => {
+    for (const tag of ['made-up', 'tutorials', 'ecosystem', 'oauth'])
+      expect(() => normalizeBlogTags([tag]), tag).toThrow('Unknown blog tag')
   })
 })
