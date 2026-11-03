@@ -1,20 +1,21 @@
 // Stable IDs are used in metadata, queries and URLs; labels can change independently.
+// Order is the display order: News first, then alphabetical by label.
 export const blogTopics = [
-  { id: 'spaces', label: 'Spaces' },
-  { id: 'identity', label: 'Identity & auth' },
-  { id: 'sync', label: 'Sync & streaming' },
-  { id: 'hosting', label: 'Hosting & infrastructure' },
-  { id: 'sdks', label: 'SDKs & tooling' },
-  { id: 'lexicons', label: 'Lexicons & records' },
-  { id: 'moderation', label: 'Moderation' },
+  { id: 'news', label: 'News & Announcements' },
   { id: 'feeds', label: 'Feeds' },
-  { id: 'governance', label: 'Standards & governance' },
-  { id: 'roadmap', label: 'Roadmaps & progress' },
   { id: 'grants', label: 'Grants' },
-  { id: 'news', label: 'News & announcements' },
+  { id: 'hosting', label: 'Hosting & Infrastructure' },
+  { id: 'identity', label: 'Identity & Auth' },
+  { id: 'lexicons', label: 'Lexicons & Records' },
+  { id: 'moderation', label: 'Moderation' },
+  { id: 'roadmap', label: 'Roadmaps & Progress' },
+  { id: 'sdks', label: 'SDKs & Tooling' },
+  { id: 'spaces', label: 'Spaces' },
+  { id: 'governance', label: 'Standards & Governance' },
+  { id: 'sync', label: 'Sync & Streaming' },
 ]
 
-// OAuth is part of Identity & auth; retain existing query links as an alias.
+// OAuth is part of Identity & Auth; retain existing query links as an alias.
 function canonicalTag(tag) {
   const id = tag.trim().toLowerCase()
   return id === 'oauth' ? 'identity' : id
@@ -57,6 +58,16 @@ export function formatBlogQuery(text, tags) {
 /** @param {string} query */
 export function blogSearchHref(query) {
   return query ? `/blog?${new URLSearchParams({ q: query })}` : '/blog'
+}
+
+/** @param {string} id */
+export function blogTopicHref(id) {
+  return `/blog/topic/${id}`
+}
+
+/** @param {string} id */
+export function findBlogTopic(id) {
+  return blogTopics.find((topic) => topic.id === id)
 }
 
 /** @param {string[] | undefined} tags @param {string[]} selected */

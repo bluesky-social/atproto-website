@@ -11,13 +11,19 @@ hand, update both; the archive consistency test checks for drift. Blog routes
 currently use English content in every locale; tags belong to the post, not a
 translation. Search indexing also reads the English tags for translated entries.
 
-The blog listing has topic filters without a separate search field. Readers can
-select topics on `/blog`, follow topic links on posts, or type
-`tag:spaces` in the existing sitewide search. Combine text and topics, for example
-`oauth tag:spaces`. Multiple tags require all topics. Unknown tags produce no
-results. Topic-only searches work without text. The blog preserves topic filters in `?q=`, supports back/forward navigation,
-and lists each matching post
-once in newest-first order. Topic counts describe the complete archive.
+Each topic has its own server-rendered page at `/blog/topic/<id>`. Unknown topic
+IDs return 404. The blog listing has a topic select box; readers choose one
+topic at a time. With JavaScript, the `<topic-select>` element navigates on
+change. Without it, the form submits to `/blog/topic`, which redirects to the
+topic page. Posts show their topics as small links at the end of the post,
+before the discussion.
+
+The order of `blogTopics` is the display order: News & Announcements first,
+then alphabetical by label. Labels use title case. IDs never change when labels
+do.
+
+The sitewide search also accepts `tag:spaces`, alone or with text, for example
+`oauth tag:spaces`. Multiple tags require all topics.
 
 Publishing refuses mismatched MDX/listing tags before making a network request.
 Saving/publishing preserves the tags and includes them in the standard.site
@@ -30,7 +36,7 @@ Use tags for a post's main subjects. A passing mention, prerequisite, linked
 resource, or a technology used by an example does not automatically warrant a tag.
 Use one tag when one topic is enough; an empty array is valid when no topic fits.
 
-- **Identity & auth** (`identity`) combines DIDs, PLC, accounts, migration,
+- **Identity & Auth** (`identity`) combines DIDs, PLC, accounts, migration,
   authentication, OAuth, and authorization. There is no separate OAuth topic;
   `tag:oauth` remains a query alias for `tag:identity`.
 - **Grants** (`grants`) is a focused replacement for funding announcements that
@@ -40,14 +46,14 @@ Use one tag when one topic is enough; an empty array is valid when no topic fits
   Tutorials navigation category. Tag those posts by the technology they cover.
 - Remove **Ecosystem**: the site as a whole serves the ecosystem, so this is not
   a useful discriminator between posts.
-- Broad protocol roadmaps and progress recaps use **Roadmaps & progress** rather
+- Broad protocol roadmaps and progress recaps use **Roadmaps & Progress** rather
   than an arbitrary subset of the many technologies discussed.
-- **SDKs & tooling** covers SDKs and tools for developing atproto apps, not every
+- **SDKs & Tooling** covers SDKs and tools for developing atproto apps, not every
   application or service that happens to be software.
 
 ## News and remaining editorial decision
 
-Use **News & announcements** (`news`) for site, podcast, and community
+Use **News & Announcements** (`news`) for site, podcast, and community
 announcements such as Going Off Protocol, Welcome to the New atproto.com, and
 Bluesky Call for Developers. This is an editorial category approved for these
 posts, not an additional label on every technical release announcement.

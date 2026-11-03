@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import { posts } from './posts'
-import { normalizeBlogTags } from './blogTags.mjs'
+import { blogTopics, normalizeBlogTags } from './blogTags.mjs'
 import { parseMdxFile, readHeaderTags } from './studio/mdxHeader'
 import { extractBlogTags, extractSearchSections } from '../mdx/search.mjs'
 
@@ -33,5 +33,22 @@ describe('blog archive tags', () => {
       expect(() => readHeaderTags(parseMdxFile(content))).toThrow()
       expect(() => extractBlogTags(content)).toThrow()
     }
+  })
+})
+
+describe('blog topic vocabulary order and labels', () => {
+  it('lists News & Announcements first', () => {
+    expect(blogTopics[0].id).toBe('news')
+  })
+
+  it('lists the remaining topics alphabetically by label', () => {
+    const rest = blogTopics.slice(1).map((topic) => topic.label)
+    expect(rest).toEqual([...rest].sort((a, b) => a.localeCompare(b)))
+  })
+
+  it('uses title case for every label', () => {
+    for (const { label } of blogTopics)
+      for (const word of label.split(' ').filter((w) => w !== '&'))
+        expect(word[0], `${label}`).toBe(word[0].toUpperCase())
   })
 })

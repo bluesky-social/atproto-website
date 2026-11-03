@@ -1,6 +1,4 @@
-import { Suspense } from 'react'
-import { BlogListing } from '@/components/BlogListing'
-import { AtprotoPublicationLink } from '@/components/AtprotoPublicationLink'
+import { BlogIndex, BLOG_DESCRIPTION } from '@/components/BlogListing'
 
 /**
  * Blog Post Listing
@@ -37,25 +35,9 @@ import { AtprotoPublicationLink } from '@/components/AtprotoPublicationLink'
 
 export const metadata = {
   title: 'Blog',
-  description: 'News, updates, and insights from the AT Protocol team.',
+  description: BLOG_DESCRIPTION,
 }
 
-export default async function BlogIndexPage() {
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-16">
-      <AtprotoPublicationLink />
-      <header className="mb-12">
-        <h1 className="font-mono text-4xl font-bold uppercase tracking-tight md:text-5xl">
-          Blog
-        </h1>
-        <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-          News, updates, and insights from the AT Protocol team.
-        </p>
-      </header>
-
-      <Suspense fallback={<p>Loading blog posts…</p>}>
-        <BlogListing />
-      </Suspense>
-    </div>
-  )
+export default function BlogIndexPage() {
+  return <BlogIndex />
 }
