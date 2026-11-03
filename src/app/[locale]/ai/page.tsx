@@ -258,6 +258,41 @@ export default function AIPage() {
             </article>
           </div>
         </section>
+        <section className={styles.section} aria-labelledby="from-the-blog">
+          <h2 id="from-the-blog">From the blog</h2>
+          <div className={styles.blogTopics}>
+            {[
+              {
+                tag: 'ai',
+                title: 'AI & agents',
+                description:
+                  'Explore agents on atproto and the people behind them.',
+              },
+              {
+                tag: 'identity',
+                title: 'Identity & auth',
+                description:
+                  'Learn about portable identities, authentication, and account ownership.',
+              },
+              {
+                tag: 'spaces',
+                title: 'Spaces',
+                description:
+                  'Follow the development of permissioned data and shared spaces on atproto.',
+              },
+            ].map((topic) => (
+              <article key={topic.tag}>
+                <Link href={`/blog?q=tag%3A${topic.tag}`}>
+                  <h3>{topic.title}</h3>
+                  <p>{topic.description}</p>
+                  <span className={styles.blogTopicLink}>
+                    Read the posts <span aria-hidden="true">→</span>
+                  </span>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
         <section className={styles.cta} aria-labelledby="get-started">
           <div>
             <h2 id="get-started">Show who’s behind your agent</h2>
