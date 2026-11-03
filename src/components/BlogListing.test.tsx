@@ -37,7 +37,7 @@ describe('BlogListing', () => {
     expect(html).toMatch(/<select[^>]*name="topic"/)
   })
 
-  it('offers "Filter" and one option per topic', () => {
+  it('offers "All posts" and one option per topic', () => {
     const values = [...render().matchAll(/<option value="([^"]*)"/g)].map(
       (m) => m[1],
     )
@@ -52,7 +52,7 @@ describe('BlogListing', () => {
     expect(selected[0][0]).toContain('value="feeds"')
   })
 
-  it('selects "Filter" when no topic is selected', () => {
+  it('selects "All posts" when no topic is selected', () => {
     const selected = [...render().matchAll(/<option[^>]*selected[^>]*>/g)]
     expect(selected).toHaveLength(1)
     expect(selected[0][0]).toContain('value=""')
