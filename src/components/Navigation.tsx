@@ -350,10 +350,7 @@ export const navigation: Array<NavGroup> = [
   },
   {
     title: 'AI',
-    links: [
-      { title: 'Our approach to AI', icon: 'sparkles', href: '/ai' },
-      { title: 'Blog Posts', icon: 'document-text', href: '/ai#posts' },
-    ],
+    links: [{ title: 'Our approach to AI', icon: 'sparkles', href: '/ai' }],
   },
   {
     title: 'Deploy',

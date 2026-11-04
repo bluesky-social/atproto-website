@@ -236,7 +236,7 @@ export default function AIPage() {
         <section id="posts" aria-labelledby="blog-posts">
           <div className={styles.blogHeader}>
             <h2 id="blog-posts">Blog Posts</h2>
-            <Link href="/blog">
+            <Link href={agentBlogHref}>
               All blog posts <span aria-hidden="true">→</span>
             </Link>
           </div>
