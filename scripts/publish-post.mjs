@@ -27,6 +27,10 @@ import * as siteModule from '../src/lexicons/site.ts'
 const { standard } = siteModule.default ?? siteModule
 import authors from '../src/lib/authors.json' with { type: 'json' }
 import { resolveBskyPostRef } from './lib/resolveBskyPostRef.mjs'
+import { normalizeBlogTags } from '../src/lib/blogTags.mjs'
+import * as postsModule from '../src/lib/posts.ts'
+const { posts } = postsModule.default ?? postsModule
+import { findDocumentByPath, assertListingTags } from './lib/blogPublishing.mjs'
 import { buildContributors } from './lib/buildContributors.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -38,6 +42,8 @@ const SITE_URL = 'https://atproto.com/blog'
  */
 function extractLiteralValue(node) {
   if (!node) return undefined
+  if (node.type === 'ArrayExpression')
+    return node.elements.map(extractLiteralValue)
   if (node.type === 'Literal') {
     return node.value
   }
@@ -50,7 +56,7 @@ function extractLiteralValue(node) {
 /**
  * Parse the header export using acorn AST parser
  */
-function parseHeaderExport(content) {
+export function parseHeaderExport(content) {
   // Find the export statement boundaries
   const exportMatch = content.match(/export\s+const\s+header\s*=\s*\{/)
   if (!exportMatch) {
@@ -146,8 +152,12 @@ export async function main(slug) {
   }
 
   // Load environment variables
-  const { ATPROTO_HANDLE, ATPROTO_APP_PASSWORD, ATPROTO_PDS_URL, ATPROTO_PUBLICATION_URI } =
-    process.env
+  const {
+    ATPROTO_HANDLE,
+    ATPROTO_APP_PASSWORD,
+    ATPROTO_PDS_URL,
+    ATPROTO_PUBLICATION_URI,
+  } = process.env
 
   if (!ATPROTO_HANDLE || !ATPROTO_APP_PASSWORD) {
     throw new Error(
@@ -169,6 +179,8 @@ export async function main(slug) {
 
   const mdxContent = fs.readFileSync(mdxPath, 'utf-8')
   const { header } = parseHeaderExport(mdxContent)
+  const tags = normalizeBlogTags(header.tags)
+  assertListingTags(slug, tags, posts)
 
   console.log(`  Title: ${header.title}`)
   console.log(`  Date: ${header.date}`)
@@ -231,9 +243,11 @@ export async function main(slug) {
   const postPath = `/${slug}`
   console.log('\n🔍 Checking for existing document...')
 
-  const existingRecords = await client.list(standard.document.main, { limit: 100 })
-
-  const existingRecord = existingRecords.records.find((r) => r.value.path === postPath)
+  const existingRecord = await findDocumentByPath(
+    client,
+    standard.document.main,
+    postPath,
+  )
   if (existingRecord) {
     console.log(`  Found existing record: ${existingRecord.uri}`)
   }
@@ -256,9 +270,10 @@ export async function main(slug) {
         publishedAt: parseDate(header.date),
         updatedAt: new Date().toISOString(),
         contributors,
+        tags,
         ...(bskyPostRef ? { bskyPostRef } : {}),
       },
-      { rkey }
+      { rkey },
     )
 
     documentUri = result.uri
@@ -276,6 +291,7 @@ export async function main(slug) {
       path: postPath,
       publishedAt: parseDate(header.date),
       contributors,
+      tags,
       ...(bskyPostRef ? { bskyPostRef } : {}),
     })
 
@@ -295,13 +311,13 @@ export async function main(slug) {
     // Update existing standardSiteUri
     updatedMdx = updatedMdx.replace(
       /standardSiteUri:\s*['"].*?['"]/,
-      `standardSiteUri: '${documentUri}'`
+      `standardSiteUri: '${documentUri}'`,
     )
   } else {
     // Add standardSiteUri to header (after the opening brace)
     updatedMdx = updatedMdx.replace(
       /export\s+const\s+header\s*=\s*\{/,
-      `export const header = {\n  standardSiteUri: '${documentUri}',`
+      `export const header = {\n  standardSiteUri: '${documentUri}',`,
     )
   }
 
@@ -310,4 +326,3 @@ export async function main(slug) {
 
   return documentUri
 }
-

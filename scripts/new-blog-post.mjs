@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { blogTopics, normalizeBlogTags } from '../src/lib/blogTags.mjs'
 import * as readline from 'readline'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -14,7 +15,7 @@ import { slugify } from '../src/lib/slugs.mjs'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BLOG_DIR = path.join(__dirname, '../src/app/[locale]/blog')
 const knownAuthors = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../src/lib/authors.json'), 'utf-8')
+  fs.readFileSync(path.join(__dirname, '../src/lib/authors.json'), 'utf-8'),
 )
 
 const rl = readline.createInterface({
@@ -41,7 +42,9 @@ async function checkGitStatus() {
   try {
     state = await gitState()
   } catch {
-    console.error('Error: Failed to check git status. Are you in a git repository?')
+    console.error(
+      'Error: Failed to check git status. Are you in a git repository?',
+    )
     process.exit(1)
   }
   if (state.dirty) {
@@ -104,14 +107,19 @@ export async function main(...args) {
 
   let authorDid = knownAuthors[authorName] || null
   if (!authorDid && authorName !== 'AT Protocol Team') {
-    const didInput = await question(`No DID found for "${authorName}". Bluesky DID (leave blank to skip): `)
+    const didInput = await question(
+      `No DID found for "${authorName}". Bluesky DID (leave blank to skip): `,
+    )
     const didValue = didInput.trim()
     if (didValue) {
       authorDid = didValue
       // Save to authors.json for future posts
       knownAuthors[authorName] = didValue
       const authorsPath = path.join(__dirname, '../src/lib/authors.json')
-      fs.writeFileSync(authorsPath, JSON.stringify(knownAuthors, null, 2) + '\n')
+      fs.writeFileSync(
+        authorsPath,
+        JSON.stringify(knownAuthors, null, 2) + '\n',
+      )
       console.log(`\n✅ Added "${authorName}" to authors.json\n`)
     }
   }
@@ -119,6 +127,17 @@ export async function main(...args) {
   const defaultDate = formatDate(new Date())
   const dateInput = await question(`Publish date (${defaultDate}): `)
   const date = dateInput.trim() || defaultDate
+
+  console.log(`Topics: ${blogTopics.map((t) => t.id).join(', ')}`)
+  let tags
+  while (!tags) {
+    const answer = await question('Tags (comma-separated, optional): ')
+    try {
+      tags = normalizeBlogTags(answer.trim() ? answer.split(',') : [])
+    } catch (err) {
+      console.error(err.message)
+    }
+  }
 
   rl.close()
 
@@ -164,6 +183,7 @@ export default function BlogPost() {
   description: '${description.replace(/'/g, "\\'")}',
   date: '${date}',
   author: '${authorName.replace(/'/g, "\\'")}',
+  tags: ${JSON.stringify(tags)},
 }
 
 Start writing your post here...
@@ -180,12 +200,13 @@ Start writing your post here...
     description: '${description.replace(/'/g, "\\'")}',
     date: '${date}',
     author: '${authorName.replace(/'/g, "\\'")}',
+    tags: ${JSON.stringify(tags)},
   },`
 
   // Insert after "export const posts: BlogPost[] = ["
   postsFile = postsFile.replace(
     /export const posts: BlogPost\[\] = \[/,
-    `export const posts: BlogPost[] = [\n${newPostEntry}`
+    `export const posts: BlogPost[] = [\n${newPostEntry}`,
   )
 
   fs.writeFileSync(postsFilePath, postsFile)
@@ -205,4 +226,3 @@ Next steps:
   const { maybePublish } = await import('./lib/maybePublish.mjs')
   await maybePublish(slug, { noSsite, publishFn: createPublishFn() })
 }
-

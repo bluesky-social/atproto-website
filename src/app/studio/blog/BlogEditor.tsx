@@ -15,12 +15,18 @@ import {
   isDirty,
   describeDraft,
 } from '@/lib/studio/draft'
-import { unknownAuthors, isValidDid, type AuthorMap } from '@/lib/studio/authors'
+import {
+  unknownAuthors,
+  isValidDid,
+  type AuthorMap,
+} from '@/lib/studio/authors'
 import { imageTag } from '@/lib/studio/postImages'
 import type { GitState } from '@/lib/studio/git'
 import { isBskyPostUrl } from '@/lib/bskyPostUrl'
 import { guardUnload } from '@/lib/studio/unloadGuard'
 import { StudioNav } from '../StudioNav'
+
+import { blogTopics } from '@/lib/blogTags.mjs'
 
 type PostListItem = { slug: string; title: string; date: string }
 type Owned = {
@@ -29,6 +35,7 @@ type Owned = {
   date: string
   author: string
   blueskyPostUrl: string
+  tags?: string[]
 }
 type Publish = { ok: boolean; uri?: string; error?: string }
 type PostImage = { filename: string; identifier: string | null }
@@ -39,6 +46,7 @@ const EMPTY: Owned = {
   date: '',
   author: '',
   blueskyPostUrl: '',
+  tags: [],
 }
 
 /**
@@ -250,7 +258,9 @@ export function BlogEditor() {
         syncUrl('')
         setBaseline(snapshot)
       }
-      openPost(open).then(clearIfMissing).catch(() => clearIfMissing())
+      openPost(open)
+        .then(clearIfMissing)
+        .catch(() => clearIfMissing())
       return
     }
     // The initial state already *is* the new-post form, so adopt it as the
@@ -365,13 +375,18 @@ export function BlogEditor() {
   // made it onto the record.
   function applyPublish(pub: Publish | undefined): string | null {
     if (pub?.uri) setSsiteUri(pub.uri)
-    return pub && !pub.ok ? `standard.site publish failed: ${pub.error ?? 'unknown'}` : null
+    return pub && !pub.ok
+      ? `standard.site publish failed: ${pub.error ?? 'unknown'}`
+      : null
   }
 
   async function save() {
     // Persist exactly what the publish step will parse (bskyPostUrl.ts
     // validates trimmed; the header must hold the same trimmed value).
-    const cleanedOwned: Owned = { ...owned, blueskyPostUrl: owned.blueskyPostUrl.trim() }
+    const cleanedOwned: Owned = {
+      ...owned,
+      blueskyPostUrl: owned.blueskyPostUrl.trim(),
+    }
     if (mode === 'new') {
       const finalSlug = slug || slugify(owned.title)
       if (!finalSlug) return setStatus('Add a title or slug first')
@@ -384,7 +399,8 @@ export function BlogEditor() {
           ...cleanedOwned,
           authorDids,
           body,
-          branch: makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
+          branch:
+            makeBranch && derivedBranch ? { name: derivedBranch } : undefined,
         }),
       })
       const data = await res.json()
@@ -415,7 +431,12 @@ export function BlogEditor() {
       const res = await fetch(`/api/studio/blog/${slug}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owned: cleanedOwned, body, revision, authorDids }),
+        body: JSON.stringify({
+          owned: cleanedOwned,
+          body,
+          revision,
+          authorDids,
+        }),
       })
       const data = await res.json()
       if (res.status === 409) {
@@ -429,7 +450,11 @@ export function BlogEditor() {
       // Smart typography is applied server-side; show the stored strings so the
       // form doesn't keep displaying straight quotes the file no longer has.
       const stored: Owned = data.owned
-        ? { ...owned, title: data.owned.title, description: data.owned.description }
+        ? {
+            ...owned,
+            title: data.owned.title,
+            description: data.owned.description,
+          }
         : owned
       if (data.owned) setOwned(stored)
       // What's on disk now is what's on screen, so this becomes the baseline and
@@ -453,7 +478,9 @@ export function BlogEditor() {
   async function publishNow() {
     if (mode !== 'edit') return
     setStatus('Publishing…')
-    const res = await fetch(`/api/studio/blog/${slug}/publish`, { method: 'POST' })
+    const res = await fetch(`/api/studio/blog/${slug}/publish`, {
+      method: 'POST',
+    })
     const data = await res.json()
     if (!res.ok) return setStatus(`Error: ${data.error}`)
     const pub: Publish | undefined = data.publish
@@ -523,7 +550,11 @@ export function BlogEditor() {
 
   async function remove() {
     if (mode !== 'edit') return
-    if (!confirm(`Delete "${owned.title || slug}"? This deletes the post directory and posts.ts entry. Recoverable from git if committed.`)) {
+    if (
+      !confirm(
+        `Delete "${owned.title || slug}"? This deletes the post directory and posts.ts entry. Recoverable from git if committed.`,
+      )
+    ) {
       return
     }
     const res = await fetch(`/api/studio/blog/${slug}`, { method: 'DELETE' })
@@ -554,11 +585,12 @@ export function BlogEditor() {
   const set = (k: keyof Owned) => (e: { target: { value: string } }) =>
     setOwned((o) => ({ ...o, [k]: e.target.value }))
 
-  const statusTone = status.startsWith('Error') || status.startsWith('Could not')
-    ? 'text-red-600'
-    : status.includes('publish failed')
-      ? 'text-amber-600'
-      : 'text-neutral-500'
+  const statusTone =
+    status.startsWith('Error') || status.startsWith('Could not')
+      ? 'text-red-600'
+      : status.includes('publish failed')
+        ? 'text-amber-600'
+        : 'text-neutral-500'
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -572,7 +604,7 @@ export function BlogEditor() {
           + New post
         </button>
 
-        <p className="mt-8 mb-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
+        <p className="mb-2 mt-8 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
           Posts
         </p>
         <ul className="-mx-2 flex min-h-0 flex-col gap-0.5 overflow-y-auto">
@@ -664,7 +696,9 @@ export function BlogEditor() {
               <button
                 onClick={() => {
                   if (
-                    confirm('Reload from disk? Unsaved changes in this form are lost.')
+                    confirm(
+                      'Reload from disk? Unsaved changes in this form are lost.',
+                    )
                   ) {
                     // Reloading from disk is a choice to abandon the form, so the
                     // draft goes too — otherwise the next reload would hand these
@@ -705,6 +739,31 @@ export function BlogEditor() {
             placeholder="Untitled post"
             className="w-full bg-transparent text-4xl font-semibold leading-tight tracking-tight text-neutral-900 outline-none placeholder:text-neutral-300"
           />
+          <fieldset className="my-4">
+            <legend className="mb-2 text-sm font-medium">Topics</legend>
+            <div className="flex flex-wrap gap-3">
+              {blogTopics.map((topic) => (
+                <label
+                  key={topic.id}
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    checked={(owned.tags ?? []).includes(topic.id)}
+                    onChange={(e) =>
+                      setOwned((o) => ({
+                        ...o,
+                        tags: e.target.checked
+                          ? [...(o.tags ?? []), topic.id]
+                          : (o.tags ?? []).filter((t) => t !== topic.id),
+                      }))
+                    }
+                  />
+                  {topic.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
           {/* A textarea so long descriptions wrap instead of scrolling out of
               sight. field-sizing:content grows it to fit where supported;
               rows=2 is the fallback height elsewhere. The value stays
@@ -713,7 +772,10 @@ export function BlogEditor() {
           <textarea
             value={owned.description}
             onChange={(e) =>
-              setOwned((o) => ({ ...o, description: singleLine(e.target.value) }))
+              setOwned((o) => ({
+                ...o,
+                description: singleLine(e.target.value),
+              }))
             }
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault()
@@ -752,7 +814,10 @@ export function BlogEditor() {
                 </Field>
               </>
             ) : (
-              <Field label="Slug" hint="read-only — delete & recreate to rename">
+              <Field
+                label="Slug"
+                hint="read-only — delete & recreate to rename"
+              >
                 <div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm text-neutral-500">
                   {slug}
                 </div>
@@ -769,14 +834,17 @@ export function BlogEditor() {
             <div className="mt-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3">
               <p className="text-sm text-neutral-700">
                 <span className="font-medium">{missingDids[0]}</span> is not in
-                authors.json. Add a DID to link the byline to a Bluesky profile, or
-                leave blank and the name renders as plain text.
+                authors.json. Add a DID to link the byline to a Bluesky profile,
+                or leave blank and the name renders as plain text.
               </p>
               <div className="mt-3 flex items-center gap-3">
                 <input
                   value={authorDids[missingDids[0]] ?? ''}
                   onChange={(e) =>
-                    setAuthorDids((d) => ({ ...d, [missingDids[0]]: e.target.value }))
+                    setAuthorDids((d) => ({
+                      ...d,
+                      [missingDids[0]]: e.target.value,
+                    }))
                   }
                   placeholder="did:plc:…"
                   aria-label={`DID for ${missingDids[0]}`}
@@ -797,9 +865,10 @@ export function BlogEditor() {
               {(authorDids[missingDids[0]] ?? '').trim() !== '' &&
                 !isValidDid(authorDids[missingDids[0]] ?? '') && (
                   <p className="mt-2 text-xs text-red-700">
-                    A DID looks like <span className="font-mono">did:plc:…</span> or{' '}
-                    <span className="font-mono">did:web:…</span>. Anything else is left
-                    out of authors.json.
+                    A DID looks like{' '}
+                    <span className="font-mono">did:plc:…</span> or{' '}
+                    <span className="font-mono">did:web:…</span>. Anything else
+                    is left out of authors.json.
                   </p>
                 )}
             </div>
@@ -815,14 +884,16 @@ export function BlogEditor() {
                   <p>
                     Can’t branch: {dirtyFiles.length} uncommitted change
                     {dirtyFiles.length === 1 ? '' : 's'} on{' '}
-                    <span className="font-mono">{git.branch}</span>. Commit or stash
-                    them to branch, or create here anyway.
+                    <span className="font-mono">{git.branch}</span>. Commit or
+                    stash them to branch, or create here anyway.
                   </p>
                   <ul className="mt-1 font-mono text-xs text-neutral-500">
                     {dirtyFiles.slice(0, 5).map((f) => (
                       <li key={f}>{f}</li>
                     ))}
-                    {dirtyFiles.length > 5 && <li>…and {dirtyFiles.length - 5} more</li>}
+                    {dirtyFiles.length > 5 && (
+                      <li>…and {dirtyFiles.length - 5} more</li>
+                    )}
                   </ul>
                 </div>
               ) : (
@@ -843,14 +914,16 @@ export function BlogEditor() {
                         className="mt-2 w-full rounded-md border border-neutral-300 bg-white px-3 py-1.5 font-mono text-sm outline-none focus:border-neutral-500"
                       />
                       <pre className="mt-2 overflow-x-auto rounded bg-neutral-50 px-3 py-2 font-mono text-xs text-neutral-500">
-                        git fetch origin main{'\n'}git checkout -b {derivedBranch} origin/main
+                        git fetch origin main{'\n'}git checkout -b{' '}
+                        {derivedBranch} origin/main
                       </pre>
                     </>
                   )}
                   {git && (
                     <p className="mt-2 text-xs text-neutral-500">
-                      Currently on <span className="font-mono">{git.branch}</span> ·
-                      working tree clean
+                      Currently on{' '}
+                      <span className="font-mono">{git.branch}</span> · working
+                      tree clean
                     </p>
                   )}
                 </>
@@ -867,8 +940,8 @@ export function BlogEditor() {
                 Create post
               </button>
               <span className="text-xs italic text-neutral-400">
-                Body, Open Graph image, and standard.site record appear after you
-                create the post.
+                Body, Open Graph image, and standard.site record appear after
+                you create the post.
               </span>
             </div>
           )}
@@ -916,8 +989,8 @@ export function BlogEditor() {
                   </p>
                 ) : (
                   <p className="mt-1 text-xs italic text-neutral-400">
-                    Drives the discussion section. Saving republishes the record,
-                    which is what puts the thread on the live page.
+                    Drives the discussion section. Saving republishes the
+                    record, which is what puts the thread on the live page.
                   </p>
                 )}
               </div>
@@ -1052,7 +1125,8 @@ export function BlogEditor() {
                   Drag an image here, or click to choose
                 </span>
                 <span className="mt-1 text-xs text-neutral-400">
-                  PNG, JPG, GIF, or WEBP · saved in the post dir, import added for you
+                  PNG, JPG, GIF, or WEBP · saved in the post dir, import added
+                  for you
                 </span>
                 <input
                   type="file"
@@ -1094,17 +1168,22 @@ export function BlogEditor() {
                                 }))
                               }
                               placeholder="Alt text — describe the image"
-                              className="mt-1.5 w-full rounded-md border border-neutral-300 px-2 py-1 text-xs text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
+                              className="mt-1.5 w-full rounded-md border border-neutral-300 px-2 py-1 text-xs text-neutral-800 outline-none placeholder:text-neutral-300 focus:border-neutral-500"
                             />
                             <div className="mt-1.5 flex items-center gap-2">
                               <button
                                 onClick={() => copyImageTag(img)}
                                 className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-50"
                               >
-                                {copiedImage === img.filename ? 'Copied' : 'Copy tag'}
+                                {copiedImage === img.filename
+                                  ? 'Copied'
+                                  : 'Copy tag'}
                               </button>
                               <code className="truncate font-mono text-[0.7rem] text-neutral-400">
-                                {imageTag(img.identifier, imageAlts[img.filename] ?? '')}
+                                {imageTag(
+                                  img.identifier,
+                                  imageAlts[img.filename] ?? '',
+                                )}
                               </code>
                             </div>
                           </>
@@ -1134,11 +1213,10 @@ export function BlogEditor() {
                 onChange={(e) => setBody(e.target.value)}
                 spellCheck={false}
                 placeholder={'# Title\n\nWrite the MDX body here…'}
-                className="min-h-[26rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 text-neutral-800 outline-none focus:border-neutral-500 placeholder:text-neutral-300"
+                className="min-h-[26rem] w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 font-mono text-sm leading-7 text-neutral-800 outline-none placeholder:text-neutral-300 focus:border-neutral-500"
               />
             </div>
           )}
-
         </div>
       </main>
     </div>
@@ -1160,7 +1238,9 @@ function Field({
         <span className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-neutral-400">
           {label}
         </span>
-        {hint && <span className="text-xs italic text-neutral-400">{hint}</span>}
+        {hint && (
+          <span className="text-xs italic text-neutral-400">{hint}</span>
+        )}
       </span>
       {children}
     </label>

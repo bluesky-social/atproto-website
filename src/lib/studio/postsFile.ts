@@ -6,6 +6,7 @@ export type PostEntry = {
   description: string
   date: string
   author?: string
+  tags?: string[]
 }
 
 const ANCHOR = 'export const posts: BlogPost[] = ['
@@ -23,6 +24,8 @@ function renderEntry(entry: PostEntry): string {
     `    date: ${q(entry.date)},`,
   ]
   if (entry.author) lines.push(`    author: ${q(entry.author)},`)
+  if (entry.tags?.length)
+    lines.push(`    tags: [${entry.tags.map(q).join(', ')}],`)
   lines.push(`  },`)
   return lines.join('\n')
 }
