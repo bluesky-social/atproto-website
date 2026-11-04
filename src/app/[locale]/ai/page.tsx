@@ -4,9 +4,9 @@ import { posts } from '@/lib/posts'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
-  title: 'AI',
+  title: 'Our approach to AI',
   description:
-    'Agents you can trace back to a person. Explore ident.link, a draft spec for linking agents to the people responsible for them on AT Protocol.',
+    'We built the AT Protocol so that people, not platforms, hold the keys to their online lives. That same commitment shapes how we think about AI.',
 }
 
 // Uses the blog topic-filter URL format, available when this page ships.
@@ -35,303 +35,237 @@ const aiPosts =
         },
       ]
 
-const steps = [
+const values = [
   {
-    title: 'The agent names its principal',
+    title: 'User choice and user control',
     description:
-      'The agent lists the person responsible for it in its DID document. For did:plc accounts, every change to that document is signed and published in an audit log.',
-    code: '"alsoKnownAs": [\n  "at://agent.bob.com",\n  "https://ident.link/agent-of/did:plc:bob"\n]',
+      'You should decide what you see, who you trust, and which tools act on your behalf. No single company should make those decisions for you.',
   },
   {
-    title: 'The principal endorses the agent',
+    title: 'Empowering people to build their own spaces online',
     description:
-      'The principal confirms the relationship with a record in their own repository, keyed by the agent’s DID.',
-    code: '// at://did:plc:bob/link.ident.endorsement/did:plc:agent\n{\n  "$type": "link.ident.endorsement",\n  "agent": "did:plc:agent"\n}',
+      "The web is better when people can shape their own corner of it, not just build on someone else's platform.",
   },
   {
-    title: 'Anyone can verify both halves',
+    title: 'Diversifying the web',
     description:
-      'Resolve the agent’s DID, fetch the endorsement from the principal’s repository, and check that it names the agent. If either half is missing, the link is unconfirmed.',
-    code: '// 1. Resolve did:plc:agent and collect its ident.link/agent-of entries\n// 2. Fetch link.ident.endorsement/did:plc:agent from the principal’s repo\n//    (for example via com.atproto.sync.getRecord)\n// 3. Confirm the record’s agent field equals did:plc:agent',
+      'A healthy internet has many apps, many communities, and many different approaches, all able to interoperate.',
+  },
+  {
+    title: 'Building a healthy information ecosystem',
+    description:
+      "People need to be able to tell what's real, where it came from, and who is behind it.",
+  },
+]
+const activities = [
+  {
+    title: 'AI is optional',
+    description:
+      'No one should have to use AI to use atproto or the apps built on it. The AI features we build will be ones you choose to turn on and can turn off.',
+  },
+  {
+    title: 'Bring your own model',
+    description:
+      'We support open weight models. People and developers can inspect them, run them on their own infrastructure, and swap them out. Whatever AI features we build, you should be able to plug in your own model instead of being locked into ours.',
+  },
+  {
+    title: 'AI for building, not for volume',
+    description:
+      "AI is most useful on an open network when it lowers the barrier to making something of your own: a custom feed, a community space, a tool that fits how you work. We aren't interested in making it easier to fill timelines with generated content.",
+  },
+  {
+    title: 'AI for finding what matters',
+    description:
+      'As the volume of content grows, people need better feeds, filters, search, and moderation. AI can power those tools, and people should be the ones who choose and configure them.',
   },
 ]
 
-function Actions() {
+function ValueIcon({ index }: { index: number }) {
   return (
-    <div className={styles.actions}>
-      <a href="https://ident.link" className={styles.primary}>
-        Explore ident.link <span aria-hidden="true">→</span>
-      </a>
-      <Link href={agentBlogHref} className={styles.secondary}>
-        Read the blog
-      </Link>
-    </div>
-  )
-}
-
-function ChatExample() {
-  return (
-    <figure
-      className={styles.chat}
-      aria-label="Illustrative group chat showing an agent’s confirmed link to Bob"
+    <svg
+      aria-hidden="true"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <figcaption className={styles.chatHeader}>
-        <strong>Group Chat</strong>
-        <span>3 people · 1 agent</span>
-      </figcaption>
-      <div className={styles.messages}>
-        <div className={styles.message}>
-          <span
-            className={`${styles.avatar} ${styles.alice}`}
-            aria-hidden="true"
-          >
-            A
-          </span>
-          <div className={styles.messageBody}>
-            <p className={styles.sender}>
-              <strong>Alice</strong> <span>@alice.example</span>
-            </p>
-            <p className={styles.bubble}>
-              Does anyone know what time works for everyone on Saturday?
-            </p>
-          </div>
-        </div>
-        <div className={styles.message}>
-          <span
-            className={`${styles.avatar} ${styles.robot}`}
-            aria-hidden="true"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            >
-              <rect x="4" y="7" width="16" height="12" rx="3" />
-              <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5" />
-            </svg>
-          </span>
-          <div className={styles.messageBody}>
-            <p className={styles.sender}>
-              <strong>Bob’s agent</strong> <span>@agent.bob.com</span>
-              <span className={styles.badge}>Agent of @bob.com</span>
-            </p>
-            <p className={styles.bubble}>
-              Bob is free from 10am to 2pm. I can hold that window on his
-              calendar if it works for you two.
-            </p>
-            <div className={styles.identity}>
-              <div className={styles.person}>
-                <span
-                  className={`${styles.avatar} ${styles.bob}`}
-                  aria-hidden="true"
-                >
-                  B
-                </span>
-                <div>
-                  <strong>Bob</strong>
-                  <span>@bob.com</span>
-                </div>
-              </div>
-              <p>
-                <span className={styles.check} aria-hidden="true">
-                  ✓
-                </span>{' '}
-                Bob confirmed this agent with ident.link
-              </p>
-              <span className={styles.profile}>
-                View @bob.com <span aria-hidden="true">→</span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className={styles.message}>
-          <span
-            className={`${styles.avatar} ${styles.carol}`}
-            aria-hidden="true"
-          >
-            C
-          </span>
-          <div className={styles.messageBody}>
-            <p className={styles.sender}>
-              <strong>Carol</strong> <span>@carol.example</span>
-            </p>
-            <p className={styles.bubble}>10am works for me.</p>
-          </div>
-        </div>
-      </div>
-      <div className={styles.composer} aria-hidden="true">
-        <span>Message the group</span>
-      </div>
-    </figure>
+      {index === 0 ? (
+        <>
+          <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+          <circle cx="16" cy="7" r="2" />
+          <circle cx="10" cy="17" r="2" />
+        </>
+      ) : index === 1 ? (
+        <>
+          <path d="M4 11l8-6 8 6v9H4z" />
+          <path d="M10 20v-5h4v5" />
+        </>
+      ) : index === 2 ? (
+        <>
+          <circle cx="6" cy="6" r="2.5" />
+          <circle cx="18" cy="6" r="2.5" />
+          <circle cx="6" cy="18" r="2.5" />
+          <circle cx="18" cy="18" r="2.5" />
+          <path d="M8.5 6h7M6 8.5v7M18 8.5v7M8.5 18h7" />
+        </>
+      ) : (
+        <>
+          <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+          <path d="M8.5 12l2.5 2.5 4.5-5" />
+        </>
+      )}
+    </svg>
   )
 }
 
 export default function AIPage() {
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        <section className={styles.hero} aria-labelledby="ai-title">
-          <div className={styles.intro}>
-            <a href="https://ident.link" className={styles.announcement}>
-              <span>New</span> ident.link: a draft spec for linking agents to
-              the people responsible for them
-            </a>
-            <h1 id="ai-title">Agents you can trace back to a person</h1>
-            <p>
-              On atproto, agents and people share an identity layer. With
-              ident.link, an agent names the person or organization responsible
-              for it, that person confirms it from their own account, and anyone
-              can check the link.
-            </p>
-            <Actions />
-          </div>
-          <ChatExample />
-        </section>
-        <section
-          className={`${styles.section} ${styles.blog}`}
-          aria-labelledby="from-the-blog"
-        >
-          <h2 id="from-the-blog">Blog posts</h2>
-          <Link href={agentBlogHref} className={styles.viewAll}>
-            View all posts <span aria-hidden="true">→</span>
+      <section className={styles.hero} aria-labelledby="ai-title">
+        <h1 id="ai-title">Our approach to AI</h1>
+        <p>
+          We built the AT Protocol so that people, not platforms, hold the keys
+          to their online lives. That same commitment shapes how we think about
+          AI.
+        </p>
+        <div className={styles.actions}>
+          <Link href={aiPosts[0].href} className={styles.primary}>
+            Read the post
           </Link>
-          <div className={styles.postList}>
-            {aiPosts.map((post, index) => (
-              <article key={post.href} className={styles.featuredPost}>
-                <div className={styles.postHeading}>
-                  {index === 0 && <span className={styles.latest}>Latest</span>}
-                  <h3>
-                    <Link href={post.href}>{post.title}</Link>
-                  </h3>
+          <a href="#posts" className={styles.secondary}>
+            Blog Posts
+          </a>
+        </div>
+      </section>
+      <div className={styles.content}>
+        <section aria-labelledby="our-values">
+          <h2 id="our-values">Our values</h2>
+          <p className={styles.lead}>
+            The principles that guide our AI work are the same ones that guide
+            everything else we build.
+          </p>
+          <div className={styles.values}>
+            {values.map((value, index) => (
+              <article key={value.title} className={styles.value}>
+                <span className={styles.icon}>
+                  <ValueIcon index={index} />
+                </span>
+                <div>
+                  <h3>{value.title}</h3>
+                  <p>{value.description}</p>
                 </div>
-                <p className={styles.postDescription}>
-                  {post.description}
-                  {'detail' in post && (
-                    <span className={styles.postDetail}>{post.detail}</span>
-                  )}
-                </p>
-                {post.date ? (
-                  <time
-                    className={styles.postDate}
-                    dateTime={new Date(post.date).toISOString().slice(0, 10)}
-                  >
-                    {post.date}
-                  </time>
-                ) : (
-                  <span className={styles.postDate}>[Date]</span>
-                )}
-                <Link href={post.href} className={styles.readPost}>
-                  Read post <span aria-hidden="true">→</span>
-                </Link>
               </article>
             ))}
           </div>
         </section>
-        <section className={styles.section} aria-labelledby="how-it-works">
-          <h2 id="how-it-works">How ident.link works</h2>
-          <ol className={styles.steps}>
-            {steps.map((step, index) => (
-              <li key={step.title} className={styles.step}>
+        <section aria-labelledby="what-were-doing">
+          <h2 id="what-were-doing">What we’re doing</h2>
+          <ol className={styles.activities}>
+            {activities.map((activity, index) => (
+              <li key={activity.title}>
+                <span className={styles.number} aria-hidden="true">
+                  0{index + 1}
+                </span>
                 <div>
-                  <span className={styles.number} aria-hidden="true">
-                    0{index + 1}
-                  </span>
-                  <h3>{step.title}</h3>
-                  <p>{step.description}</p>
+                  <h3>{activity.title}</h3>
+                  <p>{activity.description}</p>
                 </div>
-                <pre>
-                  <code>{step.code}</code>
-                </pre>
               </li>
             ))}
           </ol>
         </section>
-        <section
-          className={styles.explanation}
-          aria-label="Understanding confirmed links"
-        >
-          <div>
-            <h2>What a confirmed link means</h2>
-            <p>
-              A confirmed link tells you who is responsible for an agent. It
-              gives the agent no authority to act on that person’s behalf.
-              Either side can end it at any time: the principal deletes the
-              endorsement, or the agent removes the entry from its DID document.
-            </p>
-          </div>
-          <div>
-            <h2>Keep the link out of your agent’s hands</h2>
-            <p>
-              Your agent needs to write records, but it rarely needs to change
-              its own DID document. Give it OAuth <code>repo</code> and{' '}
-              <code>blob</code> scopes without the <code>identity</code> scope,
-              or an app password, and it can post freely but can’t alter its own
-              declaration.
-            </p>
-          </div>
-        </section>
-        <section className={styles.section} aria-labelledby="why-atproto">
+        <section aria-labelledby="why-atproto">
           <h2 id="why-atproto">Why atproto works for agents</h2>
           <div className={styles.benefits}>
-            <article>
-              <svg
-                aria-hidden="true"
-                width="40"
-                height="40"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="8" r="3.5" />
-                <path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5" />
-              </svg>
-              <h3>One identity layer</h3>
-              <p>
-                Every account has a portable, cryptographic identity that works
-                across every app on the network. An agent gets its own identity
-                in the same system people use, so it can be recognized wherever
-                you run into it.
-              </p>
+            <article className={styles.value}>
+              <span className={styles.icon}>
+                <svg
+                  aria-hidden="true"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                >
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5" />
+                </svg>
+              </span>
+              <div>
+                <h3>One identity layer</h3>
+                <p>
+                  Every account has a portable, cryptographic identity that
+                  works across every app on the network. An agent gets its own
+                  identity in the same system people use, so it can be
+                  recognized wherever you run into it.
+                </p>
+              </div>
             </article>
-            <article>
-              <svg
-                aria-hidden="true"
-                width="40"
-                height="40"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <ellipse cx="12" cy="6" rx="8" ry="3" />
-                <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
-              </svg>
-              <h3>A public record of what agents do</h3>
-              <p>
-                Public activity lives in signed repositories and flows through
-                an open firehose. Anyone can build tools to audit, label or
-                filter agent activity.
-              </p>
+            <article className={styles.value}>
+              <span className={styles.icon}>
+                <svg
+                  aria-hidden="true"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                >
+                  <ellipse cx="12" cy="6" rx="8" ry="3" />
+                  <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
+                </svg>
+              </span>
+              <div>
+                <h3>A public record of what agents do</h3>
+                <p>
+                  Public activity lives in signed repositories and flows through
+                  an open firehose. Anyone can build tools to audit, label or
+                  filter agent activity.
+                </p>
+              </div>
             </article>
           </div>
         </section>
-
-        <section className={styles.cta} aria-labelledby="get-started">
-          <div>
-            <h2 id="get-started">Show who’s behind your agent</h2>
-            <p>
-              ident.link is a draft. If you’re building agents, help shape how
-              they identify themselves on an open network.
-            </p>
+        <section id="posts" aria-labelledby="blog-posts">
+          <div className={styles.blogHeader}>
+            <h2 id="blog-posts">Blog Posts</h2>
+            <Link href="/blog">
+              All blog posts <span aria-hidden="true">→</span>
+            </Link>
           </div>
-          <Actions />
+          <div className={styles.postList}>
+            {aiPosts.map((post) => (
+              <article key={post.href}>
+                <Link href={post.href} className={styles.post}>
+                  {post.date ? (
+                    <time
+                      dateTime={new Date(post.date).toISOString().slice(0, 10)}
+                    >
+                      {post.date}
+                    </time>
+                  ) : (
+                    <span className={styles.date}>[Date]</span>
+                  )}
+                  <div>
+                    <h3>{post.title}</h3>
+                    <p>
+                      {'detail' in post ? post.detail.trim() : post.description}
+                    </p>
+                  </div>
+                  <span className={styles.arrow} aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </article>
+            ))}
+          </div>
         </section>
       </div>
     </div>

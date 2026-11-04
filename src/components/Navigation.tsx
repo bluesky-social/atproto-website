@@ -317,7 +317,10 @@ export const navigation: Array<NavGroup> = [
         icon: 'puzzle-piece',
         href: '/guides/lexicon',
         links: [
-          { title: 'Developing with Lexicons', href: '/guides/installing-lexicons' },
+          {
+            title: 'Developing with Lexicons',
+            href: '/guides/installing-lexicons',
+          },
           { title: 'Publishing Lexicons', href: '/guides/publishing-lexicons' },
           { title: 'Lexicon Style Guide', href: '/guides/lexicon-style-guide' },
         ],
@@ -346,6 +349,13 @@ export const navigation: Array<NavGroup> = [
     ],
   },
   {
+    title: 'AI',
+    links: [
+      { title: 'Our approach to AI', icon: 'sparkles', href: '/ai' },
+      { title: 'Blog Posts', icon: 'document-text', href: '/ai#posts' },
+    ],
+  },
+  {
     title: 'Deploy',
     links: [
       {
@@ -366,7 +376,7 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Account Migration', href: '/guides/account-migration' },
           { title: 'Account Recovery', href: '/guides/account-recovery' },
-        ]
+        ],
       },
       {
         title: 'Deploy recipes',
@@ -421,8 +431,16 @@ export const navigation: Array<NavGroup> = [
       { title: 'Sync', icon: 'document-text', href: '/specs/sync' },
       { title: 'DID', icon: 'document-text', href: '/specs/did' },
       { title: 'Handle', icon: 'document-text', href: '/specs/handle' },
-      { title: 'Namespaced ID (NSID)', icon: 'document-text', href: '/specs/nsid' },
-      { title: 'Timestamp ID (TID)', icon: 'document-text', href: '/specs/tid' },
+      {
+        title: 'Namespaced ID (NSID)',
+        icon: 'document-text',
+        href: '/specs/nsid',
+      },
+      {
+        title: 'Timestamp ID (TID)',
+        icon: 'document-text',
+        href: '/specs/tid',
+      },
       { title: 'Record Key', icon: 'document-text', href: '/specs/record-key' },
       {
         title: 'AT URI Scheme',
@@ -434,7 +452,10 @@ export const navigation: Array<NavGroup> = [
   },
 ]
 
-export const allPages = flattenNavigation()
+// In-page anchors are navigation shortcuts, not separate previous/next pages.
+export const allPages = flattenNavigation().filter(
+  (page) => !page.href.includes('#'),
+)
 
 export function Navigation(props: React.ComponentPropsWithoutRef<'nav'>) {
   return (

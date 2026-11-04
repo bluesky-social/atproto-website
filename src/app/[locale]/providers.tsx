@@ -63,7 +63,7 @@ function ThemeWatcher() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isLanding = ['/', '/ai'].includes(stripLocalePrefix(pathname))
+  const isLanding = stripLocalePrefix(pathname) === '/'
 
   return (
     <ThemeProvider

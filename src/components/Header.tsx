@@ -53,7 +53,7 @@ export const Header = forwardRef<
   React.ComponentPropsWithoutRef<typeof motion.div> & { minimal?: boolean }
 >(function Header({ className, minimal, ...props }, ref) {
   const pathname = usePathname()
-  const isHome = ['/', '/ai'].includes(stripLocalePrefix(pathname))
+  const isHome = stripLocalePrefix(pathname) === '/'
 
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
   let isInsideMobileNavigation = useIsInsideMobileNavigation()
@@ -104,7 +104,6 @@ export const Header = forwardRef<
         <TopLevelNavItem href="/sdks" className="hidden sm:block">
           SDKs
         </TopLevelNavItem>
-        <TopLevelNavItem href="/ai">AI</TopLevelNavItem>
         <TopLevelNavItem href="/blog">Blog</TopLevelNavItem>
         <TopLevelNavItem href="/off-protocol" className="hidden sm:block">
           Podcast
