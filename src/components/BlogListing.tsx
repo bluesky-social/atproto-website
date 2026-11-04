@@ -46,24 +46,24 @@ export function BlogListing({ topic }: { topic?: string }) {
           action="/blog/topic"
           className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-4 text-sm dark:border-zinc-800"
         >
-          <h2 className="font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
+          <h2 className="hidden font-mono text-sm font-medium uppercase tracking-wide text-zinc-700 sm:block dark:text-zinc-300">
             Latest posts
           </h2>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex w-full items-center gap-3 sm:w-auto">
             <label
               htmlFor="blog-topic"
-              className="text-zinc-600 dark:text-zinc-400"
+              className="hidden text-zinc-600 sm:block dark:text-zinc-400"
             >
               Show
             </label>
-            <div className="relative">
+            <div className="relative min-w-0 flex-1 sm:flex-none">
               <select
                 key={topic ?? 'all'}
                 id="blog-topic"
                 aria-label="Filter blog posts"
                 name="topic"
                 defaultValue={topic ?? ''}
-                className="appearance-none rounded-lg border border-zinc-200 bg-white py-2.5 pl-4 pr-9 font-mono text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                className="w-full appearance-none rounded-lg border border-zinc-200 bg-white py-2.5 pl-4 pr-9 font-mono text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
               >
                 <option value="">All posts</option>
                 {blogTopics.map((t) => (
