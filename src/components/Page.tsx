@@ -8,12 +8,20 @@ import { AtprotoDocumentLink } from './AtprotoDocumentLink'
 import { AtprotoPublicationLink } from './AtprotoPublicationLink'
 import { SubpageLinks } from './SubpageLinks'
 import { BlueskyConversation } from './BlueskyConversation'
+import { BlogTags } from './BlogTags'
 
-const BSKY_CONVERSATION_HEADER = "This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}."
+const BSKY_CONVERSATION_HEADER =
+  'This post has {replies?{replies|reply|replies}}{quotes?, {quotes|quote|quotes}}{repostedBy?, and has been reposted by {repostedBy}}.'
 
 interface PageProps {
   default: React.FunctionComponent
-  header?: PageHeaderProps & { standardSiteUri?: string; blueskyPostUrl?: string; blueskyHeaderTemplate?: string; hideSectionNav?: boolean }
+  header?: PageHeaderProps & {
+    standardSiteUri?: string
+    blueskyPostUrl?: string
+    blueskyHeaderTemplate?: string
+    hideSectionNav?: boolean
+    tags?: string[]
+  }
   sections?: PageSectionProp[]
 }
 
@@ -42,6 +50,7 @@ export function Page(page: PageProps) {
       <div className="flex flex-wrap items-start">
         <page.default />
         {showSectionNav && <PageSectionsNavigation sections={navSections} />}
+        <BlogTags tags={page.header?.tags} />
         {/* Gated on either: an explicit URL renders immediately, and a post with
             only a standardSiteUri resolves its thread from that record — which is
             what lets a thread reach a live post without rebuilding the site. */}
@@ -49,7 +58,9 @@ export function Page(page: PageProps) {
           <BlueskyConversation
             uri={page.header.blueskyPostUrl}
             documentUri={page.header.standardSiteUri}
-            headerTemplate={page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER}
+            headerTemplate={
+              page.header.blueskyHeaderTemplate ?? BSKY_CONVERSATION_HEADER
+            }
           />
         )}
       </div>

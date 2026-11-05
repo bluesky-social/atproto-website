@@ -527,7 +527,7 @@ export function AskAIButton({ className }: { className?: string }) {
         className,
       )}
     >
-      AI
+      Ask AI
     </button>
   )
 }

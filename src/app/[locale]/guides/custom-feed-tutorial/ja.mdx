@@ -3,18 +3,15 @@ import {Heading} from "@/components/Heading"
 import bsky from "./feeds-bsky.png"
 import S01 from './_snippets/01-install-deps.mdx'
 import S02 from './_snippets/02-install-lex.mdx'
-import S03 from './_snippets/03-install-tap.mdx'
 import S04 from './_snippets/04-project-setup.mdx'
 import S05 from './_snippets/05-lex-install.mdx'
 import S06 from './_snippets/06-lex-build.mdx'
-import S07 from './_snippets/07-tap-run.mdx'
 import S08 from './_snippets/08-config-and-imports.mdx'
 import S09 from './_snippets/09-post-index-and-indexer.mdx'
 import S10 from './_snippets/10-xrpc-routes.mdx'
 import S11 from './_snippets/11-feed-server.mdx'
 import S12 from './_snippets/12-start-block.mdx'
 import S13 from './_snippets/13-terminal-output.mdx'
-import S14 from './_snippets/14-tap-signal-collection.mdx'
 
 export const header = {
   title: 'カスタムフィード作成',
@@ -23,15 +20,14 @@ export const header = {
 
 カスタムフィード（フィードジェネレーター）は、ユーザーにアルゴリズムを提供するサービスです。これにより、自分好みのタイムライン表示を選んだり、[他のユーザー向けに埋め込み可能なフィードを作成したり](https://graze.leaflet.pub/3m4yjmbnyec2c)といった高い自由度が得られます。
 
-このチュートリアルでは、[firehose](/guides/streaming-data)から投稿を取り込み、アルゴリズムで並び替え、[XRPCフィードとして配信する](/guides/feeds)ことで、カスタムフィードサーバーを作成します。
+このチュートリアルでは、[Jetstream](https://bsky.network/docs/jetstream)から投稿を取り込み、アルゴリズムで並び替え、[XRPCフィードとして配信する](/guides/feeds)カスタムフィードサーバーを作成します。
 
 ## 前提条件
 
 このチュートリアルでは、TypeScriptアプリケーションをゼロから構築します。TypeScriptとNode.jsの基本的な理解を前提としています。
 
 以下をインストールしておいてください。
-- Node.js 18以上
-- Go 1.25以上
+- Node.js 22.15以上
 
 [homebrew](https://brew.sh/)に対応したプラットフォームでは、次のコマンドでインストールできます。
 
@@ -41,17 +37,13 @@ export const header = {
 
 <S02 />
 
-ネットワーク上の投稿をfirehoseで取り込むために、[`tap`](/guides/the-at-stack#tap)のインストールも必要です。
-
-<S03 />
-
 次に、新しいTypeScriptプロジェクトディレクトリを作成し、プロジェクトを初期化します。
 
 <S04 />
 
 まず、プロジェクトにLexiconを追加します。
 
-## パート1：LexionとTap
+## パート1：Lexicon
 
 [Lexicon](/guides/lexicon)はatprotoのレコードを定義します。基本的なフィードジェネレーターには`app.bsky.feed.describeFeedGenerator`と`app.bsky.feed.getFeedSkeleton`のLexiconが必要です。`lex`を使えば、これらのLexiconをダウンロードしてプロジェクトに組み込めます。
 
@@ -63,9 +55,7 @@ export const header = {
 
 生成されたコードは`src/lexicons`に配置されます。
 
-ネットワーク上の投稿をインデックスするために、別ターミナルで`tap`を実行する必要があります。次のコマンドで開始します。
-
-<S07 />
+プロジェクトのセットアップで[`@bsky/jetstream`](https://www.npmjs.com/package/@bsky/jetstream) SDKもインストールします。パート3で使用します。
 
 これでフィードジェネレーターの構築を始められます。
 
@@ -86,25 +76,25 @@ export const header = {
 
 <S08 />
 
-いくつか注目すべき点があります。`tap`で取得する対象として`DEFAULT_REPO`を指定しています。この例では一人のユーザーとして[`pfrazee.com`](https://bsky.app/profile/pfrazee.com)を追跡します。これにより、チュートリアルの例を扱いやすくしています。
+いくつか注目すべき点があります。`FEED_INITIAL_REPOS`はJetstreamのDIDフィルターを設定します。デフォルトでは空なので、ネットワーク全体の投稿を受信します。カンマ区切りのDIDを指定すると、特定のアカウントだけを追跡できます。
 
-このフィードは、特定の語句を含む投稿を検索して並び替えます。語句は`FEED_SEARCH_TERMS`環境変数で設定できます。この例では"alf"に言及する投稿を検索します。
+このフィードは、特定の語句を含む投稿を検索して並び替えます。語句は`FEED_SEARCH_TERMS`環境変数で設定できます。この例では、ゴブリン（goblin）、グレムリン（gremlin）、魔法使い（wizard）、カオス（chaos）に言及する投稿を集める`goblin-mode`フィードを作ります。
 
-次に、firehoseから投稿を取り込むロジックを設定します。
+次に、Jetstreamから投稿を取り込むロジックを設定します。
 
-## パート3：firehose取り込み
+## パート3：Jetstreamからの取り込み
 
 配信対象の投稿は配列に保存します。
 
-`tap`がネットワーク上の投稿を検出すると、このフィードサーバーは投稿テキストを設定した検索語で検索します。一致した場合は投稿を配列に追加します。以下の内容を`src/index.ts`に追加してください。
+Jetstreamはフィルター済みのイベントをデコード済みJSONとしてWebSocket経由で送信します。`@bsky/jetstream` SDKが接続と再接続を処理します。以下の内容を`src/index.ts`に追加してください。
 
 <S09 />
 
-ここでは`tap`に接続し、`@atproto/tap`ライブラリの`SimpleIndexer`関数を使って`app.bsky.feed.post` Lexicon、つまりBluesky投稿の受信レコードを処理しています。
+このコードは`app.bsky.feed.post`のコミットを対象にライブ購読します。デフォルトではネットワーク全体の投稿を受信します。`FEED_INITIAL_REPOS`にカンマ区切りのDIDを指定すると、それらのアカウントだけを追跡します。
 
-新しい投稿が見つかったら、テキストが検索語に一致するか確認します。一致した場合は`postIndex`配列に追加します。さらに削除とIDステータス変更イベントも処理し、インデックスの正確性を保ちます。
+投稿の作成または更新時に、コードは設定された検索語をテキストから探し、一致した投稿を`postIndex`に追加します。一致しなくなった投稿や削除された投稿を取り除き、アカウントイベントでアカウントが非アクティブと報告された場合も、そのアカウントの投稿を取り除きます。レコードはデコード済みJSONで届くため、Tapを実行したり、追加でデコードしたりする必要はありません。
 
-要するに、条件に一致する投稿のインメモリ検索インデックスを構築し、それをフィードとして配信します。
+この例はライブストリームのみを使うため、起動後に届いた投稿をインデックスします。過去の投稿を取得する方法は[Jetstream Replayのドキュメント](https://bsky.network/docs/jetstream-replay)を参照してください。
 
 ## パート4：フィード配信
 
@@ -127,20 +117,18 @@ export const header = {
 
 ## パート5：サーバー起動
 
-`channel.start()`でtapに接続してからサーバーを起動します。以下のランタイムロジックを`src/index.ts`に追加してください。
+Jetstreamのコンシューマーを起動してからサーバーを起動します。以下のランタイムロジックを`src/index.ts`に追加してください。
 
 <S12 />
 
-これで`tap`への接続（フィード入力）とXRPCサーバー（フィード出力）の両方が開始されます。フィードジェネレーターのテストに役立つログ出力も備えています。
+これでJetstreamコンシューマー（フィード入力）とXRPCサーバー（フィード出力）が開始されます。SDKはライブストリームを再接続します。
 
-`npx tsx src/index.ts`で実行します。初期投稿がインデックスされる様子が表示されるはずです。
+`npx tsx src/index.ts`で実行します。新しい一致投稿が届くとインデックスされます。
 
 <S13 />
 
 <Note>
-この例では単一ユーザーのデータリポジトリだけを取得している点に注意してください。ネットワーク全体を取得するには、`tap`を停止して`--signal-collection`フラグ付きで再実行します。
-
-<S14 />
+この例は起動後に作成された投稿だけを受信するため、最初の一致投稿が表示されるまで1分ほどかかることがあります。`FEED_INITIAL_REPOS`で少数のアカウントに絞ると、一致する投稿はかなり少なくなります。
 </Note>
 
 ## 結論

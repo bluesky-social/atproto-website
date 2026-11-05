@@ -2,18 +2,15 @@ import {Container} from "@/components/Container"
 import bsky from "./feeds-bsky.png"
 import S01 from './_snippets/01-install-deps.mdx'
 import S02 from './_snippets/02-install-lex.mdx'
-import S03 from './_snippets/03-install-tap.mdx'
 import S04 from './_snippets/04-project-setup.mdx'
 import S05 from './_snippets/05-lex-install.mdx'
 import S06 from './_snippets/06-lex-build.mdx'
-import S07 from './_snippets/07-tap-run.mdx'
 import S08 from './_snippets/08-config-and-imports.mdx'
 import S09 from './_snippets/09-post-index-and-indexer.mdx'
 import S10 from './_snippets/10-xrpc-routes.mdx'
 import S11 from './_snippets/11-feed-server.mdx'
 import S12 from './_snippets/12-start-block.mdx'
 import S13 from './_snippets/13-terminal-output.mdx'
-import S14 from './_snippets/14-tap-signal-collection.mdx'
 
 export const header = {
   title: '커스텀 피드 만들기',
@@ -22,17 +19,16 @@ export const header = {
 
 사용자 지정 피드 또는 피드 생성기는 사용자에게 알고리즘을 제공하는 서비스입니다. 이를 통해 타임라인 보기를 자유롭게 선택하거나 [다른 사용자를 위한 임베드 가능한 피드를 생성](https://graze.leaflet.pub/3m4yjmbnyec2c)할 수 있는 등 다양한 자유를 누릴 수 있습니다.
 
-이 튜토리얼에서는 [파이어호스](/guides/streaming-data)에서 게시물을 가져와 알고리즘으로 정렬한 후 [XRPC 피드로 브로드캐스팅](/guides/feeds)하는 커스텀 피드 서버를 만들 것입니다.
+이 튜토리얼에서는 [Jetstream](https://bsky.network/docs/jetstream)에서 게시물을 가져와 알고리즘으로 정렬한 후 [XRPC 피드로 브로드캐스팅](/guides/feeds)하는 커스텀 피드 서버를 만듭니다.
 
 ## 필수 조건
 
 이 튜토리얼은 TypeScript 애플리케이션을 처음부터 구축하는 과정을 다룹니다. TypeScript와 Node.js에 대한 실무 지식이 있어야 합니다.
 
 다음이 설치되어 있어야 합니다:
-- Node.js 18 이상
-- Go 1.25 이상
+- Node.js 22.15 이상
 
-[homebrew](https://brew.sh/)가 지원하는 플랫폼에서는 다음 명령어로 설치할 수 있습니다:
+[homebrew](https://brew.sh/)가 지원하는 플랫폼에서는 다음 명령어로 Node.js를 설치할 수 있습니다:
 
 <S01 />
 
@@ -40,17 +36,13 @@ export const header = {
 
 <S02 />
 
-네트워크의 게시물 파이프라인을 소비하려면 [`tap`](/guides/the-at-stack#tap)도 설치해야 합니다.
-
-<S03 />
-
 이제 새로운 TypeScript 프로젝트 디렉터리를 생성하고 프로젝트를 초기화하세요:
 
 <S04 />
 
 프로젝트에 Lexicons를 추가하는 것으로 시작합니다.
 
-## 파트 1: Lexicons와 Tap
+## 파트 1: Lexicons
 
 [Lexicons](/guides/lexicon)는 Atproto 레코드를 정의합니다. 기본 피드 생성기에는 `app.bsky.feed.describeFeedGenerator` 및 `app.bsky.feed.getFeedSkeleton` Lexicons가 필요합니다. `lex`를 사용하여 이러한 레크시콘을 다운로드하고 프로젝트에 빌드할 수 있습니다:
 
@@ -62,9 +54,7 @@ export const header = {
 
 생성된 코드는 `src/lexicons`에 위치합니다.
 
-네트워크의 게시물을 색인화하려면 별도의 터미널에서 `tap`을 실행해야 합니다. `tap`을 다음과 같이 시작하세요:
-
-<S07 />
+프로젝트 설정에서 [`@bsky/jetstream`](https://www.npmjs.com/package/@bsky/jetstream) SDK도 설치합니다. 파트 3에서 사용합니다.
 
 이제 피드 생성기 구축을 시작할 수 있습니다.
 
@@ -85,25 +75,25 @@ export const header = {
 
 <S08 />
 
-여기서 몇 가지 주의할 점이 있습니다. `tap`으로 가져올 `DEFAULT_REPO`를 지정했습니다. 이 경우 단일 사용자 [`pfrazee.com`](https://bsky.app/profile/pfrazee.com)을 팔로우합니다. 이렇게 하면 튜토리얼 예제를 관리하기 쉽게 유지할 수 있습니다.
+여기서 몇 가지 주의할 점이 있습니다. `FEED_INITIAL_REPOS`는 Jetstream의 DID 필터를 설정합니다. 기본값은 비어 있으므로 전체 네트워크의 게시물을 받습니다. 쉼표로 구분한 DID 목록을 지정하면 특정 계정만 추적할 수 있습니다.
 
-특정 용어가 포함된 게시물을 검색하여 이 피드를 정렬하고 있습니다. 이러한 용어는 `FEED_SEARCH_TERMS` 환경 변수로 구성할 수 있습니다. 이 예제에서는 "alf"를 언급한 게시물을 검색합니다.
+특정 용어가 포함된 게시물을 검색하여 이 피드를 정렬하고 있습니다. 이러한 용어는 `FEED_SEARCH_TERMS` 환경 변수로 구성할 수 있습니다. 이 예제에서는 고블린(goblin), 그렘린(gremlin), 마법사(wizard), 혼돈(chaos)을 언급한 게시물을 모으는 `goblin-mode` 피드를 만듭니다.
 
-다음으로, 파이어호스에서 게시물을 소비하는 로직을 설정할 것입니다.
+다음으로, Jetstream에서 게시물을 가져오는 로직을 설정합니다.
 
-## 파트 3: 파이어호스 소비
+## 파트 3: Jetstream 사용하기
 
 제공할 게시물을 배열에 저장합니다.
 
-`tap`이 네트워크에서 게시물을 발견하면, 이 피드 서버는 설정된 검색어를 게시물 텍스트에서 검색합니다. 일치하는 게시물을 찾으면 해당 게시물을 배열에 추가합니다. `src/index.ts`에 다음 내용을 추가하세요:
+Jetstream은 필터링된 이벤트를 디코딩된 JSON으로 WebSocket을 통해 전송합니다. `@bsky/jetstream` SDK가 연결과 재연결을 처리합니다. `src/index.ts`에 다음 내용을 추가하세요:
 
 <S09 />
 
-여기서 `tap`에 연결하고, `@atproto/tap` 라이브러리가 제공하는 `SimpleIndexer` 함수를 사용하여 `app.bsky.feed.post` Lexicon(즉, Bluesky 게시물)에서 들어오는 레코드를 처리합니다.
+이 코드는 `app.bsky.feed.post` 커밋을 라이브 구독합니다. 기본적으로 전체 네트워크의 게시물을 받습니다. `FEED_INITIAL_REPOS`에 쉼표로 구분한 DID 목록을 지정하면 해당 계정만 추적합니다.
 
-새로운 게시물이 발견되면, 그 텍스트가 검색어와 일치하는지 확인합니다. 일치하는 경우 `postIndex` 배열에 추가합니다. 인덱스의 정확성을 유지하기 위해 삭제 및 계정 상태 변경도 처리합니다.
+게시물을 생성하거나 업데이트할 때 코드는 설정된 검색어를 찾고 일치하는 게시물을 `postIndex`에 추가합니다. 더 이상 일치하지 않는 게시물과 삭제된 게시물을 제거하며 계정 이벤트에서 계정이 비활성 상태로 표시되면 해당 계정의 게시물도 제거합니다. 레코드는 이미 디코딩된 JSON으로 전달되므로 Tap을 실행하거나 별도로 디코딩할 필요가 없습니다.
 
-본질적으로, 특정 기준에 부합하는 게시물의 인메모리 검색 인덱스를 구축하는 것입니다. 이후 이 인덱스를 피드로 제공하게 됩니다.
+이 예제는 라이브 스트림만 사용하므로 시작한 이후 도착한 게시물을 인덱싱합니다. 과거 게시물은 [Jetstream Replay 문서](https://bsky.network/docs/jetstream-replay)를 참조하세요.
 
 ## 파트 4: 피드 제공
 
@@ -126,20 +116,18 @@ export const header = {
 
 ## 파트 5: 서버 실행
 
-`channel.start()`로 tap에 연결한 후 서버를 시작합니다. `src/index.ts`에 런타임 로직을 추가하세요:
+Jetstream 소비자를 시작한 후 서버를 시작합니다. `src/index.ts`에 런타임 로직을 추가하세요:
 
 <S12 />
 
-이 코드는 `tap`(피드 입력)과 XRPC 서버(피드 출력)에 대한 연결을 모두 시작합니다. 또한 피드 생성기 테스트를 돕기 위한 일부 로깅을 제공합니다.
+이 코드는 Jetstream 소비자(피드 입력)와 XRPC 서버(피드 출력)를 시작합니다. SDK가 라이브 스트림을 재연결합니다.
 
-`npx tsx src/index.ts`로 실행하세요. 초기 게시물이 색인되는 것을 확인할 수 있습니다:
+`npx tsx src/index.ts`로 실행하세요. 새 게시물이 도착하면 조건에 맞는 게시물을 색인합니다:
 
 <S13 />
 
 <Note>
-이 예제는 단일 사용자의 데이터 저장소만 가져옵니다. 전체 네트워크를 가져오려면 `tap`을 중지하고 `--signal-collection` 플래그를 추가하여 재실행하세요:
-
-<S14 />
+이 예제는 시작한 이후에 작성된 게시물만 받으므로 첫 번째 일치 게시물이 나타나기까지 1분 정도 걸릴 수 있습니다. `FEED_INITIAL_REPOS`로 몇몇 계정만 지정하면 일치하는 게시물이 훨씬 드물어집니다.
 </Note>
 
 ## 결론

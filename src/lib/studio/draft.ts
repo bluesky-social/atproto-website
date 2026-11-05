@@ -30,7 +30,8 @@
  *
  * v2 (2026-08-14): the blog snapshot's `owned` gained blueskyPostUrl.
  */
-export const DRAFT_SCHEMA = 2
+// v3: blog metadata includes topic tags.
+export const DRAFT_SCHEMA = 3
 
 export type Draft<T = unknown> = {
   v: number
@@ -125,7 +126,8 @@ function deepEqual(a: unknown, b: unknown): boolean {
     const keys = Object.keys(a)
     if (keys.length !== Object.keys(b).length) return false
     return keys.every(
-      (k) => Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]),
+      (k) =>
+        Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]),
     )
   }
   return false

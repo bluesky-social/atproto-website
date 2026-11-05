@@ -9,57 +9,62 @@ interface IndexedPost {
 }
 
 const postIndex: IndexedPost[] = []
+const jetstream = new Jetstream('https://jetstream.us-east.bsky.network')
 
-// =============================================================================
-// Tap Indexer
-// =============================================================================
-
-const tap = new Tap(config.tapUrl, { adminPassword: config.tapPassword })
-const indexer = new SimpleIndexer()
+function escapeRegExp(value: string) {
+    return [...value].map(char => '.^$*+?()[]{}|\\'.includes(char) ? `\\${char}` : char).join('')
+}
 
 const searchPattern = new RegExp(
-    `\\b(${config.searchTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`,
+    `\\b(${config.searchTerms.map(escapeRegExp).join('|')})\\b`,
     'i'
 )
 
-indexer.record(async (evt) => {
-    if (evt.collection !== 'app.bsky.feed.post') return
-
-    const uri = `at://${evt.did}/${evt.collection}/${evt.rkey}` as AtUriString
-
-    if (evt.action === 'delete') {
-        const idx = postIndex.findIndex(p => p.uri === uri)
-        if (idx !== -1) {
-            postIndex.splice(idx, 1)
-            console.log(`DELETE ${uri}`)
+async function indexJetstream(signal: AbortSignal) {
+    for await (const evt of jetstream.live({
+        collections: ['app.bsky.feed.post'],
+        ...(config.initialRepos.length > 0 && { dids: config.initialRepos }),
+        kinds: ['commit', 'account'],
+        signal,
+    })) {
+        if (evt.kind === 'account') {
+            if (evt.account.active) continue
+            const removed = postIndex.filter(p => p.uri.startsWith(`at://${evt.did}/`)).length
+            if (removed > 0) {
+                postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.startsWith(`at://${evt.did}/`)))
+                console.log(`Account ${evt.did} inactive: removed ${removed} posts`)
+            }
+            continue
         }
-        return
+
+        if (evt.kind !== 'commit' || evt.commit.collection !== 'app.bsky.feed.post') continue
+
+        const { rkey } = evt.commit
+        const uri = `at://${evt.did}/app.bsky.feed.post/${rkey}` as AtUriString
+        const idx = postIndex.findIndex(p => p.uri === uri)
+
+        if (evt.commit.operation === 'delete') {
+            if (idx !== -1) {
+                postIndex.splice(idx, 1)
+                console.log(`DELETE ${uri}`)
+            }
+            continue
+        }
+
+        const text = typeof evt.commit.record?.text === 'string' ? evt.commit.record.text : ''
+        if (!searchPattern.test(text)) {
+            if (idx !== -1) postIndex.splice(idx, 1)
+            continue
+        }
+
+        if (idx !== -1) postIndex.splice(idx, 1)
+        postIndex.unshift({ uri, indexedAt: Date.now() })
+        if (postIndex.length > config.maxPosts) postIndex.pop()
+
+        const preview = text.substring(0, 60).replace(/\n/g, ' ')
+        console.log(`${evt.commit.operation.toUpperCase()} ${uri}`)
+        console.log(`  \"${preview}${text.length > 60 ? '...' : ''}\"`)
+        console.log(`  ⭐ Added to index (${postIndex.length} total)`)
     }
-
-    const text = (evt.record?.text as string) || ''
-    if (!searchPattern.test(text)) return
-    if (postIndex.some(p => p.uri === uri)) return
-
-    postIndex.unshift({ uri, indexedAt: Date.now() })
-    if (postIndex.length > config.maxPosts) postIndex.pop()
-
-    const preview = text.substring(0, 60).replace(/\n/g, ' ')
-    console.log(`${evt.action.toUpperCase()} ${uri}`)
-    console.log(`  "${preview}${text.length > 60 ? '...' : ''}"`)
-    console.log(`  ⭐ Added to index (${postIndex.length} total)`)
-})
-
-indexer.identity(async (evt) => {
-    if (evt.status === 'active') return
-    // Remove posts from disabled/deleted identities
-    const removed = postIndex.filter(p => p.uri.includes(evt.did)).length
-    if (removed > 0) {
-        postIndex.splice(0, postIndex.length, ...postIndex.filter(p => !p.uri.includes(evt.did)))
-        console.log(`Identity ${evt.did} (${evt.status}): removed ${removed} posts`)
-    }
-})
-
-indexer.error((err) => console.error('Indexer error:', err))
-
-const channel = tap.channel(indexer)
+}
 ```
