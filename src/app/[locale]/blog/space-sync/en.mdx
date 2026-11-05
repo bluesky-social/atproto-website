@@ -1,58 +1,60 @@
 import trailsApp from "./trails.png"
+import { SpaceJoinDiagram } from "./SpaceJoinDiagram"
 
 export const header = {
   title: 'A Jetstream for Spaces',
   description: 'Syncing Spaces with Jetstream semantics, part of the Spaces blog series',
   date: 'November 5, 2026',
   author: 'AT Protocol Team',
+  tags: ['spaces'],
 }
 
 In our [Devex Goals for Spaces](https://atproto.com/blog/devex-goals-for-spaces) post last month, we asked whether Spaces could still support Jetstream client semantics, and showed a terminal screenshot(!) of a Jetstream client reading from a space. Since then, we've written about [Open Social Groups](https://atproto.com/blog/open-social-groups-vision) and the role of the [Group Host](https://atproto.com/blog/atmospheric-groups-intro), the forthcoming background service that administers and serves a group's spaces as a whole.
 
-This week we want to show how Spaces handle one of our core primitives: sync. And the answer may surprise you. **We plan for Space sync to become fully compatible with Jestream.** This is great news, and directly addresses one of our core goals with Spaces — it means that, for most developers, there are not going to be two dramatically different ways of working with the protocol for public and non-public data. **If you've built an app that consumes public atproto data from Jetstream, consuming space data should look very familiar.**
+This week we want to show how Spaces handle one of our core primitives: sync. And the answer may surprise you. **We plan for Jetstream to become fully compatible with Spaces.** This is great news, and directly addresses one of our core goals with Spaces — it means that, for most developers, there are not going to be two dramatically different ways of working with the protocol for public and non-public data. **If you've built an app that consumes public atproto data from Jetstream, consuming space data should look very familiar.**
 
 ## Why Spaces Need Their Own Sync
 
 Public atproto data flows through relays. Every PDS broadcasts its commits, a relay aggregates them into the firehose, and services like Jetstream turn that into JSON you can filter by collection. Spaces don't work that way. Each space is its own sync boundary; Spaces data is assumed to be non-public. In other words, we don't take for granted the ability to rebroadcast this data. There's no relay carrying space records across the network. We want data shared directly with the parties who have access.
 
-To build a view of a space in a consistent and efficient way, an app has to get a credential for the space, find out which repos have written into it, backfill each of those repos from whichever PDS hosts it, register for notifications about new writes, and keep track of account changes like deactivations and deletions. We haven't talked much about these aspects yet because the Spaces protocol hasn't been finalized, but you would not expect every production Spaces app to have to solve this on their own.
+To broadcast *public* atproto data, there are many parts of the protocol that, from a developer point of view, “just work.” This is how we typically position Jetstream against the Relays — if you're not doing full zero-trust validation, if you just want to be an atproto consumer, that's what Jetstream is for. Some of those internal mechanisms are different when talking about Spaces data, but the principle here is the same. We haven't talked too much about each of those mechanisms in our docs before finalizing Spaces (stay tuned), but there's a lot there that you won't have to solve for on your own.
 
-Separately, we *have* talked a lot lately about the ability to [self-host Jetstream](https://atproto.com/blog/introducing-bluesky-protocol-services#jetstream-v2-network-replay). This is important to our broader ecosystem goals; we provide a high-scale Jetstream for most developers that serves data from our own Relays, but the new replay functionality in Jetstream can be computationally expensive at scale, and we absolutely don't want to be the sole arbiter of those costs.
+We *have* talked a lot lately about the ability to [self-host Jetstream](https://atproto.com/blog/introducing-bluesky-protocol-services#jetstream-v2-network-replay). This is important to our broader ecosystem goals; we provide a high-scale Jetstream for most developers that serves data from our own Relays, but the new replay functionality in Jetstream can be computationally expensive at scale, and we absolutely don't want to be the sole arbiter of those costs.
 
-Soon, there will be **an even better reason to host your own Jetstream** — as a secure endpoint for Spaces data. As with the entire atproto stack, Jetstream can scale down to a point where it consumes very few resources; you don't see this with the public Jetstream rebroadcasting every record on the network, but a Spaces-only Jetstream will start out much more manageable. If you have 10 users, you only have access to those 10 users' relevant spaces.
+Soon, there will be **an even better reason to host your own Jetstream** — as a secure endpoint for Spaces data. As with the entire atproto stack, Jetstream can scale down to a point where it consumes very few resources; you don't see this with the public Jetstream rebroadcasting every record on the network, but a Spaces-only Jetstream will start out much more manageable. If you have 10 users, you only have access to those 10 users' relevant spaces. At that point, running your own Jetstream sidecar service should feel more like “filling a gap you already have” than “adding another dependency.”
 
 ## Consuming the Stream
 
 Your apps will be able to read from the sync service with any up-to-date Jetstream client: e.g., the [TypeScript SDK](https://bsky.network/docs/jetstream), or a [raw websocket](https://endpoints.bsky.app/#jetstream/tag/jetstream-websocket/GET/subscribe) or anything in between. A Spaces-compatible Jetstream would use the same replay-then-live model: you can start from a saved cursor and read through the archive, and eventually cut over to live events — or just start there.
 
-```go
-client, err := jetstream.Subscribe(syncURL,
-	jetstream.WithCollection("com.example.note"),
-	jetstream.WithAfterSeq(cursor),
-)
-if err != nil {
-	return err
-}
-defer client.Close()
+For example, here's an indexer for [Statusphere](https://atproto.com/guides/statusphere-tutorial) status records, written with the TypeScript SDK's `LexIndexer`, which calls your handlers for each record write and delete and tracks the cursor for you. The highlighted lines are the only ones that differ from the same indexer reading public Jetstream:
 
-for batch, err := range client.Events(ctx) {
-	if err != nil {
-		return err
-	}
-	for _, event := range batch.Events() {
-		// event.Space is the space the record belongs to.
-		// event.DID is still the record's author.
-		if err := applyEvent(ctx, event); err != nil {
-			return err
-		}
-	}
-	if err := saveCursor(ctx, batch.LastCursor()); err != nil {
-		return err
-	}
-}
+```ts {5,7,11,18}
+import { Jetstream, LexIndexer } from '@bsky/jetstream'
+import { xyz } from './lexicons'
+import { db, cursor } from './db'
+
+const js = new Jetstream({ service: process.env.SYNC_URL, mode: 'spaces' })
+
+const indexer = new LexIndexer({ mode: 'spaces' })
+  .commit(xyz.statusphere.status, {
+    put: async (e) => {
+      await db.upsertStatus({
+        space: e.space,
+        uri: e.uri,
+        status: e.record.status,
+        createdAt: e.record.createdAt,
+      })
+    },
+    del: async (e) => {
+      await db.deleteStatus(e.space, e.uri)
+    },
+  })
+
+await js.runner(indexer).replay({ cursor })
 ```
 
-The main difference from public Jetstream is the `space` field on each event. One stream provides every space the service follows, so the same author can write a record with the same collection and record key into two different spaces. There are also a couple of new event kinds for space-level changes, like a writer being removed from a space or a space being deleted.
+The client and the indexer are now both constructed in `spaces` mode and pointed at your own sync service instead of a public Jetstream host. Then, each event carries a `space` field identifying the space the record belongs to. One stream provides every space the service follows, and the same author can write a record with the same collection and record key into two different spaces. `e.did` is still the record's author.
 
 The stream is meant for your app's backend; i.e., not for browsers. It contains records from every space the service follows, so your app still decides which viewers can see what.
 
@@ -68,8 +70,12 @@ Write notifications work through identity as well. The service publishes its own
 
 In the current prototype, the sync service runs alongside an app and borrows read access from that app's signed-in users.
 
-For example, here's a demo of *trails*, a Strava-like app for sharing runs and rides, which is currently built on Spaces, using an adapted version of Jetstream sync. A user can share their runs and rides as atproto records with other Space members, who, in turn, can send them a “cheer” — which references the original run or ride record in its Lexicon, just like a like. Jetstream primitives are used to sync and materialize these views, much as they do in our [Statusphere](https://atproto.com/guides/statusphere-tutorial) example.
+For example, here's a screenshot of *trails*, a demo Strava-like app for sharing runs and rides, which is currently built on Spaces, using an adapted version of Jetstream sync. Each user shares their runs and rides as atproto records in their own space, and chooses who can read it. When Bob sends Alice a “cheer” on one of her rides, the cheer is written to Bob's space, not Alice's, and references her ride in its Lexicon, just like a like references a post.
 
 <Image src={trailsApp} alt="Example screenshot of the Trails app prototype built on Spaces" />
+
+The app doesn't fetch from either space directly. The sync service follows both spaces, and the app joins the ride and the cheer from a single stream, much as it would for public records in our [Statusphere](https://atproto.com/guides/statusphere-tutorial) example:
+
+<SpaceJoinDiagram />
 
 Look forward to more Space exploration next week!

@@ -5,6 +5,20 @@ import { mdxAnnotations } from 'mdx-annotations'
 import shiki from 'shiki'
 import { visit } from 'unist-util-visit'
 
+// Parses a line-highlight range from a code fence's meta string, e.g.
+// ```ts {2,5-7} highlights lines 2, 5, 6, and 7 (1-indexed).
+export function parseHighlightLines(meta) {
+  let match = meta?.match(/(?:^|\s)\{([\d,\s-]+)\}(?:\s|$)/)
+  if (!match) return new Set()
+
+  let lines = new Set()
+  for (let part of match[1].split(',')) {
+    let [start, end = start] = part.trim().split('-').map(Number)
+    for (let line = start; line <= end; line++) lines.add(line)
+  }
+  return lines
+}
+
 function rehypeParseCodeBlocks() {
   return (tree) => {
     visit(tree, 'element', (node, _nodeIndex, parentNode) => {
@@ -12,6 +26,9 @@ function rehypeParseCodeBlocks() {
         parentNode.properties.language = node.properties.className[0]?.replace(
           /^language-/,
           '',
+        )
+        parentNode.properties.highlightLines = parseHighlightLines(
+          node.data?.meta,
         )
       }
     })
@@ -32,6 +49,9 @@ function rehypeShiki() {
 
         node.properties.code = textNode.value
 
+        let highlightLines = node.properties.highlightLines
+        delete node.properties.highlightLines
+
         if (node.properties.language) {
           let tokens = highlighter.codeToThemedTokens(
             textNode.value,
@@ -42,7 +62,10 @@ function rehypeShiki() {
             elements: {
               pre: ({ children }) => children,
               code: ({ children }) => children,
-              line: ({ children }) => `<span>${children}</span>`,
+              line: ({ children, index }) =>
+                highlightLines?.has(index + 1)
+                  ? `<span class="code-line-highlight">${children}</span>`
+                  : `<span>${children}</span>`,
             },
           })
         }
