@@ -9,7 +9,7 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
-    slug: 'spaces-sync',
+    slug: 'space-sync',
     tags: ['spaces'],
     title: 'A Jetstream for Spaces',
     description: 'Syncing Spaces with Jetstream semantics, part of the Spaces blog series',
