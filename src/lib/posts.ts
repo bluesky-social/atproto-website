@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'space-sync',
+    tags: ['spaces'],
+    title: 'A Jetstream for Spaces',
+    description: 'Syncing Spaces with Jetstream semantics, part of the Spaces blog series',
+    date: 'November 6, 2026',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'open-social-groups-vision',
     tags: ['spaces'],
     title: 'Open Social Groups — the Vision',
