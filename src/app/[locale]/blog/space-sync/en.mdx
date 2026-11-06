@@ -70,11 +70,11 @@ Write notifications work through identity as well. The service publishes its own
 
 In the current prototype, the sync service runs alongside an app and borrows read access from that app's signed-in users.
 
-For example, here's a screenshot of *trails*, a demo Strava-like app for sharing runs and rides, which is currently built on Spaces, using an adapted version of Jetstream sync. Each user shares their runs and rides as atproto records in their own space, and chooses who can read it. When Bob sends Alice a “cheer” on one of her rides, the cheer is written to Bob's space, not Alice's, and references her ride in its Lexicon, just like a like references a post.
+For example, here's a screenshot of *trails*, a demo Strava-like app for sharing runs and rides, which is currently built on Spaces, using an adapted version of Jetstream sync. Each user shares their runs and rides as atproto records in a space shared with their friends. When Bob sends Alice a "cheer" on one of her rides, the cheer is written to the same space as her ride, and references her ride in its Lexicon, just like a like references a post. Alice's ride and Bob's cheer are still stored in their own repos, on whichever PDS each of them uses.
 
 <Image src={trailsApp} alt="Example screenshot of the Trails app prototype built on Spaces" />
 
-The app doesn't fetch from either space directly. The sync service follows both spaces, and the app joins the ride and the cheer from a single stream, much as it would for public records in our [Statusphere](https://atproto.com/guides/statusphere-tutorial) example:
+The app doesn't fetch from either PDS directly. The sync service brings both records into the shared space, and the app joins the ride and the cheer from a single stream, like for public records in our [Statusphere](https://atproto.com/guides/statusphere-tutorial) example:
 
 <SpaceJoinDiagram />
 
