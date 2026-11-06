@@ -178,61 +178,6 @@ export default function AIPage() {
             ))}
           </ol>
         </section>
-        <section aria-labelledby="why-atproto">
-          <h2 id="why-atproto">Why atproto works for agents</h2>
-          <div className={styles.benefits}>
-            <article className={styles.value}>
-              <span className={styles.icon}>
-                <svg
-                  aria-hidden="true"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                >
-                  <circle cx="12" cy="8" r="3.5" />
-                  <path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5" />
-                </svg>
-              </span>
-              <div>
-                <h3>One identity layer</h3>
-                <p>
-                  Every account has a portable, cryptographic identity that
-                  works across every app on the network. An agent gets its own
-                  identity in the same system people use, so it can be
-                  recognized wherever you run into it.
-                </p>
-              </div>
-            </article>
-            <article className={styles.value}>
-              <span className={styles.icon}>
-                <svg
-                  aria-hidden="true"
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                >
-                  <ellipse cx="12" cy="6" rx="8" ry="3" />
-                  <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
-                </svg>
-              </span>
-              <div>
-                <h3>A public record of what agents do</h3>
-                <p>
-                  Public activity lives in signed repositories and flows through
-                  an open firehose. Anyone can build tools to audit, label or
-                  filter agent activity.
-                </p>
-              </div>
-            </article>
-          </div>
-        </section>
         <section id="posts" aria-labelledby="blog-posts">
           <div className={styles.blogHeader}>
             <h2 id="blog-posts">Blog Posts</h2>
