@@ -69,7 +69,7 @@ const activities = [
       'We support open weight models. People and developers can inspect them, run them on their own infrastructure, and swap them out. Whatever AI features we build, you should be able to plug in your own model instead of being locked into ours.',
   },
   {
-    title: 'AI for building, not for volume',
+    title: 'AI for building, not for noise',
     description:
       "AI is most useful on an open network when it lowers the barrier to making something of your own: a custom feed, a community space, a tool that fits how you work. We aren't interested in making it easier to fill timelines with generated content.",
   },
@@ -163,7 +163,7 @@ export default function AIPage() {
           </div>
         </section>
         <section aria-labelledby="what-were-doing">
-          <h2 id="what-were-doing">What we’re doing</h2>
+          <h2 id="what-were-doing">How this shows up in our approach to AI</h2>
           <ol className={styles.activities}>
             {activities.map((activity, index) => (
               <li key={activity.title}>
