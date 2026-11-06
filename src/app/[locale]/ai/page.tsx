@@ -163,7 +163,7 @@ export default function AIPage() {
           </div>
         </section>
         <section aria-labelledby="what-were-doing">
-          <h2 id="what-were-doing">How this shows up in our approach to AI</h2>
+          <h2 id="what-were-doing">Our approach to AI</h2>
           <ol className={styles.activities}>
             {activities.map((activity, index) => (
               <li key={activity.title}>
