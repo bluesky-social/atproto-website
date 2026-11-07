@@ -1,4 +1,14 @@
 .page {
+  --badge-purple-background: #ede7fb;
+  --badge-purple-foreground: #5b3fa8;
+  --badge-person-green-background: #dff3e6;
+  --badge-person-green-foreground: #1e6b3a;
+  --badge-amber-background: #fbf1dc;
+  --badge-amber-foreground: #8a5a00;
+  --badge-red-background: #fbe8e6;
+  --badge-red-foreground: #b0362c;
+  --badge-cyan-background: #e0f1f6;
+  --badge-cyan-foreground: #0e6f8a;
   --surface: #fff;
   --badge-blue-background: #e8eefc;
   --badge-blue-foreground: #1d4ab8;
@@ -18,6 +28,16 @@
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
 }
 :global(.dark) .page {
+  --badge-purple-background: #5b3fa8;
+  --badge-purple-foreground: #ede7fb;
+  --badge-person-green-background: #1e6b3a;
+  --badge-person-green-foreground: #dff3e6;
+  --badge-amber-background: #8a5a00;
+  --badge-amber-foreground: #fbf1dc;
+  --badge-red-background: #b0362c;
+  --badge-red-foreground: #fbe8e6;
+  --badge-cyan-background: #0e6f8a;
+  --badge-cyan-foreground: #e0f1f6;
   --surface: #18181b;
   --badge-blue-background: #1d4ab8;
   --badge-blue-foreground: #e8eefc;

@@ -108,8 +108,8 @@ export default function WhyAtprotoPage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    background: '#ede7fb',
-                    color: '#5b3fa8',
+                    background: 'var(--badge-purple-background)',
+                    color: 'var(--badge-purple-foreground)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -173,8 +173,8 @@ export default function WhyAtprotoPage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: '#e8eefc',
-                    color: '#1d4ab8',
+                    background: 'var(--badge-blue-background)',
+                    color: 'var(--badge-blue-foreground)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -212,11 +212,11 @@ export default function WhyAtprotoPage() {
                     alignSelf: 'flex-start',
                     padding: '1px 7px',
                     borderRadius: '999px',
-                    background: '#e8eefc',
+                    background: 'var(--badge-blue-background)',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '10px',
                     letterSpacing: '0.06em',
-                    color: '#1d4ab8',
+                    color: 'var(--badge-blue-foreground)',
                   }}
                 >
                   {'AGENT'}
@@ -238,7 +238,7 @@ export default function WhyAtprotoPage() {
                   fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: '10px',
                   letterSpacing: '0.06em',
-                  color: '#0f7b55',
+                  color: 'var(--badge-green-foreground)',
                   textAlign: 'center',
                   lineHeight: '1.3',
                 }}
@@ -285,8 +285,8 @@ export default function WhyAtprotoPage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    background: '#dff3e6',
-                    color: '#1e6b3a',
+                    background: 'var(--badge-person-green-background)',
+                    color: 'var(--badge-person-green-foreground)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -350,8 +350,8 @@ export default function WhyAtprotoPage() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: '#e8eefc',
-                    color: '#1d4ab8',
+                    background: 'var(--badge-blue-background)',
+                    color: 'var(--badge-blue-foreground)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -389,11 +389,11 @@ export default function WhyAtprotoPage() {
                     alignSelf: 'flex-start',
                     padding: '1px 7px',
                     borderRadius: '999px',
-                    background: '#e8eefc',
+                    background: 'var(--badge-blue-background)',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '10px',
                     letterSpacing: '0.06em',
-                    color: '#1d4ab8',
+                    color: 'var(--badge-blue-foreground)',
                   }}
                 >
                   {'AGENT'}
@@ -456,7 +456,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#1d4ab8"
+            stroke="var(--badge-blue-foreground)"
             strokeWidth="1.5"
             strokeLinecap="round"
           >
@@ -486,7 +486,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#0f7b55"
+            stroke="var(--badge-green-foreground)"
             strokeWidth="1.5"
             strokeLinecap="round"
           >
@@ -516,7 +516,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#8a5a00"
+            stroke="var(--badge-amber-foreground)"
             strokeWidth="1.5"
           >
             <path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z"></path>
@@ -545,7 +545,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#5b3fa8"
+            stroke="var(--badge-purple-foreground)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -576,7 +576,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#b0362c"
+            stroke="var(--badge-red-foreground)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -606,7 +606,7 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#0e6f8a"
+            stroke="var(--badge-cyan-foreground)"
             strokeWidth="1.5"
             strokeLinecap="round"
           >
@@ -747,7 +747,10 @@ export default function WhyAtprotoPage() {
               }}
             >
               {'Learn more → '}
-              <Link href="/guides/overview" style={{ color: '#1d4ab8' }}>
+              <Link
+                href="/guides/overview"
+                style={{ color: 'var(--badge-blue-foreground)' }}
+              >
                 {'protocol overview'}
               </Link>
             </p>
@@ -774,8 +777,8 @@ export default function WhyAtprotoPage() {
                   width: '40px',
                   height: '40px',
                   borderRadius: '10px',
-                  background: '#e8eefc',
-                  color: '#1d4ab8',
+                  background: 'var(--badge-blue-background)',
+                  color: 'var(--badge-blue-foreground)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -866,7 +869,10 @@ export default function WhyAtprotoPage() {
               >
                 {'agent.'}
                 <strong
-                  style={{ color: 'rgb(29, 74, 184)', fontWeight: '600' }}
+                  style={{
+                    color: 'var(--badge-blue-foreground)',
+                    fontWeight: '600',
+                  }}
                 >
                   {'bob.com'}
                 </strong>
@@ -922,7 +928,7 @@ export default function WhyAtprotoPage() {
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '11px',
                     letterSpacing: '0.08em',
-                    color: '#1d4ab8',
+                    color: 'var(--badge-blue-foreground)',
                   }}
                 >
                   {'MOVED TO'}
@@ -1015,13 +1021,16 @@ export default function WhyAtprotoPage() {
               }}
             >
               {'Learn more → '}
-              <Link href="/guides/sync" style={{ color: '#1d4ab8' }}>
+              <Link
+                href="/guides/sync"
+                style={{ color: 'var(--badge-blue-foreground)' }}
+              >
                 {'sync guide'}
               </Link>
               {' · '}
               <Link
                 href="/guides/streaming-data#jetstream"
-                style={{ color: '#1d4ab8' }}
+                style={{ color: 'var(--badge-blue-foreground)' }}
               >
                 {'Jetstream'}
               </Link>
@@ -1067,7 +1076,7 @@ export default function WhyAtprotoPage() {
                   gap: '6px',
                   fontFamily: '"IBM Plex Mono", monospace',
                   fontSize: '12px',
-                  color: 'rgb(15, 123, 85)',
+                  color: 'var(--badge-green-foreground)',
                 }}
               >
                 <span
@@ -1096,7 +1105,7 @@ export default function WhyAtprotoPage() {
                     flex: '0 0 64px',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '12px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'message'}
@@ -1118,10 +1127,10 @@ export default function WhyAtprotoPage() {
                   style={{
                     padding: '2px 8px',
                     borderRadius: '999px',
-                    background: '#e2f4ec',
+                    background: 'var(--badge-green-background)',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '11px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'signed ✓'}
@@ -1141,7 +1150,7 @@ export default function WhyAtprotoPage() {
                     flex: '0 0 64px',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '12px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'handoff'}
@@ -1163,10 +1172,10 @@ export default function WhyAtprotoPage() {
                   style={{
                     padding: '2px 8px',
                     borderRadius: '999px',
-                    background: '#e2f4ec',
+                    background: 'var(--badge-green-background)',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '11px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'signed ✓'}
@@ -1186,7 +1195,7 @@ export default function WhyAtprotoPage() {
                     flex: '0 0 64px',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '12px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'status'}
@@ -1208,10 +1217,10 @@ export default function WhyAtprotoPage() {
                   style={{
                     padding: '2px 8px',
                     borderRadius: '999px',
-                    background: '#e2f4ec',
+                    background: 'var(--badge-green-background)',
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '11px',
-                    color: '#0f7b55',
+                    color: 'var(--badge-green-foreground)',
                   }}
                 >
                   {'signed ✓'}
@@ -1300,7 +1309,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#fbf1dc',
+                  background: 'var(--badge-amber-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1311,7 +1320,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#8a5a00"
+                  stroke="var(--badge-amber-foreground)"
                   strokeWidth="1.5"
                   aria-hidden="true"
                 >
@@ -1354,7 +1363,10 @@ export default function WhyAtprotoPage() {
               }}
             >
               {'Learn more → '}
-              <Link href="/guides/sync" style={{ color: '#1d4ab8' }}>
+              <Link
+                href="/guides/sync"
+                style={{ color: 'var(--badge-blue-foreground)' }}
+              >
                 {'sync guide'}
               </Link>
             </p>
@@ -1445,7 +1457,7 @@ export default function WhyAtprotoPage() {
                   padding: '12px 8px',
                   border: '1px solid #1d4ab8',
                   borderRadius: '8px',
-                  background: '#eef2fc',
+                  background: 'var(--badge-blue-background)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -1459,7 +1471,7 @@ export default function WhyAtprotoPage() {
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#1d4ab8"
+                  stroke="var(--badge-blue-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                 >
@@ -1469,7 +1481,7 @@ export default function WhyAtprotoPage() {
                 <span
                   style={{
                     fontSize: '13px',
-                    color: '#1d4ab8',
+                    color: 'var(--badge-blue-foreground)',
                     fontWeight: '500',
                   }}
                 >
@@ -1593,7 +1605,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#efe9fb',
+                  background: 'var(--badge-purple-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1604,7 +1616,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#5b3fa8"
+                  stroke="var(--badge-purple-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1651,12 +1663,15 @@ export default function WhyAtprotoPage() {
               {'Learn more → '}
               <Link
                 href="/guides/permission-requests"
-                style={{ color: '#1d4ab8' }}
+                style={{ color: 'var(--badge-blue-foreground)' }}
               >
                 {'Permission Requests'}
               </Link>
               {' · '}
-              <Link href="/guides/scope-builder" style={{ color: '#1d4ab8' }}>
+              <Link
+                href="/guides/scope-builder"
+                style={{ color: 'var(--badge-blue-foreground)' }}
+              >
                 {'Scope Builder'}
               </Link>
             </p>
@@ -1697,8 +1712,8 @@ export default function WhyAtprotoPage() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '10px',
-                    background: '#e8eefc',
-                    color: '#1d4ab8',
+                    background: 'var(--badge-blue-background)',
+                    color: 'var(--badge-blue-foreground)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1791,7 +1806,7 @@ export default function WhyAtprotoPage() {
                   height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0f7b55"
+                  stroke="var(--badge-green-foreground)"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1862,7 +1877,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#fbe8e6',
+                  background: 'var(--badge-red-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1873,7 +1888,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#b0362c"
+                  stroke="var(--badge-red-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1917,7 +1932,10 @@ export default function WhyAtprotoPage() {
               }}
             >
               {'Learn more → '}
-              <Link href="/guides/lexicon" style={{ color: '#1d4ab8' }}>
+              <Link
+                href="/guides/lexicon"
+                style={{ color: 'var(--badge-blue-foreground)' }}
+              >
                 {'Lexicon guide'}
               </Link>
             </p>
@@ -1963,7 +1981,7 @@ export default function WhyAtprotoPage() {
                     fontFamily: "'IBM Plex Mono', monospace",
                     fontSize: '11px',
                     letterSpacing: '0.06em',
-                    color: '#b0362c',
+                    color: 'var(--badge-red-foreground)',
                   }}
                 >
                   {'EXAMPLE'}
@@ -2065,7 +2083,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#e0f1f6',
+                  background: 'var(--badge-cyan-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -2076,7 +2094,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0e6f8a"
+                  stroke="var(--badge-cyan-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -2124,7 +2142,7 @@ export default function WhyAtprotoPage() {
               {'Learn more → '}
               <Link
                 href="/guides/streaming-data#jetstream"
-                style={{ color: 'rgb(29, 74, 184)' }}
+                style={{ color: 'var(--badge-blue-foreground)' }}
               >
                 {'Jetstream'}
               </Link>
@@ -2251,7 +2269,7 @@ export default function WhyAtprotoPage() {
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
                   fontSize: '11px',
-                  color: '#0e6f8a',
+                  color: 'var(--badge-cyan-foreground)',
                 }}
               >
                 {'all public records'}
@@ -2282,8 +2300,8 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 30px',
                   height: '30px',
                   borderRadius: '8px',
-                  background: '#e8eefc',
-                  color: '#1d4ab8',
+                  background: 'var(--badge-blue-background)',
+                  color: 'var(--badge-blue-foreground)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
