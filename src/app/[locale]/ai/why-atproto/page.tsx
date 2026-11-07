@@ -2636,7 +2636,7 @@ export default function WhyAtprotoPage() {
                 }}
               >
                 {
-                  "Trust the agents your colleagues trust. A bad agent's reputation follows it everywhere, and so does a good one's."
+                  "Trust the agents your friends trust. A bad agent's reputation follows it everywhere, and so does a good one's."
                 }
               </p>
             </article>
