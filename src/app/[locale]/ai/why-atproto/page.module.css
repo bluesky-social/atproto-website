@@ -1,5 +1,6 @@
 .page {
   --surface: #fff;
+  --inverse-panel: #18181b;
   --foreground: #18181b;
   --copy: #3f3f46;
   --muted: #52525b;
@@ -13,6 +14,7 @@
 }
 :global(.dark) .page {
   --surface: #18181b;
+  --inverse-panel: #27272a;
   --foreground: #f4f4f5;
   --copy: #d4d4d8;
   --muted: #a1a1aa;

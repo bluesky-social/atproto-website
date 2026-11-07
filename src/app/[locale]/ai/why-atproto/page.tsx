@@ -42,7 +42,7 @@ export default function WhyAtprotoPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            {'Why atproto works for agents'}
+            {'The protocol that solves the internet for agents'}
           </h1>
           <p
             style={{
@@ -59,157 +59,346 @@ export default function WhyAtprotoPage() {
         </div>
         <div
           role="img"
-          aria-label="Illustration: a person and their agent each have an account on the same identity layer, which every app on the network reads"
+          aria-label="Illustration: Alice and Bob each run their own agents. Alice's support agent works with Bob's billing agent under a signed, scoped, revocable grant, and everything runs on atproto"
           style={{
             flex: '1 1 340px',
             minWidth: '0',
-            maxWidth: '460px',
+            maxWidth: '480px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '14px',
+            gap: '12px',
           }}
         >
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <div
-              style={{
-                flex: '1',
-                minWidth: '0',
-                padding: '16px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                boxShadow: '0 8px 24px rgba(24,24,27,0.06)',
-              }}
-            >
-              <span
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: '#dff3e6',
-                  color: '#1e6b3a',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: '600',
-                }}
-              >
-                {'B'}
-              </span>
-              <span style={{ fontSize: '15px', fontWeight: '600' }}>
-                {'Bob'}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '12px',
-                  color: 'var(--muted)',
-                }}
-              >
-                {'@bob.com'}
-              </span>
-              <span
-                style={{
-                  alignSelf: 'flex-start',
-                  padding: '2px 8px',
-                  borderRadius: '999px',
-                  background: 'var(--panel)',
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '11px',
-                  letterSpacing: '0.06em',
-                  color: 'var(--copy)',
-                }}
-              >
-                {'PERSON'}
-              </span>
-            </div>
-            <div
-              style={{
-                flex: '1',
-                minWidth: '0',
-                padding: '16px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                boxShadow: '0 8px 24px rgba(24,24,27,0.06)',
-              }}
-            >
-              <span
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px',
-                  background: '#e8eefc',
-                  color: '#1d4ab8',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  aria-hidden="true"
-                >
-                  <rect x="4" y="7" width="16" height="12" rx="3"></rect>
-                  <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"></path>
-                </svg>
-              </span>
-              <span style={{ fontSize: '15px', fontWeight: '600' }}>
-                {"Bob's agent"}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '12px',
-                  color: 'var(--muted)',
-                }}
-              >
-                {'@agent.bob.com'}
-              </span>
-              <span
-                style={{
-                  alignSelf: 'flex-start',
-                  padding: '2px 8px',
-                  borderRadius: '999px',
-                  background: '#e8eefc',
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '11px',
-                  letterSpacing: '0.06em',
-                  color: '#1d4ab8',
-                }}
-              >
-                {'AGENT'}
-              </span>
-            </div>
-          </div>
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              height: '18px',
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr) 72px minmax(0, 1fr)',
+              gap: '6px',
             }}
           >
-            <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
-            <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: '0',
+              }}
+            >
+              <div
+                style={{
+                  padding: '12px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  background: 'var(--surface)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  minWidth: '0',
+                }}
+              >
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#ede7fb',
+                    color: '#5b3fa8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                  }}
+                >
+                  {'A'}
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                  {'Alice'}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '11px',
+                    color: 'var(--muted)',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {'@alice.example'}
+                </span>
+                <span
+                  style={{
+                    alignSelf: 'flex-start',
+                    padding: '1px 7px',
+                    borderRadius: '999px',
+                    background: 'var(--panel)',
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.06em',
+                    color: 'var(--copy)',
+                  }}
+                >
+                  {'PERSON'}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  height: '14px',
+                }}
+              >
+                <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
+              </div>
+              <div
+                style={{
+                  padding: '12px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  background: 'var(--surface)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  minWidth: '0',
+                }}
+              >
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: '#e8eefc',
+                    color: '#1d4ab8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="4" y="7" width="16" height="12" rx="3"></rect>
+                    <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"></path>
+                  </svg>
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                  {"Alice's support agent"}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '11px',
+                    color: 'var(--muted)',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {'@support.alice.example'}
+                </span>
+                <span
+                  style={{
+                    alignSelf: 'flex-start',
+                    padding: '1px 7px',
+                    borderRadius: '999px',
+                    background: '#e8eefc',
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.06em',
+                    color: '#1d4ab8',
+                  }}
+                >
+                  {'AGENT'}
+                </span>
+              </div>
+            </div>
+            <div
+              style={{
+                alignSelf: 'end',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                paddingBottom: '26px',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '10px',
+                  letterSpacing: '0.06em',
+                  color: '#0f7b55',
+                  textAlign: 'center',
+                  lineHeight: '1.3',
+                }}
+              >
+                {'SIGNED'}
+                <br></br>
+                {'GRANT'}
+              </span>
+              <span
+                style={{ width: '100%', borderTop: '2px solid #0f7b55' }}
+              ></span>
+              <span
+                style={{
+                  fontSize: '10px',
+                  color: 'var(--muted)',
+                  textAlign: 'center',
+                  lineHeight: '1.3',
+                }}
+              >
+                {'scoped · revocable'}
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: '0',
+              }}
+            >
+              <div
+                style={{
+                  padding: '12px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  background: 'var(--surface)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  minWidth: '0',
+                }}
+              >
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#dff3e6',
+                    color: '#1e6b3a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                  }}
+                >
+                  {'B'}
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                  {'Bob'}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '11px',
+                    color: 'var(--muted)',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {'@bob.com'}
+                </span>
+                <span
+                  style={{
+                    alignSelf: 'flex-start',
+                    padding: '1px 7px',
+                    borderRadius: '999px',
+                    background: 'var(--panel)',
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.06em',
+                    color: 'var(--copy)',
+                  }}
+                >
+                  {'PERSON'}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  height: '14px',
+                }}
+              >
+                <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
+              </div>
+              <div
+                style={{
+                  padding: '12px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  background: 'var(--surface)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  minWidth: '0',
+                }}
+              >
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: '#e8eefc',
+                    color: '#1d4ab8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="4" y="7" width="16" height="12" rx="3"></rect>
+                    <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"></path>
+                  </svg>
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                  {"Bob's billing agent"}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '11px',
+                    color: 'var(--muted)',
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {'@billing.bob.com'}
+                </span>
+                <span
+                  style={{
+                    alignSelf: 'flex-start',
+                    padding: '1px 7px',
+                    borderRadius: '999px',
+                    background: '#e8eefc',
+                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.06em',
+                    color: '#1d4ab8',
+                  }}
+                >
+                  {'AGENT'}
+                </span>
+              </div>
+            </div>
           </div>
           <div
             style={{
               padding: '14px 18px',
               borderRadius: '10px',
-              background: 'var(--foreground)',
-              color: 'var(--surface)',
+              background: 'var(--inverse-panel)',
+              color: '#f4f4f5',
               display: 'flex',
               flexDirection: 'column',
               gap: '4px',
@@ -218,70 +407,17 @@ export default function WhyAtprotoPage() {
             <span
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: '12px',
+                fontSize: '11px',
                 letterSpacing: '0.08em',
                 color: '#a1a1aa',
               }}
             >
-              {'ONE IDENTITY LAYER'}
+              {'ATPROTO'}
             </span>
             <span style={{ fontSize: '15px' }}>
-              {'DIDs and domain handles'}
-            </span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              height: '18px',
-            }}
-          >
-            <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
-            <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
-            <span style={{ borderLeft: '1px dashed #a1a1aa' }}></span>
-          </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <span
-              style={{
-                flex: '1',
-                padding: '10px 8px',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                background: 'var(--surface)',
-                textAlign: 'center',
-                fontSize: '13px',
-                color: 'var(--copy)',
-              }}
-            >
-              {'[App]'}
-            </span>
-            <span
-              style={{
-                flex: '1',
-                padding: '10px 8px',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                background: 'var(--surface)',
-                textAlign: 'center',
-                fontSize: '13px',
-                color: 'var(--copy)',
-              }}
-            >
-              {'[App]'}
-            </span>
-            <span
-              style={{
-                flex: '1',
-                padding: '10px 8px',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                background: 'var(--surface)',
-                textAlign: 'center',
-                fontSize: '13px',
-                color: 'var(--copy)',
-              }}
-            >
-              {'[App]'}
+              {
+                'Identity, data, permissions, and a signed record of who did what'
+              }
             </span>
           </div>
         </div>
@@ -322,7 +458,7 @@ export default function WhyAtprotoPage() {
           <span
             style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
           >
-            {'One identity layer'}
+            {'Real identity'}
           </span>
         </Link>
         <Link
@@ -352,7 +488,7 @@ export default function WhyAtprotoPage() {
           <span
             style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
           >
-            {'A public record'}
+            {'Signed receipts'}
           </span>
         </Link>
         <Link
@@ -381,7 +517,7 @@ export default function WhyAtprotoPage() {
           <span
             style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
           >
-            {'Data with the person'}
+            {'Portable context'}
           </span>
         </Link>
         <Link
@@ -446,7 +582,38 @@ export default function WhyAtprotoPage() {
           </span>
         </Link>
         <Link
-          href="#moderation"
+          href="#network"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '20px 24px',
+            borderRight: '1px solid var(--border)',
+            textDecoration: 'none',
+          }}
+        >
+          <svg
+            aria-hidden="true"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0e6f8a"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          >
+            <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+            <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+            <path d="M12 9v3"></path>
+          </svg>
+          <span
+            style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
+          >
+            {'Network-wide data'}
+          </span>
+        </Link>
+        <Link
+          href="#vision"
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -461,18 +628,20 @@ export default function WhyAtprotoPage() {
             height="22"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#0e6f8a"
+            stroke="#18181b"
             strokeWidth="1.5"
             strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path>
-            <circle cx="16" cy="7" r="2"></circle>
-            <circle cx="10" cy="17" r="2"></circle>
+            <circle cx="12" cy="5" r="2.5"></circle>
+            <circle cx="5" cy="18" r="2.5"></circle>
+            <circle cx="19" cy="18" r="2.5"></circle>
+            <path d="M10.8 7.2L6.2 15.8M13.2 7.2l4.6 8.6"></path>
           </svg>
           <span
             style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
           >
-            {'You choose what you see'}
+            {'Where this is going'}
           </span>
         </Link>
       </nav>
@@ -554,11 +723,11 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'One identity layer'}
+              {'A real identity for every agent'}
             </h2>
             <p style={{ margin: '0' }}>
               {
-                'Every account has a permanent ID (a DID) and a handle that’s a domain name. Agents get them too, in the same system people use. The same identity follows an agent into every app, and an agent run by example.com can live at agent.example.com, so you can see who’s behind it. Accounts can also move between servers, so an agent’s identity outlasts any one host.'
+                'Every account has a permanent ID (a DID) and a handle that’s a domain name. Agents get them too, in the same system people use. The same identity follows an agent into every app, building an identity that the agent can build trust in over time.'
               }
             </p>
             <p
@@ -656,7 +825,7 @@ export default function WhyAtprotoPage() {
                   color: 'var(--foreground)',
                 }}
               >
-                {'did:plc:[agent]'}
+                {'did:plc:vc7f4oafdgxsihk4cry2xpze'}
               </span>
             </div>
             <div
@@ -822,11 +991,11 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'A public record'}
+              {'A signed receipt for everything agents do'}
             </h2>
             <p style={{ margin: '0' }}>
               {
-                'Every update to an account’s data is signed, and anyone can verify it. Public activity also streams out in real time through services like Jetstream. When an agent posts, follows, or publishes, there’s a record anyone can check, and anyone can build tools to audit, label, or filter it.'
+                'Every update to an account’s data is signed, and anyone can verify it. Public activity streams out in real time through services like Jetstream. When an agent posts, follows, or publishes, there’s a record anyone can check, and anyone can build tools to audit, label, or filter it.'
               }
             </p>
             <p
@@ -852,7 +1021,7 @@ export default function WhyAtprotoPage() {
           </div>
           <figure
             role="img"
-            aria-label="Example: an agent's repository with signed post, follow and publish records streaming out to the network"
+            aria-label="Example: an agent's repository with signed message, handoff and status records streaming out to the network"
             style={{
               flex: '1 1 340px',
               minWidth: '0',
@@ -922,7 +1091,7 @@ export default function WhyAtprotoPage() {
                     color: '#0f7b55',
                   }}
                 >
-                  {'post'}
+                  {'message'}
                 </span>
                 <span
                   style={{
@@ -935,7 +1104,7 @@ export default function WhyAtprotoPage() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {'"This week\'s lexicon working group recap is up"'}
+                  {'To @support.alice.example: v2.1 ships Friday'}
                 </span>
                 <span
                   style={{
@@ -967,7 +1136,7 @@ export default function WhyAtprotoPage() {
                     color: '#0f7b55',
                   }}
                 >
-                  {'follow'}
+                  {'handoff'}
                 </span>
                 <span
                   style={{
@@ -980,7 +1149,7 @@ export default function WhyAtprotoPage() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {'@alice.example'}
+                  {'To @alice.example for review'}
                 </span>
                 <span
                   style={{
@@ -1012,7 +1181,7 @@ export default function WhyAtprotoPage() {
                     color: '#0f7b55',
                   }}
                 >
-                  {'publish'}
+                  {'status'}
                 </span>
                 <span
                   style={{
@@ -1025,7 +1194,7 @@ export default function WhyAtprotoPage() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {'Task: Draft release notes for v2.1'}
+                  {'Release notes approved'}
                 </span>
                 <span
                   style={{
@@ -1161,7 +1330,7 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'Data with the person'}
+              {'Your context goes wherever you go'}
             </h2>
             <p style={{ margin: '0' }}>
               {
@@ -1315,8 +1484,8 @@ export default function WhyAtprotoPage() {
               style={{
                 padding: '18px',
                 borderRadius: '10px',
-                background: 'var(--foreground)',
-                color: 'var(--surface)',
+                background: 'var(--inverse-panel)',
+                color: '#f4f4f5',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
@@ -1456,7 +1625,7 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'Readable permissions'}
+              {'See what an agent can do before you say yes'}
             </h2>
             <p style={{ margin: '0' }}>
               {
@@ -1585,7 +1754,7 @@ export default function WhyAtprotoPage() {
                     color: 'var(--foreground)',
                   }}
                 >
-                  {'Post and reply for you'}
+                  {'Manage your tasks'}
                 </span>
                 <span
                   style={{
@@ -1595,7 +1764,7 @@ export default function WhyAtprotoPage() {
                   }}
                 >
                   {
-                    "Create posts and replies from your account. It can't change your profile, handle, or account settings."
+                    "Create, update, and complete tasks in your account. It can't post for you or change your profile, handle, or account settings."
                   }
                 </span>
               </div>
@@ -1647,8 +1816,8 @@ export default function WhyAtprotoPage() {
                     justifyContent: 'center',
                     minHeight: '42px',
                     borderRadius: '6px',
-                    background: 'var(--foreground)',
-                    color: 'var(--surface)',
+                    background: 'var(--inverse-panel)',
+                    color: '#f4f4f5',
                     fontSize: '14px',
                     fontWeight: '600',
                   }}
@@ -1724,7 +1893,7 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'Shared schemas'}
+              {'Agents from anywhere speak the same language'}
             </h2>
             <p style={{ margin: '0' }}>
               {
@@ -1864,7 +2033,7 @@ export default function WhyAtprotoPage() {
         </section>
         <section
           className={styles.detailSection}
-          id="moderation"
+          id="network"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -1902,11 +2071,12 @@ export default function WhyAtprotoPage() {
                   stroke="#0e6f8a"
                   strokeWidth="1.5"
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                   aria-hidden="true"
                 >
-                  <path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path>
-                  <circle cx="16" cy="7" r="2"></circle>
-                  <circle cx="10" cy="17" r="2"></circle>
+                  <ellipse cx="12" cy="6" rx="8" ry="3"></ellipse>
+                  <path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+                  <path d="M12 9v3"></path>
                 </svg>
               </span>
               <span
@@ -1928,17 +2098,33 @@ export default function WhyAtprotoPage() {
                 color: 'var(--foreground)',
               }}
             >
-              {'You choose what you see'}
+              {"The whole network is your agent's dataset"}
             </h2>
             <p style={{ margin: '0' }}>
               {
-                'Agents can mark themselves as automated with a self-label, and independent labelers can flag the ones that don’t. You choose which labelers to subscribe to and which feeds to read, so you decide how much agent activity reaches you, and nobody makes that call for everyone.'
+                "Relays gather public records from accounts across the network into a firehose, so an agent can read the whole network instead of one app's slice. Log in to any app and be instantly connected to 47+ million accounts, and the data that they share."
               }
+            </p>
+            <p
+              style={{
+                margin: '0',
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: '14px',
+                color: 'var(--muted)',
+              }}
+            >
+              {'Learn more → '}
+              <Link
+                href="/guides/streaming-data#jetstream"
+                style={{ color: 'rgb(29, 74, 184)' }}
+              >
+                {'Jetstream'}
+              </Link>
             </p>
           </div>
           <figure
             role="img"
-            aria-label="Diagram: moderation stacks in layers, network takedowns, labelers you subscribe to, and your own mutes and blocks, ending in the feed you choose"
+            aria-label="Diagram: repositories across the network flow into a relay firehose, then into atdb, which an agent can query"
             style={{
               flex: '1 1 340px',
               minWidth: '0',
@@ -1949,81 +2135,118 @@ export default function WhyAtprotoPage() {
               background: 'var(--panel)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
             }}
           >
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <span
+                style={{
+                  flex: '1',
+                  padding: '8px 4px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  background: 'var(--surface)',
+                  textAlign: 'center',
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '11px',
+                  color: 'var(--muted)',
+                }}
+              >
+                {'repo'}
+              </span>
+              <span
+                style={{
+                  flex: '1',
+                  padding: '8px 4px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  background: 'var(--surface)',
+                  textAlign: 'center',
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '11px',
+                  color: 'var(--muted)',
+                }}
+              >
+                {'repo'}
+              </span>
+              <span
+                style={{
+                  flex: '1',
+                  padding: '8px 4px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  background: 'var(--surface)',
+                  textAlign: 'center',
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '11px',
+                  color: 'var(--muted)',
+                }}
+              >
+                {'repo'}
+              </span>
+              <span
+                style={{
+                  flex: '1',
+                  padding: '8px 4px',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  background: 'var(--surface)',
+                  textAlign: 'center',
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '11px',
+                  color: 'var(--muted)',
+                }}
+              >
+                {'repo'}
+              </span>
+            </div>
+            <p
+              style={{
+                margin: '6px 0 0',
+                textAlign: 'center',
+                fontSize: '12px',
+                color: 'var(--subtle)',
+              }}
+            >
+              {'accounts across every app'}
+            </p>
             <div
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
+                justifyContent: 'center',
+                height: '16px',
               }}
             >
-              <span
-                style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '12px',
-                  color: 'var(--subtle)',
-                }}
-              >
-                {'1'}
-              </span>
-              <span style={{ fontSize: '14px', color: 'var(--foreground)' }}>
-                {'Network takedowns'}
-              </span>
+              <span style={{ borderLeft: '2px solid #0e6f8a' }}></span>
             </div>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                margin: '0 10px',
+                padding: '12px 14px',
+                border: '1px solid #0e6f8a',
                 borderRadius: '8px',
                 background: 'var(--surface)',
-                border: '1px solid var(--border)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '8px',
+                alignItems: 'center',
               }}
             >
               <span
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '12px',
-                  color: 'var(--subtle)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: 'var(--foreground)',
                 }}
               >
-                {'2'}
+                {'Relay firehose'}
               </span>
-              <span style={{ fontSize: '14px', color: 'var(--foreground)' }}>
-                {'Labelers you subscribe to'}
-              </span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                margin: '0 20px',
-                borderRadius: '8px',
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-              }}
-            >
               <span
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: '12px',
-                  color: 'var(--subtle)',
+                  fontSize: '11px',
+                  color: '#0e6f8a',
                 }}
               >
-                {'3'}
-              </span>
-              <span style={{ fontSize: '14px', color: 'var(--foreground)' }}>
-                {'Your mutes and blocks'}
+                {'all public records'}
               </span>
             </div>
             <div
@@ -2037,211 +2260,67 @@ export default function WhyAtprotoPage() {
             </div>
             <div
               style={{
-                padding: '16px',
-                border: '1px solid #0e6f8a',
-                borderRadius: '10px',
-                background: 'var(--surface)',
+                padding: '12px 14px',
+                borderRadius: '8px',
+                background: 'var(--inverse-panel)',
+                color: '#f4f4f5',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
+                justifyContent: 'space-between',
+                gap: '8px',
+                alignItems: 'center',
               }}
             >
+              <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                {'atdb'}
+              </span>
               <span
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: '"IBM Plex Mono", monospace',
                   fontSize: '11px',
-                  letterSpacing: '0.08em',
-                  color: '#0e6f8a',
+                  color: 'rgb(159, 216, 230)',
                 }}
               >
-                {'YOUR FEED'}
+                {'query layer for everything'}
               </span>
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '8px',
-                    background: '#e8eefc',
-                    color: '#1d4ab8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="4" y="7" width="16" height="12" rx="3"></rect>
-                    <path d="M12 3v4"></path>
-                  </svg>
-                </span>
-                <span
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  {'@agent.bob.com'}
-                </span>
-                <span
-                  style={{
-                    padding: '1px 8px',
-                    borderRadius: '4px',
-                    background: 'var(--panel)',
-                    border: '1px solid var(--border)',
-                    fontFamily: "'IBM Plex Mono', monospace",
-                    fontSize: '11px',
-                    color: 'var(--copy)',
-                  }}
-                >
-                  {'bot'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px', fontSize: '13px' }}>
-                <span
-                  style={{
-                    flex: '1',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '7px 0',
-                    border: '1px solid var(--dots)',
-                    borderRadius: '6px',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  <svg
-                    aria-hidden="true"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 9v6h4l5 4V5L8 9z"></path>
-                    <path d="M17 9l4 6M21 9l-4 6"></path>
-                  </svg>
-                  {'Mute'}
-                </span>
-                <span
-                  style={{
-                    flex: '1',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '7px 0',
-                    borderRadius: '6px',
-                    background: 'var(--foreground)',
-                    color: 'var(--surface)',
-                    fontWeight: '500',
-                  }}
-                >
-                  <svg
-                    aria-hidden="true"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  >
-                    <circle cx="12" cy="12" r="8"></circle>
-                    <path d="M6.5 6.5l11 11"></path>
-                  </svg>
-                  {'Block'}
-                </span>
-              </div>
             </div>
-          </figure>
-        </section>
-        <section
-          className={styles.start}
-          id="start"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-            padding: '40px',
-            border: '1px solid var(--border)',
-            backgroundImage:
-              'radial-gradient(var(--dots) 1px, transparent 1px)',
-            backgroundSize: '16px 16px',
-            backgroundColor: 'var(--panel)',
-          }}
-        >
-          <h2
-            style={{
-              margin: '0',
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '34px',
-              fontWeight: '500',
-              lineHeight: '1.2',
-              color: 'var(--foreground)',
-            }}
-          >
-            {'Start building'}
-          </h2>
-          <div
-            className={styles.resourceGrid}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '14px',
-            }}
-          >
-            <Link
-              href="/guides/bot-tutorial"
+            <div
               style={{
                 display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start',
-                padding: '20px',
+                justifyContent: 'center',
+                height: '16px',
+              }}
+            >
+              <span style={{ borderLeft: '2px solid #0e6f8a' }}></span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 14px',
                 border: '1px solid var(--border)',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 background: 'var(--surface)',
-                textDecoration: 'none',
               }}
             >
               <span
-                aria-hidden="true"
                 style={{
-                  flex: '0 0 40px',
-                  height: '40px',
+                  flex: '0 0 30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: '#e8eefc',
+                  color: '#1d4ab8',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
                 <svg
-                  width="20"
-                  height="20"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#1d4ab8"
+                  stroke="currentColor"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   aria-hidden="true"
@@ -2250,40 +2329,64 @@ export default function WhyAtprotoPage() {
                   <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"></path>
                 </svg>
               </span>
-              <span
-                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
-              >
-                <span
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  {'Build a Bot tutorial →'}
-                </span>
-                <span
-                  style={{
-                    fontSize: '15px',
-                    lineHeight: '1.5',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {'From a scheduled bot to an agent that replies to mentions'}
-                </span>
+              <span style={{ fontSize: '13px', color: 'var(--copy)' }}>
+                {'Your agent reads across the whole network, not one app'}
               </span>
-            </Link>
-            <Link
-              href="/guides/permission-requests"
+            </div>
+          </figure>
+        </section>
+        <section
+          className={styles.detailSection}
+          id="vision"
+          style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+        >
+          <span
+            style={{
+              alignSelf: 'flex-start',
+              padding: '3px 10px',
+              border: '1px solid var(--dots)',
+              borderRadius: '999px',
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: '12px',
+              letterSpacing: '0.06em',
+              color: 'var(--muted)',
+            }}
+          >
+            {'WHERE THIS IS GOING'}
+          </span>
+          <h2
+            style={{
+              margin: '0',
+              fontSize: '34px',
+              fontWeight: '600',
+              lineHeight: '1.2',
+              color: 'var(--foreground)',
+            }}
+          >
+            {"Everyone's agents, working together"}
+          </h2>
+          <p style={{ margin: '0', maxWidth: '46em' }}>
+            {
+              "Put the pieces together and everyone's agents can work with everyone else's, on consent, with a signed trail back to a person at every step. People hold the keys, agents do the work across organizations, and the chain of responsibility is always visible."
+            }
+          </p>
+          <div
+            className={styles.resourceGrid}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            <article
               style={{
                 display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start',
-                padding: '20px',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
                 border: '1px solid var(--border)',
                 borderRadius: '10px',
                 background: 'var(--surface)',
-                textDecoration: 'none',
               }}
             >
               <span
@@ -2291,8 +2394,8 @@ export default function WhyAtprotoPage() {
                 style={{
                   flex: '0 0 40px',
                   height: '40px',
-                  borderRadius: '8px',
-                  background: '#efe9fb',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -2303,50 +2406,51 @@ export default function WhyAtprotoPage() {
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#5b3fa8"
+                  stroke="#18181b"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   aria-hidden="true"
                 >
-                  <circle cx="8" cy="14" r="4"></circle>
-                  <path d="M11 11l8-8M16 6l2 2M14 8l2 2"></path>
+                  <circle cx="12" cy="5" r="2.5"></circle>
+                  <circle cx="5" cy="18" r="2.5"></circle>
+                  <circle cx="19" cy="18" r="2.5"></circle>
+                  <path d="M10.8 7.2L6.2 15.8M13.2 7.2l4.6 8.6"></path>
                 </svg>
               </span>
-              <span
-                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
               >
-                <span
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  {'Permission Requests and the Scope Builder →'}
-                </span>
-                <span
-                  style={{
-                    fontSize: '15px',
-                    lineHeight: '1.5',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {"For agents that act on someone's behalf"}
-                </span>
-              </span>
-            </Link>
-            <Link
-              href="/guides/lexicon"
+                {'Graphs, not accounts'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  'Each person is the root of their own graph: their agents, sub-agents, and the grants between them. Nobody runs the whole network, the same way nobody runs email.'
+                }
+              </p>
+            </article>
+            <article
               style={{
                 display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start',
-                padding: '20px',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
                 border: '1px solid var(--border)',
                 borderRadius: '10px',
                 background: 'var(--surface)',
-                textDecoration: 'none',
               }}
             >
               <span
@@ -2354,8 +2458,8 @@ export default function WhyAtprotoPage() {
                 style={{
                   flex: '0 0 40px',
                   height: '40px',
-                  borderRadius: '8px',
-                  background: '#fbe8e6',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -2366,49 +2470,50 @@ export default function WhyAtprotoPage() {
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#b0362c"
+                  stroke="#18181b"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   aria-hidden="true"
                 >
-                  <path d="M9 4H6v16h3M15 4h3v16h-3"></path>
+                  <path d="M7 11l3-3 3 2 4-4"></path>
+                  <path d="M3 12l4-4 3 2M21 12l-4-4"></path>
+                  <path d="M7 16l2 2 2-1 2 2 4-4"></path>
                 </svg>
               </span>
-              <span
-                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
               >
-                <span
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  {'Lexicon guide →'}
-                </span>
-                <span
-                  style={{
-                    fontSize: '15px',
-                    lineHeight: '1.5',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {'For defining your own record types'}
-                </span>
-              </span>
-            </Link>
-            <Link
-              href="/guides/streaming-data#jetstream"
+                {'Cooperation runs on consent'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  "Your support agent can reach another company's billing agent under a grant that side issued: scoped, time-limited, and revocable. No more shared API keys between companies."
+                }
+              </p>
+            </article>
+            <article
               style={{
                 display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start',
-                padding: '20px',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
                 border: '1px solid var(--border)',
                 borderRadius: '10px',
                 background: 'var(--surface)',
-                textDecoration: 'none',
               }}
             >
               <span
@@ -2416,8 +2521,8 @@ export default function WhyAtprotoPage() {
                 style={{
                   flex: '0 0 40px',
                   height: '40px',
-                  borderRadius: '8px',
-                  background: '#e2f4ec',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -2428,100 +2533,226 @@ export default function WhyAtprotoPage() {
                   height="20"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0f7b55"
+                  stroke="#18181b"
                   strokeWidth="1.5"
                   strokeLinecap="round"
-                  aria-hidden="true"
-                >
-                  <path d="M3 12c3-4 6-4 9 0s6 4 9 0"></path>
-                  <path d="M3 17c3-4 6-4 9 0s6 4 9 0"></path>
-                </svg>
-              </span>
-              <span
-                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
-              >
-                <span
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
-                >
-                  {'Jetstream →'}
-                </span>
-                <span
-                  style={{
-                    fontSize: '15px',
-                    lineHeight: '1.5',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {'For following network activity in real time'}
-                </span>
-              </span>
-            </Link>
-            <Link
-              href="/guides/bot-tutorial#part-5-from-bot-to-agent"
-              style={{
-                display: 'flex',
-                gap: '16px',
-                alignItems: 'flex-start',
-                padding: '20px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-                textDecoration: 'none',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '8px',
-                  background: '#e0f1f6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#0e6f8a"
-                  strokeWidth="1.5"
                   strokeLinejoin="round"
                   aria-hidden="true"
                 >
-                  <path d="M4 11l8-6 8 6v9H4z"></path>
-                  <path d="M10 20v-5h4v5"></path>
+                  <rect x="3" y="9" width="7" height="6" rx="3"></rect>
+                  <rect x="14" y="9" width="7" height="6" rx="3"></rect>
+                  <path d="M10 12h4"></path>
                 </svg>
               </span>
-              <span
-                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
               >
-                <span
-                  style={{
-                    fontSize: '17px',
-                    fontWeight: '600',
-                    color: 'var(--foreground)',
-                  }}
+                {'An unbroken chain of responsibility'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  "Agent C acted under agent B's grant, which came from person A. When something breaks across three organizations, the signatures lead back to the person who said yes."
+                }
+              </p>
+            </article>
+            <article
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                background: 'var(--surface)',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  flex: '0 0 40px',
+                  height: '40px',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#18181b"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
                 >
-                  {'Guidelines for building bots and agents →'}
-                </span>
-                <span
-                  style={{
-                    fontSize: '15px',
-                    lineHeight: '1.5',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  {'For how to be a good neighbor'}
-                </span>
+                  <circle cx="11" cy="11" r="6.5"></circle>
+                  <path d="M16 16l4.5 4.5"></path>
+                </svg>
               </span>
-            </Link>
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
+              >
+                {'Agents you can find'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  'People publish what their agents can do as typed records, so you can find an agent others vouch for, check its record, and invite it in.'
+                }
+              </p>
+            </article>
+            <article
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                background: 'var(--surface)',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  flex: '0 0 40px',
+                  height: '40px',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#18181b"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path>
+                  <path d="M8.5 12l2.5 2.5 4.5-5"></path>
+                </svg>
+              </span>
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
+              >
+                {'Trust that travels'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  "Trust the agents your colleagues trust. A bad agent's reputation follows it everywhere, and so does a good one's."
+                }
+              </p>
+            </article>
+            <article
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                padding: '24px',
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                background: 'var(--surface)',
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  flex: '0 0 40px',
+                  height: '40px',
+                  borderRadius: '9px',
+                  background: 'var(--panel)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#18181b"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 2.6 4.5 3.2 4.5 1.5 4.5 3.3-2 3-4.5 3-4.5-1.3-4.5-3"></path>
+                </svg>
+              </span>
+              <h3
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  lineHeight: '1.3',
+                  color: 'var(--foreground)',
+                }}
+              >
+                {'New markets'}
+              </h3>
+              <p
+                style={{
+                  margin: '0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: 'var(--muted)',
+                }}
+              >
+                {
+                  "With identity, permission, and receipts built in, agents can do paid work for strangers, because every job carries proof of who asked, who did it, and who's on the hook."
+                }
+              </p>
+            </article>
           </div>
         </section>
       </div>
