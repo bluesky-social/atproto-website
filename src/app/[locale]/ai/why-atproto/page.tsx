@@ -1,5 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import {
+  ShareIcon,
+  UserGroupIcon,
+  LinkIcon,
+  MagnifyingGlassIcon,
+  ShieldCheckIcon,
+  CurrencyDollarIcon,
+} from '@heroicons/react/24/outline'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -2367,22 +2375,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <ShareIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <circle cx="12" cy="5" r="2.5"></circle>
-                  <circle cx="5" cy="18" r="2.5"></circle>
-                  <circle cx="19" cy="18" r="2.5"></circle>
-                  <path d="M10.8 7.2L6.2 15.8M13.2 7.2l4.6 8.6"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
@@ -2431,21 +2429,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <UserGroupIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <path d="M7 11l3-3 3 2 4-4"></path>
-                  <path d="M3 12l4-4 3 2M21 12l-4-4"></path>
-                  <path d="M7 16l2 2 2-1 2 2 4-4"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
@@ -2467,7 +2456,7 @@ export default function WhyAtprotoPage() {
                 }}
               >
                 {
-                  "Your support agent can reach another company's billing agent under a grant that side issued: scoped, time-limited, and revocable. No more shared API keys between companies."
+                  "Your support agent can reach another company's billing agent under a grant that is scoped, time-limited, and revocable. No more shared API keys between companies."
                 }
               </p>
             </article>
@@ -2494,21 +2483,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <LinkIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <rect x="3" y="9" width="7" height="6" rx="3"></rect>
-                  <rect x="14" y="9" width="7" height="6" rx="3"></rect>
-                  <path d="M10 12h4"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
@@ -2557,20 +2537,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <MagnifyingGlassIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="6.5"></circle>
-                  <path d="M16 16l4.5 4.5"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
@@ -2619,20 +2591,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <ShieldCheckIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path>
-                  <path d="M8.5 12l2.5 2.5 4.5-5"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
@@ -2681,19 +2645,12 @@ export default function WhyAtprotoPage() {
                   justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--foreground)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <CurrencyDollarIcon
+                  width={24}
+                  height={24}
+                  style={{ color: 'var(--foreground)' }}
                   aria-hidden="true"
-                >
-                  <path d="M12 3v18M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.3-4.5 3 2 2.6 4.5 3.2 4.5 1.5 4.5 3.3-2 3-4.5 3-4.5-1.3-4.5-3"></path>
-                </svg>
+                />
               </span>
               <h3
                 style={{
