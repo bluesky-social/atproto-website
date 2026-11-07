@@ -1,0 +1,295 @@
+.page {
+  --foreground: #18181b;
+  --muted: #52525b;
+  --border: #e4e4e7;
+  --surface: #ffffff;
+  --dots: #d4d4d8;
+  color: var(--foreground);
+  background: var(--surface);
+}
+:global(.dark) .page {
+  --foreground: #f4f4f5;
+  --muted: #a1a1aa;
+  --border: #3f3f46;
+  --surface: #18181b;
+  --dots: #3f3f46;
+}
+.page h1,
+.page h2,
+.page h3,
+.page p {
+  margin: 0;
+}
+.page h1,
+.actions a,
+.number,
+.blogHeader > a,
+.post time,
+.date {
+  font-family: 'IBM Plex Mono', monospace;
+}
+.page h2,
+.page section[id] {
+  scroll-margin-top: 80px;
+}
+.page h2 {
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+.page h3 {
+  font-size: 21px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+.page p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.page a {
+  text-decoration: none;
+}
+.page a:focus-visible {
+  outline: 2px solid #2b5fd9;
+  outline-offset: 5px;
+}
+.hero {
+  padding: 96px 56px 80px;
+  background: radial-gradient(var(--dots) 1px, transparent 1px) 0 0 / 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.hero h1 {
+  font-weight: 500;
+  font-size: clamp(40px, 5vw, 76px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.hero > p {
+  max-width: 40em;
+  font-size: 21px;
+  line-height: 1.5;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 6px;
+}
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 10px 26px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.actions .primary {
+  background: var(--foreground);
+  color: var(--surface);
+  border-color: var(--foreground);
+}
+.secondary {
+  background: var(--surface);
+  color: var(--foreground);
+}
+.actions a:hover {
+  opacity: 0.8;
+}
+.content {
+  max-width: 1000px;
+  padding: 64px 56px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+.content section > h2 {
+  margin-bottom: 28px;
+}
+.content .lead {
+  font-size: 18px;
+  margin-top: -18px;
+  margin-bottom: 28px;
+}
+.values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 40px;
+}
+.value {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.value h3 {
+  margin-bottom: 6px;
+}
+.icon {
+  flex: 0 0 64px;
+  height: 64px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.activities {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+.activities li {
+  display: flex;
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.number {
+  flex: 0 0 40px;
+  color: var(--muted);
+  font-size: 15px;
+  padding-top: 3px;
+}
+.activities h3 {
+  margin-bottom: 8px;
+}
+.benefits {
+  display: grid;
+  gap: 32px;
+}
+.blogHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 24px;
+}
+.blogHeader > a {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--foreground);
+  text-transform: uppercase;
+}
+.postList {
+  display: grid;
+  gap: 16px;
+}
+.post {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px 40px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.post time,
+.date {
+  font-size: 14px;
+  color: var(--muted);
+}
+.post h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.post:hover h3,
+.blogHeader > a:hover {
+  color: #2b5fd9;
+}
+.arrow {
+  align-self: center;
+  font-size: 20px;
+}
+@media (max-width: 1250px) {
+  .values {
+    grid-template-columns: 1fr;
+  }
+  .post {
+    grid-template-columns: 1fr auto;
+  }
+  .post time,
+  .date {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 600px) {
+  .hero {
+    padding: 40px 16px;
+    gap: 18px;
+    background-size: 14px 14px;
+  }
+  .hero h1 {
+    font-size: 38px;
+    line-height: 1.1;
+  }
+  .hero > p {
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .actions a {
+    font-size: 16px;
+    padding: 10px 16px;
+  }
+  .content {
+    padding: 40px 16px 72px;
+    gap: 56px;
+  }
+  .page h2 {
+    font-size: 28px;
+  }
+  .page h3 {
+    font-size: 18px;
+  }
+  .page p {
+    font-size: 15px;
+  }
+  .content .lead {
+    font-size: 16px;
+  }
+  .value {
+    gap: 16px;
+  }
+  .icon {
+    flex-basis: 48px;
+    height: 48px;
+  }
+  .icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .activities li {
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 0;
+  }
+  .number {
+    flex-basis: auto;
+    font-size: 13px;
+  }
+  .post {
+    padding: 20px 16px;
+    gap: 12px 16px;
+  }
+  .post h3 {
+    font-size: 20px;
+  }
+  .post time,
+  .date {
+    font-size: 12px;
+  }
+  .blogHeader > a {
+    font-size: 13px;
+  }
+}
