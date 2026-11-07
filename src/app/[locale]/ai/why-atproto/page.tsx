@@ -1662,7 +1662,7 @@ export default function WhyAtprotoPage() {
               margin: '0',
               padding: '28px',
               borderRadius: '12px',
-              background: '#f4f1fb',
+              background: 'var(--permission-panel)',
               display: 'flex',
               justifyContent: 'center',
             }}
@@ -2124,7 +2124,7 @@ export default function WhyAtprotoPage() {
           </div>
           <figure
             role="img"
-            aria-label="Diagram: repositories across the network flow into a relay firehose, then into atdb, which an agent can query"
+            aria-label="Diagram: repositories across the network flow into a relay firehose that your agent reads directly"
             style={{
               flex: '1 1 340px',
               minWidth: '0',
@@ -2247,40 +2247,6 @@ export default function WhyAtprotoPage() {
                 }}
               >
                 {'all public records'}
-              </span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                height: '16px',
-              }}
-            >
-              <span style={{ borderLeft: '2px solid #0e6f8a' }}></span>
-            </div>
-            <div
-              style={{
-                padding: '12px 14px',
-                borderRadius: '8px',
-                background: 'var(--inverse-panel)',
-                color: '#f4f4f5',
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <span style={{ fontSize: '14px', fontWeight: '600' }}>
-                {'atdb'}
-              </span>
-              <span
-                style={{
-                  fontFamily: '"IBM Plex Mono", monospace',
-                  fontSize: '11px',
-                  color: 'rgb(159, 216, 230)',
-                }}
-              >
-                {'query layer for everything'}
               </span>
             </div>
             <div
