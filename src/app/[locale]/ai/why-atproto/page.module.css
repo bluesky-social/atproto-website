@@ -1,5 +1,9 @@
 .page {
   --surface: #fff;
+  --badge-blue-background: #e8eefc;
+  --badge-blue-foreground: #1d4ab8;
+  --badge-green-background: #e2f4ec;
+  --badge-green-foreground: #0f7b55;
   --permission-panel: #f4f1fb;
   --inverse-panel: #18181b;
   --foreground: #18181b;
@@ -15,6 +19,10 @@
 }
 :global(.dark) .page {
   --surface: #18181b;
+  --badge-blue-background: #1d4ab8;
+  --badge-blue-foreground: #e8eefc;
+  --badge-green-background: #0f7b55;
+  --badge-green-foreground: #e2f4ec;
   --permission-panel: #2b2538;
   --inverse-panel: #27272a;
   --foreground: #f4f4f5;

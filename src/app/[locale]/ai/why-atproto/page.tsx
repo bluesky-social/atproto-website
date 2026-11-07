@@ -684,7 +684,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#e8eefc',
+                  background: 'var(--badge-blue-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -695,7 +695,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#1d4ab8"
+                  stroke="var(--badge-blue-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   aria-hidden="true"
@@ -952,7 +952,7 @@ export default function WhyAtprotoPage() {
                   flex: '0 0 48px',
                   height: '48px',
                   borderRadius: '10px',
-                  background: '#e2f4ec',
+                  background: 'var(--badge-green-background)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -963,7 +963,7 @@ export default function WhyAtprotoPage() {
                   height="24"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0f7b55"
+                  stroke="var(--badge-green-foreground)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   aria-hidden="true"
