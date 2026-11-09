@@ -64,13 +64,13 @@ Public Key: did:key:z...
 
 The public key (starting with `did:key:`) is safe to share and will be registered with the PLC directory.
 
-Next, authenticate to your account using `goat`:
+Next, authenticate to your account using `goat`, you will need your full account password:
 
 ```bash
-goat account login
+goat account login -u YOUR_USERNAME -p YOUR_PASSWORD
 ```
 
-Follow the prompts to enter your PDS host, handle, and app password. Then, request a token:
+Then, request a token:
 
 ```bash
 goat account plc request-token
@@ -79,7 +79,7 @@ goat account plc request-token
 You'll receive a verification code via email. Finally, use `goat account plc` to add your public key to your identity:
 
 ```bash
-goat account plc add-rotation-key --token YOUR_TOKEN did:key:YOUR_PUBLIC_KEY
+goat account plc add-rotation-key --first --token YOUR_TOKEN did:key:YOUR_PUBLIC_KEY
 ```
 
 Replace `YOUR_TOKEN` with the email verification code, and `did:key:YOUR_PUBLIC_KEY` with the public key from `goat key generate`.
