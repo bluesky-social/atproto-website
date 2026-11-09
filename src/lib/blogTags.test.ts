@@ -66,6 +66,7 @@ describe('blog topic vocabulary order and labels', () => {
     expect(blogTopics).toEqual([
       { id: 'news', label: 'News & Announcements' },
       { id: 'identity', label: 'Accounts & Auth' },
+      { id: 'ai', label: 'AI' },
       { id: 'feeds', label: 'Feeds' },
       { id: 'governance', label: 'Governance' },
       { id: 'lexicons', label: 'Lexicons & Data Schemas' },

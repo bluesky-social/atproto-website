@@ -2,8 +2,8 @@
 // Order is the display order: News first, then alphabetical by label.
 export const blogTopics = [
   { id: 'news', label: 'News & Announcements' },
-  { id: 'ai', label: 'AI' },
   { id: 'identity', label: 'Accounts & Auth' },
+  { id: 'ai', label: 'AI' },
   { id: 'feeds', label: 'Feeds' },
   { id: 'governance', label: 'Governance' },
   { id: 'lexicons', label: 'Lexicons & Data Schemas' },

@@ -15,7 +15,7 @@ export function generateMetadata(): Metadata {
       type: 'article',
       url: '/blog/ai-on-atproto',
       siteName: 'AT Protocol',
-      publishedTime: '2026-11-09',
+      publishedTime: '2026-11-10',
       authors: [content.header.author],
       tags: ['ai'],
       images: [{ url: '/default-social-card.png', width: 1200, height: 630 }],

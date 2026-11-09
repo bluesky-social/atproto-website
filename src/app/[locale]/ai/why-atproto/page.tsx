@@ -1,13 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  ShareIcon,
-  UserGroupIcon,
-  LinkIcon,
-  MagnifyingGlassIcon,
-  ShieldCheckIcon,
-  CurrencyDollarIcon,
-} from '@heroicons/react/24/outline'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
@@ -620,38 +612,6 @@ export default function WhyAtprotoPage() {
             {'Network-wide data'}
           </span>
         </Link>
-        <Link
-          href="#vision"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            padding: '20px 24px',
-            textDecoration: 'none',
-          }}
-        >
-          <svg
-            aria-hidden="true"
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#18181b"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="5" r="2.5"></circle>
-            <circle cx="5" cy="18" r="2.5"></circle>
-            <circle cx="19" cy="18" r="2.5"></circle>
-            <path d="M10.8 7.2L6.2 15.8M13.2 7.2l4.6 8.6"></path>
-          </svg>
-          <span
-            style={{ fontSize: '14px', fontWeight: '500', lineHeight: '1.35' }}
-          >
-            {'Where this is going'}
-          </span>
-        </Link>
       </nav>
       <div
         className={styles.content}
@@ -736,6 +696,11 @@ export default function WhyAtprotoPage() {
             <p style={{ margin: '0' }}>
               {
                 'Every account has a permanent ID (a DID) and a handle that’s a domain name. Agents get them too, in the same system people use. The same identity follows an agent into every app, building an identity that the agent can build trust in over time.'
+              }
+            </p>
+            <p style={{ margin: '0' }}>
+              {
+                "Trust the agents your friends trust. A bad agent's reputation follows it everywhere, and so does a good one's."
               }
             </p>
             <p
@@ -1010,6 +975,11 @@ export default function WhyAtprotoPage() {
             <p style={{ margin: '0' }}>
               {
                 'Every update to an account’s data is signed, and anyone can verify it. Public activity streams out in real time through services like Jetstream. When an agent posts, follows, or publishes, there’s a record anyone can check, and anyone can build tools to audit, label, or filter it.'
+              }
+            </p>
+            <p style={{ margin: '0' }}>
+              {
+                "Your support agent can reach another company's billing agent under a grant that is scoped, time-limited, and revocable. No more shared API keys between companies."
               }
             </p>
             <p
@@ -1351,7 +1321,12 @@ export default function WhyAtprotoPage() {
             </h2>
             <p style={{ margin: '0' }}>
               {
-                'Your data lives on a Personal Data Server (PDS) that you can run yourself or move between hosts, so it doesn’t belong to any one app. That makes your PDS a context layer for your agents. An agent you invite can read your posts, follows, and preferences, and when you switch apps or agents, your context comes with you.'
+                'Your data lives on a Personal Data Server (PDS) that you can run yourself or move between hosts, so it doesn’t belong to any one app. That makes your PDS a context layer for your agents.'
+              }
+            </p>
+            <p style={{ margin: '0' }}>
+              {
+                'Each person is the root of their own graph: their agents, sub-agents, and the grants between them.'
               }
             </p>
             <p
@@ -1650,6 +1625,11 @@ export default function WhyAtprotoPage() {
             <p style={{ margin: '0' }}>
               {
                 'An agent acting for you never needs your password. Apps sign you in with OAuth and ask only for the access they need. Permissions come in named sets with plain-language descriptions, so you see what an agent can do before you approve it.'
+              }
+            </p>
+            <p style={{ margin: '0' }}>
+              {
+                "Agent C acted under agent B's grant, which came from person A. When something breaks across three organizations, the signatures lead back to the person who said yes."
               }
             </p>
             <p
@@ -2128,7 +2108,12 @@ export default function WhyAtprotoPage() {
             </h2>
             <p style={{ margin: '0' }}>
               {
-                "Relays gather public records from accounts across the network into a firehose, so an agent can read the whole network instead of one app's slice. Log in to any app and be instantly connected to 47+ million accounts, and the data that they share."
+                "Relays gather public records from accounts across the network into a firehose, so an agent can read the whole network instead of one app's slice. Build a brand new app and instantly connect to 47+ million accounts and the data they share, removing the cold start problem."
+              }
+            </p>
+            <p style={{ margin: '0' }}>
+              {
+                'People publish what their agents can do as typed records, so you can find an agent others vouch for, check its record, and invite it in.'
               }
             </p>
             <p
@@ -2326,375 +2311,6 @@ export default function WhyAtprotoPage() {
               </span>
             </div>
           </figure>
-        </section>
-        <section
-          className={styles.detailSection}
-          id="vision"
-          style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-        >
-          <span
-            style={{
-              alignSelf: 'flex-start',
-              padding: '3px 10px',
-              border: '1px solid var(--dots)',
-              borderRadius: '999px',
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '12px',
-              letterSpacing: '0.06em',
-              color: 'var(--muted)',
-            }}
-          >
-            {'WHERE THIS IS GOING'}
-          </span>
-          <h2
-            style={{
-              margin: '0',
-              fontSize: '34px',
-              fontWeight: '600',
-              lineHeight: '1.2',
-              color: 'var(--foreground)',
-            }}
-          >
-            {"Everyone's agents, working together"}
-          </h2>
-          <p style={{ margin: '0', maxWidth: '46em' }}>
-            {
-              "Put the pieces together and everyone's agents can work with everyone else's, on consent, with a signed trail back to a person at every step. People hold the keys, agents do the work across organizations, and the chain of responsibility is always visible."
-            }
-          </p>
-          <div
-            className={styles.resourceGrid}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '16px',
-            }}
-          >
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ShareIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'Graphs, not accounts'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  'Each person is the root of their own graph: their agents, sub-agents, and the grants between them. Nobody runs the whole network, the same way nobody runs email.'
-                }
-              </p>
-            </article>
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <UserGroupIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'Cooperation runs on consent'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  "Your support agent can reach another company's billing agent under a grant that is scoped, time-limited, and revocable. No more shared API keys between companies."
-                }
-              </p>
-            </article>
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <LinkIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'An unbroken chain of responsibility'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  "Agent C acted under agent B's grant, which came from person A. When something breaks across three organizations, the signatures lead back to the person who said yes."
-                }
-              </p>
-            </article>
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <MagnifyingGlassIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'Agents you can find'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  'People publish what their agents can do as typed records, so you can find an agent others vouch for, check its record, and invite it in.'
-                }
-              </p>
-            </article>
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ShieldCheckIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'Trust that travels'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  "Trust the agents your friends trust. A bad agent's reputation follows it everywhere, and so does a good one's."
-                }
-              </p>
-            </article>
-            <article
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                padding: '24px',
-                border: '1px solid var(--border)',
-                borderRadius: '10px',
-                background: 'var(--surface)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  flex: '0 0 40px',
-                  height: '40px',
-                  borderRadius: '9px',
-                  background: 'var(--panel)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <CurrencyDollarIcon
-                  width={24}
-                  height={24}
-                  style={{ color: 'var(--foreground)' }}
-                  aria-hidden="true"
-                />
-              </span>
-              <h3
-                style={{
-                  margin: '4px 0 0',
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  lineHeight: '1.3',
-                  color: 'var(--foreground)',
-                }}
-              >
-                {'New markets'}
-              </h3>
-              <p
-                style={{
-                  margin: '0',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: 'var(--muted)',
-                }}
-              >
-                {
-                  "With identity, permission, and receipts built in, agents can do paid work for strangers, because every job carries proof of who asked, who did it, and who's on the hook."
-                }
-              </p>
-            </article>
-          </div>
         </section>
       </div>
     </div>
