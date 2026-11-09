@@ -36,9 +36,44 @@ div#kapa-widget-container {
   }
 }
 
+@layer components {
+  /* Lines marked in a code fence's meta, e.g. ```ts {2,5-7}. Bleeds into
+     the pre's p-4 padding so the highlight spans the full panel width. The
+     code element grows to the longest line so highlights also cover lines
+     that scroll horizontally. */
+  pre:has(.code-line-highlight) > code {
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  .code-line-highlight {
+    display: inline-block;
+    width: calc(100% + 2rem);
+    margin-inline: -1rem;
+    padding-inline: calc(1rem - 2px) 1rem;
+    border-left: 2px solid theme('colors.blue.500');
+    background-color: theme('colors.blue.500 / 10%');
+  }
+
+  .dark .code-line-highlight {
+    border-left-color: theme('colors.sky.400');
+    background-color: theme('colors.sky.400 / 10%');
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/** EXCALIFONT (diagrams) **/
+
+@font-face {
+  font-family: 'Excalifont';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/excalifont/Excalifont-Regular.woff2) format('woff2');
+}
 
 /** IBM PLEX SANS **/
 

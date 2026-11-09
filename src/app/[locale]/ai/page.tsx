@@ -9,8 +9,7 @@ export const metadata: Metadata = {
     'We built the AT Protocol so that people, not platforms, hold the keys to their online lives. That same commitment shapes how we think about AI.',
 }
 
-// Uses the blog topic-filter URL format, available when this page ships.
-const agentBlogHref = '/blog?q=tag%3Aai'
+const agentBlogHref = '/blog/topic/ai'
 
 const aiPosts = posts
   .filter((post) => post.tags?.includes('ai'))
