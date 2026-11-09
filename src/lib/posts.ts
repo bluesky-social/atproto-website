@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'ai-on-atproto',
+    title: 'AI on Atproto: Our Approach',
+    description: 'The values behind our approach to AI, how they show up in what we build, and why atproto is well suited to a web where AI agents are everywhere.',
+    date: 'November 9, 2026',
+    author: 'AT Protocol Team',
+    tags: ['ai'],
+  },
+  {
     slug: 'open-social-groups-vision',
     title: 'Open Social Groups — the Vision',
     description: 'Showcasing the full vision for Open Social Groups, from the Spaces blog series',

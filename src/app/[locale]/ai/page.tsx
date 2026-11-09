@@ -12,28 +12,10 @@ export const metadata: Metadata = {
 // Uses the blog topic-filter URL format, available when this page ships.
 const agentBlogHref = '/blog?q=tag%3Aai'
 
-// Keep the designed feature visible until its post and AI tags are published.
-// Published AI posts use archive metadata and appear newest first.
-const taggedPosts = posts
+const aiPosts = posts
   .filter((post) => post.tags?.includes('ai'))
   .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
-const aiPosts =
-  taggedPosts.length > 0
-    ? taggedPosts.map((post) => ({
-        ...post,
-        href: `/blog/${post.slug}`,
-      }))
-    : [
-        {
-          title: 'AI on Atproto: Our Approach',
-          description:
-            'We built the AT Protocol so that people, not platforms, hold the keys to their online lives. That same commitment shapes how we think about AI.',
-          detail:
-            ' This post lays out the values behind our approach, how they show up in what we build, and why we think atproto is well suited to a web where AI agents are everywhere.',
-          date: undefined,
-          href: agentBlogHref,
-        },
-      ]
+  .map((post) => ({ ...post, href: `/blog/${post.slug}` }))
 
 const values = [
   {
@@ -133,7 +115,7 @@ export default function AIPage() {
           AI.
         </p>
         <div className={styles.actions}>
-          <Link href={aiPosts[0].href} className={styles.primary}>
+          <Link href="/blog/ai-on-atproto" className={styles.primary}>
             Read the post
           </Link>
           <a href="#posts" className={styles.secondary}>
@@ -189,20 +171,14 @@ export default function AIPage() {
             {aiPosts.map((post) => (
               <article key={post.href}>
                 <Link href={post.href} className={styles.post}>
-                  {post.date ? (
-                    <time
-                      dateTime={new Date(post.date).toISOString().slice(0, 10)}
-                    >
-                      {post.date}
-                    </time>
-                  ) : (
-                    <span className={styles.date}>[Date]</span>
-                  )}
+                  <time
+                    dateTime={new Date(post.date).toISOString().slice(0, 10)}
+                  >
+                    {post.date}
+                  </time>
                   <div>
                     <h3>{post.title}</h3>
-                    <p>
-                      {'detail' in post ? post.detail.trim() : post.description}
-                    </p>
+                    <p>{post.description}</p>
                   </div>
                   <span className={styles.arrow} aria-hidden="true">
                     →
