@@ -96,6 +96,20 @@ export default function BuildingAgentsPage() {
           See the{' '}
           <Link href="/guides/streaming-data">streaming data guide</Link>.
         </p>
+        <Heading id="getting-started">Start with a public-data feature</Heading>
+        <p>
+          Choose an existing record type and build a useful view of it, such as
+          a reading list based on posts from accounts someone follows. Public
+          records let you test the idea before adding account access. If the app
+          needs to write records on someone’s behalf, request only the OAuth
+          permissions needed for that feature.
+        </p>
+        <p>
+          The{' '}
+          <Link href="/guides/reads-and-writes">reads and writes guide</Link>{' '}
+          covers working with records. If your app creates a new kind of data,
+          define a small Lexicon and consider how another app could use it.
+        </p>
       </div>
     </>
   )

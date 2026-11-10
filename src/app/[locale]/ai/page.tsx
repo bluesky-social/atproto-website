@@ -9,7 +9,7 @@ import { posts } from '@/lib/posts'
 export const metadata: Metadata = {
   title: 'AI on atproto',
   description:
-    'People are building AI tools on atproto to help develop apps, find useful information, and work with public data. The network’s open APIs let developers build on existing accounts and records. People can choose which apps to use and who hosts their data.',
+    'A new app on atproto can work with existing identities and compatible public records. AI tools can help developers try ideas faster, while shared accounts and data give those ideas something to work with. People can choose which apps to use and who hosts their data.',
 }
 
 const agentBlogHref = '/blog/topic/ai'
@@ -22,7 +22,7 @@ const activities = [
   {
     title: 'Building apps',
     description:
-      'AI coding tools can help developers build custom feeds, community sites, and other apps on atproto. Shared accounts and documented APIs give those apps an existing network to work with.',
+      'A cinema app could let someone sign in with their existing account, find people they already follow, and add film reviews. The app needs to support those features and record types, but it can build on connections people already have. AI coding tools can help a developer prototype that experience and test it with compatible public records sooner.',
   },
   {
     title: 'Choosing tools',
@@ -30,9 +30,9 @@ const activities = [
       'Atproto does not require a particular AI provider. Developers can use hosted models or run models themselves. People can choose apps that use AI and apps that don’t.',
   },
   {
-    title: 'Finding useful information',
+    title: 'Finding information',
     description:
-      'Developers can build search, feeds, and moderation tools using public network data. Different communities can choose tools that suit their needs.',
+      'Developers can build search, feeds, and moderation tools over compatible public records. A community could try a different way to find discussions or filter a feed without asking everyone to create a new account. The app still needs to index the relevant data and give people a reason to use it.',
   },
 ]
 
@@ -44,7 +44,7 @@ export default function AIPage() {
     >
       <PageHeader
         title="AI on atproto"
-        description="People are building AI tools on atproto to help develop apps, find useful information, and work with public data. The network’s open APIs let developers build on existing accounts and records. People can choose which apps to use and who hosts their data."
+        description="A new app on atproto can work with existing identities and compatible public records. AI tools can help developers try ideas faster, while shared accounts and data give those ideas something to work with. People can choose which apps to use and who hosts their data."
         primaryCTA={{ label: 'Read the post', href: '/blog/ai-on-atproto' }}
         secondaryCTA={{ label: 'Blog posts', href: '#posts' }}
       />
