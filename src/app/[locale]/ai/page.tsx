@@ -9,7 +9,7 @@ import { posts } from '@/lib/posts'
 export const metadata: Metadata = {
   title: 'AI on atproto',
   description:
-    'A new app on atproto can work with existing identities and compatible public records. AI tools can help developers try ideas faster, while shared accounts and data give those ideas something to work with. People can choose which apps to use and who hosts their data.',
+    'People are building AI tools on atproto to help develop apps, find useful information, and work with public data. The network’s open APIs let developers build on existing accounts and records. People can choose which apps to use and who hosts their data.',
 }
 
 const agentBlogHref = '/blog/topic/ai'
@@ -44,7 +44,7 @@ export default function AIPage() {
     >
       <PageHeader
         title="AI on atproto"
-        description="A new app on atproto can work with existing identities and compatible public records. AI tools can help developers try ideas faster, while shared accounts and data give those ideas something to work with. People can choose which apps to use and who hosts their data."
+        description="People are building AI tools on atproto to help develop apps, find useful information, and work with public data. The network’s open APIs let developers build on existing accounts and records. People can choose which apps to use and who hosts their data."
         primaryCTA={{ label: 'Read the post', href: '/blog/ai-on-atproto' }}
         secondaryCTA={{ label: 'Blog posts', href: '#posts' }}
       />
