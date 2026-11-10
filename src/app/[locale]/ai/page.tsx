@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { BlogPostCard } from '@/components/BlogPostCard'
+import { Button } from '@/components/Button'
+import { Heading } from '@/components/Heading'
+import { PageHeader } from '@/components/PageHeader'
 import { posts } from '@/lib/posts'
-import styles from './page.module.css'
 
 export const metadata: Metadata = {
   title: 'Our approach to AI',
@@ -14,7 +16,6 @@ const agentBlogHref = '/blog/topic/ai'
 const aiPosts = posts
   .filter((post) => post.tags?.includes('ai'))
   .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
-  .map((post) => ({ ...post, href: `/blog/${post.slug}` }))
 
 const values = [
   {
@@ -65,8 +66,7 @@ function ValueIcon({ index }: { index: number }) {
   return (
     <svg
       aria-hidden="true"
-      width="28"
-      height="28"
+      className="size-6 md:size-7"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -105,37 +105,35 @@ function ValueIcon({ index }: { index: number }) {
 
 export default function AIPage() {
   return (
-    <div className={styles.page}>
-      <section className={styles.hero} aria-labelledby="ai-title">
-        <h1 id="ai-title">Our approach to AI</h1>
-        <p>
-          We built the AT Protocol so that people, not platforms, hold the keys
-          to their online lives. That same commitment shapes how we think about
-          AI.
-        </p>
-        <div className={styles.actions}>
-          <Link href="/blog/ai-on-atproto" className={styles.primary}>
-            Read the post
-          </Link>
-          <a href="#posts" className={styles.secondary}>
-            Blog Posts
-          </a>
-        </div>
-      </section>
-      <div className={styles.content}>
+    <div
+      id="ai-title"
+      className="scroll-mt-14 text-zinc-900 dark:text-zinc-100"
+    >
+      <PageHeader
+        title="Our approach to AI"
+        description="We built the AT Protocol so that people, not platforms, hold the keys to their online lives. That same commitment shapes how we think about AI."
+        primaryCTA={{ label: 'Read the post', href: '/blog/ai-on-atproto' }}
+        secondaryCTA={{ label: 'Blog Posts', href: '#posts' }}
+      />
+      <div className="flex w-full max-w-2xl flex-col gap-16 px-4 py-12 md:px-16 md:py-16 lg:max-w-5xl">
         <section aria-labelledby="our-values">
-          <h2 id="our-values">Our values</h2>
-          <p className={styles.lead}>
-            The principles that guide our AI work are the same ones that guide
-            everything else we build.
-          </p>
-          <div className={styles.values}>
+          <div className="prose max-w-none dark:prose-invert">
+            <Heading id="our-values">Our values</Heading>
+            <p className="max-w-3xl">
+              The principles that guide our AI work are the same ones that guide
+              everything else we build.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-8 xl:grid-cols-2 xl:gap-x-10">
             {values.map((value, index) => (
-              <article key={value.title} className={styles.value}>
-                <span className={styles.icon}>
+              <article
+                key={value.title}
+                className="flex min-w-0 items-start gap-4 md:gap-5"
+              >
+                <span className="flex size-12 shrink-0 items-center justify-center border border-zinc-200 md:size-16 dark:border-zinc-700">
                   <ValueIcon index={index} />
                 </span>
-                <div>
+                <div className="prose min-w-0 max-w-none dark:prose-invert">
                   <h3>{value.title}</h3>
                   <p>{value.description}</p>
                 </div>
@@ -144,14 +142,25 @@ export default function AIPage() {
           </div>
         </section>
         <section aria-labelledby="what-were-doing">
-          <h2 id="what-were-doing">Our approach to AI</h2>
-          <ol className={styles.activities}>
+          <div className="prose max-w-none dark:prose-invert">
+            <Heading id="what-were-doing">Our approach to AI</Heading>
+          </div>
+          <ol
+            role="list"
+            className="mt-8 list-none divide-y divide-zinc-200 border-y border-zinc-200 p-0 dark:divide-zinc-700 dark:border-zinc-700"
+          >
             {activities.map((activity, index) => (
-              <li key={activity.title}>
-                <span className={styles.number} aria-hidden="true">
+              <li
+                key={activity.title}
+                className="flex flex-col gap-2 py-6 sm:flex-row sm:gap-8"
+              >
+                <span
+                  className="shrink-0 font-mono text-sm text-zinc-500 sm:w-10 sm:pt-1 dark:text-zinc-400"
+                  aria-hidden="true"
+                >
                   0{index + 1}
                 </span>
-                <div>
+                <div className="prose min-w-0 max-w-3xl dark:prose-invert">
                   <h3>{activity.title}</h3>
                   <p>{activity.description}</p>
                 </div>
@@ -159,31 +168,22 @@ export default function AIPage() {
             ))}
           </ol>
         </section>
-        <section id="posts" aria-labelledby="blog-posts">
-          <div className={styles.blogHeader}>
-            <h2 id="blog-posts">Blog Posts</h2>
-            <Link href={agentBlogHref}>
-              All blog posts <span aria-hidden="true">→</span>
-            </Link>
+        <section
+          id="posts"
+          aria-labelledby="blog-posts"
+          className="scroll-mt-24"
+        >
+          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+            <div className="prose max-w-none dark:prose-invert">
+              <Heading id="blog-posts">Blog Posts</Heading>
+            </div>
+            <Button href={agentBlogHref} variant="text" arrow="right">
+              All blog posts
+            </Button>
           </div>
-          <div className={styles.postList}>
+          <div className="space-y-8">
             {aiPosts.map((post) => (
-              <article key={post.href}>
-                <Link href={post.href} className={styles.post}>
-                  <time
-                    dateTime={new Date(post.date).toISOString().slice(0, 10)}
-                  >
-                    {post.date}
-                  </time>
-                  <div>
-                    <h3>{post.title}</h3>
-                    <p>{post.description}</p>
-                  </div>
-                  <span className={styles.arrow} aria-hidden="true">
-                    →
-                  </span>
-                </Link>
-              </article>
+              <BlogPostCard key={post.slug} post={post} headingLevel={3} />
             ))}
           </div>
         </section>
