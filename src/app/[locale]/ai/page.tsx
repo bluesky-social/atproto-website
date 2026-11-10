@@ -22,7 +22,7 @@ const activities = [
   {
     title: 'Building apps',
     description:
-      'A cinema app could let someone sign in with their existing account, find people they already follow, and add film reviews. The app needs to support those features and record types, but it can build on connections people already have. AI coding tools can help a developer prototype that experience and test it with compatible public records sooner.',
+      'A new app can work with existing accounts and compatible public records. AI coding tools can help developers prototype an interface or workflow faster and test it with data already on the network. Each app still needs to support the record types it uses and earn adoption.',
   },
   {
     title: 'Choosing tools',
