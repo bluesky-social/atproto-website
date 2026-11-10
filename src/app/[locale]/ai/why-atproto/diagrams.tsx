@@ -2,24 +2,8 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import clsx from 'clsx'
 import { Code } from '@/components/Code'
 import { Tag } from '@/components/Tag'
+import { RobotIcon as AgentIcon } from '@/components/icons/outline/RobotIcon'
 import { UserIcon } from '@/components/icons/outline/UserIcon'
-
-function AgentIcon(props: ComponentPropsWithoutRef<'svg'>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <rect x="4" y="7" width="16" height="12" rx="3" />
-      <path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5" />
-    </svg>
-  )
-}
 
 function AppIcon(props: ComponentPropsWithoutRef<'svg'>) {
   return (

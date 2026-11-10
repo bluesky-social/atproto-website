@@ -15,6 +15,7 @@ import { NewspaperIcon } from './NewspaperIcon'
 import { PuzzlePieceIcon } from './PuzzlePieceIcon'
 import { QuestionIcon } from './QuestionIcon'
 import { RectangleGroupIcon } from './RectangleGroupIcon'
+import { RobotIcon } from './RobotIcon'
 import { SparklesIcon } from './SparklesIcon'
 import { StreamIcon } from './StreamIcon'
 import { WindowIcon } from './WindowIcon'
@@ -35,6 +36,7 @@ export type OutlineIconEnum =
   | 'puzzle-piece'
   | 'rectangle-group'
   | 'question'
+  | 'robot'
   | 'sparkles'
   | 'stream'
   | 'user'
@@ -87,6 +89,9 @@ export function Icon(
   }
   if (props.icon === 'question') {
     return <QuestionIcon {...props} />
+  }
+  if (props.icon === 'robot') {
+    return <RobotIcon {...props} />
   }
   if (props.icon === 'sparkles') {
     return <SparklesIcon {...props} />
