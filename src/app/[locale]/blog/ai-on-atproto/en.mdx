@@ -1,15 +1,17 @@
 export const header = {
   title: 'AI on atproto: Our approach',
   description:
-    'The values behind our approach to AI, how they show up in what we build, and why atproto is well suited to increasing security and trust in a web where AI agents are everywhere.',
+    'Jay Graber shares her perspective on AI, building apps on atproto, and the choices facing people using the network.',
   date: 'November 10, 2026',
   author: 'Jay Graber',
   tags: ['ai'],
 }
 
-A lot of people are wary of AI, and for good reason. But it’s already changing the web. More of what we read is machine-generated, more of what happens online is done by software acting for someone, and the question of who controls these systems is becoming the question of who controls the web.
+_Jay Graber helped lead the development of atproto as the CEO of Bluesky, and is now the Chief Innovation Officer (CIO) at Bluesky. In this essay, she shares her perspective on AI and the choices facing people building on the network._
 
-We built the AT Protocol so that people, not platforms, hold the keys to their own online lives. That same commitment shapes how we think about AI. This post lays out the values behind our approach, how they show up in what we build, and why we think atproto is well suited to increasing security and trust in a web where AI agents are everywhere.
+I want people to have more say in the software they use. On atproto, someone can build a feed for their community or create an app that works with accounts people already have. AI tools could make more of that work accessible to people who have an idea but lack the time or programming experience to build it.
+
+The same questions about control apply to the tools themselves. Who chooses the model? What data can it access? Can someone change providers or stop using it? The values behind atproto give builders a useful starting point.
 
 ## Our values
 
@@ -41,31 +43,19 @@ AI is most useful on an open network when it lowers the barrier to making someth
 
 As the volume of content grows, people need better feeds, filters, search, and moderation. AI can power those tools, and people should be the ones who choose and configure them.
 
-## Agents are coming to the web
+## Agents acting on someone’s behalf
 
-AI agents are increasingly becoming a part of life online. They browse, message, schedule, and will someday be able to transact on behalf of the people who run them. That can be enormously useful. An agent can help you keep up with what matters, or let you build things you couldn't build alone.
+An agent that schedules a meeting or posts for someone needs permission to do that work. The person using it needs to understand that permission and be able to withdraw it. Other people may also need to know who the agent represents.
 
-But on today's web, agents are often anonymous and unaccountable. It’s increasingly hard to know whether you're talking to a person or an agent, who is responsible for an agent's behavior, or what it has been doing on its own. Left unaddressed, that will erode trust and make the information ecosystem worse for everyone.
-
-We don't think it will be possible long-term to keep agents off open networks. The answer is to build infrastructure that makes them legible and accountable to people, by making it clear who is responsible for the agent and the actions that it takes.
-
-## Why atproto is built for agents
+## Building agents on atproto
 
 The AT Protocol wasn't designed specifically for AI, but the properties that make it good for people also make it a strong foundation for agents.
 
 **A common identity layer.** Every account on atproto has a portable, cryptographic identity (a DID) that works across every app on the network. An agent can have its own identity in the same system people use, so it can be recognized, referenced, and held to the same norms, whichever app you encounter it in.
 
-**A transparent data log.** For agents operating on the open web, public activity on atproto lives in signed data repositories and flows through an open firehose that anyone can read, making actions recorded and verifiable.
+**Signed records.** Atproto repositories contain signed records. Those signatures can help establish which account published a record. They do not prove that an agent’s account of its work is accurate, or capture actions it takes outside the network. Linking an agent to the person responsible for it requires an additional, explicit relationship.
 
 **Infrastructure you can self-host.** Your Personal Data Server (PDS) holds your data, and you can run it yourself or choose who runs it for you. That makes the PDS a natural personal context layer: a place where your preferences, history, and permissions live under your control, which agents you invite can draw on, and which you can revoke.
-
-## What this makes possible
-
-Put together, these pieces let us address the two biggest trust problems with agents.
-
-**Chain of custody back to the party responsible for it.** Because agents and people share an identity layer, an agent's identity can be verifiably linked to the person or organization responsible for it. When you encounter an agent, you should be able to see who it acts for.
-
-**Transparency into what agents are doing.** Because public actions on atproto are written to an open, signed log, for agents that operate on the open web, anyone can see what an agent has done on the network, and anyone can build tools to audit, label, or filter agent activity.
 
 ## Building it together
 

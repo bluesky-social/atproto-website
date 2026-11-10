@@ -2,146 +2,101 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Heading } from '@/components/Heading'
 import { PageHeader } from '@/components/PageHeader'
-import {
-  AgentNetworkDiagram,
-  IdentityDiagram,
-  RecordDiagram,
-  ContextDiagram,
-  PermissionsDiagram,
-  SchemaDiagram,
-  NetworkDiagram,
-  SectionMarker,
-  SectionIcon,
-  type SectionId,
-} from './diagrams'
+
+const description =
+  'Use atproto accounts, public records, and OAuth permissions to build agents that work with apps on the network.'
 
 export const metadata: Metadata = {
-  title: 'Agent protocol',
-  description:
-    'An identity that works in every app, a public record, and open APIs anyone can build on. Explore why atproto works for agents.',
+  title: 'Building agents on atproto',
+  description,
 }
 
-const sections = [
-  {
-    id: 'identity',
-    label: 'Real identity',
-    title: 'A real identity for every agent',
-    paragraphs: [
-      'Every account has a permanent ID (a DID) and a handle that’s a domain name. Agents get them too, in the same system people use. The same identity follows an agent into every app, building an identity that the agent can build trust in over time.',
-      "Trust the agents your friends trust. A bad agent's reputation follows it everywhere, and so does a good one's.",
-    ],
-    links: [{ href: '/guides/overview', title: 'protocol overview' }],
-    diagram: IdentityDiagram,
-  },
-  {
-    id: 'record',
-    label: 'Signed receipts',
-    title: 'A signed receipt for everything agents do',
-    paragraphs: [
-      'Every update to an account’s data is signed, and anyone can verify it. Public activity streams out in real time through services like Jetstream. When an agent posts, follows, or publishes, there’s a record anyone can check, and anyone can build tools to audit, label, or filter it.',
-      "Your support agent can reach another company's billing agent under a grant that is scoped, time-limited, and revocable. No more shared API keys between companies.",
-    ],
-    links: [
-      { href: '/guides/sync', title: 'sync guide' },
-      { href: '/guides/streaming-data#jetstream', title: 'Jetstream' },
-    ],
-    diagram: RecordDiagram,
-  },
-  {
-    id: 'data',
-    label: 'Portable context',
-    title: 'Your context goes wherever you go',
-    paragraphs: [
-      'Your data lives on a Personal Data Server (PDS) that you can run yourself or move between hosts, so it doesn’t belong to any one app. That makes your PDS a context layer for your agents.',
-      'Each person is the root of their own graph: their agents, sub-agents, and the grants between them.',
-    ],
-    links: [{ href: '/guides/sync', title: 'sync guide' }],
-    diagram: ContextDiagram,
-  },
-  {
-    id: 'permissions',
-    label: 'Readable permissions',
-    title: 'See what an agent can do before you say yes',
-    paragraphs: [
-      'An agent acting for you never needs your password. Apps sign you in with OAuth and ask only for the access they need. Permissions come in named sets with plain-language descriptions, so you see what an agent can do before you approve it.',
-      "Agent C acted under agent B's grant, which came from person A. When something breaks across three organizations, the signatures lead back to the person who said yes.",
-    ],
-    links: [
-      { href: '/guides/permission-requests', title: 'Permission Requests' },
-      { href: '/guides/scope-builder', title: 'Scope Builder' },
-    ],
-    diagram: PermissionsDiagram,
-  },
-  {
-    id: 'schemas',
-    label: 'Shared schemas',
-    title: 'Agents from anywhere speak the same language',
-    paragraphs: [
-      'Lexicon is atproto’s schema language. Publish a schema for a new kind of record, like a task, a handoff, or a status update, and every agent and app that reads it gets the same shape. Published schemas can’t change their constraints, so agents built by different people can rely on them without a shared vendor.',
-    ],
-    links: [{ href: '/guides/lexicon', title: 'Lexicon guide' }],
-    diagram: SchemaDiagram,
-  },
-  {
-    id: 'network',
-    label: 'Network-wide data',
-    title: "The whole network is your agent's dataset",
-    paragraphs: [
-      "Relays gather public records from accounts across the network into a firehose, so an agent can read the whole network instead of one app's slice. Build a brand new app and instantly connect to 47+ million accounts and the data they share, removing the cold start problem.",
-      'People publish what their agents can do as typed records, so you can find an agent others vouch for, check its record, and invite it in.',
-    ],
-    links: [{ href: '/guides/streaming-data#jetstream', title: 'Jetstream' }],
-    diagram: NetworkDiagram,
-  },
-] satisfies Array<{
-  id: SectionId
-  label: string
-  title: string
-  paragraphs: string[]
-  links: Array<{ href: string; title: string }>
-  diagram: React.ComponentType
-}>
-
-export default function WhyAtprotoPage() {
+export default function BuildingAgentsPage() {
   return (
-    <div className="text-zinc-900 dark:text-zinc-100">
+    <>
       <PageHeader
-        title={'Agent protocol'}
-        description={
-          'An identity that works in every app, a public record, and open APIs anyone can build on.'
-        }
+        title="Building agents on atproto"
+        description={description}
       />
-      <div className="flex max-w-6xl flex-col gap-16 px-4 py-12 md:px-16 md:py-16">
-        {sections.map(
-          ({ id, title, paragraphs, links, diagram: Diagram }, index) => (
-            <section
-              key={id}
-              aria-labelledby={id}
-              className="grid items-start gap-8 xl:grid-cols-2 xl:gap-12"
-            >
-              <div className="prose min-w-0 max-w-none dark:prose-invert">
-                <SectionMarker id={id} number={index + 1} />
-                <Heading id={id} className="mt-0 scroll-mt-40">
-                  {title}
-                </Heading>
-                {paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-                <p className="mb-0">
-                  Learn more:{' '}
-                  {links.map((link, index) => (
-                    <span key={link.href}>
-                      {index > 0 && ' · '}
-                      <Link href={link.href}>{link.title}</Link>
-                    </span>
-                  ))}
-                </p>
-              </div>
-              <Diagram />
-            </section>
-          ),
-        )}
+      <div className="prose max-w-2xl px-4 py-12 dark:prose-invert md:px-16 md:py-16 lg:max-w-5xl">
+        <p>
+          An agent can use atproto APIs to read public records or act through an
+          account. These are the same accounts and APIs available to other apps.
+          The guides below cover the existing protocol features needed to get
+          started.
+        </p>
+
+        <Heading id="identity">Accounts and hosting</Heading>
+        <p>
+          An agent can have its own account, with a DID and a domain-based
+          handle. The account’s DID stays the same when its handle or hosting
+          provider changes. Its public records are stored on a Personal Data
+          Server (PDS), which can be self-hosted or run by a hosting provider.
+        </p>
+        <p>
+          Read about <Link href="/guides/identity">identity</Link> and{' '}
+          <Link href="/guides/self-hosting">self-hosting a PDS</Link>.
+        </p>
+
+        <Heading id="permissions">Acting with permission</Heading>
+        <p>
+          An app can use OAuth to request access to someone’s account without
+          asking for their password. Permission scopes specify the record types
+          or API operations the app needs. Named permission sets give those
+          requests descriptions people can read before approving access. People
+          can revoke an app’s OAuth session.
+        </p>
+        <p>
+          Use the{' '}
+          <Link href="/guides/permission-requests">
+            permission requests guide
+          </Link>{' '}
+          and <Link href="/guides/scope-builder">scope builder</Link> to define
+          the access your app needs.
+        </p>
+
+        <Heading id="record">Publishing records</Heading>
+        <p>
+          Repository commits are signed. A record can be verified against a
+          signed repository state to establish which account published it. This
+          does not prove that the record is true or describe work an agent did
+          outside the network. Records can also be updated or deleted; a
+          repository is not a permanent history of every action.
+        </p>
+        <p>
+          Read the <Link href="/guides/sync">sync guide</Link> and{' '}
+          <Link href="/specs/repository">repository specification</Link>.
+        </p>
+
+        <Heading id="schemas">Defining record types</Heading>
+        <p>
+          Lexicon defines record and API schemas. Developers can publish schemas
+          for their app’s data, such as tasks or status updates. Other apps can
+          use those schemas to read the records, but they still need to agree on
+          what the records mean and how to use them.
+        </p>
+        <p>
+          Start with the <Link href="/guides/lexicon">Lexicon guide</Link>.
+        </p>
+
+        <Heading id="network">Reading public network data</Heading>
+        <p>
+          Relays aggregate public repository updates from PDS hosts. An agent
+          can consume those updates and index the records it needs. Reading a
+          stream of new updates and collecting existing records are separate
+          tasks.
+        </p>
+        <p>
+          Jetstream provides a simpler JSON stream for applications that do not
+          need cryptographic verification of the stream’s events. Use the
+          repository firehose when that verification is required. These streams
+          carry public records; they do not grant access to private data.
+        </p>
+        <p>
+          See the{' '}
+          <Link href="/guides/streaming-data">streaming data guide</Link>.
+        </p>
       </div>
-    </div>
+    </>
   )
 }

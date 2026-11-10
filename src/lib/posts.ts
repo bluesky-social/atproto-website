@@ -11,7 +11,7 @@ export const posts: BlogPost[] = [
   {
     slug: 'ai-on-atproto',
     title: 'AI on atproto: Our approach',
-    description: 'The values behind our approach to AI, how they show up in what we build, and why atproto is well suited to increasing security and trust in a web where AI agents are everywhere.',
+    description: 'Jay Graber shares her perspective on AI, building apps on atproto, and the choices facing people using the network.',
     date: 'November 10, 2026',
     author: 'Jay Graber',
     tags: ['ai'],
