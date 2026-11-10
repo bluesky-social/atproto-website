@@ -110,7 +110,10 @@ function NavLink({
       {icon && (
         <Icon
           icon={icon}
-          className="size-[18px] fill-none stroke-black dark:stroke-white"
+          className={clsx(
+            'size-[18px] fill-none stroke-black dark:stroke-white',
+            icon === 'robot' && 'scale-[1.125]',
+          )}
         />
       )}
       <span className="flex items-center gap-1 truncate">
@@ -351,11 +354,11 @@ export const navigation: Array<NavGroup> = [
   {
     title: 'AI',
     links: [
-      { title: 'Our approach to AI', icon: 'sparkles', href: '/ai' },
+      { title: 'AI on atproto', icon: 'sparkles', href: '/ai' },
       {
-        title: 'Why atproto for agents',
-        icon: 'rectangle-group',
-        href: '/ai/why-atproto',
+        title: 'Agent protocol',
+        icon: 'robot',
+        href: '/ai/agent-protocol',
       },
     ],
   },

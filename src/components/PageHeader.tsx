@@ -71,13 +71,13 @@ export function PageHeader({
           </div>
         )}
         {(primaryCTA || secondaryCTA) && (
-          <div className="mt-4 flex gap-2 max-md:w-full">
+          <div className="mt-4 flex flex-wrap gap-2 max-md:w-full">
             {primaryCTA && (
               <Button
                 href={primaryCTA.href}
                 variant="primary"
                 size="large"
-                className="max-md:flex-1"
+                className="whitespace-nowrap max-md:flex-1"
               >
                 {primaryCTA.label}
               </Button>
@@ -87,7 +87,7 @@ export function PageHeader({
                 href={secondaryCTA.href}
                 variant="outline"
                 size="large"
-                className="max-md:flex-1"
+                className="whitespace-nowrap max-md:flex-1"
               >
                 {secondaryCTA.label}
               </Button>
