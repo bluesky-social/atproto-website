@@ -16,7 +16,7 @@ import {
 } from './diagrams'
 
 export const metadata: Metadata = {
-  title: 'Why atproto works for agents',
+  title: 'Agent protocol',
   description:
     'An identity that works in every app, a public record, and open APIs anyone can build on. Explore why atproto works for agents.',
 }
@@ -106,7 +106,7 @@ export default function WhyAtprotoPage() {
   return (
     <div className="text-zinc-900 dark:text-zinc-100">
       <PageHeader
-        title={'Why atproto for agents'}
+        title={'Agent protocol'}
         description={
           'An identity that works in every app, a public record, and open APIs anyone can build on.'
         }

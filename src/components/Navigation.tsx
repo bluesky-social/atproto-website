@@ -356,9 +356,9 @@ export const navigation: Array<NavGroup> = [
     links: [
       { title: 'AI on atproto', icon: 'sparkles', href: '/ai' },
       {
-        title: 'Why atproto for agents',
+        title: 'Agent protocol',
         icon: 'robot',
-        href: '/ai/why-atproto',
+        href: '/ai/agent-protocol',
       },
     ],
   },
