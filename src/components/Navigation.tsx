@@ -264,6 +264,11 @@ export const navigation: Array<NavGroup> = [
           { title: 'FAQ', href: '/guides/faq' },
         ],
       },
+      {
+        title: 'Spaces',
+        icon: 'sparkles',
+        href: '/guides/spaces',
+      },
       { title: 'SDKs', icon: 'cube', href: '/sdks' },
       {
         title: 'Cookbook',
