@@ -1,6 +1,6 @@
 import { Usecases } from '@/components/home/Usecases'
 import Link from 'next/link'
-import { OutlineIconEnum, Icon } from '@/components/icons/outline'
+import { NavGrid, NavGridItem } from '@/components/NavGrid'
 
 export const header = {
   title: 'さあ、作ろう',
@@ -19,44 +19,44 @@ export const header = {
 export default function DocsHome() {
   return (
     <div className="flex flex-1 flex-col gap-16 px-8 pb-16 pt-8 md:pt-16 xl:max-w-6xl xl:px-16">
-      <div className="grid gap-6 md:grid-cols-2">
-        <NavItem
+      <NavGrid>
+        <NavGridItem
           icon="key"
           title="認証"
           description="ログインと権限"
           href="/guides/auth"
         />
-        <NavItem
+        <NavGridItem
           icon="database"
           title="読み書き"
           description="データリポジトリ"
           href="/guides/reads-and-writes"
         />
-        <NavItem
+        <NavGridItem
           icon="stream"
           title="同期"
           description="ストリーミング"
           href="/guides/sync"
         />
-        <NavItem
+        <NavGridItem
           icon="puzzle-piece"
           title="Lexicon"
           description="レコードとAPIのスキーマ"
           href="/guides/lexicon"
         />
-        <NavItem
+        <NavGridItem
           icon="media"
           title="画像と動画"
           description="CDN利用"
           href="/guides/images-and-video"
         />
-        <NavItem
+        <NavGridItem
           icon="flag"
           title="モデレーション"
           description="安全と信頼の組み立て"
           href="/guides/moderation"
         />
-      </div>
+      </NavGrid>
       <div className="[html_:where(&amp;&gt;*)]:max-w-2xl [html_:where(&amp;&gt;*)]:lg:max-w-3xl prose flex-auto dark:prose-invert">
         <h2 className="scroll-mt-24">
           atprotoとは
@@ -106,36 +106,5 @@ export default function DocsHome() {
         </p>
       </div>
     </div>
-  )
-}
-
-
-function NavItem({
-  title,
-  description,
-  href,
-  icon,
-}: {
-  title: string
-  description: string
-  href: string
-  icon: OutlineIconEnum
-}) {
-  return (
-    <Link className="group flex flex-row items-center gap-6" href={href}>
-      <div>
-        <div className="rounded-sm p-4 ring-1 ring-zinc-900/15 group-hover:ring-zinc-900/30 dark:ring-zinc-100/15 dark:group-hover:ring-zinc-100/25">
-          <Icon
-            icon={icon}
-            className="size-8 fill-none stroke-current"
-            strokeWidth="1.0"
-          />
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="text-2xl font-medium leading-normal">{title}</div>
-        <div className="text-zinc-700 dark:text-zinc-400">{description}</div>
-      </div>
-    </Link>
   )
 }

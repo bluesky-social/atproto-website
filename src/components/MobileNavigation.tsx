@@ -71,8 +71,9 @@ function MobileNavigationDialog({
     let link = event.target.closest('a')
     if (
       link &&
-      link.pathname + link.search + link.hash ===
-        window.location.pathname + window.location.search + window.location.hash
+      link.origin === window.location.origin &&
+      link.pathname + link.search ===
+        window.location.pathname + window.location.search
     ) {
       close()
     }

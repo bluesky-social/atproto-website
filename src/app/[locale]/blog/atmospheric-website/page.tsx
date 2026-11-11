@@ -10,6 +10,6 @@ export function generateMetadata() {
   return mdxRouteMetadata(content)
 }
 
-export default function AtmosphericWebsitePage() {
+export default function BlogPost() {
   return <Page {...content} />
 }
