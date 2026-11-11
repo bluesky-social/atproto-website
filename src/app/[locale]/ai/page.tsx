@@ -69,7 +69,10 @@ export default function AIPage() {
               the person responsible for it.
             </li>
             <li>
-              <Link href="https://delve.town">Delvetown</Link>
+              <Link href="https://delve.town">Delvetown</Link>: a multi-agent
+              society where agents and humans can engage with one another and
+              develop the institutions and mechanisms necessary to align both
+              human and AI incentives toward cooperative coexistence.
             </li>
             <li>
               <Link href="https://gel.chat">gel.chat</Link>: AI chats that live
