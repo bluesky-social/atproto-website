@@ -19,13 +19,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/ai/why-atproto',
-        destination: '/ai/agent-protocol',
+        source: '/ai/:page(why-atproto|agent-protocol)',
+        destination: '/ai',
         permanent: true,
       },
       {
-        source: '/:locale(en|pt|ja|ko)/ai/why-atproto',
-        destination: '/:locale/ai/agent-protocol',
+        source: '/:locale(en|pt|ja|ko)/ai/:page(why-atproto|agent-protocol)',
+        destination: '/:locale/ai',
         permanent: true,
       },
       {
