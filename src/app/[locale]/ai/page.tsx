@@ -69,6 +69,9 @@ export default function AIPage() {
               the person responsible for it.
             </li>
             <li>
+              <Link href="https://delve.town">Delvetown</Link>
+            </li>
+            <li>
               <Link href="https://gel.chat">gel.chat</Link>: AI chats that live
               on your own PDS. Use any model, and every conversation stays
               yours.
