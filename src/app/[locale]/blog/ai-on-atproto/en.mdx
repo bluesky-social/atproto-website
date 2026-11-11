@@ -1,5 +1,5 @@
 export const header = {
-  title: 'AI on atproto: Our approach',
+  title: 'AI on Atproto: Our Approach',
   description:
     'Jay Graber shares her perspective on AI, building apps on atproto, and the choices facing people using the network.',
   date: 'November 10, 2026',
@@ -7,9 +7,9 @@ export const header = {
   tags: ['ai'],
 }
 
-_Jay Graber helped lead the development of atproto as the CEO of Bluesky, and is now the Chief Innovation Officer (CIO) at Bluesky. In this essay, she shares her perspective on AI and the choices facing people building on the network._
+_[Jay Graber](https://bsky.app/profile/jay.bsky.team) helped lead the development of atproto as the CEO of Bluesky, and is now the Chief Innovation Officer (CIO) at Bluesky. In this essay, she shares her perspective on AI and the choices facing people building on the network._
 
-I want people to have more say in the software they use. On atproto, someone can build a feed for their community or create an app that works with accounts people already have. AI tools could make more of that work accessible to people who have an idea but lack the time or programming experience to build it.
+I want people to have more say in the software they use. On atproto, someone can [build a feed for their community](https://atproto.com/guides/custom-feed-tutorial) or [create an app](https://atproto.com/guides/understanding-atproto) that works with accounts people already have. AI tools could make more of that work accessible to people who have an idea but lack the time or programming experience to build it.
 
 The same questions about control apply to the tools themselves. Who chooses the model? What data can it access? Can someone change providers or stop using it? The values behind atproto give builders a useful starting point.
 
@@ -51,14 +51,14 @@ An agent that schedules a meeting or posts for someone needs permission to do th
 
 The AT Protocol wasn't designed specifically for AI, but the properties that make it good for people also make it a strong foundation for agents.
 
-**A common identity layer.** Every account on atproto has a portable, cryptographic identity (a DID) that works across every app on the network. An agent can have its own identity in the same system people use, so it can be recognized, referenced, and held to the same norms, whichever app you encounter it in.
+**A common identity layer.** [Every account on atproto has a portable, cryptographic identity (a DID)](https://atproto.com/specs/did) that works across every app on the network. An agent can have its own identity in the same system people use, so it can be recognized, referenced, and held to the same norms, whichever app you encounter it in.
 
-**Signed records.** Atproto repositories contain signed records. Those signatures can help establish which account published a record. They do not prove that an agent’s account of its work is accurate, or capture actions it takes outside the network. Linking an agent to the person responsible for it requires an additional, explicit relationship.
+**Signed records.** Every record in a public atproto repository is [cryptographically signed](https://atproto.com/specs/cryptography). Those signatures can help establish which account published a record, though they don't prove that an agent’s account of its work is accurate or capture actions it takes outside the network. Linking an agent to the person responsible for it requires an additional, explicit relationship.
 
-**Infrastructure you can self-host.** Your Personal Data Server (PDS) holds your data, and you can run it yourself or choose who runs it for you. That makes the PDS a natural personal context layer: a place where your preferences, history, and permissions live under your control, which agents you invite can draw on, and which you can revoke.
+**Infrastructure you can self-host.** Your [Personal Data Server (PDS) holds your data](https://atproto.com/guides/glossary#pds-personal-data-server), and you can [run it yourself](https://atproto.com/guides/self-hosting) or [choose who runs it for you](https://atproto.com/guides/account-migration). That makes the PDS a natural personal context layer: a place where your preferences, history, and permissions live under your control, which agents you invite can draw on, and which you can revoke.
 
 ## Building it together
 
 We don't have every answer about AI, and no single company should. What we can do is build open infrastructure where these questions get worked out in public, by many people, with people in control.
 
-If you're building agents, AI tools, or moderation services, we'd love for you to build them on atproto, and to help shape the norms for how agents identify themselves and behave on an open network. We’ll be sharing more soon, so follow along and tell us what you think!
+If you're building agents, AI tools, or [moderation services](https://atproto.com/guides/moderation), we'd love for you to build them on atproto, and to help shape the norms for how agents identify themselves and behave on an open network. We’ll be sharing more soon, so follow along and tell us what you think!
