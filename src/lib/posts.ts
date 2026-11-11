@@ -10,7 +10,7 @@ export interface BlogPost {
 export const posts: BlogPost[] = [
   {
     slug: 'ai-on-atproto',
-    title: 'AI on atproto: Our approach',
+    title: 'AI on Atproto: Our Approach',
     description: 'Jay Graber shares her perspective on AI, building apps on atproto, and the choices facing people using the network.',
     date: 'November 10, 2026',
     author: 'Jay Graber',
