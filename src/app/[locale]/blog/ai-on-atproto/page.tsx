@@ -1,26 +1,13 @@
-import type { Metadata } from 'next'
 import { Page } from '@/components/Page'
 import { mdxRouteMetadata } from '@/lib/localizedMdx'
 import * as content from './en.mdx'
 
-export function generateMetadata(): Metadata {
-  const { title, description } = mdxRouteMetadata(content)
-  return {
-    title,
-    description,
-    authors: [{ name: content.header.author }],
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      url: '/blog/ai-on-atproto',
-      siteName: 'AT Protocol',
-      publishedTime: '2026-11-10',
-      authors: [content.header.author],
-      tags: ['ai'],
-      images: [{ url: '/default-social-card.png', width: 1200, height: 630 }],
-    },
-  }
+// Metadata comes from the MDX header (see mdx.d.ts). en.mdx is imported
+// statically — not translated, and the module edge is what makes content
+// edits hot-reload.
+
+export function generateMetadata() {
+  return mdxRouteMetadata(content)
 }
 
 export default function BlogPost() {
