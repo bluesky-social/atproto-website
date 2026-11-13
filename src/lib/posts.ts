@@ -9,6 +9,14 @@ export interface BlogPost {
 
 export const posts: BlogPost[] = [
   {
+    slug: 'getting-ready-for-the-spaces-public-beta',
+    title: 'Getting Ready for the Spaces Public Beta',
+    description: 'Atproto spaces are moving from alpha to public beta on December 1. Here’s what to expect.',
+    date: 'November 13, 2026',
+    author: 'Jim Ray',
+    tags: ['spaces', 'news'],
+  },
+  {
     slug: 'space-sync',
     tags: ['spaces'],
     title: 'A Jetstream for Spaces',

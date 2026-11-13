@@ -1,0 +1,47 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3n27oiowixx2v',
+  title: 'Getting Ready for the Spaces Public Beta',
+  description: 'Atproto spaces are moving from alpha to public beta on December 1. Here’s what to expect.',
+  date: 'November 13, 2026',
+  author: 'Jim Ray',
+  tags: ['spaces', 'news'],
+}
+
+Back in August we announced the [atproto spaces alpha was live](https://atproto.com/blog/atproto-spaces-alpha) and since then the team and the entire atproto ecosystem has been hard at work making permissioned data on the protocol a reality. Now, we’re ready to move to the next step to get the Atmosphere ready for Spaces-compatible applications.
+
+## The Public Beta begins December 1 
+
+The goals of the alpha were to develop with real code, in public, with resources that anyone could use. This included [adding spaces capabilities to the reference PDS](https://www.google.com/url?q=https://github.com/bluesky-social/atproto/pull/5187&sa=D&source=docs&ust=1794523897336967&usg=AOvVaw3ahhPn6Ic7R2BAFlosEF9E), a hosted PDS that anyone could sign into to test their code, and an [example app](https://github.com/bluesky-social/bulletin) and [SDK](https://atproto.com/blog/atproto-spaces-alpha#example-app-and-alpha-sdk).
+
+As a true software alpha, development means the spec has changed significantly over the past few months and has involved breaking changes along the way. The protocol team has stuck to a Thursday update schedule, [tracked in the Atmosphere community forum](https://discourse.atmosphere.community/t/atproto-spaces-alpha-updates/1129/1), and even [incorporated an entirely new archive format](https://discourse.atmosphere.community/t/atproto-spaces-alpha-updates/1129/9) courtesy of [Atproto ecosystem stalwart fig](https://bsky.app/profile/bad-example.com).  We’ve gotten valuable feedback from developers building on the alpha and have incorporated your ideas and changes into the protocol — Spaces has been a truly collaborative project and one we hope everyone involved can take pride in\!
+
+The Spaces protocol has matured enough it’s now time to move from alpha to public beta. This means changes to the protocol will be minimized and managed as though production software depends on it, much like the existing protocol.
+
+## Rolling out the Spaces-capable PDS
+
+We want developers to start building incredible apps using the features enabled by Spaces. We will  be rolling out spaces capabilities to the reference PDS and Bluesky will update the PDS fleet at the same time. If you are running a PDS based on the [reference PDS](https://github.com/bluesky-social/pds), all you should need to do is update to the latest version released on December 1 and you’ll be Spaces-capable.
+
+This means that the vast majority of Atmosphere accounts will be able to log into a Spaces app and seamlessly use the new functionality. We’ve been working with other infrastructure providers like [Blacksky](https://blacksky.community/), [Eurosky](https://eurosky.tech/), [Northsky](https://northskysocial.ca/), and [selfhosted.social](https://selfhosted.social/) so anyone on those networks will also be able to use new Spaces apps as well.
+
+Developers should consider December 1 as the starting point for the Spaces rollout. Expect there will be some updates along the way and that the global, decentralized network of providers serving millions of people will be updating their services at this time.
+
+We want the focus to be on developers and services and to give the ecosystem time to prepare. We’ll promote the new apps and capabilities enabled by Spaces for end-users starting in early 2027.
+
+## PDS migration
+If you are currently running the stock reference PDS, adding Spaces support should be as simple as running the auto-update. Active `did:plc` accounts will involve a PLC update to add a new `kem` key, which will be handled by the migration.
+
+If you are running the alpha of the PDS, the migration will **not** be smooth. **Please do not deploy the alpha in production or with production data.** Please do not switch to the alpha in anticipation of an easy migration.
+
+The [hosted Spaces alpha PDS](https://spaces-alpha.host.bsky.network/) will be shut down at some point in the future. This was built for testing purposes with the expectation that the accounts were meant for testing only. If you need to migrate data, reach out and we'll see what we can do.
+
+## Developer resources
+
+The alpha has been a great time to work out the critical details of the biggest extension to the protocol since launch. Spaces has come a long way in a very short time and we can’t thank everyone who contributed enough. 
+
+The public beta is meant for developers to build production apps with real users. In addition to the reference PDS, we’ll be adding new documentation to [atproto.com](http://atproto.com) with sample code and releasing an SDK for working with Spaces.
+
+## A beginning
+
+We’re grateful for all the feedback we’ve received from everyone building on the Spaces alpha so far and excited for entire new types of apps built with permissioned data. Starting December 1, a critical mass of Atmosphere accounts will be Spaces-enabled and you can start building the next round of amazing apps in the Atmosphere confident that millions of people can use them.
+
+This is such an exciting moment for the Atmosphere! Spaces will unlock entire new types of apps, devs who’ve been waiting for permissioned data can build amazing new experiences, and the promise of an open, social web for everyone gets even closer. We’re thrilled to be a part of this, so thankful for everyone’s contributions, and as excited as ever about the future of the Atmosphere.
