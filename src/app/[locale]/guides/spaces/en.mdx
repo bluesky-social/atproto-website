@@ -1,0 +1,42 @@
+import { SpacesNetworkDiagram } from './SpacesNetworkDiagram'
+import { SpacesOneRecordDiagram } from './SpacesOneRecordDiagram'
+import { SpacesAppsDiagram } from './SpacesAppsDiagram'
+import { SpacesAccessDiagram } from './SpacesAccessDiagram'
+import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
+
+export const header = {
+  title: 'Spaces',
+  description: 'A visual introduction to atproto Spaces',
+}
+
+TK intro.
+
+## Spaces are small atproto networks
+
+TK: accounts, PDSes, repos, and records, and how a space has the same shape.
+
+<SpacesNetworkDiagram />
+
+## One record, one space
+
+TK: spaces aren't ACLs on records. Each record is in exactly one space; overlapping audiences mean separate spaces with separate records.
+
+<SpacesOneRecordDiagram />
+
+## Space data is atmospheric
+
+TK: space records use Lexicons like any other records, so any app with access can build its own view of them.
+
+<SpacesAppsDiagram />
+
+## Spaces control access, apps control permissions
+
+TK: a space authority is just an account, and decides who's in; roles and finer-grained permissions are up to the app.
+
+<SpacesAccessDiagram />
+
+## Syncing a space
+
+TK: sync without a relay, Jetstream semantics.
+
+<SpaceJoinDiagram />
