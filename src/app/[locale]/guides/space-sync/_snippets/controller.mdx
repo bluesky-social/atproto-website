@@ -1,0 +1,26 @@
+```ts
+import { readFile } from 'node:fs/promises'
+import { SpaceSyncController } from '@bsky/space-sync'
+
+const controller = await SpaceSyncController.start({
+  // jetstream-spaces' private --listen address
+  service: 'http://127.0.0.1:3002',
+  brokerSecret: (await readFile('./broker-secret', 'utf8')).trim(),
+  // your app's NodeOAuthClient
+  oauthClient,
+  // every space jetstream-spaces should follow
+  getCatalog: async () => {
+    const rows = await db.selectFrom('board').select('uri').execute()
+    return rows.map((row) => row.uri)
+  },
+  // users whose sessions can read a space, best candidates first
+  getReaders: async (space) => {
+    const board = await db
+      .selectFrom('board')
+      .select('ownerDid')
+      .where('uri', '=', space.toString())
+      .executeTakeFirst()
+    return board ? [board.ownerDid] : undefined
+  },
+})
+```

@@ -1,0 +1,17 @@
+```ts
+import { SpaceClient } from '@atproto/lex-space'
+
+// by authority (the key can be left out for space types with a literal key)
+const space = SpaceClient.openSpace(
+  com.example.bookmarks,
+  { authority: client.did },
+  { agent: client.agent },
+)
+
+// or by URI
+const forum = SpaceClient.openSpace(
+  com.example.forum,
+  'at://did:plc:abc/space/com.example.forum/general',
+  { agent: client.agent },
+)
+```

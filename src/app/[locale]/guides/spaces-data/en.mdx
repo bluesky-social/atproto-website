@@ -1,0 +1,121 @@
+import Install from './_snippets/install.mdx'
+import SpaceTypeLexicon from './_snippets/space-type-lexicon.mdx'
+import Scopes from './_snippets/scopes.mdx'
+import CreateSpace from './_snippets/create-space.mdx'
+import OpenSpace from './_snippets/open-space.mdx'
+import ListSpaces from './_snippets/list-spaces.mdx'
+import CreateRecord from './_snippets/create-record.mdx'
+import CreateResult from './_snippets/create-result.mdx'
+import PutDeleteRecord from './_snippets/put-delete-record.mdx'
+import ListRecords from './_snippets/list-records.mdx'
+import GetRecord from './_snippets/get-record.mdx'
+import ReadOtherRepo from './_snippets/read-other-repo.mdx'
+
+export const header = {
+  title: 'Spaces Data',
+  description: 'Read and write records in atproto Spaces',
+}
+
+TK intro.
+
+- Records in a space are ordinary atproto records, defined by Lexicons, read and written with the same helpers as [public data](/guides/reading-data).
+- Differences are in where they live and who can read them. See [Differences from public data](#differences-from-public-data).
+- Uses `@atproto/lex-space`, alongside the `@atproto/lex` client from [Reads and Writes](/guides/reads-and-writes). TK: Go.
+
+<Install />
+
+TK: alpha tag; drop at launch.
+
+## Space types
+
+TK
+
+- A space type is a Lexicon with `type: "space"`, listing the record collections it's meant to hold.
+- `key` controls the space key: `literal:self` means one space of this type per account, like a profile record.
+- Install and build it like any other Lexicon ([Developing with Lexicons](/guides/installing-lexicons)).
+
+<SpaceTypeLexicon />
+
+## Permissions
+
+TK
+
+- Apps get access to spaces with `space:` OAuth scopes, by space type and authority. See [Permission Requests](/guides/permission-requests).
+- Default is the user's own spaces (`authority=self`); `authority=*` covers spaces where the user is a member.
+- Creating a space needs `manage=create`.
+- `read` reads every repo in a space; `read_self` only the user's own.
+- TK verify: a bare `space:<nsid>` scope resolves the published space-type Lexicon to fill in collections, so publish it first.
+
+<Scopes />
+
+## Creating a space
+
+TK
+
+- The user becomes the space authority.
+- The policy decides who has access. `personalspace`: only the authority. TK: `memberspace`, `managedspace`.
+
+<CreateSpace />
+
+## Opening a space
+
+TK
+
+- Opening makes no request. A space credential is fetched when first needed, then cached and renewed.
+
+<OpenSpace />
+
+TK: listing the user's spaces.
+
+<ListSpaces />
+
+## Writing records
+
+TK
+
+- `create`, `put`, and `delete` work like their [public equivalents](/guides/writing-data).
+- Writes always go to the user's own repo in the space, on their own PDS.
+
+<CreateRecord />
+
+TK: space record URI format, `at://{authority}/space/{spaceType}/{skey}/{author}/{collection}/{rkey}`.
+
+<CreateResult />
+
+<PutDeleteRecord />
+
+## Reading records
+
+TK
+
+- Reads default to the user's own repo.
+
+<ListRecords />
+
+<GetRecord />
+
+TK: reading another member's records, needs a `read` grant.
+
+<ReadOtherRepo />
+
+## Differences from public data
+
+TK
+
+- **Per-space repos.** Each member has a separate repo for each space, on their own PDS. Not part of their public repo.
+- **No firehose.** Space records aren't broadcast or carried by relays. See [Space sync](/guides/space-sync).
+- **Addressing.** Space record URIs include the space. XRPC calls take `space` as well as `repo` (`com.atproto.space.*`, not `com.atproto.repo.*`).
+- **Create the space first.** Writing to a space that doesn't exist fails with `SpaceNotFound`.
+- **Errors.** `SpaceNotFound` doesn't tell you whether a space doesn't exist or you can't access it. Also `SpaceDeleted`, `AppNotAuthorized`.
+- **Blobs.** Uploaded the usual way, then referenced from a space record. TK: reading space blobs.
+- **Access control, not encryption.** Anyone with access to a space, including apps, can read it.
+- **Same:** Lexicons, rkeys, validation, `create`/`put`/`delete`/`get`/`list`.
+
+## Further Reading and Resources
+
+- [Spaces](/guides/spaces)
+- [Reading public data](/guides/reading-data)
+- [Writing public data](/guides/writing-data)
+- [Space sync](/guides/space-sync)
+- [`@atproto/lex-space` README](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-space)
+- [Spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data)

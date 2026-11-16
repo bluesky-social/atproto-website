@@ -1,0 +1,112 @@
+import S01 from './_snippets/01-install.mdx'
+import S02 from './_snippets/02-init-project.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-login.mdx'
+import S05 from './_snippets/05-open-space.mdx'
+import S06 from './_snippets/06-commands.mdx'
+import S07 from './_snippets/07-env-file.mdx'
+import S08 from './_snippets/08-run.mdx'
+import S09 from './_snippets/09-output.mdx'
+import S10 from './_snippets/10-server.mdx'
+import S11 from './_snippets/11-run-server.mdx'
+
+export const header = {
+  title: 'Build a Private App',
+  description: 'Store private data in a personal space',
+}
+
+TK intro.
+
+- A private calendar: events stored in a personal space, non-public data that only you (and apps you authorize) can read.
+- Personal spaces have one member, and the user is the space authority. Good fit for settings, drafts, bookmarks, notes.
+- Shout out [Airspace](https://getair.space/), which keeps drafts in a personal space until you publish them.
+- Same shape as the [bot tutorial](/guides/bot-tutorial): password login and a small script, plus a page you can open in your browser.
+- Uses the published [Lexicon Community](https://lexicon.community/) calendar Lexicons, so there's nothing to define or publish.
+
+## Prerequisites
+
+TK
+
+- Node.js 22+ (TK: confirm minimum for `@atproto/lex-space`).
+- An account on a Spaces-enabled PDS. During the alpha, get an invite from your [BPS account](https://bsky.network/account), or [run your own](/blog/atproto-spaces-alpha#running-a-spaces-capable-pds).
+
+<Note>
+App passwords can't access spaces. This tutorial logs in with your full account password, so use a test account. Production apps should use [OAuth](/guides/auth).
+</Note>
+
+<S01 />
+
+<S02 />
+
+## Part 1: Lexicons
+
+TK
+
+- `community.lexicon.calendar.collection`: a published space type for calendar data, holding events and RSVPs.
+- `community.lexicon.calendar.event`: the event record.
+- Install and build them like any other published Lexicon. TK: verify `lex install` handles space types in the alpha.
+
+<S03 />
+
+## Part 2: Log in
+
+TK
+
+- Save shared code in `src/calendar.ts`.
+- Same as the bot tutorial, but with your full account password, and returning a `Client`.
+
+<S04 />
+
+## Part 3: Open your calendar
+
+TK
+
+- The calendar space type uses `"key": "any"`, so pick a space key: `personal`.
+- Look for it with `listSpaces`; create it the first time.
+- `personalspace` policy: only the authority has access.
+- Everything here goes to your own repo on your own PDS, so no space credential is needed.
+
+<S05 />
+
+## Part 4: Add and remove events
+
+TK
+
+- CLI in `src/index.ts`.
+- `create`, `delete`, `list` mirror the public record helpers from [Writing public data](/guides/writing-data).
+- Prints your calendar after every command.
+
+<S06 />
+
+<S07 />
+
+<S08 />
+
+<S09 />
+
+## Part 5: View it in your browser
+
+TK
+
+- `src/server.ts`: a tiny `node:http` server that reads your calendar and renders it as HTML.
+- Only listens on `127.0.0.1`: the page shows private data, and there's no login.
+
+<S10 />
+
+<S11 />
+
+TK: screenshot.
+
+## Part 6: Check that it's private
+
+TK
+
+- Look up your account in a public data browser like [pdsls](https://pdsls.dev/): no calendar events in your public repo.
+- Log in with Spaces access to see the space and its records.
+
+## Conclusion
+
+TK
+
+- Next: share a calendar with friends in [Build a Shared Space App](/guides/shared-space-tutorial).
+- [Spaces data](/guides/spaces-data) for the full set of record operations.

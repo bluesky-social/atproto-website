@@ -2,6 +2,8 @@ import { SpacesNetworkDiagram } from './SpacesNetworkDiagram'
 import { SpacesOneRecordDiagram } from './SpacesOneRecordDiagram'
 import { SpacesAppsDiagram } from './SpacesAppsDiagram'
 import { SpacesAccessDiagram } from './SpacesAccessDiagram'
+import { SpacesLabelsDiagram } from './SpacesLabelsDiagram'
+import { SpacesNotifyDiagram } from './SpacesNotifyDiagram'
 import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
 
 export const header = {
@@ -35,8 +37,26 @@ TK: a space authority is just an account, and decides who's in; roles and finer-
 
 <SpacesAccessDiagram />
 
+## Moderation in spaces
+
+TK: labels are records written into the same space as what they label, and synced like any other record; the space authority is the default labeler. Apps apply the labels they accept. See [Moderating spaces](/guides/moderating-spaces).
+
+<SpacesLabelsDiagram />
+
 ## Syncing a space
 
-TK: sync without a relay, Jetstream semantics.
+TK: sync without a relay. A writer's PDS notifies the space host (the authority's PDS); the space host notifies sync services; they fetch the record from the writer's PDS with a space credential.
+
+<SpacesNotifyDiagram />
+
+TK: jetstream-spaces does this for every space your app follows, and gives your app one stream.
 
 <SpaceJoinDiagram />
+
+## Next steps
+
+- [Spaces data](/guides/spaces-data)
+- [Space sync](/guides/space-sync)
+- [Moderating spaces](/guides/moderating-spaces)
+- [Build a Private App](/guides/private-app-tutorial)
+- [Build a Shared Space App](/guides/shared-space-tutorial)

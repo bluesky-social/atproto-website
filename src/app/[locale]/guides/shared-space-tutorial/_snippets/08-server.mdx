@@ -1,0 +1,77 @@
+```ts
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
+import { HOST_DID, addMember, createCalendar, event, openCalendar, rsvp } from './calendar.js'
+import { events } from './indexer.js'
+import { calendarPage, loginPage, notMemberPage } from './pages.js'
+import { oauthClient, readers, scope } from './sync.js'
+
+createServer(async (req, res) => {
+  const url = new URL(req.url!, 'http://127.0.0.1:3000')
+
+  if (url.pathname === '/login') {
+    const handle = url.searchParams.get('handle')!
+    return redirect(res, (await oauthClient.authorize(handle, { scope })).toString())
+  }
+
+  if (url.pathname === '/callback') {
+    const { session } = await oauthClient.callback(url.searchParams)
+    readers.add(session.did)
+    if (session.did === HOST_DID) await createCalendar(session)
+    res.setHeader('Set-Cookie', `did=${session.did}; HttpOnly; SameSite=Lax; Path=/`)
+    return redirect(res, '/')
+  }
+
+  const did = /did=([^;]+)/.exec(req.headers.cookie ?? '')?.[1]
+  const session = did ? await oauthClient.restore(did).catch(() => undefined) : undefined
+  if (!session) return html(res, loginPage())
+
+  const calendar = openCalendar(session)
+
+  if (req.method === 'POST') {
+    const form = new URLSearchParams(await readBody(req))
+    if (url.pathname === '/event') {
+      await calendar.create(event, {
+        name: form.get('name')!,
+        startsAt: new Date(form.get('startsAt')!).toISOString(),
+        createdAt: new Date().toISOString(),
+      })
+    }
+    if (url.pathname === '/rsvp') {
+      const uri = form.get('uri')!
+      await calendar.create(rsvp, {
+        subject: { uri, cid: events.get(uri)!.cid },
+        status: 'community.lexicon.calendar.rsvp#going',
+      })
+    }
+    if (url.pathname === '/member' && session.did === HOST_DID) {
+      await addMember(session, form.get('did')!)
+    }
+    return redirect(res, '/')
+  }
+
+  // only members of the calendar can see it
+  try {
+    await calendar.authorize()
+  } catch {
+    return html(res, notMemberPage())
+  }
+  html(res, calendarPage(session.did === HOST_DID))
+}).listen(3000, '127.0.0.1')
+
+console.log('http://127.0.0.1:3000')
+
+function html(res: ServerResponse, body: string) {
+  res.setHeader('Content-Type', 'text/html')
+  res.end(`<!doctype html><title>Our calendar</title>${body}`)
+}
+
+function redirect(res: ServerResponse, location: string) {
+  res.writeHead(302, { Location: location }).end()
+}
+
+async function readBody(req: IncomingMessage) {
+  let body = ''
+  for await (const chunk of req) body += chunk
+  return body
+}
+```

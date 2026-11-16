@@ -1,0 +1,21 @@
+```ts
+export async function openCalendar(client: Client) {
+  const { spaces } = await client.call(listSpaces, {
+    spaceType: calendarType.nsid,
+    spaceDid: client.did,
+  })
+
+  if (!spaces.some((s) => s.space.endsWith('/personal'))) {
+    return SpaceClient.createSpace(client.agent, calendarType, {
+      skey: 'personal',
+      policy: personalspace.policy.$build({}),
+    })
+  }
+
+  return SpaceClient.openSpace(
+    calendarType,
+    { authority: client.did, skey: 'personal' },
+    { agent: client.agent },
+  )
+}
+```

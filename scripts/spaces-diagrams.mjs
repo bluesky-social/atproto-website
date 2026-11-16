@@ -365,3 +365,86 @@ export function ${name}() {
   })
   d.write()
 }
+
+// 5. Labels in a space are records, synced like any other record.
+{
+  const d = diagram('SpacesLabelsDiagram', {
+    w: 800,
+    h: 440,
+    vars: ['alice', 'bob', 'carol', 'muted', 'ink', 'bg'],
+    label:
+      "A space holds a post from Carol, a post from Bob, and a takedown label record from Alice, the space authority, on Bob's post. Your app syncs all three records, shows Carol's post, and hides Bob's.",
+  })
+  const { api } = d
+  api.rect(20, 20, 300, 400, 'ink', { dash: '7 7' })
+  api.text(38, 50, 'a space', 'ink', 22, 'start')
+  ;[
+    ['carol', 140],
+    ['bob', 236],
+  ].forEach(([c, y]) => {
+    api.person(70, y, c, c)
+    api.rect(120, y - 28, 180, 56, c)
+    api.text(210, y + 7, 'post', c, 20)
+  })
+  api.person(70, 340, 'alice', 'alice')
+  api.text(70, 386, 'authority', 'alice', 15)
+  api.rect(120, 307, 180, 66, 'alice')
+  api.text(210, 335, '!takedown', 'alice', 20)
+  api.text(210, 361, "on bob's post", 'alice', 15)
+
+  api.arrow(328, 220, 392, 220)
+  api.text(360, 206, 'sync', 'ink', 17)
+
+  api.rect(400, 80, 380, 280)
+  api.text(418, 110, 'your app', 'ink', 19, 'start')
+  api.rect(440, 140, 300, 56, 'carol')
+  api.text(590, 175, "carol's post", 'carol', 20)
+  api.rect(440, 220, 300, 56, 'muted', { dash: '5 6' })
+  api.text(590, 255, "bob's post: hidden", 'muted', 20)
+  api.text(590, 326, 'applies the label', 'ink', 16)
+  d.write()
+}
+
+// 6. What happens before the stream, as a sequence: write, notify, notify, fetch.
+{
+  const d = diagram('SpacesNotifyDiagram', {
+    w: 800,
+    h: 480,
+    vars: ['alice', 'bob', 'ink', 'bg'],
+    label:
+      "A sequence in time. Bob writes a post to his PDS, into a space whose authority is Alice. Bob's PDS notifies the space host, Alice's PDS. Alice's PDS notifies the sync service. The sync service fetches the post from Bob's PDS with a space credential, and Bob's PDS returns the post.",
+  })
+  const { api } = d
+  const bob = 80,
+    bobPds = 260,
+    host = 480,
+    sync = 690
+  api.text(bob, 34, 'bob', 'bob', 24)
+  api.person(bob, 66, '', 'bob')
+  api.rect(bobPds - 85, 36, 170, 56, 'bob')
+  api.text(bobPds, 71, "bob's PDS", 'bob', 19)
+  api.rect(host - 95, 30, 190, 68, 'alice')
+  api.text(host, 60, "alice's PDS", 'alice', 19)
+  api.text(host, 84, 'space host', 'alice', 15)
+  api.rect(sync - 95, 36, 190, 56)
+  api.text(sync, 71, 'sync service', 'ink', 19)
+
+  for (const [x, c] of [
+    [bob, 'bob'],
+    [bobPds, 'bob'],
+    [host, 'alice'],
+    [sync, 'ink'],
+  ])
+    api.line(x, 104, x, 460, c, { sw: 1.2, dash: '4 8' })
+
+  const step = (y, x1, x2, text, color = 'ink', { dash, at = (x1 + x2) / 2 } = {}) => {
+    api.arrow(x1 + Math.sign(x2 - x1) * 6, y, x2 - Math.sign(x2 - x1) * 6, y, color, { dash })
+    api.text(at, y - 12, text, color, 17)
+  }
+  step(150, bob, bobPds, 'write post', 'bob')
+  step(220, bobPds, host, 'notify')
+  step(290, host, sync, 'notify')
+  step(360, sync, bobPds, 'fetch, with a credential', 'ink', { at: 586 })
+  step(430, bobPds, sync, 'post', 'bob', { dash: '6 7', at: 370 })
+  d.write()
+}

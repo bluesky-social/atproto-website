@@ -1,0 +1,122 @@
+import Build from './_snippets/build.mdx'
+import Run from './_snippets/run.mdx'
+import Lexicons from './_snippets/lexicons.mdx'
+import Controller from './_snippets/controller.mdx'
+import Notify from './_snippets/notify.mdx'
+import Stream from './_snippets/stream.mdx'
+import Indexer from './_snippets/indexer.mdx'
+
+export const header = {
+  title: 'Space Sync',
+  description: 'Syncing non-public data from across the network',
+}
+
+## How sync works for spaces
+
+TK
+
+- Public data: each PDS emits commits, [relays](/guides/the-at-stack#relays) aggregate them into the firehose, [Jetstream](/guides/streaming-data) turns that into filterable JSON. Anyone can subscribe without permission.
+- Space data isn't broadcast and has no relay. Each space is its own sync boundary.
+- Records live in each member's per-space repo on their own PDS. To sync a space, fetch from every writer's PDS directly.
+- Reading takes a credential: a member delegates their access, and the space authority exchanges it for a short-lived space credential.
+- Notifications: a writer's PDS notifies the space host, which notifies every registered sync service. A notification only says a write happened; the service then fetches and verifies the records.
+- Account changes (deactivation, deletion) are public events, so a space sync service also follows public Jetstream.
+- Syncing a space doesn't mean every user of your app can see it. The app still checks who can view what.
+
+TK: diagram (notify → fetch → one stream). See the [Spaces](/guides/spaces#syncing-a-space) walkthrough.
+
+## Why run jetstream-spaces
+
+TK
+
+- Everything above, done for you: the catalogue of spaces, collecting delegations from signed-in users, exchanging and renewing credentials, registering for notifications, fetching and verifying repos, recovering from gaps, following account events.
+- A Go service that runs next to your app. Your app tells it which spaces to follow and answers its requests for authorization.
+- Archives what it syncs and serves it back as one Jetstream-shaped stream, with the same replay-then-live model as [Jetstream](/guides/streaming-data#jetstream).
+- No Go knowledge needed: most apps run the binary and talk to it from their own language.
+
+## Running jetstream-spaces
+
+TK: build and shared secret.
+
+<Build />
+
+<Run />
+
+TK
+
+- `--listen`: the private address your app connects to. Serves records from every synced space, so never expose it. Only binds to loopback or private addresses.
+- `--notification-listen`: receives notifications from space hosts. Route `GET /.well-known/did.json`, `POST /xrpc/com.atproto.space.notifyWrite`, and `POST /xrpc/com.atproto.space.notifySpaceDeleted` here from an HTTPS reverse proxy. TK: these route names differ from the reference PDS's `notifySpaceUpdate`; confirm.
+- `--public-origin`: the HTTPS origin space hosts reach it at. Its service DID (`did:web:sync.example.com#space-sync`) is derived from this. Keep it fixed.
+- `--public-jetstream-url`: public Jetstream, for account updates.
+- `--data-dir`: the archive. Keep it across restarts.
+- TK: Docker image and compose (the private listener can't be port-mapped; share a network namespace with the app).
+
+## Connecting your app
+
+TK
+
+- TypeScript SDK: `@bsky/space-sync`. TK: not published yet; confirm package name and install.
+- Go client: `appclient`, in the jetstream-spaces repo.
+- Both sides use the same Lexicon schemas. Example: a `com.example.board` space type holding `com.example.note` records.
+
+<Lexicons />
+
+### The controller
+
+TK
+
+- One control connection per app. Over it, jetstream-spaces asks for the **catalogue** (every space to sync) and for **authorization** (a fresh delegation from a user who can read a space).
+- The controller answers authorization requests with your app's OAuth client. Your app never handles tokens; jetstream-spaces never holds OAuth sessions.
+
+<Controller />
+
+TK: when the app learns about a new space, save it to the catalogue first, then hint.
+
+<Notify />
+
+TK
+
+- To stop syncing a space, leave it out of the catalogue.
+- Signing out: `controller.notifySignedOut(did)` from `onSessionDeleted`.
+
+### Reading the stream
+
+TK
+
+- Events have the usual Jetstream commit fields plus `space`, the URI of the record's space. `did` is still the author.
+- Records are always validated against your Lexicon schemas.
+- TK: `live()` vs `snapshot()` vs `replay()`.
+
+<Stream />
+
+### Indexing
+
+TK
+
+- An indexer writing into your database is the right shape for most apps.
+- Every handler is required, since records can leave a space in more ways than public records:
+  - `put` / `del` per record type
+  - `deleted`: the space was deleted
+  - `authorRemoved`: an author left the space
+  - `authorReset`: an author's records are being re-imported
+  - `account`: deactivated (hide) or deleted (purge), in every space
+- Key tables by space as well as author, collection, and rkey.
+- At-least-once delivery: make handlers idempotent.
+
+<Indexer />
+
+## What your app still handles
+
+TK
+
+- Viewer access: the stream holds every followed space. Backend only, never browsers.
+- Blobs: only blob refs are synced. Fetch blobs with the viewer's own authorization.
+
+## Further Reading and Resources
+
+- [Spaces](/guides/spaces)
+- [Spaces data](/guides/spaces-data)
+- [Streaming data](/guides/streaming-data)
+- [A Jetstream for Spaces](/blog/space-sync)
+- [jetstream-spaces on GitHub](https://github.com/bluesky-social/jetstream-spaces)
+- [Spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data)
