@@ -246,6 +246,14 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'incoming-migration',
+    tags: ['hosting', 'identity'],
+    title: 'Enabling Account Migration Back to Bluesky’s PDS',
+    description: 'Returning users can now migrate their accounts back to the Bluesky PDS.',
+    date: 'September 26, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'taking-at-to-the-ietf',
     tags: ['governance'],
     title: 'Taking AT to the IETF',
@@ -298,6 +306,14 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'api-v0-14-0-release-notes',
+    tags: ['sdks', 'lexicons'],
+    title: '@atproto/api v0.14.0 release notes',
+    description: 'Version 0.14 of the TypeScript SDK significantly improves the type safety of the @atproto/api package.',
+    date: 'February 13, 2025',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'looking-back-2024',
     tags: ['news'],
     title: 'Looking Back At 2024 AT Protocol Development',
@@ -342,6 +358,14 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'ts-api-refactor',
+    tags: ['sdks'],
+    title: 'Typescript API Package Auth Refactor',
+    description: 'Changes to how the TypeScript @atproto/api package works with authentication sessions, in preparation for OAuth.',
+    date: 'August 12, 2024',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'label-grants',
     tags: ['moderation'],
     title: 'Labeling Services Microgrants',
@@ -369,6 +393,14 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'blueskys-moderation-architecture',
+    tags: ['moderation'],
+    title: 'Atproto Moderation Architecture',
+    description: 'A deep dive into how labeling and moderation work in the AT Protocol.',
+    date: 'March 15, 2024',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'atproto-grants',
     tags: ['news'],
     title: 'Announcing AT Protocol Grants',
@@ -378,12 +410,28 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'skygaze-hackathon',
+    tags: ['news', 'feeds'],
+    title: 'Skygaze Hackathon',
+    description: 'A recap of the first Bluesky AI Hackathon, hosted by Skygaze, creators of the For You feed.',
+    date: 'February 27, 2024',
+    author: 'Cooper Edmunds',
+  },
+  {
     slug: 'self-host-federation',
     tags: ['hosting', 'identity'],
     title: 'Early Access Federation for Self-Hosters',
     description:
       'Releasing an early-access version of federation intended for self-hosters and developers.',
     date: 'February 22, 2024',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'feature-bridgyfed',
+    tags: ['news'],
+    title: 'Featured Community Project: Bridgy Fed',
+    description: 'An interview with Ryan Barrett, the developer of Bridgy Fed, a bridge between decentralized social networks.',
+    date: 'December 4, 2023',
     author: 'AT Protocol Team',
   },
   {
@@ -423,6 +471,14 @@ export const posts: BlogPost[] = [
     author: 'AT Protocol Team',
   },
   {
+    slug: 'rate-limits-pds-v3',
+    tags: ['hosting'],
+    title: 'Rate Limits, PDS Distribution v3, and More',
+    description: 'New application rate limits, the v3 PDS distribution, and other updates for developers.',
+    date: 'September 15, 2023',
+    author: 'AT Protocol Team',
+  },
+  {
     slug: 'repo-sync-update',
     tags: ['sync'],
     title: 'Updates to Repository Sync Semantics',
@@ -438,6 +494,14 @@ export const posts: BlogPost[] = [
     description:
       'A guide to creating posts via the Bluesky API, including mentions, links, replies, quote posts, and image embeds.',
     date: 'August 11, 2023',
+    author: 'AT Protocol Team',
+  },
+  {
+    slug: 'feature-skyfeed',
+    tags: ['feeds'],
+    title: 'Featured Community Project: Skyfeed',
+    description: 'An interview with redsolver, the developer of SkyFeed, a third-party client and custom feed builder.',
+    date: 'August 8, 2023',
     author: 'AT Protocol Team',
   },
   {
