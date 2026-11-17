@@ -2,7 +2,7 @@
 import { SpaceClient, personalspace } from '@atproto/lex-space'
 import { com } from './lexicons/index.js'
 
-const space = await SpaceClient.createSpace(client.agent, com.example.bookmarks, {
+const space = await SpaceClient.createSpace(client.agent, com.example.bookmarks.main, {
   policy: personalspace.policy.$build({}),
 })
 ```
