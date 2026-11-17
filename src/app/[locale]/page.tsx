@@ -34,9 +34,9 @@ export default async function HomePage({ params }: any) {
             </Button>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 sm:text-center xl:text-left">
-            <Stat value="40M+" desc={t('Users')} first />
-            <Stat value="2.4B+" desc={t('Totally normal posts')} />
-            <Stat value="100%" desc={t('Open data')} />
+            <Stat value="47M+" desc={t('Users')} first />
+            <Stat value="3.4B+" desc={t('Totally normal posts')} />
+            <Stat value="8K+" desc={t('Open data types')} />
           </div>
         </div>
         <div className="pb-12 pt-4 sm:py-8 xl:flex-1 xl:py-0">
