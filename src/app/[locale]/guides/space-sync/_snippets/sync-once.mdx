@@ -1,0 +1,13 @@
+```ts
+// list the repos in the Space, then pull each one from its writer's PDS
+for await (const writer of reader.writers()) {
+  if (writer.$type === 'com.atproto.space.defs#repoRemoved') continue
+
+  const pulled = await reader.pullRepo({ repo: writer.repo })
+  if (pulled.type === 'snapshot') {
+    for (const { collection, rkey, record } of pulled.records) {
+      console.log(writer.repo, collection, rkey, record)
+    }
+  }
+}
+```

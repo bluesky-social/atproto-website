@@ -1,0 +1,11 @@
+```ts
+import { getBlobCid } from '@atproto/lex'
+
+const post = await forum.get(com.example.forum.post, { repo: 'did:plc:xyz', rkey })
+
+const { body } = await forum.getBlob({
+  repo: 'did:plc:xyz',
+  cid: getBlobCid(post.value.image),
+})
+// body: Uint8Array
+```

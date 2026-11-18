@@ -6,6 +6,7 @@ import granular from "./skyblur-granular.png"
 import lexicon from "./skyblur-lexicon.png"
 import OauthScopeMetadata from './_snippets/oauth-scope-metadata.mdx'
 import OauthAuthUrl from './_snippets/oauth-auth-url.mdx'
+import SpacePermissionSet from './_snippets/space-permission-set.mdx'
 import oauthdomain from "./oauth-domain.jpg"
 
 export const header = {
@@ -42,7 +43,7 @@ From a user experience perspective, it's best to keep the number of requested pe
 
 ## Permission types
 
-Permissions relate to user-owned resources on PDS instances and are represented by five types:
+Permissions relate to user-owned resources on PDS instances and are represented by six types:
 
 <ResponsiveTable
   columns={[{label: 'Type'}, {label: 'Description'}, {label: 'Examples'}]}
@@ -52,6 +53,7 @@ Permissions relate to user-owned resources on PDS instances and are represented 
     [{label: 'blob'}, {label: 'Media file uploads to the PDS. Cannot be included in permission sets.'}, {label: 'blob:*/* (any type), blob:image/* (images only)'}],
     [{label: 'identity'}, {label: 'DID document and handle'}, {label: 'identity:handle, identity:*'}],
     [{label: 'account'}, {label: 'Account hosting details. Cannot be included in permission sets.'}, {label: 'account:email, account:email?action=manage'}],
+    [{label: 'space'}, {label: 'Reading, writing, and managing records in Spaces'}, {label: 'space:com.example.forum?authority=*, space:com.example.notes?manage=create'}],
   ]}
 />
 
@@ -80,6 +82,39 @@ When requesting OAuth permissions, keep these rules of thumb in mind:
 These approaches compose: apps often request one or more permission sets plus a handful of individual scopes in the same OAuth flow.
 
 And if you need help building your own permission sets, or requesting Bluesky permissions, we've built a [scope builder](/guides/scope-builder) page to help.
+
+## Space permissions
+
+`space` permissions grant access to [Spaces](/guides/spaces) of a given space type, like `space:com.example.forum`:
+
+<ResponsiveTable
+  columns={[{label: 'Parameter'}, {label: 'Values'}, {label: 'Default'}]}
+  rows={[
+    [{label: 'authority'}, {label: 'self (spaces the user is the authority of), * (any space the user is a member of), or a specific DID'}, {label: 'self'}],
+    [{label: 'skey'}, {label: 'A space key, or * for any'}, {label: '*'}],
+    [{label: 'action'}, {label: 'read, read_self, create, update, delete'}, {label: 'read, create, update, delete'}],
+    [{label: 'collection'}, {label: 'Record types the app can create, update, and delete'}, {label: 'The collections the space type declares'}],
+    [{label: 'manage'}, {label: 'create, update, delete (creating spaces, changing their policy and members, and deleting them)'}, {label: 'None'}],
+  ]}
+/>
+
+`read` lets an app read every member's repo in a space, while `read_self` only covers the user's own repo, and isn't enough to sync the space. The default collections come from the published space type Lexicon, so the space type needs to be published, or the app needs to list `collection` explicitly. Creating a space always needs `manage=create`.
+
+Some examples:
+
+<ResponsiveTable
+  columns={[{label: 'Scope'}, {label: 'Grants'}]}
+  rows={[
+    [{label: 'space:com.example.notes?manage=create'}, {label: "The user's own notes spaces: create them, read them, and write the collections the type declares"}],
+    [{label: 'space:com.example.forum?authority=*'}, {label: 'Every forum the user is a member of: read, and write the collections the type declares'}],
+    [{label: 'space:com.example.forum?authority=*&action=read'}, {label: 'The same forums, read-only'}],
+    [{label: 'space:*?authority=*&action=read_self'}, {label: "List all of the user's spaces, and read the user's own repo in each"}],
+  ]}
+/>
+
+Unlike `blob`, `account`, and `identity` scopes, `space` permissions can be included in [permission sets](/guides/permission-sets), with `resource: "space"` and the same parameters:
+
+<SpacePermissionSet />
 
 ## Clients
 

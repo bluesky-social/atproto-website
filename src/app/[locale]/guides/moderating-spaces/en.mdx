@@ -7,7 +7,7 @@ export const header = {
 
 Moderation in Spaces is conceptually very similar but technically different from moderation in the public atproto network. 
 
-Spaces use the same two layers as public atproto: infrastructure takedowns, and [labels](/guides/labels) as an annotation layer on top. Every Space still has to moderate what it hosts and serves, but Spaces don't have the option of bootstrapping on top of public labelers used elsewhere on the network, because they are not public. PDS hosts may still perform some automated scanning of illegal materials as a baseline compliance step, but content moderation beyond that is up to the Space maintainers.
+Spaces use the same two layers as public atproto: infrastructure takedowns, and [labels](/guides/labels) as an annotation layer on top. Every service still has to moderate what it hosts and serves, but Spaces can't rely on the public labelers used elsewhere on the network by default, because those labelers can't see into a Space unless they're admitted to it. PDS hosts may still perform some automated scanning of illegal materials as a baseline compliance step, but content moderation beyond that is up to the Space maintainers.
 
 What also changes in Space moderation is how labels are distributed, plus the ability for space authorities to remove accounts from a Space.
 
@@ -41,4 +41,3 @@ Space authorities can also remove **accounts**, using `com.atproto.memberspace.r
 - [Labels](/guides/labels)
 - [Label spec](/specs/label)
 - [Spaces](/guides/spaces)
-- [Spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data)

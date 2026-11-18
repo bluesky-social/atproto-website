@@ -1,0 +1,11 @@
+```ts
+import { SpaceReader, delegationTokenProviderFor } from '@atproto/lex-space'
+import * as community from './lexicons/community.js'
+
+const reader = SpaceReader.openSpace(
+  community.lexicon.calendar.collection.main,
+  { authority: hostDid, skey: 'friends' },
+  // a member of the space lends their access with a delegation token
+  { delegationTokenProvider: delegationTokenProviderFor(client.agent) },
+)
+```
