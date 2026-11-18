@@ -94,7 +94,7 @@ After a DID document has been resolved, atproto-specific information needs to be
 
 The DID declared in the document (in the `id` field) should always be verified against what was expected (eg, used for resolution).
 
-The [handle](/specs/handle) claimed by the DID is found in the `alsoKnownAs` array. Each element of this array is a URI string. Handles will have the URI prefix `at://`, followed by the handle hostname, with no other URI parts or trailing characters. The first syntaxtually valid handle found in the ordered list is treated as the claimed handle, even if it fails to resolve bi-directionally. Any other handle URIs should be ignored.
+The [handle](/specs/handle) claimed by the DID is found in the `alsoKnownAs` array. Each element of this array is a URI string. Handles will have the URI prefix `at://`, followed by the handle hostname, with no other URI parts or trailing characters. The first syntactically valid handle found in the ordered list is treated as the claimed handle, even if it fails to resolve bi-directionally. Any other handle URIs should be ignored.
 
 It is crucial to validate the handle bidirectionally, by resolving the handle to a DID and checking that it matches the current DID document. See the [handle specification](/specs/handle) for details.
 
