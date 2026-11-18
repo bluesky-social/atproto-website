@@ -54,6 +54,17 @@ const indexer = new SpaceSyncIndexer(calendarType)
     else inactive.add(evt.did)
   })
 
-const stream = new SpaceSyncStream('http://127.0.0.1:3002')
-stream.runner(indexer).replay({ cursor: new MemoryCursorStore() })
+export async function startIndexer() {
+  const stream = new SpaceSyncStream('http://127.0.0.1:3002')
+  const cursor = new MemoryCursorStore()
+  // jetstream-spaces may still be starting up: retry until it's ready
+  for (;;) {
+    try {
+      return await stream.runner(indexer).replay({ cursor })
+    } catch (err) {
+      console.error('waiting for jetstream-spaces:', (err as Error).message)
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+    }
+  }
+}
 ```

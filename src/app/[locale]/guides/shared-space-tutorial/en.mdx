@@ -1,3 +1,5 @@
+import calendar from './calendar.png'
+import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
 import S01 from './_snippets/01-init-project.mdx'
 import S02 from './_snippets/02-lex-install.mdx'
 import S03 from './_snippets/03-env-file.mdx'
@@ -6,115 +8,130 @@ import S05 from './_snippets/05-sync.mdx'
 import S06 from './_snippets/06-indexer.mdx'
 import S07 from './_snippets/07-pages.mdx'
 import S08 from './_snippets/08-server.mdx'
-import S09 from './_snippets/09-run-jetstream-spaces.mdx'
-import S10 from './_snippets/10-run-app.mdx'
+import S09 from './_snippets/09-build-jetstream-spaces.mdx'
+import S10 from './_snippets/10-run-jetstream-spaces.mdx'
+import S11 from './_snippets/11-run-app.mdx'
 
 export const header = {
   title: 'Build a Shared Space App',
   description: 'Share records with friends in a space, and sync them into your app',
 }
 
-TK intro.
+In this tutorial, you'll build a shared calendar on atproto. One account hosts the calendar as a Space, adds friends as members, and everyone can post events and RSVP to them. Each person's events and RSVPs are stored in their own repo on their own PDS, and your app syncs all of them into one view with [jetstream-spaces](/guides/space-sync). You'll use the same [Lexicon Community](https://lexicon.community/) calendar [Lexicons](/guides/lexicon) as in [Build a Private App](/guides/private-app-tutorial), along with the Spaces TypeScript SDK and [OAuth](/guides/auth).
 
-- A shared calendar web app: a host's calendar space, friends added as members, everyone posts events and RSVPs.
-- Each member's events and RSVPs live in their own repo, on their own PDS. The app syncs them all with [jetstream-spaces](/guides/space-sync) and renders the calendar.
-- Written in TypeScript with no web framework. jetstream-spaces is a Go program, but you only run it as a binary.
-- Users log in with OAuth, as in [OAuth with Node.js](/guides/oauth-cli-tutorial). jetstream-spaces borrows their access through your app's OAuth client.
-- Uses the same published [Lexicon Community](https://lexicon.community/) calendar Lexicons as [Build a Private App](/guides/private-app-tutorial), plus RSVPs. Any other app that speaks these Lexicons can read and write the same calendar.
+It works the same way as the sync diagram in the [Spaces walkthrough](/guides/spaces#jetstream-for-spaces), with an event and an RSVP in place of a ride and a cheer:
 
-TK: diagram (adapt the space sync diagram from the [Spaces](/guides/spaces) walkthrough).
+<SpaceJoinDiagram />
 
 ## Prerequisites
 
-TK
+You should have installed:
 
-- Node.js 22.19+ (required by `@bsky/space-sync`). TK: package not published yet.
-- Go, to build jetstream-spaces.
-- Two accounts on a Spaces-enabled PDS: a host and a friend.
-- A public HTTPS origin that space hosts can reach jetstream-spaces at. TK: Cloudflare Tunnel or similar for local development.
+- Node.js 22+
+- Go
+
+On platforms supported by [homebrew](https://brew.sh), you can install them with:
+
+```bash
+brew install node go
+```
+
+You'll also need two accounts on a *PDS that supports Spaces*: one to host the calendar, and one for a friend. As of December 1, 2026, the [reference PDS](https://github.com/bluesky-social/pds) includes support for Spaces.
+
+Lastly, you'll need a public HTTPS address, so that the PDS hosting your calendar can notify it when anyone writes to the calendar. For local development, you can use a tunneling service like [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/), [ngrok](https://ngrok.com/docs/), or [Tailscale Funnel](https://tailscale.com/kb/1223/funnel).
+
+## Part 1: Project Setup
+
+Create a new project directory and install the [SDK](https://npmx.dev/package/@atproto/lex), the OAuth client, the `jetstream-spaces` client, and other project dependencies:
 
 <S01 />
 
-## Part 1: Lexicons
-
-TK
-
-- `community.lexicon.calendar.collection` (space type), `event`, and `rsvp`.
-- They're published, which OAuth `space:` scopes need: the PDS looks up the space type to see which collections it holds.
-- An RSVP points at an event with a strong reference (URI and CID), like a like points at a post.
+You'll also need the `lex` CLI tool installed globally, and the [`community.lexicon.calendar`](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexicons installed in this project:
 
 <S02 />
 
 ## Part 2: The calendar
 
-TK
-
-- `src/calendar.ts`. One calendar per app, hosted by `HOST_DID`, with space key `friends`.
-- `memberspace` policy: access by member list. The host is the space authority.
-- `createCalendar` runs when the host first logs in; `addMember` gives a friend read and write access. TK: handle → DID lookup.
-- Every function takes an OAuth session: all reads and writes happen as the logged-in user.
-
-<S03 />
+Create a new file at `src/calendar.ts`. This file will contain some shared methods for your app:
 
 <S04 />
 
+- The calendar is hosted by one account, set as `HOST_DID`, and keyed as `friends`.
+- `createCalendar()` creates the Space with a `memberspace` policy, so only the host and the members they add have access. It runs when the host first logs in.
+- `addMember()` gives a friend permission to read and write in the calendar.
+- Every function takes an OAuth session, so all reads and writes happen as the logged-in user.
+
+Set the host's DID in a `.env` file:
+
+<S03 />
+
 ## Part 3: Run jetstream-spaces
 
-TK: condensed from [Space sync](/guides/space-sync#running-jetstream-spaces). Build steps, shared secret (`./broker-secret`, in your app's directory too), reverse proxy routes.
+`jetstream-spaces` does the work of syncing your calendar: it gets notified when anyone writes to it, fetches the new records from each member's PDS, and serves them to your app as one stream. It's written in Go, but you'll just build and run it here.
+
+Clone and build it next to your project, and create a secret that your app and jetstream-spaces will share:
 
 <S09 />
 
-## Part 4: OAuth and the controller
-
-TK
-
-- `src/sync.ts`.
-- A loopback OAuth client, as in [OAuth with Node.js](/guides/oauth-cli-tutorial), plus a `space:` scope:
-  - `authority=*`: any calendar the user is a member of
-  - `manage=create` to create the calendar, `manage=update` to add members
-- Sessions in memory: restarting the app signs everyone out. TK: a real app stores them durably, since jetstream-spaces keeps asking for authorization.
-- The controller: the catalogue is one space; readers are the host, then anyone who's signed in. The controller asks their PDS for a delegation token when jetstream-spaces needs one.
-- `onSessionDeleted` tells the controller when a user signs out.
-
-<S05 />
-
-## Part 5: Index events and RSVPs
-
-TK
-
-- `src/indexer.ts`. In-memory maps instead of a database, and an in-memory cursor, so it replays everything on every start.
-- All lifecycle handlers are required: space deleted, author removed or reset, account deactivated or deleted.
-- Keyed by record URI, which includes the space. Keeps each event's CID for RSVPs.
-
-<S06 />
-
-## Part 6: The web app
-
-TK
-
-- `src/pages.ts`: HTML for the login form, the calendar (with RSVP counts and buttons), and the host's add-member form.
-- `src/server.ts`: OAuth login and callback, form posts, and the calendar page.
-- The synced data contains the whole calendar, so check access before showing it: `calendar.authorize()` fails for anyone who isn't a member.
-- New events and RSVPs show up once jetstream-spaces syncs them. TK: refresh to see them.
-
-<S07 />
-
-<S08 />
-
-## Part 7: Try it
-
-TK
-
-- Start jetstream-spaces, then the app.
-- Log in as the host at `http://127.0.0.1:3000`. Add your friend's DID.
-- In a private window, log in as the friend. Add an event; RSVP to the host's.
-- TK: screenshot.
+Now you can run `./jetstream-spaces`:
 
 <S10 />
 
+Make sure to **replace** `https://sync.example.com` with your public HTTPS address (from Cloudflare, Ngrok, Tailscale, or elsewhere).
+
+Leave it running in a terminal. Port `3002` is private to localhost; that's where your app will read from. 
+
+## Part 4: OAuth and the controller
+
+Now you'll need to create some OAuth boilerplate. Create a new file at `src/sync.ts` with these contents:
+
+<S05 />
+
+There are two things going on here. One is an OAuth client, as in [OAuth with Node.js](/guides/oauth-cli-tutorial). It requests two [permission scopes](/guides/permission-requests): base `atproto`, and a `space:` scope for calendars: `authority=*` to read and write in any calendar the user is a member of, `manage=create` to create one, and `manage=update` to add members.
+
+The other is a `SpaceSyncController` that connects your app to `jetstream-spaces`. It tells `jetstream-spaces` which space to sync, and when `jetstream-spaces` needs access, it uses a signed-in user's OAuth session to get it, starting with the host.
+
+This app stores sessions in memory, so restarting it signs everyone out. A production app should store them durably, since `jetstream-spaces` will keep asking for access.
+
+## Part 5: Index events and RSVPs
+
+Next, create another file at `src/indexer.ts` to handle the notifications being broadcast:
+
+<S06 />
+
+This reads from `jetstream-spaces` and keeps the calendar in memory:
+- `.commit()` handles events and RSVPs being written or deleted.
+- `.space()` and `.account()` handle the other ways records can leave a space: the space being deleted, an author being removed, or an account being deactivated or deleted. All of these are required.
+- `startIndexer()` replays everything from the beginning, then follows new events as they arrive.
+
+## Part 6: View it in your browser
+
+Finally, you'll turn it into a web app.
+
+<Image src={calendar} alt="A plain web page titled Our calendar, listing two events with one RSVP each, and forms to add an event and a member" />
+
+Create `src/pages.ts` to render the login form and the calendar as HTML:
+
+<S07 />
+
+And lastly, create `src/server.ts`, which uses a `node:http` server to handle logging in, adding events, RSVPs, and members, and showing the calendar.
+
+<S08 />
+
+After each login, it calls `controller.notifySpaceAvailable()`, so `jetstream-spaces` tries again right away with the new session. Before showing the calendar, it checks with `calendar.authorize()` that the logged-in user is a member.
+
+Run it with `npx tsx`:
+
+<S11 />
+
+You should be able to open the app at `http://127.0.0.1:3000` in your browser and log in as the host. This also creates the calendar.
+
+To demonstrate the full flow from here, add another user's DID as a member, then log in as that DID in another browser or a private window. Add an event as one account, and RSVP to it as the other. New events and RSVPs appear once `jetstream-spaces` syncs them, so refresh to see them.
+
+You've now built an app that syncs a shared Space across multiple accounts and PDSes!
+
 ## Conclusion
 
-TK
+Congratulations on building a full-fledged multi-user Spaces app! This tutorial demonstrated the full Spaces flow, including OAuth scopes, Jetstream sync, and handling write notifications from multiple user repositories.
 
-- Recap: one space, many repos on many PDSes, one stream into your app, OAuth sessions authorizing the sync.
-- [Space sync](/guides/space-sync), [Moderating spaces](/guides/moderating-spaces), [Spaces](/guides/spaces).
+From here, you can refer to [Space sync](/guides/space-sync) for more on using Spaces with Jetstream, and start developing your own atproto Spaces apps!

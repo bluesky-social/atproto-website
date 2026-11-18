@@ -45,8 +45,8 @@ TK: build and shared secret.
 TK
 
 - `--listen`: the private address your app connects to. Serves records from every synced space, so never expose it. Only binds to loopback or private addresses.
-- `--notification-listen`: receives notifications from space hosts. Route `GET /.well-known/did.json`, `POST /xrpc/com.atproto.space.notifyWrite`, and `POST /xrpc/com.atproto.space.notifySpaceDeleted` here from an HTTPS reverse proxy. TK: these route names differ from the reference PDS's `notifySpaceUpdate`; confirm.
-- `--public-origin`: the HTTPS origin space hosts reach it at. Its service DID (`did:web:sync.example.com#space-sync`) is derived from this. Keep it fixed.
+- `--notification-listen`: receives callbacks from space hosts. Route `POST /xrpc/com.atproto.space.confirmRegistration` and `POST /xrpc/com.atproto.space.notifySpaceUpdate` here from an HTTPS reverse proxy. Each callback carries a secret token for its space.
+- `--public-origin`: the HTTPS origin space hosts reach it at. Passed to each space host when jetstream-spaces registers for notifications. Keep it fixed.
 - `--public-jetstream-url`: public Jetstream, for account updates.
 - `--data-dir`: the archive. Keep it across restarts.
 - TK: Docker image and compose (the private listener can't be port-mapped; share a network namespace with the app).

@@ -52,7 +52,7 @@ You'll also need the `lex` CLI tool and `tsx` installed globally, and the [`comm
 
 Create a new file at `src/calendar.ts`. This file will contain some shared methods for your app.
 
-Start by importing the packages you'll need, and setting up the OAuth client:
+Start by importing the packages you'll need, and setting up the authenticated client:
 
 <S04 />
 
@@ -91,7 +91,7 @@ The last command, run on its own without `add`, should read the events you've wr
 
 Finally, you can make a minimal interface to display this data in a browser.
 
-Create `src/server.ts`, which will use as `node:http` server to read your calendar and render it as HTML on `localhost`.
+Create `src/server.ts`, which will use a `node:http` server to read your calendar and render it as HTML on `localhost`.
 
 <S10 />
 
@@ -105,7 +105,7 @@ Then open `http://127.0.0.1:3000` in your browser:
 
 You've now written and read Spaces data, and viewed it in a browser! 
 
-If you want to verify that this data is a) private, and b) can be ready by other apps supporting Spaces, you can use an atproto browser like [pdsls](https://pdsls.dev), following the walkthrough on our blog under [Using Spaces across Apps](/blog/atmospheric-groups-intro#using-spaces-across-apps). Log in with Spaces access to see the space and its records.
+If you want to verify that this data is a) private, and b) can be read by other apps supporting Spaces, you can use an atproto browser like [pdsls](https://pdsls.dev), following the walkthrough on our blog under [Using Spaces across Apps](/blog/atmospheric-groups-intro#using-spaces-across-apps). Log in with Spaces access to see the space and its records.
 
 ## Conclusion
 

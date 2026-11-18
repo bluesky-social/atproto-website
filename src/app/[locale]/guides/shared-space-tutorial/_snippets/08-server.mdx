@@ -1,11 +1,24 @@
 ```ts
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
-import { HOST_DID, addMember, createCalendar, event, openCalendar, rsvp } from './calendar.js'
-import { events } from './indexer.js'
+import { HOST_DID, addMember, calendarUri, createCalendar, event, openCalendar, rsvp } from './calendar.js'
+import { events, startIndexer } from './indexer.js'
 import { calendarPage, loginPage, notMemberPage } from './pages.js'
-import { oauthClient, readers, scope } from './sync.js'
+import { controller, oauthClient, readers, scope } from './sync.js'
+
+startIndexer()
 
 createServer(async (req, res) => {
+  try {
+    await route(req, res)
+  } catch (err) {
+    res.statusCode = 500
+    html(res, `<p>Something went wrong: ${(err as Error).message}</p>`)
+  }
+}).listen(3000, '127.0.0.1')
+
+console.log('http://127.0.0.1:3000')
+
+async function route(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url!, 'http://127.0.0.1:3000')
 
   if (url.pathname === '/login') {
@@ -17,6 +30,8 @@ createServer(async (req, res) => {
     const { session } = await oauthClient.callback(url.searchParams)
     readers.add(session.did)
     if (session.did === HOST_DID) await createCalendar(session)
+    // a new session can read the calendar: tell jetstream-spaces to try now
+    await controller.notifySpaceAvailable(calendarUri)
     res.setHeader('Set-Cookie', `did=${session.did}; HttpOnly; SameSite=Lax; Path=/`)
     return redirect(res, '/')
   }
@@ -56,9 +71,7 @@ createServer(async (req, res) => {
     return html(res, notMemberPage())
   }
   html(res, calendarPage(session.did === HOST_DID))
-}).listen(3000, '127.0.0.1')
-
-console.log('http://127.0.0.1:3000')
+}
 
 function html(res: ServerResponse, body: string) {
   res.setHeader('Content-Type', 'text/html')
