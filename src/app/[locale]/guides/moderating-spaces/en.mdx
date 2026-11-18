@@ -5,54 +5,35 @@ export const header = {
   description: 'Labels and takedowns for non-public data',
 }
 
-TK intro.
+Moderation in Spaces is conceptually very similar but technically different from moderation in the public atproto network. 
 
-- Spaces use the same two layers as public atproto: infrastructure takedowns, and [labels](/guides/labels) as an annotation layer on top.
-- Every service still has to moderate what it hosts and serves.
-- What changes is how labels are distributed, plus one more tool: space authorities can remove accounts from a space.
+Spaces use the same two layers as public atproto: infrastructure takedowns, and [labels](/guides/labels) as an annotation layer on top. Every Space still has to moderate what it hosts and serves, but Spaces don't have the option of bootstrapping on top of public labelers used elsewhere on the network, because they are not public. PDS hosts may still perform some automated scanning of illegal materials as a baseline compliance step, but content moderation beyond that is up to the Space maintainers.
+
+What also changes in Space moderation is how labels are distributed, plus the ability for space authorities to remove accounts from a Space.
 
 ## Labels are records
 
-TK
+Labels on space data are `com.atproto.label.record` records, written into the **same space** as the content they label. In other words, they are not a different, non-record form of metadata the way that public labels are. Labels that point across space boundaries are ignored.
 
-- Labels on space data are `com.atproto.label.record` records, written into the **same space** as the content they label. Labels that point across space boundaries are ignored.
-- They aren't individually signed like public labels. The space repo they're written into authenticates them.
-- No `src`, `sig`, `ver`, or `neg` fields; compare with the [public label object](/guides/labels).
-- Indexers sync label records like any other space data, then use the usual `atproto-accept-labelers` header to decide which labels to show. The header doesn't go away.
-- Label records are for space data only, for now. Public data keeps using signed labels.
+Space labels aren't individually signed like public labels. The space repo they're written into authenticates them. Unlike [public labels](/guides/labels), they do not have `src`, `sig`, `ver`, or `neg` fields.
 
 <LabelRecord />
 
-TK (open questions, maybe as a Note):
+[Indexers sync](/guides/space-sync) label records like any other space data, then use the usual `atproto-accept-labelers` header to decide which labels to show. Label records are for space data only. Public data keeps using signed labels.
 
-- Labels on whole accounts within a space: not yet specified; space types can define their own behavior for now.
-- Labeler declarations: no universal declaration type; apps may define their own.
-- Negation by deleting a label record: implied, not stated in the core proposal.
+There is not currently a standard for space label negations, or space labels on accounts.
 
 ## Who labels a space
 
-TK
+The [space authority](/guides/spaces#spaces-control-access-apps-control-permissions) is always in the space's writer set, so it can always publish labels. It's the default labeler for its space. Any other labeler has to be admitted like any other reader (it needs a space credential) and be in the writer set for its labels to sync.
 
-- The space authority is always in the space's writer set, so it can always publish labels. It's the default labeler for its space.
-- Any other labeler has to be admitted like any other reader (it needs a space credential) and be in the writer set for its labels to sync.
-- So a moderation service can't see or label a space it hasn't been admitted to. In practice, the community running a space, or a labeler it chooses, does the labeling.
-- Labelers should not publish regular public labels (via `subscribeLabels`) about records in non-public spaces, since that leaks metadata.
+A moderation service can't see or label a space it hasn't been admitted to. In practice, the community running a space, or a labeler it chooses, does the labeling. Labelers should not publish regular public labels (via `subscribeLabels`) about records in non-public spaces, as that would leak metadata.
 
 ## Takedowns and removing members
 
-TK
+By convention, a space authority's `!takedown` label removes content from its space, and syncing services and apps should respect it.
 
-- By convention, a space authority's `!takedown` label removes content from its space, and syncing services and apps should respect it.
-- Space authorities can also remove accounts: `com.atproto.memberspace.removeMembers` and `com.atproto.space.removeWriter`. For restricted spaces this removes read and write access.
-- PDS: an account takedown applies to all of that account's space repos; blob takedowns work the same for space blobs.
-- AppView: account, space, and individual record takedowns.
-- Deactivation and deletion work the same as for public data. If a space authority is taken down or deactivated, its spaces are suspended, not deleted.
-
-## Reporting
-
-TK
-
-- No universal reporting interface for spaces in the protocol. Apps and group specs define their own.
+Space authorities can also remove **accounts**, using `com.atproto.memberspace.removeMembers` and `com.atproto.space.removeWriter`. For restricted spaces this removes read and write access. Deactivation and deletion work the same as for public data. If a space authority is taken down or deactivated, its spaces are suspended, not deleted.
 
 ## Further Reading and Resources
 
