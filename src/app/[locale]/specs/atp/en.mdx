@@ -17,7 +17,7 @@ Some of the main protocol features and design themes include: {{ className: 'lea
 
 ## Protocol Structure
 
-**Identity:** account control is rooted in persistent [DID](/specs/did) identifiers (like `did:plc:ewvi7nxzyoun6zhxrhs64oiz`). These can be universally resolved to determine the current service provider location and [cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) complement DIDs and provide mutable and human-meaninful usernames in the form of DNS hostnames (eg, `user.example.com`).
+**Identity:** account control is rooted in persistent [DID](/specs/did) identifiers (like `did:plc:ewvi7nxzyoun6zhxrhs64oiz`). These can be universally resolved to determine the current service provider location and [cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) complement DIDs and provide mutable and human-meaningful usernames in the form of DNS hostnames (eg, `user.example.com`).
 
 **Data:** public content is stored in content-addressed and cryptographically verifiable [repositories](/specs/repository). Data records and network messages all conform to a unified [data model](/specs/data-model) with both [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations. [Labels](/specs/label) are a separate form of lightweight metadata, individually signed and distributed outside repositories, which can be used for moderation and badging.
 
