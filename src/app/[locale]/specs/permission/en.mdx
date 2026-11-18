@@ -290,7 +290,7 @@ Permission sets are Lexicon schemas and are published and fetched using the Lexi
 
 This adds an intentional degree of temporal dynamism to OAuth sessions involving permission sets. Lexicon designers can define new resources (eg, record types) and update published sets to include permissions to those resources. Client software can then be updated to take advantage of those new lexicons, without requiring users to re-authenticate their sessions. OAuth session are strictly limited to the auth scopes in the initial grant; it is the indirection of permission sets which enables this flexibility.
 
-Authorization Servers and Resource Servers must ignore any individual permission declarations within a permission set that describe an unknown resource, or include unexpected parameter names or values. The reason for this behavior is that the permission system is expected to evolve over time, and new client permission requests should not be rejected in whole. At the same time, new parameters (fields) might attentuate permissions further, and it would be unsafe to grant partially-understood permissions.
+Authorization Servers and Resource Servers must ignore any individual permission declarations within a permission set that describe an unknown resource, or include unexpected parameter names or values. The reason for this behavior is that the permission system is expected to evolve over time, and new client permission requests should not be rejected in whole. At the same time, new parameters (fields) might attenuate permissions further, and it would be unsafe to grant partially-understood permissions.
 
 
 ### Namespace Authority

@@ -39,7 +39,7 @@ In current atproto Lexicon use, the **query** and **fragment** parts are not yet
 "at://" AUTHORITY [ "/" COLLECTION [ "/" RKEY ] ]
 ```
 
-The **authority** section is required, and should be normalized. Similar to the rules for DID syntax elsewhere in atproto, it is syntaxtually valid to have AT URIs with unsupported DID methods, though the URI will not resolve or function properly. The optional **collection** part of the path must be a normalized [NSID](/specs/nsid). The optional **rkey** part of the path must be a valid [record key](/specs/record-key).
+The **authority** section is required, and should be normalized. Similar to the rules for DID syntax elsewhere in atproto, it is syntactically valid to have AT URIs with unsupported DID methods, though the URI will not resolve or function properly. The optional **collection** part of the path must be a normalized [NSID](/specs/nsid). The optional **rkey** part of the path must be a valid [record key](/specs/record-key).
 
 An AT URI pointing to a specific record in a repository is not a *strong* reference, in that it is not content-addressed. The record may change or be removed over time, or the DID itself may be deleted or unavailable. For `did:web`, control of the DID (and thus repository) may change over time. For AT URIs with a handle in the authority section, the handle-to-DID mapping can also change.
 
@@ -59,7 +59,7 @@ AT URIs *align* with the generic Universal Resource Identifiers (URI) syntax des
 - Relative references: not yet supported
 - Normalization rules: supported in general syntax, not currently used
 
-AT URIs are not fully compliant with either [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) or the WHATWG URL Standard ([https://url.spec.whatwg.org/](https://url.spec.whatwg.org/)). Un-encoded colon characters in DIDs in the authority part of the URI are disallowed by those standard. Note that it is possible to un-ambigiously differentiate a DID in the authority section from a `host:port` pair. DIDs always have at least two colons, and always begin with `did:`.
+AT URIs are not fully compliant with either [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) or the WHATWG URL Standard ([https://url.spec.whatwg.org/](https://url.spec.whatwg.org/)). Un-encoded colon characters in DIDs in the authority part of the URI are disallowed by those standard. Note that it is possible to un-ambiguously differentiate a DID in the authority section from a `host:port` pair. DIDs always have at least two colons, and always begin with `did:`.
 
 ### Full AT URI Syntax
 

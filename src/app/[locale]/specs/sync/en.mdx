@@ -6,7 +6,7 @@ export const header = {
 
 # Data Synchronization
 
-Synchronization of public data between independent network participants is one of the defining features of atproto (which is named for "Authenticated Transfer"). Data redistibution is trustworthy, low-latency, and resource efficient at large scale. {{ className: 'lead' }}
+Synchronization of public data between independent network participants is one of the defining features of atproto (which is named for "Authenticated Transfer"). Data redistribution is trustworthy, low-latency, and resource efficient at large scale. {{ className: 'lead' }}
 
 There are two main data synchronization mechanisms in atproto. Batch data transfer is supported using full-repository exports as CAR files over HTTP. Real-time synchronization can be provided by a repository event stream (over WebSocket), commonly referred to as a "firehose". Used together, they enable a complete, live-updated, and authenticated copy of network data. {{ className: 'lead' }}
 
@@ -143,7 +143,7 @@ Note that the repository *contents* are not included in the sync event: the `blo
 
 If a service receives and processes every `#commit` message from a repository, it should have a complete and coherent view of all records in the repository. If messages are missing or mangled, the receiving service might have an incomplete or incorrect view of some records. How can a service be confident it has successfully synchronized a complete repository?
 
-If the receiving service maintained a full copy of the repository data structure (MST), it could apply the diff from each `#commit` and verify the integrity of the complete tree structure. But this process is resource intensive in both compute and storage, and unrealisticly expensive at scale.
+If the receiving service maintained a full copy of the repository data structure (MST), it could apply the diff from each `#commit` and verify the integrity of the complete tree structure. But this process is resource intensive in both compute and storage, and unrealistically expensive at scale.
 
 Instead, receiving services can verify that each `#commit` diff is consistent with the previous state of the repository, creating a chain of verification. Only a small amount of state needs to be stored for each repository.
 

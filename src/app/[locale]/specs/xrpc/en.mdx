@@ -12,7 +12,7 @@ HTTP APIs for client-server and server-server requests in atproto use a set of c
 
 The HTTP request path starts with `/xrpc/`, followed by an NSID. Paths must always be top-level, not below a prefix. The NSID maps to the `id` field in the associated Lexicon.
 
-The two requests types that can be expressed in Lexicons are "query" (HTTP GET) and "procedure" (HTTP POST). Following HTTP REST semantics, queries (GET) are cacheable and should not mutate resource state. Procedures are not cacheable and may mutate state.
+The two request types that can be expressed in Lexicons are "query" (HTTP GET) and "procedure" (HTTP POST). Following HTTP REST semantics, queries (GET) are cacheable and should not mutate resource state. Procedures are not cacheable and may mutate state.
 
 Lexicon `params` (under the `parameters` field) map to HTTP URL query parameters. Only certain Lexicon types can be included in params, as specified by the `params` type. Multiple query parameters with the same name can be used to represent an array of parameters. When encoding `boolean` parameters, the strings `true` and `false` should be used. Strings should not be quoted. If a `default` value is included in the schema, it should be included in every request to ensure consistent caching behavior.
 
@@ -55,7 +55,7 @@ Most requests should be authenticated using an access JWT, but the validity life
 
 Clients should treat the tokens as opaque string tokens: the JWT fields and semantics are not a stable part of the specification.
 
-Servers (eg, PDS implementations) which generate and valiate auth JWTs should implement domain separation between access and refresh tokens, using the `typ` header field: access tokens should use `at+jwt`, and refresh tokens should use `refresh+jwt`. Note that `at+jwt` (defined in [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html)) is short for "access token", and is not a reference to the "at" in atproto.
+Servers (eg, PDS implementations) which generate and validate auth JWTs should implement domain separation between access and refresh tokens, using the `typ` header field: access tokens should use `at+jwt`, and refresh tokens should use `refresh+jwt`. Note that `at+jwt` (defined in [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html)) is short for "access token", and is not a reference to the "at" in atproto.
 
 ### App Passwords
 
@@ -166,7 +166,7 @@ Clients can use the following request headers:
 
 `403 Forbidden`: The client lacks permission for this endpoint
 
-`404 Not Found`: Can indicate a missing resource. This can also indicate that the server does not support atproto, or does not support this endpoint. See response error message (or lack thereof) to clairfy.
+`404 Not Found`: Can indicate a missing resource. This can also indicate that the server does not support atproto, or does not support this endpoint. See response error message (or lack thereof) to clarify.
 
 `413 Payload Too Large`: Request body was too large. If possible, split in to multiple smaller requests.
 
