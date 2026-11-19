@@ -25,15 +25,9 @@ A notification only says that a repo changed. The records themselves always come
 
 Compared with [syncing public data](/guides/streaming-data):
 
-**There's no relay.** Public records are broadcast: every PDS emits its commits, relays aggregate them into the firehose, and anyone can subscribe. Space records aren't rebroadcast anywhere.
+There's no relay; space records aren't rebroadcast anywhere. Access comes first; A sync service gets into a Space by borrowing access from a member. The member's PDS issues a delegation token, and the Space host exchanges it for a short-lived Space credential. The Space PDS host keeps the Space's writer set — the list of repos in the Space — so a sync service knows which PDSes to fetch from.
 
-**Access comes first.** A sync service gets into a Space by borrowing access from a member: the member's PDS issues a delegation token, and the Space host exchanges it for a short-lived Space credential.
-
-**The Space PDS host knows where to look.** It keeps the Space's writer set — the list of repos in the Space — so a sync service knows which PDSes to fetch from.
-
-**Account changes are still public.** Deactivations and deletions come from the public network, so a space sync service would also follow public [Jetstream](/guides/streaming-data#jetstream).
-
-Being able to sync a Space also doesn't mean that every user of your app can see it. Granular permissions are left to the application level.
+Account changes are still public. Deactivations and deletions come from the public network, so a space sync service would also follow public [Jetstream](/guides/streaming-data#jetstream). Being able to sync a Space also doesn't mean that every user of your app can see it. Granular permissions are left to the application level.
 
 ## Syncing a Space with the SDK
 
@@ -67,10 +61,8 @@ It listens in two places:
 
 The [Build a Shared Space App tutorial](/guides/shared-space-tutorial) provides an example of working with `jetstream-spaces`, and the [README](https://github.com/bluesky-social/jetstream-spaces) covers deployment and configuration in detail.
 
-`jetstream-spaces` leaves two things up to app logic:
-
-- **Viewer access.** The stream contains every Space it follows, so check that a viewer can see a Space before serving its records. For this reason, the stream is for your backend only.
-- **Blobs.** Only references to blobs are synced. You need to fetch blobs separately, with the viewer's own access.
+`jetstream-spaces` leaves Viewer access up to app logic. The stream contains every Space it follows.
+It also only syncs references to blobs. You need to fetch blobs separately, with the viewer's own access.
 
 ## Further Reading and Resources
 
