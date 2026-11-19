@@ -6,6 +6,7 @@ import OpenSpace from './_snippets/open-space.mdx'
 import ListSpaces from './_snippets/list-spaces.mdx'
 import CreateRecord from './_snippets/create-record.mdx'
 import CreateResult from './_snippets/create-result.mdx'
+import UriFormat from './_snippets/uri-format.mdx'
 import PutDeleteRecord from './_snippets/put-delete-record.mdx'
 import ListRecords from './_snippets/list-records.mdx'
 import GetRecord from './_snippets/get-record.mdx'
@@ -102,7 +103,7 @@ For every `space:` parameter, and how to include space permissions in a permissi
 
 Space record URIs are constructed slightly differently from public records. They begin with `at:space/` and include the space authority and space type:
 
-`at:space/{authority}/{spaceType}/{skey}/{author}/{collection}/{rkey}`.
+<UriFormat />
 
 <CreateResult />
 
