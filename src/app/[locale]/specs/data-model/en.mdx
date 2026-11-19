@@ -24,7 +24,7 @@ In atproto, object nodes often include a string field `$type` that specifies the
 
 The atproto data model aligns with [DASL](https://dasl.ing/), a specification for hash-linked data structures. DASL libraries and tooling can be used when implementing atproto. DASL itself is a subset of [Interplanetary Linked Data (IPLD)](https://ipld.io/docs/data-model/).
 
-IPLD specified a normalized JSON encoding called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data. The atproto JSON encoding is not designed to be byte-determinisitic, and the CBOR representation is used when data needs to be cryptographically signed or hashed.
+IPLD specified a normalized JSON encoding called **DAG-JSON,** but atproto uses a different set of conventions when encoding JSON data. The atproto JSON encoding is not designed to be byte-deterministic, and the CBOR representation is used when data needs to be cryptographically signed or hashed.
 
 ## Data Types
 
