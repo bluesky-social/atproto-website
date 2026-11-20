@@ -19,6 +19,14 @@ There are a few details that might catch you off guard if you're used to using o
 
 - **Client IDs**: In other OAuth ecosystems, it is often necessary for client apps to pre-register themselves with the resource server. This is not viable in a decentralized system (with many clients and many resource servers). In atproto, the client ID is a URL, which is fetched at auth time to determine OAuth features like redirect URI and scopes. See [Client ID Metadata Documents](/specs/oauth#client-id-metadata-document).
 
+## Client Identifiers
+
+AT Protocol's OAuth profile uses the new [Client ID Metadata Document](https://datatracker.ietf.org/doc/draft-parecki-oauth-client-id-metadata-document/) draft specification for identifying clients. In general the URL to your Client ID Metadata Document which is your `client_id` can be any URL you want, however, there are some important things to consider:
+
+- **The URL must be publicly accessible:** Authorization Servers need to be able to GET the document from that URL.
+- **For native apps:** The `redirect_uris` must either be HTTPS URLs or use a custom protocol which matches the hostname of the Client ID Metadata Document in reverse, e.g., for `https://app.example.com/oauth-client-metadata.json` you could use `com.example.app:/callback`
+- **For all apps:** If the URL has a path of exactly `/oauth-client-metadata.json` then the authorize screen will only display the hostname, so for `client_id` of `https://app.example.com/oauth-client-metadata.json` you will see `app.example.com` as the application name, but for `https://app.example.com/oauth/client-metadata.json` you'll see the complete URL with the hostname emphasized.
+
 ## Understanding DPoP
 
 [DPoP (Demonstrating Proof of Possession)](https://datatracker.ietf.org/doc/html/rfc9449) cryptographically binds OAuth tokens to a key held by the client. Even if an attacker intercepts your access token, they can't use it without your private key. This is especially important for confidential clients with long-lived sessions (up to 2 years).
