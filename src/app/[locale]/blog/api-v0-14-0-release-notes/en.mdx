@@ -16,7 +16,7 @@ This release is a big step forward, significantly improving the type safety of o
 
 ## Context
 
-Atproto is an "open protocol" which means a lot of things. One of these things is that the data structures handled through the protocol are extensible. Lexicons (which is the syntax used to define the schema of the data structures) can be used to describe placeholders where arbitrary data types (defined through third-party Lexicons) can be used.
+Atproto is an "open protocol" which means a lot of things. One of these things is that the data structures handled through the protocol are extensible. Lexicons (which is the syntax used to define the schema of the data structures) can be used to describe placeholders where arbitrary data types (defined through third-party lexicons) can be used.
 
 An example of such a placeholder exists in the Lexicon definition of a Bluesky post
 ([`app.bsky.feed.post`](https://github.com/bluesky-social/atproto/blob/5ece8c6aeab9c5c3f51295d93ed6e27c3c6095c2/lexicons/app/bsky/feed/post.json#L5-L64)), which enables posts to have an `embed` property defined as follows:
@@ -66,7 +66,7 @@ Since `embed` is an open union, it can be used to store anything. For example, a
 ```
 
 <Note>
-Only systems that know about the `com.example.calendar.event` Lexicon can interpret this data. The official Bluesky app will typically only know about the data types defined in the `app.bsky` lexicons.
+Only systems that know about the `com.example.calendar.event` lexicon can interpret this data. The official Bluesky app will typically only know about the data types defined in the `app.bsky` lexicons.
 </Note>
 
 ## Revamped TypeScript interfaces
@@ -220,7 +220,7 @@ While optional in interfaces generated from Lexicon `object` definitions, the `$
 
 ### `is*` utility methods
 
-The example above shows how data can be discriminated based on the `$type` property. The SDK provides utility methods to perform this kind of discrimination. These methods are named `is*` and are generated from the lexicons. For example, the `app.bsky.embed.images` Lexicon used to generate the following `isMain` utility method:
+The example above shows how data can be discriminated based on the `$type` property. The SDK provides utility methods to perform this kind of discrimination. These methods are named `is*` and are generated from the lexicons. For example, the `app.bsky.embed.images` lexicon used to generate the following `isMain` utility method:
 
 ```typescript
 export interface Main {

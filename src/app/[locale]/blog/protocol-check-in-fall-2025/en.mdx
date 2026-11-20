@@ -44,7 +44,7 @@ We recently wrapped up our dev work on [auth scopes and permission sets](https:/
 
 ### Lexicon SDK
 
-Lexicons are the coordination points for schematic data in the network. As more and more applications are publishing new Lexicons, it’s important that developers can actually make use of them to build native integrations between apps.
+Lexicons are the coordination points for schematic data in the network. As more and more applications are publishing new lexicons, it’s important that developers can actually make use of them to build native integrations between apps.
 
 The current Lexicon SDK was really a prototype that ended up living on way longer than it probably should have. It doesn’t have to be like this. We’re putting together a new SDK that takes inspiration from [Buf](https://buf.build/)’s approach to codegen and schema management. This SDK should make it a breeze to pull in schemas from across the Atmosphere into your application.
 
@@ -52,7 +52,7 @@ The current Lexicon SDK was really a prototype that ended up living on way longe
 
 Repository synchronization is at the core of AT. Every app has to do it. And unfortunately it’s difficult to do and even more difficult to do correctly.
 
-We’re continuing to roll out [Sync1.1](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) on the producer (Relay) side, but a fully spec-compliant consumer for it still doesn’t exist. Most developers currently rely on [Jetstream](https://github.com/bluesky-social/jetstream) to drive their application, but that only helps with live data. There’s no easy way to perform backfill and sync full subsets of the network.
+We’re continuing to roll out [Sync1.1](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration) on the producer (relay) side, but a fully spec-compliant consumer for it still doesn’t exist. Most developers currently rely on [Jetstream](https://github.com/bluesky-social/jetstream) to drive their application, but that only helps with live data. There’s no easy way to perform backfill and sync full subsets of the network.
 
 We’re working on a tool that should smooth over the tricky parts of doing sync in AT. This tool will likely take the form of a small service you can run that handles backfill, cutover, cursor management, Sync1.1, and dynamic filtering by DID and collection. That service will do all the tricky stuff and then hand off a nice clean set of record-level operations to your application. It will offer several interfaces including a websocket interface and the ability to translate the firehose into webhooks — meaning AT can work with serverless architectures\!
 
@@ -82,19 +82,19 @@ We’re hoping to take pieces of [AT to the IETF](https://docs.bsky.app/blog/tak
 
 ## Hard Decentralization
 
-Hard decentralization refers to the emergence of a resilient and multi-stakeholder Atmosphere that relies less on Bluesky PBC’s existence. There's some overlap with the other two goals here. Improving things like sync make it easier to run alternate infrastructure like Relays and Appviews, and our governance work should help build confidence that the protocol is a genuine public good that’s larger than Bluesky.
+Hard decentralization refers to the emergence of a resilient and multi-stakeholder Atmosphere that relies less on Bluesky PBC’s existence. There's some overlap with the other two goals here. Improving things like sync make it easier to run alternate infrastructure like relays and Appviews, and our governance work should help build confidence that the protocol is a genuine public good that’s larger than Bluesky.
 
 To support the goal of hard decentralization, we're also tackling some specific technical challenges.
 
 ### Improving Non-Bluesky PDS Hosting
 
-The decentralization guarantees of AT come from the locked-open substrate of data hosted by Personal Data Servers (PDSes). One of our current goals to increase the resilience of the network is to encourage more non-Bluesky PDS hosting.
+The decentralization guarantees of AT come from the locked-open substrate of data hosted by personal data servers (PDSes). One of our current goals to increase the resilience of the network is to encourage more non-Bluesky PDS hosting.
 
 We recently [enabled account migration back to bsky.social](/blog/incoming-migration). We hope this will give users the confidence to experiment with other hosts in the network, knowing they can always migrate back if they need to. Already we’re seeing an [uptick in users posting from non-Bluesky PDSes](https://blue.mackuba.eu/stats/).
 
 Some developers in the network have launched account migration tools that make it easier for non-technical users to migrate between hosts. Examples include [PDS MOOver](https://pdsmoover.com/) and [Tektite](https://tektite.cc/). We believe that the next step is to introduce an account migration UI into the PDS itself.
 
-We also intend to make running a PDS more approachable for mid-size hosts. This includes adding auto-scaling rate limits to the Relay reference implementation so that hosts can scale up organically without needing permission or approval. We’re also looking at ways to improve the PDS distribution to make it easier to run and administer with thousands of users.
+We also intend to make running a PDS more approachable for mid-size hosts. This includes adding auto-scaling rate limits to the relay reference implementation so that hosts can scale up organically without needing permission or approval. We’re also looking at ways to improve the PDS distribution to make it easier to run and administer with thousands of users.
 
 ### Technical Improvements to PLC
 

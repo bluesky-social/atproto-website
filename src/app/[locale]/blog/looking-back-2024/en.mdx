@@ -26,7 +26,7 @@ A lot of progress was made in 2024! Some large protocol milestones include:
 
 One of the more recently-completed components is Lexicon resolution. This is the mechanism for looking up the schema of new data by NSID. After feedback on a [public proposal](https://github.com/bluesky-social/atproto/discussions/3074), we settled on a design that uses DNS TXT records that map to a DID, then schemas stored as records in an atproto repo. We have some early implementations which prove out the design.
 
-We plan on writing this up as a formal specification, and would like to build tooling to support publishing, mirroring, discovery, and integration of Lexicons.
+We plan on writing this up as a formal specification, and would like to build tooling to support publishing, mirroring, discovery, and integration of lexicons.
 
 ## Auth and OAuth
 
@@ -40,9 +40,9 @@ Apart from OAuth, we are increasingly interested in a more powerful and flexible
 
 ## Sync, Firehose, and Backfill
 
-As the overall network has scaled to over 26 million accounts, resource costs around Relays and the firehose mechanism have become more urgent.
+As the overall network has scaled to over 26 million accounts, resource costs around relays and the firehose mechanism have become more urgent.
 
-The initial Relay design required a full mirror of all repository data (records and MST nodes) to fully verify each commit message. This meant that disk consumption increased both with the number of accounts, and the amount of data each account stored. This was considered [relatively affordable](https://whtwnd.com/bnewbold.net/entries/Notes%20on%20Running%20a%20Full-Network%20atproto%20Relay%20\(July%202024\)), and further scaling could be achieved with infrastructure sharding.
+The initial relay design required a full mirror of all repository data (records and MST nodes) to fully verify each commit message. This meant that disk consumption increased both with the number of accounts, and the amount of data each account stored. This was considered [relatively affordable](https://whtwnd.com/bnewbold.net/entries/Notes%20on%20Running%20a%20Full-Network%20atproto%20relay%20\(July%202024\)), and further scaling could be achieved with infrastructure sharding.
 
 However, we are currently exploring a "non-archival" relay design which is significantly cheaper to operate, even at full network scale. This will simplify the role of relays in the network, replace the `tooBig` mechanism for large commits, and clarify what a downstream service needs to do to synchronize data reliably.
 

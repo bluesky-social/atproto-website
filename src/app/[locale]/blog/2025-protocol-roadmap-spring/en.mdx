@@ -10,7 +10,7 @@ export const header = {
 
 *Join the [Github](https://github.com/bluesky-social/atproto/discussions/3616) discussion here.*
 
-Metamorphosis is the process where a caterpillar forms a chrysalis, liquifies its own body, and emerges as an imago, or butterfly. It is a pretty nifty trick. Anyways, trees are budding, Lexicons are blossoming, spring is happening, and it is time for an update to the AT Protocol roadmap.
+Metamorphosis is the process where a caterpillar forms a chrysalis, liquifies its own body, and emerges as an imago, or butterfly. It is a pretty nifty trick. Anyways, trees are budding, lexicons are blossoming, spring is happening, and it is time for an update to the AT Protocol roadmap.
 
 We recently [summarized progress on the protocol in 2024](https://docs.bsky.app/blog/looking-back-2024). This blog post will be forward looking, covering our protocol goals for the next 6-7 months. As a high-level summary:
 
@@ -38,7 +38,7 @@ In addition to completing OAuth for existing apps, Auth Scopes will be necessary
 
 ## PDS Account Management
 
-More and more folks are building independent apps on atproto. While they can use OAuth to authenticate users from any PDS instance, account signup is more complicated. In theory it is possible to implement account creation using the `com.atproto.*` Lexicons, but in practice this is difficult (or impossible) to implement in independent apps, because of anti-bot measures. This results in developers directing new users to sign up with Bluesky, which is a bad user experience, and conflates having an account on the AT Protocol with having a Bluesky account.
+More and more folks are building independent apps on atproto. While they can use OAuth to authenticate users from any PDS instance, account signup is more complicated. In theory it is possible to implement account creation using the `com.atproto.*` lexicons, but in practice this is difficult (or impossible) to implement in independent apps, because of anti-bot measures. This results in developers directing new users to sign up with Bluesky, which is a bad user experience, and conflates having an account on the AT Protocol with having a Bluesky account.
 
 To improve this situation, we are implementing a web interface in the PDS reference distribution which will give users a less-branded account sign-up experience. The PDS technically already has a web interface, used for the OAuth authorization flow, and this simply extends that. Over time, we expect the web interface to provide generic account management capabilities, such as password recovery flows, additional 2FA mechanisms, management of active auth sessions, account deactivation, etc.
 
@@ -56,7 +56,7 @@ Looking forward, we continue to have plans to implement on-protocol DMs and E2EE
 
 There are a few protocol features and API endpoints which were supported in early days of atproto development. They have been deprecated for some time, but have continued to function. As the protocol stabilizes, we want to ensure developers are building against the current protocol, and will start to remove this functionality more aggressively.
 
-A simple deprecation are the `#tombstone`, and `#handle`, and `#migrate` events on the firehose. These were replaced with `#identity` and `#account` early last year (2024), and have been deprecated since then. We will remove them from the atproto Lexicons entirely soon.
+A simple deprecation are the `#tombstone`, and `#handle`, and `#migrate` events on the firehose. These were replaced with `#identity` and `#account` early last year (2024), and have been deprecated since then. We will remove them from the atproto lexicons entirely soon.
 
 Client apps should resolve user login identifiers (handles or DIDs) to PDS instances, and should not hardcode the `bsky.social` domain for API requests. In the early days, all API requests could be made to this server, and we have continued to proxy requests to avoid breakage. Most clients and SDKs have been updated, and we may stop proxying in the near future.
 

@@ -6,7 +6,7 @@ export const header = {
   author: 'AT Protocol Team',
 }
 
-This post lays out the current AT Protocol (atproto) development plan, through to a "version one" release. This document is written for developers already familiar with atproto concepts and terminology. The scope here is features of the underlying protocol itself, not any application or Lexicons on top of the protocol. In particular, this post doesn't describe any product features specific to the Bluesky microblogging application (`app.bsky.*` Lexicons).
+This post lays out the current AT Protocol (atproto) development plan, through to a "version one" release. This document is written for developers already familiar with atproto concepts and terminology. The scope here is features of the underlying protocol itself, not any application or lexicons on top of the protocol. In particular, this post doesn't describe any product features specific to the Bluesky microblogging application (`app.bsky.*` lexicons).
 
 At a high level:
 
@@ -57,7 +57,7 @@ Atproto has had a clear system for third-party application development and appli
 
 There is a lot of supporting framework and documentation needed to make atproto a developer-friendly foundation for application development, and a few protocol pieces still need to be worked out:
 
-**Lexicon schema resolution:** There should be a clear automated method for resolving new and unknown NSIDs (schema names) to a Lexicon JSON object over the web.
+**Lexicon schema resolution:** There should be a clear automated method for resolving new and unknown NSIDs (schema names) to a lexicon JSON object over the web.
 
 **Clarify validation failure behaviors:** What each piece of infrastructure is expected to do when records fail to validate against the Lexicon schema needs to be specified in detail, with test cases provided.
 
@@ -84,4 +84,4 @@ The plan is to bring development and governance of the protocol itself to an est
 
 Which parts of the protocol would be in-scope for independent standardization? Like many network protocols, atproto is abstracted into multiple layers, with distinctions between "application-specific" bits and the core protocol. The identity, auth, data model, repositories, streams, and Lexicon schema language are all part of the core protocol, and in-scope for standardization. Some API endpoints under the `com.atproto.*` namespace are also relatively core, and that namespace specifically could fall under independent governance.
 
-Other application-specific APIs and namespaces, including the `app.bsky.*` microblogging application, would not be in-scope for standardization as part of the core protocol. The authority for these APIs and Lexicons is encoded in the name itself, and Bluesky PBC intends to retain control over future development of the `bsky.app` application. The API schemas (Lexicons) will be open, and the expectations and rules for third-party interoperability and extensions for any Lexicon will be part of the core protocol specification.
+Other application-specific APIs and namespaces, including the `app.bsky.*` microblogging application, would not be in-scope for standardization as part of the core protocol. The authority for these APIs and lexicons is encoded in the name itself, and Bluesky PBC intends to retain control over future development of the `bsky.app` application. The API schemas (lexicons) will be open, and the expectations and rules for third-party interoperability and extensions for any Lexicon will be part of the core protocol specification.

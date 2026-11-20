@@ -8,15 +8,15 @@ export const header = {
 
 # Introducing Tap: Repository Synchronization Made Simple
 
-Just about every app built on AT needs data from a repository at some point. For many use cases – feed generators, labelers, bots – streaming live data through a Relay or Jetstream works well. But some applications need to go beyond what Jetstream was designed for, like tracking specific subsets of a repo, automatically backfilling a database when adding new repos to monitor, or even mirroring the entire Atmosphere.
+Just about every app built on AT needs data from a repository at some point. For many use cases – feed generators, labelers, bots – streaming live data through a relay or Jetstream works well. But some applications need to go beyond what Jetstream was designed for, like tracking specific subsets of a repo, automatically backfilling a database when adding new repos to monitor, or even mirroring the entire Atmosphere.
 
 We recently released [Tap](https://github.com/bluesky-social/indigo/blob/main/cmd/tap/README.md), a tool designed to handle the hard parts of repo synchronization, so you can focus on building your application.
 
 ## The Challenge of AT Sync
 
-AT provides two primary mechanisms for syncing repositories: the Relay firehose of real-time events, and direct PDS access to full repos via `com.atproto.sync.getRepo`. Most applications consume events directly from an upstream Relay or Jetstream, and this presents a new set of challenges:
+AT provides two primary mechanisms for syncing repositories: the relay firehose of real-time events, and direct PDS access to full repos via `com.atproto.sync.getRepo`. Most applications consume events directly from an upstream relay or Jetstream, and this presents a new set of challenges:
 
-**Backfill is tricky.** When you start tracking a new repo, you likely need to fetch at least some of the current records in that repo, possibly the full repo. Neither the Relay nor Jetstream provides a built-in utility for doing this, leaving it as an exercise for the developer. And once you do have the full backfill, you then need to cut over to fetching live events, requiring careful cursor management to make sure you’re not duplicating or missing data.
+**Backfill is tricky.** When you start tracking a new repo, you likely need to fetch at least some of the current records in that repo, possibly the full repo. Neither the relay nor Jetstream provides a built-in utility for doing this, leaving it as an exercise for the developer. And once you do have the full backfill, you then need to cut over to fetching live events, requiring careful cursor management to make sure you’re not duplicating or missing data.
 
 **Recovery is fragile.** If your repo gets into a desynchronized state for whatever reason, it’s often hard to recover gracefully. Without some explicit recovery logic, you’ll simply be missing data forever. Cursor management is a tricky affair given the stateless design of the repo event stream making it easier for repos to land in a desynchronized state.
 
@@ -26,7 +26,7 @@ AT provides two primary mechanisms for syncing repositories: the Relay firehose 
 
 ## What Tap Does
 
-Put simply, Tap is the all-in-one tool for synchronizing subsets of the Atmosphere, or even creating a full copy of the Atmosphere if you need it. Tap is a single-tenant service, written in Go, that subscribes to a Relay and outputs filtered, verified events of repositories. Think of it as a specialized synchronization tool that sits between the [full network firehose](https://atproto.com/specs/sync#firehose) and your application.
+Put simply, Tap is the all-in-one tool for synchronizing subsets of the Atmosphere, or even creating a full copy of the Atmosphere if you need it. Tap is a single-tenant service, written in Go, that subscribes to a relay and outputs filtered, verified events of repositories. Think of it as a specialized synchronization tool that sits between the [full network firehose](https://atproto.com/specs/sync#firehose) and your application.
 
 The goal of Tap is to handle the complexity of repo synchronization, with features that manage:
 
