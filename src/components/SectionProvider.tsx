@@ -89,12 +89,17 @@ function useVisibleSections(sectionStore: StoreApi<SectionState>) {
           newVisibleSections.push('_top')
         }
 
+        // Headings sit at fractional offsets (images and diagrams scale with
+        // the column), but the browser scrolls to whole pixels: jumping to an
+        // anchor can leave the section before it showing by under a pixel,
+        // which would keep that section highlighted. Treat that as not shown.
         let nextSection = sections[sectionIndex + 1]
         let bottom =
           (nextSection?.headingRef?.current?.getBoundingClientRect().top ??
             Infinity) +
           scrollY -
-          remToPx(nextSection?.offsetRem ?? 0)
+          remToPx(nextSection?.offsetRem ?? 0) -
+          1
 
         if (
           (top > scrollY && top < scrollY + innerHeight) ||
