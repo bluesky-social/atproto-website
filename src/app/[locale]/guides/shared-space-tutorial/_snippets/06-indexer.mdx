@@ -1,0 +1,70 @@
+```ts
+import { MemoryCursorStore, SpaceSyncIndexer, SpaceSyncStream } from '@bsky/space-sync'
+import { calendarType, event, rsvp } from './calendar.js'
+
+type Event = { author: string; cid: string; name: string; startsAt?: string }
+type Rsvp = { author: string; subject: string; status: string }
+
+export const events = new Map<string, Event>()
+export const rsvps = new Map<string, Rsvp>()
+export const inactive = new Set<string>()
+
+function removeAuthor(author: string) {
+  for (const [uri, e] of events) if (e.author === author) events.delete(uri)
+  for (const [uri, r] of rsvps) if (r.author === author) rsvps.delete(uri)
+}
+
+const indexer = new SpaceSyncIndexer(calendarType)
+  .commit(event, {
+    put: (evt) => {
+      events.set(evt.uri.toString(), {
+        author: evt.did,
+        cid: evt.cid.toString(),
+        name: evt.record.name,
+        startsAt: evt.record.startsAt,
+      })
+    },
+    del: (evt) => {
+      events.delete(evt.uri.toString())
+    },
+  })
+  .commit(rsvp, {
+    put: (evt) => {
+      rsvps.set(evt.uri.toString(), {
+        author: evt.did,
+        subject: evt.record.subject.uri,
+        status: evt.record.status,
+      })
+    },
+    del: (evt) => {
+      rsvps.delete(evt.uri.toString())
+    },
+  })
+  .space({
+    deleted: () => {
+      events.clear()
+      rsvps.clear()
+    },
+    authorRemoved: (evt) => removeAuthor(evt.did),
+    authorReset: (evt) => removeAuthor(evt.did),
+  })
+  .account((evt) => {
+    if (evt.active) inactive.delete(evt.did)
+    else if (evt.status === 'deleted') removeAuthor(evt.did)
+    else inactive.add(evt.did)
+  })
+
+export async function startIndexer() {
+  const stream = new SpaceSyncStream('http://127.0.0.1:3002')
+  const cursor = new MemoryCursorStore()
+  // jetstream-spaces may still be starting up: retry until it's ready
+  for (;;) {
+    try {
+      return await stream.runner(indexer).replay({ cursor })
+    } catch (err) {
+      console.error('waiting for jetstream-spaces:', (err as Error).message)
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+    }
+  }
+}
+```

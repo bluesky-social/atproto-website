@@ -41,7 +41,7 @@ There are different kinds of services which you can [self-host](/guides/self-hos
 
 Let's assume you're building an application. Your users will sign in with [OAuth](/guides/auth), which hands your application the address of their PDS. Your application then [reads & writes](/guides/reads-and-writes) records by contacting their PDS.
 
-To listen for activity across the network, you [sync from relays](/guides/sync). You could sync directly from the users' PDSes, but it's more convenient to use the relays. Since all data is signed, you can confirm the relay's stream is accurate.
+To listen for activity across the network, you [sync from relays](/guides/sync). You could sync directly from the users' PDSes, but it's more convenient to use the relays. All public data is signed, so you can confirm the relay's stream is accurate.
 
 The [Lexicons](/guides/lexicon) help identify the data being published on the network. You use them to validate data as you read it, just like you validate incoming HTTP requests.
 

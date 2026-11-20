@@ -1,0 +1,51 @@
+```ts
+import { readFile } from 'node:fs/promises'
+import {
+  NodeOAuthClient,
+  buildAtprotoLoopbackClientMetadata,
+} from '@atproto/oauth-client-node'
+import type { NodeSavedSession, NodeSavedState } from '@atproto/oauth-client-node'
+import { SpaceSyncController } from '@bsky/space-sync'
+import { HOST_DID, calendarUri } from './calendar.js'
+
+export const scope =
+  'atproto space:community.lexicon.calendar.collection?authority=*&manage=create&manage=update'
+
+const states = new Map<string, NodeSavedState>()
+const sessions = new Map<string, NodeSavedSession>()
+
+// everyone who has signed in: jetstream-spaces can borrow their access
+export const readers = new Set<string>()
+
+export const oauthClient = new NodeOAuthClient({
+  clientMetadata: buildAtprotoLoopbackClientMetadata({
+    scope,
+    redirect_uris: ['http://127.0.0.1:3000/callback'],
+  }),
+  stateStore: {
+    get: async (key) => states.get(key),
+    set: async (key, value) => void states.set(key, value),
+    del: async (key) => void states.delete(key),
+  },
+  sessionStore: {
+    get: async (key) => sessions.get(key),
+    set: async (key, value) => void sessions.set(key, value),
+    del: async (key) => void sessions.delete(key),
+  },
+  onSessionDeleted: (did) => {
+    readers.delete(did)
+    controller.notifySignedOut(did)
+  },
+})
+
+export const controller = await SpaceSyncController.start({
+  service: 'http://127.0.0.1:3002',
+  brokerSecret: (await readFile('./broker-secret', 'utf8')).trim(),
+  oauthClient,
+  // the only space this app follows
+  getCatalog: () => [calendarUri],
+  // whose sessions can read it, host first
+  getReaders: (space) =>
+    space.toString() === calendarUri ? [...new Set([HOST_DID, ...readers])] : undefined,
+})
+```

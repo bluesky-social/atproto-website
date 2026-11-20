@@ -1,0 +1,73 @@
+import { SpacesNotifyDiagram } from '@/app/[locale]/guides/spaces/SpacesNotifyDiagram'
+import OpenReader from './_snippets/open-reader.mdx'
+import SyncOnce from './_snippets/sync-once.mdx'
+import Run from './_snippets/run.mdx'
+
+export const header = {
+  title: 'Space Sync',
+  description: 'Syncing non-public data from across the network',
+}
+
+Spaces sync differently from public atproto data. There's no relay or firehose for space data: each Space is its own sync boundary, and a service that wants a copy of a Space has to be let in, then fetch each member's records itself.
+
+## How sync works for Spaces
+
+A single write follows this sequence:
+
+<SpacesNotifyDiagram />
+
+1. Bob writes a record to his own repo in the Space, on his own PDS.
+2. Bob's PDS notifies the Space PDS host: the PDS of Alice, the Space authority.
+3. The Space host notifies every sync service registered for the Space.
+4. Each sync service fetches the new record from Bob's PDS with a Space credential, and verifies it.
+
+A notification only says that a repo changed. The records themselves always come from each writer's PDS.
+
+Compared with [syncing public data](/guides/streaming-data):
+
+There's no relay; space records aren't rebroadcast anywhere. Access comes first; A sync service gets into a Space by borrowing access from a member. The member's PDS issues a delegation token, and the Space host exchanges it for a short-lived Space credential. The Space PDS host keeps the Space's writer set — the list of repos in the Space — so a sync service knows which PDSes to fetch from.
+
+Account changes are still public. Deactivations and deletions come from the public network, so a space sync service would also follow public [Jetstream](/guides/streaming-data#jetstream). Being able to sync a Space also doesn't mean that every user of your app can see it. Granular permissions are left to the application level.
+
+## Syncing a Space with the SDK
+
+You can sync a Space yourself with `SpaceReader` from `@atproto/lex-space` in the reference [TypeScript SDK](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-space).
+
+First, open a reader for the Space with a member's session. This also exchanges the member's delegation token for a Space credential, and renews it as needed:
+
+<OpenReader />
+
+Then list the Space's writers, and pull each repo. The first pull of a repo returns a full snapshot, verified against the repo's latest commit:
+
+<SyncOnce />
+
+To keep a copy up to date from there, you have to either poll or register an endpoint with the space host to be notified of updates. Both of these solutions are covered in the [`lex-space` README](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-space#building-a-sync-service).
+
+That only syncs one space. An app would typically follow many, each with its own credential, registration, writer set, and repos to pull, plus account events from the public network and a durable copy to replay from. That's what `jetstream-spaces` is for.
+
+## jetstream-spaces
+
+[`jetstream-spaces`](https://github.com/bluesky-social/jetstream-spaces) is a service that runs next to your app and syncs every Space your app follows. It serves everything it syncs back to your app as one stream, with the same replay-then-live model as [Jetstream](/guides/streaming-data#jetstream).
+
+It uses the same client ergonomics at the public Jetstream. Each output has the usual Jetstream fields, plus a `space` field naming the Space the record belongs to.
+
+It's written in Go, but you can just build and run it, and talk to it from your app:
+
+<Run />
+
+It listens in two places:
+- `--listen` is a private address that only your app should reach: it serves records from every Space you sync.
+- `--notification-listen` receives notifications from Space hosts, and needs to be reachable at the public HTTPS address you set with `--public-origin`.
+
+The [Build a Shared Space App tutorial](/guides/shared-space-tutorial) provides an example of working with `jetstream-spaces`, and the [README](https://github.com/bluesky-social/jetstream-spaces) covers deployment and configuration in detail.
+
+`jetstream-spaces` leaves Viewer access up to app logic. The stream contains every Space it follows.
+It also only syncs references to blobs. You need to fetch blobs separately, with the viewer's own access.
+
+## Further Reading and Resources
+
+- [Build a Shared Space App](/guides/shared-space-tutorial)
+- [`jetstream-spaces` on GitHub](https://github.com/bluesky-social/jetstream-spaces)
+- [Spaces](/guides/spaces)
+- [Streaming data](/guides/streaming-data)
+- [A Jetstream for Spaces](/blog/space-sync)

@@ -1,0 +1,42 @@
+```ts
+import { XrpcResponseError } from '@atproto/lex'
+import {
+  MemberspacePolicyManager,
+  SpaceClient,
+  SpaceManager,
+  memberspace,
+} from '@atproto/lex-space'
+import type { OAuthSession } from '@atproto/oauth-client-node'
+import * as dotenv from 'dotenv'
+import * as community from './lexicons/community.js'
+
+dotenv.config()
+
+export const calendarType = community.lexicon.calendar.collection.main
+export const { event, rsvp } = community.lexicon.calendar
+
+export const HOST_DID = process.env.HOST_DID!
+export const calendarUri = `at://${HOST_DID}/space/${calendarType.nsid}/friends`
+
+export function openCalendar(session: OAuthSession) {
+  return SpaceClient.openSpace(calendarType, calendarUri, { agent: session })
+}
+
+export async function createCalendar(host: OAuthSession) {
+  try {
+    await SpaceClient.createSpace(host, calendarType, {
+      skey: 'friends',
+      policy: memberspace.policy.$build({}),
+    })
+  } catch (err) {
+    if (!(err instanceof XrpcResponseError && err.error === 'SpaceAlreadyExists')) throw err
+  }
+}
+
+export async function addMember(host: OAuthSession, did: string) {
+  const manager = await SpaceManager.open(host, calendarUri)
+  if (manager instanceof MemberspacePolicyManager) {
+    await manager.putMembers([{ did, read: true, write: true }])
+  }
+}
+```

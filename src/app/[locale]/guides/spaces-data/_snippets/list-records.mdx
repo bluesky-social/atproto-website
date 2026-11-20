@@ -1,0 +1,7 @@
+```ts
+const { records, cursor } = await space.list(com.example.bookmark, { limit: 50 })
+
+for (const { rkey, valid, value } of records) {
+  if (valid) console.log(rkey, value.url)
+}
+```
