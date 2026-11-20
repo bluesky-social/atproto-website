@@ -42,8 +42,8 @@ Why would you want to run one of these services?
 
 
 
-* You’d run a **PDS** (Personal Data Server) if you want to self-host your data and keys to get increased control and privacy.
-* You’d run a **Relay** if you want a full copy of the network, or to crawl subsets of the network for targeted applications or services.
+* You’d run a **PDS** (personal data server) if you want to self-host your data and keys to get increased control and privacy.
+* You’d run a **relay** if you want a full copy of the network, or to crawl subsets of the network for targeted applications or services.
 * You’d run an **AppView** if you want to build custom applications with tailored views and experiences, such as a custom view for microblogging or for photos.
 
 So what if you want to run your own moderation?
@@ -68,7 +68,7 @@ This is different from ActivityPub servers (Mastodon), which manage both data ho
 
 ## Where moderation is applied
 
-Moderation is done by a dedicated service called the **Labeler** (or “Labeling service”).
+Moderation is done by a dedicated service called the **labeler** (or “labeling service”).
 
 Labelers produce “labels” which are associated with specific pieces of user-generated content, such as individual posts,  accounts, lists, or feeds. These labels make an assertion about the content, such as whether it contains sensitive material, is unpleasant, or is misleading.
 
@@ -142,7 +142,7 @@ Learn more about label definitions in the [API Docs on Labelers and Moderation](
 
 ## Running a labeler
 
-We recently open-sourced [Ozone](https://github.com/bluesky-social/ozone), our powerful open-source Labeler service that we use in-house to moderate Bluesky. This is a significant step forward in transparency and community involvement, as we're sharing the same professional-grade tooling that our own moderation team relies on daily.
+We recently open-sourced [Ozone](https://github.com/bluesky-social/ozone), our powerful open-source labeler service that we use in-house to moderate Bluesky. This is a significant step forward in transparency and community involvement, as we're sharing the same professional-grade tooling that our own moderation team relies on daily.
 
 Ozone is designed for traditional moderation, where a team of moderators receives reports and takes action on them, but you're free to apply other models with custom software. We recommend anyone interested in running a labeler try out Ozone, as it simplifies the process by helping labelers set up their service account, field reports, and publish labels from the same web interface used by Bluesky's own moderation team, ensuring that all the necessary technical requirements are met. Detailed instructions for setting up and operating Ozone can be [found in the readme](https://github.com/bluesky-social/ozone).
 
@@ -161,13 +161,13 @@ If you want to create your own labeler, you simply need to build a web service t
 * com.atproto.label.subscribeLabels : a realtime subscription of all labels
 * com.atproto.label.queryLabels : for looking up labels you've published on user-generated content
 
-Reporting content is an important part of moderation, and reports should be sent privately to whoever is able to act on them. The Labeling service's API includes a specific endpoint designed for this use case. To receive user reports, a labeler can implement:
+Reporting content is an important part of moderation, and reports should be sent privately to whoever is able to act on them. The labeling service's API includes a specific endpoint designed for this use case. To receive user reports, a labeler can implement:
 
 
 
 * com.atproto.report.createReport : files a report from a particular user
 
-When a user submits a report, they choose which of their active Labelers to report to. This gives users the ability to decide who should be informed of an issue. Reports serve as an additional signal for labelers, and they can handle them in a manner that best suits their needs, whether through human review or automated resolution. Appeals from users are essentially another type of report that provides feedback to Labelers. It's important to note that a Labeler is not required to accept reports.
+When a user submits a report, they choose which of their active labelers to report to. This gives users the ability to decide who should be informed of an issue. Reports serve as an additional signal for labelers, and they can handle them in a manner that best suits their needs, whether through human review or automated resolution. Appeals from users are essentially another type of report that provides feedback to labelers. It's important to note that a labeler is not required to accept reports.
 
 In addition to the technical implementation, your labeler should also have a dedicated Bluesky account associated with it. This account serves as your labeler's public presence within the Bluesky app, allowing you to share information about the types of labels you plan to publish and how users should interpret them. By publishing an `app.bsky.labeler.service` record, you effectively "convert" your account into a Bluesky labeler, enabling users to discover and subscribe to your labeling service.
 
@@ -176,20 +176,20 @@ More details about labels and labelers can be found in the [atproto specs](https
 
 ## Infrastructure moderation
 
-Labeling is the basic building block of composable moderation, but there are other aspects involved. In the AT Protocol network, various services, such as the PDS, Relay, and AppView, have ultimate discretion over what content they carry, though it's not the most straightforward avenue for content moderation. Services that are closer to users, such as the client and labelers, are designed to be more actively involved in community and content moderation. These service providers have a better understanding of the specific community norms and social dynamics within their user base. By handling content moderation at this level, clients and labelers can make more informed decisions that align with the expectations and values of their communities.
+Labeling is the basic building block of composable moderation, but there are other aspects involved. In the AT Protocol network, various services, such as the PDS, relay, and AppView, have ultimate discretion over what content they carry, though it's not the most straightforward avenue for content moderation. Services that are closer to users, such as the client and labelers, are designed to be more actively involved in community and content moderation. These service providers have a better understanding of the specific community norms and social dynamics within their user base. By handling content moderation at this level, clients and labelers can make more informed decisions that align with the expectations and values of their communities.
 
-Infrastructure providers such as Relays play a different role in the network, and are designed to be a common service provider that serves many kinds of applications. Relays perform simple data aggregation, and as the network grows, may eventually come to serve a wide range of social apps, each with their own unique communities and social norms. Consequently, Relays focus on combating network abuse and mitigating infrastructure-level harms, rather than making granular content moderation decisions.
+Infrastructure providers such as relays play a different role in the network, and are designed to be a common service provider that serves many kinds of applications. Relays perform simple data aggregation, and as the network grows, may eventually come to serve a wide range of social apps, each with their own unique communities and social norms. Consequently, relays focus on combating network abuse and mitigating infrastructure-level harms, rather than making granular content moderation decisions.
 
 An example of harm handled at the infrastructure layer is content that is illegal to host, such as child sexual abuse material (CSAM). Service providers should actively detect and remove content that cannot be hosted in the jurisdictions in which they operate. Bluesky already [actively monitors](https://bsky.social/about/blog/01-16-2024-moderation-2023) its infrastructure for illegal content, and we're working on systems to advise other services (like PDS hosts) about issues we find.
 
 
 
-<Image src={infraVsAppModeration} alt="Labels drive moderation in the client. The Relay and Appview apply infrastructure moderation." />
+<Image src={infraVsAppModeration} alt="Labels drive moderation in the client. The relay and Appview apply infrastructure moderation." />
 
 
-_Labels drive moderation in the client. The Relay and Appview apply infrastructure moderation._
+_Labels drive moderation in the client. The relay and Appview apply infrastructure moderation._
 
-This separation between backend infrastructure and application concerns is similar to how the web itself works. The PDSs function like personal websites or blogs on the web, which are hosted by various hosting providers. Just as individuals can choose their hosting provider and move their website if needed, users on the AT Protocol can select their PDS and migrate their data if they wish to change providers. Multiple companies can then run Relays and AppViews over PDSs, which are similar to content delivery networks and search engines, that serve as the backbone infrastructure to aggregate and index information. To provide a unified experience to the end user, application and labeling systems then provide a robust, opinionated approach to content moderation, the way individual websites and applications set their own community guidelines.
+This separation between backend infrastructure and application concerns is similar to how the web itself works. The PDSs function like personal websites or blogs on the web, which are hosted by various hosting providers. Just as individuals can choose their hosting provider and move their website if needed, users on the AT Protocol can select their PDS and migrate their data if they wish to change providers. Multiple companies can then run relays and AppViews over PDSs, which are similar to content delivery networks and search engines, that serve as the backbone infrastructure to aggregate and index information. To provide a unified experience to the end user, application and labeling systems then provide a robust, opinionated approach to content moderation, the way individual websites and applications set their own community guidelines.
 
 
 ## In summary

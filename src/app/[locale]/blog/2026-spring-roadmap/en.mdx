@@ -20,7 +20,7 @@ We've had a busy 6 months since the last update in [October 2025](https://atprot
 
 **Sync Infrastructure:** in December we [released tap](https://atproto.com/blog/introducing-tap), a self-hosted atproto sync consumer, which serves as a reference implementation for [Sync 1.1](https://github.com/bluesky-social/proposals/tree/main/0006-sync-iteration). Tap is application-agnostic, helps with reliable and correct firehose consumption, and demonstrates how to "backfill" historical data from the network. And in January, we [upgraded the popular `bsky.network` relay instance](https://atproto.com/blog/relay-rollout) to a newer relay implementation which incorporates Sync 1.1.
 
-**Lexicon Workflows**: the TypeScript reference SDK had a major refresh for [working with Lexicons](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex), including a [new `lex` tool](https://github.com/bluesky-social/atproto/tree/main/packages/lex-cli) for resolving published lexicons and generating types. The [`goat` command line tool](https://github.com/bluesky-social/goat) got new functionality for working with lexicon schemas, including publishing, resolving, and linting.
+**Lexicon Workflows**: the TypeScript reference SDK had a major refresh for [working with lexicons](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex), including a [new `lex` tool](https://github.com/bluesky-social/atproto/tree/main/packages/lex-cli) for resolving published lexicons and generating types. The [`goat` command line tool](https://github.com/bluesky-social/goat) got new functionality for working with lexicon schemas, including publishing, resolving, and linting.
 
 **OAuth Completeness:** permissions and permission sets shipped, giving app devs flexibility in requesting access to user accounts. SDK support, cookbooks, and developer documentation for OAuth got big overhauls, making it significantly easier to integrate into client apps.
 
@@ -40,7 +40,7 @@ The original design focus of the protocol was to support public conversations in
 
 Several teams have been working in parallel to implement extensions to the protocol for non-public data, including Blacksky, Northsky, and Habitat. A [sketch design proposal](https://dholms.leaflet.pub/3mhj6bcqats2o) has been published by the Bluesky protocol team, and we expect to discuss and debate all of these architectures with the Atmosphere developer community both in-person in Vancouver, and online in coming weeks.
 
-Shipping Permissioned Data will require updates to PDS implementations, SDKs, written specifications, moderation tooling, and more. We expect there to be significant implementation and experimentation work before details are finalized. Permissioned data will probably be a major focus for the Bluesky protocol team through the summer.
+Shipping permissioned data will require updates to PDS implementations, SDKs, written specifications, moderation tooling, and more. We expect there to be significant implementation and experimentation work before details are finalized. Permissioned data will probably be a major focus for the Bluesky protocol team through the summer.
 
 ### Account Experience
 

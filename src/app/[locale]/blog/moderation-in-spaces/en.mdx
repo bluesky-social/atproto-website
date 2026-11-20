@@ -1,0 +1,48 @@
+export const header = {
+  standardSiteUri: 'at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/site.standard.document/3n2qynq7czk2q',
+  title: 'Moderation in Spaces',
+  description: 'Moderation is critical to global atproto and just as important to get right for spaces.',
+  date: 'November 20, 2026',
+  author: 'Jim Ray',
+  tags: ['spaces', 'moderation'],
+}
+
+From the beginning, [moderation has been core to the ethos of AT Protocol](https://atproto.com/guides/moderation), including making moderation composable and layered. Bluesky, which operates the oldest and largest application in the Atmosphere, has outlined how they approach moderation in a [stackable way](https://bsky.social/about/blog/03-12-2024-stackable-moderation). Blacksky brings different approaches to moderation and has even built [an entire product](https://acorn.blacksky.community/docs/moderation/how-it-works) to address the unique needs of different communities. Moderation of the global atproto network is an active process, and that’s just as true for atproto spaces.
+
+A space acts like a miniature version of the global Atmosphere, which includes moderation. Accounts are still hosted on PDSes and displayed by applications. In the same way an account could be removed from a PDS, which would remove it from view by an application, it would also be removed from a space. Or a post may be hidden or removed without removing the account from the space.
+
+As you think about the kinds of apps and experiences you want to build with spaces, here’s how to think about moderation.
+
+## The space authority
+
+On the global atproto network, there are multiple infrastructure operators that can perform moderation actions — the PDS, the relay, the application host — as well as labelers that can be algorithmic, community built, or even individually maintained.
+
+Spaces adds a **space authority**, which controls access to a space, making it a natural fit for moderation actions. On global atproto, when a record or account is flagged, it may get moderated at the app level for not following community guidelines, or at the PDS level for not complying with a local jurisdiction. 
+
+On a space, the space authority is capable of removing the bad actor or content from the space itself, up to and including excluding them from membership entirely.
+
+## Labels are records
+
+On the global atproto network, a labeler is part of the layered approach to moderation and labels provide an important social function. For example, people might want to subscribe to a labeler to hide certain content, or to mark accounts with certain labels. In a global context, it makes sense to keep these public and on the network.
+
+Because you don’t want to broadcast data, or even references to data, in a space, using a public labeler could compromise the space. So, labels are instead themselves records that are bound to the space. These label records then reference the records they are applied to. For moderation, apps should honor labels published by a group account in a group space. 
+
+Conceptually, this is similar to moderating global atproto with tools like Ozone, where a report is handled by higher order systems (sometimes automated, sometimes hand reviewed) and group host implementations should include functions for removing content and accounts from having access to a space.
+
+## Moderating a space is the same as moderating the global network
+
+Just like with global atproto, the layered approach to moderation still applies to a space. An account is still, for example, entwined with its hosting status; if an account is removed from a PDS it is also removed from a space and removing an account from a space does not necessarily remove the account from the PDS.
+
+## How moderation might work in a group
+
+To understand how this might work in context, let’s consider a space built using the [opensocial.group standard](https://tangled.org/opensocial.group/proposal), a currently-in-development proposal for Atmospheric Groups.
+
+In an opensocial.group, a group host acts as the space authority. The group host also provides an interface for managing moderation requests (by group administrators, for example). Think of this interface as a mini-[Ozone](https://atproto.com/guides/using-ozone).
+
+A group can set the moderation logic in a way that makes sense to their group, including creating their own labels. A group can also set the moderation roles for the group, with default roles of “apply labels”, “read reports”, and “resolve reports”.
+
+If someone posts something to the group that’s considered off-topic, a non-administrator might label the post as such. A moderator might see that label in the group admin interface and escalate it to an administrator, who would be responsible for taking the content down.
+
+In the case of an account that’s, for example, spamming a group, a label can be applied to the account and the account can be removed entirely, which removes them from the group. At the protocol level, this removes their access from the space.
+
+Moderation is never done and we want to make sure that the foundational pieces are in place to build on. The [spaces public beta](https://atproto.com/blog/getting-ready-for-the-spaces-public-beta) is an opportunity to test what's working, build new tooling, and let us know what else you need.

@@ -26,14 +26,14 @@ We have a a few resources for developers working with OAuth:
 The current OAuth profile does not specify how granular permissions ("scopes") work with atproto. Instead, we have defined a small set of "transitional" scopes which provide the same levels of client access as the current auth system:
 
 - `transition:generic` the same level of permissions as an App Password
-- `transition:chat.bsky` is an add-on (must be included in combination with `transition:generic`) which adds access to the `chat.bsky.*` Lexicons for DMs. Same behavior as an App Password with the DM access option selected.
+- `transition:chat.bsky` is an add-on (must be included in combination with `transition:generic`) which adds access to the `chat.bsky.*` lexicons for DMs. Same behavior as an App Password with the DM access option selected.
 
 ### Next Steps
 
 There are two larger components which will integrate OAuth into the atproto ecosystem:
 
 - The first is to expand the PDS account web interface to manage active OAuth sessions. This will allow users to inspect active sessions, the associated clients, and to revoke those sessions (eg, "remote log out"). This is user interface work specific to the PDS implementation, and will not change or impact the existing OAuth specification.
-- The second is to design an atproto-native scopes system which integrates with Lexicons, record collections, and other protocol features. This will allow granular app permissions in an extensible manner. This is expected to be orthogonal to the current OAuth specification, and it should be relatively easy for client apps to transition to more granular permissions, though it will likely require logout and re-authentication by users.
+- The second is to design an atproto-native scopes system which integrates with lexicons, record collections, and other protocol features. This will allow granular app permissions in an extensible manner. This is expected to be orthogonal to the current OAuth specification, and it should be relatively easy for client apps to transition to more granular permissions, though it will likely require logout and re-authentication by users.
 
 These are big priorities for user security, and the path to implementation and deployment is clear.
 
