@@ -1313,21 +1313,9 @@ export const individualScopes: CuratedScope[] = [
     resourceType: 'account',
     scopeString: 'account:email',
     replacesTransition: 'transition:email',
-    supersededBy: 'account-email-manage',
     specLink: '/specs/permission#account',
     explanation:
       'Makes the account\'s email address and verification status visible via com.atproto.server.getSession. Replaces transition:email.',
-  },
-  {
-    id: 'account-email-manage',
-    label: 'Manage account email',
-    description: 'Change the user\'s email address.',
-    kind: 'individual',
-    resourceType: 'account',
-    scopeString: 'account:email?action=manage',
-    specLink: '/specs/permission#account',
-    explanation:
-      'Allows reading AND changing the account\'s email address. Implies account:email.',
   },
   {
     id: 'identity-handle',

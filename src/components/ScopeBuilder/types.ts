@@ -47,7 +47,7 @@ export interface CuratedScope {
   // input that lets the user override the audience per request.
   defaultAud?: string
   // Id of another curated scope whose selection semantically subsumes this
-  // one (e.g. account:email is subsumed by account:email?action=manage). When
+  // one (e.g. account:repo is subsumed by account:repo?action=manage). When
   // the superset is selected, this scope's checkbox is auto-unchecked and
   // disabled with an inline "Included via ..." note.
   supersededBy?: string
