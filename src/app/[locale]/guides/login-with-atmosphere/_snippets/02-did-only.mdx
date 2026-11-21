@@ -1,0 +1,14 @@
+```typescript
+import { AtmosphereLogin } from '@atproto/atmosphere-login'
+
+// Returns only the DID for use with external auth
+const result = await AtmosphereLogin.prompt({
+  mode: 'did-only',
+})
+
+console.log(result.did)    // 'did:plc:...'
+console.log(result.handle) // 'alice.bsky.social'
+
+// Pass to your own auth system
+await myAuthSystem.authenticate(result.did)
+```

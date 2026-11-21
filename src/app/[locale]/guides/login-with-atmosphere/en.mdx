@@ -1,0 +1,122 @@
+import { Container } from "@/components/Container"
+import { AtmosphereLoginWidget } from "@/components/AtmosphereLoginMockup"
+import { AtmosphereLoginEmbed } from "@/components/AtmosphereLoginEmbed"
+import atmosphereLogo from "./atmosphere-login.png"
+import S00 from './_snippets/00-npm-install.mdx'
+import S01 from './_snippets/01-import-widget.mdx'
+import S02 from './_snippets/02-did-only.mdx'
+import S03 from './_snippets/03-with-default-pds.mdx'
+import S06 from './_snippets/06-embed-button.mdx'
+
+export const header = {
+  title: 'Login with Atmosphere',
+  description: 'Embedding an Atmosphere login widget into your app',
+}
+
+## Overview
+
+AT Protocol identities can be used across applications with [OAuth](/guides/about-oauth). Instead of implementing your own OAuth flow, you can embed the Atmosphere login widget into your app. This provides a straightforward, consistent login experience.
+
+This provides an interface to pick from any of the atproto identities you've used locally, similar to the [Sign in with Google](https://developers.google.com/identity/gsi/web/guides/overview) auth flow.
+
+As in other atproto auth flows, your PDS is the actual identity provider, and your app is the OAuth client. The user will authenticate with their PDS, which will return an access token to your app.
+
+In addition to logging in with existing identities, this interface can also be used for sign up flows — allowing users to create a new identity and immediately use it to log in.
+
+## FedCM support
+
+Eventually, we plan to support [FedCM](/blog/working-to-decentralize-fedcm), which will provide native browser support for decentralized login flows. This widget provides a similar experience to FedCM, and can be embedded into any web app as-is.
+
+## Using the Widget
+
+Install the package:
+
+<S00 />
+
+The simplest integration is to embed the login button on your page:
+
+<S06 />
+
+<Container>
+  <AtmosphereLoginEmbed logoSrc={atmosphereLogo} />
+</Container>
+
+When the user clicks the button, it opens the account picker in an iframe overlay. The user can select an existing identity or create a new one:
+
+<Container>
+  <AtmosphereLoginWidget appName="Your App" logoSrc={atmosphereLogo} />
+</Container>
+
+When the user completes the login flow, the widget closes and your `onLogin` callback receives a session object containing the user's DID and an access token for your app to use when making authenticated requests to AT Protocol APIs.
+
+<S01 />
+
+If you want to build your own button or trigger the login flow programmatically, you can import the widget separately and call it directly—the provided button is just a convenience wrapper.
+
+## Customization
+
+If you want new users to be able to sign up directly through the widget, provide a `defaultPds` that will host their accounts:
+
+<S03 />
+
+## Self-Hosting the Login Server
+
+By default, the widget loads from a CDN. If you prefer not to have any external dependencies, you can self-host the login server:
+
+```bash
+npx @atproto/atmosphere-login serve --port 3001
+```
+
+Then point your widget to your self-hosted instance. This is also useful if you need the login flow to work in environments without external network access.
+
+## Returning a Session
+
+By default, the widget returns a session object with everything you need to make authenticated API calls:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `did` | `string` | The user's DID (e.g., `did:plc:...`) |
+| `handle` | `string` | The user's handle (e.g., `alice.bsky.social`) |
+| `accessToken` | `string` | JWT access token for API requests |
+| `refreshToken` | `string` | Token for obtaining new access tokens |
+| `expiresAt` | `Date` | When the access token expires |
+| `pds` | `string` | The user's PDS service URL |
+
+The session object can be passed directly to `@atproto/lex`'s `Agent` constructor to make authenticated requests.
+
+## DID Resolution Only
+
+The widget can also be used for DID resolution only, without returning a session. This allows you to use the account picker UI in combination with an external authentication flow.
+
+For example, if you're already using the [authproto](https://github.com/FujoWebDev/fujocoded-plugins/tree/main/astro-authproto) Astro package, you can use this widget to provide a familiar interface, then return the DID to your authproto server for authentication.
+
+Set `mode: 'did-only'` to skip the OAuth token exchange:
+
+<S02 />
+
+In this mode, the widget returns only the `did` and `handle` properties. Your application is responsible for any subsequent authentication with those identifiers.
+
+## Configuration Options
+
+The widget accepts the following configuration options:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `scope` | `string` | `'atproto'` | OAuth scopes to request (see [Permission Sets](/guides/permission-sets)) |
+| `mode` | `'session'` \| `'did-only'` | `'session'` | Whether to return a full session or just the DID |
+| `defaultPds` | `string` | — | PDS URL for new account signups |
+| `allowSignup` | `boolean` | `true` | Whether to show the "Create a new account" option |
+| `theme` | `'light'` \| `'dark'` \| `'auto'` | `'auto'` | Widget color scheme |
+| `serverUrl` | `string` | — | URL of self-hosted login server (if not using CDN) |
+| `onLogin` | `(session) => void` | — | Callback when login completes |
+| `onCancel` | `() => void` | — | Callback when user dismisses the widget |
+
+## Further Reading and Resources
+
+- [SDK authentication](/guides/sdk-auth)
+- [About OAuth](/guides/about-oauth)
+- [Permission Requests](/guides/permission-requests)
+- [Permission Sets](/guides/permission-sets)
+- [OAuth Patterns](/guides/oauth-patterns)
+- [OAuth spec](/specs/oauth)
+- [Permissions spec](/specs/permission)
