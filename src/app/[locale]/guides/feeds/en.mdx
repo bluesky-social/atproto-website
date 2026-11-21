@@ -46,7 +46,9 @@ The general flow of providing a custom algorithm to a user is as follows:
 - A user requests a feed from the AppView using the at-uri of the declared feed
 - The AppView resolves the at-uri and finds the DID doc of the Feed Generator
 - The AppView sends a getFeedSkeleton request to the service endpoint declared in the Feed Generator's DID doc
+  - The endpoint is the `serviceEndpoint` of the `#bsky_fg` service entry (type `BskyFeedGenerator`). It is used as a bare origin (scheme, hostname and optional port), so any path is dropped: an endpoint of `https://example.com/feeds` is called at `https://example.com/xrpc/app.bsky.feed.getFeedSkeleton`.
   - This request is authenticated by a JWT signed by the user's repo signing key
+  - The JWT's `lxm` is `app.bsky.feed.getFeedSkeleton` and its `aud` is the Feed Generator's DID. The reference PDS currently sends a bare DID in `aud`; the [XRPC spec](/specs/xrpc#inter-service-authentication-jwt) says new software should include the service fragment (`#bsky_fg`).
 - The Feed Generator returns a skeleton of the feed to the AppView
 - The AppView hydrates the feed (user info, post contents, aggregates, etc.)
 - The AppView returns the hydrated feed to the user
