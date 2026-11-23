@@ -135,6 +135,8 @@ Type-specific fields:
 
 When included as an HTTP query parameter, should be rendered as `true` or `false` (no quotes).
 
+`const` and `default` are mutually exclusive.
+
 ### `integer`
 
 A signed integer number.
@@ -146,6 +148,8 @@ Type-specific fields:
 - `enum` (array of integers, optional): a closed set of allowed values
 - `default` (integer, optional): a default value for this field
 - `const` (integer, optional): a fixed (constant) value for this field
+
+`const` and `default` are mutually exclusive.
 
 ### `string`
 
