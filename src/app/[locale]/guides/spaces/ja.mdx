@@ -1,0 +1,70 @@
+import { SpacesNetworkDiagram } from './SpacesNetworkDiagram.ja'
+import { SpacesOneRecordDiagram } from './SpacesOneRecordDiagram.ja'
+import { SpacesAppsDiagram } from './SpacesAppsDiagram.ja'
+import { SpacesAccessDiagram } from './SpacesAccessDiagram.ja'
+import { SpacesLabelsDiagram } from './SpacesLabelsDiagram.ja'
+import { SpacesNotifyDiagram } from './SpacesNotifyDiagram.ja'
+import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
+
+export const header = {
+  title: 'Spaces',
+  description: 'atproto Spacesのビジュアル入門',
+}
+
+**Spaces**（スペース）は、非公開データをATプロトコル上に保存・同期するための仕組みです。スペース内のデータは公開ネットワークの一部ではなく、そのスペースのメンバーだけがアクセスできます。それでいて、スペースはポータブルなアイデンティティや相互運用可能なデータといったatprotoの利点を*そのまま*備えています。各スペースは、独自のレコードを持つ、それ自体ひとつのatprotoネットワークだと考えることができます。
+
+スペースを使えば、招待制のソーシャルアプリ、共有またはプライベートなワークスペースなど、デフォルトで公開したくないデータを扱うアプリケーションを構築できます。このページでは、スペースの仕組みを概念的に解説し、スペースを使った開発の勘所をつかめるようにします。
+
+すぐにスペースを使った開発を始めたい場合は、[共有スペースアプリのチュートリアル](/guides/shared-space-tutorial)と[プライベートアプリのチュートリアル](/guides/private-app-tutorial)を参照してください。入門編は以下に続きます。
+
+## スペースは小さなatprotoネットワーク
+
+スペースは、公開atprotoと同じく、[Lexicon](/guides/lexicon)に従ったレコードを各ユーザーの[PDS](/guides/the-at-stack#pds)上のリポジトリに保存します。ひとつのスペースは複数のユーザーのリポジトリにまたがることができ、各ユーザーは自分自身のリポジトリに書き込みます。
+
+<SpacesNetworkDiagram />
+
+## 1つのレコードは1つのスペースに
+
+スペースは個々のレコードに対するパーミッションでは*ありません*。各レコードは*ひとつのスペースに書き込まれ*、そのレコードへのアクセスはスペース自体が制御します。1つのレコードを複数のスペースに入れることはできません。スペースはアクセス制御の手段であり、暗号化ではありません。スペースのレコードも、他のレコードと同様にPDSに保存されます。
+
+<SpacesOneRecordDiagram />
+
+## スペースのデータはAtmosphereの一部
+
+スペースは他のatprotoデータと同じくLexiconを使うため、特定のアプリに縛られません。スペースへのアクセス権を持つアプリであれば、どのアプリでもそのデータを読み書きでき、スペースのデータから独自のビューを構築できます。つまり、atprotoの[ソーシャルグラフ](/guides/social-graph)を他のアプリが借りてリミックスできるのと同じように、スペースによって定義されたグループやソーシャルな境界も再利用できるのです。
+
+<SpacesAppsDiagram />
+
+## スペースはアクセスを、アプリはパーミッションを制御する
+
+各スペースには、誰がスペース内のデータを読み書きできるかを制御する単一のオーソリティ（authority）が存在します。スペースオーソリティはDIDであり、個人ユーザーでも共有アイデンティティでも構いません。スペースオーソリティは他のDIDにアクセスを許可したり、いつでもそれを取り消したりできます。スペースのメンバーシップは二値的です。つまり、アカウントはスペースに入っているか、入っていないかのどちらかです。アプリはスペースのメンバーシップの上に、独自のきめ細かなパーミッションを実装できます。
+
+<SpacesAccessDiagram />
+
+## スペースでのモデレーション
+
+公開atprotoデータでは、モデレーションは[ラベル](/guides/labels)によって実装されます。ラベルは他のレコードに付与できるメタデータの一種です。スペースでは、モデレーションの「ラベル」は通常の*レコード*であり、ラベル付けの対象と同じスペースに書き込まれ、スペース内の他のレコードと同様に同期されます。アプリは自身が受け入れるラベルを適用します。詳しくは[スペースのモデレーション](/guides/moderating-spaces)を参照してください。
+
+<SpacesLabelsDiagram />
+
+## スペースの同期
+
+非公開データは公開データのようにネットワーク全体へ再配信されないため、スペースは*リレーなしで*同期する必要があります。デフォルトでは、スペースのオーソリティが、誰がスペースを読めるか、誰の書き込みをスペースの一部として扱うかを決定します。オーソリティ自身は誰のレコードも保存しません。ユーザーがスペースにレコードを書き込むと、そのユーザーのPDSがスペースオーソリティのPDSに通知し、オーソリティのPDSはそのスペースをフォローしている同期サービスに通知します。同期サービスはクレデンシャルを使ってユーザーのPDSからレコードを取得し、スペースをフォローしているアプリへ渡します。
+
+<SpacesNotifyDiagram />
+
+## スペース向けJetstream
+
+この通知ベースの同期モデルを簡単に扱うために、スペース版のJetstreamサービスを利用できます。これにより、アプリは標準のJetstreamと同じクライアント側APIを持つ単一のストリームを得られます。
+
+<SpaceJoinDiagram />
+
+以上がスペースの主要な概念です！スペースが公開データとどう異なるかの具体例は、このドキュメント全体を通して紹介しています。詳しい解説やチュートリアルは、以下のリンクを参照してください。
+
+## 関連・参考資料
+
+- [スペースのデータ](/guides/spaces-data)
+- [スペースの同期](/guides/space-sync)
+- [スペースのモデレーション](/guides/moderating-spaces)
+- [プライベートアプリを作る](/guides/private-app-tutorial)
+- [共有スペースアプリを作る](/guides/shared-space-tutorial)

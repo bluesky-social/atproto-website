@@ -1,0 +1,137 @@
+import calendar from './calendar.png'
+import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
+import S01 from './_snippets/01-init-project.mdx'
+import S02 from './_snippets/02-lex-install.mdx'
+import S03 from './_snippets/03-env-file.mdx'
+import S04 from './_snippets/04-calendar.mdx'
+import S05 from './_snippets/05-sync.mdx'
+import S06 from './_snippets/06-indexer.mdx'
+import S07 from './_snippets/07-pages.mdx'
+import S08 from './_snippets/08-server.mdx'
+import S09 from './_snippets/09-build-jetstream-spaces.mdx'
+import S10 from './_snippets/10-run-jetstream-spaces.mdx'
+import S11 from './_snippets/11-run-app.mdx'
+
+export const header = {
+  title: '共有スペースアプリを作る',
+  description: 'スペースで友人とレコードを共有し、アプリに同期する',
+}
+
+このチュートリアルでは、atproto上に共有カレンダーを構築します。1つのアカウントがカレンダーをスペースとしてホストし、友人をメンバーとして追加します。メンバーは誰でもイベントを投稿し、出欠の返信（RSVP）ができます。各人のイベントとRSVPはそれぞれのPDS上の自分のリポジトリに保存され、アプリは[jetstream-spaces](/guides/space-sync)を使ってそれらすべてを1つのビューに同期します。[プライベートアプリを作る](/guides/private-app-tutorial)と同じ[Lexicon Community](https://lexicon.community/)のカレンダー用[Lexicon](/guides/lexicon)を、SpacesのTypeScript SDKおよび[OAuth](/guides/auth)と組み合わせて使用します。
+
+仕組みは[Spacesの解説](/guides/spaces#jetstream-for-spaces)にある同期の図と同じで、ライドとチアの代わりにイベントとRSVPを扱います。
+
+<SpaceJoinDiagram />
+
+## 前提条件
+
+以下をインストールしておいてください。
+
+- Node.js 22以上
+- Go
+
+[homebrew](https://brew.sh)に対応したプラットフォームでは、次のコマンドでインストールできます。
+
+```bash
+brew install node go
+```
+
+また、*Spacesに対応したPDS*上のアカウントが2つ必要です。1つはカレンダーをホストするためのもの、もう1つは友人役のものです。2026年12月1日時点で、[リファレンスPDS](https://github.com/bluesky-social/pds)はSpacesに対応しています。
+
+最後に、誰かがカレンダーに書き込んだときに、カレンダーをホストするPDSから通知を受け取れるよう、公開HTTPSアドレスが必要です。ローカル開発では、[Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/)、[ngrok](https://ngrok.com/docs/)、[Tailscale Funnel](https://tailscale.com/kb/1223/funnel)などのトンネリングサービスを利用できます。
+
+## パート1：プロジェクトのセットアップ
+
+新しいプロジェクトディレクトリを作成し、[SDK](https://npmx.dev/package/@atproto/lex)、OAuthクライアント、`jetstream-spaces`クライアント、その他の依存関係をインストールします。
+
+<S01 />
+
+また、`lex` CLIツールをグローバルにインストールし、このプロジェクトに[`community.lexicon.calendar`](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexiconを導入する必要があります。
+
+<S02 />
+
+## パート2：カレンダー
+
+`src/calendar.ts`に新しいファイルを作成します。このファイルには、アプリで共有するいくつかのメソッドを記述します。
+
+<S04 />
+
+- カレンダーは`HOST_DID`として設定した1つのアカウントがホストし、キーは`friends`です。
+- `createCalendar()`は`memberspace`ポリシーでスペースを作成します。そのため、ホストと、ホストが追加したメンバーだけがアクセスできます。これはホストが初めてログインしたときに実行されます。
+- `addMember()`は、友人にカレンダーを読み書きするパーミッションを与えます。
+- どの関数もOAuthセッションを受け取るため、すべての読み書きはログイン中のユーザーとして行われます。
+
+ホストのDIDを`.env`ファイルに設定します。
+
+<S03 />
+
+## パート3：jetstream-spacesを実行する
+
+`jetstream-spaces`は、カレンダーの同期処理を担います。誰かが書き込むと通知を受け取り、各メンバーのPDSから新しいレコードを取得して、1つのストリームとしてアプリに提供します。Goで書かれていますが、ここではビルドして実行するだけです。
+
+プロジェクトの隣にクローンしてビルドし、アプリとjetstream-spacesで共有するシークレットを作成します。
+
+<S09 />
+
+これで`./jetstream-spaces`を実行できます。
+
+<S10 />
+
+`https://sync.example.com`は、必ず自分の公開HTTPSアドレス（Cloudflare、Ngrok、Tailscaleなどで取得したもの）に**置き換えて**ください。
+
+ターミナルで実行したままにしておきます。ポート`3002`はlocalhost専用で、アプリはここから読み取ります。
+
+## パート4：OAuthとコントローラー
+
+次に、OAuthの定型コードを作成します。`src/sync.ts`に次の内容で新しいファイルを作成します。
+
+<S05 />
+
+ここでは2つのことを行っています。1つはOAuthクライアントで、[Node.jsでのOAuth](/guides/oauth-cli-tutorial)と同様のものです。2つの[パーミッションスコープ](/guides/permission-requests)を要求します。基本の`atproto`と、カレンダー用の`space:`スコープです。`space:`スコープでは、ユーザーがメンバーになっている任意のカレンダーを読み書きするための`authority=*`、カレンダーを作成するための`manage=create`、メンバーを追加するための`manage=update`を指定しています。
+
+もう1つは、アプリを`jetstream-spaces`に接続する`SpaceSyncController`です。これは`jetstream-spaces`にどのスペースを同期するかを伝え、`jetstream-spaces`がアクセスを必要とするときには、ホストから順に、サインイン済みユーザーのOAuthセッションを使ってアクセスを取得します。
+
+このアプリはセッションをメモリに保存するため、再起動すると全員がサインアウトされます。`jetstream-spaces`は継続的にアクセスを要求するため、本番アプリではセッションを永続的に保存すべきです。
+
+## パート5：イベントとRSVPのインデックス作成
+
+次に、ブロードキャストされる通知を処理するために、`src/indexer.ts`に別のファイルを作成します。
+
+<S06 />
+
+これは`jetstream-spaces`から読み取り、カレンダーをメモリ上に保持します。
+- `.commit()`は、イベントやRSVPの書き込みと削除を処理します。
+- `.space()`と`.account()`は、レコードがスペースから消えるその他のケースを処理します。スペースの削除、作成者の削除、アカウントの無効化または削除です。これらはすべて必須です。
+- `startIndexer()`は、すべてを最初からリプレイし、その後は到着する新しいイベントを追跡します。
+
+## パート6：ブラウザで表示する
+
+最後に、これをウェブアプリにします。
+
+<Image src={calendar} alt="Our calendarというタイトルのシンプルなウェブページ。それぞれRSVPが1件ずつ付いた2つのイベントと、イベントやメンバーを追加するフォームが表示されている" />
+
+ログインフォームとカレンダーをHTMLとしてレンダリングするために、`src/pages.ts`を作成します。
+
+<S07 />
+
+最後に、`src/server.ts`を作成します。これは`node:http`サーバーを使って、ログイン、イベント・RSVP・メンバーの追加、カレンダーの表示を処理します。
+
+<S08 />
+
+ログインのたびに`controller.notifySpaceAvailable()`を呼び出すため、`jetstream-spaces`は新しいセッションを使ってすぐに再試行します。カレンダーを表示する前には、`calendar.authorize()`でログイン中のユーザーがメンバーであることを確認します。
+
+`npx tsx`で実行します。
+
+<S11 />
+
+ブラウザで`http://127.0.0.1:3000`を開き、ホストとしてログインできるはずです。これによりカレンダーも作成されます。
+
+ここから一連の流れを確認するには、別のユーザーのDIDをメンバーとして追加し、別のブラウザまたはプライベートウィンドウでそのDIDとしてログインします。一方のアカウントでイベントを追加し、もう一方のアカウントでRSVPしてみてください。新しいイベントやRSVPは`jetstream-spaces`が同期した時点で表示されるので、ページを再読み込みして確認してください。
+
+これで、複数のアカウントとPDSにまたがる共有スペースを同期するアプリを構築できました！
+
+## 結論
+
+本格的なマルチユーザーのSpacesアプリの完成、おめでとうございます！このチュートリアルでは、OAuthスコープ、Jetstreamによる同期、複数ユーザーのリポジトリからの書き込み通知の処理など、Spacesの一連の流れを紹介しました。
+
+ここからは、JetstreamでSpacesを使う方法について[スペースの同期](/guides/space-sync)を参照し、あなた自身のatproto Spacesアプリの開発を始めましょう！

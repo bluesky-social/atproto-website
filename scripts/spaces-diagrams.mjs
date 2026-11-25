@@ -36,6 +36,94 @@ const VARS = {
 
 const r2 = (s) => s.replace(/-?\d+\.\d+/g, (n) => String(Math.round(+n * 100) / 100))
 
+// Every diagram is also written as `<Name>.ja.tsx`, with the same shapes and
+// its text looked up here. A value can be [text, fontSize] where the
+// translation needs a smaller size to fit. Names are left as they are.
+const NAMES = new Set(['', 'alice', 'bob', 'carol', 'dave', '!takedown'])
+const JA = {
+  // SpacesNetworkDiagram
+  "alice's PDS": 'aliceのPDS',
+  "bob's PDS": 'bobのPDS',
+  "carol's PDS": 'carolのPDS',
+  repo: 'リポジトリ',
+  post: 'ポスト',
+  like: 'いいね',
+  follow: ['フォロー', 16],
+  note: 'メモ',
+  pin: 'ピン',
+  'space repo': 'スペースリポジトリ',
+  'a space': 'スペース',
+  'atproto accounts,': 'atprotoアカウント、',
+  'atproto repos,': 'atprotoリポジトリ、',
+  'atproto records': 'atprotoレコード',
+  "Alice, Bob, and Carol each have an account hosted on their own PDS, and each PDS holds that account's repo of records. Alice and Bob are also members of a space, so their PDSes each hold a space repo with records of their own. The space is drawn as a boundary around those space repos: atproto accounts, repos, and records, as a smaller network.":
+    'Alice、Bob、Carolはそれぞれ自分のPDSにアカウントを持ち、各PDSにはそのアカウントのレコードを収めたリポジトリがあります。AliceとBobはあるスペースのメンバーでもあるため、それぞれのPDSには独自のレコードを持つスペースリポジトリもあります。スペースはそれらのスペースリポジトリを囲む境界として描かれています。atprotoのアカウント、リポジトリ、レコードからなる、より小さなネットワークです。',
+  // SpacesOneRecordDiagram
+  'book club space repo': '読書会スペース',
+  'running club space repo': 'ランニング部スペース',
+  'two spaces, two separate notes: each record is in exactly one space':
+    '2つのスペースに別々のメモ：各レコードは1つのスペースだけに属する',
+  "Alice is in two spaces, a book club with Bob and a running club with Carol. Alice's PDS holds a separate space repo for each, each with its own note. Bob's PDS holds his book club space repo and his public repo, and Carol's PDS holds her public repo and her running club space repo. Each record is in exactly one space.":
+    'Aliceは2つのスペースに参加しています。Bobとの読書会と、Carolとのランニング部です。AliceのPDSにはそれぞれ別のスペースリポジトリがあり、それぞれに独自のメモがあります。BobのPDSには読書会のスペースリポジトリと公開リポジトリがあり、CarolのPDSには公開リポジトリとランニング部のスペースリポジトリがあります。各レコードはちょうど1つのスペースに属します。',
+  // SpacesAppsDiagram
+  "alice's repo": 'aliceのリポジトリ',
+  "bob's repo": 'bobのリポジトリ',
+  'with permission': '許可を得て',
+  'fitness app': 'フィットネスアプリ',
+  'map app': '地図アプリ',
+  'calendar app': 'カレンダーアプリ',
+  "alice's ride": 'aliceのライド',
+  "bob's ride": 'bobのライド',
+  '+1 cheer': '+1 応援',
+  "A space holds Alice's repo, with two posts, and Bob's repo, with a post and a like. Three different apps that have been given access to the space read the same records: a fitness app shows them as a feed of rides, a map app shows them as routes, and a calendar app shows them as days.":
+    'あるスペースには、2件のポストを含むAliceのリポジトリと、ポストといいねを含むBobのリポジトリがあります。スペースへのアクセスを許可された3つの異なるアプリが同じレコードを読み取ります。フィットネスアプリはライドのフィードとして、地図アプリはルートとして、カレンダーアプリは日付として表示します。',
+  // SpacesAccessDiagram
+  'space authority': 'スペースオーソリティ',
+  "decides who's in": 'メンバーを決める',
+  'no access': 'アクセス不可',
+  'access to the whole space': 'スペース全体へのアクセス',
+  'your app': 'あなたのアプリ',
+  'roles and permissions': 'ロールとパーミッション',
+  admin: '管理者',
+  member: 'メンバー',
+  reader: '閲覧者',
+  'can remove posts': 'ポストを削除できる',
+  'can post and reply': '投稿と返信ができる',
+  'can only read': '閲覧のみ',
+  "Alice is the space authority, and decides who is in the space. Alice, Bob, and Carol are members, and their posts are in the space. Dave is not a member and has no access. Your app reads the whole space, and assigns roles itself: Alice is an admin who can remove posts, Bob is a member who can post and reply, and Carol is a reader who can only read.":
+    'Aliceはスペースオーソリティであり、誰がスペースに入るかを決めます。Alice、Bob、Carolはメンバーで、彼らのポストはスペース内にあります。Daveはメンバーではなく、アクセスできません。あなたのアプリはスペース全体を読み取り、独自にロールを割り当てます。Aliceはポストを削除できる管理者、Bobは投稿と返信ができるメンバー、Carolは閲覧のみができる閲覧者です。',
+  // SpacesLabelsDiagram
+  authority: 'オーソリティ',
+  "on bob's post": 'bobのポストに',
+  sync: '同期',
+  "carol's post": 'carolのポスト',
+  "bob's post: hidden": 'bobのポスト：非表示',
+  'applies the label': 'ラベルを適用',
+  "A space holds a post from Carol, a post from Bob, and a takedown label record from Alice, the space authority, on Bob's post. Your app syncs all three records, shows Carol's post, and hides Bob's.":
+    'あるスペースには、Carolのポスト、Bobのポスト、そしてスペースオーソリティであるAliceがBobのポストに付けたテイクダウンのラベルレコードがあります。あなたのアプリは3つのレコードすべてを同期し、Carolのポストを表示し、Bobのポストを非表示にします。',
+  // SpacesNotifyDiagram
+  'space host': 'スペースホスト',
+  'sync service': '同期サービス',
+  'write post': 'ポストを書き込む',
+  notify: '通知',
+  'fetch, with a credential': 'クレデンシャルで取得',
+  "A sequence in time. Bob writes a post to his PDS, into a space whose authority is Alice. Bob's PDS notifies the space host, Alice's PDS. Alice's PDS notifies the sync service. The sync service fetches the post from Bob's PDS with a space credential, and Bob's PDS returns the post.":
+    '時系列の流れ。Bobは、Aliceがオーソリティであるスペースに、自分のPDSを通じてポストを書き込みます。BobのPDSはスペースホストであるAliceのPDSに通知します。AliceのPDSは同期サービスに通知します。同期サービスはスペースクレデンシャルを使ってBobのPDSからポストを取得し、BobのPDSがポストを返します。',
+}
+
+const LOCALES = [
+  ['', (t, size) => [t, size]],
+  [
+    '.ja',
+    (t, size) => {
+      if (NAMES.has(t)) return [t, size]
+      const v = JA[t]
+      if (v === undefined) throw new Error(`No Japanese text for ${JSON.stringify(t)}`)
+      return Array.isArray(v) ? v : [v, size]
+    },
+  ],
+]
+
 function diagram(name, { w, h, label, vars }) {
   let seed = 1
   const els = []
@@ -49,9 +137,11 @@ function diagram(name, { w, h, label, vars }) {
   }
   const api = {
     text(x, y, t, color = 'ink', size = 19, anchor = 'middle') {
-      els.push(
-        `<text x="${x}" y="${y}" fill="var(--${color})" fontSize={${size}} textAnchor="${anchor}">${t}</text>`,
-      )
+      // Rendered per locale in write()
+      els.push((tr) => {
+        const [text, fontSize] = tr(t, size)
+        return `<text x="${x}" y="${y}" fill="var(--${color})" fontSize={${fontSize}} textAnchor="${anchor}">${text}</text>`
+      })
     },
     rect(x, y, w, h, color = 'ink', { sw = 1.6, dash } = {}) {
       emit(
@@ -118,7 +208,9 @@ function diagram(name, { w, h, label, vars }) {
       const used = vars
       const light = used.map((k) => `[--${k}:${VARS[k][0]}]`).join(' ')
       const dark = used.map((k) => `dark:[--${k}:${VARS[k][1]}]`).join(' ')
-      const src = `// Generated by scripts/spaces-diagrams.mjs with rough.js in the style of
+      for (const [suffix, tr] of LOCALES) {
+        const body = els.map((el) => (typeof el === 'function' ? el(tr) : el))
+        const src = `// Generated by scripts/spaces-diagrams.mjs with rough.js in the style of
 // Excalidraw. Colors come from the CSS variables on the root <svg> so the
 // diagram follows the site theme.
 export function ${name}() {
@@ -127,17 +219,18 @@ export function ${name}() {
       <svg
         viewBox="0 0 ${w} ${h}"
         role="img"
-        aria-label="${label}"
+        aria-label="${tr(label)[0]}"
         fontFamily="Excalifont, sans-serif"
         className="h-auto w-full ${light} ${dark}"
       >
-      ${els.join('\n      ')}
+      ${body.join('\n      ')}
       </svg>
     </figure>
   )
 }
 `
-      fs.writeFileSync(`${OUT}/${name}.tsx`, src)
+        fs.writeFileSync(`${OUT}/${name}${suffix}.tsx`, src)
+      }
     },
   }
 }

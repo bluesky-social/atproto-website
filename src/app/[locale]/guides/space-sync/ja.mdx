@@ -1,0 +1,73 @@
+import { SpacesNotifyDiagram } from '@/app/[locale]/guides/spaces/SpacesNotifyDiagram.ja'
+import OpenReader from './_snippets/open-reader.mdx'
+import SyncOnce from './_snippets/sync-once.mdx'
+import Run from './_snippets/run.mdx'
+
+export const header = {
+  title: 'スペースの同期',
+  description: 'ネットワーク上の非公開データを同期する',
+}
+
+スペースは、公開atprotoデータとは異なる方法で同期されます。スペースのデータにはリレーもFirehoseもありません。各スペースがそれ自体で同期の境界となっており、スペースのコピーを持ちたいサービスは、まずスペースへの参加を認められ、そのうえで各メンバーのレコードを自ら取得する必要があります。
+
+## スペースの同期の仕組み
+
+1回の書き込みは、次の順序で処理されます。
+
+<SpacesNotifyDiagram />
+
+1. Bobが、自分のPDS上の、スペース内にある自分のリポジトリにレコードを書き込みます。
+2. BobのPDSが、スペースのPDSホスト、つまりスペースオーソリティであるAliceのPDSに通知します。
+3. スペースホストが、そのスペースに登録されたすべての同期サービスに通知します。
+4. 各同期サービスが、スペースクレデンシャルを使ってBobのPDSから新しいレコードを取得し、検証します。
+
+通知が伝えるのは、リポジトリが変更されたという事実だけです。レコード自体は、常に各書き込み者のPDSから取得されます。
+
+[公開データの同期](/guides/streaming-data)と比較すると、次のような違いがあります。
+
+リレーはありません。スペースのレコードはどこにも再配信されません。まずアクセスが必要です。同期サービスは、メンバーからアクセスを借りることでスペースに参加します。メンバーのPDSが委任トークンを発行し、スペースホストがそれを短期間有効なスペースクレデンシャルと交換します。スペースのPDSホストはスペースのライターセット（スペースに含まれるリポジトリの一覧）を保持しているため、同期サービスはどのPDSからデータを取得すればよいかを知ることができます。
+
+アカウントの変更は引き続き公開されます。アカウントの無効化や削除は公開ネットワークから届くため、スペースの同期サービスは公開[Jetstream](/guides/streaming-data#jetstream)もフォローすることになります。また、スペースを同期できるからといって、アプリのすべてのユーザーがそのスペースを見られるわけではありません。きめ細かなパーミッションはアプリケーション層に委ねられています。
+
+## SDKでスペースを同期する
+
+リファレンス実装の[TypeScript SDK](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-space)に含まれる`@atproto/lex-space`の`SpaceReader`を使えば、スペースを自分で同期できます。
+
+まず、メンバーのセッションを使ってスペースのリーダーを開きます。これにより、メンバーの委任トークンがスペースクレデンシャルと交換され、必要に応じて更新されます。
+
+<OpenReader />
+
+次に、スペースのライターを一覧し、各リポジトリをプルします。リポジトリを初めてプルすると完全なスナップショットが返され、リポジトリの最新コミットに照らして検証されます。
+
+<SyncOnce />
+
+そこからコピーを最新に保つには、ポーリングするか、更新の通知を受け取るエンドポイントをスペースホストに登録する必要があります。どちらの方法も[`lex-space`のREADME](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex-space#building-a-sync-service)で解説しています。
+
+これで同期できるのは1つのスペースだけです。通常、アプリは多数のスペースをフォローし、それぞれに独自のクレデンシャル、登録、ライターセット、プルすべきリポジトリがあります。さらに、公開ネットワークからのアカウントイベントや、リプレイ元となる永続的なコピーも必要です。そのために用意されているのが`jetstream-spaces`です。
+
+## jetstream-spaces
+
+[`jetstream-spaces`](https://github.com/bluesky-social/jetstream-spaces)は、アプリと並行して動作し、アプリがフォローするすべてのスペースを同期するサービスです。同期したすべてのデータを、[Jetstream](/guides/streaming-data#jetstream)と同じ「リプレイしてからライブ」モデルで、単一のストリームとしてアプリに提供します。
+
+公開Jetstreamと同じクライアントの使い勝手を備えています。各出力には通常のJetstreamのフィールドに加えて、レコードが属するスペースを示す`space`フィールドが含まれます。
+
+Goで書かれていますが、ビルドして実行し、アプリから通信するだけで使えます。
+
+<Run />
+
+2つのアドレスで待ち受けます。
+- `--listen`は、アプリだけがアクセスすべきプライベートなアドレスです。同期しているすべてのスペースのレコードを提供します。
+- `--notification-listen`はスペースホストからの通知を受け取るためのもので、`--public-origin`で設定した公開HTTPSアドレスから到達可能である必要があります。
+
+[共有スペースアプリを作るチュートリアル](/guides/shared-space-tutorial)では`jetstream-spaces`を使った例を紹介しています。デプロイや設定の詳細は[README](https://github.com/bluesky-social/jetstream-spaces)を参照してください。
+
+`jetstream-spaces`は、閲覧者のアクセス制御をアプリのロジックに委ねています。ストリームには、フォローしているすべてのスペースが含まれます。
+また、Blobについては参照のみを同期します。Blobは、閲覧者自身のアクセス権を使って別途取得する必要があります。
+
+## 関連・参考資料
+
+- [共有スペースアプリを作る](/guides/shared-space-tutorial)
+- [GitHub上の`jetstream-spaces`](https://github.com/bluesky-social/jetstream-spaces)
+- [Spaces](/guides/spaces)
+- [データのストリーミング](/guides/streaming-data)
+- [A Jetstream for Spaces](/blog/space-sync)

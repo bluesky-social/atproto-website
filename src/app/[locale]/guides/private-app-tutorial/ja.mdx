@@ -1,0 +1,116 @@
+import calendar from './calendar.png'
+import S01 from './_snippets/01-install.mdx'
+import S02 from './_snippets/02-init-project.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-login.mdx'
+import S05 from './_snippets/05-open-space.mdx'
+import S06 from './_snippets/06-commands.mdx'
+import S07 from './_snippets/07-env-file.mdx'
+import S08 from './_snippets/08-run.mdx'
+import S09 from './_snippets/09-output.mdx'
+import S10 from './_snippets/10-server.mdx'
+import S11 from './_snippets/11-run-server.mdx'
+
+export const header = {
+  title: 'プライベートアプリを作る',
+  description: '個人用スペースにプライベートなデータを保存する',
+}
+
+このチュートリアルでは、Spacesのプリミティブを使って、atproto上にプライベートなカレンダーを構築します。これは、あなた自身と、あなたが許可したアプリだけが読めるデータになります。[Lexicon Community](https://lexicon.community/)が定義したカレンダー用の[Lexicon](/guides/lexicon)と、SpacesのTypeScript SDKを使用します。
+
+
+## 前提条件
+
+以下をインストールしておいてください。
+
+- Node.js 22以上
+
+[homebrew](https://brew.sh)に対応したプラットフォームでは、次のコマンドでインストールできます。
+
+```bash
+brew install node
+```
+
+また、*Spacesに対応したPDS*上のアカウントも必要です。2026年12月1日時点で、[リファレンスPDS](https://github.com/bluesky-social/pds)はSpacesに対応しています。
+
+<Note>
+アプリパスワードではスペースにアクセスできません。このチュートリアルではアカウントの本来のパスワードでログインするため、テスト用アカウントを使用してください。本番アプリでは[OAuth](/guides/auth)を使用してください。
+</Note>
+
+## パート1：プロジェクトのセットアップ
+
+新しいプロジェクトディレクトリを作成し、[SDK](https://npmx.dev/package/@atproto/lex)とその他の依存関係をインストールします。
+
+<S02 />
+
+また、`lex` CLIツールと`tsx`をグローバルにインストールし、カレンダーのデータを読み書きするために[`community.lexicon.calendar`](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexiconをこのプロジェクトに導入する必要があります。
+
+<S01 />
+<S03 />
+
+## パート2：ログイン
+
+`src/calendar.ts`に新しいファイルを作成します。このファイルには、アプリで共有するいくつかのメソッドを記述します。
+
+まず、必要なパッケージをインポートし、認証済みクライアントをセットアップします。
+
+<S04 />
+
+## パート3：カレンダーを開く
+
+次に、`openCalendar()`関数を追加します。
+- このスペースは共有する予定がないため、キーを`personal`とします。
+- `listSpaces`でスペースを探し、初回は作成します。
+- `personalspace`ポリシーを指定して`createSpace()`を呼び出します。オーソリティだけがアクセスできます。
+- ここでのすべての操作は自分のPDS上の自分のリポジトリに対して行われるため、追加のクレデンシャルは不要です。
+- 最後に、`openSpace()`でスペースを返します。
+
+<S05 />
+
+## パート4：イベントの追加と削除
+
+次に、`src/index.ts`に別のファイルを作成します。ここでは、`src/calendar.ts`のヘルパーメソッドを使ってスペース内のレコードを実際に読み書きし、カレンダーを操作します。
+
+このデモアプリでは、レコードを作成、削除、一覧表示するCLIメソッドを追加します。これらは[公開データの書き込み](/guides/writing-data)と同じように動作します。[community.lexicon.calendar.event](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexiconでは`name`、`startsAt`、`createdAt`が必須なので、これらをコマンドライン入力として扱います。
+
+<S06 />
+
+これでスクリプトをテストする準備が整いました。まず、PDSに認証できるよう、シェルに環境変数を設定します。
+
+<S07 />
+
+次に、サンプル入力を与えて`npx tsx src/index.ts`としてスクリプトを実行します。
+
+<S08 />
+
+`add`を付けずに単独で実行した最後のコマンドで、書き込んだイベントが読み取れるはずです。
+
+<S09 />
+
+## パート5：ブラウザで表示する
+
+最後に、このデータをブラウザで表示する最小限のインターフェースを作成します。
+
+`src/server.ts`を作成します。これは`node:http`サーバーを使ってカレンダーを読み取り、`localhost`上でHTMLとしてレンダリングします。
+
+<S10 />
+
+`npx tsx`で実行します。
+
+<S11 />
+
+そして、ブラウザで`http://127.0.0.1:3000`を開きます。
+
+<Image src={calendar} alt="My calendarというタイトルのシンプルなウェブページ。dentist（歯医者）とfarmers market（ファーマーズマーケット）の2つのイベントが表示されている" />
+
+これで、スペースのデータを書き込み、読み取り、ブラウザで表示することができました！
+
+このデータが a) プライベートであること、b) スペースに対応した他のアプリから読めること を確認したい場合は、[pdsls](https://pdsls.dev)のようなatprotoブラウザを使い、ブログの[Using Spaces across Apps](/blog/atmospheric-groups-intro#using-spaces-across-apps)の手順に従ってください。スペースへのアクセスを許可してログインすると、スペースとそのレコードを確認できます。
+
+## 結論
+
+これは、atproto Spacesを扱う最も最小限の例のひとつです。新しいスペースを作成するロジックを書き、スペースに書き込み、CLIとウェブインターフェースで読み戻しました。atprotoはこれほどシンプルにもなり得ます。atprotoはとりわけ、コンテンツアドレス可能なストレージインターフェースであり、今では非公開データにも対応しているのです！
+
+プライベートなデータにatproto Spacesを使った別の例としては、[Airspace](https://getair.space/)をご覧ください！
+
+次は、読み書き操作の全体については[スペースのデータ](/guides/spaces-data)を参照するか、[共有スペースアプリを作る](/guides/shared-space-tutorial)で複数ユーザーの例に進んでください。
