@@ -1,0 +1,26 @@
+```ts
+import { createServer } from 'node:http'
+import { login, openCalendar, event } from './calendar.js'
+
+const client = await login()
+const calendar = await openCalendar(client)
+
+createServer(async (req, res) => {
+  const { records } = await calendar.list(event)
+  const items = records
+    .filter((r) => r.valid)
+    .map((r) => r.value)
+    .sort((a, b) => (a.startsAt ?? '').localeCompare(b.startsAt ?? ''))
+    .map((e) => `<li><time>${new Date(e.startsAt!).toLocaleString()}</time> ${escape(e.name)}</li>`)
+    .join('')
+
+  res.setHeader('Content-Type', 'text/html')
+  res.end(`<!doctype html><title>My calendar</title><h1>My calendar</h1><ul>${items}</ul>`)
+}).listen(3000, '127.0.0.1')
+
+console.log('http://127.0.0.1:3000')
+
+function escape(s: string) {
+  return s.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`)
+}
+```

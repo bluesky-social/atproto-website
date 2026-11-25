@@ -1,0 +1,115 @@
+import Install from './_snippets/install.mdx'
+import SpaceTypeLexicon from './_snippets/space-type-lexicon.mdx'
+import Scopes from './_snippets/scopes.mdx'
+import CreateSpace from './_snippets/create-space.mdx'
+import OpenSpace from './_snippets/open-space.mdx'
+import ListSpaces from './_snippets/list-spaces.mdx'
+import CreateRecord from './_snippets/create-record.mdx'
+import CreateResult from './_snippets/create-result.mdx'
+import UriFormat from './_snippets/uri-format.mdx'
+import PutDeleteRecord from './_snippets/put-delete-record.mdx'
+import ListRecords from './_snippets/list-records.mdx'
+import GetRecord from './_snippets/get-record.mdx'
+import ReadOtherRepo from './_snippets/read-other-repo.mdx'
+import GetBlob from './_snippets/get-blob.mdx'
+
+export const header = {
+  title: 'Spaces Data',
+  description: 'Read and write records in atproto Spaces',
+}
+
+Reading and writing space records works similarly to public records. The reference `lex` [TypeScript SDK](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex) provides another package called `lex-space` for working with space data:
+
+<Install />
+
+Records in a space are ordinary atproto records, defined by Lexicons, read and written with the same helpers as [public data](/guides/reading-data). The differences are in where they live and who can read them.
+
+## Creating a space
+
+Spaces have to be created before being written to. Writing to a space that doesn't exist fails with `SpaceNotFound`.
+
+The identity who creates the space becomes the space authority. To create a space, call `createSpace()` with an authenticated client and a [Lexicon for that Space](#space-types):
+
+<CreateSpace />
+
+You can also assign an access policy to a space at creation time. There are three defaults:
+- `personalspace`: only the space authority has access.
+- `memberspace`: the authority and any other invited users have access.
+- `managedspace`: access is delegated to an application which handles permissions.
+
+## Opening a space
+
+Once a Space has been created, call `openSpace()` on it:
+
+<OpenSpace />
+
+This performs credential management as needed in the background. A [space credential](/guides/spaces#syncing-a-space) is fetched at runtime, then cached and renewed.
+
+## Writing records
+
+`create`, `put`, and `delete` operations on space records work just like they do on [public records](/guides/writing-data). Writes always go to the user's own repository, in the space.
+
+<CreateRecord />
+
+<PutDeleteRecord />
+
+**Blobs** are uploaded as normal, then referenced from a space record.
+
+## Reading records
+
+As with public records, you can `list` records matching a given Lexicon in a space:
+
+<ListRecords />
+
+Or `get` records individually:
+
+<GetRecord />
+
+Read operations target a user's own repository by default. You can also read other user repositories from the Spaces you're in:
+
+<ReadOtherRepo />
+
+You also need access to fetch **blobs** with `space.getBlob()`:
+
+<GetBlob />
+
+## Space types
+
+A space **type** is a [Lexicon](/guides/lexicon) with `type: "space"`, listing the record collections the space is meant to hold. A required `key` property controls the space key; `literal:self` means one space of this type per account, like a profile record:
+
+<SpaceTypeLexicon />
+
+You can install and build space types like any other Lexicon ([Developing with Lexicons](/guides/installing-lexicons)).
+
+You can also list a user's spaces by `spaceType`:
+
+<ListSpaces />
+
+## App Permissions
+
+**Apps** are granted access to spaces with `space:` OAuth scopes, by space type and authority. See [Permission Requests](/guides/permission-requests):
+
+<Scopes />
+
+Creating a space needs `manage=create`.
+
+`authority=self` refers to a user's own spaces. `authority=*` covers spaces where the user is a member.
+
+`read` reads every repo in a space; `read_self` reads only the user's own.
+
+For every `space:` parameter, and how to include space permissions in a permission set, see [Space permissions](/guides/permission-requests#space-permissions).
+
+## Addressing Space Records
+
+Space record URIs are constructed slightly differently from public records. They begin with `at:space/` and include the space authority and space type:
+
+<UriFormat />
+
+<CreateResult />
+
+## Further Reading and Resources
+
+- [Spaces](/guides/spaces)
+- [Reading public data](/guides/reading-data)
+- [Writing public data](/guides/writing-data)
+- [Space sync](/guides/space-sync)

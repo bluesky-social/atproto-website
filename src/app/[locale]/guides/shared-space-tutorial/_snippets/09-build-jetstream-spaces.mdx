@@ -1,0 +1,6 @@
+```bash
+git clone https://github.com/bluesky-social/jetstream-spaces
+cd jetstream-spaces
+go build -o jetstream-spaces ./cmd/jetstream-spaces
+(umask 077; openssl rand -hex 32 > ../shared-calendar/broker-secret)
+```

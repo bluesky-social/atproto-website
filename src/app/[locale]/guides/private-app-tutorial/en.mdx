@@ -1,0 +1,116 @@
+import calendar from './calendar.png'
+import S01 from './_snippets/01-install.mdx'
+import S02 from './_snippets/02-init-project.mdx'
+import S03 from './_snippets/03-lex-install.mdx'
+import S04 from './_snippets/04-login.mdx'
+import S05 from './_snippets/05-open-space.mdx'
+import S06 from './_snippets/06-commands.mdx'
+import S07 from './_snippets/07-env-file.mdx'
+import S08 from './_snippets/08-run.mdx'
+import S09 from './_snippets/09-output.mdx'
+import S10 from './_snippets/10-server.mdx'
+import S11 from './_snippets/11-run-server.mdx'
+
+export const header = {
+  title: 'Build a Private App',
+  description: 'Store private data in a personal space',
+}
+
+In this tutorial, you'll use the Spaces primitives to build a private calendar on atproto. This will be data that only you — and any authorized apps — can read. You'll use [Lexicon Community](https://lexicon.community/)-defined calendar [Lexicons](/guides/lexicon), along with the Spaces TypeScript SDK. 
+
+
+## Prerequisites
+
+You should have installed:
+
+- Node.js 22+
+
+On platforms supported by [homebrew](https://brew.sh), you can install it with:
+
+```bash
+brew install node
+```
+
+You'll also need an account on a *PDS that supports Spaces*. As of December 1, 2026, the [reference PDS](https://github.com/bluesky-social/pds) includes support for Spaces.
+
+<Note>
+App passwords can't access spaces. This tutorial logs in with your full account password, so use a test account. Production apps should use [OAuth](/guides/auth).
+</Note>
+
+## Part 1: Project Setup
+
+Create a new project directory and install the [SDK](https://npmx.dev/package/@atproto/lex) and other project dependencies:
+
+<S02 />
+
+You'll also need the `lex` CLI tool and `tsx` installed globally, and the [`community.lexicon.calendar`](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexicons installed in this project to read and write calendar data:
+
+<S01 />
+<S03 />
+
+## Part 2: Log in
+
+Create a new file at `src/calendar.ts`. This file will contain some shared methods for your app.
+
+Start by importing the packages you'll need, and setting up the authenticated client:
+
+<S04 />
+
+## Part 3: Open your calendar
+
+Next, add an `openCalendar()` function:
+- This space will be keyed as `personal` because you aren't expecting to share it.
+- Look for it with `listSpaces`; create it the first time.
+- Call `createSpace()` with a `personalspace` policy: only the authority has access.
+- Everything here goes to your own repo on your own PDS, so no further credentials are needed.
+- Finally, return the Space with `openSpace()`.
+
+<S05 />
+
+## Part 4: Add and remove events
+
+Next, create another file at `src/index.ts`. Here, you'll use the helper methods from `src/calendar.ts` to actually read and write records in your space, to interact with your calendar.
+
+For this demo app, you'll add some CLI methods to create, delete, and list records. These work similarly to [writing public data](/guides/writing-data) — the [community.lexicon.calendar.event](https://lexicon.garden/lexicon/did:plc:mtr7qrqtcyseedx3jyr5o7db/community.lexicon.calendar.event) Lexicon needs `name`, `startsAt`, and `createdAt`, so you'll handle those as command line input:
+
+<S06 />
+
+Now you're ready to test the script. Start by setting environment variables in your shell so you can authenticate to your PDS:
+
+<S07 />
+
+Then, run the script as `npx tsx src/index.ts` with some sample input:
+
+<S08 />
+
+The last command, run on its own without `add`, should read the events you've written:
+
+<S09 />
+
+## Part 5: View it in your browser
+
+Finally, you can make a minimal interface to display this data in a browser.
+
+Create `src/server.ts`, which will use a `node:http` server to read your calendar and render it as HTML on `localhost`.
+
+<S10 />
+
+Run it with `npx tsx`:
+
+<S11 />
+
+Then open `http://127.0.0.1:3000` in your browser:
+
+<Image src={calendar} alt="A plain web page titled My calendar, listing two events: dentist and farmers market" />
+
+You've now written and read Spaces data, and viewed it in a browser! 
+
+If you want to verify that this data is a) private, and b) can be read by other apps supporting Spaces, you can use an atproto browser like [pdsls](https://pdsls.dev), following the walkthrough on our blog under [Using Spaces across Apps](/blog/atmospheric-groups-intro#using-spaces-across-apps). Log in with Spaces access to see the space and its records.
+
+## Conclusion
+
+This is one of the most minimal examples of working with atproto Spaces. You wrote logic to create a new Space, wrote to the space, and read it back on the CLI and in a web interface. atproto can be as straightforward as that: among other things, it's a content-addressible storage interface, now with support for non-public data!
+
+For another example of using atproto Spaces for private data, see [Airspace](https://getair.space/)!
+
+Next, refer to [Spaces data](/guides/spaces-data) for a full set of read-write operations, or move on to a multi-user example in [Build a Shared Space App](/guides/shared-space-tutorial).

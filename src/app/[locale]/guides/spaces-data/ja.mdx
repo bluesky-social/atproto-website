@@ -1,0 +1,115 @@
+import Install from './_snippets/install.mdx'
+import SpaceTypeLexicon from './_snippets/space-type-lexicon.mdx'
+import Scopes from './_snippets/scopes.mdx'
+import CreateSpace from './_snippets/create-space.mdx'
+import OpenSpace from './_snippets/open-space.mdx'
+import ListSpaces from './_snippets/list-spaces.mdx'
+import CreateRecord from './_snippets/create-record.mdx'
+import CreateResult from './_snippets/create-result.mdx'
+import UriFormat from './_snippets/uri-format.mdx'
+import PutDeleteRecord from './_snippets/put-delete-record.mdx'
+import ListRecords from './_snippets/list-records.mdx'
+import GetRecord from './_snippets/get-record.mdx'
+import ReadOtherRepo from './_snippets/read-other-repo.mdx'
+import GetBlob from './_snippets/get-blob.mdx'
+
+export const header = {
+  title: 'スペースのデータ',
+  description: 'atproto Spacesでレコードを読み書きする',
+}
+
+スペースのレコードの読み書きは、公開レコードとほぼ同じように行えます。リファレンス実装の`lex` [TypeScript SDK](https://github.com/bluesky-social/atproto/tree/main/packages/lex/lex)には、スペースのデータを扱うための`lex-space`という別パッケージが用意されています。
+
+<Install />
+
+スペース内のレコードは、Lexiconで定義された通常のatprotoレコードであり、[公開データ](/guides/reading-data)と同じヘルパーで読み書きします。違いは、レコードがどこに置かれ、誰が読めるかという点にあります。
+
+## スペースの作成
+
+スペースは、書き込む前に作成しておく必要があります。存在しないスペースに書き込もうとすると、`SpaceNotFound`で失敗します。
+
+スペースを作成したアイデンティティが、そのスペースのオーソリティになります。スペースを作成するには、認証済みクライアントと[そのスペース用のLexicon](#space-types)を指定して`createSpace()`を呼び出します。
+
+<CreateSpace />
+
+作成時に、スペースにアクセスポリシーを割り当てることもできます。デフォルトで3種類あります。
+- `personalspace`：スペースオーソリティのみがアクセスできます。
+- `memberspace`：オーソリティと、招待された他のユーザーがアクセスできます。
+- `managedspace`：アクセスの管理を、パーミッションを扱うアプリケーションに委任します。
+
+## スペースを開く
+
+スペースを作成したら、そのスペースに対して`openSpace()`を呼び出します。
+
+<OpenSpace />
+
+これにより、必要に応じてバックグラウンドでクレデンシャル管理が行われます。[スペースクレデンシャル](/guides/spaces#syncing-a-space)は実行時に取得され、キャッシュおよび更新されます。
+
+## レコードの書き込み
+
+スペースのレコードに対する`create`、`put`、`delete`操作は、[公開レコード](/guides/writing-data)の場合とまったく同じように動作します。書き込みは常に、スペース内にあるユーザー自身のリポジトリに対して行われます。
+
+<CreateRecord />
+
+<PutDeleteRecord />
+
+**Blob**は通常どおりアップロードし、スペースのレコードから参照します。
+
+## レコードの読み取り
+
+公開レコードと同様に、スペース内で特定のLexiconに一致するレコードを`list`できます。
+
+<ListRecords />
+
+または、レコードを個別に`get`できます。
+
+<GetRecord />
+
+読み取り操作は、デフォルトではユーザー自身のリポジトリを対象とします。自分が参加しているスペースであれば、他のユーザーのリポジトリを読むこともできます。
+
+<ReadOtherRepo />
+
+`space.getBlob()`で**Blob**を取得する場合にも、アクセス権が必要です。
+
+<GetBlob />
+
+## スペースタイプ
+
+スペースの**タイプ**は、`type: "space"`を持つ[Lexicon](/guides/lexicon)で、そのスペースが保持するレコードのコレクションを列挙します。必須の`key`プロパティはスペースキーを制御します。`literal:self`は、プロフィールレコードと同様に、このタイプのスペースをアカウントごとに1つだけ持つことを意味します。
+
+<SpaceTypeLexicon />
+
+スペースタイプは、他のLexiconと同じようにインストールしてビルドできます（[Lexiconを使った開発](/guides/installing-lexicons)を参照）。
+
+ユーザーのスペースを`spaceType`で一覧することもできます。
+
+<ListSpaces />
+
+## アプリのパーミッション
+
+**アプリ**には、スペースタイプとオーソリティごとに、`space:` OAuthスコープでスペースへのアクセスが付与されます。[パーミッションリクエスト](/guides/permission-requests)を参照してください。
+
+<Scopes />
+
+スペースの作成には`manage=create`が必要です。
+
+`authority=self`はユーザー自身のスペースを指します。`authority=*`は、ユーザーがメンバーとなっているスペースを対象とします。
+
+`read`はスペース内のすべてのリポジトリを読み取ります。`read_self`はユーザー自身のリポジトリのみを読み取ります。
+
+すべての`space:`パラメータの一覧や、権限セットにスペースのパーミッションを含める方法については、[スペースのパーミッション](/guides/permission-requests#space-permissions)を参照してください。
+
+## スペースレコードのアドレス指定
+
+スペースレコードのURIは、公開レコードとは少し異なる形で構成されます。`at:space/`で始まり、スペースオーソリティとスペースタイプを含みます。
+
+<UriFormat />
+
+<CreateResult />
+
+## 関連・参考資料
+
+- [Spaces](/guides/spaces)
+- [公開データの読み取り](/guides/reading-data)
+- [公開データの書き込み](/guides/writing-data)
+- [スペースの同期](/guides/space-sync)

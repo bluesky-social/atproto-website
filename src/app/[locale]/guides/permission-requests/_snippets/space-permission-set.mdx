@@ -1,0 +1,24 @@
+```json
+{
+  "lexicon": 1,
+  "id": "com.example.forum.authFull",
+  "defs": {
+    "main": {
+      "type": "permission-set",
+      "title": "Forum",
+      "detail": "Read and post in forums",
+      "permissions": [
+        {
+          "type": "permission",
+          "resource": "space",
+          "spaceType": "com.example.forum",
+          "authority": "*",
+          "action": ["read", "create", "update", "delete"],
+          "collection": ["com.example.forum.post"],
+          "manage": ["create", "update"]
+        }
+      ]
+    }
+  }
+}
+```

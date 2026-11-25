@@ -1,0 +1,31 @@
+```ts
+import { login, openCalendar, event } from './calendar.js'
+
+async function main() {
+  const client = await login()
+  const calendar = await openCalendar(client)
+  const [command, ...args] = process.argv.slice(2)
+
+  switch (command) {
+    case 'add': {
+      const [startsAt, ...name] = args
+      await calendar.create(event, {
+        name: name.join(' '),
+        startsAt: new Date(startsAt).toISOString(),
+        createdAt: new Date().toISOString(),
+      })
+      break
+    }
+    case 'rm':
+      await calendar.delete(event, { rkey: args[0] })
+      break
+  }
+
+  const { records } = await calendar.list(event)
+  for (const { rkey, valid, value } of records) {
+    if (valid) console.log(`${value.startsAt}  ${value.name}  (${rkey})`)
+  }
+}
+
+main()
+```

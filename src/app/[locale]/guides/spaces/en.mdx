@@ -1,0 +1,70 @@
+import { SpacesNetworkDiagram } from './SpacesNetworkDiagram'
+import { SpacesOneRecordDiagram } from './SpacesOneRecordDiagram'
+import { SpacesAppsDiagram } from './SpacesAppsDiagram'
+import { SpacesAccessDiagram } from './SpacesAccessDiagram'
+import { SpacesLabelsDiagram } from './SpacesLabelsDiagram'
+import { SpacesNotifyDiagram } from './SpacesNotifyDiagram'
+import { SpaceJoinDiagram } from '@/app/[locale]/blog/space-sync/SpaceJoinDiagram'
+
+export const header = {
+  title: 'Spaces',
+  description: 'A visual introduction to atproto Spaces',
+}
+
+**Spaces** are a way to store and sync non-public data on AT Protocol. Data in Spaces is not part of the public network, and is only accessible to members of the Space. Spaces *retain* the advantages of atproto like portable identity and interoperable data. Each Space can be thought of as its own atproto network, with its own records.
+
+Spaces can be used to build invite-only social apps, shared or private workspaces, and other applications where you don't want public visibility by default! This page provides a conceptual walkthrough of how Spaces work, so you can gain intuition for building with Spaces.
+
+If you want to jump directly into building with Spaces, check out our [Shared Space App Tutorial](/guides/shared-space-tutorial) and [Private App Tutorial](/guides/private-app-tutorial). For the introduction, read on.
+
+## Spaces are miniature atproto networks
+
+Spaces store records in individual users' repositories on their [PDSes](/guides/the-at-stack#pds), following [Lexicons](/guides/lexicon), just like public atproto. A Space can span multiple users' repositories, with each user writing to their own repository.
+
+<SpacesNetworkDiagram />
+
+## One record, one space
+
+Spaces are *not* permissions on individual records. Instead, each record is *written into a single Space*, and the Space itself controls access to that record. One record can't be in multiple Spaces. Spaces are a means of access control, not encryption; Space records are stored in a PDS like any others.
+
+<SpacesOneRecordDiagram />
+
+## Space data is atmospheric
+
+Spaces use Lexicons like any other atproto data, which means that they aren't tied to a single app. Any app that has access to a Space can read and write its data, and can build its own view of the Space's data. This means that, just like how atproto [social graphs](/guides/social-graph) can be borrowed and remixed by other apps, the groups and social boundaries defined by Spaces can be reused as well.
+
+<SpacesAppsDiagram />
+
+## Spaces control access, apps control permissions
+
+Each Space has a single authority that controls who can read and write data in the Space. The Space authority is a DID, which can be an individual user, or a shared identity. The Space authority can grant access to other DIDs, or revoke access at any time. Space membership is binary — i.e., an account is either in a Space or not. Apps can implement their own granular permissions on top of Space membership.
+
+<SpacesAccessDiagram />
+
+## Moderation in spaces
+
+With public atproto data, moderation is implemented through [labels](/guides/labels), a form of metadata that can be applied to other records. In Spaces, moderation "labels" are regular *records* that are written into the same space as what they label, and synced like any other record in the Space. Apps apply the labels they accept. See [Moderating spaces](/guides/moderating-spaces) for more detail.
+
+<SpacesLabelsDiagram />
+
+## Syncing a space
+
+Spaces have to sync *without a Relay*, since non-public data isn't rebroadcasted across the network the way public data is. By default, a Space's authority decides who can read the Space and whose writes count as part of it. It doesn't store anyone's records. When a user writes a record into a Space, their PDS notifies the Space authority's PDS, which then notifies any sync services that are following the Space. The sync services fetch the record from the user's PDS with a credential, and then pass it along to the app that's following the Space.
+
+<SpacesNotifyDiagram />
+
+## Jetstream for spaces
+
+To simplify this notification-based sync model, you can use a Spaces variant of the Jetstream service, to give your app one stream that uses the same client-side API as the standard Jetstream.
+
+<SpaceJoinDiagram />
+
+Those are the key concepts of Spaces! You'll find concrete examples of how Spaces work differently than public data throughout these docs. For detailed walkthroughs and tutorials, follow the links below.
+
+## Further Reading and Resources
+
+- [Spaces data](/guides/spaces-data)
+- [Space sync](/guides/space-sync)
+- [Moderating spaces](/guides/moderating-spaces)
+- [Build a Private App](/guides/private-app-tutorial)
+- [Build a Shared Space App](/guides/shared-space-tutorial)

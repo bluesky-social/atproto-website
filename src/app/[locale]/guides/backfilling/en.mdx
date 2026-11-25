@@ -8,15 +8,15 @@ export const header = {
 
 ## When to backfill
 
-Backfilling is the process of syncing all the data in the network from scratch. You may want to do this if you're running a service that requires a complete copy of the data in the network.
+Backfilling is the process of syncing the public data in the network from scratch. You may want to do this if you're running a service that requires a complete copy of the data in the network.
 
 Backfilling the Bluesky Lexicons in particular is resource-intensive and time consuming. Backfilling other Lexicons typically is not. If you are developing your own application, using its own set of Lexicons, you can backfill all of the data that you are writing, as you write it, using the same code paths. Our [Statusphere tutorial](/guides/statusphere-tutorial) provides an example of this.
 
 If you are doing large-scale lookups, you can also make use of [Jetstream](/guides/streaming-data#jetstream) and [backlinks](/guides/social-graph#backlinks) in combination with selective backfilling.
 
-For the entire network to be backfillable by third parties at all is a novel concept for atproto. Other, monolithic social networks generally only offer an large-scale event stream (like our firehose) from the current date and time, making it difficult to perform data analysis without an intermediary.
+For the entire public network to be backfillable by third parties is a novel concept for atproto. Other, monolithic social networks generally only offer an large-scale event stream (like our firehose) from the current date and time, making it difficult to perform data analysis without an intermediary.
 
-With the AT Protocol and adequate resources, you can *always* backfill the entire network on your own. This, in turn, benefits researchers and other forms of data analysis — if you can provision enough storage, you can have your own local copy of the entire Atmosphere.
+With the AT Protocol and adequate resources, you can *always* backfill the entire public network on your own. This, in turn, benefits researchers and other forms of data analysis — if you can provision enough storage, you can have your own local copy of the entire Atmosphere.
 
 Feed generators, labelers, and bots that consume data directly from the firehose may or may not require backfilling.
 When backfilling, you generally need to maintain 'up to date' replica of the data, which requires a cutover to streaming firehose data once the backfill is complete. We created `tap` to streamline this process.
@@ -55,7 +55,7 @@ If you are implementing backfilling on your own, the general process is:
 - The checkpoint will contain a rev value that you can use to skip any buffered events that have already been included in said checkpoint.
 - For each buffered event, if the rev is less than the current rev you have, you can safely skip it.
 
-Do the above process for each repo and you will end up with a complete replica of the network. To get a list of all the repos, you can use the `com.atproto.sync.listRepos` endpoint on the relay, or on each PDS.
+Do the above process for each repo and you will end up with a complete replica of the public network. To get a list of all the repos, you can use the `com.atproto.sync.listRepos` endpoint on the relay, or on each PDS.
 
 - This is a fairly large amount of data (hundreds of GBs at the time of writing), and will be somewhat demanding in terms of resources.
 - Be careful not to get rate limited. You will be making one call to `getRepo` per user. It is recommended to implement client side rate limiting to prevent your requests from getting blocked by firewalls on the PDS or relay you are requesting data from.

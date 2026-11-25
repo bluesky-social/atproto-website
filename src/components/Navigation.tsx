@@ -249,6 +249,8 @@ export const navigation: Array<NavGroup> = [
             href: '/guides/statusphere-tutorial',
           },
           { title: 'Adding Labels', href: '/guides/labels-tutorial' },
+          { title: 'Build a Private App', href: '/guides/private-app-tutorial' },
+          { title: 'Build a Shared Space App', href: '/guides/shared-space-tutorial' },
         ],
       },
       {
@@ -263,6 +265,11 @@ export const navigation: Array<NavGroup> = [
           { title: 'Atproto Ethos', href: '/articles/atproto-ethos' },
           { title: 'FAQ', href: '/guides/faq' },
         ],
+      },
+      {
+        title: 'Spaces',
+        icon: 'sparkles',
+        href: '/guides/spaces',
       },
       { title: 'SDKs', icon: 'cube', href: '/sdks' },
       {
@@ -293,8 +300,9 @@ export const navigation: Array<NavGroup> = [
         icon: 'database',
         href: '/guides/reads-and-writes',
         links: [
-          { title: 'Reading data', href: '/guides/reading-data' },
-          { title: 'Writing data', href: '/guides/writing-data' },
+          { title: 'Reading public data', href: '/guides/reading-data' },
+          { title: 'Writing public data', href: '/guides/writing-data' },
+          { title: 'Spaces data', href: '/guides/spaces-data' },
           {
             title: 'Accounts and deletions',
             href: '/guides/account-lifecycle',
@@ -309,6 +317,7 @@ export const navigation: Array<NavGroup> = [
         links: [
           { title: 'Streaming data', href: '/guides/streaming-data' },
           { title: 'Backfilling', href: '/guides/backfilling' },
+          { title: 'Space sync', href: '/guides/space-sync' },
           { title: 'Feeds', href: '/guides/feeds' },
         ],
       },
@@ -341,6 +350,7 @@ export const navigation: Array<NavGroup> = [
           { title: 'Creating a labeler', href: '/guides/creating-a-labeler' },
           { title: 'Subscriptions', href: '/guides/subscriptions' },
           { title: 'Using Ozone', href: '/guides/using-ozone' },
+          { title: 'Moderating spaces', href: '/guides/moderating-spaces' },
         ],
       },
     ],

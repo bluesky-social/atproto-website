@@ -1,0 +1,38 @@
+```ts
+import { events, rsvps, inactive } from './indexer.js'
+
+export function loginPage() {
+  return `<form action="/login"><input name="handle" placeholder="your handle"><button>Log in</button></form>`
+}
+
+export function notMemberPage() {
+  return `<p>Ask the host to add you to the calendar.</p>`
+}
+
+export function calendarPage(isHost: boolean) {
+  const items = [...events]
+    .filter(([, e]) => !inactive.has(e.author))
+    .sort(([, a], [, b]) => (a.startsAt ?? '').localeCompare(b.startsAt ?? ''))
+    .map(([uri, e]) => {
+      const going = [...rsvps.values()].filter(
+        (r) => r.subject === uri && r.status.endsWith('#going') && !inactive.has(r.author),
+      ).length
+      return `<li>
+        <time>${new Date(e.startsAt!).toLocaleString()}</time> ${escape(e.name)} (${going} going)
+        <form method="post" action="/rsvp"><input type="hidden" name="uri" value="${uri}"><button>Going</button></form>
+      </li>`
+    })
+    .join('')
+
+  return `<h1>Our calendar</h1>
+    <ul>${items}</ul>
+    <form method="post" action="/event">
+      <input name="name" placeholder="event"> <input name="startsAt" type="datetime-local"> <button>Add</button>
+    </form>
+    ${isHost ? `<form method="post" action="/member"><input name="did" placeholder="friend's DID"><button>Add member</button></form>` : ''}`
+}
+
+function escape(s: string) {
+  return s.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`)
+}
+```
