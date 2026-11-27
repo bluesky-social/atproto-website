@@ -16,6 +16,12 @@ The label concept and protocol primitive is flexible in scope, use cases, and da
 
 The core label schema is versioned, and this document describes labels version `1`.
 
+<Note>
+**Space Label Records**
+
+The [Spaces specification](/specs/space) adds a new way of publishing labels as records within a space repository. These documents have not yet been updated to cover that system. See the [spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data#moderation) for details.
+</Note>
+
 ## Schema and Data Model
 
 Labels are protocol objects, similar to repository commits or MST nodes. They are canonically encoded in a strict subset of CBOR ([DRISL](https://dasl.ing/drisl.html)) for for signing (see sections below). There is a Lexicon definition (`com.atproto.label.defs#label`) which represents labels, but it has slightly different field requirements than the core protocol object: the version field (`ver`) and signature (`sig`) are both optional in that version.
