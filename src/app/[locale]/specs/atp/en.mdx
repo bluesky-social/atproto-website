@@ -12,7 +12,7 @@ Some of the main protocol features and design themes include: {{ className: 'lea
 
 - Self-authenticating data and identity, allowing seamless account migrations and redistribution of content {{ className: 'lead' }}
 - Global broadcast architecture designed for "big world" use cases, scaling to billions of accounts {{ className: 'lead' }}
-- Separate namespaced "spaces" system providing data locality boundary and access control {{ className: 'lead' }}
+- Separate namespaced "spaces" system providing a data locality boundary and access control {{ className: 'lead' }}
 - Delegated authority over application-layer schemas and aggregation infrastructure {{ className: 'lead' }}
 - Re-use of content-addressed data models from prior P2P protocols, and networking primitives from the web platform {{ className: 'lead' }}
 
@@ -39,6 +39,7 @@ Possible future changes and extensions to the protocol are described in the indi
 AT Protocol was designed to provide stability and interoperation within mature network ecosystems, while at the same time allowing product designers to rapidly ship differentiating features and novel application experiences.
 
 The core application development and extension mechanism is to design and publish new Lexicon schemas under independent NSID hierarchies. Lexicon schemas can define new data record schemas, new HTTP API endpoints, and new event stream message types. New applications often require new network aggregation services ("AppViews") and client app support (eg, mobile apps or web interfaces).
+
 It is expected that competing developers will reuse Lexicon schemas and public data records across organizational boundaries. For example, applications developers can reuse and contribute to the existing public social graph data described by the `app.bsky.*` Lexicon schemas. They can extend with new data types by publishing Lexicon schemas under their own namespace. That data becomes part of the common pool of public data that any other developer can integrate and build with.
 
 Governance structures for individual Lexicon namespaces are flexible. They could be developed and maintained by volunteer communities, corporations, consortia, academic researchers, funded non-profits, etc.

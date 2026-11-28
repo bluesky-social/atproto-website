@@ -17,7 +17,7 @@ Permissions relate to user owned resources on PDS instances:
 - `repo`: Public Repository (records and collections)
 - `rpc`: Service Authentication (API calls to external services)
 - `blob`: uploaded media files
-- `space`: Spaces and Space Repository data
+- `space`: Spaces and Space repository data
 - `identity`: DID and handle
 - `account`: hosting status, email address
 
@@ -142,12 +142,14 @@ Parameters:
 - `skey` (string, optional): space key to match, which matches `record-key` string syntax. Wildcard (`*`) is allowed, grants access to spaces with any space key, and is the default behavior if the parameter is not defined.
 - `collection` (array of strings, optional): NSIDs of record types. Wildcard (`*`) is allowed and grants access to all record types within spaces. If not defined, the `collections` array on the relevant space type declaration is used.
 - `action` (array of unique strings, optional): defines the set of record operations allowed. Allowed values are `read_self`, `read`, `create`, `update`, `delete`. `read` is a superset of `read_self`. If not defined, all operations are allowed.
-- `manage` (array of unique strings, optional): defines set of space management operations granted. Allowed values are `create`, `update`, `delete`. If not defined, no operations are granted.
- 
+- `manage` (array of unique strings, optional): defines the set of space management operations granted. Allowed values are `create`, `update`, `delete`. If not defined, no operations are granted.
+
+When `space` permissions are included in permission sets, the `spaceType` must fall under allowed NSID hierarchy rules, but `collection` may include record types of any NSID.
+
 Examples:
 
 ```
-# accounts's own bookmarks space, with read access and write access to the collections its declaration lists
+# account's own bookmarks space, with read access and write access to the collections its declaration lists
 space:com.example.bookmarks
 
 {
@@ -157,7 +159,7 @@ space:com.example.bookmarks
 }
 
 # administer forum spaces (update and delete the spaces), with full read/write access to records in the space
-space:com.atmoboards.forum?authority=*&manage=update&manage=delete
+space:com.example.forum?authority=*&manage=update&manage=delete
 
 {
   "type": "permission",

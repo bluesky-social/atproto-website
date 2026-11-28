@@ -130,7 +130,7 @@ Type-specific fields:
 - `key` (string, required): specifies the "space key" syntax for spaces of this type. Same semantics and syntax as `key` field for Record schemas
 - `title` (string, optional): short name for the space type, which may be displayed to end users. Should be limited to a handful of words
 - `title:lang` (map of strings to strings, optional): internationalized/localized variations of `title` for display. The map key strings must be valid language codes; see the `language` lexicon string format
-- `collections` (array of strings with NSID syntax, required): record types expected to be found in spaces of this type. Other record types can be read and written to spaces, but may require additional permissions.
+- `collections` (array of strings with NSID syntax, required): record types expected to be found in spaces of this type. Wildcard (`*`) is not supported. Other record types can be written to spaces, but may require additional permissions.
 
 ## Field Type Definitions
 
