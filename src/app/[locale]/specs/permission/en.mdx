@@ -17,6 +17,7 @@ Permissions relate to user owned resources on PDS instances:
 - `repo`: Public Repository (records and collections)
 - `rpc`: Service Authentication (API calls to external services)
 - `blob`: uploaded media files
+- `space`: Spaces and Space repository data
 - `identity`: DID and handle
 - `account`: hosting status, email address
 
@@ -124,6 +125,49 @@ blob:*/*
 
 # Upload video or html
 blob?accept=video/*&accept=text/html
+```
+
+### `space`
+
+<Note>
+The [spaces protocol](/specs/space) is new, and this section does not yet describe the full permission semantics. See the [proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data#oauth-scopes) for more details.
+</Note>
+
+Access to space repository data, and management of the account's own spaces.
+
+Parameters:
+
+- `spaceType` (string, required, positional): NSID of space type. Wildcard (`*`) is allowed in scope string syntax, and grants access to all space types. Partial wildcards are not supported (eg, can not use `com.example.*`). Wildcards are *not* supported in permissions within a permission set.
+- `authority` (string, optional): space authority, either as a DID or the literal `self` for the current account. Wildcard (`*`) is allowed and grants access to spaces of any authority (including self). If not defined, `self` is granted.
+- `skey` (string, optional): space key to match, which matches `record-key` string syntax. Wildcard (`*`) is allowed, grants access to spaces with any space key, and is the default behavior if the parameter is not defined.
+- `collection` (array of strings, optional): NSIDs of record types. Wildcard (`*`) is allowed and grants access to all record types within spaces. If not defined, the `collections` array on the relevant space type declaration is used.
+- `action` (array of unique strings, optional): defines the set of record operations allowed. Allowed values are `read_self`, `read`, `create`, `update`, `delete`. `read` is a superset of `read_self`. If not defined, all operations are allowed.
+- `manage` (array of unique strings, optional): defines the set of space management operations granted. Allowed values are `create`, `update`, `delete`. If not defined, no operations are granted.
+
+When `space` permissions are included in permission sets, the `spaceType` must fall under allowed NSID hierarchy rules, but `collection` may include record types of any NSID.
+
+Examples:
+
+```
+# account's own bookmarks space, with read access and write access to the collections its declaration lists
+space:com.example.bookmarks
+
+{
+  "type": "permission",
+  "resource": "space",
+  "spaceType": "com.example.bookmarks"
+}
+
+# administer forum spaces (update and delete the spaces), with full read/write access to records in the space
+space:com.example.forum?authority=*&manage=update&manage=delete
+
+{
+  "type": "permission",
+  "resource": "space",
+  "spaceType": "com.example.forum",
+  "authority": "*",
+  "manage": ["update", "delete"]
+}
 ```
 
 ### `account`

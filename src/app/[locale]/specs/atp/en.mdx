@@ -11,17 +11,20 @@ The Authenticated Transfer Protocol ("AT Protocol" or "atproto") is a network pr
 Some of the main protocol features and design themes include: {{ className: 'lead' }}
 
 - Self-authenticating data and identity, allowing seamless account migrations and redistribution of content {{ className: 'lead' }}
-- Design for "big world" use cases, scaling to billions of accounts {{ className: 'lead' }}
+- Global broadcast architecture designed for "big world" use cases, scaling to billions of accounts {{ className: 'lead' }}
+- Separate namespaced "spaces" system providing a data locality boundary and access control {{ className: 'lead' }}
 - Delegated authority over application-layer schemas and aggregation infrastructure {{ className: 'lead' }}
 - Re-use of content-addressed data models from prior P2P protocols, and networking primitives from the web platform {{ className: 'lead' }}
+
+The core protocol is in the process of standardization at the IETF, with the ["ATP" working group](https://datatracker.ietf.org/wg/atp/about/) first chartered in 2026.
 
 ## Protocol Structure
 
 **Identity:** account control is rooted in persistent [DID](/specs/did) identifiers (like `did:plc:ewvi7nxzyoun6zhxrhs64oiz`). These can be universally resolved to determine the current service provider location and [cryptographic keys](/specs/cryptography) associated with the account. [Handles](/specs/handle) complement DIDs and provide mutable and human-meaningful usernames in the form of DNS hostnames (eg, `user.example.com`).
 
-**Data:** public content is stored in content-addressed and cryptographically verifiable [repositories](/specs/repository). Data records and network messages all conform to a unified [data model](/specs/data-model) with both [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations. [Labels](/specs/label) are a separate form of lightweight metadata, individually signed and distributed outside repositories, which can be used for moderation and badging.
+**Data:** global broadcast content is stored in content-addressed and cryptographically verifiable [repositories](/specs/repository). [Spaces](/specs/space) are a separate system of namespaced repositories with optional access control. Data records and network messages all conform to a unified [data model](/specs/data-model) with both [CBOR](https://en.wikipedia.org/wiki/CBOR) and JSON representations. [Labels](/specs/label) are a separate form of lightweight metadata, individually signed and distributed outside repositories, which can be used for moderation and badging.
 
-**Network:** client-server and server-server HTTP APIs are described with lexicon schemas ([XRPC](/specs/xrpc)), as are WebSocket [event streams](/specs/event-stream). Individual records can be globally referenced with [AT-URIs](/specs/at-uri-scheme). [Personal Data Servers (PDS)](/specs/account) host accounts, handle key management, manage repositories, provide authentication, and proxy client HTTP requests. Relays aggregate from many PDS hosts and output a unified full-network [firehose](/specs/sync).
+**Network:** client-server and server-server HTTP APIs are described with lexicon schemas ([XRPC](/specs/xrpc)), as are WebSocket [event streams](/specs/event-stream). Individual records can be globally referenced with [AT-URIs](/specs/at-uri-scheme). [Personal Data Servers (PDS)](/specs/account) host individual accounts, handle key management, manage repositories, provide authentication, and proxy client HTTP requests. Group Hosts play a similar role for group accounts managed by members. Relays aggregate global broadcast data from many PDS hosts and output unified full-network [firehoses](/specs/sync).
 
 **Application:** APIs and record schemas for applications built on atproto are specified in [Lexicons](/specs/lexicon), which are referenced by [Namespaced Identifiers (NSIDs)](/specs/nsid). Application-specific aggregations (like search) are provided by Application View (App View) services. Clients can include mobile apps, desktop software, or web interfaces. Clients are authorized using [OAuth](/specs/oauth), and [permissions](/specs/permission) are used to grant access to users' protocol resources.
 
@@ -29,6 +32,7 @@ AT Protocol itself does not specify how common social web conventions like follo
 
 The `com.atproto.*` Lexicons provide common APIs for things like account management and record creation. These could be considered part of AT Protocol itself, though they may also be extended or replaced over time as needed.
 
+Possible future changes and extensions to the protocol are described in the individual specification documents.
 
 ## Protocol Extension and Applications
 
@@ -39,12 +43,3 @@ The core application development and extension mechanism is to design and publis
 It is expected that competing developers will reuse Lexicon schemas and public data records across organizational boundaries. For example, applications developers can reuse and contribute to the existing public social graph data described by the `app.bsky.*` Lexicon schemas. They can extend with new data types by publishing Lexicon schemas under their own namespace. That data becomes part of the common pool of public data that any other developer can integrate and build with.
 
 Governance structures for individual Lexicon namespaces are flexible. They could be developed and maintained by volunteer communities, corporations, consortia, academic researchers, funded non-profits, etc.
-
-
-## What is Missing?
-
-**Non-Public Data:** mechanisms for personal and group data sharing are planned, and should support a wide variety of application functionality. These will be large additions to the protocol framework. We recommend against simply "bolting on" encryption or private content using the existing protocol primitives.
-
-**Protocol Governance and Formal Standards Process:** once the basic protocol framework has been shown to work between multiple interoperating organizations, the plan is to bring the protocol specifications to an existing standards body (like the IETF) for revision and independent review.
-
-Possible future changes and extensions to the protocol are described in the individual specification documents.

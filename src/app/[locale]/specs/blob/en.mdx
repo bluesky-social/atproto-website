@@ -14,6 +14,12 @@ While blobs are universally content addressed (by CID), they are always referenc
 
 The empty blob (zero bytes) is generally valid, though it may be disallowed by individual Lexicons/applications.
 
+<Note>
+**Space Blobs**
+
+The [Spaces specification](/specs/space) adds blobs which are tied to records in space repositories. Similar to other space data, these blobs have access controls. This specification has not yet been updated to cover that system. See the [spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data#blob-sync) for details.
+</Note>
+
 ## Blob Metadata
 
 Currently, the only "blessed" CID type for blobs is similar to that for repository records, but with the `raw` codec:

@@ -35,6 +35,7 @@ This specification describes version 1 of the Lexicon definition language. {{ cl
 | `procedure` |  | primary |
 | `subscription` |  | primary |
 | `permission-set` |  | primary |
+| `space` |  | primary |
 
 ## Lexicon Files
 
@@ -62,6 +63,7 @@ The primary types are:
 - `subscription`: Event Stream (WebSocket)
 - `record`: describes an object that can be stored in a repository record
 - `permission-set`: describes a bundle of auth permissions
+- `space`: describes a space type
 
 All of the primary definition types include these fields:
 
@@ -118,6 +120,17 @@ Type-specific fields:
 - `detail` (string, optional): human-meaningful description of the scope of this permission set, which will be displayed to users. Should be limited to a paragraph or so.
 - `detail:lang` (map of strings to strings, optional): same as `title:lang`, but for `detail`
 - `permissions` (array of `permission` definitions, required): the permissions included in this set
+
+### Space Type
+
+Specifies a type of space, with implied application semantics and access controls. See [Spaces specification](/specs/space) for more details.
+
+Type-specific fields:
+
+- `key` (string, required): specifies the "space key" syntax for spaces of this type. Same semantics and syntax as `key` field for Record schemas
+- `title` (string, optional): short name for the space type, which may be displayed to end users. Should be limited to a handful of words
+- `title:lang` (map of strings to strings, optional): internationalized/localized variations of `title` for display. The map key strings must be valid language codes; see the `language` lexicon string format
+- `collections` (array of strings with NSID syntax, required): record types expected to be found in spaces of this type. Wildcard (`*`) is not supported. Other record types can be written to spaces, but may require additional permissions.
 
 ## Field Type Definitions
 

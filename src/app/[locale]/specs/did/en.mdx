@@ -104,6 +104,8 @@ The public **atproto signing key** for the account is found under the `verificat
 
 A valid signing key is required for most atproto functionality. An account with no valid key in their DID document is likely broken.
 
+The public **atproto spaces KEM key** for the account is also found under `verificationMethod`, in an object with `id` ending `#atproto_kem` and the same other syntax and formatting requirements as the atproto signing key. The KEM key is currently used with HPKE secret export and a MAC to prove authenticity as part of the [spaces](/specs/space) protocol. Cryptographic best practice dictates that the same key should not be used for signatures (ECDSA) and KEM (ECDH), so the `#atproto` and `#atproto_kem` keys should be distinct. However, consuming code should not reject identical keys. Unlike the signing key, the `secp256k1` ("K-256") elliptic curve system is not supported for `#atproto_kem`. An account missing a `#atproto_kem` key will not be able to publish atproto space data, but other atproto mechanisms that rely only on `#atproto` should still function.
+
 The **PDS service network location** for the account is found under the `service` array, with `id` ending `#atproto_pds`, and `type` matching `AtprotoPersonalDataServer`. The first matching entry in the array should be used, and any others ignored. The `serviceEndpoint` field must contain an HTTPS URL of server. It should contain only the URI scheme (`http` or `https`), hostname, and optional port number, not any "userinfo", path prefix, or other components.
 
 A working PDS is required for most atproto account functionality. An account with no valid PDS location in their DID document is likely broken.

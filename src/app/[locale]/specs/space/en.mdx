@@ -1,0 +1,26 @@
+export const header = {
+  title: 'Spaces',
+  description:
+    'Namespaced data repositories with access controls.',
+}
+
+# Spaces
+
+In addition to a single global broadcast [repository](/specs/repository), atproto accounts can publish data in multiple **spaces**. A space is a namespaced container for network data under the authority of a single account (**space authority**) which multiple authorized accounts can read and write data to. Spaces provide a more granular context and locality for data, and use a different synchronization mechanism instead of the firehose event stream.
+
+Space data, including records and blobs, is stored by each account on its own host. The role of the space authority is to grant access to all the data within the overall space (from any participating account), and to facilitate notification of updates to synchronizing services. Space data is not end-to-end encrypted (E2EE), and does not provide cryptographic guarantees of confidentiality.
+
+Space records are referenced by URIs which include both the space itself (identified by space authority account, space type, and space key), and then the record within that space (repository account, collection, and record key).
+
+Spaces support a variety of use cases:
+
+* **Personal data:** limited to a single account across multiple devices and app services. Examples include bookmarks, drafts, and preferences.
+* **Gated content:** with access gated by one or more managing services. Examples include paid newsletters and subscriber-only posts.
+* **Shared content:** with access determined by social graph relationships. Examples include private posts and stories.
+* **Groups:** with membership, roles, and multiple content types. Examples include public and private forums, group discussions, and communities.
+
+<Note>
+Spaces are a major addition to AT Protocol, developed over the course of 2026 and launched to the live network in December 2026.
+
+This website has not yet been updated with the full specification. For now, refer to the [spaces proposal](https://github.com/bluesky-social/proposals/tree/main/0016-permissioned-data) for details.
+</Note>

@@ -19,6 +19,8 @@ Because of the subtle visual distinction when the full curve names are written o
 
 The original atproto reference implementation consistently support both curve types. When generating new key pairs, it uses `k256` by default.
 
+The [spaces](/specs/space) protocol functionality uses cryptographic keys to derive shared secrets and authenticate published data using a MAC, not a signature. It uses HPKE secret export (DHKEM) to derive a MAC key. Best practice is to not use the same key material for both signatures and KEM purposes, so a separate public key is registered in the account's DID document. The `k256` elliptic curve type is not supported for KEM keys, only `p256`.
+
 Key points for both systems have loss-less "compressed" representations, which are useful when sharing the public keys. This is usually supported natively for `k256`, but sometimes requires extra methods or jumping through hoops for `p256`. You can read more about this at: [02, 03 or 04? So What Are Compressed and Uncompressed Public Keys?](https://medium.com/asecuritysite-when-bob-met-alice/02-03-or-04-so-what-are-compressed-and-uncompressed-public-keys-6abcb57efeb6).
 
 A common pattern when signing data in atproto is to:
@@ -84,3 +86,5 @@ There is no specific recommended byte or string encoding for private keys across
 ## Possible Future Changes
 
 The set of supported cryptographic systems is expected to evolve slowly. There are significant interoperability and implementation advantages to having as few systems as possible at any point in time.
+
+A "post-quantum" cryptographic system is expected to be added in the near future.
